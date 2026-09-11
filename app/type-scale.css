@@ -1,0 +1,122 @@
+/* Escala tipográfica moderada para la web clínica */
+
+body {
+  font-size: 16px;
+}
+
+.brand-name {
+  font-size: 1.12rem;
+}
+
+.brand-sub {
+  font-size: 0.68rem;
+}
+
+.nav {
+  font-size: 0.86rem;
+}
+
+.hero h1 {
+  font-size: clamp(2.65rem, 4.7vw, 4.7rem);
+  line-height: 1.02;
+  letter-spacing: -0.045em;
+}
+
+.hero-lead {
+  font-size: clamp(1rem, 1.25vw, 1.08rem);
+  line-height: 1.7;
+}
+
+.eyebrow,
+.panel-kicker,
+.service-number,
+.method-steps span {
+  font-size: 0.69rem;
+}
+
+.panel-title {
+  font-size: clamp(1.9rem, 2.7vw, 2.75rem);
+}
+
+.trust-strip p {
+  font-size: 0.74rem;
+}
+
+.section h2 {
+  font-size: clamp(2.2rem, 3.7vw, 3.65rem);
+  line-height: 1.08;
+  letter-spacing: -0.035em;
+}
+
+.service-card h3 {
+  font-size: clamp(2rem, 3vw, 3.1rem);
+}
+
+.service-card p:not(.service-number),
+.dememoria-card > p:last-child,
+.about-copy > p:last-child {
+  font-size: 0.98rem;
+}
+
+.service-note {
+  font-size: 0.87rem !important;
+}
+
+.method-steps h3 {
+  font-size: 1.35rem;
+}
+
+.method-steps p {
+  font-size: 0.95rem;
+}
+
+.about-copy h2 {
+  font-size: clamp(2.15rem, 3.2vw, 3.35rem);
+}
+
+.about-role {
+  font-size: 0.71rem;
+}
+
+.contact-place {
+  font-size: 1.5rem;
+}
+
+.button,
+.nav-cta {
+  font-size: 0.87rem;
+}
+
+.footer {
+  font-size: 0.76rem;
+}
+
+.footer-brand {
+  font-size: 1rem;
+}
+
+@media (max-width: 680px) {
+  body {
+    font-size: 15.5px;
+  }
+
+  .hero h1 {
+    font-size: clamp(2.25rem, 11vw, 3.35rem);
+  }
+
+  .section h2 {
+    font-size: clamp(1.95rem, 9vw, 2.7rem);
+  }
+
+  .service-card h3 {
+    font-size: clamp(1.8rem, 8vw, 2.4rem);
+  }
+
+  .panel-title {
+    font-size: clamp(1.75rem, 8vw, 2.3rem);
+  }
+
+  .about-copy h2 {
+    font-size: clamp(1.95rem, 8.5vw, 2.55rem);
+  }
+}
