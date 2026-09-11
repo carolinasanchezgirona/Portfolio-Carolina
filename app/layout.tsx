@@ -42,7 +42,8 @@ export const metadata: Metadata = {
 const structuredData = {
   "@context": "https://schema.org",
   "@type": "ProfessionalService",
-  name: "Carolina Sánchez | Psicóloga · Dememoria",
+  name: "Carolina Sánchez | Psicóloga y Neuropsicóloga",
+  alternateName: "Dememoria",
   url: "https://carolinasanchezgirona.com",
   email: "contact@carolinasanchezgirona.com",
   areaServed: ["Arenys de Mar", "Maresme", "Barcelona", "España"],
