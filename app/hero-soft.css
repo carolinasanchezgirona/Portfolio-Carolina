@@ -1,0 +1,51 @@
+/* Hero panel: misma familia visual que Mineuri, con menos peso que el mensaje principal */
+.hero-panel {
+  border: 1px solid rgba(76, 91, 255, 0.10);
+  background:
+    radial-gradient(circle at 82% 18%, rgba(255, 217, 90, 0.34), transparent 24%),
+    radial-gradient(circle at 16% 22%, rgba(27, 207, 201, 0.20), transparent 28%),
+    radial-gradient(circle at 78% 82%, rgba(255, 111, 97, 0.12), transparent 30%),
+    linear-gradient(145deg, #f8f9ff 0%, #eef1ff 58%, #ecfbfa 100%);
+  box-shadow: 0 18px 48px rgba(23, 32, 57, 0.10);
+}
+
+.orb-one {
+  background: rgba(76, 91, 255, 0.08);
+}
+
+.orb-two {
+  background: rgba(27, 207, 201, 0.10);
+}
+
+.panel-content {
+  color: var(--mineuri-ink);
+  background: linear-gradient(to top, rgba(255,255,255,.84), rgba(255,255,255,.20));
+}
+
+.panel-title {
+  color: var(--mineuri-ink);
+}
+
+.panel-kicker {
+  color: var(--mineuri-primary);
+}
+
+.panel-list {
+  color: var(--mineuri-text);
+}
+
+.panel-list span {
+  padding: 7px 10px;
+  border: 1px solid rgba(76, 91, 255, 0.10);
+  border-radius: 12px;
+  background: rgba(255,255,255,.56);
+}
+
+@media (max-width: 680px) {
+  .hero-panel {
+    background:
+      radial-gradient(circle at 82% 18%, rgba(255, 217, 90, 0.26), transparent 24%),
+      radial-gradient(circle at 16% 22%, rgba(27, 207, 201, 0.16), transparent 28%),
+      linear-gradient(145deg, #f8f9ff 0%, #eef1ff 60%, #ecfbfa 100%);
+  }
+}
