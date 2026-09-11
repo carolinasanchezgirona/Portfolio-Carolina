@@ -1,0 +1,348 @@
+/* Capa final de coherencia visual para la home clínica */
+
+:root {
+  --clinical-primary: #4c5bff;
+  --clinical-primary-dark: #3442d9;
+  --clinical-primary-soft: #eef0ff;
+  --clinical-data: #1bcfc9;
+  --clinical-data-dark: #0d8f8b;
+  --clinical-data-soft: #e8fbfa;
+  --clinical-ink: #1d2333;
+  --clinical-text: #343d55;
+  --clinical-muted: #66718b;
+  --clinical-border: #e2e6f1;
+  --clinical-surface: #ffffff;
+  --clinical-soft: #f7f8fc;
+  --clinical-dark: #18223c;
+  --brand-gradient: linear-gradient(90deg, #4c5bff 0%, #1bcfc9 52%, #ff6f61 100%);
+}
+
+/* Jerarquía tipográfica: hero protagonista, secciones un escalón por debajo */
+.hero h1 {
+  font-size: clamp(2.55rem, 4.35vw, 4.35rem);
+  line-height: 1.04;
+}
+
+.section h2 {
+  font-size: clamp(2rem, 3.15vw, 3.15rem);
+  line-height: 1.1;
+  letter-spacing: -0.03em;
+}
+
+.about-copy h2 {
+  font-size: clamp(2rem, 3vw, 3rem);
+}
+
+/* Ritmo vertical más compacto */
+.section {
+  padding: 96px 0;
+}
+
+.services,
+.method,
+.about,
+.contact {
+  scroll-margin-top: 92px;
+}
+
+.method {
+  gap: 60px;
+}
+
+.dememoria {
+  padding-top: 24px;
+  padding-bottom: 24px;
+}
+
+/* Firma visual de marca, repetida con moderación */
+.hero-panel::before,
+.dememoria-card::before,
+.contact-box::before {
+  content: "";
+  display: block;
+  height: 6px;
+  border-radius: 999px;
+  background: var(--brand-gradient);
+}
+
+.hero-panel::before {
+  position: absolute;
+  top: 22px;
+  left: 30px;
+  right: 30px;
+  z-index: 3;
+  opacity: 0.92;
+}
+
+.dememoria-card::before {
+  position: absolute;
+  top: 30px;
+  left: 42px;
+  width: 112px;
+  z-index: 3;
+}
+
+.contact-box::before {
+  width: 92px;
+  margin-bottom: 24px;
+}
+
+/* Evita dos firmas decorativas simultáneas en Dememoria */
+.dememoria-card::after {
+  display: none;
+}
+
+/* Enfoque de trabajo: una sola banda, sin cuatro pasteles decorativos */
+.trust-strip {
+  position: relative;
+  background: #fff;
+  border: 1px solid var(--clinical-border);
+  box-shadow: 0 14px 36px rgba(23, 32, 57, 0.05);
+}
+
+.trust-strip::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 5px;
+  background: var(--brand-gradient);
+}
+
+.trust-strip p,
+.trust-strip p:nth-child(1),
+.trust-strip p:nth-child(2),
+.trust-strip p:nth-child(3),
+.trust-strip p:nth-child(4) {
+  color: var(--clinical-text);
+  background: #fff;
+  border-color: var(--clinical-border);
+}
+
+/* Un único patrón para cualquier bloque numerado */
+.service-card,
+.method-steps article {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid var(--clinical-border);
+  border-radius: 26px;
+  box-shadow: 0 16px 42px rgba(23, 32, 57, 0.07);
+}
+
+.service-card::before,
+.method-steps article::before {
+  content: "";
+  display: block;
+  width: 72px;
+  height: 6px;
+  margin-bottom: 24px;
+  border-radius: 999px;
+  background: var(--clinical-primary);
+}
+
+.service-card:first-child::before {
+  background: var(--clinical-primary);
+}
+
+.service-card-dark::before,
+.method-steps article:nth-child(1)::before,
+.method-steps article:nth-child(2)::before {
+  background: var(--clinical-data);
+}
+
+.method-steps article:nth-child(3)::before,
+.method-steps article:nth-child(4)::before {
+  background: var(--clinical-primary);
+}
+
+.service-number,
+.method-steps span,
+.method-steps article:nth-child(1) span,
+.method-steps article:nth-child(2) span,
+.method-steps article:nth-child(3) span,
+.method-steps article:nth-child(4) span {
+  margin: 0 0 14px;
+  color: var(--clinical-primary);
+  font-size: 0.7rem;
+  font-weight: 750;
+  letter-spacing: 0.14em;
+}
+
+.service-card-dark .service-number,
+.method-steps article:nth-child(1) span,
+.method-steps article:nth-child(2) span {
+  color: var(--clinical-data-dark);
+}
+
+.service-card h3,
+.method-steps h3 {
+  margin-top: 0;
+}
+
+/* Áreas de trabajo: menos decoración y mejor contraste */
+.service-card {
+  min-height: 410px;
+  padding: 38px;
+}
+
+.service-card:first-child {
+  background: linear-gradient(180deg, #fff 0%, #f6f7ff 100%);
+}
+
+.service-card-dark {
+  color: #fff;
+  background:
+    radial-gradient(circle at 88% 14%, rgba(27, 207, 201, 0.10), transparent 28%),
+    var(--clinical-dark);
+}
+
+.service-card-dark p:not(.service-number),
+.service-card-dark .service-note {
+  color: #f3f6ff;
+}
+
+.service-note {
+  color: var(--clinical-text);
+}
+
+/* Cómo trabajo: mismos bloques numerados, ahora sí como sistema */
+.method-intro {
+  position: sticky;
+  top: 24px;
+  padding: 32px;
+  border: 1px solid var(--clinical-border);
+  border-radius: 26px;
+  background: var(--clinical-primary-soft);
+}
+
+.method-intro > p:last-child {
+  color: #2e3650;
+}
+
+.method-steps {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+  border-top: 0;
+}
+
+.method-steps article {
+  display: block;
+  min-height: 220px;
+  padding: 28px;
+  background: #fff;
+  border-bottom: 1px solid var(--clinical-border);
+}
+
+.method-steps article:hover {
+  margin: 0;
+  padding: 28px;
+  transform: translateY(-2px);
+  background: #fff;
+}
+
+.method-steps article:nth-child(1),
+.method-steps article:nth-child(2) {
+  background: linear-gradient(180deg, #fff 0%, var(--clinical-data-soft) 100%);
+}
+
+.method-steps article:nth-child(3),
+.method-steps article:nth-child(4) {
+  background: linear-gradient(180deg, #fff 0%, var(--clinical-primary-soft) 100%);
+}
+
+.method-steps h3 {
+  margin-bottom: 12px;
+  color: var(--clinical-ink);
+}
+
+.method-steps p {
+  color: var(--clinical-text);
+  line-height: 1.65;
+}
+
+/* La parte oscura debe mantener contraste alto */
+.dememoria-card > p:last-child {
+  color: #f1f4ff;
+}
+
+.panel-list {
+  color: var(--clinical-ink);
+}
+
+/* Ajuste de jerarquía y legibilidad general */
+.hero-lead,
+.about-copy > p,
+.contact p,
+.service-card p:not(.service-number) {
+  color: var(--clinical-text);
+}
+
+.service-card-dark p:not(.service-number) {
+  color: #f4f6ff;
+}
+
+/* La vieja barra amarilla de Servicios ya no forma parte del sistema */
+.services::before {
+  display: none;
+}
+
+@media (max-width: 980px) {
+  .section {
+    padding: 82px 0;
+  }
+
+  .method {
+    gap: 36px;
+  }
+
+  .method-intro {
+    position: static;
+  }
+}
+
+@media (max-width: 680px) {
+  .hero h1 {
+    font-size: clamp(2.2rem, 10vw, 3.1rem);
+  }
+
+  .section h2,
+  .about-copy h2 {
+    font-size: clamp(1.85rem, 8.2vw, 2.45rem);
+  }
+
+  .section {
+    padding: 68px 0;
+  }
+
+  .service-card,
+  .method-intro,
+  .method-steps article {
+    border-radius: 20px;
+  }
+
+  .service-card {
+    min-height: auto;
+    padding: 28px;
+  }
+
+  .method-intro {
+    padding: 26px;
+  }
+
+  .method-steps {
+    grid-template-columns: 1fr;
+  }
+
+  .method-steps article,
+  .method-steps article:hover {
+    min-height: auto;
+    padding: 24px;
+  }
+
+  .hero-panel::before {
+    left: 22px;
+    right: 22px;
+  }
+}
