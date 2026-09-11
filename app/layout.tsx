@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import "./mineuri-theme.css";
 import "./type-scale.css";
-import "./hero-soft.css";
+import "./coherence.css";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://carolinasanchezgirona.com"),
