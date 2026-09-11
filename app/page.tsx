@@ -18,11 +18,12 @@ export default function HomePage() {
 
       <section className="hero" id="inicio">
         <div className="hero-copy">
-          <p className="eyebrow">Dememoria · Psicología y Neuropsicología</p>
-          <h1>Un espacio clínico para comprender lo que te ocurre y trabajar sobre ello con rigor.</h1>
+          <p className="eyebrow">Carolina Sánchez · Psicología sanitaria y neuropsicología</p>
+          <h1>Psicóloga sanitaria y neuropsicóloga en Arenys de Mar.</h1>
           <p className="hero-lead">
-            Psicología sanitaria y neuropsicología clínica en Arenys de Mar y online. Evaluación,
-            intervención y acompañamiento adaptados a la persona, su contexto y sus objetivos.
+            Atención psicológica para adultos y evaluación e intervención neuropsicológica. Un trabajo
+            clínico individualizado, cercano y basado en evidencia, adaptado a la persona, su contexto
+            y sus objetivos.
           </p>
           <div className="hero-actions">
             <a className="button button-primary" href="#contacto">Pedir cita <Arrow /></a>
@@ -132,11 +133,11 @@ export default function HomePage() {
 
       <section className="section dememoria" aria-labelledby="dememoria-title">
         <div className="dememoria-card">
-          <p className="eyebrow light">Dememoria</p>
+          <p className="eyebrow light">Dememoria · Consulta clínica</p>
           <h2 id="dememoria-title">La clínica no empieza en una etiqueta diagnóstica.</h2>
           <p>
-            Dememoria nace como un espacio de psicología y neuropsicología centrado en comprender a
-            la persona antes de decidir cómo intervenir. Diagnóstico, pruebas, síntomas y escalas
+            Dememoria es el nombre de mi actividad de consulta privada. El trabajo parte de comprender
+            a la persona antes de decidir cómo intervenir. Diagnóstico, pruebas, síntomas y escalas
             aportan información, pero adquieren sentido cuando se integran con la biografía, el
             funcionamiento cotidiano y las necesidades reales de quien consulta.
           </p>
@@ -156,6 +157,11 @@ export default function HomePage() {
             Mi forma de trabajar combina razonamiento clínico, evaluación estructurada y objetivos
             terapéuticos concretos, procurando que cada decisión tenga sentido para la persona y no
             solo sobre el papel.
+          </p>
+          <p>
+            Paralelamente amplío mi formación en Ingeniería Biomédica, con interés en neurociencia,
+            tecnología sanitaria y herramientas digitales aplicadas a salud. Es una línea complementaria
+            a mi práctica clínica y neuropsicológica.
           </p>
         </div>
       </section>
@@ -180,7 +186,7 @@ export default function HomePage() {
       <footer className="footer">
         <div>
           <p className="footer-brand">Carolina Sánchez | Psicóloga</p>
-          <p>Dememoria · Psicología y Neuropsicología</p>
+          <p>Dememoria · Consulta de Psicología y Neuropsicología</p>
         </div>
         <div className="footer-right">
           <p>Arenys de Mar · Atención online</p>
