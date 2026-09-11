@@ -17,7 +17,7 @@
   --brand-gradient: linear-gradient(90deg, #4c5bff 0%, #1bcfc9 52%, #ff6f61 100%);
 }
 
-/* Jerarquía tipográfica: hero protagonista, secciones un escalón por debajo */
+/* Jerarquía tipográfica */
 .hero h1 {
   font-size: clamp(2.55rem, 4.35vw, 4.35rem);
   line-height: 1.04;
@@ -33,9 +33,9 @@
   font-size: clamp(2rem, 3vw, 3rem);
 }
 
-/* Ritmo vertical más compacto */
+/* Ritmo vertical compacto y consistente */
 .section {
-  padding: 96px 0;
+  padding: 88px 0;
 }
 
 .services,
@@ -46,15 +46,26 @@
 }
 
 .method {
-  gap: 60px;
+  gap: 52px;
+  padding-top: 82px;
+  padding-bottom: 72px;
 }
 
 .dememoria {
-  padding-top: 24px;
-  padding-bottom: 24px;
+  padding-top: 28px;
+  padding-bottom: 44px;
 }
 
-/* Firma visual de marca, repetida con moderación */
+.about {
+  padding-top: 78px;
+  padding-bottom: 78px;
+}
+
+.contact {
+  padding-top: 78px;
+}
+
+/* Firma visual de marca */
 .hero-panel::before,
 .dememoria-card::before,
 .contact-box::before {
@@ -76,9 +87,9 @@
 
 .dememoria-card::before {
   position: absolute;
-  top: 30px;
-  left: 42px;
-  width: 112px;
+  top: 28px;
+  left: 40px;
+  width: 108px;
   z-index: 3;
 }
 
@@ -87,17 +98,21 @@
   margin-bottom: 24px;
 }
 
-/* Evita dos firmas decorativas simultáneas en Dememoria */
 .dememoria-card::after {
   display: none;
 }
 
-/* Enfoque de trabajo: una sola banda, sin cuatro pasteles decorativos */
+/* Principios de trabajo: una sola banda, no cuatro chips */
 .trust-strip {
   position: relative;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  overflow: hidden;
+  padding-top: 5px;
   background: #fff;
   border: 1px solid var(--clinical-border);
-  box-shadow: 0 14px 36px rgba(23, 32, 57, 0.05);
+  border-radius: 20px;
+  box-shadow: 0 10px 28px rgba(23, 32, 57, 0.045);
 }
 
 .trust-strip::before {
@@ -115,9 +130,19 @@
 .trust-strip p:nth-child(2),
 .trust-strip p:nth-child(3),
 .trust-strip p:nth-child(4) {
+  min-height: 76px;
+  padding: 18px 20px;
   color: var(--clinical-text);
-  background: #fff;
-  border-color: var(--clinical-border);
+  background: transparent;
+  border: 0;
+  border-right: 1px solid var(--clinical-border);
+  font-weight: 650;
+  letter-spacing: 0.035em;
+  text-transform: none;
+}
+
+.trust-strip p:last-child {
+  border-right: 0;
 }
 
 /* Un único patrón para cualquier bloque numerado */
@@ -172,7 +197,7 @@
 .service-card-dark .service-number,
 .method-steps article:nth-child(1) span,
 .method-steps article:nth-child(2) span {
-  color: var(--clinical-data-dark);
+  color: var(--clinical-data);
 }
 
 .service-card h3,
@@ -180,9 +205,9 @@
   margin-top: 0;
 }
 
-/* Áreas de trabajo: menos decoración y mejor contraste */
+/* Áreas de trabajo */
 .service-card {
-  min-height: 410px;
+  min-height: 400px;
   padding: 38px;
 }
 
@@ -197,47 +222,54 @@
     var(--clinical-dark);
 }
 
-.service-card-dark p:not(.service-number),
+.service-card-dark h3 {
+  color: #fff;
+}
+
+.service-card-dark p:not(.service-number) {
+  color: #f8faff;
+}
+
 .service-card-dark .service-note {
-  color: #f3f6ff;
+  color: #e7ecf7;
 }
 
 .service-note {
   color: var(--clinical-text);
 }
 
-/* Cómo trabajo: mismos bloques numerados, ahora sí como sistema */
+/* Cómo trabajo: mismo sistema de tarjeta numerada */
 .method-intro {
   position: sticky;
   top: 24px;
-  padding: 32px;
+  padding: 30px;
   border: 1px solid var(--clinical-border);
   border-radius: 26px;
   background: var(--clinical-primary-soft);
 }
 
 .method-intro > p:last-child {
-  color: #2e3650;
+  color: #273149;
 }
 
 .method-steps {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 18px;
+  gap: 16px;
   border-top: 0;
 }
 
 .method-steps article {
   display: block;
-  min-height: 220px;
-  padding: 28px;
+  min-height: 205px;
+  padding: 26px;
   background: #fff;
   border-bottom: 1px solid var(--clinical-border);
 }
 
 .method-steps article:hover {
   margin: 0;
-  padding: 28px;
+  padding: 26px;
   transform: translateY(-2px);
   background: #fff;
 }
@@ -258,20 +290,25 @@
 }
 
 .method-steps p {
-  color: var(--clinical-text);
+  color: #2f3850;
   line-height: 1.65;
 }
 
-/* La parte oscura debe mantener contraste alto */
+/* Dememoria más compacta para evitar un vacío de scroll */
+.dememoria-card {
+  min-height: 430px;
+  padding: 58px;
+}
+
 .dememoria-card > p:last-child {
-  color: #f1f4ff;
+  color: #f4f6ff;
 }
 
 .panel-list {
   color: var(--clinical-ink);
 }
 
-/* Ajuste de jerarquía y legibilidad general */
+/* Legibilidad general */
 .hero-lead,
 .about-copy > p,
 .contact p,
@@ -280,25 +317,43 @@
 }
 
 .service-card-dark p:not(.service-number) {
-  color: #f4f6ff;
+  color: #f8faff;
 }
 
-/* La vieja barra amarilla de Servicios ya no forma parte del sistema */
 .services::before {
   display: none;
 }
 
 @media (max-width: 980px) {
   .section {
-    padding: 82px 0;
+    padding: 76px 0;
   }
 
   .method {
-    gap: 36px;
+    gap: 34px;
+    padding-top: 72px;
+    padding-bottom: 64px;
   }
 
   .method-intro {
     position: static;
+  }
+
+  .trust-strip {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .trust-strip p:nth-child(2) {
+    border-right: 0;
+  }
+
+  .trust-strip p:nth-child(-n+2) {
+    border-bottom: 1px solid var(--clinical-border);
+  }
+
+  .dememoria-card {
+    min-height: 390px;
+    padding: 48px;
   }
 }
 
@@ -313,7 +368,7 @@
   }
 
   .section {
-    padding: 68px 0;
+    padding: 62px 0;
   }
 
   .service-card,
@@ -339,6 +394,29 @@
   .method-steps article:hover {
     min-height: auto;
     padding: 24px;
+  }
+
+  .trust-strip {
+    grid-template-columns: 1fr;
+  }
+
+  .trust-strip p,
+  .trust-strip p:nth-child(1),
+  .trust-strip p:nth-child(2),
+  .trust-strip p:nth-child(3),
+  .trust-strip p:nth-child(4) {
+    min-height: 58px;
+    border-right: 0;
+    border-bottom: 1px solid var(--clinical-border);
+  }
+
+  .trust-strip p:last-child {
+    border-bottom: 0;
+  }
+
+  .dememoria-card {
+    min-height: auto;
+    padding: 42px 28px;
   }
 
   .hero-panel::before {
