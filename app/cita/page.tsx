@@ -132,13 +132,13 @@ export default function BookingPage() {
             <label className="privacy-check">
               <input name="privacy_acknowledged" type="checkbox" required />
               <span>
-                Declaro haber leído la <a href="#privacy-information">información de privacidad y protección de datos</a>.
+                Declaro haber leído la <a href="/privacidad/" target="_blank" rel="noopener">política de privacidad y protección de datos</a>.
               </span>
             </label>
             <label className="privacy-check">
               <input name="informed_consent_accepted" type="checkbox" required />
               <span>
-                He leído y acepto el <a href="#consent-information">consentimiento informado para la intervención psicológica o neuropsicológica</a>.
+                He leído y acepto el consentimiento informado correspondiente a la intervención: <a href="/consentimiento-psicologico/" target="_blank" rel="noopener">Psicología</a> · <a href="/consentimiento-neuropsicologico/" target="_blank" rel="noopener">Neuropsicología</a>.
               </span>
             </label>
           </div>
@@ -155,20 +155,20 @@ export default function BookingPage() {
           <div id="new-patient-signature" className="form-field signature-field">
             <label htmlFor="signer-name">Firma electrónica · escribe tu nombre y apellidos</label>
             <input id="signer-name" name="signer_name" type="text" autoComplete="name" maxLength={120} required />
-            <p className="form-help">Al confirmar, esta firma queda asociada a la fecha, la cita y las versiones aceptadas.</p>
+            <p className="form-help">Al confirmar, esta firma queda asociada a la fecha, la cita y los documentos aceptados.</p>
           </div>
 
           <div id="new-patient-information" className="legal-information">
             <details id="privacy-information" className="privacy-details">
-              <summary>Información básica de privacidad · versión 1.1</summary>
+              <summary>Información básica de privacidad</summary>
               <p>
-                Responsable: Carolina Sánchez Girona, titular de Dememoria. Finalidad: gestionar la cita y la relación asistencial. Se recogen únicamente datos identificativos, de contacto y de la reserva; no indiques aquí el motivo de consulta. Para ejercer tus derechos puedes escribir a contact@carolinasanchezgirona.com.
+                Responsable: Carolina Sánchez Girona, titular de Dememoria. Finalidad: gestionar la cita y la relación asistencial. Se recogen únicamente datos identificativos, de contacto y de la reserva; no indiques aquí el motivo de consulta. <a href="/privacidad/" target="_blank" rel="noopener">Consultar el documento completo</a>.
               </p>
             </details>
             <details id="consent-information" className="privacy-details">
-              <summary>Resumen del consentimiento informado · versión 1.1</summary>
+              <summary>Consentimiento informado</summary>
               <p>
-                La intervención psicológica o neuropsicológica requiere participación activa y puede implicar abordar contenidos emocionalmente difíciles. Se explicarán objetivos, técnicas, límites de confidencialidad y alternativas. Puedes formular preguntas y retirar el consentimiento. La atención online no sustituye un servicio de emergencias.
+                La intervención psicológica o neuropsicológica requiere participación activa y puede implicar abordar contenidos emocionalmente difíciles. Puedes consultar los documentos completos de <a href="/consentimiento-psicologico/" target="_blank" rel="noopener">intervención psicológica</a> y <a href="/consentimiento-neuropsicologico/" target="_blank" rel="noopener">intervención neuropsicológica</a>.
               </p>
             </details>
           </div>
