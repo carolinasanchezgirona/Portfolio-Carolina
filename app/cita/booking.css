@@ -1,6 +1,6 @@
 .booking-page{min-height:100vh;}
 .booking-header{display:flex;align-items:center;justify-content:space-between;gap:24px;}
-.booking-header .brand{display:flex;flex-direction:column;gap:2px;text-decoration:none;}
+.booking-header .brand{display:flex;flex-direction:column;gap:2px;text-decoration:none;min-width:0;}
 .booking-header .nav{display:flex;align-items:center;}
 .booking-intro{padding:54px 0 34px;border-bottom:1px solid var(--e-line);}
 .booking-intro-inner{max-width:760px;}
@@ -50,7 +50,7 @@
 .day-times{margin-top:18px;}
 .day-times h4{margin:0 0 10px;font-size:.9rem;color:var(--e-ink-soft);}
 .time-options{display:flex;flex-wrap:wrap;gap:8px;}
-.time-option{min-width:78px;padding:10px 12px;border:1px solid var(--e-line);border-radius:9px;background:#fff;color:var(--e-ink);cursor:pointer;}
+.time-option{min-width:78px;min-height:44px;padding:10px 12px;border:1px solid var(--e-line);border-radius:9px;background:#fff;color:var(--e-ink);cursor:pointer;}
 .time-option:hover,.time-option.is-selected{border-color:var(--e-teal);background:var(--e-teal);color:#fff;}
 .selection-summary{margin-bottom:22px;padding:16px 18px;border:1px solid var(--e-line);border-radius:10px;background:#F8F4EE;color:var(--e-ink-soft);}
 .selection-summary strong,.selection-summary span{display:block;}
@@ -69,7 +69,7 @@
 .cancellation-acceptance{padding-top:4px;}
 .privacy-check{display:flex;gap:11px;align-items:flex-start;padding:13px 14px;border:1px solid var(--e-line);border-radius:9px;background:#fff;color:var(--e-ink-soft);font-size:.84rem;line-height:1.55;}
 .privacy-check input{margin-top:4px;accent-color:var(--e-teal);}
-.privacy-check a{color:var(--e-teal);text-underline-offset:2px;}
+.privacy-check a{color:var(--e-teal);text-underline-offset:2px;overflow-wrap:anywhere;}
 .signature-field{margin-top:6px;padding:18px;border:1px solid var(--e-line);border-radius:10px;background:#FCFBF8;}
 .signature-field .form-help{margin:0;}
 .legal-information{display:grid;gap:10px;}
@@ -85,13 +85,27 @@
 .booking-footer{border-top:1px solid var(--e-line);}
 [hidden]{display:none!important;}
 @media(max-width:680px){
-  .booking-header{min-height:68px;}
+  .booking-header{min-height:68px;gap:12px;}
   .booking-intro{padding:38px 0 28px;}
   .booking-intro h1{font-size:clamp(2.4rem,12vw,3.4rem);}
   .booking-flow{padding-top:22px;padding-bottom:48px;}
-  .booking-panel{padding:20px;}
+  .booking-panel{padding:18px;}
+  .booking-panel-heading{gap:12px;margin-bottom:20px;}
+  .booking-step{flex-basis:34px;width:34px;height:34px;}
   .patient-type-options,.form-grid{grid-template-columns:1fr;}
-  .service-fixed,.first-available{align-items:flex-start;flex-direction:column;}
+  .service-fixed,.first-available{align-items:flex-start;flex-direction:column;gap:10px;}
   .first-available>span{white-space:normal;}
-  .calendar-day,.calendar-empty{min-height:38px;}
+  .calendar-toolbar{grid-template-columns:44px 1fr 44px;gap:6px;}
+  .calendar-toolbar h3{font-size:1.08rem;}
+  .calendar-nav{width:44px;height:44px;}
+  .calendar-weekdays,.calendar-grid{gap:4px;}
+  .calendar-day,.calendar-empty{min-height:42px;}
+  .time-option{min-height:44px;}
+  .form-field input{font-size:16px;}
+  .booking-submit{width:100%;}
+  .privacy-check{padding:14px 12px;}
+}
+@media(max-width:380px){
+  .booking-header .brand-sub{display:none;}
+  .booking-header .brand-name{font-size:1.08rem;}
 }
