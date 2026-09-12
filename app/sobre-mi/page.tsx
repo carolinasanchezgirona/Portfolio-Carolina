@@ -121,13 +121,16 @@ export default function AboutPage() {
             <p>
               Formo parte del Grupo de Trabajo de Neuropsicología y Salud Mental del Col·legi Oficial de Psicologia de Catalunya. También participo en divulgación profesional sobre psicología sanitaria, neuropsicología, deterioro cognitivo y cuestiones en las que el funcionamiento psicológico y cognitivo se cruza con otros ámbitos de la salud y la sociedad.
             </p>
-            <h3>Publicaciones en PsiAra · COPC</h3>
+            <h3>Publicaciones seleccionadas</h3>
             <div className="seo-authority-links">
               <a href="https://psiara.cat/2026/08/06/cuando-el-dolor-no-encuentra-un-lugar/" target="_blank" rel="noopener noreferrer">
                 Cuando el dolor no encuentra un lugar ↗
               </a>
               <a href="https://psiara.cat/2026/08/05/la-capacitat-per-testar-en-el-dret-civil-catala-des-duna-perspectiva-neuropsicologica/" target="_blank" rel="noopener noreferrer">
                 La capacitat per testar en el dret civil català des d’una perspectiva neuropsicològica ↗
+              </a>
+              <a href="https://icab.cat/ca/actualitat/noticies/noticia/El-numero-de-la-revista-Mon-Juridic-365-ja-disponible-al-web-de-lICAB-en-format-PDF/" target="_blank" rel="noopener noreferrer">
+                La ficció de la lucidesa? Capacitat testamentària, captació de voluntat i prova de la vulnerabilitat · Món Jurídic (ICAB) ↗
               </a>
             </div>
           </section>
