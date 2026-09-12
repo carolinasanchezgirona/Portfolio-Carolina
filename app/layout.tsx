@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import SiteShell from "./components/site-shell";
 import "./globals.css";
 import "./mineuri-theme.css";
 import "./type-scale.css";
@@ -140,7 +141,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         />
       </head>
       <body>
-        {children}
+        <SiteShell>{children}</SiteShell>
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
