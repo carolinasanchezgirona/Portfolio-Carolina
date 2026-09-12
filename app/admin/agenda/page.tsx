@@ -1,0 +1,154 @@
+import Script from "next/script";
+import "./admin.css";
+
+export default function AdminAgendaPage() {
+  return (
+    <main className="admin-page">
+      <section id="admin-login" className="admin-login-shell">
+        <form id="admin-login-form" className="admin-login-card">
+          <p className="admin-eyebrow">Área privada</p>
+          <h1>Agenda profesional</h1>
+          <p>Acceso reservado a Carolina Sánchez.</p>
+
+          <label>
+            Correo
+            <input id="admin-email" type="email" autoComplete="username" defaultValue="dememoria.arenys@gmail.com" required />
+          </label>
+          <label>
+            Contraseña
+            <input id="admin-password" type="password" autoComplete="current-password" required />
+          </label>
+          <p id="admin-login-message" className="admin-message" role="status" />
+          <button type="submit" className="admin-primary">Entrar</button>
+          <a className="admin-back-link" href="/">Volver a la web</a>
+        </form>
+      </section>
+
+      <section id="admin-app" className="admin-app" hidden>
+        <header className="admin-topbar">
+          <div>
+            <p className="admin-eyebrow">Administración</p>
+            <h1>Agenda de pacientes</h1>
+          </div>
+          <div className="admin-top-actions">
+            <button id="admin-new" className="admin-primary" type="button">Nueva cita</button>
+            <button id="admin-print" className="admin-secondary" type="button">Imprimir semana</button>
+            <button id="admin-logout" className="admin-text" type="button">Cerrar sesión</button>
+          </div>
+        </header>
+
+        <section className="admin-toolbar" aria-label="Navegación de agenda">
+          <div className="admin-week-nav">
+            <button id="week-prev" type="button" aria-label="Semana anterior">←</button>
+            <button id="week-today" type="button">Hoy</button>
+            <button id="week-next" type="button" aria-label="Semana siguiente">→</button>
+          </div>
+          <div>
+            <strong id="week-title">Semana</strong>
+            <p id="week-subtitle" className="admin-muted" />
+          </div>
+          <div className="admin-legend" aria-label="Leyenda">
+            <span><i className="dot dot-psych" /> Psicología</span>
+            <span><i className="dot dot-neuro" /> Neuropsicología</span>
+          </div>
+        </section>
+
+        <section className="admin-summary" aria-label="Resumen semanal">
+          <article><strong id="summary-total">0</strong><span>Citas</span></article>
+          <article><strong id="summary-confirmed">0</strong><span>Confirmadas</span></article>
+          <article><strong id="summary-pending">0</strong><span>Pendientes</span></article>
+          <article><strong id="summary-cancelled">0</strong><span>Canceladas</span></article>
+        </section>
+
+        <p id="admin-status" className="admin-message" role="status" aria-live="polite" />
+        <section id="week-calendar" className="week-calendar" aria-label="Calendario semanal" />
+      </section>
+
+      <dialog id="appointment-dialog" className="appointment-dialog">
+        <form id="appointment-form" method="dialog">
+          <div className="dialog-heading">
+            <div>
+              <p className="admin-eyebrow">Cita</p>
+              <h2 id="dialog-title">Nueva cita</h2>
+            </div>
+            <button id="dialog-close" className="dialog-close" type="button" aria-label="Cerrar">×</button>
+          </div>
+
+          <input id="appointment-id" type="hidden" />
+
+          <div className="form-grid two-cols">
+            <label>
+              Fecha
+              <input id="appointment-date" type="date" required />
+            </label>
+            <label>
+              Hora
+              <input id="appointment-time" type="time" step="1800" required />
+            </label>
+          </div>
+
+          <label>
+            Nombre del paciente
+            <input id="appointment-name" type="text" maxLength={120} required />
+          </label>
+
+          <div className="form-grid two-cols">
+            <label>
+              Correo
+              <input id="appointment-email" type="email" maxLength={254} />
+            </label>
+            <label>
+              Teléfono
+              <input id="appointment-phone" type="tel" maxLength={30} />
+            </label>
+          </div>
+
+          <div className="form-grid two-cols">
+            <label>
+              Servicio
+              <select id="appointment-service" required>
+                <option value="psicologia_general_sanitaria">Psicología General Sanitaria</option>
+                <option value="neuropsicologia">Neuropsicología</option>
+              </select>
+            </label>
+            <label>
+              Estado
+              <select id="appointment-status" required>
+                <option value="confirmed">Confirmada</option>
+                <option value="pending">Pendiente</option>
+                <option value="completed">Realizada</option>
+                <option value="no_show">No presentado</option>
+                <option value="cancelled">Cancelada</option>
+                <option value="rescheduled">Reprogramada</option>
+              </select>
+            </label>
+          </div>
+
+          <div className="form-grid two-cols">
+            <label>
+              Tipo de paciente
+              <select id="appointment-patient-type">
+                <option value="existing">Paciente existente</option>
+                <option value="new">Primera visita</option>
+              </select>
+            </label>
+            <label>
+              Precio (€)
+              <input id="appointment-price" type="number" min="0" step="0.01" defaultValue="60" />
+            </label>
+          </div>
+
+          <p className="admin-note">Este formulario administrativo no registra consentimiento clínico. Las citas creadas aquí quedan marcadas como creadas por la profesional.</p>
+          <p id="appointment-message" className="admin-message" role="status" />
+
+          <div className="dialog-actions">
+            <button id="appointment-cancel" className="admin-secondary" type="button">Cancelar</button>
+            <button className="admin-primary" type="submit">Guardar cita</button>
+          </div>
+        </form>
+      </dialog>
+
+      <Script src="/admin-agenda.js" strategy="afterInteractive" />
+    </main>
+  );
+}
