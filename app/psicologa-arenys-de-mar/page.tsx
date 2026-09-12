@@ -139,7 +139,7 @@ export default function LocalPsychologistPage() {
             <p>Valoración actual publicada en el perfil de empresa de Dememòria en Google.</p>
             <div className="seo-related">
               <a
-                href="https://www.google.com/maps/search/?api=1&query=Dememoria+Arenys+de+Mar"
+                href="https://maps.app.goo.gl/ubCSFYZRgbv7vpqF9"
                 target="_blank"
                 rel="noopener noreferrer"
               >
@@ -157,6 +157,38 @@ export default function LocalPsychologistPage() {
           </div>
         </aside>
       </div>
+
+      <section className="editorial-section" aria-labelledby="consulta-map-title">
+        <div className="editorial-wrap">
+          <div className="editorial-section-head">
+            <p className="editorial-section-eyebrow">Dónde está la consulta</p>
+            <h2 id="consulta-map-title">Dememoria · Arenys de Mar</h2>
+            <p style={{ color: "var(--e-ink-soft)", lineHeight: 1.7, marginTop: "14px" }}>
+              Carrer Barcelona 8, Local · Arenys de Mar. Puedes abrir la ficha de Google para consultar la ubicación y las indicaciones para llegar.
+            </p>
+            <a
+              className="editorial-card-link"
+              href="https://maps.app.goo.gl/ubCSFYZRgbv7vpqF9"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Abrir en Google Maps →
+            </a>
+          </div>
+          <div style={{ overflow: "hidden", border: "1px solid var(--e-line)", borderRadius: "14px", background: "#fff" }}>
+            <iframe
+              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2984.1022207147844!2d2.5429863999999998!3d41.588671299999994!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x12bb370f7cb10fdd%3A0x163145da43e6593b!2sDememoria%20-%20Psic.%20Carolina%20S%C3%A1nchez!5e0!3m2!1ses!2ses!4v1789232018184!5m2!1ses!2ses"
+              width="100%"
+              height="420"
+              style={{ display: "block", border: 0 }}
+              allowFullScreen
+              loading="lazy"
+              referrerPolicy="strict-origin-when-cross-origin"
+              title="Mapa de Dememoria, consulta de Carolina Sánchez en Arenys de Mar"
+            />
+          </div>
+        </div>
+      </section>
 
       <section className="editorial-section seo-authority">
         <div className="editorial-wrap seo-authority-grid">
