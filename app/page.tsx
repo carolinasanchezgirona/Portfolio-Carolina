@@ -125,6 +125,28 @@ export default function HomePage() {
         </div>
       </section>
 
+      <section className="editorial-section editorial-reviews" aria-labelledby="google-reviews-title">
+        <div className="editorial-wrap editorial-reviews-grid">
+          <div>
+            <p className="editorial-section-eyebrow">Valoraciones en Google</p>
+            <h2 id="google-reviews-title">5,0 de 5 · 20 reseñas</h2>
+          </div>
+          <div className="editorial-reviews-copy">
+            <p>
+              Valoración actual publicada en el perfil de empresa de Dememòria en Google.
+            </p>
+            <a
+              className="editorial-card-link"
+              href="https://www.google.com/maps/search/?api=1&query=Dememoria+Arenys+de+Mar"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Ver reseñas en Google →
+            </a>
+          </div>
+        </div>
+      </section>
+
       <section className="editorial-section editorial-dememoria" aria-labelledby="dememoria-title">
         <div className="editorial-wrap editorial-dememoria-inner">
           <p className="editorial-section-eyebrow">Dememoria · Consulta clínica</p>
