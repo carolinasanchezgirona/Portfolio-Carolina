@@ -67,7 +67,7 @@ export default function NeuropsychologyPage() {
               La neuropsicología estudia cómo funcionan procesos cognitivos como la memoria, la atención, el lenguaje, la planificación, la velocidad de procesamiento o la regulación de la conducta, y cómo ese funcionamiento se relaciona con la vida cotidiana de la persona.
             </p>
             <p>
-              Una evaluación no consiste únicamente en obtener puntuaciones. El objetivo es integrar entrevista clínica, historia, observación, pruebas estandarizadas y funcionamiento diario para construir un perfil cognitivo que sea clínicamente útil.
+              Una evaluación no consiste únicamente en obtener puntuaciones. El objetivo es integrar entrevista clínica, historia, observación, pruebas estandarizadas y funcionamiento diario para construir un perfil cognitivo que sea clínicamente útil. <a href="/evaluacion-neuropsicologica/">Ver cómo se realiza una evaluación neuropsicológica.</a>
             </p>
           </section>
 
@@ -112,7 +112,7 @@ export default function NeuropsychologyPage() {
               En personas mayores, la valoración neuropsicológica puede ayudar a distinguir entre cambios esperables asociados a la edad, dificultades relacionadas con factores emocionales o médicos y patrones que requieren una exploración más profunda.
             </p>
             <p>
-              En situaciones de deterioro cognitivo o demencia, el trabajo no termina en el diagnóstico. También puede incluir seguimiento, estimulación o rehabilitación cognitiva, adaptación de estrategias para la vida diaria, orientación a familiares y coordinación con el resto del equipo sanitario.
+              En situaciones de deterioro cognitivo o demencia, el trabajo no termina en el diagnóstico. También puede incluir seguimiento, estimulación o rehabilitación cognitiva, adaptación de estrategias para la vida diaria, orientación a familiares y coordinación con el resto del equipo sanitario. <a href="/deterioro-cognitivo/">Más información sobre deterioro cognitivo y problemas de memoria.</a>
             </p>
           </section>
 
@@ -139,8 +139,10 @@ export default function NeuropsychologyPage() {
             <a className="editorial-btn editorial-btn-primary" href="/cita/">Consultar disponibilidad</a>
           </div>
           <div className="seo-card">
-            <h3>También puede interesarte</h3>
+            <h3>Áreas relacionadas</h3>
             <div className="seo-related">
+              <a href="/evaluacion-neuropsicologica/">Evaluación neuropsicológica</a>
+              <a href="/deterioro-cognitivo/">Deterioro cognitivo y memoria</a>
               <a href="/psicologa-arenys-de-mar/">Consulta en Arenys de Mar</a>
               <a href="/psicologia/">Psicología General Sanitaria</a>
             </div>
