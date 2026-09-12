@@ -34,7 +34,7 @@ export default function NeuropsychologicalConsentPage() {
             <p><strong>Teléfono de contacto:</strong> __________________________</p>
             <p><strong>Correo electrónico:</strong> __________________________</p>
             <p><strong>Fecha de la firma:</strong> __________________________</p>
-            <p><strong>Nombre del profesional:</strong> __________________________</p>
+            <p><strong>Nombre del profesional:</strong> Carolina Sánchez Girona</p>
             <p><strong>Centro:</strong> Dememoria – Neuropsicología y Rehabilitación Neuropsicológica</p>
           </div>
         </section>
