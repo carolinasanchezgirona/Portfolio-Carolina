@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 
 const administrativeRoutes = [
   "/cita",
+  "/admin",
   "/privacidad",
   "/consentimiento-psicologico",
   "/consentimiento-neuropsicologico",
