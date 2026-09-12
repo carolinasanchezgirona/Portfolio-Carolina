@@ -31,7 +31,7 @@ export default function PrivacyPage() {
             <p><strong>Responsable del tratamiento:</strong> Dememoria (Consulta de Neuropsicología y Psicología)</p>
             <p><strong>CIF/NIF:</strong> 53067189W</p>
             <p><strong>Dirección:</strong> Carrer Barcelona 8 Local Arenys de Mar</p>
-            <p><strong>Correo electrónico:</strong> dememoria.arenys@gmail.com</p>
+            <p><strong>Correo electrónico:</strong> contact@carolinasanchezgirona.com</p>
             <p><strong>Teléfono:</strong> 604974857</p>
             <p><strong>Delegado de Protección de Datos (si aplica):</strong> Carolina Sánchez</p>
           </div>
@@ -102,7 +102,7 @@ export default function PrivacyPage() {
 
         <section>
           <h2>6. Derechos del paciente</h2>
-          <p>Los pacientes pueden ejercer los siguientes derechos mediante solicitud escrita a dememoria.arenys@gmail.com:</p>
+          <p>Los pacientes pueden ejercer los siguientes derechos mediante solicitud escrita a contact@carolinasanchezgirona.com:</p>
           <ul>
             <li>Acceso: Saber qué datos tratamos.</li>
             <li>Rectificación: Corregir datos inexactos.</li>
