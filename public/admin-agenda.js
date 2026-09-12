@@ -7,14 +7,14 @@
   const KEY = "sb_publishable_b2MRfP0bPti87V2FXCzHGw_Y9vvcbii";
   const ZONE = "Europe/Madrid";
   const SESSION_KEY = "dememoria_admin_session";
-  const ALLOWED_EMAIL = "dememoria.arenys@gmail.com";
+  const ALLOWED_USER_ID = "9d2cfdb1-fed6-4f76-b47a-d58507eb14f2";
 
   const $ = (selector) => document.querySelector(selector);
   const els = {
     login: $("#admin-login"), app: $("#admin-app"), loginForm: $("#admin-login-form"),
     email: $("#admin-email"), password: $("#admin-password"), loginMessage: $("#admin-login-message"),
-    logout: $("#admin-logout"), newButton: $("#admin-new"), print: $("#admin-print"),
-    prev: $("#week-prev"), next: $("#week-next"), today: $("#week-today"),
+    forgot: $("#admin-forgot-password"), logout: $("#admin-logout"), accessButton: $("#admin-access"),
+    newButton: $("#admin-new"), print: $("#admin-print"), prev: $("#week-prev"), next: $("#week-next"), today: $("#week-today"),
     weekTitle: $("#week-title"), weekSubtitle: $("#week-subtitle"), calendar: $("#week-calendar"), status: $("#admin-status"),
     total: $("#summary-total"), confirmed: $("#summary-confirmed"), pending: $("#summary-pending"), cancelled: $("#summary-cancelled"),
     dialog: $("#appointment-dialog"), dialogTitle: $("#dialog-title"), dialogClose: $("#dialog-close"),
@@ -22,9 +22,13 @@
     id: $("#appointment-id"), date: $("#appointment-date"), time: $("#appointment-time"), name: $("#appointment-name"),
     patientEmail: $("#appointment-email"), phone: $("#appointment-phone"), service: $("#appointment-service"),
     appointmentStatus: $("#appointment-status"), patientType: $("#appointment-patient-type"), price: $("#appointment-price"),
+    accessDialog: $("#access-dialog"), accessForm: $("#access-form"), accessClose: $("#access-close"), accessCancel: $("#access-cancel"),
+    currentEmail: $("#access-current-email"), newEmail: $("#access-new-email"), newPassword: $("#access-new-password"),
+    repeatPassword: $("#access-repeat-password"), accessMessage: $("#access-message"),
   };
 
   let session = null;
+  let currentUser = null;
   let appointments = [];
   let weekStartKey = mondayKey(todayKey());
 
@@ -93,9 +97,18 @@
     return { apikey: KEY, Authorization: `Bearer ${session.access_token}`, "Content-Type": "application/json" };
   }
 
-  function setLoginMessage(text) { els.loginMessage.textContent = text || ""; }
-  function setStatus(text) { els.status.textContent = text || ""; }
-  function setFormMessage(text) { els.message.textContent = text || ""; }
+  function setLoginMessage(text) { if (els.loginMessage) els.loginMessage.textContent = text || ""; }
+  function setStatus(text) { if (els.status) els.status.textContent = text || ""; }
+  function setFormMessage(text) { if (els.message) els.message.textContent = text || ""; }
+  function setAccessMessage(text) { if (els.accessMessage) els.accessMessage.textContent = text || ""; }
+
+  async function fetchCurrentUser() {
+    if (!session?.access_token) return null;
+    const response = await fetch(`${AUTH_URL}/user`, { headers: { apikey: KEY, Authorization: `Bearer ${session.access_token}` }, cache: "no-store" });
+    if (!response.ok) return null;
+    const user = await response.json();
+    return user?.id === ALLOWED_USER_ID ? user : null;
+  }
 
   async function signIn(email, password) {
     const response = await fetch(`${AUTH_URL}/token?grant_type=password`, {
@@ -104,16 +117,40 @@
     });
     const body = await response.json().catch(() => ({}));
     if (!response.ok) throw new Error(body.error_description || body.msg || "No se ha podido iniciar sesión.");
-    if ((body.user?.email || "").toLowerCase() !== ALLOWED_EMAIL) throw new Error("Esta cuenta no tiene acceso al área administrativa.");
+    if (body.user?.id !== ALLOWED_USER_ID) throw new Error("Esta cuenta no tiene acceso al área administrativa.");
     saveSession(body);
+    currentUser = body.user;
   }
 
-  async function verifySession() {
-    if (!session?.access_token) return false;
-    const response = await fetch(`${AUTH_URL}/user`, { headers: { apikey: KEY, Authorization: `Bearer ${session.access_token}` } });
-    if (!response.ok) return false;
-    const user = await response.json();
-    return (user.email || "").toLowerCase() === ALLOWED_EMAIL;
+  async function requestPasswordReset(email) {
+    if (!email) throw new Error("Escribe primero el correo de acceso.");
+    const redirectTo = `${window.location.origin}/admin/agenda/`;
+    const response = await fetch(`${AUTH_URL}/recover?redirect_to=${encodeURIComponent(redirectTo)}`, {
+      method: "POST", headers: { apikey: KEY, "Content-Type": "application/json" }, body: JSON.stringify({ email }),
+    });
+    const body = await response.json().catch(() => ({}));
+    if (!response.ok) throw new Error(body.msg || body.error_description || "No se ha podido enviar el correo de recuperación.");
+  }
+
+  function sessionFromRecoveryHash() {
+    const hash = new URLSearchParams(window.location.hash.replace(/^#/, ""));
+    if (hash.get("type") !== "recovery" || !hash.get("access_token")) return null;
+    return {
+      access_token: hash.get("access_token"),
+      refresh_token: hash.get("refresh_token"),
+      token_type: hash.get("token_type") || "bearer",
+      expires_in: Number(hash.get("expires_in") || 3600),
+    };
+  }
+
+  async function updateAccount(payload) {
+    const response = await fetch(`${AUTH_URL}/user`, {
+      method: "PUT", headers: authHeaders(), body: JSON.stringify(payload),
+    });
+    const body = await response.json().catch(() => ({}));
+    if (!response.ok) throw new Error(body.msg || body.error_description || body.message || "No se han podido guardar los cambios.");
+    if (body?.id === ALLOWED_USER_ID) currentUser = body;
+    return body;
   }
 
   function showApp() {
@@ -124,6 +161,16 @@
   function showLogin() {
     els.app.hidden = true;
     els.login.hidden = false;
+  }
+
+  function openAccess() {
+    if (!els.accessDialog) return;
+    els.currentEmail.value = currentUser?.email || "";
+    els.newEmail.value = "";
+    els.newPassword.value = "";
+    els.repeatPassword.value = "";
+    setAccessMessage("");
+    els.accessDialog.showModal();
   }
 
   function serviceLabel(code) { return code === "neuropsicologia" ? "Neuropsicología" : "Psicología"; }
@@ -139,7 +186,7 @@
     const url = `${REST_URL}/appointment_bookings?select=${encodeURIComponent(select)}&starts_at=gte.${encodeURIComponent(start)}&starts_at=lt.${encodeURIComponent(end)}&order=starts_at.asc`;
     const response = await fetch(url, { headers: authHeaders(), cache: "no-store" });
     if (response.status === 401) {
-      saveSession(null); showLogin(); throw new Error("La sesión ha caducado. Vuelve a entrar.");
+      saveSession(null); currentUser = null; showLogin(); throw new Error("La sesión ha caducado. Vuelve a entrar.");
     }
     const body = await response.json().catch(() => []);
     if (!response.ok) throw new Error(body.message || "No se ha podido cargar la agenda.");
@@ -154,7 +201,6 @@
     const lastDate = new Date(madridLocalToIso(lastKey, "12:00"));
     els.weekTitle.textContent = `Semana del ${dayShort.format(firstDate)} al ${dayShort.format(lastDate)}`;
     els.weekSubtitle.textContent = monthYear.format(firstDate);
-
     els.total.textContent = String(appointments.length);
     els.confirmed.textContent = String(appointments.filter((a) => a.status === "confirmed").length);
     els.pending.textContent = String(appointments.filter((a) => a.status === "pending").length);
@@ -257,7 +303,16 @@
     } catch (error) { setLoginMessage(error.message); }
   });
 
-  els.logout?.addEventListener("click", () => { saveSession(null); appointments = []; showLogin(); });
+  els.forgot?.addEventListener("click", async () => {
+    setLoginMessage("Enviando correo de recuperación…");
+    try {
+      await requestPasswordReset(els.email.value.trim());
+      setLoginMessage("Te he enviado un correo para crear una contraseña nueva.");
+    } catch (error) { setLoginMessage(error.message); }
+  });
+
+  els.logout?.addEventListener("click", () => { saveSession(null); currentUser = null; appointments = []; showLogin(); });
+  els.accessButton?.addEventListener("click", openAccess);
   els.newButton?.addEventListener("click", openNew);
   els.print?.addEventListener("click", () => window.print());
   els.prev?.addEventListener("click", async () => { weekStartKey = addDaysKey(weekStartKey, -7); await loadWeek().catch((e) => setStatus(e.message)); });
@@ -265,6 +320,9 @@
   els.today?.addEventListener("click", async () => { weekStartKey = mondayKey(todayKey()); await loadWeek().catch((e) => setStatus(e.message)); });
   els.dialogClose?.addEventListener("click", () => els.dialog.close());
   els.cancel?.addEventListener("click", () => els.dialog.close());
+  els.accessClose?.addEventListener("click", () => els.accessDialog.close());
+  els.accessCancel?.addEventListener("click", () => els.accessDialog.close());
+
   els.form?.addEventListener("submit", async (event) => {
     event.preventDefault();
     if (!els.form.reportValidity()) return;
@@ -277,13 +335,49 @@
     } catch (error) { setFormMessage(error.message); }
   });
 
+  els.accessForm?.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const email = els.newEmail.value.trim();
+    const password = els.newPassword.value;
+    const repeat = els.repeatPassword.value;
+    if (!email && !password) return setAccessMessage("Escribe un correo nuevo, una contraseña nueva o ambos.");
+    if (password && password.length < 8) return setAccessMessage("La contraseña debe tener al menos 8 caracteres.");
+    if (password !== repeat) return setAccessMessage("Las dos contraseñas no coinciden.");
+
+    setAccessMessage("Guardando cambios…");
+    try {
+      if (password) await updateAccount({ password });
+      if (email && email.toLowerCase() !== (currentUser?.email || "").toLowerCase()) {
+        await updateAccount({ email });
+        setAccessMessage("Contraseña actualizada. Para completar el cambio de correo, revisa los mensajes de confirmación que envíe Supabase.");
+      } else {
+        setAccessMessage("Contraseña actualizada correctamente.");
+      }
+      els.newPassword.value = "";
+      els.repeatPassword.value = "";
+    } catch (error) { setAccessMessage(error.message); }
+  });
+
   (async function init() {
-    session = getSession();
-    if (session && await verifySession()) {
+    const recovery = sessionFromRecoveryHash();
+    if (recovery) {
+      saveSession(recovery);
+      history.replaceState(null, "", window.location.pathname + window.location.search);
+    } else {
+      session = getSession();
+    }
+
+    currentUser = await fetchCurrentUser();
+    if (currentUser) {
       showApp();
       loadWeek().catch((e) => setStatus(e.message));
+      if (recovery) {
+        openAccess();
+        setAccessMessage("El enlace de recuperación es válido. Escribe ahora tu contraseña nueva.");
+      }
     } else {
       saveSession(null);
+      currentUser = null;
       showLogin();
     }
   })();
