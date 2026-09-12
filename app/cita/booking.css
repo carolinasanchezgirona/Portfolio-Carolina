@@ -63,6 +63,9 @@
 .form-field input:focus{border-color:var(--e-teal);box-shadow:0 0 0 3px rgba(14,107,84,.10);}
 .form-help{margin:-6px 0 18px;color:#7a746b;font-size:.79rem;line-height:1.55;}
 .acceptances{display:grid;gap:10px;margin:8px 0 18px;}
+.first-visit-note{padding:15px 16px;border:1px solid var(--e-line);border-radius:10px;background:var(--e-teal-tint);}
+.first-visit-note strong{display:block;margin-bottom:5px;color:var(--e-teal);font-size:.86rem;}
+.first-visit-note p{margin:0;color:var(--e-ink-soft);font-size:.82rem;line-height:1.6;}
 .cancellation-acceptance{padding-top:4px;}
 .privacy-check{display:flex;gap:11px;align-items:flex-start;padding:13px 14px;border:1px solid var(--e-line);border-radius:9px;background:#fff;color:var(--e-ink-soft);font-size:.84rem;line-height:1.55;}
 .privacy-check input{margin-top:4px;accent-color:var(--e-teal);}
