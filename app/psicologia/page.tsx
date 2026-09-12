@@ -75,7 +75,7 @@ export default function PsychologyPage() {
             <h2>Motivos de consulta frecuentes</h2>
             <h3>Ansiedad y preocupación persistente</h3>
             <p>
-              Preocupación difícil de frenar, sensación de alerta, síntomas físicos, anticipación, miedo a determinadas situaciones o sensación de no poder desconectar. El trabajo no se limita a reducir síntomas: también busca comprender qué función están cumpliendo y qué patrones los mantienen.
+              Preocupación difícil de frenar, sensación de alerta, síntomas físicos, anticipación, miedo a determinadas situaciones o sensación de no poder desconectar. El trabajo no se limita a reducir síntomas: también busca comprender qué función están cumpliendo y qué patrones los mantienen. <a href="/ansiedad/">Más información sobre el trabajo con ansiedad.</a>
             </p>
             <h3>Estado de ánimo y apatía</h3>
             <p>
@@ -83,7 +83,7 @@ export default function PsychologyPage() {
             </p>
             <h3>Duelo y pérdidas</h3>
             <p>
-              El duelo puede aparecer tras una muerte, una ruptura, una pérdida de salud, un cambio de rol o una etapa vital que termina. No se trata de acelerar el proceso, sino de ayudar a integrar lo ocurrido y recuperar capacidad de adaptación sin negar el impacto de la pérdida.
+              El duelo puede aparecer tras una muerte, una ruptura, una pérdida de salud, un cambio de rol o una etapa vital que termina. No se trata de acelerar el proceso, sino de ayudar a integrar lo ocurrido y recuperar capacidad de adaptación sin negar el impacto de la pérdida. <a href="/duelo/">Más información sobre duelo y pérdidas.</a>
             </p>
             <h3>Relaciones, límites y decisiones</h3>
             <p>
@@ -139,8 +139,10 @@ export default function PsychologyPage() {
             <a className="editorial-btn editorial-btn-primary" href="/cita/">Consultar disponibilidad</a>
           </div>
           <div className="seo-card">
-            <h3>También puede interesarte</h3>
+            <h3>Áreas relacionadas</h3>
             <div className="seo-related">
+              <a href="/ansiedad/">Ansiedad</a>
+              <a href="/duelo/">Duelo y pérdidas</a>
               <a href="/psicologa-arenys-de-mar/">Consulta en Arenys de Mar</a>
               <a href="/neuropsicologia/">Neuropsicología</a>
             </div>
