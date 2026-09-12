@@ -149,6 +149,12 @@ export default function BookingPage() {
           <p className="form-help">No incluyas información clínica ni el motivo de consulta en este formulario.</p>
 
           <div id="new-patient-documents" className="acceptances">
+            <div className="first-visit-note" role="note">
+              <strong>Para la primera visita</strong>
+              <p>
+                Si dispones de informes o documentación previa que pueda ser relevante para la atención, puedes traerla a la sesión: informes de psicología o psiquiatría, valoraciones médicas, pruebas, informes hospitalarios o información sobre tratamientos actuales. No es necesario aportar documentación que no consideres relacionada con el motivo de consulta ni enviarla a través de este formulario.
+              </p>
+            </div>
             <label className="privacy-check">
               <input name="privacy_acknowledged" type="checkbox" required />
               <span>
