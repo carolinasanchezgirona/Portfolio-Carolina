@@ -132,6 +132,22 @@ export default function LocalPsychologistPage() {
             </ul>
             <a className="editorial-btn editorial-btn-primary" href="/cita/">Consultar disponibilidad</a>
           </div>
+
+          <div className="seo-card">
+            <p className="editorial-section-eyebrow">Valoraciones en Google</p>
+            <h3>5,0 de 5 · 20 reseñas</h3>
+            <p>Valoración actual publicada en el perfil de empresa de Dememòria en Google.</p>
+            <div className="seo-related">
+              <a
+                href="https://www.google.com/maps/search/?api=1&query=Dememoria+Arenys+de+Mar"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Ver reseñas en Google ↗
+              </a>
+            </div>
+          </div>
+
           <div className="seo-card">
             <h3>Servicios</h3>
             <div className="seo-related">
