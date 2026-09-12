@@ -2,130 +2,132 @@ import type { Metadata } from "next";
 import "../legal.css";
 
 export const metadata: Metadata = {
-  title: "Consentiment informat psicològic | Carolina Sánchez Girona",
-  description: "Consentiment informat per a la intervenció psicològica a Dememoria.",
+  title: "Consentimiento informado psicológico | Carolina Sánchez Girona",
+  description: "Consentimiento informado para intervención psicológica en Dememoria.",
 };
 
 export default function PsychologicalConsentPage() {
   return (
-    <main className="legal-page" lang="ca">
+    <main className="legal-page" lang="es">
       <header className="legal-wrap legal-header">
         <a className="legal-brand" href="/">
           <strong>Carolina Sánchez</strong>
-          <span>Psicòloga · Neuropsicòloga</span>
+          <span>Psicóloga · Neuropsicóloga</span>
         </a>
-        <a className="legal-back" href="/cita/">Tornar a la cita</a>
+        <a className="legal-back" href="/cita/">Volver a la cita</a>
       </header>
 
       <section className="legal-hero">
         <div className="legal-wrap">
-          <p className="legal-eyebrow">Dememoria · Consentiment informat</p>
-          <h1>Consentiment informat per a la intervenció psicològica</h1>
+          <p className="legal-eyebrow">Dememoria · Consentimiento informado</p>
+          <h1>Consentimiento informado para intervención psicológica</h1>
         </div>
       </section>
 
       <article className="legal-wrap legal-document">
         <section>
           <div className="legal-data">
-            <p><strong>Nom del pacient:</strong> __________________________</p>
-            <p><strong>Data de naixement:</strong> __________________________</p>
+            <p><strong>Nombre del paciente:</strong> __________________________</p>
+            <p><strong>Fecha de nacimiento:</strong> __________________________</p>
             <p><strong>DNI/NIE:</strong> __________________________</p>
-            <p><strong>Adreça:</strong> __________________________</p>
-            <p><strong>Telèfon de contacte:</strong> __________________________</p>
-            <p><strong>Correu electrònic:</strong> __________________________</p>
-            <p><strong>Data de la signatura:</strong> __________________________</p>
-            <p><strong>Nom de la professional:</strong> Carolina Sánchez Girona</p>
-            <p><strong>Centre:</strong> Dememoria – Neuropsicologia i Psicologia</p>
+            <p><strong>Dirección:</strong> __________________________</p>
+            <p><strong>Teléfono de contacto:</strong> __________________________</p>
+            <p><strong>Correo electrónico:</strong> __________________________</p>
+            <p><strong>Fecha de la firma:</strong> __________________________</p>
+            <p><strong>Nombre del profesional:</strong> Carolina Sánchez Girona</p>
+            <p><strong>Centro:</strong> Dememoria – Neuropsicología y Psicología</p>
           </div>
         </section>
 
         <section>
-          <h2>1. Introducció</h2>
-          <p>Aquest document té com a objectiu proporcionar informació clara i detallada sobre la intervenció psicològica que es durà a terme a Dememoria. La signatura d’aquest consentiment indica que la persona ha entès la informació i accepta voluntàriament el tractament proposat.</p>
+          <h2>1. Introducción</h2>
+          <p>Este documento tiene como objetivo proporcionar información clara y detallada sobre la intervención psicológica que se llevará a cabo en Dememoria. La firma de este consentimiento indica que el paciente ha comprendido la información y acepta voluntariamente el tratamiento propuesto.</p>
         </section>
 
         <section>
-          <h2>2. Objectiu de la intervenció</h2>
-          <p>El tractament psicològic té com a finalitat:</p>
+          <h2>2. Objetivo de la intervención</h2>
+          <p>El tratamiento psicológico tiene como finalidad:</p>
           <ul>
-            <li>Oferir suport psicològic per millorar el benestar emocional i la qualitat de vida.</li>
-            <li>Identificar i abordar dificultats emocionals, cognitives i conductuals.</li>
-            <li>Proporcionar estratègies per a la gestió de l’estrès, l’ansietat, la depressió, el dol o altres dificultats psicològiques.</li>
-            <li>Facilitar eines per millorar l’autoestima, les habilitats socials i la regulació emocional.</li>
-            <li>Acompanyar en processos de canvi i adaptació a noves situacions vitals.</li>
+            <li>Brindar apoyo psicológico para mejorar el bienestar emocional y la calidad de vida.</li>
+            <li>Identificar y abordar dificultades emocionales, cognitivas y conductuales.</li>
+            <li>Proporcionar estrategias para el manejo del estrés, ansiedad, depresión, duelo u otras dificultades psicológicas.</li>
+            <li>Facilitar herramientas para mejorar la autoestima, las habilidades sociales y la regulación emocional.</li>
+            <li>Acompañar en procesos de cambio y adaptación a nuevas situaciones vitales.</li>
           </ul>
         </section>
 
         <section>
-          <h2>3. Naturalesa del tractament i procediments</h2>
-          <p>La intervenció psicològica inclourà:</p>
+          <h2>3. Naturaleza del tratamiento y procedimientos</h2>
+          <p>La intervención psicológica incluirá:</p>
           <ul>
-            <li>Avaluació inicial: entrevistes i qüestionaris per comprendre la situació de la persona.</li>
-            <li>Teràpia psicològica: sessions individuals amb tècniques basades en evidència científica (ex. teràpia cognitivoconductual, teràpia d’acceptació i compromís, etc.).</li>
-            <li>Estratègies d’afrontament: tècniques per millorar la gestió emocional i la presa de decisions.</li>
-            <li>Seguiment i ajust del tractament segons l’evolució de la persona.</li>
-            <li>Sessions presencials i/o telemàtiques, segons disponibilitat i necessitats.</li>
+            <li>Evaluación inicial: Entrevistas y cuestionarios para comprender la situación del paciente.</li>
+            <li>Terapia psicológica: Sesiones individuales con técnicas basadas en evidencia científica (ej. terapia cognitivo-conductual, terapia de aceptación y compromiso, etc.).</li>
+            <li>Estrategias de afrontamiento: Técnicas para mejorar la gestión emocional y la toma de decisiones.</li>
+            <li>Seguimiento y ajuste del tratamiento según la evolución del paciente.</li>
+            <li>Sesiones presenciales y/o telemáticas, según disponibilidad y necesidades.</li>
           </ul>
-          <p>La durada del tractament dependrà de la problemàtica i de la valoració professional.</p>
+          <p>La duración del tratamiento dependerá de la problemática del paciente y la valoración del profesional.</p>
         </section>
 
         <section>
-          <h2>4. Beneficis esperats</h2>
-          <p>Els beneficis potencials inclouen:</p>
+          <h2>4. Beneficios esperados</h2>
+          <p>Los beneficios potenciales incluyen:</p>
           <ul>
-            <li>Reducció del malestar emocional.</li>
-            <li>Millora en la capacitat d’afrontar situacions difícils.</li>
-            <li>Increment de l’autoestima i la confiança.</li>
-            <li>Desenvolupament d’estratègies per gestionar emocions i pensaments.</li>
-            <li>Millora de les relacions interpersonals.</li>
-          </ul>
-        </section>
-
-        <section>
-          <h2>5. Riscos i limitacions</h2>
-          <p>Tot i que la intervenció psicològica pot ser beneficiosa, cal tenir en compte:</p>
-          <ul>
-            <li>Els canvis poden requerir temps i esforç.</li>
-            <li>Algunes sessions poden generar malestar emocional temporal en abordar experiències difícils.</li>
-            <li>La teràpia no garanteix resultats específics, ja que l’èxit depèn de múltiples factors.</li>
-            <li>En casos greus, es pot recomanar la derivació a un altre professional o tractament complementari.</li>
+            <li>Reducción del malestar emocional.</li>
+            <li>Mejora en la capacidad para afrontar situaciones difíciles.</li>
+            <li>Aumento de la autoestima y autoconfianza.</li>
+            <li>Desarrollo de estrategias para gestionar emociones y pensamientos.</li>
+            <li>Mejora en las relaciones interpersonales.</li>
           </ul>
         </section>
 
         <section>
-          <h2>6. Confidencialitat i protecció de dades</h2>
-          <p>Tota la informació obtinguda durant la teràpia és confidencial i es protegeix segons la Llei de Protecció de Dades vigent a Espanya (LOPDGDD i RGPD).</p>
-          <p>Les dades només es podran compartir amb tercers (altres professionals de la salut) amb el consentiment exprés de la persona, excepte en situacions de risc per a la vida del pacient o de tercers, o quan ho requereixi la llei.</p>
-          <p>Les sessions no podran ser enregistrades sense el consentiment explícit de totes dues parts.</p>
-        </section>
-
-        <section>
-          <h2>7. Drets i responsabilitats de la persona</h2>
-          <h3>Drets</h3>
+          <h2>5. Riesgos y limitaciones</h2>
+          <p>Si bien la intervención psicológica puede ser beneficiosa, existen algunas consideraciones:</p>
           <ul>
-            <li>Rebre informació clara i comprensible sobre el tractament.</li>
-            <li>Expressar dubtes i preguntes en qualsevol moment.</li>
-            <li>Modificar o retirar el consentiment en qualsevol moment sense justificació.</li>
-            <li>Accedir a les seves dades personals i sol·licitar-ne l’eliminació segons la normativa vigent.</li>
-          </ul>
-          <h3>Responsabilitats</h3>
-          <ul>
-            <li>Assistir amb puntualitat a les sessions programades.</li>
-            <li>Informar sobre canvis en l’estat de salut o la medicació que puguin afectar el tractament.</li>
-            <li>Seguir les recomanacions terapèutiques per optimitzar els resultats.</li>
+            <li>Los cambios pueden requerir tiempo y esfuerzo.</li>
+            <li>Algunas sesiones pueden generar malestar emocional temporal al abordar experiencias difíciles.</li>
+            <li>La terapia no garantiza resultados específicos, ya que el éxito depende de múltiples factores.</li>
+            <li>En casos graves, puede recomendarse la derivación a otro profesional o tratamiento complementario.</li>
           </ul>
         </section>
 
         <section>
-          <h2>8. Consentiment</h2>
-          <p>Declaro haver llegit i entès la informació continguda en aquest document. Se m’han explicat els objectius, beneficis, riscos i limitacions de la intervenció psicològica. He tingut l’oportunitat de formular preguntes i totes han estat respostes satisfactòriament.</p>
-          <p>Autoritzo voluntàriament Dememoria i la professional responsable a dur a terme la intervenció psicològica descrita.</p>
-          <p><strong>Signatura de la persona atesa o representant legal</strong></p>
-          <p>Signatura: __________________________</p>
-          <p>Data: __________________________</p>
-          <p><strong>Signatura de la professional responsable</strong></p>
-          <p>Signatura: __________________________</p>
-          <p>Data: __________________________</p>
+          <h2>6. Confidencialidad y protección de datos</h2>
+          <ul>
+            <li>Toda la información obtenida durante la terapia es confidencial y se protege según la Ley de Protección de Datos vigente en España (LOPDGDD y RGPD).</li>
+            <li>Los datos solo podrán compartirse con terceros (otros profesionales de la salud) con el consentimiento expreso del paciente, excepto en situaciones de riesgo para la vida del paciente o terceros, o cuando lo requiera la ley.</li>
+            <li>Las sesiones no podrán ser grabadas sin el consentimiento explícito de ambas partes.</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>7. Derechos y responsabilidades del paciente</h2>
+          <h3>Derechos</h3>
+          <ul>
+            <li>Recibir información clara y comprensible sobre el tratamiento.</li>
+            <li>Expresar dudas y preguntas en cualquier momento.</li>
+            <li>Modificar o retirar su consentimiento en cualquier momento sin justificación.</li>
+            <li>Acceder a sus datos personales y solicitar su eliminación según la normativa vigente.</li>
+          </ul>
+          <h3>Responsabilidades</h3>
+          <ul>
+            <li>Asistir con puntualidad a las sesiones programadas.</li>
+            <li>Informar sobre cambios en su estado de salud o medicación que puedan afectar el tratamiento.</li>
+            <li>Seguir las recomendaciones terapéuticas para optimizar los resultados.</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>8. Consentimiento</h2>
+          <p>Declaro haber leído y comprendido la información contenida en este documento. Se me han explicado los objetivos, beneficios, riesgos y limitaciones de la intervención psicológica. He tenido la oportunidad de formular preguntas y todas han sido respondidas satisfactoriamente.</p>
+          <p>Autorizo voluntariamente a Dememoria y al profesional responsable a llevar a cabo la intervención psicológica descrita.</p>
+          <p><strong>Firma del paciente o representante legal</strong></p>
+          <p>Firma: __________________________</p>
+          <p>Fecha: __________________________</p>
+          <p><strong>Firma del profesional responsable</strong></p>
+          <p>Firma: __________________________</p>
+          <p>Fecha: __________________________</p>
         </section>
       </article>
 
