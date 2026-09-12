@@ -39,7 +39,7 @@ export default function HomePage() {
           <figure className="editorial-photo">
             <img
               className="editorial-photo-image"
-              src="/carolina-sanchez-retrato.webp?v=20260912-1035"
+              src="/carolina-retrato-2026.webp"
               alt="Carolina Sánchez, psicóloga y neuropsicóloga"
               width={480}
               height={618}
