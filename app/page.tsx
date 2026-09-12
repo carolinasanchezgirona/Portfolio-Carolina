@@ -17,7 +17,7 @@ export default function HomePage() {
         <nav className="nav" aria-label="Navegación principal">
           <a href="#areas">Áreas</a>
           <a href="#como-trabajo">Cómo trabajo</a>
-          <a href="#sobre-mi">Sobre mí</a>
+          <a href="/sobre-mi/">Sobre mí</a>
           <a className="nav-cta" href="/cita">Pedir cita</a>
         </nav>
       </header>
@@ -153,8 +153,9 @@ export default function HomePage() {
               en Ingeniería Biomédica complementa esta práctica desde la neurociencia y la tecnología sanitaria.
             </p>
             <p>
-              Participo también en divulgación profesional en psicología sanitaria y neuropsicología, con publicaciones en la revista PsiAra del Col·legi Oficial de Psicologia de Catalunya. <a href="https://www.linkedin.com/in/carolina-s%C3%A1nchez-girona-43b3b94a/" target="_blank" rel="noopener noreferrer">Ver perfil profesional en LinkedIn ↗</a>
+              Participo también en divulgación profesional en psicología sanitaria y neuropsicología, con publicaciones en la revista PsiAra del Col·legi Oficial de Psicologia de Catalunya.
             </p>
+            <p><a href="/sobre-mi/">Conocer mi trayectoria profesional →</a></p>
             <p><a href="/psicologa-arenys-de-mar/">Consulta de Psicología y Neuropsicología en Arenys de Mar →</a></p>
           </div>
         </div>
