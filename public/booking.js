@@ -39,6 +39,24 @@
     newDocuments: $("#new-patient-documents"),
     newSignature: $("#new-patient-signature"),
     newInformation: $("#new-patient-information"),
+    selectedServiceName: $("#selected-service-name"),
+    consentLink: $("#consent-link"),
+    consentDescription: $("#consent-description"),
+  };
+
+  const SERVICES = {
+    psicologia_general_sanitaria: {
+      label: "Psicología General Sanitaria",
+      professional: "Psicóloga General Sanitaria",
+      consentHref: "/consentimiento-psicologico/",
+      consentText: "consentimiento informado para intervención psicológica",
+    },
+    neuropsicologia: {
+      label: "Neuropsicología",
+      professional: "Neuropsicóloga",
+      consentHref: "/consentimiento-neuropsicologico/",
+      consentText: "consentimiento informado para intervención neuropsicológica",
+    },
   };
 
   const dateFmt = new Intl.DateTimeFormat("es-ES", {
@@ -84,6 +102,31 @@
     return field && typeof field.value === "string" ? field.value : "new";
   }
 
+  function serviceCodeValue() {
+    const field = form.elements.namedItem("service_code");
+    const value = field && typeof field.value === "string" ? field.value : "psicologia_general_sanitaria";
+    return SERVICES[value] ? value : "psicologia_general_sanitaria";
+  }
+
+  function updateSelectionSummary() {
+    if (!state.selected) return;
+    const service = SERVICES[serviceCodeValue()];
+    els.summary.innerHTML = `<strong>${formatSlot(state.selected)}</strong><span>${service.label} · ${state.duration} minutos · 60 €</span>`;
+  }
+
+  function updateServiceChoice() {
+    const service = SERVICES[serviceCodeValue()];
+    if (els.selectedServiceName) els.selectedServiceName.textContent = service.label;
+    if (els.consentLink) {
+      els.consentLink.href = service.consentHref;
+      els.consentLink.textContent = service.consentText;
+    }
+    if (els.consentDescription) {
+      els.consentDescription.innerHTML = `Consulta el <a href="${service.consentHref}" target="_blank" rel="noopener">${service.consentText}</a>.`;
+    }
+    updateSelectionSummary();
+  }
+
   function updatePatientType() {
     const existing = patientTypeValue() === "existing";
     if (els.newDocuments) els.newDocuments.hidden = existing;
@@ -108,7 +151,7 @@
   function selectSlot(slot) {
     state.selected = slot;
     els.selected.value = slot.starts_at;
-    els.summary.innerHTML = `<strong>${formatSlot(slot)}</strong><span>${state.duration} minutos · 60 €</span>`;
+    updateSelectionSummary();
     els.submit.disabled = false;
     showMessage("");
 
@@ -272,6 +315,10 @@
     input.addEventListener("change", updatePatientType);
   });
 
+  document.querySelectorAll('input[name="service_code"]').forEach((input) => {
+    input.addEventListener("change", updateServiceChoice);
+  });
+
   form.addEventListener("submit", async (event) => {
     event.preventDefault();
     const data = new FormData(form);
@@ -280,8 +327,10 @@
     const phone = String(data.get("patient_phone") || "").trim();
     const signer = String(data.get("signer_name") || "").trim();
     const patientType = String(data.get("patient_type") || "new");
+    const serviceCode = String(data.get("service_code") || "psicologia_general_sanitaria");
     const isExisting = patientType === "existing";
 
+    if (!SERVICES[serviceCode]) return showMessage("Selecciona el tipo de atención.", "error");
     if (!state.selected) return showMessage("Selecciona primero una fecha y una hora.", "error");
     if (!name) return showMessage("Escribe tu nombre y apellidos.", "error");
     if (!email) return showMessage("Escribe tu correo electrónico.", "error");
@@ -317,6 +366,7 @@
           p_cancellation_accepted: true,
           p_informed_consent_accepted: !isExisting,
           p_signer_name: isExisting ? null : signer,
+          p_service_code: serviceCode,
         }),
       });
 
@@ -339,6 +389,7 @@
         "success",
       );
       updatePatientType();
+      updateServiceChoice();
       await loadSlots();
     } catch (error) {
       showMessage(`${error.message} Inténtalo de nuevo dentro de unos minutos.`, "error");
@@ -349,5 +400,6 @@
   });
 
   updatePatientType();
+  updateServiceChoice();
   loadSlots();
 })();
