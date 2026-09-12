@@ -59,6 +59,12 @@
 .editorial-site .nav-cta:hover{background:#101512;color:#fff;}
 
 .editorial-hero{padding:56px 0 64px;border-bottom:1px solid var(--e-line);}
+.editorial-hero-grid{
+  display:grid;
+  grid-template-columns:minmax(0,1.15fr) minmax(300px,.72fr);
+  gap:56px;
+  align-items:center;
+}
 .editorial-hero-copy{max-width:720px;}
 .editorial-eyebrow,
 .editorial-section-eyebrow{
@@ -100,26 +106,22 @@
 .editorial-meta{display:flex;gap:20px;flex-wrap:wrap;color:#827a6e;font-size:.8rem;}
 .editorial-meta span+span::before{content:"·";margin-right:20px;color:#b1aa9f;}
 
-.editorial-photo{margin:42px 0 0;}
-.editorial-photo-placeholder{
-  min-height:360px;
-  aspect-ratio:16/8;
-  border:1px solid var(--e-line);
-  border-radius:14px;
-  background:
-    radial-gradient(circle at 18% 24%,rgba(14,107,84,.14),transparent 28%),
-    radial-gradient(circle at 78% 72%,rgba(178,74,37,.10),transparent 26%),
-    linear-gradient(135deg,var(--e-teal-tint),#f6f0e9 62%,#fff);
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  justify-content:center;
-  gap:6px;
-  color:#8d857a;
-  text-align:center;
+.editorial-photo{
+  margin:0;
+  width:100%;
+  justify-self:end;
 }
-.editorial-photo-placeholder span{font-family:Newsreader,Georgia,serif;font-size:1.4rem;color:var(--e-ink-soft);}
-.editorial-photo-placeholder small{font-size:.78rem;}
+.editorial-photo-image{
+  display:block;
+  width:100%;
+  height:auto;
+  aspect-ratio:480/618;
+  object-fit:cover;
+  object-position:center 28%;
+  border:1px solid var(--e-line);
+  border-radius:18px;
+  background:#e9e6e1;
+}
 
 .editorial-section{padding:64px 0;border-bottom:1px solid var(--e-line);}
 .editorial-section-head{max-width:680px;margin-bottom:34px;}
@@ -176,6 +178,8 @@
 
 @media(max-width:900px){
   .editorial-site .nav a:not(.nav-cta){display:none;}
+  .editorial-hero-grid{grid-template-columns:1fr;gap:34px;}
+  .editorial-photo{max-width:520px;justify-self:start;}
   .editorial-step-grid{grid-template-columns:repeat(2,minmax(0,1fr));}
   .editorial-about-grid,.editorial-contact-grid{grid-template-columns:1fr;gap:28px;}
 }
@@ -186,7 +190,8 @@
   .editorial-hero{padding:38px 0 48px;}
   .editorial-hero h1{font-size:clamp(2.35rem,11vw,3.25rem);}
   .editorial-lead{font-size:1rem;}
-  .editorial-photo-placeholder{min-height:250px;aspect-ratio:4/3;}
+  .editorial-photo{max-width:none;}
+  .editorial-photo-image{border-radius:14px;}
   .editorial-section{padding:52px 0;}
   .editorial-section h2{font-size:clamp(1.85rem,8.5vw,2.5rem);}
   .editorial-service-grid,.editorial-step-grid{grid-template-columns:1fr;}
