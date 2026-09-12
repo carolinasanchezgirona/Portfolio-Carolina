@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Script from "next/script";
 import "./booking.css";
 
 export const metadata: Metadata = {
@@ -226,7 +227,7 @@ export default function BookingPage() {
         </div>
       </footer>
 
-      <script src="/booking.js" defer />
+      <Script src="/booking.js" strategy="afterInteractive" />
     </main>
   );
 }
