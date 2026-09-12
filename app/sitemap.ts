@@ -11,6 +11,24 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 1,
     },
     {
+      url: "https://carolinasanchezgirona.com/psicologa-arenys-de-mar/",
+      lastModified: new Date(),
+      changeFrequency: "monthly",
+      priority: 0.95,
+    },
+    {
+      url: "https://carolinasanchezgirona.com/psicologia/",
+      lastModified: new Date(),
+      changeFrequency: "monthly",
+      priority: 0.9,
+    },
+    {
+      url: "https://carolinasanchezgirona.com/neuropsicologia/",
+      lastModified: new Date(),
+      changeFrequency: "monthly",
+      priority: 0.9,
+    },
+    {
       url: "https://carolinasanchezgirona.com/cita/",
       lastModified: new Date(),
       changeFrequency: "daily",
