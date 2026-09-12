@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import GoogleAnalyticsConsent from "./components/google-analytics-consent";
 import SiteShell from "./components/site-shell";
 import "./globals.css";
 import "./mineuri-theme.css";
@@ -75,7 +76,6 @@ const structuredData = {
       },
       sameAs: [
         "https://www.linkedin.com/in/carolina-s%C3%A1nchez-girona-43b3b94a/",
-        "https://www.doctoralia.es/carolina-sanchez-girona/psicologo/arenys-de-mar",
       ],
       memberOf: {
         "@type": "Organization",
@@ -114,7 +114,6 @@ const structuredData = {
         "Consulta de Psicología General Sanitaria y Neuropsicología en Arenys de Mar y online.",
       sameAs: [
         "https://www.linkedin.com/in/carolina-s%C3%A1nchez-girona-43b3b94a/",
-        "https://www.doctoralia.es/carolina-sanchez-girona/psicologo/arenys-de-mar",
       ],
       founder: {
         "@id": "https://carolinasanchezgirona.com/#carolina-sanchez-girona",
@@ -163,6 +162,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
       </head>
       <body>
         <SiteShell>{children}</SiteShell>
+        <GoogleAnalyticsConsent />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}

@@ -97,7 +97,10 @@ export default function PrivacyPage() {
             <li>Asesoría contable y fiscal: Para la gestión económica de la consulta.</li>
             <li>Plataformas de gestión de citas o mensajería segura: Si se usan herramientas externas, se garantizará su cumplimiento con el RGPD</li>
           </ul>
-          <p>No se realizan transferencias internacionales de datos.</p>
+          <p>
+            El uso consentido de Google Analytics puede implicar tratamientos internacionales de datos.
+            Google aplica los mecanismos de transferencia y garantías descritos en su documentación de privacidad.
+          </p>
         </section>
 
         <section>
@@ -137,14 +140,29 @@ export default function PrivacyPage() {
           </ul>
         </section>
 
-        <section>
+        <section id="cookies">
           <h2>8. Uso de tecnologías y cookies</h2>
-          <p>Si Dememoria tiene página web, se incluirá una política de cookies detallando:</p>
+          <p>
+            La web utiliza almacenamiento local estrictamente necesario para recordar durante seis meses
+            si el usuario acepta o rechaza las cookies analíticas. Esta preferencia puede modificarse en
+            cualquier momento mediante el botón «Cookies» disponible en la web.
+          </p>
+          <p>
+            Google Analytics solo se carga después de una aceptación expresa. Su finalidad es obtener
+            estadísticas agregadas sobre el uso de la web y sus canales de acceso para mejorar sus contenidos
+            y funcionamiento. Google puede establecer cookies como <strong>_ga</strong> y
+            <strong> _ga_&lt;identificador&gt;</strong> para distinguir sesiones y usuarios.
+          </p>
           <ul>
-            <li>Tipos de cookies utilizadas.</li>
-            <li>Finalidad de cada cookie.</li>
-            <li>Posibilidad de configurar o rechazar cookies.</li>
+            <li><strong>Proveedor:</strong> Google Ireland Limited.</li>
+            <li><strong>Base jurídica:</strong> consentimiento del usuario (art. 6.1.a RGPD).</li>
+            <li><strong>Conservación:</strong> según la configuración y los plazos definidos por Google Analytics.</li>
+            <li><strong>Revocación:</strong> mediante el botón «Cookies», con la misma facilidad que la aceptación.</li>
           </ul>
+          <p>
+            Puede consultar información adicional en la
+            {" "}<a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer">política de privacidad de Google</a>.
+          </p>
         </section>
 
         <section>
