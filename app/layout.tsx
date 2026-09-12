@@ -43,65 +43,89 @@ export const metadata: Metadata = {
 
 const structuredData = {
   "@context": "https://schema.org",
-  "@type": "ProfessionalService",
-  name: "Carolina Sánchez | Psicóloga y Neuropsicóloga",
-  alternateName: "Dememoria",
-  url: "https://carolinasanchezgirona.com",
-  email: "contact@carolinasanchezgirona.com",
-  telephone: "+34604974857",
-  address: {
-    "@type": "PostalAddress",
-    streetAddress: "Carrer Barcelona 8, Local",
-    addressLocality: "Arenys de Mar",
-    addressRegion: "Cataluña",
-    addressCountry: "ES",
-  },
-  areaServed: ["Arenys de Mar", "Maresme", "Barcelona", "España"],
-  description:
-    "Consulta de Psicología General Sanitaria y Neuropsicología en Arenys de Mar y online.",
-  sameAs: [
-    "https://www.linkedin.com/in/carolina-s%C3%A1nchez-girona-43b3b94a/",
+  "@graph": [
+    {
+      "@type": "Person",
+      "@id": "https://carolinasanchezgirona.com/#carolina-sanchez-girona",
+      name: "Carolina Sánchez Girona",
+      jobTitle: "Psicóloga General Sanitaria y Neuropsicóloga",
+      url: "https://carolinasanchezgirona.com/sobre-mi/",
+      image: "https://carolinasanchezgirona.com/carolina-sanchez-retrato.jpg",
+      identifier: {
+        "@type": "PropertyValue",
+        propertyID: "COPC",
+        value: "24892",
+      },
+      sameAs: [
+        "https://www.linkedin.com/in/carolina-s%C3%A1nchez-girona-43b3b94a/",
+        "https://www.doctoralia.es/carolina-sanchez-girona/psicologo/arenys-de-mar",
+      ],
+      memberOf: {
+        "@type": "Organization",
+        name: "Grup de Treball Neuropsicologia i salut mental del Col·legi Oficial de Psicologia de Catalunya",
+      },
+      knowsAbout: [
+        "Psicología General Sanitaria",
+        "Neuropsicología",
+        "Evaluación neuropsicológica",
+        "Deterioro cognitivo",
+        "Demencias",
+        "Ansiedad",
+        "Duelo",
+        "Estimulación cognitiva",
+      ],
+    },
+    {
+      "@type": "ProfessionalService",
+      "@id": "https://carolinasanchezgirona.com/#dememoria",
+      name: "Carolina Sánchez | Psicóloga y Neuropsicóloga",
+      alternateName: "Dememoria",
+      url: "https://carolinasanchezgirona.com",
+      image: "https://carolinasanchezgirona.com/carolina-sanchez-retrato.jpg",
+      email: "contact@carolinasanchezgirona.com",
+      telephone: "+34604974857",
+      address: {
+        "@type": "PostalAddress",
+        streetAddress: "Carrer Barcelona 8, Local",
+        postalCode: "08350",
+        addressLocality: "Arenys de Mar",
+        addressRegion: "Cataluña",
+        addressCountry: "ES",
+      },
+      areaServed: ["Arenys de Mar", "Maresme", "Barcelona", "España"],
+      description:
+        "Consulta de Psicología General Sanitaria y Neuropsicología en Arenys de Mar y online.",
+      sameAs: [
+        "https://www.linkedin.com/in/carolina-s%C3%A1nchez-girona-43b3b94a/",
+        "https://www.doctoralia.es/carolina-sanchez-girona/psicologo/arenys-de-mar",
+      ],
+      founder: {
+        "@id": "https://carolinasanchezgirona.com/#carolina-sanchez-girona",
+      },
+      hasOfferCatalog: {
+        "@type": "OfferCatalog",
+        name: "Servicios clínicos",
+        itemListElement: [
+          {
+            "@type": "Offer",
+            itemOffered: {
+              "@type": "Service",
+              name: "Psicología General Sanitaria",
+              url: "https://carolinasanchezgirona.com/psicologia/",
+            },
+          },
+          {
+            "@type": "Offer",
+            itemOffered: {
+              "@type": "Service",
+              name: "Neuropsicología",
+              url: "https://carolinasanchezgirona.com/neuropsicologia/",
+            },
+          },
+        ],
+      },
+    },
   ],
-  founder: {
-    "@type": "Person",
-    name: "Carolina Sánchez Girona",
-    jobTitle: "Psicóloga General Sanitaria y Neuropsicóloga",
-    url: "https://carolinasanchezgirona.com",
-    sameAs: [
-      "https://www.linkedin.com/in/carolina-s%C3%A1nchez-girona-43b3b94a/",
-    ],
-    knowsAbout: [
-      "Psicología General Sanitaria",
-      "Neuropsicología",
-      "Evaluación neuropsicológica",
-      "Deterioro cognitivo",
-      "Demencias",
-      "Ansiedad",
-      "Duelo",
-    ],
-  },
-  hasOfferCatalog: {
-    "@type": "OfferCatalog",
-    name: "Servicios clínicos",
-    itemListElement: [
-      {
-        "@type": "Offer",
-        itemOffered: {
-          "@type": "Service",
-          name: "Psicología General Sanitaria",
-          url: "https://carolinasanchezgirona.com/psicologia/",
-        },
-      },
-      {
-        "@type": "Offer",
-        itemOffered: {
-          "@type": "Service",
-          name: "Neuropsicología",
-          url: "https://carolinasanchezgirona.com/neuropsicologia/",
-        },
-      },
-    ],
-  },
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
