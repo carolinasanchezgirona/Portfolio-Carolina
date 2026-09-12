@@ -29,6 +29,30 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.9,
     },
     {
+      url: "https://carolinasanchezgirona.com/ansiedad/",
+      lastModified: new Date(),
+      changeFrequency: "monthly",
+      priority: 0.82,
+    },
+    {
+      url: "https://carolinasanchezgirona.com/duelo/",
+      lastModified: new Date(),
+      changeFrequency: "monthly",
+      priority: 0.82,
+    },
+    {
+      url: "https://carolinasanchezgirona.com/evaluacion-neuropsicologica/",
+      lastModified: new Date(),
+      changeFrequency: "monthly",
+      priority: 0.85,
+    },
+    {
+      url: "https://carolinasanchezgirona.com/deterioro-cognitivo/",
+      lastModified: new Date(),
+      changeFrequency: "monthly",
+      priority: 0.85,
+    },
+    {
       url: "https://carolinasanchezgirona.com/cita/",
       lastModified: new Date(),
       changeFrequency: "daily",
