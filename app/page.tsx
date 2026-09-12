@@ -1,3 +1,9 @@
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  alternates: { canonical: "/" },
+};
+
 const Arrow = () => <span aria-hidden="true">↗</span>;
 
 export default function HomePage() {
@@ -62,20 +68,22 @@ export default function HomePage() {
               <div className="editorial-accent" />
               <p className="editorial-card-kicker">Psicología sanitaria</p>
               <h3>Psicología</h3>
-              <p>
+              <p className="editorial-card-copy">
                 Ansiedad, estado de ánimo, duelo, relaciones, sobrecarga y cambios vitales que empiezan a ocupar
                 demasiado espacio en el día a día.
               </p>
+              <a className="editorial-card-link" href="/psicologia/">Ver Psicología General Sanitaria →</a>
             </article>
 
             <article className="editorial-service-card editorial-service-coral" id="neuropsicologia">
               <div className="editorial-accent" />
               <p className="editorial-card-kicker">Evaluación e intervención</p>
               <h3>Neuropsicología</h3>
-              <p>
+              <p className="editorial-card-copy">
                 Memoria, atención, lenguaje, funciones ejecutivas, deterioro cognitivo y seguimiento cuando es
                 necesario comprender mejor el perfil cognitivo.
               </p>
+              <a className="editorial-card-link" href="/neuropsicologia/">Ver Neuropsicología →</a>
             </article>
           </div>
         </div>
@@ -144,6 +152,10 @@ export default function HomePage() {
               Combino razonamiento clínico, evaluación estructurada y objetivos terapéuticos concretos. Mi formación
               en Ingeniería Biomédica complementa esta práctica desde la neurociencia y la tecnología sanitaria.
             </p>
+            <p>
+              Participo también en divulgación profesional en psicología sanitaria y neuropsicología, con publicaciones en la revista PsiAra del Col·legi Oficial de Psicologia de Catalunya. <a href="https://www.linkedin.com/in/carolina-s%C3%A1nchez-girona-43b3b94a/" target="_blank" rel="noopener noreferrer">Ver perfil profesional en LinkedIn ↗</a>
+            </p>
+            <p><a href="/psicologa-arenys-de-mar/">Consulta de Psicología y Neuropsicología en Arenys de Mar →</a></p>
           </div>
         </div>
       </section>
