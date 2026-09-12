@@ -1,0 +1,206 @@
+import type { Metadata } from "next";
+import "./booking.css";
+
+export const metadata: Metadata = {
+  title: "Pedir cita | Carolina Sánchez Girona",
+  description: "Reserva una sesión de psicología o neuropsicología con Carolina Sánchez Girona.",
+};
+
+export default function BookingPage() {
+  return (
+    <main className="editorial-site booking-page">
+      <header className="site-header booking-header">
+        <a className="brand" href="/" aria-label="Carolina Sánchez, inicio">
+          <span className="brand-name">Carolina Sánchez</span>
+          <span className="brand-sub">Psicóloga · Neuropsicóloga</span>
+        </a>
+        <nav className="nav" aria-label="Navegación de cita">
+          <a href="/">Volver a la web</a>
+        </nav>
+      </header>
+
+      <section className="booking-intro">
+        <div className="editorial-wrap booking-intro-inner">
+          <p className="editorial-eyebrow">Consulta profesional · Reserva online</p>
+          <h1>Pedir cita</h1>
+          <p className="booking-lead">
+            Consulta la primera cita disponible o abre el calendario para elegir otra fecha.
+          </p>
+        </div>
+      </section>
+
+      <section className="editorial-wrap booking-flow" aria-labelledby="booking-heading">
+        <section className="booking-panel service-panel">
+          <div className="booking-panel-heading">
+            <span className="booking-step" aria-hidden="true">01</span>
+            <div>
+              <p className="booking-kicker">Tipo de sesión</p>
+              <h2 id="booking-heading">Sesión profesional</h2>
+            </div>
+          </div>
+
+          <div className="service-fixed">
+            <div>
+              <strong>Sesión de psicología o neuropsicología</strong>
+              <small>60 minutos</small>
+            </div>
+            <b>60 €</b>
+          </div>
+
+          <fieldset className="patient-type-fieldset">
+            <legend>¿Es tu primera visita?</legend>
+            <div className="patient-type-options">
+              <label className="patient-type-option">
+                <input type="radio" name="patient_type" value="new" form="booking-form" defaultChecked />
+                <span>
+                  <strong>Primera visita</strong>
+                  <small>Completarás privacidad, consentimiento y firma electrónica.</small>
+                </span>
+              </label>
+              <label className="patient-type-option">
+                <input type="radio" name="patient_type" value="existing" form="booking-form" />
+                <span>
+                  <strong>Paciente existente</strong>
+                  <small>Solo tendrás que confirmar tus datos y la política de cancelación.</small>
+                </span>
+              </label>
+            </div>
+          </fieldset>
+        </section>
+
+        <section className="booking-panel availability-panel">
+          <div className="booking-panel-heading">
+            <span className="booking-step" aria-hidden="true">02</span>
+            <div>
+              <p className="booking-kicker">Disponibilidad</p>
+              <h2>Elige fecha y hora</h2>
+            </div>
+          </div>
+
+          <div id="slots-status" className="booking-status" role="status" aria-live="polite">
+            Consultando disponibilidad…
+          </div>
+          <div id="first-available" className="first-available" hidden />
+          <button id="toggle-calendar" className="text-button" type="button" hidden>
+            Elegir otra fecha
+          </button>
+
+          <div id="calendar-section" className="calendar-section" hidden>
+            <div className="calendar-toolbar">
+              <button id="calendar-prev" className="calendar-nav" type="button" aria-label="Mes anterior">←</button>
+              <h3 id="calendar-title" />
+              <button id="calendar-next" className="calendar-nav" type="button" aria-label="Mes siguiente">→</button>
+            </div>
+            <div className="calendar-weekdays" aria-hidden="true">
+              <span>L</span><span>M</span><span>X</span><span>J</span><span>V</span><span>S</span><span>D</span>
+            </div>
+            <div id="calendar-grid" className="calendar-grid" role="grid" aria-label="Calendario de citas" />
+            <div id="day-times" className="day-times" aria-live="polite" />
+          </div>
+        </section>
+
+        <form id="booking-form" className="booking-panel booking-form" noValidate>
+          <div className="booking-panel-heading">
+            <span className="booking-step" aria-hidden="true">03</span>
+            <div>
+              <p className="booking-kicker">Datos y aceptación</p>
+              <h2>Completa la reserva</h2>
+            </div>
+          </div>
+
+          <input id="selected-slot" name="starts_at" type="hidden" />
+          <div id="selection-summary" className="selection-summary">Todavía no has elegido un horario.</div>
+
+          <div className="form-field">
+            <label htmlFor="patient-name">Nombre y apellidos</label>
+            <input id="patient-name" name="patient_name" type="text" autoComplete="name" maxLength={120} required />
+          </div>
+
+          <div className="form-grid">
+            <div className="form-field">
+              <label htmlFor="patient-email">Correo electrónico</label>
+              <input id="patient-email" name="patient_email" type="email" autoComplete="email" maxLength={254} required />
+            </div>
+            <div className="form-field">
+              <label htmlFor="patient-phone">Teléfono</label>
+              <input id="patient-phone" name="patient_phone" type="tel" autoComplete="tel" maxLength={30} required />
+            </div>
+          </div>
+          <p className="form-help">No incluyas información clínica ni el motivo de consulta en este formulario.</p>
+
+          <div id="new-patient-documents" className="acceptances">
+            <label className="privacy-check">
+              <input name="privacy_acknowledged" type="checkbox" required />
+              <span>
+                Declaro haber leído la <a href="#privacy-information">información de privacidad y protección de datos</a>.
+              </span>
+            </label>
+            <label className="privacy-check">
+              <input name="informed_consent_accepted" type="checkbox" required />
+              <span>
+                He leído y acepto el <a href="#consent-information">consentimiento informado para la intervención psicológica o neuropsicológica</a>.
+              </span>
+            </label>
+          </div>
+
+          <div className="acceptances cancellation-acceptance">
+            <label className="privacy-check">
+              <input name="cancellation_accepted" type="checkbox" required />
+              <span>
+                He leído y acepto la <a href="#cancellation-information">política de cancelación</a>. Si necesito cambiar o cancelar la cita, avisaré con al menos 24 horas de antelación.
+              </span>
+            </label>
+          </div>
+
+          <div id="new-patient-signature" className="form-field signature-field">
+            <label htmlFor="signer-name">Firma electrónica · escribe tu nombre y apellidos</label>
+            <input id="signer-name" name="signer_name" type="text" autoComplete="name" maxLength={120} required />
+            <p className="form-help">Al confirmar, esta firma queda asociada a la fecha, la cita y las versiones aceptadas.</p>
+          </div>
+
+          <div id="new-patient-information" className="legal-information">
+            <details id="privacy-information" className="privacy-details">
+              <summary>Información básica de privacidad · versión 1.1</summary>
+              <p>
+                Responsable: Carolina Sánchez Girona, titular de Dememoria. Finalidad: gestionar la cita y la relación asistencial. Se recogen únicamente datos identificativos, de contacto y de la reserva; no indiques aquí el motivo de consulta. Para ejercer tus derechos puedes escribir a contact@carolinasanchezgirona.com.
+              </p>
+            </details>
+            <details id="consent-information" className="privacy-details">
+              <summary>Resumen del consentimiento informado · versión 1.1</summary>
+              <p>
+                La intervención psicológica o neuropsicológica requiere participación activa y puede implicar abordar contenidos emocionalmente difíciles. Se explicarán objetivos, técnicas, límites de confidencialidad y alternativas. Puedes formular preguntas y retirar el consentimiento. La atención online no sustituye un servicio de emergencias.
+              </p>
+            </details>
+          </div>
+
+          <details id="cancellation-information" className="privacy-details">
+            <summary>Cancelaciones y cambios</summary>
+            <p>
+              Si necesitas cancelar o cambiar la cita, avisa con al menos 24 horas de antelación. Las situaciones imprevistas se valorarán individualmente.
+            </p>
+          </details>
+
+          <div id="form-message" className="form-message" role="status" aria-live="polite" />
+          <button id="booking-submit" className="booking-submit" type="submit" disabled>
+            Confirmar reserva <span aria-hidden="true">→</span>
+          </button>
+        </form>
+      </section>
+
+      <footer className="editorial-footer booking-footer">
+        <div className="editorial-wrap editorial-footer-inner">
+          <div>
+            <p className="editorial-footer-brand">Carolina Sánchez | Psicóloga</p>
+            <p>Dememoria · Consulta de Psicología y Neuropsicología</p>
+          </div>
+          <div>
+            <p>Arenys de Mar · Atención online</p>
+            <p>© 2026 Carolina Sánchez Girona</p>
+          </div>
+        </div>
+      </footer>
+
+      <script src="/booking.js" defer />
+    </main>
+  );
+}
