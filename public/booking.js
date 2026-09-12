@@ -326,7 +326,7 @@
     els.submit.disabled = true;
     els.submit.textContent = "Registrando…";
     try {
-      const response = await rpc("create_calendar_booking", {
+      const response = await rpc("create_public_booking_v2", {
         p_starts_at: state.selected.starts_at,
         p_duration_minutes: state.duration,
         p_patient_name: name,
@@ -341,8 +341,11 @@
       });
       if (!response.ok) {
         const body = await response.json().catch(() => ({}));
-        const message = String(body.message || "");
-        throw new Error(message.includes("ya no está disponible") ? "Ese horario acaba de reservarse. Elige otro." : "No se ha podido registrar la reserva.");
+        const message = String(body.message || body.details || body.hint || "");
+        if (message.includes("ya no está disponible")) {
+          throw new Error("Ese horario acaba de reservarse. Elige otro.");
+        }
+        throw new Error(message ? `No se ha podido registrar la reserva: ${message}` : `No se ha podido registrar la reserva (HTTP ${response.status}).`);
       }
 
       const existingMessage = "Solicitud registrada. El horario queda reservado mientras comprobamos que eres paciente actual.";
