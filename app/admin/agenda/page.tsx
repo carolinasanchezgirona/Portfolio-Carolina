@@ -12,7 +12,7 @@ export default function AdminAgendaPage() {
 
           <label>
             Correo
-            <input id="admin-email" type="email" autoComplete="username" defaultValue="dememoria.arenys@gmail.com" required />
+            <input id="admin-email" type="email" autoComplete="username" required />
           </label>
           <label>
             Contraseña
@@ -20,6 +20,7 @@ export default function AdminAgendaPage() {
           </label>
           <p id="admin-login-message" className="admin-message" role="status" />
           <button type="submit" className="admin-primary">Entrar</button>
+          <button id="admin-forgot-password" type="button" className="admin-text">He olvidado mi contraseña</button>
           <a className="admin-back-link" href="/">Volver a la web</a>
         </form>
       </section>
@@ -33,6 +34,7 @@ export default function AdminAgendaPage() {
           <div className="admin-top-actions">
             <button id="admin-new" className="admin-primary" type="button">Nueva cita</button>
             <button id="admin-print" className="admin-secondary" type="button">Imprimir semana</button>
+            <button id="admin-access" className="admin-secondary" type="button">Acceso</button>
             <button id="admin-logout" className="admin-text" type="button">Cerrar sesión</button>
           </div>
         </header>
@@ -144,6 +146,48 @@ export default function AdminAgendaPage() {
           <div className="dialog-actions">
             <button id="appointment-cancel" className="admin-secondary" type="button">Cancelar</button>
             <button className="admin-primary" type="submit">Guardar cita</button>
+          </div>
+        </form>
+      </dialog>
+
+      <dialog id="access-dialog" className="appointment-dialog">
+        <form id="access-form">
+          <div className="dialog-heading">
+            <div>
+              <p className="admin-eyebrow">Seguridad</p>
+              <h2>Correo y contraseña</h2>
+            </div>
+            <button id="access-close" className="dialog-close" type="button" aria-label="Cerrar">×</button>
+          </div>
+
+          <p className="admin-note">Puedes cambiar el correo, la contraseña o ambos. La contraseña no se guarda en esta web.</p>
+
+          <label>
+            Correo actual
+            <input id="access-current-email" type="email" readOnly />
+          </label>
+
+          <label>
+            Nuevo correo
+            <input id="access-new-email" type="email" autoComplete="email" placeholder="Dejar vacío si no quieres cambiarlo" />
+          </label>
+
+          <div className="form-grid two-cols">
+            <label>
+              Nueva contraseña
+              <input id="access-new-password" type="password" autoComplete="new-password" minLength={8} placeholder="Mínimo 8 caracteres" />
+            </label>
+            <label>
+              Repetir contraseña
+              <input id="access-repeat-password" type="password" autoComplete="new-password" minLength={8} />
+            </label>
+          </div>
+
+          <p id="access-message" className="admin-message" role="status" />
+
+          <div className="dialog-actions">
+            <button id="access-cancel" className="admin-secondary" type="button">Cancelar</button>
+            <button className="admin-primary" type="submit">Guardar cambios</button>
           </div>
         </form>
       </dialog>
