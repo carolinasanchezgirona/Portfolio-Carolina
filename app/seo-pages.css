@@ -16,6 +16,8 @@
 .seo-copy p+p{margin-top:16px;}
 .seo-copy ul{margin:18px 0 0;padding-left:20px;}
 .seo-copy li+li{margin-top:8px;}
+.seo-copy a{color:var(--e-teal);text-decoration:none;text-underline-offset:2px;}
+.seo-copy a:hover{text-decoration:underline;}
 .seo-callout{margin-top:24px;padding:22px 24px;border-left:3px solid var(--e-teal);background:var(--e-teal-tint);}
 .seo-callout strong{display:block;margin-bottom:6px;color:var(--e-ink);font-family:Newsreader,Georgia,serif;font-size:1.2rem;font-weight:500;}
 .seo-sidebar{position:sticky;top:100px;display:grid;gap:14px;}
