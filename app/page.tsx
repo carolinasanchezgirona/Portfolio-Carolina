@@ -17,7 +17,7 @@ export default function HomePage() {
       </header>
 
       <section className="editorial-hero" id="inicio">
-        <div className="editorial-wrap">
+        <div className="editorial-wrap editorial-hero-grid">
           <div className="editorial-hero-copy">
             <p className="editorial-eyebrow">Carolina Sánchez · Psicología sanitaria y neuropsicología</p>
             <h1>Psicóloga sanitaria y neuropsicóloga en Arenys de Mar.</h1>
@@ -36,11 +36,15 @@ export default function HomePage() {
             </div>
           </div>
 
-          <figure className="editorial-photo" aria-label="Espacio reservado para retrato profesional de Carolina Sánchez">
-            <div className="editorial-photo-placeholder">
-              <span>Retrato profesional</span>
-              <small>Foto real, luz natural y fondo sencillo</small>
-            </div>
+          <figure className="editorial-photo">
+            <img
+              className="editorial-photo-image"
+              src="/carolina-sanchez-retrato.webp"
+              alt="Carolina Sánchez, psicóloga y neuropsicóloga"
+              width={480}
+              height={618}
+              loading="eager"
+            />
           </figure>
         </div>
       </section>
