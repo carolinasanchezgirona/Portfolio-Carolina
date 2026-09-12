@@ -137,7 +137,7 @@ export default function HomePage() {
             </p>
             <a
               className="editorial-card-link"
-              href="https://www.google.com/maps/search/?api=1&query=Dememoria+Arenys+de+Mar"
+              href="https://maps.app.goo.gl/ubCSFYZRgbv7vpqF9"
               target="_blank"
               rel="noopener noreferrer"
             >
