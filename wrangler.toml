@@ -7,4 +7,4 @@ command = "npm run build"
 [assets]
 directory = "./out"
 
-# redeploy trigger 2026-09-12-cta-photo
+# redeploy trigger 2026-09-12-cloudflare-reconnect
