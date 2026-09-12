@@ -1,0 +1,290 @@
+(() => {
+  "use strict";
+
+  const SUPABASE_URL = "https://grgyvdxkjdstdyumdfyg.supabase.co";
+  const REST_URL = `${SUPABASE_URL}/rest/v1`;
+  const AUTH_URL = `${SUPABASE_URL}/auth/v1`;
+  const KEY = "sb_publishable_b2MRfP0bPti87V2FXCzHGw_Y9vvcbii";
+  const ZONE = "Europe/Madrid";
+  const SESSION_KEY = "dememoria_admin_session";
+  const ALLOWED_EMAIL = "dememoria.arenys@gmail.com";
+
+  const $ = (selector) => document.querySelector(selector);
+  const els = {
+    login: $("#admin-login"), app: $("#admin-app"), loginForm: $("#admin-login-form"),
+    email: $("#admin-email"), password: $("#admin-password"), loginMessage: $("#admin-login-message"),
+    logout: $("#admin-logout"), newButton: $("#admin-new"), print: $("#admin-print"),
+    prev: $("#week-prev"), next: $("#week-next"), today: $("#week-today"),
+    weekTitle: $("#week-title"), weekSubtitle: $("#week-subtitle"), calendar: $("#week-calendar"), status: $("#admin-status"),
+    total: $("#summary-total"), confirmed: $("#summary-confirmed"), pending: $("#summary-pending"), cancelled: $("#summary-cancelled"),
+    dialog: $("#appointment-dialog"), dialogTitle: $("#dialog-title"), dialogClose: $("#dialog-close"),
+    form: $("#appointment-form"), cancel: $("#appointment-cancel"), message: $("#appointment-message"),
+    id: $("#appointment-id"), date: $("#appointment-date"), time: $("#appointment-time"), name: $("#appointment-name"),
+    patientEmail: $("#appointment-email"), phone: $("#appointment-phone"), service: $("#appointment-service"),
+    appointmentStatus: $("#appointment-status"), patientType: $("#appointment-patient-type"), price: $("#appointment-price"),
+  };
+
+  let session = null;
+  let appointments = [];
+  let weekStartKey = mondayKey(todayKey());
+
+  const dateLong = new Intl.DateTimeFormat("es-ES", { weekday: "long", day: "numeric", month: "long", timeZone: ZONE });
+  const dayShort = new Intl.DateTimeFormat("es-ES", { weekday: "short", day: "numeric", month: "short", timeZone: ZONE });
+  const monthYear = new Intl.DateTimeFormat("es-ES", { month: "long", year: "numeric", timeZone: ZONE });
+  const timeFmt = new Intl.DateTimeFormat("es-ES", { hour: "2-digit", minute: "2-digit", hour12: false, timeZone: ZONE });
+
+  function todayKey() {
+    const parts = new Intl.DateTimeFormat("en-CA", { year: "numeric", month: "2-digit", day: "2-digit", timeZone: ZONE }).formatToParts(new Date());
+    const obj = Object.fromEntries(parts.map((p) => [p.type, p.value]));
+    return `${obj.year}-${obj.month}-${obj.day}`;
+  }
+
+  function addDaysKey(key, days) {
+    const [y, m, d] = key.split("-").map(Number);
+    const dt = new Date(Date.UTC(y, m - 1, d + days, 12));
+    return `${dt.getUTCFullYear()}-${String(dt.getUTCMonth() + 1).padStart(2, "0")}-${String(dt.getUTCDate()).padStart(2, "0")}`;
+  }
+
+  function mondayKey(key) {
+    const [y, m, d] = key.split("-").map(Number);
+    const dt = new Date(Date.UTC(y, m - 1, d, 12));
+    const weekday = dt.getUTCDay() || 7;
+    return addDaysKey(key, 1 - weekday);
+  }
+
+  function zoneOffsetMs(date) {
+    const parts = new Intl.DateTimeFormat("en-US", {
+      timeZone: ZONE, hour12: false, year: "numeric", month: "2-digit", day: "2-digit",
+      hour: "2-digit", minute: "2-digit", second: "2-digit",
+    }).formatToParts(date);
+    const p = Object.fromEntries(parts.map((part) => [part.type, part.value]));
+    return Date.UTC(+p.year, +p.month - 1, +p.day, +p.hour, +p.minute, +p.second) - date.getTime();
+  }
+
+  function madridLocalToIso(dateKey, time) {
+    const [y, m, d] = dateKey.split("-").map(Number);
+    const [hh, mm] = time.split(":").map(Number);
+    const guess = Date.UTC(y, m - 1, d, hh, mm, 0);
+    let instant = new Date(guess);
+    let offset = zoneOffsetMs(instant);
+    instant = new Date(guess - offset);
+    const refined = zoneOffsetMs(instant);
+    if (refined !== offset) instant = new Date(guess - refined);
+    return instant.toISOString();
+  }
+
+  function keyFromIso(iso) {
+    const parts = new Intl.DateTimeFormat("en-CA", { year: "numeric", month: "2-digit", day: "2-digit", timeZone: ZONE }).formatToParts(new Date(iso));
+    const p = Object.fromEntries(parts.map((part) => [part.type, part.value]));
+    return `${p.year}-${p.month}-${p.day}`;
+  }
+
+  function getSession() {
+    try { return JSON.parse(sessionStorage.getItem(SESSION_KEY) || "null"); } catch { return null; }
+  }
+
+  function saveSession(value) {
+    session = value;
+    if (value) sessionStorage.setItem(SESSION_KEY, JSON.stringify(value));
+    else sessionStorage.removeItem(SESSION_KEY);
+  }
+
+  function authHeaders() {
+    return { apikey: KEY, Authorization: `Bearer ${session.access_token}`, "Content-Type": "application/json" };
+  }
+
+  function setLoginMessage(text) { els.loginMessage.textContent = text || ""; }
+  function setStatus(text) { els.status.textContent = text || ""; }
+  function setFormMessage(text) { els.message.textContent = text || ""; }
+
+  async function signIn(email, password) {
+    const response = await fetch(`${AUTH_URL}/token?grant_type=password`, {
+      method: "POST", headers: { apikey: KEY, "Content-Type": "application/json" },
+      body: JSON.stringify({ email, password }),
+    });
+    const body = await response.json().catch(() => ({}));
+    if (!response.ok) throw new Error(body.error_description || body.msg || "No se ha podido iniciar sesión.");
+    if ((body.user?.email || "").toLowerCase() !== ALLOWED_EMAIL) throw new Error("Esta cuenta no tiene acceso al área administrativa.");
+    saveSession(body);
+  }
+
+  async function verifySession() {
+    if (!session?.access_token) return false;
+    const response = await fetch(`${AUTH_URL}/user`, { headers: { apikey: KEY, Authorization: `Bearer ${session.access_token}` } });
+    if (!response.ok) return false;
+    const user = await response.json();
+    return (user.email || "").toLowerCase() === ALLOWED_EMAIL;
+  }
+
+  function showApp() {
+    els.login.hidden = true;
+    els.app.hidden = false;
+  }
+
+  function showLogin() {
+    els.app.hidden = true;
+    els.login.hidden = false;
+  }
+
+  function serviceLabel(code) { return code === "neuropsicologia" ? "Neuropsicología" : "Psicología"; }
+  function statusLabel(status) {
+    return ({ confirmed: "Confirmada", pending: "Pendiente", cancelled: "Cancelada", canceled: "Cancelada", completed: "Realizada", no_show: "No presentado", rescheduled: "Reprogramada" })[status] || status;
+  }
+
+  async function loadWeek() {
+    setStatus("Cargando agenda…");
+    const start = madridLocalToIso(weekStartKey, "00:00");
+    const end = madridLocalToIso(addDaysKey(weekStartKey, 7), "00:00");
+    const select = "id,patient_name,patient_email,patient_phone,patient_type,status,starts_at,ends_at,price_eur,service_code,created_by_admin";
+    const url = `${REST_URL}/appointment_bookings?select=${encodeURIComponent(select)}&starts_at=gte.${encodeURIComponent(start)}&starts_at=lt.${encodeURIComponent(end)}&order=starts_at.asc`;
+    const response = await fetch(url, { headers: authHeaders(), cache: "no-store" });
+    if (response.status === 401) {
+      saveSession(null); showLogin(); throw new Error("La sesión ha caducado. Vuelve a entrar.");
+    }
+    const body = await response.json().catch(() => []);
+    if (!response.ok) throw new Error(body.message || "No se ha podido cargar la agenda.");
+    appointments = body;
+    renderWeek();
+    setStatus("");
+  }
+
+  function renderWeek() {
+    const firstDate = new Date(madridLocalToIso(weekStartKey, "12:00"));
+    const lastKey = addDaysKey(weekStartKey, 6);
+    const lastDate = new Date(madridLocalToIso(lastKey, "12:00"));
+    els.weekTitle.textContent = `Semana del ${dayShort.format(firstDate)} al ${dayShort.format(lastDate)}`;
+    els.weekSubtitle.textContent = monthYear.format(firstDate);
+
+    els.total.textContent = String(appointments.length);
+    els.confirmed.textContent = String(appointments.filter((a) => a.status === "confirmed").length);
+    els.pending.textContent = String(appointments.filter((a) => a.status === "pending").length);
+    els.cancelled.textContent = String(appointments.filter((a) => ["cancelled", "canceled"].includes(a.status)).length);
+
+    els.calendar.replaceChildren();
+    for (let i = 0; i < 7; i += 1) {
+      const key = addDaysKey(weekStartKey, i);
+      const instant = new Date(madridLocalToIso(key, "12:00"));
+      const dayAppointments = appointments.filter((a) => keyFromIso(a.starts_at) === key);
+      const column = document.createElement("article");
+      column.className = "calendar-day-column";
+      const head = document.createElement("div");
+      head.className = "calendar-day-head";
+      head.innerHTML = `<strong>${dateLong.format(instant)}</strong><span>${dayAppointments.length} ${dayAppointments.length === 1 ? "cita" : "citas"}</span>`;
+      const body = document.createElement("div");
+      body.className = "calendar-day-body";
+      if (!dayAppointments.length) {
+        const empty = document.createElement("div"); empty.className = "empty-day"; empty.textContent = "Sin citas"; body.append(empty);
+      }
+      dayAppointments.forEach((appointment) => {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = `appointment-card${appointment.service_code === "neuropsicologia" ? " neuro" : ""}${["cancelled", "canceled"].includes(appointment.status) ? " cancelled" : ""}`;
+        button.innerHTML = `<time>${timeFmt.format(new Date(appointment.starts_at))}</time><strong>${escapeHtml(appointment.patient_name)}</strong><small>${serviceLabel(appointment.service_code)} · ${statusLabel(appointment.status)}</small>`;
+        button.addEventListener("click", () => openEdit(appointment));
+        body.append(button);
+      });
+      column.append(head, body);
+      els.calendar.append(column);
+    }
+  }
+
+  function escapeHtml(value) {
+    return String(value || "").replace(/[&<>'"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "'": "&#39;", '"': "&quot;" })[c]);
+  }
+
+  function openNew() {
+    els.form.reset();
+    els.id.value = "";
+    els.dialogTitle.textContent = "Nueva cita";
+    els.date.value = todayKey();
+    els.time.value = "09:00";
+    els.service.value = "psicologia_general_sanitaria";
+    els.appointmentStatus.value = "confirmed";
+    els.patientType.value = "existing";
+    els.price.value = "60";
+    setFormMessage("");
+    els.dialog.showModal();
+  }
+
+  function openEdit(a) {
+    els.id.value = a.id;
+    els.dialogTitle.textContent = "Editar cita";
+    els.date.value = keyFromIso(a.starts_at);
+    els.time.value = timeFmt.format(new Date(a.starts_at));
+    els.name.value = a.patient_name || "";
+    els.patientEmail.value = a.patient_email || "";
+    els.phone.value = a.patient_phone || "";
+    els.service.value = a.service_code || "psicologia_general_sanitaria";
+    els.appointmentStatus.value = a.status === "canceled" ? "cancelled" : a.status;
+    els.patientType.value = a.patient_type || "existing";
+    els.price.value = a.price_eur ?? 60;
+    setFormMessage("");
+    els.dialog.showModal();
+  }
+
+  async function rpc(name, body) {
+    const response = await fetch(`${REST_URL}/rpc/${name}`, { method: "POST", headers: authHeaders(), body: JSON.stringify(body) });
+    const data = await response.json().catch(() => ({}));
+    if (!response.ok) throw new Error(data.message || data.hint || "No se ha podido guardar la cita.");
+    return data;
+  }
+
+  async function saveAppointment() {
+    const startsAt = madridLocalToIso(els.date.value, els.time.value);
+    const common = {
+      p_starts_at: startsAt,
+      p_patient_name: els.name.value.trim(),
+      p_patient_email: els.patientEmail.value.trim() || null,
+      p_patient_phone: els.phone.value.trim() || null,
+      p_patient_type: els.patientType.value,
+      p_service_code: els.service.value,
+      p_status: els.appointmentStatus.value,
+      p_price_eur: Number(els.price.value || 60),
+    };
+    if (els.id.value) await rpc("admin_update_appointment", { p_id: els.id.value, ...common });
+    else await rpc("admin_create_appointment", common);
+  }
+
+  els.loginForm?.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    setLoginMessage("Entrando…");
+    try {
+      await signIn(els.email.value.trim(), els.password.value);
+      els.password.value = "";
+      showApp();
+      await loadWeek();
+      setLoginMessage("");
+    } catch (error) { setLoginMessage(error.message); }
+  });
+
+  els.logout?.addEventListener("click", () => { saveSession(null); appointments = []; showLogin(); });
+  els.newButton?.addEventListener("click", openNew);
+  els.print?.addEventListener("click", () => window.print());
+  els.prev?.addEventListener("click", async () => { weekStartKey = addDaysKey(weekStartKey, -7); await loadWeek().catch((e) => setStatus(e.message)); });
+  els.next?.addEventListener("click", async () => { weekStartKey = addDaysKey(weekStartKey, 7); await loadWeek().catch((e) => setStatus(e.message)); });
+  els.today?.addEventListener("click", async () => { weekStartKey = mondayKey(todayKey()); await loadWeek().catch((e) => setStatus(e.message)); });
+  els.dialogClose?.addEventListener("click", () => els.dialog.close());
+  els.cancel?.addEventListener("click", () => els.dialog.close());
+  els.form?.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    if (!els.form.reportValidity()) return;
+    setFormMessage("Guardando…");
+    try {
+      await saveAppointment();
+      els.dialog.close();
+      weekStartKey = mondayKey(els.date.value);
+      await loadWeek();
+    } catch (error) { setFormMessage(error.message); }
+  });
+
+  (async function init() {
+    session = getSession();
+    if (session && await verifySession()) {
+      showApp();
+      loadWeek().catch((e) => setStatus(e.message));
+    } else {
+      saveSession(null);
+      showLogin();
+    }
+  })();
+})();
