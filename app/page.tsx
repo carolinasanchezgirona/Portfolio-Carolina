@@ -12,7 +12,7 @@ export default function HomePage() {
           <a href="#areas">Áreas</a>
           <a href="#como-trabajo">Cómo trabajo</a>
           <a href="#sobre-mi">Sobre mí</a>
-          <a className="nav-cta" href="#contacto">Pedir cita</a>
+          <a className="nav-cta" href="/cita">Pedir cita</a>
         </nav>
       </header>
 
@@ -26,7 +26,7 @@ export default function HomePage() {
               individualizado, cercano y basado en evidencia, adaptado a la persona, su contexto y sus objetivos.
             </p>
             <div className="editorial-actions">
-              <a className="editorial-btn editorial-btn-primary" href="#contacto">Pedir cita <Arrow /></a>
+              <a className="editorial-btn editorial-btn-primary" href="/cita">Pedir cita <Arrow /></a>
               <a className="editorial-btn editorial-btn-secondary" href="#como-trabajo">Cómo trabajo</a>
             </div>
             <div className="editorial-meta" aria-label="Información práctica">
@@ -144,25 +144,6 @@ export default function HomePage() {
               Combino razonamiento clínico, evaluación estructurada y objetivos terapéuticos concretos. Mi formación
               en Ingeniería Biomédica complementa esta práctica desde la neurociencia y la tecnología sanitaria.
             </p>
-          </div>
-        </div>
-      </section>
-
-      <section className="editorial-section editorial-contact" id="contacto" aria-labelledby="contact-title">
-        <div className="editorial-wrap editorial-contact-grid">
-          <div>
-            <p className="editorial-section-eyebrow">Contacto</p>
-            <h2 id="contact-title">Podemos empezar por una primera visita.</h2>
-          </div>
-          <div className="editorial-contact-card">
-            <p className="editorial-contact-place">Arenys de Mar · Maresme</p>
-            <p>Consulta presencial y online · 60 min · 60 €</p>
-            <a className="editorial-btn editorial-btn-primary" href="mailto:contact@carolinasanchezgirona.com?subject=Solicitud%20de%20primera%20visita">
-              Solicitar primera visita <Arrow />
-            </a>
-            <a className="editorial-email" href="mailto:contact@carolinasanchezgirona.com">
-              contact@carolinasanchezgirona.com
-            </a>
           </div>
         </div>
       </section>
