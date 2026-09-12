@@ -34,14 +34,34 @@ export default function BookingPage() {
           <div className="booking-panel-heading">
             <span className="booking-step" aria-hidden="true">01</span>
             <div>
-              <p className="booking-kicker">Tipo de sesión</p>
-              <h2 id="booking-heading">Sesión profesional</h2>
+              <p className="booking-kicker">Tipo de atención</p>
+              <h2 id="booking-heading">Elige el tipo de consulta</h2>
             </div>
           </div>
 
+          <fieldset className="patient-type-fieldset service-type-fieldset">
+            <legend>¿Qué tipo de atención necesitas?</legend>
+            <div className="patient-type-options">
+              <label className="patient-type-option">
+                <input type="radio" name="service_code" value="psicologia_general_sanitaria" form="booking-form" defaultChecked />
+                <span>
+                  <strong>Psicóloga General Sanitaria</strong>
+                  <small>Atención psicológica para adultos.</small>
+                </span>
+              </label>
+              <label className="patient-type-option">
+                <input type="radio" name="service_code" value="neuropsicologia" form="booking-form" />
+                <span>
+                  <strong>Neuropsicóloga</strong>
+                  <small>Evaluación e intervención neuropsicológica.</small>
+                </span>
+              </label>
+            </div>
+          </fieldset>
+
           <div className="service-fixed">
             <div>
-              <strong>Sesión de psicología o neuropsicología</strong>
+              <strong id="selected-service-name">Psicología General Sanitaria</strong>
               <small>60 minutos</small>
             </div>
             <b>60 €</b>
@@ -138,7 +158,7 @@ export default function BookingPage() {
             <label className="privacy-check">
               <input name="informed_consent_accepted" type="checkbox" required />
               <span>
-                He leído y acepto el documento correspondiente a mi intervención: <a href="/consentimiento-psicologico/" target="_blank" rel="noopener">Consentiment informat per a la intervenció psicològica</a> · <a href="/consentimiento-neuropsicologico/" target="_blank" rel="noopener">Consentiment informat per a intervenció neuropsicològica</a>.
+                He leído y acepto el <a id="consent-link" href="/consentimiento-psicologico/" target="_blank" rel="noopener">consentimiento informado para intervención psicológica</a>.
               </span>
             </label>
           </div>
@@ -166,9 +186,9 @@ export default function BookingPage() {
               </p>
             </details>
             <details id="consent-information" className="privacy-details">
-              <summary>Consentimientos informados</summary>
-              <p>
-                Consulta el documento completo de <a href="/consentimiento-psicologico/" target="_blank" rel="noopener">intervenció psicològica</a> o de <a href="/consentimiento-neuropsicologico/" target="_blank" rel="noopener">intervenció neuropsicològica</a>, según corresponda.
+              <summary>Consentimiento informado</summary>
+              <p id="consent-description">
+                Consulta el <a href="/consentimiento-psicologico/" target="_blank" rel="noopener">consentimiento informado para intervención psicológica</a>.
               </p>
             </details>
           </div>
