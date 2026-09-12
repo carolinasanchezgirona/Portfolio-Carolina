@@ -9,6 +9,8 @@ import "./editorial.css";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://carolinasanchezgirona.com"),
+  applicationName: "Carolina Sánchez | Psicóloga",
+  creator: "Carolina Sánchez Girona",
   title: {
     default: "Carolina Sánchez | Psicóloga y Neuropsicóloga en Arenys de Mar",
     template: "%s | Carolina Sánchez",
@@ -35,6 +37,20 @@ export const metadata: Metadata = {
     title: "Carolina Sánchez | Psicóloga y Neuropsicóloga",
     description:
       "Psicología sanitaria y neuropsicología clínica en Arenys de Mar y online.",
+    images: [
+      {
+        url: "/carolina-sanchez-retrato.jpg",
+        width: 480,
+        height: 618,
+        alt: "Carolina Sánchez, psicóloga y neuropsicóloga",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary",
+    title: "Carolina Sánchez | Psicóloga y Neuropsicóloga",
+    description: "Psicología sanitaria y neuropsicología clínica en Arenys de Mar y online.",
+    images: ["/carolina-sanchez-retrato.jpg"],
   },
   robots: {
     index: true,
@@ -139,6 +155,11 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
           href="https://fonts.googleapis.com/css2?family=Newsreader:ital,wght@0,400;0,500;0,600;1,400&family=Inter:wght@400;500;600&display=swap"
           rel="stylesheet"
         />
+        <meta name="theme-color" content="#FBF9F5" />
+        <meta property="og:image" content="https://carolinasanchezgirona.com/carolina-sanchez-retrato.jpg" />
+        <meta property="og:image:width" content="480" />
+        <meta property="og:image:height" content="618" />
+        <meta property="og:image:alt" content="Carolina Sánchez, psicóloga y neuropsicóloga" />
       </head>
       <body>
         <SiteShell>{children}</SiteShell>
