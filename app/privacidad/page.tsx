@@ -8,7 +8,7 @@ export const metadata: Metadata = {
 
 export default function PrivacyPage() {
   return (
-    <main className="legal-page">
+    <main className="legal-page" lang="es">
       <header className="legal-wrap legal-header">
         <a className="legal-brand" href="/">
           <strong>Carolina Sánchez</strong>
@@ -79,6 +79,7 @@ export default function PrivacyPage() {
 
         <section>
           <h2>4. Plazos de conservación de los datos</h2>
+          <p>Los datos se conservarán durante los siguientes períodos:</p>
           <ul>
             <li>Datos administrativos y de contacto: Mientras dure la relación profesional y hasta 5 años después (por prescripción de posibles responsabilidades legales).</li>
             <li>Historia clínica y datos de salud: Mínimo 5 años desde la última consulta, conforme a la normativa sanitaria española.</li>
@@ -94,7 +95,7 @@ export default function PrivacyPage() {
             <li>Cumplimiento de obligaciones legales: Autoridades sanitarias, Hacienda, Seguridad Social, tribunales o fuerzas de seguridad.</li>
             <li>Colaboraciones con otros profesionales de la salud: Solo con consentimiento expreso del paciente.</li>
             <li>Asesoría contable y fiscal: Para la gestión económica de la consulta.</li>
-            <li>Plataformas de gestión de citas o mensajería segura: Si se usan herramientas externas, se garantizará su cumplimiento con el RGPD.</li>
+            <li>Plataformas de gestión de citas o mensajería segura: Si se usan herramientas externas, se garantizará su cumplimiento con el RGPD</li>
           </ul>
           <p>No se realizan transferencias internacionales de datos.</p>
         </section>
@@ -105,17 +106,18 @@ export default function PrivacyPage() {
           <ul>
             <li>Acceso: Saber qué datos tratamos.</li>
             <li>Rectificación: Corregir datos inexactos.</li>
-            <li>Supresión ("derecho al olvido"): Eliminar datos cuando no sean necesarios.</li>
+            <li>Supresión (&quot;derecho al olvido&quot;): Eliminar datos cuando no sean necesarios.</li>
             <li>Limitación del tratamiento: Restringir el uso de datos en ciertos casos.</li>
             <li>Portabilidad: Solicitar la entrega de datos en formato digital estructurado.</li>
             <li>Oposición: Impedir el uso de datos para ciertos fines.</li>
             <li>Retirada del consentimiento: En cualquier momento, sin afectar la licitud del tratamiento previo.</li>
           </ul>
-          <p>Si el usuario considera que sus derechos no han sido respetados, puede presentar una reclamación ante la Agencia Española de Protección de Datos (AEPD).</p>
+          <p>Si el usuario considera que sus derechos no han sido respetados, puede presentar una reclamación ante la Agencia Española de Protección de Datos (AEPD) (www.aepd.es).</p>
         </section>
 
         <section>
           <h2>7. Medidas de seguridad</h2>
+          <p>Para proteger los datos personales, Dememoria aplica las siguientes medidas técnicas y organizativas:</p>
           <h3>7.1. Seguridad de los datos digitales</h3>
           <ul>
             <li>Acceso restringido: Solo profesionales autorizados pueden acceder a la información.</li>
