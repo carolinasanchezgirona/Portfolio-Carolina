@@ -3,7 +3,7 @@
   --e-ink:#1C2320;
   --e-ink-soft:#52605A;
   --e-teal:#11a6c2;
-  --e-teal-tint:#ece5df;
+  --e-teal-tint:#EAF6F8;
   --e-coral:#B24A25;
   --e-coral-tint:#F5E7DE;
   --e-indigo:#4B4ADE;
@@ -148,7 +148,7 @@
 .editorial-card-link{display:inline-flex;margin-top:18px;color:var(--e-teal);font-size:.86rem;font-weight:600;text-decoration:none;}
 .editorial-card-link:hover{text-decoration:underline;}
 
-.editorial-method{background:#F8F4EE;}
+.editorial-method{background:#F3F8F8;}
 .editorial-step-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px;}
 .editorial-step{padding:22px 20px;}
 .editorial-step span{display:block;margin-bottom:8px;color:#8c857a;font-size:.72rem;font-weight:600;letter-spacing:.1em;}
@@ -160,11 +160,11 @@
 .editorial-reviews-copy p{margin:0;max-width:48ch;color:var(--e-ink-soft);line-height:1.7;}
 .editorial-reviews-copy .editorial-card-link{margin-top:14px;}
 
-.editorial-dememoria{background:#173B44;color:#fff;}
+.editorial-dememoria{background:#11A6C2;color:#F8F5F0;}
 .editorial-dememoria-inner{max-width:760px;margin-left:auto;margin-right:auto;text-align:center;}
-.editorial-dememoria .editorial-section-eyebrow{color:#A9D9E2;}
-.editorial-dememoria h2{color:#fff;}
-.editorial-dememoria p:last-child{max-width:60ch;margin:18px auto 0;color:#D8E9EC;line-height:1.7;}
+.editorial-dememoria .editorial-section-eyebrow{color:rgba(248,245,240,.84);}
+.editorial-dememoria h2{color:#F8F5F0;}
+.editorial-dememoria p:last-child{max-width:60ch;margin:18px auto 0;color:rgba(248,245,240,.94);line-height:1.7;}
 
 .editorial-about-grid,
 .editorial-contact-grid{display:grid;grid-template-columns:.9fr 1.1fr;gap:64px;align-items:start;}
@@ -174,7 +174,7 @@
 .editorial-about-copy a{color:var(--e-teal);text-decoration:none;}
 .editorial-about-copy a:hover{text-decoration:underline;}
 
-.editorial-contact{background:#F8F4EE;}
+.editorial-contact{background:#EAF6F8;}
 .editorial-contact-card{padding:28px;}
 .editorial-contact-place{margin:0 0 8px;color:var(--e-teal);font-family:Newsreader,Georgia,serif;font-size:1.5rem;}
 .editorial-contact-card>p:nth-child(2){margin:0 0 22px;color:var(--e-ink-soft);}
