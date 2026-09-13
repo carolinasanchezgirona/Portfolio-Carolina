@@ -21,8 +21,22 @@
       .appointment-card{border-left-color:#11A6C2!important}
       .appointment-card-action{color:#11A6C2!important}
       .patient-history-list button:hover{background:#EAF6F8!important}
+      .admin-top-actions a.admin-secondary{text-decoration:none}
     `;
     document.head.appendChild(brandStyle);
+  }
+
+  if (document.querySelector("#appointment-form") && !document.querySelector("#admin-articles-link")) {
+    const topActions = document.querySelector(".admin-top-actions");
+    if (topActions) {
+      const link = document.createElement("a");
+      link.id = "admin-articles-link";
+      link.href = "/admin/articulos/";
+      link.className = "admin-secondary";
+      link.textContent = "Artículos";
+      const accessButton = document.querySelector("#admin-access");
+      topActions.insertBefore(link, accessButton || null);
+    }
   }
 
   if (document.querySelector("#appointment-form") && !document.querySelector('script[data-admin-recurrence="true"]')) {
