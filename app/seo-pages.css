@@ -32,7 +32,7 @@
 .seo-related{display:grid;gap:8px;margin-top:14px;}
 .seo-related a{color:var(--e-teal);font-size:.88rem;text-decoration:none;overflow-wrap:anywhere;}
 .seo-related a:hover{text-decoration:underline;}
-.seo-authority{background:#F8F4EE;}
+.seo-authority{background:#F3F8F8;}
 .seo-authority-grid{display:grid;grid-template-columns:.8fr 1.2fr;gap:56px;align-items:start;}
 .seo-authority-copy p{margin:0;color:var(--e-ink-soft);line-height:1.7;}
 .seo-authority-copy p+p{margin-top:14px;}
