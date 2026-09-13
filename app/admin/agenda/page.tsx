@@ -1,5 +1,15 @@
 import Script from "next/script";
+import type { Metadata } from "next";
 import "./admin.css";
+
+export const metadata: Metadata = {
+  title: "Mi agenda | Carolina Sánchez",
+  description: "Agenda profesional privada de Carolina Sánchez.",
+  manifest: "/admin-manifest.webmanifest",
+  icons: { icon: "/pwa-icon.svg", apple: "/pwa-icon.svg" },
+  appleWebApp: { capable: true, title: "Mi agenda", statusBarStyle: "default" },
+  robots: { index: false, follow: false, nocache: true },
+};
 
 export default function AdminAgendaPage() {
   return (
@@ -33,12 +43,32 @@ export default function AdminAgendaPage() {
           </div>
           <div className="admin-top-actions">
             <button id="admin-new" className="admin-primary" type="button">Nueva cita</button>
+            <button id="admin-block" className="admin-secondary" type="button">Bloquear horario</button>
+            <button id="pwa-install" className="admin-secondary" type="button" hidden>Instalar app</button>
             <button id="admin-print" className="admin-secondary" type="button">Imprimir semana</button>
             <button id="admin-access" className="admin-secondary" type="button">Acceso</button>
             <button id="admin-logout" className="admin-text" type="button">Cerrar sesión</button>
           </div>
         </header>
 
+        <p id="pwa-install-hint" className="admin-muted" hidden />
+
+        <nav className="admin-view-tabs" aria-label="Vistas de la agenda">
+          <button id="view-today" className="active" type="button">Hoy</button>
+          <button id="view-week" type="button">Semana</button>
+          <button id="view-patients" type="button">Pacientes</button>
+        </nav>
+
+        <section id="today-view" className="admin-view">
+          <div className="today-heading">
+            <div><p className="admin-eyebrow">Vista rápida</p><h2 id="today-title">Hoy</h2></div>
+            <button id="today-new" className="admin-primary" type="button">Añadir cita</button>
+          </div>
+          <div id="today-summary" className="today-summary" />
+          <div id="today-list" className="today-list" />
+        </section>
+
+        <section id="week-view" className="admin-view" hidden>
         <section className="admin-toolbar" aria-label="Navegación de agenda">
           <div className="admin-week-nav">
             <button id="week-prev" type="button" aria-label="Semana anterior">←</button>
@@ -64,6 +94,17 @@ export default function AdminAgendaPage() {
 
         <p id="admin-status" className="admin-message" role="status" aria-live="polite" />
         <section id="week-calendar" className="week-calendar" aria-label="Calendario semanal" />
+        </section>
+
+        <section id="patients-view" className="admin-view" hidden>
+          <div className="patients-heading">
+            <div><p className="admin-eyebrow">Historial administrativo</p><h2>Pacientes y citas</h2></div>
+            <input id="patient-search" type="search" placeholder="Buscar por nombre, correo o teléfono" autoComplete="off" />
+          </div>
+          <p className="admin-note">Se muestran únicamente datos de contacto y citas. No se incluyen notas ni información clínica.</p>
+          <p id="patient-search-status" className="admin-message" role="status" />
+          <div id="patient-results" className="patient-results" />
+        </section>
       </section>
 
       <dialog id="appointment-dialog" className="appointment-dialog">
@@ -151,6 +192,29 @@ export default function AdminAgendaPage() {
         </form>
       </dialog>
 
+      <dialog id="block-dialog" className="appointment-dialog">
+        <form id="block-form">
+          <div className="dialog-heading">
+            <div><p className="admin-eyebrow">Disponibilidad</p><h2>Bloquear horario</h2></div>
+            <button id="block-close" className="dialog-close" type="button" aria-label="Cerrar">×</button>
+          </div>
+          <div className="form-grid two-cols">
+            <label>Fecha<input id="block-date" type="date" required /></label>
+            <label>Motivo<input id="block-reason" type="text" maxLength={120} placeholder="Personal, reunión…" /></label>
+          </div>
+          <div className="form-grid two-cols">
+            <label>Desde<input id="block-start" type="time" step="1800" required /></label>
+            <label>Hasta<input id="block-end" type="time" step="1800" required /></label>
+          </div>
+          <p className="admin-note">La franja dejará de aparecer inmediatamente en la reserva pública. No modifica citas ya existentes.</p>
+          <p id="block-message" className="admin-message" role="status" />
+          <div className="dialog-actions">
+            <button id="block-cancel" className="admin-secondary" type="button">Cerrar</button>
+            <button className="admin-primary" type="submit">Bloquear</button>
+          </div>
+        </form>
+      </dialog>
+
       <dialog id="access-dialog" className="appointment-dialog">
         <form id="access-form">
           <div className="dialog-heading">
@@ -193,7 +257,8 @@ export default function AdminAgendaPage() {
         </form>
       </dialog>
 
-      <Script src="/admin-agenda-v2.js?v=20260913-appointments" strategy="afterInteractive" />
+      <Script src="/admin-agenda-v3.js?v=20260913-app" strategy="afterInteractive" />
+      <Script src="/pwa.js?v=20260913-admin" strategy="afterInteractive" />
     </main>
   );
 }
