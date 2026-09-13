@@ -4,12 +4,55 @@
   const ZONE = "Europe/Madrid";
   const SESSION_KEY = "dememoria_admin_session";
   const form = document.querySelector("#appointment-form");
-  const repeat = document.querySelector("#appointment-repeat");
-  const count = document.querySelector("#appointment-repeat-count");
-  const repeatFields = document.querySelector("#appointment-repeat-fields");
-  if (!form || !repeat || !count) return;
+  if (!form) return;
 
   const q = (s) => document.querySelector(s);
+
+  function ensureControls() {
+    let repeat = q("#appointment-repeat");
+    let count = q("#appointment-repeat-count");
+    let repeatFields = q("#appointment-repeat-fields");
+    if (repeat && count) return { repeat, count, repeatFields };
+
+    const block = document.createElement("div");
+    block.id = "appointment-recurrence-controls";
+    block.className = "form-grid two-cols";
+    block.innerHTML = `
+      <label>
+        Repetir cita
+        <select id="appointment-repeat">
+          <option value="none">No repetir</option>
+          <option value="weekly">Cada semana</option>
+          <option value="biweekly">Cada 15 días</option>
+          <option value="monthly">Una vez al mes</option>
+        </select>
+      </label>
+      <label id="appointment-repeat-fields" hidden>
+        Número de sesiones
+        <input id="appointment-repeat-count" type="number" min="2" max="52" step="1" value="4" />
+      </label>`;
+
+    const firstNote = form.querySelector(".admin-note");
+    form.insertBefore(block, firstNote || q("#appointment-message"));
+
+    const note = document.createElement("p");
+    note.id = "appointment-recurrence-note";
+    note.className = "admin-note";
+    note.textContent = "En una serie, cada sesión se crea como una cita independiente. Antes de crearla se comprueba que ninguna fecha esté ocupada o bloqueada.";
+    block.insertAdjacentElement("afterend", note);
+
+    repeat = q("#appointment-repeat");
+    count = q("#appointment-repeat-count");
+    repeatFields = q("#appointment-repeat-fields");
+    return { repeat, count, repeatFields };
+  }
+
+  const controls = ensureControls();
+  const repeat = controls.repeat;
+  const count = controls.count;
+  const repeatFields = controls.repeatFields;
+  if (!repeat || !count) return;
+
   let configPromise = null;
 
   async function config() {
@@ -76,7 +119,10 @@
     return addMonths(start, index);
   }
 
-  function msg(text) { const el = q("#appointment-message"); if (el) el.textContent = text; }
+  function msg(text) {
+    const el = q("#appointment-message");
+    if (el) el.textContent = text;
+  }
 
   async function rpc(name, body) {
     const c = await config();
@@ -99,18 +145,22 @@
       const aa = a.ok ? await a.json() : [];
       const bb = b.ok ? await b.json() : [];
       if (aa.length || bb.length) {
-        const when = new Intl.DateTimeFormat("es-ES", { weekday: "long", day: "numeric", month: "long", hour: "2-digit", minute: "2-digit", timeZone: ZONE }).format(new Date(start));
+        const when = new Intl.DateTimeFormat("es-ES", {
+          weekday: "long", day: "numeric", month: "long", hour: "2-digit", minute: "2-digit", timeZone: ZONE,
+        }).format(new Date(start));
         throw new Error(`No se ha creado la serie: ${when} ya está ocupado o bloqueado.`);
       }
     }
   }
 
   function visibility() {
-    const active = repeat.value !== "none";
+    const active = repeat.value !== "none" && !q("#appointment-id")?.value;
     if (repeatFields) repeatFields.hidden = !active;
     count.required = active;
   }
+
   repeat.addEventListener("change", visibility);
+  form.addEventListener("reset", () => setTimeout(() => { repeat.value = "none"; visibility(); }, 0));
 
   form.addEventListener("submit", async (event) => {
     if (repeat.value === "none" || q("#appointment-id")?.value) return;
