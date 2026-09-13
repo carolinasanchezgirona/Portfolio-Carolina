@@ -193,7 +193,7 @@ export default function AdminAgendaPage() {
         </form>
       </dialog>
 
-      <Script src="/admin-agenda.js?v=20260913-appointments" strategy="afterInteractive" />
+      <Script src="/admin-agenda-v2.js?v=20260913-appointments" strategy="afterInteractive" />
     </main>
   );
 }
