@@ -134,7 +134,7 @@ export default function BookingPage() {
           </div>
         </section>
 
-        <form id="booking-form" className="booking-panel booking-form" noValidate>
+        <form id="booking-form" className="booking-panel booking-form">
           <div className="booking-panel-heading">
             <span className="booking-step" aria-hidden="true">03</span>
             <div>
@@ -161,7 +161,7 @@ export default function BookingPage() {
               <input id="patient-phone" name="patient_phone" type="tel" autoComplete="tel" maxLength={30} required />
             </div>
           </div>
-          <p className="form-help">No incluyas información clínica ni el motivo de consulta en este formulario.</p>
+          <p className="form-help">Todos los campos mostrados son obligatorios. No incluyas información clínica ni el motivo de consulta en este formulario.</p>
 
           <div id="new-patient-documents" className="acceptances">
             <div className="first-visit-note" role="note">
