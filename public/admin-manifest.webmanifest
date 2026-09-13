@@ -1,0 +1,12 @@
+{
+  "name": "Mi agenda · Carolina Sánchez",
+  "short_name": "Mi agenda",
+  "description": "Agenda profesional privada de Carolina Sánchez.",
+  "start_url": "/admin/agenda/?source=pwa",
+  "scope": "/admin/agenda/",
+  "display": "standalone",
+  "background_color": "#F7F5F0",
+  "theme_color": "#0E6B54",
+  "lang": "es",
+  "icons": [{ "src": "/pwa-icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }]
+}
