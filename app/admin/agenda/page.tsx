@@ -144,8 +144,9 @@ export default function AdminAgendaPage() {
           <p id="appointment-message" className="admin-message" role="status" />
 
           <div className="dialog-actions">
-            <button id="appointment-cancel" className="admin-secondary" type="button">Cancelar</button>
-            <button className="admin-primary" type="submit">Guardar cita</button>
+            <button id="appointment-close" className="admin-secondary" type="button">Cerrar sin guardar</button>
+            <button id="appointment-cancel-booking" className="admin-danger" type="button" hidden>Cancelar cita</button>
+            <button id="appointment-save" className="admin-primary" type="submit">Crear cita</button>
           </div>
         </form>
       </dialog>
@@ -192,7 +193,7 @@ export default function AdminAgendaPage() {
         </form>
       </dialog>
 
-      <Script src="/admin-agenda.js?v=20260912-2139" strategy="afterInteractive" />
+      <Script src="/admin-agenda.js?v=20260913-appointments" strategy="afterInteractive" />
     </main>
   );
 }
