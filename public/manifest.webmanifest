@@ -1,0 +1,19 @@
+{
+  "name": "Citas · Carolina Sánchez",
+  "short_name": "Citas Carolina",
+  "description": "Reserva de citas de Psicología y Neuropsicología con Carolina Sánchez.",
+  "start_url": "/cita/?source=pwa",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#FBF9F5",
+  "theme_color": "#0E6B54",
+  "lang": "es",
+  "icons": [
+    {
+      "src": "/pwa-icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
