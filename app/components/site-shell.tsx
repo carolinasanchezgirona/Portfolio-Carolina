@@ -29,6 +29,7 @@ function SiteHeader() {
         <a href="/psicologia/">Psicología</a>
         <a href="/neuropsicologia/">Neuropsicología</a>
         <a href="/sobre-mi/">Sobre mí</a>
+        <a href="/articulos/">Artículos</a>
         <a className="nav-cta" href="/cita/">Pedir cita</a>
       </nav>
 
@@ -43,6 +44,7 @@ function SiteHeader() {
           <a href="/evaluacion-neuropsicologica/">Evaluación neuropsicológica</a>
           <a href="/deterioro-cognitivo/">Deterioro cognitivo</a>
           <a href="/sobre-mi/">Sobre mí</a>
+          <a href="/articulos/">Artículos</a>
           <a href="/psicologa-arenys-de-mar/">Consulta en Arenys de Mar</a>
           <a href="/cita/">Pedir cita</a>
         </div>
@@ -78,6 +80,7 @@ function SiteFooter() {
         <nav className="site-footer-column" aria-label="Consulta">
           <p className="site-footer-heading">Consulta</p>
           <a href="/sobre-mi/">Sobre mí</a>
+          <a href="/articulos/">Artículos</a>
           <a href="/psicologa-arenys-de-mar/">Psicóloga en Arenys de Mar</a>
           <a href="/cita/">Pedir cita</a>
         </nav>
