@@ -8,6 +8,23 @@
   const isStandalone = window.matchMedia("(display-mode: standalone)").matches || window.navigator.standalone === true;
   const isIOS = /iphone|ipad|ipod/i.test(window.navigator.userAgent);
 
+  if (document.querySelector("#appointment-form") && !document.querySelector("style[data-admin-brand=true]")) {
+    const brandStyle = document.createElement("style");
+    brandStyle.dataset.adminBrand = "true";
+    brandStyle.textContent = `
+      .admin-primary{border-color:#11A6C2!important;background:#11A6C2!important;color:#FBF9F5!important}
+      .admin-primary:hover{border-color:#075A68!important;background:#075A68!important}
+      .admin-secondary,.admin-week-nav button{border-color:#9EDCE7!important;color:#11A6C2!important}
+      .admin-secondary:hover,.admin-week-nav button:hover{border-color:#11A6C2!important;background:#EAF6F8!important}
+      .admin-view-tabs button.active{background:#11A6C2!important;color:#FBF9F5!important;box-shadow:0 5px 16px rgba(17,166,194,.22)!important}
+      .dot-psych{background:#11A6C2!important}
+      .appointment-card{border-left-color:#11A6C2!important}
+      .appointment-card-action{color:#11A6C2!important}
+      .patient-history-list button:hover{background:#EAF6F8!important}
+    `;
+    document.head.appendChild(brandStyle);
+  }
+
   if (document.querySelector("#appointment-form") && !document.querySelector('script[data-admin-recurrence="true"]')) {
     const recurrenceScript = document.createElement("script");
     recurrenceScript.src = "/admin-recurrence.js?v=20260913-recurrence-2";
