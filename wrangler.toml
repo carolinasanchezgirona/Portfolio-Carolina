@@ -7,4 +7,4 @@ command = "npm run build"
 [assets]
 directory = "./out"
 
-# redeploy trigger 2026-09-13-articles-editor-v2
+# redeploy trigger 2026-09-13-article-layout-controls
