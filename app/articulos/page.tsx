@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
+import Script from "next/script";
 import "./articles.css";
-import { getPublishedArticles } from "./articles-data";
 
 export const metadata: Metadata = {
   title: "Artículos de Psicología y Neuropsicología",
@@ -13,24 +13,9 @@ export const metadata: Metadata = {
   },
 };
 
-type PageProps = { searchParams: Promise<{ categoria?: string }> };
-
-function categoryLabel(category: string) {
-  return category === "neuropsicologia" ? "Neuropsicología" : "Psicología";
-}
-
-function formatDate(value: string | null) {
-  if (!value) return "";
-  return new Intl.DateTimeFormat("es-ES", { day: "numeric", month: "long", year: "numeric", timeZone: "Europe/Madrid" }).format(new Date(value));
-}
-
-export default async function ArticlesPage({ searchParams }: PageProps) {
-  const params = await searchParams;
-  const category = params.categoria === "psicologia" || params.categoria === "neuropsicologia" ? params.categoria : undefined;
-  const articles = await getPublishedArticles(category);
-
+export default function ArticlesPage() {
   return (
-    <main className="articles-page">
+    <main className="articles-page" data-articles-view="list">
       <section className="articles-hero">
         <div className="articles-wrap">
           <p className="articles-kicker">Recursos</p>
@@ -38,34 +23,18 @@ export default async function ArticlesPage({ searchParams }: PageProps) {
           <p className="articles-lead">Psicología, neuropsicología y salud cognitiva explicadas con rigor, claridad y utilidad práctica.</p>
         </div>
       </section>
-
       <div className="articles-wrap">
         <div className="articles-toolbar">
           <div className="articles-filters" aria-label="Filtrar artículos">
-            <a className={!category ? "active" : ""} href="/articulos/">Todos</a>
-            <a className={category === "psicologia" ? "active" : ""} href="/articulos/?categoria=psicologia">Psicología</a>
-            <a className={category === "neuropsicologia" ? "active" : ""} href="/articulos/?categoria=neuropsicologia">Neuropsicología</a>
+            <a data-category="all" href="/articulos/">Todos</a>
+            <a data-category="psicologia" href="/articulos/?categoria=psicologia">Psicología</a>
+            <a data-category="neuropsicologia" href="/articulos/?categoria=neuropsicologia">Neuropsicología</a>
           </div>
         </div>
-
-        {articles.length ? (
-          <section className="articles-grid" aria-label="Listado de artículos">
-            {articles.map((article) => (
-              <article key={article.id} className={`articles-card${article.featured ? " featured" : ""}`}>
-                <div className="articles-card-meta">
-                  <span className="articles-card-category">{categoryLabel(article.category)}</span>
-                  {article.published_at ? <span>{formatDate(article.published_at)}</span> : null}
-                </div>
-                <h2><a href={`/articulos/${article.slug}/`} style={{ color: "inherit", textDecoration: "none" }}>{article.title}</a></h2>
-                {article.excerpt ? <p>{article.excerpt}</p> : null}
-                <a className="articles-card-link" href={`/articulos/${article.slug}/`}>Leer artículo →</a>
-              </article>
-            ))}
-          </section>
-        ) : (
-          <div className="articles-empty">Próximamente encontrarás aquí nuevos artículos.</div>
-        )}
+        <p id="articles-status" className="articles-empty">Cargando artículos…</p>
+        <section id="articles-grid" className="articles-grid" aria-label="Listado de artículos" />
       </div>
+      <Script src="/articles-public.js?v=20260913-1" strategy="afterInteractive" />
     </main>
   );
 }
