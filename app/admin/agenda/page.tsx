@@ -42,6 +42,7 @@ export default function AdminAgendaPage() {
             <h1>Agenda de pacientes</h1>
           </div>
           <div className="admin-top-actions">
+            <a className="admin-secondary" href="/admin/articulos/">Artículos</a>
             <button id="admin-new" className="admin-primary" type="button">Nueva cita</button>
             <button id="admin-block" className="admin-secondary" type="button">Bloquear horario</button>
             <button id="pwa-install" className="admin-secondary" type="button" hidden>Instalar app</button>
