@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Citas Carolina Sánchez">
+  <rect width="512" height="512" rx="112" fill="#0E6B54"/>
+  <circle cx="256" cy="256" r="170" fill="#FBF9F5" opacity="0.08"/>
+  <text x="256" y="292" text-anchor="middle" font-family="Georgia, serif" font-size="150" font-weight="700" fill="#FBF9F5">CS</text>
+  <circle cx="384" cy="128" r="26" fill="#B24A25"/>
+</svg>
