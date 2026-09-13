@@ -42,6 +42,7 @@
     newDocuments: $("#new-patient-documents"),
     newSignature: $("#new-patient-signature"),
     newInformation: $("#new-patient-information"),
+    firstVisitNote: $(".first-visit-note"),
     selectedServiceName: $("#selected-service-name"),
     consentLink: $("#consent-link"),
     consentDescription: $("#consent-description"),
@@ -125,21 +126,17 @@
 
   function updatePatientType() {
     const existing = patientTypeValue() === "existing";
-    if (els.newDocuments) els.newDocuments.hidden = existing;
-    if (els.newSignature) els.newSignature.hidden = existing;
-    if (els.newInformation) els.newInformation.hidden = existing;
+    if (els.newDocuments) els.newDocuments.hidden = false;
+    if (els.newSignature) els.newSignature.hidden = false;
+    if (els.newInformation) els.newInformation.hidden = false;
+    if (els.firstVisitNote) els.firstVisitNote.hidden = existing;
 
     const privacy = form.elements.namedItem("privacy_acknowledged");
     const consent = form.elements.namedItem("informed_consent_accepted");
     const signer = form.elements.namedItem("signer_name");
-    if (privacy) privacy.required = !existing;
-    if (consent) consent.required = !existing;
-    if (signer) signer.required = !existing;
-    if (existing) {
-      if (privacy) privacy.checked = false;
-      if (consent) consent.checked = false;
-      if (signer) signer.value = "";
-    }
+    if (privacy) privacy.required = true;
+    if (consent) consent.required = true;
+    if (signer) signer.required = true;
   }
 
   function selectSlot(slot) {
@@ -312,15 +309,13 @@
     if (!email) return showMessage("Escribe tu correo electrónico.", "error");
     if (!form.elements.patient_email.checkValidity()) return showMessage("Comprueba que el correo electrónico sea válido.", "error");
     if (!phone) return showMessage("Escribe tu número de teléfono.", "error");
+    if (!data.get("privacy_acknowledged") || !data.get("informed_consent_accepted")) {
+      return showMessage("Debes leer y aceptar la privacidad y el consentimiento informado.", "error");
+    }
     if (!data.get("cancellation_accepted")) return showMessage("Debes leer y aceptar la política de cancelación.", "error");
-    if (!isExisting) {
-      if (!data.get("privacy_acknowledged") || !data.get("informed_consent_accepted")) {
-        return showMessage("Debes leer y aceptar la privacidad y el consentimiento informado.", "error");
-      }
-      if (!signer) return showMessage("Escribe tu nombre y apellidos en el campo de firma electrónica.", "error");
-      if (signer.toLocaleLowerCase("es") !== name.toLocaleLowerCase("es")) {
-        return showMessage("La firma debe coincidir con el nombre y apellidos indicados.", "error");
-      }
+    if (!signer) return showMessage("Escribe tu nombre y apellidos en el campo de firma electrónica.", "error");
+    if (signer.toLocaleLowerCase("es") !== name.toLocaleLowerCase("es")) {
+      return showMessage("La firma debe coincidir con el nombre y apellidos indicados.", "error");
     }
 
     els.submit.disabled = true;
@@ -333,10 +328,10 @@
         p_patient_email: email,
         p_patient_phone: phone,
         p_patient_type: patientType,
-        p_privacy_acknowledged: !isExisting,
+        p_privacy_acknowledged: true,
         p_cancellation_accepted: true,
-        p_informed_consent_accepted: !isExisting,
-        p_signer_name: isExisting ? null : signer,
+        p_informed_consent_accepted: true,
+        p_signer_name: signer,
         p_service_code: serviceCode,
       });
       if (!response.ok) {
