@@ -2,8 +2,8 @@
   --e-bg:#FBF9F5;
   --e-ink:#1C2320;
   --e-ink-soft:#52605A;
-  --e-teal:#0E6B54;
-  --e-teal-tint:#E3EFEA;
+  --e-teal:#0B7285;
+  --e-teal-tint:#E2F3F5;
   --e-coral:#B24A25;
   --e-coral-tint:#F5E7DE;
   --e-indigo:#4B4ADE;
@@ -57,7 +57,7 @@
   color:var(--e-bg);
   box-shadow:none;
 }
-.editorial-site .nav a.nav-cta:hover{background:#095742;color:var(--e-bg);}
+.editorial-site .nav a.nav-cta:hover{background:#075A68;color:var(--e-bg);}
 
 .editorial-hero{padding:56px 0 64px;border-bottom:1px solid var(--e-line);}
 .editorial-hero-grid{
@@ -101,7 +101,7 @@
   font-weight:600;
 }
 .editorial-btn-primary{border:1px solid var(--e-teal);border-radius:999px;background:var(--e-teal);color:var(--e-bg);}
-.editorial-btn-primary:hover{background:#095742;border-color:#095742;color:var(--e-bg);}
+.editorial-btn-primary:hover{background:#075A68;border-color:#075A68;color:var(--e-bg);}
 .editorial-btn-secondary{border:1px solid var(--e-line);border-radius:10px;background:transparent;color:var(--e-ink);}
 .editorial-btn-secondary:hover{border-color:#cfc9bf;background:#fff;}
 .editorial-meta{display:flex;gap:20px;flex-wrap:wrap;color:#827a6e;font-size:.8rem;}
@@ -160,11 +160,11 @@
 .editorial-reviews-copy p{margin:0;max-width:48ch;color:var(--e-ink-soft);line-height:1.7;}
 .editorial-reviews-copy .editorial-card-link{margin-top:14px;}
 
-.editorial-dememoria{background:#1F2B27;color:#fff;}
+.editorial-dememoria{background:#173B44;color:#fff;}
 .editorial-dememoria-inner{max-width:760px;margin-left:auto;margin-right:auto;text-align:center;}
-.editorial-dememoria .editorial-section-eyebrow{color:#B9D3C9;}
+.editorial-dememoria .editorial-section-eyebrow{color:#A9D9E2;}
 .editorial-dememoria h2{color:#fff;}
-.editorial-dememoria p:last-child{max-width:60ch;margin:18px auto 0;color:#DCE6E1;line-height:1.7;}
+.editorial-dememoria p:last-child{max-width:60ch;margin:18px auto 0;color:#D8E9EC;line-height:1.7;}
 
 .editorial-about-grid,
 .editorial-contact-grid{display:grid;grid-template-columns:.9fr 1.1fr;gap:64px;align-items:start;}
