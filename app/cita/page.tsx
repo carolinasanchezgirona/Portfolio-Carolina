@@ -5,6 +5,16 @@ import "./booking.css";
 export const metadata: Metadata = {
   title: "Pedir cita | Carolina Sánchez Girona",
   description: "Reserva una sesión de psicología o neuropsicología con Carolina Sánchez Girona.",
+  manifest: "/manifest.webmanifest",
+  icons: {
+    icon: "/pwa-icon.svg",
+    apple: "/pwa-icon.svg",
+  },
+  appleWebApp: {
+    capable: true,
+    title: "Citas Carolina",
+    statusBarStyle: "default",
+  },
 };
 
 export default function BookingPage() {
@@ -27,6 +37,10 @@ export default function BookingPage() {
           <p className="booking-lead">
             Consulta la primera cita disponible o abre el calendario para elegir otra fecha.
           </p>
+          <button id="pwa-install" className="text-button" type="button" hidden>
+            Instalar citas en el móvil
+          </button>
+          <p id="pwa-install-hint" className="form-help" hidden />
         </div>
       </section>
 
@@ -228,6 +242,7 @@ export default function BookingPage() {
       </footer>
 
       <Script src="/booking.js" strategy="afterInteractive" />
+      <Script src="/pwa.js" strategy="afterInteractive" />
     </main>
   );
 }
