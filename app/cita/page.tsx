@@ -96,7 +96,7 @@ export default function BookingPage() {
                 <input type="radio" name="patient_type" value="existing" form="booking-form" />
                 <span>
                   <strong>Paciente existente</strong>
-                  <small>Solo tendrás que confirmar tus datos y la política de cancelación.</small>
+                  <small>También completarás privacidad, consentimiento, cancelación y firma electrónica.</small>
                 </span>
               </label>
             </div>
@@ -196,7 +196,7 @@ export default function BookingPage() {
           <div id="new-patient-signature" className="form-field signature-field">
             <label htmlFor="signer-name">Firma electrónica · escribe tu nombre y apellidos</label>
             <input id="signer-name" name="signer_name" type="text" autoComplete="name" maxLength={120} required />
-            <p className="form-help">Al confirmar, esta firma queda asociada a la fecha, la cita y los documentos aceptados.</p>
+            <p className="form-help">Debe coincidir exactamente con el campo «Nombre y apellidos». Al confirmar, esta firma queda asociada a la fecha, la cita y los documentos aceptados.</p>
           </div>
 
           <div id="new-patient-information" className="legal-information">
@@ -242,6 +242,7 @@ export default function BookingPage() {
       </footer>
 
       <Script src="/booking.js" strategy="afterInteractive" />
+      <Script src="/booking-calendar.js?v=20260913-calendar-1" strategy="afterInteractive" />
       <Script src="/pwa.js" strategy="afterInteractive" />
     </main>
   );
