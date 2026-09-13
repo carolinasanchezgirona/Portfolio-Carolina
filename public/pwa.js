@@ -16,6 +16,14 @@
     document.head.appendChild(recurrenceScript);
   }
 
+  if (document.querySelector("#appointment-form") && !document.querySelector('script[data-admin-communications="true"]')) {
+    const communicationsScript = document.createElement("script");
+    communicationsScript.src = "/admin-communications.js?v=20260913-communications-1";
+    communicationsScript.defer = true;
+    communicationsScript.dataset.adminCommunications = "true";
+    document.head.appendChild(communicationsScript);
+  }
+
   if ("serviceWorker" in navigator) {
     window.addEventListener("load", () => {
       navigator.serviceWorker.register("/sw.js").catch((error) => {
