@@ -11,18 +11,33 @@ export default function ArticleReaderPage() {
           <header className="article-header">
             <p id="article-category" className="articles-kicker" />
             <h1 id="article-title" />
+            <p id="article-subtitle" className="article-subtitle" />
             <p id="article-excerpt" className="article-excerpt" />
-            <p id="article-date" className="article-date" />
-            <img id="article-image" className="article-image" alt="" hidden />
+            <div className="article-meta"><span id="article-date" /><span id="article-reading-time" /></div>
+            <div id="article-tags" className="article-tags" />
+            <figure id="article-figure" className="article-figure" hidden>
+              <img id="article-image" className="article-image" alt="" />
+              <figcaption id="article-image-caption" />
+            </figure>
           </header>
-          <article id="article-content" className="article-prose" />
+          <div className="article-reading-layout">
+            <aside id="article-toc" className="article-toc" hidden>
+              <strong>En este artículo</strong>
+              <nav id="article-toc-links" aria-label="Índice del artículo" />
+            </aside>
+            <article id="article-content" className="article-prose" />
+          </div>
+          <aside id="article-cta" className="article-cta" hidden>
+            <div><span>Siguiente paso</span><strong id="article-cta-heading">¿Quieres dar el siguiente paso?</strong></div>
+            <a id="article-cta-link" href="/cita/">Pedir cita →</a>
+          </aside>
           <aside id="article-related" className="article-related" hidden>
-            <strong>¿Quieres saber más?</strong>
+            <strong>También puede interesarte</strong>
             <a id="article-related-link" href="#">Ver información relacionada →</a>
           </aside>
         </div>
       </div>
-      <Script src="/articles-public.js?v=20260913-1" strategy="afterInteractive" />
+      <Script src="/articles-public.js?v=20260913-editor-2" strategy="afterInteractive" />
     </main>
   );
 }
