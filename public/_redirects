@@ -3,6 +3,6 @@
 /es / 301
 /es/ / 301
 /es/* / 301
-/articulos/leer/ /articulos/leer/index.html 200
-/articulos/:slug/ /articulos/leer/index.html?slug=:slug 200
-/articulos/:slug /articulos/leer/index.html?slug=:slug 200
+/articulos/leer/ /articulos/ 302
+/articulos/:slug/ /articulos/leer/ 200
+/articulos/:slug /articulos/leer/ 200
