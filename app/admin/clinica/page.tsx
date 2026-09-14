@@ -16,14 +16,8 @@ export default function AdminClinicaPage() {
           <p className="clinic-eyebrow">Dememoria · Área privada</p>
           <h1>Gestión clínica</h1>
           <p>Acceso reservado a Carolina Sánchez.</p>
-          <label>
-            Correo
-            <input id="clinic-email" type="email" autoComplete="username" required />
-          </label>
-          <label>
-            Contraseña
-            <input id="clinic-password" type="password" autoComplete="current-password" required />
-          </label>
+          <label>Correo<input id="clinic-email" type="email" autoComplete="username" required /></label>
+          <label>Contraseña<input id="clinic-password" type="password" autoComplete="current-password" required /></label>
           <p id="clinic-login-message" className="clinic-message" role="status" />
           <button className="clinic-primary clinic-login-button" type="submit">Entrar</button>
           <a className="clinic-back" href="/admin/agenda/">Volver a la agenda</a>
@@ -54,10 +48,7 @@ export default function AdminClinicaPage() {
 
         <section id="clinic-today-view" className="clinic-view">
           <div className="clinic-section-heading">
-            <div>
-              <p className="clinic-eyebrow">Vista rápida</p>
-              <h2>Consultas de hoy</h2>
-            </div>
+            <div><p className="clinic-eyebrow">Vista rápida</p><h2>Consultas de hoy</h2></div>
             <a className="clinic-primary" href="/admin/agenda/">Nueva cita</a>
           </div>
           <div className="clinic-summary" aria-label="Resumen del día">
@@ -71,39 +62,71 @@ export default function AdminClinicaPage() {
 
         <section id="clinic-patients-view" className="clinic-view" hidden>
           <div className="clinic-section-heading clinic-patients-heading">
-            <div>
-              <p className="clinic-eyebrow">Dememoria</p>
-              <h2>Pacientes</h2>
-            </div>
+            <div><p className="clinic-eyebrow">Dememoria</p><h2>Pacientes</h2></div>
             <input id="clinic-patient-search" type="search" placeholder="Buscar por nombre, correo o teléfono" autoComplete="off" />
           </div>
-          <p className="clinic-note">
-            Esta primera versión vincula cada paciente con su historial de citas. Las notas clínicas se incorporarán en el siguiente bloque.
-          </p>
+          <p className="clinic-note">Las fichas clínicas están vinculadas a las reservas reales, pero conservan documentación independiente y privada.</p>
           <div id="clinic-patient-list" className="clinic-patient-list" />
         </section>
       </section>
 
-      <dialog id="clinic-patient-dialog" className="clinic-dialog">
-        <div className="clinic-dialog-content">
+      <dialog id="clinic-patient-dialog" className="clinic-dialog clinic-patient-dialog">
+        <form id="clinic-patient-form" className="clinic-dialog-content">
+          <input id="clinic-patient-id" type="hidden" />
           <div className="clinic-dialog-heading">
-            <div>
-              <p className="clinic-eyebrow">Ficha de paciente</p>
-              <h2 id="clinic-patient-name">Paciente</h2>
-            </div>
+            <div><p className="clinic-eyebrow">Ficha clínica</p><h2 id="clinic-patient-name">Paciente</h2></div>
             <button id="clinic-patient-close" className="clinic-close" type="button" aria-label="Cerrar">×</button>
           </div>
           <div id="clinic-patient-contact" className="clinic-contact" />
-          <div className="clinic-next-step">
-            <strong>Continuidad clínica</strong>
-            <p>La ficha clínica, Preparar sesión y Cierre asistido se añadirán aquí sin mezclar los datos con Mineuri.</p>
+
+          <section className="clinic-preparation">
+            <p className="clinic-eyebrow">Preparar sesión</p>
+            <div id="clinic-preparation-content" />
+          </section>
+
+          <div className="clinic-form-grid">
+            <label className="clinic-full">Síntesis clínica<textarea id="clinic-summary-note" rows={4} placeholder="Problemas actuales, contexto y evolución relevante…" /></label>
+            <label>Para la próxima sesión<textarea id="clinic-next-focus" rows={3} placeholder="Cuestiones pendientes y focos posibles…" /></label>
+            <label>Medicación registrada<textarea id="clinic-medication" rows={3} placeholder="Fármaco, dosis, fecha y fuente…" /></label>
           </div>
-          <h3>Historial de citas</h3>
+          <div className="clinic-form-actions">
+            <p id="clinic-patient-message" className="clinic-message" role="status" />
+            <button className="clinic-primary" type="submit">Guardar ficha</button>
+          </div>
+
+          <h3>Sesiones y citas</h3>
           <div id="clinic-patient-history" className="clinic-history" />
-        </div>
+        </form>
       </dialog>
 
-      <Script src="/admin-clinica.js?v=20260914-1" strategy="afterInteractive" />
+      <dialog id="clinic-session-dialog" className="clinic-dialog clinic-session-dialog">
+        <form id="clinic-session-form" className="clinic-dialog-content">
+          <input id="clinic-session-id" type="hidden" />
+          <input id="clinic-session-patient-id" type="hidden" />
+          <input id="clinic-session-appointment-id" type="hidden" />
+          <div className="clinic-dialog-heading">
+            <div><p className="clinic-eyebrow">Sesión clínica</p><h2 id="clinic-session-title">Sesión</h2></div>
+            <button id="clinic-session-close" className="clinic-close" type="button" aria-label="Cerrar">×</button>
+          </div>
+          <p id="clinic-session-state" className="clinic-note" />
+          <label className="clinic-session-field">Notas de trabajo<textarea id="clinic-work-notes" rows={5} placeholder="Apuntes breves durante la consulta. No forman parte del registro aprobado." /></label>
+          <div className="clinic-form-grid">
+            <label>Evolución<textarea id="clinic-evolution-note" rows={4} /></label>
+            <label>Intervención<textarea id="clinic-intervention-note" rows={4} /></label>
+            <label>Respuesta<textarea id="clinic-response-note" rows={3} /></label>
+            <label>Acuerdos<textarea id="clinic-agreements-note" rows={3} /></label>
+            <label>Tarea o ejercicio<textarea id="clinic-homework-note" rows={3} /></label>
+            <label>Próxima sesión<textarea id="clinic-next-session-note" rows={3} /></label>
+          </div>
+          <p id="clinic-session-message" className="clinic-message" role="status" />
+          <div className="clinic-dialog-actions">
+            <button id="clinic-save-draft" className="clinic-secondary" type="button">Guardar borrador</button>
+            <button id="clinic-approve-session" className="clinic-primary" type="submit">Aprobar y cerrar</button>
+          </div>
+        </form>
+      </dialog>
+
+      <Script src="/admin-clinica.js?v=20260914-2" strategy="afterInteractive" />
     </main>
   );
 }
