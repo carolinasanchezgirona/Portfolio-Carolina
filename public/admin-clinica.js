@@ -215,6 +215,17 @@
       const state = item.email_status === "sent" ? `Enviado · enlace hasta ${dateShort.format(new Date(item.access_expires_at))}` : item.status === "prepared" ? "Preparado, sin enviar" : item.status;
       info.append(create("strong", "", item.title), create("span", "", state));
       row.append(info);
+      if (["sent", "assigned"].includes(item.status)) {
+        const reviewed = create("button", "clinic-secondary", "Marcar revisado"); reviewed.type = "button";
+        reviewed.addEventListener("click", async () => {
+          try {
+            const rows = await rest(`clinical_exercise_assignments?id=eq.${encodeURIComponent(item.id)}&select=*`, { method: "PATCH", headers: { Prefer: "return=representation" }, body: JSON.stringify({ status: "reviewed", reviewed_at: new Date().toISOString(), updated_at: new Date().toISOString() }) });
+            if (rows?.[0]) exerciseAssignments = exerciseAssignments.map((x) => x.id === item.id ? rows[0] : x);
+            renderExercises(currentPatient); renderTimeline(currentPatient); renderPending();
+          } catch (error) { els.patientMessage.textContent = error.message; }
+        });
+        row.append(reviewed);
+      }
       els.patientExercises.append(row);
     });
   }
@@ -563,6 +574,7 @@
       .forEach((field) => { field.disabled = approved; });
     els.saveDraft.disabled = approved;
     els.approveSession.disabled = approved;
+    els.dictate.disabled = approved;
     els.sessionDialog.showModal();
   }
 
@@ -841,7 +853,7 @@
   els.patientSearch.addEventListener("input", () => renderPatients(els.patientSearch.value));
   els.patientClose.addEventListener("click", () => els.patientDialog.close());
   els.patientForm.addEventListener("submit", (event) => savePatient(event).catch((error) => { els.patientMessage.textContent = error.message; }));
-  els.sessionClose.addEventListener("click", () => els.sessionDialog.close());
+  els.sessionClose.addEventListener("click", () => { if (isDictating) speechRecognition?.stop(); els.sessionDialog.close(); });
   els.refreshTimeline.addEventListener("click", () => currentPatient && renderTimeline(currentPatient));
   els.addDocument.addEventListener("click", () => { if (!currentPatient) return; els.documentForm.reset(); els.documentDate.value = todayKey(); els.documentMessage.textContent = ""; els.documentDialog.showModal(); });
   els.documentClose.addEventListener("click", () => els.documentDialog.close());
