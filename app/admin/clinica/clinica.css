@@ -39,3 +39,13 @@
 .clinic-draft-generator strong{color:#1f5f99}
 .clinic-draft-generator p{margin:4px 0 0;color:#4b6072;font-size:.8rem;line-height:1.5}
 @media(max-width:620px){.clinic-draft-generator{align-items:stretch;flex-direction:column}.clinic-draft-generator button{width:100%}}
+
+.clinic-exercises-section{margin:28px 0;padding:22px;border:1px solid #a9c7df;border-radius:16px;background:#f8fbfe}
+.clinic-exercises-section h3{margin:3px 0 0}
+.clinic-exercise-suggestions{display:grid;gap:10px;margin:16px 0 20px}
+.clinic-exercise-card{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:15px;border:1px solid #d5e3ee;border-radius:13px;background:#fff}
+.clinic-exercise-card p{margin:5px 0 0;color:#607786;font-size:13px}
+.clinic-exercise-dialog{width:min(720px,calc(100% - 24px))}
+.clinic-exercise-dialog label{display:grid;gap:7px;margin:14px 0;font-weight:700}
+.clinic-exercise-dialog input,.clinic-exercise-dialog textarea{width:100%;border:1px solid #a9c7df;border-radius:10px;padding:11px 12px;font:inherit;color:#233746;background:#fff}
+@media(max-width:620px){.clinic-exercise-card{align-items:flex-start;flex-direction:column}.clinic-exercise-card button{width:100%}}
