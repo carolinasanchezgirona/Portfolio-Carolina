@@ -20,3 +20,17 @@
 .clinic-empty-inline{margin:0;padding:18px;color:#7b7167;font-size:.84rem}
 .clinic-session-field{margin:18px 0}
 @media(max-width:620px){.clinic-preparation-grid,.clinic-form-grid{grid-template-columns:1fr}.clinic-dialog-content{padding:20px}.clinic-form-actions,.clinic-dialog-actions{align-items:stretch;flex-direction:column}.clinic-form-actions .clinic-message{margin-right:0}.clinic-history article{align-items:stretch;flex-direction:column}.clinic-history article button{width:100%}}
+
+.clinic-consultation-tools{display:grid;gap:18px;margin:18px 0;padding:18px;border:1px solid #a9c7df;border-radius:14px;background:#f5f9fc}
+.clinic-marker-grid{display:flex;flex-wrap:wrap;gap:8px}
+.clinic-marker-grid label,.clinic-session-goals label{display:flex;align-items:center;gap:7px;padding:8px 11px;border:1px solid #a9c7df;border-radius:999px;background:#fff;color:#334e63;font-size:.78rem;font-weight:700;cursor:pointer}
+.clinic-marker-grid label:has(input:checked),.clinic-session-goals label:has(input:checked){border-color:#1f5f99;background:#eaf3fa;color:#1f5f99}
+.clinic-marker-grid input,.clinic-session-goals input{accent-color:#1f5f99}
+.clinic-evolution-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:9px}
+.clinic-evolution-grid label{display:grid;gap:6px;color:#4b6072;font-size:.76rem;font-weight:700}
+.clinic-evolution-grid select{min-height:40px;padding:7px 8px;border:1px solid #a9c7df;border-radius:10px;background:#fff;color:#2d322f;font:600 .77rem Inter,sans-serif}
+.clinic-goals-heading{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.clinic-goals-heading .clinic-text{min-height:34px;padding:5px 9px;color:#1f5f99}
+.clinic-session-goals{display:flex;flex-wrap:wrap;gap:8px}
+@media(max-width:760px){.clinic-evolution-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:480px){.clinic-evolution-grid{grid-template-columns:1fr}.clinic-marker-grid label,.clinic-session-goals label{width:100%;border-radius:10px}}
