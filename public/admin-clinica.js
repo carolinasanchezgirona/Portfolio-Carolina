@@ -44,6 +44,16 @@
     exerciseTitle: $("#clinic-exercise-title"), exerciseContent: $("#clinic-exercise-content"),
     exerciseRationale: $("#clinic-exercise-rationale"), exerciseEmail: $("#clinic-exercise-email"),
     exerciseMessage: $("#clinic-exercise-message"), saveExercise: $("#clinic-save-exercise"),
+    printHistory: $("#clinic-print-history"), newReport: $("#clinic-new-report"), patientReports: $("#clinic-patient-reports"),
+    reportDialog: $("#clinic-report-dialog"), reportForm: $("#clinic-report-form"), reportClose: $("#clinic-report-close"),
+    reportId: $("#clinic-report-id"), reportHeading: $("#clinic-report-heading"), reportType: $("#clinic-report-type"),
+    reportRecipient: $("#clinic-report-recipient"), reportPurpose: $("#clinic-report-purpose"),
+    reportStart: $("#clinic-report-start"), reportEnd: $("#clinic-report-end"), generateReport: $("#clinic-generate-report"),
+    reportTitlePreview: $("#clinic-report-title-preview"), reportMeta: $("#clinic-report-meta"),
+    reportContext: $("#clinic-report-context"), reportEvolution: $("#clinic-report-evolution"),
+    reportInterventions: $("#clinic-report-interventions"), reportCurrent: $("#clinic-report-current"),
+    reportSignature: $("#clinic-report-signature"), reportMessage: $("#clinic-report-message"),
+    saveReport: $("#clinic-save-report"), approveReport: $("#clinic-approve-report"), printReport: $("#clinic-print-report"),
   };
 
   let session = null;
@@ -53,6 +63,7 @@
   let clinicalGoals = [];
   let exerciseTemplates = [];
   let exerciseAssignments = [];
+  let clinicalReports = [];
   let currentPatient = null;
   let currentAppointment = null;
 
@@ -222,6 +233,112 @@
     renderExercises(currentPatient);
     els.exerciseDialog.close();
   }
+
+  function escapeHtml(value) {
+    return String(value || "").replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;").replaceAll("'", "&#039;");
+  }
+  function reportTypeLabel(type) {
+    return ({ evolution: "Informe de evolución", clinical_summary: "Resumen clínico", referral: "Informe de derivación" })[type] || "Informe clínico";
+  }
+  function approvedSessionsInPeriod(patientId) {
+    const start = els.reportStart.value ? new Date(els.reportStart.value + "T00:00:00") : null;
+    const end = els.reportEnd.value ? new Date(els.reportEnd.value + "T23:59:59") : null;
+    return patientSessions(patientId).filter((item) => {
+      const date = new Date(item.session_date);
+      return item.status === "approved" && (!start || date >= start) && (!end || date <= end);
+    }).sort((a, b) => new Date(a.session_date) - new Date(b.session_date));
+  }
+  function printableWindow(title, body) {
+    const popup = window.open("", "_blank", "noopener,noreferrer");
+    if (!popup) throw new Error("El navegador ha bloqueado la ventana de impresión.");
+    popup.document.write(`<!doctype html><html lang="es"><head><meta charset="utf-8"><title>${escapeHtml(title)}</title><style>@page{size:A4;margin:18mm}body{font-family:Arial,sans-serif;color:#1f2933;font-size:11pt;line-height:1.5}header{border-bottom:2px solid #1f5f99;margin-bottom:24px;padding-bottom:14px}h1{font-size:20pt;color:#1f5f99;margin:4px 0}h2{font-size:13pt;margin:24px 0 8px}h3{font-size:11pt;margin:18px 0 5px}.meta{color:#526b7a;font-size:9.5pt}.entry{break-inside:avoid;border-bottom:1px solid #d5e3ee;padding:0 0 14px;margin-bottom:16px}.text{white-space:pre-wrap}.signature{margin-top:48px}.privacy{margin-top:30px;color:#607786;font-size:8.5pt}@media print{button{display:none}}</style></head><body>${body}<script>window.onload=()=>window.print()<\/script></body></html>`);
+    popup.document.close();
+  }
+  function printClinicalHistory() {
+    if (!currentPatient) return;
+    const sessions = patientSessions(currentPatient.id).filter((item) => item.status === "approved").sort((a, b) => new Date(a.session_date) - new Date(b.session_date));
+    const entries = sessions.map((item) => `<section class="entry"><h2>Sesión ${item.session_number || ""} · ${escapeHtml(dateShort.format(new Date(item.session_date)))}</h2>${item.evolution_note ? `<h3>Evolución</h3><div class="text">${escapeHtml(item.evolution_note)}</div>` : ""}${item.intervention_note ? `<h3>Intervención</h3><div class="text">${escapeHtml(item.intervention_note)}</div>` : ""}${item.response_note ? `<h3>Respuesta</h3><div class="text">${escapeHtml(item.response_note)}</div>` : ""}${item.agreements_note ? `<h3>Acuerdos</h3><div class="text">${escapeHtml(item.agreements_note)}</div>` : ""}${item.homework_note ? `<h3>Tarea</h3><div class="text">${escapeHtml(item.homework_note)}</div>` : ""}</section>`).join("");
+    printableWindow("Historial clínico", `<header><p>Carolina Sánchez Girona · Psicóloga General Sanitaria y Neuropsicóloga</p><h1>Historial clínico</h1><p class="meta">Paciente: ${escapeHtml(currentPatient.full_name)} · Código: ${escapeHtml(currentPatient.public_code)} · Emitido: ${escapeHtml(dateShort.format(new Date()))}</p></header>${entries || "<p>No constan sesiones clínicas aprobadas.</p>"}<p class="privacy">Documento confidencial que contiene datos de salud.</p>`);
+  }
+  function openReport(report = null) {
+    if (!currentPatient) return;
+    els.reportId.value = report?.id || "";
+    els.reportType.value = report?.report_type || "evolution";
+    els.reportRecipient.value = report?.recipient || "";
+    els.reportPurpose.value = report?.purpose || "";
+    els.reportStart.value = report?.period_start || "";
+    els.reportEnd.value = report?.period_end || "";
+    const content = report?.content || {};
+    els.reportContext.value = content.context || "";
+    els.reportEvolution.value = content.evolution || "";
+    els.reportInterventions.value = content.interventions || "";
+    els.reportCurrent.value = content.current || "";
+    els.reportTitlePreview.textContent = report?.title || reportTypeLabel(els.reportType.value);
+    els.reportHeading.textContent = report?.title || "Nuevo informe";
+    els.reportMeta.textContent = `${currentPatient.public_code} · ${currentPatient.full_name}`;
+    els.reportSignature.textContent = `Carolina Sánchez Girona · ${dateShort.format(new Date())}`;
+    els.reportMessage.textContent = report?.status === "approved" ? "Informe aprobado. El contenido está bloqueado." : "";
+    const locked = report?.status === "approved";
+    [els.reportType, els.reportRecipient, els.reportPurpose, els.reportStart, els.reportEnd, els.reportContext, els.reportEvolution, els.reportInterventions, els.reportCurrent].forEach((field) => { field.disabled = locked; });
+    els.generateReport.disabled = locked; els.saveReport.disabled = locked; els.approveReport.disabled = locked;
+    els.reportDialog.showModal();
+  }
+  function generateReportDraft() {
+    if (!currentPatient) return;
+    const sessions = approvedSessionsInPeriod(currentPatient.id);
+    const goals = patientGoals(currentPatient.id);
+    els.reportTitlePreview.textContent = reportTypeLabel(els.reportType.value);
+    els.reportContext.value = currentPatient.clinical_summary || "No consta una síntesis clínica redactada.";
+    els.reportEvolution.value = sessions.map((item) => `${dateShort.format(new Date(item.session_date))}: ${item.evolution_note || "Sin descripción de evolución."}`).join("\n\n");
+    els.reportInterventions.value = sessions.filter((item) => item.intervention_note).map((item) => `${dateShort.format(new Date(item.session_date))}: ${item.intervention_note}`).join("\n\n");
+    const activeGoals = goals.map((goal) => goal.title).join("; ");
+    els.reportCurrent.value = [currentPatient.next_session_focus ? `Focos clínicos pendientes: ${currentPatient.next_session_focus}` : "", activeGoals ? `Objetivos activos: ${activeGoals}.` : ""].filter(Boolean).join("\n\n");
+    els.reportMessage.textContent = `Borrador generado a partir de ${sessions.length} sesión(es) aprobada(s). Revísalo antes de aprobar.`;
+  }
+  function reportPayload(status) {
+    const sessions = approvedSessionsInPeriod(currentPatient.id);
+    return {
+      patient_id: currentPatient.id, report_type: els.reportType.value,
+      title: reportTypeLabel(els.reportType.value), recipient: els.reportRecipient.value.trim() || null,
+      purpose: els.reportPurpose.value.trim() || null, period_start: els.reportStart.value || null,
+      period_end: els.reportEnd.value || null,
+      content: { context: els.reportContext.value.trim(), evolution: els.reportEvolution.value.trim(), interventions: els.reportInterventions.value.trim(), current: els.reportCurrent.value.trim() },
+      included_session_ids: sessions.map((item) => item.id), status,
+      approved_at: status === "approved" ? new Date().toISOString() : null, updated_at: new Date().toISOString(),
+    };
+  }
+  async function persistReport(status) {
+    if (!currentPatient) return;
+    if (status === "approved" && !els.reportEvolution.value.trim() && !els.reportContext.value.trim()) throw new Error("El informe no contiene información suficiente para aprobarlo.");
+    els.reportMessage.textContent = status === "approved" ? "Aprobando informe…" : "Guardando borrador…";
+    const payload = reportPayload(status);
+    const rows = els.reportId.value
+      ? await rest(`clinical_reports?id=eq.${encodeURIComponent(els.reportId.value)}&select=*`, { method: "PATCH", headers: { Prefer: "return=representation" }, body: JSON.stringify(payload) })
+      : await rest("clinical_reports?select=*", { method: "POST", headers: { Prefer: "return=representation" }, body: JSON.stringify(payload) });
+    const saved = rows?.[0]; if (!saved) throw new Error("No se ha podido guardar el informe.");
+    clinicalReports = [saved, ...clinicalReports.filter((item) => item.id !== saved.id)];
+    els.reportId.value = saved.id;
+    renderReports(currentPatient);
+    openReport(saved);
+  }
+  function printCurrentReport() {
+    if (!currentPatient) return;
+    const section = (title, value) => value.trim() ? `<h2>${title}</h2><div class="text">${escapeHtml(value)}</div>` : "";
+    printableWindow(els.reportTitlePreview.textContent, `<header><p>Carolina Sánchez Girona · Psicóloga General Sanitaria y Neuropsicóloga</p><h1>${escapeHtml(els.reportTitlePreview.textContent)}</h1><p class="meta">Paciente: ${escapeHtml(currentPatient.full_name)} · Código: ${escapeHtml(currentPatient.public_code)}<br>Destinatario: ${escapeHtml(els.reportRecipient.value || "No especificado")} · Finalidad: ${escapeHtml(els.reportPurpose.value || "Asistencial")}<br>Fecha: ${escapeHtml(dateShort.format(new Date()))}</p></header>${section("Motivo y contexto", els.reportContext.value)}${section("Evolución clínica", els.reportEvolution.value)}${section("Intervenciones realizadas", els.reportInterventions.value)}${section("Situación actual y recomendaciones", els.reportCurrent.value)}<div class="signature"><p>Carolina Sánchez Girona</p></div><p class="privacy">Documento confidencial que contiene datos de salud.</p>`);
+  }
+  function renderReports(patient) {
+    els.patientReports.replaceChildren();
+    const reports = clinicalReports.filter((item) => item.patient_id === patient.id);
+    if (!reports.length) { els.patientReports.append(create("p", "clinic-empty-inline", "Todavía no hay informes guardados.")); return; }
+    reports.forEach((report) => {
+      const row = create("article"); const info = create("div");
+      info.append(create("strong", "", report.title), create("span", "", `${dateShort.format(new Date(report.created_at))} · ${report.status === "approved" ? "Aprobado" : "Borrador"}`));
+      const button = create("button", "clinic-secondary", report.status === "approved" ? "Ver / imprimir" : "Continuar");
+      button.type = "button"; button.addEventListener("click", () => openReport(report));
+      row.append(info, button); els.patientReports.append(row);
+    });
+  }
+
   function markerValues(container) {
     return Array.from(container.querySelectorAll('input[type="checkbox"]:checked')).map((input) => input.value);
   }
@@ -341,6 +458,7 @@
     els.patientName.textContent = `${patient.public_code} · ${patient.full_name}`;
     renderPreparation(patient);
     renderExercises(patient);
+    renderReports(patient);
     renderHistory(patient);
     els.patientDialog.showModal();
   }
@@ -403,13 +521,14 @@
 
   async function loadData() {
     setMessage("Cargando información clínica…");
-    const [bookingRows, patientRows, sessionRows, goalRows, templateRows, assignmentRows] = await Promise.all([
+    const [bookingRows, patientRows, sessionRows, goalRows, templateRows, assignmentRows, reportRows] = await Promise.all([
       rest(`appointment_bookings?select=id,patient_name,patient_email,patient_phone,patient_type,status,starts_at,ends_at,service_code,clinical_patient_id&order=starts_at.desc&limit=1000`),
       rest("clinical_patients?select=*&order=full_name.asc"),
       rest("clinical_sessions?select=*&order=session_date.desc"),
       rest("clinical_goals?select=*&order=created_at.asc"),
       rest("clinical_exercise_templates?select=*&status=eq.active&order=title.asc"),
       rest("clinical_exercise_assignments?select=*&order=created_at.desc"),
+      rest("clinical_reports?select=*&order=created_at.desc"),
     ]);
     appointments = bookingRows || [];
     patients = patientRows || [];
@@ -417,6 +536,7 @@
     clinicalGoals = goalRows || [];
     exerciseTemplates = templateRows || [];
     exerciseAssignments = assignmentRows || [];
+    clinicalReports = reportRows || [];
     renderToday();
     renderPatients(els.patientSearch.value);
     setMessage("");
@@ -567,6 +687,14 @@
   els.patientClose.addEventListener("click", () => els.patientDialog.close());
   els.patientForm.addEventListener("submit", (event) => savePatient(event).catch((error) => { els.patientMessage.textContent = error.message; }));
   els.sessionClose.addEventListener("click", () => els.sessionDialog.close());
+  els.printHistory.addEventListener("click", () => { try { printClinicalHistory(); } catch (error) { els.patientMessage.textContent = error.message; } });
+  els.newReport.addEventListener("click", () => openReport());
+  els.reportClose.addEventListener("click", () => els.reportDialog.close());
+  els.reportType.addEventListener("change", () => { els.reportTitlePreview.textContent = reportTypeLabel(els.reportType.value); });
+  els.generateReport.addEventListener("click", generateReportDraft);
+  els.saveReport.addEventListener("click", () => persistReport("draft").catch((error) => { els.reportMessage.textContent = error.message; }));
+  els.approveReport.addEventListener("click", () => persistReport("approved").catch((error) => { els.reportMessage.textContent = error.message; }));
+  els.printReport.addEventListener("click", () => { try { printCurrentReport(); } catch (error) { els.reportMessage.textContent = error.message; } });
   els.newExercise.addEventListener("click", () => openExercise());
   els.exerciseClose.addEventListener("click", () => els.exerciseDialog.close());
   els.saveExercise.addEventListener("click", () => saveExercise(false).catch((error) => { els.exerciseMessage.textContent = error.message; }));
@@ -591,7 +719,7 @@
     event.preventDefault();
     persistClinicalSession("approved").catch((error) => { els.sessionMessage.textContent = error.message; });
   });
-  [els.patientDialog, els.sessionDialog, els.exerciseDialog].forEach((dialog) => dialog.addEventListener("click", (event) => {
+  [els.patientDialog, els.sessionDialog, els.exerciseDialog, els.reportDialog].forEach((dialog) => dialog.addEventListener("click", (event) => {
     if (event.target === dialog) dialog.close();
   }));
 
