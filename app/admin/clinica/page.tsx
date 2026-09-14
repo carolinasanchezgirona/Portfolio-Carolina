@@ -42,6 +42,7 @@ export default function AdminClinicaPage() {
         <nav className="clinic-tabs" aria-label="Vistas de gestión clínica">
           <button id="clinic-view-today" className="active" type="button">Hoy</button>
           <button id="clinic-view-patients" type="button">Pacientes</button>
+          <button id="clinic-view-pending" type="button">Pendientes <span id="clinic-pending-badge" className="clinic-tab-badge">0</span></button>
         </nav>
 
         <p id="clinic-status" className="clinic-message" role="status" aria-live="polite" />
@@ -58,6 +59,12 @@ export default function AdminClinicaPage() {
             <article><strong id="clinic-finished-today">0</strong><span>Realizadas</span></article>
           </div>
           <div id="clinic-today-list" className="clinic-list" />
+        </section>
+
+        <section id="clinic-pending-view" className="clinic-view" hidden>
+          <div className="clinic-section-heading"><div><p className="clinic-eyebrow">Carga administrativa</p><h2>Pendientes</h2></div></div>
+          <div id="clinic-pending-summary" className="clinic-summary" />
+          <div id="clinic-pending-list" className="clinic-pending-list" />
         </section>
 
         <section id="clinic-patients-view" className="clinic-view" hidden>
@@ -104,11 +111,53 @@ export default function AdminClinicaPage() {
             <div id="clinic-patient-exercises" className="clinic-history" />
           </section>
 
+          <section className="clinic-patient-tools-grid">
+            <article>
+              <div className="clinic-goals-heading"><h3>Cronología clínica</h3><button id="clinic-refresh-timeline" className="clinic-text" type="button">Actualizar</button></div>
+              <div id="clinic-patient-timeline" className="clinic-timeline" />
+            </article>
+            <article>
+              <div className="clinic-goals-heading"><h3>Documentos</h3><button id="clinic-add-document" className="clinic-secondary" type="button">Subir documento</button></div>
+              <div id="clinic-patient-documents" className="clinic-history" />
+            </article>
+            <article>
+              <div className="clinic-goals-heading"><h3>Escalas y puntuaciones</h3><button id="clinic-add-scale" className="clinic-secondary" type="button">Añadir medición</button></div>
+              <div id="clinic-patient-scales" className="clinic-history" />
+            </article>
+          </section>
+
           <h3>Informes guardados</h3>
           <div id="clinic-patient-reports" className="clinic-history" />
 
           <h3>Sesiones y citas</h3>
           <div id="clinic-patient-history" className="clinic-history" />
+        </form>
+      </dialog>
+
+      <dialog id="clinic-document-dialog" className="clinic-dialog clinic-small-dialog">
+        <form id="clinic-document-form" className="clinic-dialog-content">
+          <div className="clinic-dialog-heading"><div><p className="clinic-eyebrow">Archivo privado</p><h2>Subir documento</h2></div><button id="clinic-document-close" className="clinic-close" type="button">×</button></div>
+          <label>Título<input id="clinic-document-title" required /></label>
+          <label>Categoría<select id="clinic-document-category"><option value="external_report">Informe externo</option><option value="referral">Derivación</option><option value="consent">Consentimiento</option><option value="test_result">Resultado de prueba</option><option value="attendance">Justificante</option><option value="other">Otro</option></select></label>
+          <label>Fecha del documento<input id="clinic-document-date" type="date" /></label>
+          <label>Archivo<input id="clinic-document-file" type="file" accept=".pdf,.jpg,.jpeg,.png,.docx" required /></label>
+          <label>Notas<textarea id="clinic-document-notes" rows={3} /></label>
+          <p className="clinic-note">Máximo 10 MB. El archivo se guardará en almacenamiento privado.</p>
+          <p id="clinic-document-message" className="clinic-message" />
+          <div className="clinic-dialog-actions"><button className="clinic-primary" type="submit">Subir documento</button></div>
+        </form>
+      </dialog>
+
+      <dialog id="clinic-scale-dialog" className="clinic-dialog clinic-small-dialog">
+        <form id="clinic-scale-form" className="clinic-dialog-content">
+          <div className="clinic-dialog-heading"><div><p className="clinic-eyebrow">Medición longitudinal</p><h2>Añadir escala</h2></div><button id="clinic-scale-close" className="clinic-close" type="button">×</button></div>
+          <label>Instrumento<input id="clinic-scale-instrument" list="clinic-scale-options" required /><datalist id="clinic-scale-options"><option value="PHQ-9" /><option value="GAD-7" /><option value="PCL-5" /><option value="MoCA" /><option value="MMSE" /><option value="ACE-III" /><option value="TMT-A" /><option value="TMT-B" /></datalist></label>
+          <label>Fecha<input id="clinic-scale-date" type="date" required /></label>
+          <label>Puntuación total<input id="clinic-scale-score" type="number" step="0.01" /></label>
+          <label>Interpretación clínica<textarea id="clinic-scale-interpretation" rows={3} /></label>
+          <label>Notas<textarea id="clinic-scale-notes" rows={3} /></label>
+          <p id="clinic-scale-message" className="clinic-message" />
+          <div className="clinic-dialog-actions"><button className="clinic-primary" type="submit">Guardar medición</button></div>
         </form>
       </dialog>
 
@@ -208,7 +257,9 @@ export default function AdminClinicaPage() {
               <div id="clinic-session-goals" className="clinic-session-goals" />
             </div>
           </section>
-          <label className="clinic-session-field">Notas de trabajo<textarea id="clinic-work-notes" rows={5} placeholder="Apuntes breves durante la consulta. No forman parte del registro aprobado." /></label>
+          <label className="clinic-session-field">Notas de trabajo
+            <span className="clinic-dictation-actions"><button id="clinic-dictate" className="clinic-secondary" type="button">Iniciar dictado</button><span id="clinic-dictation-state" className="clinic-muted" /></span>
+            <textarea id="clinic-work-notes" rows={5} placeholder="Apuntes breves durante la consulta. No forman parte del registro aprobado." /></label>
           <div className="clinic-draft-generator">
             <div><strong>Cierre asistido</strong><p>Organiza tus notas y marcadores en los apartados clínicos. Podrás revisar todo antes de aprobar.</p></div>
             <button id="clinic-generate-draft" className="clinic-secondary" type="button">Generar borrador</button>
@@ -229,7 +280,7 @@ export default function AdminClinicaPage() {
         </form>
       </dialog>
 
-      <Script src="/admin-clinica.js?v=20260914-4" strategy="afterInteractive" />
+      <Script src="/admin-clinica.js?v=20260914-5" strategy="afterInteractive" />
     </main>
   );
 }
