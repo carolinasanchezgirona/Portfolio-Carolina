@@ -351,7 +351,7 @@
     card.append(create("time", "clinic-time", timeFormat.format(new Date(appointment.starts_at))));
     const body = create("div");
     body.append(
-      create("h3", "", appointment.patient_name),
+      create("h3", "", patient?.public_code || "Paciente sin código"),
       create("p", "", `${appointment.service_code === "neuropsicologia" ? "Neuropsicología" : "Psicología"} · ${appointment.patient_type === "new" ? "Primera visita" : "Seguimiento"}`)
     );
     card.append(body, create("span", `clinic-status-pill ${statusClass(appointment.status)}`, statusLabel(appointment.status)));
