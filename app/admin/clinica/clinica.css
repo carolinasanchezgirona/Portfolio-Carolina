@@ -62,3 +62,23 @@
 .clinic-report-sheet textarea{width:100%;border:1px solid #a9c7df;border-radius:10px;padding:12px;font:inherit;line-height:1.5;color:#233746;background:#fff}
 .clinic-report-sheet footer{margin-top:42px;border-top:1px solid #d5e3ee;padding-top:18px}
 @media(max-width:620px){.clinic-report-sheet{padding:22px}.clinic-report-toolbar{align-items:stretch;flex-direction:column}}
+
+.clinic-tab-badge{display:inline-grid;place-items:center;min-width:22px;height:22px;margin-left:5px;padding:0 6px;border-radius:999px;background:#eaf3fa;color:#1f5f99;font-size:12px}
+.clinic-tabs button.active .clinic-tab-badge{background:#fff;color:#1f5f99}
+.clinic-pending-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
+.clinic-pending-group{padding:18px;border:1px solid #d5e3ee;border-radius:15px;background:#fff}
+.clinic-pending-group h3{margin:0 0 14px;color:#1f5f99}
+.clinic-pending-group article{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:11px 0;border-top:1px solid #e6eef4}
+.clinic-pending-group article div{display:grid;gap:3px}.clinic-pending-group article span{color:#607786;font-size:13px}
+.clinic-patient-tools-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin:28px 0}
+.clinic-patient-tools-grid>article{min-width:0;padding:18px;border:1px solid #d5e3ee;border-radius:15px;background:#f8fbfe}
+.clinic-patient-tools-grid>article:first-child{grid-column:1/-1}
+.clinic-timeline{display:grid;gap:0;max-height:340px;overflow:auto}
+.clinic-timeline-item{display:grid;grid-template-columns:100px 90px 1fr;gap:12px;padding:11px 0;border-bottom:1px solid #d5e3ee;align-items:start}
+.clinic-timeline-item time,.clinic-timeline-item span{color:#607786;font-size:13px}
+.clinic-small-dialog{width:min(620px,calc(100% - 24px))}
+.clinic-small-dialog label{display:grid;gap:7px;margin:14px 0;font-weight:700}
+.clinic-small-dialog input,.clinic-small-dialog select,.clinic-small-dialog textarea{width:100%;border:1px solid #a9c7df;border-radius:10px;padding:11px 12px;font:inherit;color:#233746;background:#fff}
+.clinic-dictation-actions{display:flex;align-items:center;gap:12px;margin:8px 0;font-weight:400}
+.clinic-dictation-actions .clinic-muted{font-size:13px}
+@media(max-width:760px){.clinic-pending-list,.clinic-patient-tools-grid{grid-template-columns:1fr}.clinic-patient-tools-grid>article:first-child{grid-column:auto}.clinic-timeline-item{grid-template-columns:85px 70px 1fr}}
