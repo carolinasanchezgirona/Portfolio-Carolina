@@ -14,8 +14,9 @@
     login: $("#clinic-login"), app: $("#clinic-app"), loginForm: $("#clinic-login-form"),
     email: $("#clinic-email"), password: $("#clinic-password"), loginMessage: $("#clinic-login-message"),
     logout: $("#clinic-logout"), refresh: $("#clinic-refresh"), date: $("#clinic-date"), status: $("#clinic-status"),
-    viewToday: $("#clinic-view-today"), viewPatients: $("#clinic-view-patients"),
-    todayView: $("#clinic-today-view"), patientsView: $("#clinic-patients-view"),
+    viewToday: $("#clinic-view-today"), viewPatients: $("#clinic-view-patients"), viewPending: $("#clinic-view-pending"),
+    todayView: $("#clinic-today-view"), patientsView: $("#clinic-patients-view"), pendingView: $("#clinic-pending-view"),
+    pendingBadge: $("#clinic-pending-badge"), pendingSummary: $("#clinic-pending-summary"), pendingList: $("#clinic-pending-list"),
     todayList: $("#clinic-today-list"), patientList: $("#clinic-patient-list"), patientSearch: $("#clinic-patient-search"),
     totalToday: $("#clinic-total-today"), confirmedToday: $("#clinic-confirmed-today"),
     pendingToday: $("#clinic-pending-today"), finishedToday: $("#clinic-finished-today"),
@@ -45,6 +46,16 @@
     exerciseRationale: $("#clinic-exercise-rationale"), exerciseEmail: $("#clinic-exercise-email"),
     exerciseMessage: $("#clinic-exercise-message"), saveExercise: $("#clinic-save-exercise"),
     printHistory: $("#clinic-print-history"), newReport: $("#clinic-new-report"), patientReports: $("#clinic-patient-reports"),
+    patientTimeline: $("#clinic-patient-timeline"), refreshTimeline: $("#clinic-refresh-timeline"),
+    addDocument: $("#clinic-add-document"), patientDocuments: $("#clinic-patient-documents"),
+    documentDialog: $("#clinic-document-dialog"), documentForm: $("#clinic-document-form"), documentClose: $("#clinic-document-close"),
+    documentTitle: $("#clinic-document-title"), documentCategory: $("#clinic-document-category"), documentDate: $("#clinic-document-date"),
+    documentFile: $("#clinic-document-file"), documentNotes: $("#clinic-document-notes"), documentMessage: $("#clinic-document-message"),
+    addScale: $("#clinic-add-scale"), patientScales: $("#clinic-patient-scales"), scaleDialog: $("#clinic-scale-dialog"),
+    scaleForm: $("#clinic-scale-form"), scaleClose: $("#clinic-scale-close"), scaleInstrument: $("#clinic-scale-instrument"),
+    scaleDate: $("#clinic-scale-date"), scaleScore: $("#clinic-scale-score"), scaleInterpretation: $("#clinic-scale-interpretation"),
+    scaleNotes: $("#clinic-scale-notes"), scaleMessage: $("#clinic-scale-message"),
+    dictate: $("#clinic-dictate"), dictationState: $("#clinic-dictation-state"),
     reportDialog: $("#clinic-report-dialog"), reportForm: $("#clinic-report-form"), reportClose: $("#clinic-report-close"),
     reportId: $("#clinic-report-id"), reportHeading: $("#clinic-report-heading"), reportType: $("#clinic-report-type"),
     reportRecipient: $("#clinic-report-recipient"), reportPurpose: $("#clinic-report-purpose"),
@@ -64,6 +75,10 @@
   let exerciseTemplates = [];
   let exerciseAssignments = [];
   let clinicalReports = [];
+  let clinicalDocuments = [];
+  let scaleMeasurements = [];
+  let speechRecognition = null;
+  let isDictating = false;
   let currentPatient = null;
   let currentAppointment = null;
 
@@ -370,6 +385,135 @@
     });
   }
 
+
+  function renderPending() {
+    const drafts = clinicalSessions.filter((item) => item.status === "draft");
+    const exercises = exerciseAssignments.filter((item) => ["prepared", "sent", "assigned"].includes(item.status));
+    const reports = clinicalReports.filter((item) => item.status === "draft");
+    const now = new Date();
+    const withoutNext = patients.filter((patient) => !patientAppointments(patient.id).some((item) => new Date(item.starts_at) > now && !["cancelled", "canceled"].includes(item.status)));
+    const groups = [
+      ["Sesiones sin cerrar", drafts, (item) => patientById(item.patient_id)],
+      ["Ejercicios pendientes", exercises, (item) => patientById(item.patient_id)],
+      ["Informes en borrador", reports, (item) => patientById(item.patient_id)],
+      ["Sin próxima cita", withoutNext, (item) => item],
+    ];
+    const total = groups.reduce((sum, [, items]) => sum + items.length, 0);
+    els.pendingBadge.textContent = String(total);
+    els.pendingSummary.replaceChildren();
+    groups.forEach(([label, items]) => { const card = create("article"); card.append(create("strong", "", String(items.length)), create("span", "", label)); els.pendingSummary.append(card); });
+    els.pendingList.replaceChildren();
+    groups.forEach(([label, items, getPatient]) => {
+      const section = create("section", "clinic-pending-group"); section.append(create("h3", "", label));
+      if (!items.length) section.append(create("p", "clinic-empty-inline", "Sin pendientes."));
+      items.forEach((item) => {
+        const patient = getPatient(item); if (!patient) return;
+        const row = create("article"); const info = create("div");
+        const detail = item.title || (item.session_number ? `Sesión ${item.session_number}` : patient.public_code);
+        info.append(create("strong", "", patient.public_code), create("span", "", detail));
+        const button = create("button", "clinic-secondary", "Abrir ficha"); button.type = "button"; button.addEventListener("click", () => openPatient(patient));
+        row.append(info, button); section.append(row);
+      });
+      els.pendingList.append(section);
+    });
+  }
+  function timelineItems(patient) {
+    const items = [];
+    patientAppointments(patient.id).forEach((x) => items.push({ date: x.starts_at, type: "Cita", text: statusLabel(x.status) }));
+    patientSessions(patient.id).forEach((x) => items.push({ date: x.session_date, type: "Sesión", text: `${x.status === "approved" ? "Aprobada" : "Borrador"} · sesión ${x.session_number || ""}` }));
+    patientExercises(patient.id).forEach((x) => items.push({ date: x.sent_at || x.created_at, type: "Ejercicio", text: `${x.title} · ${x.email_status === "sent" ? "enviado" : "preparado"}` }));
+    clinicalReports.filter((x) => x.patient_id === patient.id).forEach((x) => items.push({ date: x.approved_at || x.created_at, type: "Informe", text: `${x.title} · ${x.status === "approved" ? "aprobado" : "borrador"}` }));
+    clinicalDocuments.filter((x) => x.patient_id === patient.id).forEach((x) => items.push({ date: x.document_date || x.created_at, type: "Documento", text: x.title }));
+    scaleMeasurements.filter((x) => x.patient_id === patient.id).forEach((x) => items.push({ date: x.measured_at, type: "Escala", text: `${x.instrument}${x.total_score !== null && x.total_score !== undefined ? `: ${x.total_score}` : ""}` }));
+    return items.sort((a, b) => new Date(b.date) - new Date(a.date));
+  }
+  function renderTimeline(patient) {
+    els.patientTimeline.replaceChildren();
+    const items = timelineItems(patient);
+    if (!items.length) { els.patientTimeline.append(create("p", "clinic-empty-inline", "Todavía no hay actividad clínica.")); return; }
+    items.forEach((item) => {
+      const row = create("article", "clinic-timeline-item");
+      row.append(create("time", "", dateShort.format(new Date(item.date))), create("strong", "", item.type), create("span", "", item.text));
+      els.patientTimeline.append(row);
+    });
+  }
+  function renderDocuments(patient) {
+    els.patientDocuments.replaceChildren();
+    const docs = clinicalDocuments.filter((item) => item.patient_id === patient.id);
+    if (!docs.length) { els.patientDocuments.append(create("p", "clinic-empty-inline", "No hay documentos.")); return; }
+    docs.forEach((doc) => {
+      const row = create("article"); const info = create("div");
+      info.append(create("strong", "", doc.title), create("span", "", `${doc.file_name} · ${dateShort.format(new Date(doc.document_date || doc.created_at))}`));
+      const button = create("button", "clinic-secondary", "Abrir"); button.type = "button";
+      button.addEventListener("click", async () => {
+        try {
+          const response = await fetch(`${SUPABASE_URL}/storage/v1/object/authenticated/clinical-documents/${doc.file_path}`, { headers: authHeaders() });
+          if (!response.ok) throw new Error("No se ha podido descargar el documento.");
+          const url = URL.createObjectURL(await response.blob()); const popup = window.open(url, "_blank"); if (popup) popup.opener = null;
+          setTimeout(() => URL.revokeObjectURL(url), 60000);
+        } catch (error) { els.patientMessage.textContent = error.message; }
+      });
+      row.append(info, button); els.patientDocuments.append(row);
+    });
+  }
+  async function uploadDocument(event) {
+    event.preventDefault(); if (!currentPatient) return;
+    const file = els.documentFile.files?.[0]; if (!file) throw new Error("Selecciona un archivo.");
+    if (file.size > 10485760) throw new Error("El archivo supera los 10 MB.");
+    els.documentMessage.textContent = "Subiendo documento…";
+    const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, "_");
+    const path = `${currentPatient.id}/${crypto.randomUUID()}-${safeName}`;
+    const upload = await fetch(`${SUPABASE_URL}/storage/v1/object/clinical-documents/${path}`, { method: "POST", headers: { apikey: KEY, Authorization: `Bearer ${session.access_token}`, "Content-Type": file.type || "application/octet-stream", "x-upsert": "false" }, body: file });
+    if (!upload.ok) throw new Error((await upload.json().catch(() => ({}))).message || "No se ha podido subir el archivo.");
+    try {
+      const rows = await rest("clinical_documents?select=*", { method: "POST", headers: { Prefer: "return=representation" }, body: JSON.stringify({ patient_id: currentPatient.id, category: els.documentCategory.value, title: els.documentTitle.value.trim(), file_path: path, file_name: file.name, mime_type: file.type || null, file_size: file.size, document_date: els.documentDate.value || null, notes: els.documentNotes.value.trim() || null }) });
+      if (!rows?.[0]) throw new Error("No se pudo registrar el documento.");
+      clinicalDocuments.unshift(rows[0]);
+    } catch (error) {
+      await fetch(`${SUPABASE_URL}/storage/v1/object/clinical-documents/${path}`, { method: "DELETE", headers: authHeaders() });
+      throw error;
+    }
+    renderDocuments(currentPatient); renderTimeline(currentPatient); els.documentDialog.close(); renderPending();
+  }
+  function renderScales(patient) {
+    els.patientScales.replaceChildren();
+    const rows = scaleMeasurements.filter((item) => item.patient_id === patient.id).sort((a, b) => new Date(b.measured_at) - new Date(a.measured_at));
+    if (!rows.length) { els.patientScales.append(create("p", "clinic-empty-inline", "No hay mediciones.")); return; }
+    rows.forEach((item) => {
+      const row = create("article"); const info = create("div");
+      info.append(create("strong", "", `${item.instrument}${item.total_score !== null && item.total_score !== undefined ? ` · ${item.total_score}` : ""}`), create("span", "", `${dateShort.format(new Date(item.measured_at + "T12:00:00"))}${item.interpretation ? ` · ${item.interpretation}` : ""}`));
+      row.append(info); els.patientScales.append(row);
+    });
+  }
+  async function saveScale(event) {
+    event.preventDefault(); if (!currentPatient) return;
+    els.scaleMessage.textContent = "Guardando medición…";
+    const rows = await rest("clinical_scale_measurements?select=*", { method: "POST", headers: { Prefer: "return=representation" }, body: JSON.stringify({ patient_id: currentPatient.id, instrument: els.scaleInstrument.value.trim(), measured_at: els.scaleDate.value, total_score: els.scaleScore.value === "" ? null : Number(els.scaleScore.value), interpretation: els.scaleInterpretation.value.trim() || null, notes: els.scaleNotes.value.trim() || null }) });
+    if (!rows?.[0]) throw new Error("No se ha podido guardar la medición.");
+    scaleMeasurements.unshift(rows[0]); renderScales(currentPatient); renderTimeline(currentPatient); els.scaleDialog.close();
+  }
+  function toggleDictation() {
+    if (isDictating) { speechRecognition?.stop(); return; }
+    const Recognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!Recognition) { els.dictationState.textContent = "El navegador no admite dictado."; return; }
+    if (!sessionStorage.getItem("clinic_dictation_notice")) {
+      const accepted = window.confirm("El navegador puede procesar la voz mediante un servicio externo. No se guardará audio en la aplicación. ¿Quieres iniciar el dictado?");
+      if (!accepted) return;
+      sessionStorage.setItem("clinic_dictation_notice", "accepted");
+    }
+    speechRecognition = new Recognition(); speechRecognition.lang = "es-ES"; speechRecognition.continuous = true; speechRecognition.interimResults = true;
+    let finalText = "";
+    speechRecognition.onstart = () => { isDictating = true; els.dictate.textContent = "Detener dictado"; els.dictationState.textContent = "Escuchando…"; };
+    speechRecognition.onresult = (event) => {
+      let interim = ""; for (let i = event.resultIndex; i < event.results.length; i += 1) { const text = event.results[i][0].transcript; if (event.results[i].isFinal) finalText += text + " "; else interim += text; }
+      els.dictationState.textContent = interim || "Escuchando…";
+      if (finalText) { els.workNotes.value = [els.workNotes.value.trim(), finalText.trim()].filter(Boolean).join("\n"); finalText = ""; }
+    };
+    speechRecognition.onerror = (event) => { els.dictationState.textContent = `Error de dictado: ${event.error}`; };
+    speechRecognition.onend = () => { isDictating = false; els.dictate.textContent = "Iniciar dictado"; if (!els.dictationState.textContent.startsWith("Error")) els.dictationState.textContent = "Dictado detenido."; };
+    speechRecognition.start();
+  }
+
   function renderPreparation(patient) {
     els.preparation.replaceChildren();
     const recent = patientSessions(patient.id).filter((item) => item.status === "approved").slice(0, 3);
@@ -458,6 +602,9 @@
     els.patientMessage.textContent = "";
     els.patientName.textContent = `${patient.public_code} · ${patient.full_name}`;
     renderPreparation(patient);
+    renderTimeline(patient);
+    renderDocuments(patient);
+    renderScales(patient);
     renderExercises(patient);
     renderReports(patient);
     renderHistory(patient);
@@ -522,7 +669,7 @@
 
   async function loadData() {
     setMessage("Cargando información clínica…");
-    const [bookingRows, patientRows, sessionRows, goalRows, templateRows, assignmentRows, reportRows] = await Promise.all([
+    const [bookingRows, patientRows, sessionRows, goalRows, templateRows, assignmentRows, reportRows, documentRows, scaleRows] = await Promise.all([
       rest(`appointment_bookings?select=id,patient_name,patient_email,patient_phone,patient_type,status,starts_at,ends_at,service_code,clinical_patient_id&order=starts_at.desc&limit=1000`),
       rest("clinical_patients?select=*&order=full_name.asc"),
       rest("clinical_sessions?select=*&order=session_date.desc"),
@@ -530,6 +677,8 @@
       rest("clinical_exercise_templates?select=*&status=eq.active&order=title.asc"),
       rest("clinical_exercise_assignments?select=*&order=created_at.desc"),
       rest("clinical_reports?select=*&order=created_at.desc"),
+      rest("clinical_documents?select=*&order=created_at.desc"),
+      rest("clinical_scale_measurements?select=*&order=measured_at.desc"),
     ]);
     appointments = bookingRows || [];
     patients = patientRows || [];
@@ -538,8 +687,11 @@
     exerciseTemplates = templateRows || [];
     exerciseAssignments = assignmentRows || [];
     clinicalReports = reportRows || [];
+    clinicalDocuments = documentRows || [];
+    scaleMeasurements = scaleRows || [];
     renderToday();
     renderPatients(els.patientSearch.value);
+    renderPending();
     setMessage("");
   }
 
@@ -664,12 +816,13 @@
   }
 
   function setView(name) {
-    const today = name === "today";
-    els.todayView.hidden = !today;
-    els.patientsView.hidden = today;
-    els.viewToday.classList.toggle("active", today);
-    els.viewPatients.classList.toggle("active", !today);
-    if (!today) els.patientSearch.focus();
+    els.todayView.hidden = name !== "today";
+    els.patientsView.hidden = name !== "patients";
+    els.pendingView.hidden = name !== "pending";
+    els.viewToday.classList.toggle("active", name === "today");
+    els.viewPatients.classList.toggle("active", name === "patients");
+    els.viewPending.classList.toggle("active", name === "pending");
+    if (name === "patients") els.patientSearch.focus();
   }
 
   els.loginForm.addEventListener("submit", async (event) => {
@@ -684,10 +837,19 @@
   els.refresh.addEventListener("click", () => loadData().catch((error) => setMessage(error.message)));
   els.viewToday.addEventListener("click", () => setView("today"));
   els.viewPatients.addEventListener("click", () => setView("patients"));
+  els.viewPending.addEventListener("click", () => setView("pending"));
   els.patientSearch.addEventListener("input", () => renderPatients(els.patientSearch.value));
   els.patientClose.addEventListener("click", () => els.patientDialog.close());
   els.patientForm.addEventListener("submit", (event) => savePatient(event).catch((error) => { els.patientMessage.textContent = error.message; }));
   els.sessionClose.addEventListener("click", () => els.sessionDialog.close());
+  els.refreshTimeline.addEventListener("click", () => currentPatient && renderTimeline(currentPatient));
+  els.addDocument.addEventListener("click", () => { if (!currentPatient) return; els.documentForm.reset(); els.documentDate.value = todayKey(); els.documentMessage.textContent = ""; els.documentDialog.showModal(); });
+  els.documentClose.addEventListener("click", () => els.documentDialog.close());
+  els.documentForm.addEventListener("submit", (event) => uploadDocument(event).catch((error) => { els.documentMessage.textContent = error.message; }));
+  els.addScale.addEventListener("click", () => { if (!currentPatient) return; els.scaleForm.reset(); els.scaleDate.value = todayKey(); els.scaleMessage.textContent = ""; els.scaleDialog.showModal(); });
+  els.scaleClose.addEventListener("click", () => els.scaleDialog.close());
+  els.scaleForm.addEventListener("submit", (event) => saveScale(event).catch((error) => { els.scaleMessage.textContent = error.message; }));
+  els.dictate.addEventListener("click", toggleDictation);
   els.printHistory.addEventListener("click", () => { try { printClinicalHistory(); } catch (error) { els.patientMessage.textContent = error.message; } });
   els.newReport.addEventListener("click", () => openReport());
   els.reportClose.addEventListener("click", () => els.reportDialog.close());
@@ -720,7 +882,7 @@
     event.preventDefault();
     persistClinicalSession("approved").catch((error) => { els.sessionMessage.textContent = error.message; });
   });
-  [els.patientDialog, els.sessionDialog, els.exerciseDialog, els.reportDialog].forEach((dialog) => dialog.addEventListener("click", (event) => {
+  [els.patientDialog, els.sessionDialog, els.exerciseDialog, els.reportDialog, els.documentDialog, els.scaleDialog].forEach((dialog) => dialog.addEventListener("click", (event) => {
     if (event.target === dialog) dialog.close();
   }));
 
