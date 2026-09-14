@@ -34,12 +34,15 @@
     agreementsNote: $("#clinic-agreements-note"), homeworkNote: $("#clinic-homework-note"),
     nextSessionNote: $("#clinic-next-session-note"), sessionMessage: $("#clinic-session-message"),
     saveDraft: $("#clinic-save-draft"), approveSession: $("#clinic-approve-session"),
+    processMarkers: $("#clinic-process-markers"), interventionMarkers: $("#clinic-intervention-markers"),
+    sessionGoals: $("#clinic-session-goals"), addGoal: $("#clinic-add-goal"),
   };
 
   let session = null;
   let appointments = [];
   let patients = [];
   let clinicalSessions = [];
+  let clinicalGoals = [];
   let currentPatient = null;
   let currentAppointment = null;
 
@@ -121,6 +124,38 @@
       .sort((a, b) => new Date(b.session_date) - new Date(a.session_date));
   }
   function patientById(id) { return patients.find((patient) => patient.id === id); }
+  function patientGoals(patientId) {
+    return clinicalGoals.filter((goal) => goal.patient_id === patientId && ["active", "review"].includes(goal.status));
+  }
+  function markerValues(container) {
+    return Array.from(container.querySelectorAll('input[type="checkbox"]:checked')).map((input) => input.value);
+  }
+  function setMarkerValues(container, values = []) {
+    container.querySelectorAll('input[type="checkbox"]').forEach((input) => { input.checked = values.includes(input.value); });
+  }
+  function evolutionValues() {
+    return Object.fromEntries(Array.from(document.querySelectorAll("[data-evolution]")).map((select) => [select.dataset.evolution, select.value]));
+  }
+  function setEvolutionValues(values = {}) {
+    document.querySelectorAll("[data-evolution]").forEach((select) => { select.value = values[select.dataset.evolution] || "not_assessed"; });
+  }
+  function renderSessionGoals(patientId, selected = []) {
+    els.sessionGoals.replaceChildren();
+    const goals = patientGoals(patientId);
+    if (!goals.length) {
+      els.sessionGoals.append(create("p", "clinic-empty-inline", "Todavía no hay objetivos activos."));
+      return;
+    }
+    goals.forEach((goal) => {
+      const label = create("label");
+      const input = create("input");
+      input.type = "checkbox";
+      input.value = goal.id;
+      input.checked = selected.includes(goal.id);
+      label.append(input, document.createTextNode(goal.title));
+      els.sessionGoals.append(label);
+    });
+  }
 
   function renderPreparation(patient) {
     els.preparation.replaceChildren();
@@ -158,6 +193,10 @@
     els.agreementsNote.value = existing?.agreements_note || "";
     els.homeworkNote.value = existing?.homework_note || "";
     els.nextSessionNote.value = existing?.next_session_note || patient.next_session_focus || "";
+    setMarkerValues(els.processMarkers, existing?.process_markers || []);
+    setMarkerValues(els.interventionMarkers, existing?.intervention_markers || []);
+    setEvolutionValues(existing?.evolution_markers || {});
+    renderSessionGoals(patient.id, existing?.worked_goal_ids || []);
     els.sessionMessage.textContent = "";
     const approved = existing?.status === "approved";
     els.sessionState.textContent = approved
@@ -267,14 +306,16 @@
 
   async function loadData() {
     setMessage("Cargando información clínica…");
-    const [bookingRows, patientRows, sessionRows] = await Promise.all([
+    const [bookingRows, patientRows, sessionRows, goalRows] = await Promise.all([
       rest(`appointment_bookings?select=id,patient_name,patient_email,patient_phone,patient_type,status,starts_at,ends_at,service_code,clinical_patient_id&order=starts_at.desc&limit=1000`),
       rest("clinical_patients?select=*&order=full_name.asc"),
       rest("clinical_sessions?select=*&order=session_date.desc"),
+      rest("clinical_goals?select=*&order=created_at.asc"),
     ]);
     appointments = bookingRows || [];
     patients = patientRows || [];
     clinicalSessions = sessionRows || [];
+    clinicalGoals = goalRows || [];
     renderToday();
     renderPatients(els.patientSearch.value);
     setMessage("");
@@ -318,6 +359,10 @@
       agreements_note: els.agreementsNote.value.trim() || null,
       homework_note: els.homeworkNote.value.trim() || null,
       next_session_note: els.nextSessionNote.value.trim() || null,
+      process_markers: markerValues(els.processMarkers),
+      intervention_markers: markerValues(els.interventionMarkers),
+      evolution_markers: evolutionValues(),
+      worked_goal_ids: markerValues(els.sessionGoals),
       approved_at: status === "approved" ? new Date().toISOString() : null,
       updated_at: new Date().toISOString(),
     };
@@ -380,6 +425,20 @@
   els.patientClose.addEventListener("click", () => els.patientDialog.close());
   els.patientForm.addEventListener("submit", (event) => savePatient(event).catch((error) => { els.patientMessage.textContent = error.message; }));
   els.sessionClose.addEventListener("click", () => els.sessionDialog.close());
+  els.addGoal.addEventListener("click", async () => {
+    if (!currentPatient) return;
+    const title = window.prompt("Escribe el objetivo terapéutico:");
+    if (!title?.trim()) return;
+    try {
+      const rows = await rest("clinical_goals?select=*", {
+        method: "POST", headers: { Prefer: "return=representation" },
+        body: JSON.stringify({ patient_id: currentPatient.id, title: title.trim() }),
+      });
+      if (rows?.[0]) clinicalGoals.push(rows[0]);
+      const selected = markerValues(els.sessionGoals);
+      renderSessionGoals(currentPatient.id, selected);
+    } catch (error) { els.sessionMessage.textContent = error.message; }
+  });
   els.saveDraft.addEventListener("click", () => persistClinicalSession("draft").catch((error) => { els.sessionMessage.textContent = error.message; }));
   els.sessionForm.addEventListener("submit", (event) => {
     event.preventDefault();
