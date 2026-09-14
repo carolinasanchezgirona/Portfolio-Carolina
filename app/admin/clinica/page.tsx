@@ -104,6 +104,9 @@ export default function AdminClinicaPage() {
             <div id="clinic-patient-exercises" className="clinic-history" />
           </section>
 
+          <h3>Informes guardados</h3>
+          <div id="clinic-patient-reports" className="clinic-history" />
+
           <h3>Sesiones y citas</h3>
           <div id="clinic-patient-history" className="clinic-history" />
         </form>
