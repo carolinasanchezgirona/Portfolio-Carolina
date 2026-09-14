@@ -78,6 +78,10 @@ export default function AdminClinicaPage() {
             <button id="clinic-patient-close" className="clinic-close" type="button" aria-label="Cerrar">×</button>
           </div>
           <div id="clinic-patient-contact" className="clinic-contact" />
+          <div className="clinic-record-actions">
+            <button id="clinic-print-history" className="clinic-secondary" type="button">Imprimir historial clínico</button>
+            <button id="clinic-new-report" className="clinic-primary" type="button">Generar informe</button>
+          </div>
 
           <section className="clinic-preparation">
             <p className="clinic-eyebrow">Preparar sesión</p>
@@ -102,6 +106,41 @@ export default function AdminClinicaPage() {
 
           <h3>Sesiones y citas</h3>
           <div id="clinic-patient-history" className="clinic-history" />
+        </form>
+      </dialog>
+
+      <dialog id="clinic-report-dialog" className="clinic-dialog clinic-report-dialog">
+        <form id="clinic-report-form" className="clinic-dialog-content">
+          <input id="clinic-report-id" type="hidden" />
+          <div className="clinic-dialog-heading">
+            <div><p className="clinic-eyebrow">Documento clínico</p><h2 id="clinic-report-heading">Informe</h2></div>
+            <button id="clinic-report-close" className="clinic-close" type="button" aria-label="Cerrar">×</button>
+          </div>
+          <div className="clinic-form-grid clinic-report-settings">
+            <label>Tipo de informe<select id="clinic-report-type"><option value="evolution">Informe de evolución</option><option value="clinical_summary">Resumen clínico</option><option value="referral">Informe de derivación</option></select></label>
+            <label>Destinatario<input id="clinic-report-recipient" placeholder="Paciente, profesional, entidad…" /></label>
+            <label className="clinic-full">Finalidad<input id="clinic-report-purpose" placeholder="Finalidad asistencial del documento…" /></label>
+            <label>Desde<input id="clinic-report-start" type="date" /></label>
+            <label>Hasta<input id="clinic-report-end" type="date" /></label>
+          </div>
+          <div className="clinic-report-toolbar">
+            <button id="clinic-generate-report" className="clinic-secondary" type="button">Autogenerar borrador</button>
+            <span>Se incluirán únicamente registros aprobados del periodo seleccionado.</span>
+          </div>
+          <section id="clinic-report-sheet" className="clinic-report-sheet">
+            <header><p>Carolina Sánchez Girona · Psicóloga General Sanitaria y Neuropsicóloga</p><h1 id="clinic-report-title-preview">Informe de evolución</h1><p id="clinic-report-meta" /></header>
+            <label>Motivo y contexto<textarea id="clinic-report-context" rows={5} /></label>
+            <label>Evolución clínica<textarea id="clinic-report-evolution" rows={8} /></label>
+            <label>Intervenciones realizadas<textarea id="clinic-report-interventions" rows={7} /></label>
+            <label>Situación actual y recomendaciones<textarea id="clinic-report-current" rows={6} /></label>
+            <footer><p id="clinic-report-signature" /></footer>
+          </section>
+          <p id="clinic-report-message" className="clinic-message" role="status" />
+          <div className="clinic-dialog-actions">
+            <button id="clinic-save-report" className="clinic-secondary" type="button">Guardar borrador</button>
+            <button id="clinic-approve-report" className="clinic-secondary" type="button">Aprobar informe</button>
+            <button id="clinic-print-report" className="clinic-primary" type="button">Imprimir / guardar PDF</button>
+          </div>
         </form>
       </dialog>
 
@@ -187,7 +226,7 @@ export default function AdminClinicaPage() {
         </form>
       </dialog>
 
-      <Script src="/admin-clinica.js?v=20260914-3" strategy="afterInteractive" />
+      <Script src="/admin-clinica.js?v=20260914-4" strategy="afterInteractive" />
     </main>
   );
 }
