@@ -140,6 +140,10 @@ export default function AdminClinicaPage() {
             </div>
           </section>
           <label className="clinic-session-field">Notas de trabajo<textarea id="clinic-work-notes" rows={5} placeholder="Apuntes breves durante la consulta. No forman parte del registro aprobado." /></label>
+          <div className="clinic-draft-generator">
+            <div><strong>Cierre asistido</strong><p>Organiza tus notas y marcadores en los apartados clínicos. Podrás revisar todo antes de aprobar.</p></div>
+            <button id="clinic-generate-draft" className="clinic-secondary" type="button">Generar borrador</button>
+          </div>
           <div className="clinic-form-grid">
             <label>Evolución<textarea id="clinic-evolution-note" rows={4} /></label>
             <label>Intervención<textarea id="clinic-intervention-note" rows={4} /></label>
