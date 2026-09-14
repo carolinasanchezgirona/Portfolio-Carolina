@@ -109,6 +109,36 @@ export default function AdminClinicaPage() {
             <button id="clinic-session-close" className="clinic-close" type="button" aria-label="Cerrar">×</button>
           </div>
           <p id="clinic-session-state" className="clinic-note" />
+          <section className="clinic-consultation-tools">
+            <div>
+              <p className="clinic-eyebrow">Procesos observados o referidos</p>
+              <div id="clinic-process-markers" className="clinic-marker-grid">
+                {["Rumiación", "Evitación", "Comprobación", "Insomnio", "Activación fisiológica", "Bajo estado de ánimo", "Autocrítica"].map((item) => (
+                  <label key={item}><input type="checkbox" value={item} />{item}</label>
+                ))}
+              </div>
+            </div>
+            <div>
+              <p className="clinic-eyebrow">Intervenciones realizadas</p>
+              <div id="clinic-intervention-markers" className="clinic-marker-grid">
+                {["Psicoeducación", "Análisis funcional", "Exposición", "Activación conductual", "Defusión", "Reestructuración cognitiva", "Regulación emocional", "Resolución de problemas"].map((item) => (
+                  <label key={item}><input type="checkbox" value={item} />{item}</label>
+                ))}
+              </div>
+            </div>
+            <div>
+              <p className="clinic-eyebrow">Evolución desde la sesión anterior</p>
+              <div className="clinic-evolution-grid">
+                {["Sueño", "Ansiedad", "Estado de ánimo", "Funcionamiento", "Tarea"].map((item) => (
+                  <label key={item}>{item}<select data-evolution={item}><option value="not_assessed">No valorado</option><option value="better">Mejor</option><option value="similar">Similar</option><option value="worse">Peor</option><option value="fluctuating">Fluctuante</option></select></label>
+                ))}
+              </div>
+            </div>
+            <div>
+              <div className="clinic-goals-heading"><p className="clinic-eyebrow">Objetivos activos</p><button id="clinic-add-goal" className="clinic-text" type="button">+ Añadir objetivo</button></div>
+              <div id="clinic-session-goals" className="clinic-session-goals" />
+            </div>
+          </section>
           <label className="clinic-session-field">Notas de trabajo<textarea id="clinic-work-notes" rows={5} placeholder="Apuntes breves durante la consulta. No forman parte del registro aprobado." /></label>
           <div className="clinic-form-grid">
             <label>Evolución<textarea id="clinic-evolution-note" rows={4} /></label>
