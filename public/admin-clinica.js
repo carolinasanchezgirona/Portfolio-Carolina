@@ -36,6 +36,7 @@
     saveDraft: $("#clinic-save-draft"), approveSession: $("#clinic-approve-session"),
     processMarkers: $("#clinic-process-markers"), interventionMarkers: $("#clinic-intervention-markers"),
     sessionGoals: $("#clinic-session-goals"), addGoal: $("#clinic-add-goal"),
+    generateDraft: $("#clinic-generate-draft"),
   };
 
   let session = null;
@@ -343,6 +344,33 @@
     els.patientMessage.textContent = "Ficha guardada.";
   }
 
+  function generateStructuredDraft() {
+    const notes = els.workNotes.value.trim();
+    const processes = markerValues(els.processMarkers);
+    const interventions = markerValues(els.interventionMarkers);
+    const evolution = evolutionValues();
+    const evolutionLabels = { better: "mejor", similar: "similar", worse: "peor", fluctuating: "fluctuante" };
+    const assessed = Object.entries(evolution)
+      .filter(([, value]) => value !== "not_assessed")
+      .map(([area, value]) => `${area}: ${evolutionLabels[value] || value}`);
+
+    if (!notes && !processes.length && !interventions.length && !assessed.length) {
+      els.sessionMessage.textContent = "Añade primero alguna nota o marcador.";
+      return;
+    }
+    if (!els.evolutionNote.value.trim()) {
+      const parts = [];
+      if (notes) parts.push(notes);
+      if (processes.length) parts.push(`Procesos registrados: ${processes.join(", ")}.`);
+      if (assessed.length) parts.push(`Evolución referida u observada: ${assessed.join("; ")}.`);
+      els.evolutionNote.value = parts.join("\n\n");
+    }
+    if (!els.interventionNote.value.trim() && interventions.length) {
+      els.interventionNote.value = `Intervenciones realizadas: ${interventions.join(", ")}.`;
+    }
+    els.sessionMessage.textContent = "Borrador generado. Revísalo antes de aprobar.";
+  }
+
   function sessionPayload(status) {
     const patientId = els.sessionPatientId.value;
     const existing = clinicalSessions.find((item) => item.id === els.sessionId.value);
@@ -390,6 +418,20 @@
     els.sessionId.value = saved.id;
     els.sessionMessage.textContent = status === "approved" ? "Registro aprobado y cerrado." : "Borrador guardado.";
     if (status === "approved") {
+      if (currentPatient && els.nextSessionNote.value.trim()) {
+        const updatedPatients = await rest(`clinical_patients?id=eq.${encodeURIComponent(currentPatient.id)}&select=*`, {
+          method: "PATCH",
+          headers: { Prefer: "return=representation" },
+          body: JSON.stringify({
+            next_session_focus: els.nextSessionNote.value.trim(),
+            updated_at: new Date().toISOString(),
+          }),
+        });
+        if (updatedPatients?.[0]) {
+          currentPatient = updatedPatients[0];
+          patients = patients.map((patient) => patient.id === currentPatient.id ? currentPatient : patient);
+        }
+      }
       els.sessionDialog.close();
       if (currentPatient) {
         renderPreparation(currentPatient);
@@ -425,6 +467,7 @@
   els.patientClose.addEventListener("click", () => els.patientDialog.close());
   els.patientForm.addEventListener("submit", (event) => savePatient(event).catch((error) => { els.patientMessage.textContent = error.message; }));
   els.sessionClose.addEventListener("click", () => els.sessionDialog.close());
+  els.generateDraft.addEventListener("click", generateStructuredDraft);
   els.addGoal.addEventListener("click", async () => {
     if (!currentPatient) return;
     const title = window.prompt("Escribe el objetivo terapéutico:");
