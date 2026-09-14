@@ -249,8 +249,9 @@
     }).sort((a, b) => new Date(a.session_date) - new Date(b.session_date));
   }
   function printableWindow(title, body) {
-    const popup = window.open("", "_blank", "noopener,noreferrer");
+    const popup = window.open("", "_blank");
     if (!popup) throw new Error("El navegador ha bloqueado la ventana de impresión.");
+    popup.opener = null;
     popup.document.write(`<!doctype html><html lang="es"><head><meta charset="utf-8"><title>${escapeHtml(title)}</title><style>@page{size:A4;margin:18mm}body{font-family:Arial,sans-serif;color:#1f2933;font-size:11pt;line-height:1.5}header{border-bottom:2px solid #1f5f99;margin-bottom:24px;padding-bottom:14px}h1{font-size:20pt;color:#1f5f99;margin:4px 0}h2{font-size:13pt;margin:24px 0 8px}h3{font-size:11pt;margin:18px 0 5px}.meta{color:#526b7a;font-size:9.5pt}.entry{break-inside:avoid;border-bottom:1px solid #d5e3ee;padding:0 0 14px;margin-bottom:16px}.text{white-space:pre-wrap}.signature{margin-top:48px}.privacy{margin-top:30px;color:#607786;font-size:8.5pt}@media print{button{display:none}}</style></head><body>${body}<script>window.onload=()=>window.print()<\/script></body></html>`);
     popup.document.close();
   }
@@ -281,7 +282,7 @@
     const locked = report?.status === "approved";
     [els.reportType, els.reportRecipient, els.reportPurpose, els.reportStart, els.reportEnd, els.reportContext, els.reportEvolution, els.reportInterventions, els.reportCurrent].forEach((field) => { field.disabled = locked; });
     els.generateReport.disabled = locked; els.saveReport.disabled = locked; els.approveReport.disabled = locked;
-    els.reportDialog.showModal();
+    if (!els.reportDialog.open) els.reportDialog.showModal();
   }
   function generateReportDraft() {
     if (!currentPatient) return;
