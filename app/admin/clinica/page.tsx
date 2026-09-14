@@ -94,8 +94,35 @@ export default function AdminClinicaPage() {
             <button className="clinic-primary" type="submit">Guardar ficha</button>
           </div>
 
+          <section className="clinic-exercises-section">
+            <div className="clinic-goals-heading"><div><p className="clinic-eyebrow">Continuidad terapéutica</p><h3>Ejercicios</h3></div><button id="clinic-new-exercise" className="clinic-secondary" type="button">Asignar ejercicio</button></div>
+            <div id="clinic-exercise-suggestions" className="clinic-exercise-suggestions" />
+            <div id="clinic-patient-exercises" className="clinic-history" />
+          </section>
+
           <h3>Sesiones y citas</h3>
           <div id="clinic-patient-history" className="clinic-history" />
+        </form>
+      </dialog>
+
+      <dialog id="clinic-exercise-dialog" className="clinic-dialog clinic-exercise-dialog">
+        <form id="clinic-exercise-form" className="clinic-dialog-content">
+          <input id="clinic-exercise-template-id" type="hidden" />
+          <div className="clinic-dialog-heading">
+            <div><p className="clinic-eyebrow">Material para el paciente</p><h2>Preparar ejercicio</h2></div>
+            <button id="clinic-exercise-close" className="clinic-close" type="button" aria-label="Cerrar">×</button>
+          </div>
+          <p id="clinic-exercise-patient-code" className="clinic-note" />
+          <label>Título<input id="clinic-exercise-title" required /></label>
+          <label>Contenido<textarea id="clinic-exercise-content" rows={12} required /></label>
+          <label>Motivo de la sugerencia<textarea id="clinic-exercise-rationale" rows={2} /></label>
+          <label>Correo destinatario<input id="clinic-exercise-email" type="email" required /></label>
+          <p className="clinic-note">El correo será neutro. El contenido se abrirá mediante un enlace personal que caduca en 7 días.</p>
+          <p id="clinic-exercise-message" className="clinic-message" role="status" />
+          <div className="clinic-dialog-actions">
+            <button id="clinic-save-exercise" className="clinic-secondary" type="button">Guardar sin enviar</button>
+            <button className="clinic-primary" type="submit">Guardar y enviar enlace</button>
+          </div>
         </form>
       </dialog>
 
@@ -160,7 +187,7 @@ export default function AdminClinicaPage() {
         </form>
       </dialog>
 
-      <Script src="/admin-clinica.js?v=20260914-2" strategy="afterInteractive" />
+      <Script src="/admin-clinica.js?v=20260914-3" strategy="afterInteractive" />
     </main>
   );
 }
