@@ -37,6 +37,13 @@
     processMarkers: $("#clinic-process-markers"), interventionMarkers: $("#clinic-intervention-markers"),
     sessionGoals: $("#clinic-session-goals"), addGoal: $("#clinic-add-goal"),
     generateDraft: $("#clinic-generate-draft"),
+    exerciseSuggestions: $("#clinic-exercise-suggestions"), patientExercises: $("#clinic-patient-exercises"),
+    newExercise: $("#clinic-new-exercise"), exerciseDialog: $("#clinic-exercise-dialog"),
+    exerciseForm: $("#clinic-exercise-form"), exerciseClose: $("#clinic-exercise-close"),
+    exerciseTemplateId: $("#clinic-exercise-template-id"), exercisePatientCode: $("#clinic-exercise-patient-code"),
+    exerciseTitle: $("#clinic-exercise-title"), exerciseContent: $("#clinic-exercise-content"),
+    exerciseRationale: $("#clinic-exercise-rationale"), exerciseEmail: $("#clinic-exercise-email"),
+    exerciseMessage: $("#clinic-exercise-message"), saveExercise: $("#clinic-save-exercise"),
   };
 
   let session = null;
@@ -44,6 +51,8 @@
   let patients = [];
   let clinicalSessions = [];
   let clinicalGoals = [];
+  let exerciseTemplates = [];
+  let exerciseAssignments = [];
   let currentPatient = null;
   let currentAppointment = null;
 
@@ -127,6 +136,91 @@
   function patientById(id) { return patients.find((patient) => patient.id === id); }
   function patientGoals(patientId) {
     return clinicalGoals.filter((goal) => goal.patient_id === patientId && ["active", "review"].includes(goal.status));
+  }
+  function patientExercises(patientId) {
+    return exerciseAssignments.filter((item) => item.patient_id === patientId).sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+  }
+  function suggestedExercises(patientId) {
+    const latest = patientSessions(patientId)[0];
+    const markers = latest?.process_markers || [];
+    return exerciseTemplates
+      .map((template) => ({ template, matches: (template.process_tags || []).filter((tag) => markers.includes(tag)) }))
+      .filter((item) => item.matches.length)
+      .sort((a, b) => b.matches.length - a.matches.length)
+      .slice(0, 3);
+  }
+  function openExercise(template = null, rationale = "") {
+    if (!currentPatient) return;
+    els.exerciseTemplateId.value = template?.id || "";
+    els.exercisePatientCode.textContent = `Paciente ${currentPatient.public_code} · La identidad no aparecerá en el correo.`;
+    els.exerciseTitle.value = template?.title || "";
+    els.exerciseContent.value = template?.instructions || "";
+    els.exerciseRationale.value = rationale;
+    els.exerciseEmail.value = currentPatient.email || "";
+    els.exerciseMessage.textContent = "";
+    els.exerciseDialog.showModal();
+  }
+  function renderExercises(patient) {
+    els.exerciseSuggestions.replaceChildren();
+    const suggestions = suggestedExercises(patient.id);
+    if (suggestions.length) {
+      suggestions.forEach(({ template, matches }) => {
+        const card = create("article", "clinic-exercise-card");
+        const body = create("div");
+        body.append(create("strong", "", template.title), create("p", "", `Sugerido por: ${matches.join(", ")} · ${template.duration_minutes || "—"} min`));
+        const button = create("button", "clinic-secondary", "Preparar");
+        button.type = "button";
+        button.addEventListener("click", () => openExercise(template, `Procesos registrados: ${matches.join(", ")}.`));
+        card.append(body, button);
+        els.exerciseSuggestions.append(card);
+      });
+    } else {
+      els.exerciseSuggestions.append(create("p", "clinic-empty-inline", "No hay sugerencias automáticas con los datos registrados. Puedes asignar un ejercicio manualmente."));
+    }
+    els.patientExercises.replaceChildren();
+    const assigned = patientExercises(patient.id);
+    if (!assigned.length) {
+      els.patientExercises.append(create("p", "clinic-empty-inline", "Todavía no hay ejercicios asignados."));
+      return;
+    }
+    assigned.forEach((item) => {
+      const row = create("article");
+      const info = create("div");
+      const state = item.email_status === "sent" ? `Enviado · enlace hasta ${dateShort.format(new Date(item.access_expires_at))}` : item.status === "prepared" ? "Preparado, sin enviar" : item.status;
+      info.append(create("strong", "", item.title), create("span", "", state));
+      row.append(info);
+      els.patientExercises.append(row);
+    });
+  }
+  async function saveExercise(sendAfterSave) {
+    if (!currentPatient) return;
+    if (!els.exerciseTitle.value.trim() || !els.exerciseContent.value.trim()) throw new Error("Completa el título y el contenido.");
+    els.exerciseMessage.textContent = sendAfterSave ? "Preparando enlace seguro…" : "Guardando…";
+    const rows = await rest("clinical_exercise_assignments?select=*", {
+      method: "POST", headers: { Prefer: "return=representation" },
+      body: JSON.stringify({
+        patient_id: currentPatient.id,
+        template_id: els.exerciseTemplateId.value || null,
+        title: els.exerciseTitle.value.trim(),
+        content: els.exerciseContent.value.trim(),
+        rationale: els.exerciseRationale.value.trim() || null,
+        recipient_email: els.exerciseEmail.value.trim() || null,
+        status: "prepared",
+      }),
+    });
+    const saved = rows?.[0];
+    if (!saved) throw new Error("No se ha podido guardar el ejercicio.");
+    exerciseAssignments.unshift(saved);
+    if (sendAfterSave) {
+      const response = await fetch(`${SUPABASE_URL}/functions/v1/send-clinical-exercise`, {
+        method: "POST", headers: authHeaders(), body: JSON.stringify({ assignment_id: saved.id }),
+      });
+      const body = await response.json().catch(() => ({}));
+      if (!response.ok) throw new Error(body.error || "No se ha podido enviar el enlace.");
+      await loadData();
+    }
+    renderExercises(currentPatient);
+    els.exerciseDialog.close();
   }
   function markerValues(container) {
     return Array.from(container.querySelectorAll('input[type="checkbox"]:checked')).map((input) => input.value);
@@ -244,7 +338,9 @@
     els.nextFocus.value = patient.next_session_focus || "";
     els.medication.value = patient.medication_notes || "";
     els.patientMessage.textContent = "";
+    els.patientName.textContent = `${patient.public_code} · ${patient.full_name}`;
     renderPreparation(patient);
+    renderExercises(patient);
     renderHistory(patient);
     els.patientDialog.showModal();
   }
@@ -295,7 +391,7 @@
       const bookings = patientAppointments(patient.id);
       const card = create("article", "clinic-patient-card");
       const body = create("div");
-      body.append(create("h3", "", patient.full_name), create("p", "", [patient.email, patient.phone].filter(Boolean).join(" · ") || "Sin contacto registrado"));
+      body.append(create("h3", "", patient.public_code), create("p", "", "Identidad oculta en el listado general"));
       const summary = create("p", "", `${bookings.length} cita(s) · ${patientSessions(patient.id).length} sesión(es) clínica(s)`);
       const button = create("button", "clinic-secondary", "Abrir ficha");
       button.type = "button";
@@ -307,16 +403,20 @@
 
   async function loadData() {
     setMessage("Cargando información clínica…");
-    const [bookingRows, patientRows, sessionRows, goalRows] = await Promise.all([
+    const [bookingRows, patientRows, sessionRows, goalRows, templateRows, assignmentRows] = await Promise.all([
       rest(`appointment_bookings?select=id,patient_name,patient_email,patient_phone,patient_type,status,starts_at,ends_at,service_code,clinical_patient_id&order=starts_at.desc&limit=1000`),
       rest("clinical_patients?select=*&order=full_name.asc"),
       rest("clinical_sessions?select=*&order=session_date.desc"),
       rest("clinical_goals?select=*&order=created_at.asc"),
+      rest("clinical_exercise_templates?select=*&status=eq.active&order=title.asc"),
+      rest("clinical_exercise_assignments?select=*&order=created_at.desc"),
     ]);
     appointments = bookingRows || [];
     patients = patientRows || [];
     clinicalSessions = sessionRows || [];
     clinicalGoals = goalRows || [];
+    exerciseTemplates = templateRows || [];
+    exerciseAssignments = assignmentRows || [];
     renderToday();
     renderPatients(els.patientSearch.value);
     setMessage("");
@@ -467,6 +567,10 @@
   els.patientClose.addEventListener("click", () => els.patientDialog.close());
   els.patientForm.addEventListener("submit", (event) => savePatient(event).catch((error) => { els.patientMessage.textContent = error.message; }));
   els.sessionClose.addEventListener("click", () => els.sessionDialog.close());
+  els.newExercise.addEventListener("click", () => openExercise());
+  els.exerciseClose.addEventListener("click", () => els.exerciseDialog.close());
+  els.saveExercise.addEventListener("click", () => saveExercise(false).catch((error) => { els.exerciseMessage.textContent = error.message; }));
+  els.exerciseForm.addEventListener("submit", (event) => { event.preventDefault(); saveExercise(true).catch((error) => { els.exerciseMessage.textContent = error.message; }); });
   els.generateDraft.addEventListener("click", generateStructuredDraft);
   els.addGoal.addEventListener("click", async () => {
     if (!currentPatient) return;
@@ -487,7 +591,7 @@
     event.preventDefault();
     persistClinicalSession("approved").catch((error) => { els.sessionMessage.textContent = error.message; });
   });
-  [els.patientDialog, els.sessionDialog].forEach((dialog) => dialog.addEventListener("click", (event) => {
+  [els.patientDialog, els.sessionDialog, els.exerciseDialog].forEach((dialog) => dialog.addEventListener("click", (event) => {
     if (event.target === dialog) dialog.close();
   }));
 
