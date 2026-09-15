@@ -44,6 +44,7 @@
       text: "Cita con Carolina Sánchez",
       dates: `${googleDate(appointment.starts_at)}/${googleDate(appointment.ends_at)}`,
       details: "Cita profesional con Carolina Sánchez · 60 minutos. Si necesitas cambiar o cancelar la cita, avisa con al menos 24 horas de antelación.",
+      location: "Dememoria · Carrer Barcelona 8, Local · Arenys de Mar",
       ctz: "Europe/Madrid",
     });
     return `https://calendar.google.com/calendar/render?${params.toString()}`;
@@ -64,10 +65,6 @@
     ensurePanel();
     const body = panel.querySelector("#appointment-communications-body");
     if (body) body.innerHTML = html;
-  }
-
-  function label(value, goodText, pendingText) {
-    return value ? goodText : pendingText;
   }
 
   async function copyCalendarLink(appointment) {
@@ -100,7 +97,7 @@
 
     try {
       const c = await config();
-      const select = "id,status,patient_email,patient_phone,starts_at,ends_at,reminder_sent_at,needs_patient_confirmation,created_by_admin";
+      const select = "id,status,patient_email,starts_at,ends_at,reminder_sent_at,needs_patient_confirmation,created_by_admin";
       const response = await fetch(`${c.rest}/appointment_bookings?select=${encodeURIComponent(select)}&id=eq.${encodeURIComponent(id)}&limit=1`, {
         headers: await authHeaders(), cache: "no-store",
       });
@@ -117,13 +114,11 @@
         ? `Enviado · ${new Intl.DateTimeFormat("es-ES", { dateStyle: "short", timeStyle: "short", timeZone: "Europe/Madrid" }).format(new Date(appointment.reminder_sent_at))}`
         : "Pendiente";
       const email = appointment.patient_email ? "Disponible" : "Sin correo";
-      const phone = appointment.patient_phone ? "Disponible" : "Sin teléfono";
 
       setBody(`
         <span><b>Confirmación:</b> ${confirmation}</span>
         <span><b>Recordatorio por email:</b> ${reminder}</span>
         <span><b>Email:</b> ${email}</span>
-        <span><b>WhatsApp:</b> ${phone === "Disponible" ? "Teléfono disponible · envío automático no conectado" : "Sin teléfono"}</span>
         <button id="copy-calendar-link" class="admin-secondary" type="button" style="justify-self:start;margin-top:5px">Copiar enlace de Google Calendar</button>
       `);
       panel.querySelector("#copy-calendar-link")?.addEventListener("click", () => copyCalendarLink(appointment));
