@@ -1,7 +1,6 @@
 (() => {
   "use strict";
 
-  const ZONE = "Europe/Madrid";
   const SESSION_KEY = "dememoria_admin_session";
   const form = document.querySelector("#appointment-form");
   if (!form) return;
@@ -38,7 +37,7 @@
     const note = document.createElement("p");
     note.id = "appointment-recurrence-note";
     note.className = "admin-note";
-    note.textContent = "Puedes crear una serie desde una cita nueva o desde una cita ya existente. Si partes de una cita existente, esa cita cuenta como la primera sesión y se crearán únicamente las siguientes fechas.";
+    note.textContent = "La serie se guarda completa en una sola operación. Si alguna fecha está ocupada o bloqueada, no se crea ninguna cita. Si partes de una cita existente, esa cita cuenta como la primera sesión.";
     block.insertAdjacentElement("afterend", note);
 
     repeat = q("#appointment-repeat");
@@ -47,10 +46,7 @@
     return { repeat, count, repeatFields };
   }
 
-  const controls = ensureControls();
-  const repeat = controls.repeat;
-  const count = controls.count;
-  const repeatFields = controls.repeatFields;
+  const { repeat, count, repeatFields } = ensureControls();
   if (!repeat || !count) return;
 
   let configPromise = null;
@@ -75,48 +71,11 @@
   async function headers() {
     const c = await config();
     const current = auth();
-    return { apikey: c.key, Authorization: `Bearer ${current?.access_token || ""}`, "Content-Type": "application/json" };
-  }
-
-  function zoneOffsetMs(value) {
-    const parts = new Intl.DateTimeFormat("en-US", {
-      timeZone: ZONE, hour12: false, year: "numeric", month: "2-digit", day: "2-digit",
-      hour: "2-digit", minute: "2-digit", second: "2-digit",
-    }).formatToParts(value);
-    const p = Object.fromEntries(parts.map((part) => [part.type, part.value]));
-    return Date.UTC(+p.year, +p.month - 1, +p.day, +p.hour, +p.minute, +p.second) - value.getTime();
-  }
-
-  function madridLocalToIso(dateKey, timeValue) {
-    const [y, m, d] = dateKey.split("-").map(Number);
-    const [hh, mm] = timeValue.split(":").map(Number);
-    const guess = Date.UTC(y, m - 1, d, hh, mm, 0);
-    let instant = new Date(guess);
-    let offset = zoneOffsetMs(instant);
-    instant = new Date(guess - offset);
-    const refined = zoneOffsetMs(instant);
-    if (refined !== offset) instant = new Date(guess - refined);
-    return instant.toISOString();
-  }
-
-  function addDays(key, days) {
-    const [y, m, d] = key.split("-").map(Number);
-    const dt = new Date(Date.UTC(y, m - 1, d + days, 12));
-    return `${dt.getUTCFullYear()}-${String(dt.getUTCMonth() + 1).padStart(2, "0")}-${String(dt.getUTCDate()).padStart(2, "0")}`;
-  }
-
-  function addMonths(key, months) {
-    const [y, m, d] = key.split("-").map(Number);
-    const first = new Date(Date.UTC(y, m - 1 + months, 1, 12));
-    const maxDay = new Date(Date.UTC(first.getUTCFullYear(), first.getUTCMonth() + 1, 0, 12)).getUTCDate();
-    const day = Math.min(d, maxDay);
-    return `${first.getUTCFullYear()}-${String(first.getUTCMonth() + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
-  }
-
-  function dateAt(start, kind, index) {
-    if (kind === "weekly") return addDays(start, index * 7);
-    if (kind === "biweekly") return addDays(start, index * 14);
-    return addMonths(start, index);
+    return {
+      apikey: c.key,
+      Authorization: `Bearer ${current?.access_token || ""}`,
+      "Content-Type": "application/json",
+    };
   }
 
   function msg(text) {
@@ -127,30 +86,14 @@
   async function rpc(name, body) {
     const c = await config();
     const response = await fetch(`${c.rest}/rpc/${name}`, {
-      method: "POST", headers: await headers(), body: JSON.stringify(body), cache: "no-store",
+      method: "POST",
+      headers: await headers(),
+      body: JSON.stringify(body),
+      cache: "no-store",
     });
     const data = await response.json().catch(() => ({}));
-    if (!response.ok) throw new Error(data.message || data.hint || "No se ha podido guardar la cita.");
+    if (!response.ok) throw new Error(data.message || data.hint || "No se ha podido guardar la serie.");
     return data;
-  }
-
-  async function preflight(starts) {
-    const c = await config();
-    const h = await headers();
-    for (const start of starts) {
-      const end = new Date(new Date(start).getTime() + 3600000).toISOString();
-      const bookings = `${c.rest}/appointment_bookings?select=id&status=in.(pending,confirmed)&starts_at=lt.${encodeURIComponent(end)}&ends_at=gt.${encodeURIComponent(start)}&limit=1`;
-      const blocks = `${c.rest}/appointment_schedule_blocks?select=id&starts_at=lt.${encodeURIComponent(end)}&ends_at=gt.${encodeURIComponent(start)}&limit=1`;
-      const [a, b] = await Promise.all([fetch(bookings, { headers: h }), fetch(blocks, { headers: h })]);
-      const aa = a.ok ? await a.json() : [];
-      const bb = b.ok ? await b.json() : [];
-      if (aa.length || bb.length) {
-        const when = new Intl.DateTimeFormat("es-ES", {
-          weekday: "long", day: "numeric", month: "long", hour: "2-digit", minute: "2-digit", timeZone: ZONE,
-        }).format(new Date(start));
-        throw new Error(`No se ha creado la serie: ${when} ya está ocupado o bloqueado.`);
-      }
-    }
   }
 
   function visibility() {
@@ -171,51 +114,53 @@
 
   form.addEventListener("submit", async (event) => {
     if (repeat.value === "none") return;
+
     event.preventDefault();
     event.stopImmediatePropagation();
     if (!form.checkValidity()) return form.reportValidity();
 
     const total = Number(count.value || 0);
-    if (!Number.isInteger(total) || total < 2 || total > 52) return msg("Indica entre 2 y 52 sesiones en total.");
+    if (!Number.isInteger(total) || total < 2 || total > 52) {
+      msg("Indica entre 2 y 52 sesiones en total.");
+      return;
+    }
 
     const date = q("#appointment-date").value;
     const time = q("#appointment-time").value;
-    const existingId = q("#appointment-id")?.value || "";
-    const allStarts = Array.from({ length: total }, (_, i) => madridLocalToIso(dateAt(date, repeat.value, i), time));
-    const startsToCreate = existingId ? allStarts.slice(1) : allStarts;
+    const startsAt = new Date(`${date}T${time}:00`).toISOString();
+    const existingId = q("#appointment-id")?.value || null;
     const button = q("#appointment-save");
-    if (button) { button.disabled = true; button.textContent = existingId ? "Guardando serie…" : "Creando serie…"; }
 
-    const common = {
-      p_patient_name: q("#appointment-name").value.trim(),
-      p_patient_email: q("#appointment-email").value.trim() || null,
-      p_patient_phone: q("#appointment-phone").value.trim() || null,
-      p_patient_type: q("#appointment-patient-type").value,
-      p_service_code: q("#appointment-service").value,
-      p_status: q("#appointment-status").value,
-      p_price_eur: Number(q("#appointment-price").value || 60),
-    };
+    if (button) {
+      button.disabled = true;
+      button.textContent = "Guardando serie…";
+    }
 
     try {
-      msg("Comprobando las siguientes fechas…");
-      await preflight(startsToCreate);
+      msg("Comprobando y guardando toda la serie…");
+      await rpc("admin_create_appointment_series", {
+        p_existing_id: existingId,
+        p_starts_at: startsAt,
+        p_patient_name: q("#appointment-name").value.trim(),
+        p_patient_email: q("#appointment-email").value.trim() || null,
+        p_patient_phone: q("#appointment-phone").value.trim() || null,
+        p_patient_type: q("#appointment-patient-type").value,
+        p_service_code: q("#appointment-service").value,
+        p_status: q("#appointment-status").value,
+        p_price_eur: Number(q("#appointment-price").value || 60),
+        p_pattern: repeat.value,
+        p_total: total,
+      });
 
-      if (existingId) {
-        msg("Guardando la cita actual…");
-        await rpc("admin_update_appointment", { p_id: existingId, p_starts_at: allStarts[0], ...common });
-      }
-
-      for (let i = 0; i < startsToCreate.length; i += 1) {
-        msg(`Creando sesión ${existingId ? i + 2 : i + 1} de ${total}…`);
-        await rpc("admin_create_appointment", { p_starts_at: startsToCreate[i], ...common });
-      }
-
-      msg(`Serie guardada: ${total} citas en total.`);
+      msg(`Serie guardada correctamente: ${total} citas.`);
       setTimeout(() => window.location.reload(), 500);
     } catch (error) {
       msg(error instanceof Error ? error.message : "No se ha podido guardar la serie.");
     } finally {
-      if (button) { button.disabled = false; button.textContent = existingId ? "Guardar cambios" : "Crear cita"; }
+      if (button) {
+        button.disabled = false;
+        button.textContent = existingId ? "Guardar cambios" : "Crear cita";
+      }
     }
   }, true);
 
