@@ -16,7 +16,7 @@ export default function ClinicaLayout({ children }: Readonly<{ children: React.R
       <script src="/clinic-rebook.js?v=20260915-1" defer />
       <script src="/clinic-report-options.js?v=20260915-2" defer />
       <script src="/clinic-ux-guards.js?v=20260915-1" defer />
-      <script src="/clinic-patient-dashboard.js?v=20260915-1" defer />
+      <script src="/clinic-patient-dashboard.js?v=20260915-2" defer />
     </>
   );
 }
