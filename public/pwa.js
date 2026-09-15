@@ -5,7 +5,7 @@
   const installButton = document.querySelector("#pwa-install");
   const installHint = document.querySelector("#pwa-install-hint");
 
-  const isStandalone = window.matchMedia("(display-mode: standalone)").matches || window.navigator.standalone === true;
+  const isStandalone = window.matchMedia("display-mode: standalone").matches || window.navigator.standalone === true;
   const isIOS = /iphone|ipad|ipod/i.test(window.navigator.userAgent);
 
   if (document.querySelector("#appointment-form") && !document.querySelector("style[data-admin-brand=true]")) {
@@ -26,22 +26,9 @@
     document.head.appendChild(brandStyle);
   }
 
-  if (document.querySelector("#appointment-form") && !document.querySelector("#admin-articles-link")) {
-    const topActions = document.querySelector(".admin-top-actions");
-    if (topActions) {
-      const link = document.createElement("a");
-      link.id = "admin-articles-link";
-      link.href = "/admin/articulos/";
-      link.className = "admin-secondary";
-      link.textContent = "Artículos";
-      const accessButton = document.querySelector("#admin-access");
-      topActions.insertBefore(link, accessButton || null);
-    }
-  }
-
   if (document.querySelector("#appointment-form") && !document.querySelector('script[data-admin-recurrence="true"]')) {
     const recurrenceScript = document.createElement("script");
-    recurrenceScript.src = "/admin-recurrence.js?v=20260915-recurrence-3";
+    recurrenceScript.src = "/admin-recurrence.js?v=20260915-recurrence-4";
     recurrenceScript.defer = true;
     recurrenceScript.dataset.adminRecurrence = "true";
     document.head.appendChild(recurrenceScript);
@@ -90,9 +77,7 @@
     }
   });
 
-  if (isIOS) {
-    installButton?.removeAttribute("hidden");
-  }
+  if (isIOS) installButton?.removeAttribute("hidden");
 
   window.addEventListener("appinstalled", () => {
     installButton?.setAttribute("hidden", "");
