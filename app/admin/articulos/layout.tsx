@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import "./mobile-fixes.css";
 
 export default function AdminArticlesLayout({ children }: { children: ReactNode }) {
   return (
