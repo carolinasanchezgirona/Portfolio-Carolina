@@ -1,0 +1,23 @@
+.clinic-page{--brand:#11A6C2;--brand-dark:#075A68;--brand-soft:#EAF6F8;--brand-border:#9EDCE7}
+.clinic-eyebrow{color:var(--brand-dark)}
+.clinic-primary{border-color:var(--brand);background:var(--brand);color:#fffdf9}
+.clinic-primary:hover{border-color:var(--brand-dark);background:var(--brand-dark)}
+.clinic-secondary{border-color:var(--brand-border);background:#fffdf9;color:var(--brand-dark)}
+.clinic-secondary:hover{border-color:var(--brand);background:var(--brand-soft)}
+.clinic-tabs button.active{background:var(--brand);color:#fffdf9;box-shadow:0 5px 16px rgba(17,166,194,.22)}
+.clinic-appointment{border-left-color:var(--brand)}
+.clinic-status-pill{background:var(--brand-soft);color:var(--brand-dark)}
+.clinic-open-patient{border-color:var(--brand-border);color:var(--brand-dark)}
+.clinic-next-step,.clinic-preparation,.clinic-draft-generator,.clinic-report-toolbar{background:var(--brand-soft)}
+.clinic-preparation,.clinic-consultation-tools,.clinic-draft-generator,.clinic-exercises-section{border-color:var(--brand-border)}
+.clinic-marker-grid label,.clinic-session-goals label,.clinic-evolution-grid select,.clinic-exercise-dialog input,.clinic-exercise-dialog textarea,.clinic-report-settings select,.clinic-report-settings input,.clinic-report-sheet textarea{border-color:var(--brand-border)}
+.clinic-marker-grid label:has(input:checked),.clinic-session-goals label:has(input:checked){border-color:var(--brand);background:var(--brand-soft);color:var(--brand-dark)}
+.clinic-marker-grid input,.clinic-session-goals input{accent-color:var(--brand)}
+.clinic-goals-heading .clinic-text,.clinic-draft-generator strong{color:var(--brand-dark)}
+.clinic-report-sheet header{border-bottom-color:var(--brand)}
+.clinic-report-sheet h1{color:var(--brand-dark)}
+.clinic-report-sheet{box-shadow:0 12px 40px rgba(17,166,194,.08)}
+.clinic-login-card{border-radius:18px}
+.clinic-login-card input{border-color:#d8ccbc}
+.clinic-login-card .clinic-primary{margin-top:20px}
+@media(max-width:560px){.clinic-login-shell{padding:18px}.clinic-login-card{padding:28px 24px}}
