@@ -6,7 +6,7 @@ export default function NotFound() {
         style={{ minHeight: "62vh", display: "grid", placeItems: "center" }}
       >
         <div className="editorial-wrap" style={{ maxWidth: 760, textAlign: "center" }}>
-          <p className="editorial-section-eyebrow">Página no encontrada</p>
+          <p className="editorial-section-eyebrow">Error 404 · Página no encontrada</p>
           <h1
             style={{
               margin: "0 auto",
@@ -29,12 +29,18 @@ export default function NotFound() {
               lineHeight: 1.7,
             }}
           >
-            Puede que el enlace haya cambiado o que la dirección no sea correcta. Puedes volver al inicio o consultar directamente las áreas de Psicología y Neuropsicología.
+            Puede que el enlace haya cambiado o que la dirección no sea correcta. Puedes volver al inicio,
+            reservar una visita o contactar conmigo si necesitas localizar una información concreta.
           </p>
-          <div className="editorial-actions" style={{ justifyContent: "center", marginBottom: 0 }}>
-            <a className="editorial-btn editorial-btn-primary" href="/">Volver al inicio</a>
-            <a className="editorial-btn editorial-btn-secondary" href="/cita/">Pedir cita</a>
+          <div className="editorial-actions" style={{ justifyContent: "center", marginBottom: 14 }}>
+            <a className="editorial-btn editorial-btn-primary" href="/cita/">Pedir cita</a>
+            <a className="editorial-btn editorial-btn-secondary" href="/">Volver al inicio</a>
           </div>
+          <p style={{ margin: 0, color: "#52605A", fontSize: ".88rem" }}>
+            <a href="mailto:contact@carolinasanchezgirona.com" style={{ textDecoration: "underline", textUnderlineOffset: 3 }}>
+              contact@carolinasanchezgirona.com
+            </a>
+          </p>
         </div>
       </section>
     </main>
