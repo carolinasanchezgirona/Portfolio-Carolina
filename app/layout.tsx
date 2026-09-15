@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Inter, Newsreader } from "next/font/google";
 import GoogleAnalyticsConsent from "./components/google-analytics-consent";
 import SiteShell from "./components/site-shell";
 import CrisisNotice from "./components/crisis-notice";
@@ -9,6 +10,18 @@ import "./coherence.css";
 import "./hero-soft.css";
 import "./editorial.css";
 import "./accessibility.css";
+
+const inter = Inter({
+  subsets: ["latin"],
+  variable: "--font-inter",
+  display: "swap",
+});
+
+const newsreader = Newsreader({
+  subsets: ["latin"],
+  variable: "--font-newsreader",
+  display: "swap",
+});
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://carolinasanchezgirona.com"),
@@ -148,14 +161,8 @@ const structuredData = {
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="es">
+    <html lang="es" className={`${inter.variable} ${newsreader.variable}`}>
       <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link
-          href="https://fonts.googleapis.com/css2?family=Newsreader:ital,wght@0,400;0,500;0,600;1,400&family=Inter:wght@400;500;600&display=swap"
-          rel="stylesheet"
-        />
         <meta name="theme-color" content="#FBF9F5" />
         <meta property="og:image" content="https://carolinasanchezgirona.com/carolina-sanchez-retrato.jpg" />
         <meta property="og:image:width" content="480" />

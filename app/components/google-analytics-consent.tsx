@@ -160,7 +160,7 @@ export default function GoogleAnalyticsConsent() {
               Usamos Google Analytics para conocer el uso general de la web y mejorarla.
               Solo se activará si aceptas. Puedes cambiar tu decisión cuando quieras.
             </p>
-            <a href="/privacidad/#cookies">Más información</a>
+            <a href="/privacidad/#cookies">Más información sobre las cookies</a>
           </div>
           <div className="analytics-consent-actions">
             <button type="button" onClick={() => chooseConsent("rejected")}>

@@ -16,7 +16,7 @@
 .service-fixed>div{display:flex;flex-direction:column;gap:4px;}
 .service-fixed strong{font-size:1rem;}
 .service-fixed small{color:var(--e-ink-soft);}
-.service-fixed b{color:var(--e-teal);font-family:Newsreader,Georgia,serif;font-size:1.5rem;font-weight:500;white-space:nowrap;}
+.service-fixed b{color:var(--e-teal);font-family:var(--font-newsreader),Georgia,serif;font-size:1.5rem;font-weight:500;white-space:nowrap;}
 .patient-type-fieldset{margin:24px 0 0;padding:0;border:0;}
 .patient-type-fieldset legend{margin-bottom:12px;font-size:.88rem;font-weight:700;color:var(--e-ink);}
 .patient-type-options{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;}
