@@ -36,7 +36,7 @@
 
   if (document.querySelector("#appointment-form") && !document.querySelector('script[data-admin-communications="true"]')) {
     const communicationsScript = document.createElement("script");
-    communicationsScript.src = "/admin-communications.js?v=20260913-communications-1";
+    communicationsScript.src = "/admin-communications.js?v=20260915-communications-2";
     communicationsScript.defer = true;
     communicationsScript.dataset.adminCommunications = "true";
     document.head.appendChild(communicationsScript);
