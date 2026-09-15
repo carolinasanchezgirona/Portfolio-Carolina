@@ -1,5 +1,6 @@
 (() => {
   'use strict';
+  // v2 deployment refresh
   const SUPABASE_URL='https://grgyvdxkjdstdyumdfyg.supabase.co';
   const REST=`${SUPABASE_URL}/rest/v1`;
   const KEY='sb_publishable_b2MRfP0bPti87V2FXCzHGw_Y9vvcbii';
