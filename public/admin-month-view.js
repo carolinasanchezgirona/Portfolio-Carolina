@@ -85,7 +85,7 @@
     const guess = Date.UTC(y,m-1,d,hh,mm,0); let instant = new Date(guess);
     const parts = new Intl.DateTimeFormat("en-US", { timeZone: ZONE, hour12:false, year:"numeric",month:"2-digit",day:"2-digit",hour:"2-digit",minute:"2-digit",second:"2-digit" }).formatToParts(instant);
     const p = Object.fromEntries(parts.map(x => [x.type,x.value]));
-    let offset = Date.UTC(+p.year,+p.month-1,+p.day,+p.hour,+p.minute,+p.second)-instant.getTime();
+    const offset = Date.UTC(+p.year,+p.month-1,+p.day,+p.hour,+p.minute,+p.second)-instant.getTime();
     instant = new Date(guess-offset);
     return instant.toISOString();
   }
@@ -186,3 +186,4 @@
 
   ["#view-today","#view-week","#view-patients"].forEach(sel=>document.querySelector(sel)?.addEventListener("click",()=>{section.hidden=true;monthButton.classList.remove("active");}));
 })();
+// build 20260915-2
