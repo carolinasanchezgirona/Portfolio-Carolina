@@ -1,6 +1,7 @@
 (() => {
   "use strict";
 
+  const ZONE = "Europe/Madrid";
   const SESSION_KEY = "dememoria_admin_session";
   const form = document.querySelector("#appointment-form");
   if (!form) return;
@@ -78,6 +79,33 @@
     };
   }
 
+  function zoneOffsetMs(value) {
+    const parts = new Intl.DateTimeFormat("en-US", {
+      timeZone: ZONE,
+      hour12: false,
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+    }).formatToParts(value);
+    const p = Object.fromEntries(parts.map((part) => [part.type, part.value]));
+    return Date.UTC(+p.year, +p.month - 1, +p.day, +p.hour, +p.minute, +p.second) - value.getTime();
+  }
+
+  function madridLocalToIso(dateKey, timeValue) {
+    const [y, m, d] = dateKey.split("-").map(Number);
+    const [hh, mm] = timeValue.split(":").map(Number);
+    const guess = Date.UTC(y, m - 1, d, hh, mm, 0);
+    let instant = new Date(guess);
+    let offset = zoneOffsetMs(instant);
+    instant = new Date(guess - offset);
+    const refined = zoneOffsetMs(instant);
+    if (refined !== offset) instant = new Date(guess - refined);
+    return instant.toISOString();
+  }
+
   function msg(text) {
     const el = q("#appointment-message");
     if (el) el.textContent = text;
@@ -127,7 +155,7 @@
 
     const date = q("#appointment-date").value;
     const time = q("#appointment-time").value;
-    const startsAt = new Date(`${date}T${time}:00`).toISOString();
+    const startsAt = madridLocalToIso(date, time);
     const existingId = q("#appointment-id")?.value || null;
     const button = q("#appointment-save");
 
