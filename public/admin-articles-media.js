@@ -34,8 +34,12 @@
     const accepted = ["image/jpeg", "image/png", "image/webp", "image/gif"];
     if (!accepted.includes(file.type)) throw new Error("Formato no compatible. Usa JPG, PNG, WebP o GIF.");
     if (file.size > MAX_SOURCE_BYTES) throw new Error("La imagen supera 18 MB. Reduce su tamaño antes de subirla.");
-    if (file.size <= TARGET_BYTES) return file;
-    if (file.type === "image/gif") throw new Error("El GIF supera 4,5 MB. Reduce su tamaño antes de subirlo.");
+    if (file.type === "image/gif") {
+      if (file.size > TARGET_BYTES) throw new Error("El GIF supera 4,5 MB. Reduce su tamaño antes de subirlo.");
+      return file;
+    }
+
+    if (file.type === "image/webp" && file.size <= TARGET_BYTES) return file;
 
     setMessage("Optimizando imagen…");
     let bitmap;
@@ -53,7 +57,7 @@
     ctx.drawImage(bitmap, 0, 0, canvas.width, canvas.height);
     bitmap.close?.();
 
-    for (const quality of [0.88, 0.8, 0.72, 0.64]) {
+    for (const quality of [0.86, 0.8, 0.74, 0.68]) {
       const blob = await new Promise((resolve) => canvas.toBlob(resolve, "image/webp", quality));
       if (blob && blob.size <= TARGET_BYTES) {
         return new File([blob], `${file.name.replace(/\.[^.]+$/, "")}.webp`, { type: "image/webp" });
@@ -105,7 +109,7 @@
       imageAlt.value = file.name.replace(/\.[^.]+$/, "").replace(/[-_]+/g, " ");
       imageAlt.dispatchEvent(new Event("input", { bubbles: true }));
     }
-    setMessage("Imagen subida correctamente.");
+    setMessage("Imagen optimizada y subida correctamente.");
   }
 
   async function inline(file) {
@@ -116,10 +120,10 @@
     const caption = window.prompt("Pie de foto (opcional):", "") || "";
     const position = $("#inline-image-position")?.value || "wide";
     editor.focus();
-    const html = `<figure class="article-media article-media-${position}"><img src="${url}" alt="${alt.replace(/"/g, "&quot;")}">${caption ? `<figcaption>${caption.replace(/</g, "&lt;").replace(/>/g, "&gt;")}</figcaption>` : ""}</figure><p><br></p>`;
+    const html = `<figure class="article-media article-media-${position}"><img src="${url}" alt="${alt.replace(/"/g, "&quot;")}" loading="lazy" decoding="async">${caption ? `<figcaption>${caption.replace(/</g, "&lt;").replace(/>/g, "&gt;")}</figcaption>` : ""}</figure><p><br></p>`;
     document.execCommand("insertHTML", false, html);
     editor.dispatchEvent(new Event("input", { bubbles: true }));
-    setMessage("Imagen insertada en el artículo.");
+    setMessage("Imagen optimizada e insertada en el artículo.");
   }
 
   document.addEventListener("change", (event) => {
