@@ -6,6 +6,7 @@
   const KEY = "sb_publishable_b2MRfP0bPti87V2FXCzHGw_Y9vvcbii";
   const SESSION_KEY = "dememoria_admin_session";
   const ZONE = "Europe/Madrid";
+  const MODULE_VERSION = "20260915-2";
 
   const appointmentDialog = document.querySelector("#appointment-dialog");
   const idField = document.querySelector("#appointment-id");
@@ -24,6 +25,7 @@
   const dialog = document.createElement("dialog");
   dialog.id = "quick-reschedule-dialog";
   dialog.className = "appointment-dialog";
+  dialog.dataset.moduleVersion = MODULE_VERSION;
   dialog.innerHTML = `
     <form id="quick-reschedule-form">
       <div class="dialog-heading">
