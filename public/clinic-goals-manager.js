@@ -1,5 +1,6 @@
 (() => {
   "use strict";
+  // v2 deployment marker
 
   const SUPABASE_URL = "https://grgyvdxkjdstdyumdfyg.supabase.co";
   const REST_URL = `${SUPABASE_URL}/rest/v1`;
