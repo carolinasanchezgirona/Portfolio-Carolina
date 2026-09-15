@@ -19,7 +19,7 @@
 .seo-copy a{color:var(--e-teal);text-decoration:none;text-underline-offset:2px;overflow-wrap:anywhere;}
 .seo-copy a:hover{text-decoration:underline;}
 .seo-callout{margin-top:24px;padding:22px 24px;border-left:3px solid var(--e-teal);background:var(--e-teal-tint);}
-.seo-callout strong{display:block;margin-bottom:6px;color:var(--e-ink);font-family:Newsreader,Georgia,serif;font-size:1.2rem;font-weight:500;}
+.seo-callout strong{display:block;margin-bottom:6px;color:var(--e-ink);font-family:var(--font-newsreader),Georgia,serif;font-size:1.2rem;font-weight:500;}
 .seo-sidebar{position:sticky;top:100px;display:grid;gap:14px;}
 .seo-card{padding:22px;border:1px solid var(--e-line);border-radius:12px;background:var(--e-card);}
 .seo-card h2,.seo-card h3{margin:0 0 12px;font-size:1.4rem;line-height:1.2;}
