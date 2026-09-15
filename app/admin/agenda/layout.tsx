@@ -15,6 +15,7 @@ export default function AgendaLayout({ children }: Readonly<{ children: React.Re
       <script src="/admin-ux-guards.js?v=20260915-1" defer />
       <script src="/admin-month-view.js?v=20260915-2" defer />
       <script src="/admin-quick-reschedule.js?v=20260915-2" defer />
+      <script src="/admin-waitlist.js?v=20260915-1" defer />
     </>
   );
 }
