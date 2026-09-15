@@ -1,3 +1,4 @@
+// Clinical report options v2
 (() => {
   "use strict";
   const dialog = document.querySelector("#clinic-report-dialog");
