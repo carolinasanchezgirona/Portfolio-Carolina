@@ -7,5 +7,11 @@ export const metadata: Metadata = {
 };
 
 export default function AgendaLayout({ children }: Readonly<{ children: React.ReactNode }>) {
-  return <>{children}</>;
+  return (
+    <>
+      {children}
+      <script src="/admin-series-edit.js?v=20260915-1" defer />
+      <script src="/admin-rebook-receiver.js?v=20260915-1" defer />
+    </>
+  );
 }
