@@ -41,7 +41,7 @@
 
   if (document.querySelector("#appointment-form") && !document.querySelector('script[data-admin-recurrence="true"]')) {
     const recurrenceScript = document.createElement("script");
-    recurrenceScript.src = "/admin-recurrence.js?v=20260913-recurrence-2";
+    recurrenceScript.src = "/admin-recurrence.js?v=20260915-recurrence-3";
     recurrenceScript.defer = true;
     recurrenceScript.dataset.adminRecurrence = "true";
     document.head.appendChild(recurrenceScript);
