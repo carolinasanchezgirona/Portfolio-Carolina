@@ -58,7 +58,7 @@
         const href = articleHref(article.slug);
         const summary = article.subtitle || article.excerpt || "";
         const mins = readingMinutes(article.content);
-        card.innerHTML = `${article.image_url ? `<a class="articles-card-image" href="${href}" aria-label="Leer ${escapeHtml(article.title)}"><img src="${escapeHtml(article.image_url)}" alt="${escapeHtml(article.image_alt || "")}" loading="lazy"></a>` : ""}<div class="articles-card-body"><div class="articles-card-meta"><span class="articles-card-category">${categoryLabel(article.category)}</span>${article.published_at ? `<span>${formatDate(article.published_at)}</span>` : ""}${mins ? `<span>${mins} min</span>` : ""}</div><h2><a href="${href}">${escapeHtml(article.title)}</a></h2>${summary ? `<p>${escapeHtml(summary)}</p>` : ""}<a class="articles-card-link" href="${href}">Leer artículo →</a></div>`;
+        card.innerHTML = `${article.image_url ? `<a class="articles-card-image" href="${href}" aria-label="Leer ${escapeHtml(article.title)}"><img src="${escapeHtml(article.image_url)}" alt="${escapeHtml(article.image_alt || "")}" loading="lazy" decoding="async"></a>` : ""}<div class="articles-card-body"><div class="articles-card-meta"><span class="articles-card-category">${categoryLabel(article.category)}</span>${article.published_at ? `<span>${formatDate(article.published_at)}</span>` : ""}${mins ? `<span>${mins} min</span>` : ""}</div><h2><a href="${href}">${escapeHtml(article.title)}</a></h2>${summary ? `<p>${escapeHtml(summary)}</p>` : ""}<a class="articles-card-link" href="${href}">Leer artículo →</a></div>`;
         grid.append(card);
       });
     } catch (error) { status.hidden = false; status.textContent = error.message; }
@@ -125,12 +125,18 @@
 
       const figure = document.querySelector("#article-figure");
       if (article.image_url) {
-        const image = document.querySelector("#article-image"); image.src = article.image_url; image.alt = article.image_alt || "";
+        const image = document.querySelector("#article-image"); image.src = article.image_url; image.alt = article.image_alt || ""; image.decoding = "async";
         const caption = document.querySelector("#article-image-caption"); caption.textContent = article.image_caption || ""; caption.hidden = !article.image_caption;
         figure.hidden = false;
       }
 
-      const content = document.querySelector("#article-content"); content.innerHTML = article.content || ""; buildToc(content);
+      const content = document.querySelector("#article-content");
+      content.innerHTML = article.content || "";
+      content.querySelectorAll("img").forEach((image) => {
+        image.loading = "lazy";
+        image.decoding = "async";
+      });
+      buildToc(content);
 
       const cta = document.querySelector("#article-cta");
       if (article.cta_label && article.cta_url) { const link = document.querySelector("#article-cta-link"); link.href = article.cta_url; link.textContent = `${article.cta_label} →`; cta.hidden = false; }
