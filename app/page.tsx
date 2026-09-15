@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 
 export const metadata: Metadata = {
   alternates: { canonical: "/" },
@@ -43,14 +44,15 @@ export default function HomePage() {
           </div>
 
           <figure className="editorial-photo">
-            <img
+            <Image
               className="editorial-photo-image"
-              src="/carolina-sanchez-retrato.jpg"
+              src="/carolina-sanchez-retrato-720.webp"
               alt="Carolina Sánchez, psicóloga y neuropsicóloga"
-              width={480}
-              height={618}
-              loading="eager"
-              decoding="sync"
+              width={720}
+              height={927}
+              sizes="(max-width: 680px) calc(100vw - 36px), (max-width: 900px) 520px, 360px"
+              preload
+              unoptimized
             />
           </figure>
         </div>
