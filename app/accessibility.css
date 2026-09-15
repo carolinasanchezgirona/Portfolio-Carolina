@@ -76,12 +76,16 @@
   color:#fff!important;
 }
 
-/* The bright Dememoria block remains a major brand surface. Dark ink on
-   this cyan gives sufficient contrast without changing the chosen block hue. */
-.editorial-dememoria{color:#1C2320!important;}
-.editorial-dememoria h2{color:#1C2320!important;}
-.editorial-dememoria .editorial-section-eyebrow{color:#263D42!important;}
-.editorial-dememoria p:last-child{color:#263D42!important;}
+/* The Dememoria block now uses the darker brand teal. Light text restores
+   AA contrast after that palette change. */
+.editorial-dememoria{color:#F8F5F0!important;}
+.editorial-dememoria h2{color:#F8F5F0!important;}
+.editorial-dememoria .editorial-section-eyebrow{color:#F8F5F0!important;}
+.editorial-dememoria p:last-child{color:#F8F5F0!important;}
+
+/* Step numbers are small text, so they need the same stronger neutral used
+   for other secondary copy. */
+.editorial-step span{color:#6F675D!important;}
 
 .form-field input:focus{
   border-color:#087A8F!important;
