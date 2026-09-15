@@ -28,7 +28,7 @@
         </select>
       </label>
       <label id="appointment-repeat-fields" hidden>
-        Número de sesiones
+        Número total de sesiones
         <input id="appointment-repeat-count" type="number" min="2" max="52" step="1" value="4" />
       </label>`;
 
@@ -38,7 +38,7 @@
     const note = document.createElement("p");
     note.id = "appointment-recurrence-note";
     note.className = "admin-note";
-    note.textContent = "En una serie, cada sesión se crea como una cita independiente. Antes de crearla se comprueba que ninguna fecha esté ocupada o bloqueada.";
+    note.textContent = "Puedes crear una serie desde una cita nueva o desde una cita ya existente. Si partes de una cita existente, esa cita cuenta como la primera sesión y se crearán únicamente las siguientes fechas.";
     block.insertAdjacentElement("afterend", note);
 
     repeat = q("#appointment-repeat");
@@ -130,7 +130,7 @@
       method: "POST", headers: await headers(), body: JSON.stringify(body), cache: "no-store",
     });
     const data = await response.json().catch(() => ({}));
-    if (!response.ok) throw new Error(data.message || data.hint || "No se ha podido crear la cita.");
+    if (!response.ok) throw new Error(data.message || data.hint || "No se ha podido guardar la cita.");
     return data;
   }
 
@@ -154,53 +154,68 @@
   }
 
   function visibility() {
-    const active = repeat.value !== "none" && !q("#appointment-id")?.value;
+    const active = repeat.value !== "none";
     if (repeatFields) repeatFields.hidden = !active;
     count.required = active;
   }
 
+  function resetRecurrence() {
+    repeat.value = "none";
+    count.value = "4";
+    visibility();
+  }
+
   repeat.addEventListener("change", visibility);
-  form.addEventListener("reset", () => setTimeout(() => { repeat.value = "none"; visibility(); }, 0));
+  form.addEventListener("reset", () => setTimeout(resetRecurrence, 0));
+  q("#appointment-dialog")?.addEventListener("close", resetRecurrence);
 
   form.addEventListener("submit", async (event) => {
-    if (repeat.value === "none" || q("#appointment-id")?.value) return;
+    if (repeat.value === "none") return;
     event.preventDefault();
     event.stopImmediatePropagation();
     if (!form.checkValidity()) return form.reportValidity();
 
     const total = Number(count.value || 0);
-    if (!Number.isInteger(total) || total < 2 || total > 52) return msg("Indica entre 2 y 52 sesiones.");
+    if (!Number.isInteger(total) || total < 2 || total > 52) return msg("Indica entre 2 y 52 sesiones en total.");
 
     const date = q("#appointment-date").value;
     const time = q("#appointment-time").value;
-    const starts = Array.from({ length: total }, (_, i) => madridLocalToIso(dateAt(date, repeat.value, i), time));
+    const existingId = q("#appointment-id")?.value || "";
+    const allStarts = Array.from({ length: total }, (_, i) => madridLocalToIso(dateAt(date, repeat.value, i), time));
+    const startsToCreate = existingId ? allStarts.slice(1) : allStarts;
     const button = q("#appointment-save");
-    if (button) { button.disabled = true; button.textContent = "Creando serie…"; }
+    if (button) { button.disabled = true; button.textContent = existingId ? "Guardando serie…" : "Creando serie…"; }
+
+    const common = {
+      p_patient_name: q("#appointment-name").value.trim(),
+      p_patient_email: q("#appointment-email").value.trim() || null,
+      p_patient_phone: q("#appointment-phone").value.trim() || null,
+      p_patient_type: q("#appointment-patient-type").value,
+      p_service_code: q("#appointment-service").value,
+      p_status: q("#appointment-status").value,
+      p_price_eur: Number(q("#appointment-price").value || 60),
+    };
 
     try {
-      msg("Comprobando todos los horarios…");
-      await preflight(starts);
-      const common = {
-        p_patient_name: q("#appointment-name").value.trim(),
-        p_patient_email: q("#appointment-email").value.trim() || null,
-        p_patient_phone: q("#appointment-phone").value.trim() || null,
-        p_patient_type: q("#appointment-patient-type").value,
-        p_service_code: q("#appointment-service").value,
-        p_status: q("#appointment-status").value,
-        p_price_eur: Number(q("#appointment-price").value || 60),
-      };
-      for (let i = 0; i < starts.length; i += 1) {
-        msg(`Creando sesión ${i + 1} de ${starts.length}…`);
-        await rpc("admin_create_appointment", { p_starts_at: starts[i], ...common });
+      msg("Comprobando las siguientes fechas…");
+      await preflight(startsToCreate);
+
+      if (existingId) {
+        msg("Guardando la cita actual…");
+        await rpc("admin_update_appointment", { p_id: existingId, p_starts_at: allStarts[0], ...common });
       }
-      msg(`Serie creada: ${starts.length} citas.`);
-      repeat.value = "none";
-      visibility();
-      setTimeout(() => window.location.reload(), 600);
+
+      for (let i = 0; i < startsToCreate.length; i += 1) {
+        msg(`Creando sesión ${existingId ? i + 2 : i + 1} de ${total}…`);
+        await rpc("admin_create_appointment", { p_starts_at: startsToCreate[i], ...common });
+      }
+
+      msg(`Serie guardada: ${total} citas en total.`);
+      setTimeout(() => window.location.reload(), 500);
     } catch (error) {
-      msg(error instanceof Error ? error.message : "No se ha podido crear la serie.");
+      msg(error instanceof Error ? error.message : "No se ha podido guardar la serie.");
     } finally {
-      if (button) { button.disabled = false; button.textContent = "Crear cita"; }
+      if (button) { button.disabled = false; button.textContent = existingId ? "Guardar cambios" : "Crear cita"; }
     }
   }, true);
 
