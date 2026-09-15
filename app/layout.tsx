@@ -1,12 +1,14 @@
 import type { Metadata } from "next";
 import GoogleAnalyticsConsent from "./components/google-analytics-consent";
 import SiteShell from "./components/site-shell";
+import CrisisNotice from "./components/crisis-notice";
 import "./globals.css";
 import "./mineuri-theme.css";
 import "./type-scale.css";
 import "./coherence.css";
 import "./hero-soft.css";
 import "./editorial.css";
+import "./accessibility.css";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://carolinasanchezgirona.com"),
@@ -162,6 +164,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
       </head>
       <body>
         <SiteShell>{children}</SiteShell>
+        <CrisisNotice />
         <GoogleAnalyticsConsent />
         <script
           type="application/ld+json"
