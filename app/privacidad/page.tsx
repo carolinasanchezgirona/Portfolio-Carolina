@@ -46,6 +46,7 @@ export default function PrivacyPage() {
             <li>Historia clínica y evaluación neuropsicológica: Antecedentes médicos, datos de salud, resultados de pruebas y evaluaciones.</li>
             <li>Planes de tratamiento y seguimiento: Notas clínicas, evolución terapéutica, registros de intervenciones.</li>
           </ul>
+          <p><strong>Minimización en la reserva web:</strong> el formulario público de cita no solicita el motivo de consulta ni otros datos de salud. La información clínica se recoge únicamente cuando es necesaria para la atención profesional y por los canales habilitados para ello.</p>
           <h3>2.2. Facturación y gestión administrativa</h3>
           <ul>
             <li>Emisión de facturas y justificantes de pago.</li>
@@ -79,27 +80,29 @@ export default function PrivacyPage() {
 
         <section>
           <h2>4. Plazos de conservación de los datos</h2>
-          <p>Los datos se conservarán durante los siguientes períodos:</p>
+          <p>Los datos se conservarán durante los períodos exigidos por la normativa aplicable y, en su caso, durante el tiempo necesario para atender posibles responsabilidades derivadas de la relación profesional.</p>
           <ul>
-            <li>Datos administrativos y de contacto: Mientras dure la relación profesional y hasta 5 años después (por prescripción de posibles responsabilidades legales).</li>
-            <li>Historia clínica y datos de salud: Mínimo 5 años desde la última consulta, conforme a la normativa sanitaria española.</li>
-            <li>Facturación y datos fiscales: Mínimo 6 años, según el Código de Comercio y la normativa tributaria.</li>
-            <li>Datos utilizados con fines de investigación: Se conservarán de forma anonimizada indefinidamente.</li>
+            <li>Datos administrativos y de contacto: mientras dure la relación profesional y durante los plazos legales posteriores aplicables.</li>
+            <li>Historia clínica y datos de salud: durante el período mínimo exigido por la normativa sanitaria aplicable y, cuando proceda, por los plazos adicionales legalmente exigibles.</li>
+            <li>Facturación y datos fiscales: durante los plazos establecidos por la normativa fiscal y mercantil.</li>
+            <li>Datos utilizados con fines de investigación: únicamente cuando exista base jurídica suficiente y, cuando sea posible, de forma anonimizada.</li>
           </ul>
         </section>
 
         <section>
-          <h2>5. Destinatarios de los datos</h2>
-          <p>Los datos personales NO serán cedidos a terceros salvo en las siguientes excepciones:</p>
+          <h2>5. Destinatarios, proveedores tecnológicos y transferencias</h2>
+          <p>Los datos personales no se comunican a terceros salvo cuando resulte necesario para prestar el servicio, exista obligación legal o se cuente con una base jurídica válida.</p>
           <ul>
-            <li>Cumplimiento de obligaciones legales: Autoridades sanitarias, Hacienda, Seguridad Social, tribunales o fuerzas de seguridad.</li>
-            <li>Colaboraciones con otros profesionales de la salud: Solo con consentimiento expreso del paciente.</li>
-            <li>Asesoría contable y fiscal: Para la gestión económica de la consulta.</li>
-            <li>Plataformas de gestión de citas o mensajería segura: Si se usan herramientas externas, se garantizará su cumplimiento con el RGPD</li>
+            <li>Autoridades sanitarias, tributarias, judiciales o administrativas cuando exista obligación legal.</li>
+            <li>Otros profesionales sanitarios cuando sea necesario y exista la correspondiente base jurídica o consentimiento.</li>
+            <li>Asesoría contable y fiscal para la gestión económica de la consulta.</li>
+            <li>Proveedores tecnológicos que prestan servicios de alojamiento, infraestructura web, base de datos, gestión de reservas o comunicaciones, actuando bajo las condiciones contractuales y de protección de datos que correspondan.</li>
           </ul>
           <p>
-            El uso consentido de Google Analytics puede implicar tratamientos internacionales de datos.
-            Google aplica los mecanismos de transferencia y garantías descritos en su documentación de privacidad.
+            La web utiliza servicios tecnológicos de terceros, entre ellos Cloudflare para infraestructura web y Supabase para funciones de base de datos y reservas. Cuando un proveedor pueda implicar tratamiento de datos fuera del Espacio Económico Europeo, se aplicarán los mecanismos y garantías previstos en el RGPD que resulten exigibles.
+          </p>
+          <p>
+            Google Analytics solo se activa con consentimiento. Su uso puede implicar tratamientos internacionales de datos conforme a los mecanismos y garantías descritos por Google en su documentación de privacidad.
           </p>
         </section>
 
@@ -109,10 +112,10 @@ export default function PrivacyPage() {
           <ul>
             <li>Acceso: Saber qué datos tratamos.</li>
             <li>Rectificación: Corregir datos inexactos.</li>
-            <li>Supresión (&quot;derecho al olvido&quot;): Eliminar datos cuando no sean necesarios.</li>
+            <li>Supresión: Solicitar la eliminación cuando proceda legalmente.</li>
             <li>Limitación del tratamiento: Restringir el uso de datos en ciertos casos.</li>
-            <li>Portabilidad: Solicitar la entrega de datos en formato digital estructurado.</li>
-            <li>Oposición: Impedir el uso de datos para ciertos fines.</li>
+            <li>Portabilidad: Solicitar la entrega de datos cuando este derecho resulte aplicable.</li>
+            <li>Oposición: Oponerse al tratamiento en los supuestos legalmente previstos.</li>
             <li>Retirada del consentimiento: En cualquier momento, sin afectar la licitud del tratamiento previo.</li>
           </ul>
           <p>Si el usuario considera que sus derechos no han sido respetados, puede presentar una reclamación ante la Agencia Española de Protección de Datos (AEPD) (www.aepd.es).</p>
@@ -120,23 +123,24 @@ export default function PrivacyPage() {
 
         <section>
           <h2>7. Medidas de seguridad</h2>
-          <p>Para proteger los datos personales, Dememoria aplica las siguientes medidas técnicas y organizativas:</p>
+          <p>Dememoria aplica medidas técnicas y organizativas orientadas a proteger la confidencialidad, integridad y disponibilidad de la información, ajustadas al tipo de datos tratados y al riesgo asociado.</p>
           <h3>7.1. Seguridad de los datos digitales</h3>
           <ul>
-            <li>Acceso restringido: Solo profesionales autorizados pueden acceder a la información.</li>
-            <li>Cifrado y copias de seguridad: Datos sensibles protegidos con medidas de encriptación.</li>
-            <li>Uso de contraseñas seguras y autenticación en dos pasos en los sistemas informáticos.</li>
-            <li>Registro de accesos y modificaciones en la historia clínica.</li>
+            <li>Acceso restringido a los sistemas y a la información profesional.</li>
+            <li>Uso de conexiones cifradas en tránsito mediante HTTPS/TLS en la web y los servicios asociados.</li>
+            <li>Contraseñas seguras y mecanismos adicionales de autenticación cuando están disponibles.</li>
+            <li>Copias de seguridad y controles de acceso en los sistemas que alojan información profesional.</li>
           </ul>
           <h3>7.2. Seguridad de los datos en papel</h3>
           <ul>
-            <li>Almacenamiento en archivadores cerrados con llave.</li>
-            <li>Destrucción segura de documentos mediante trituradora o empresa certificada.</li>
+            <li>Almacenamiento en espacios de acceso restringido.</li>
+            <li>Destrucción segura de documentación cuando procede.</li>
           </ul>
-          <h3>7.3. Seguridad en la comunicación</h3>
+          <h3>7.3. Comunicación y formularios</h3>
           <ul>
-            <li>Correo electrónico cifrado para información sensible.</li>
-            <li>No se usan aplicaciones de mensajería no seguras (WhatsApp, Telegram) para datos clínicos.</li>
+            <li>Los formularios públicos recogen únicamente la información necesaria para la finalidad indicada.</li>
+            <li>No se solicita información clínica o de salud en el formulario público de reserva.</li>
+            <li>La información especialmente sensible se gestiona por los canales profesionales habilitados para ello.</li>
           </ul>
         </section>
 
@@ -167,7 +171,7 @@ export default function PrivacyPage() {
 
         <section>
           <h2>9. Modificaciones de esta política</h2>
-          <p>Esta política puede actualizarse según cambios normativos o mejoras en la gestión de protección de datos. La última versión estará siempre disponible en la consulta y, en su caso, en la web de Dememoria.</p>
+          <p>Esta política puede actualizarse según cambios normativos, tecnológicos o mejoras en la gestión de protección de datos. La última versión estará siempre disponible en la consulta y, en su caso, en la web de Dememoria.</p>
         </section>
 
         <section>
