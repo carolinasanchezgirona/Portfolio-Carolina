@@ -59,6 +59,8 @@ function SiteFooter() {
       <div className="editorial-wrap site-footer-grid">
         <div className="site-footer-intro">
           <p className="editorial-footer-brand">Carolina Sánchez | Psicóloga</p>
+          <p>Psicóloga General Sanitaria · Neuropsicóloga</p>
+          <p>Col·legiada COPC núm. 24892</p>
           <p>Dememoria · Consulta de Psicología y Neuropsicología</p>
           <p>Arenys de Mar · Atención presencial y online</p>
         </div>
@@ -103,8 +105,9 @@ export default function SiteShell({ children }: { children: ReactNode }) {
 
   return (
     <div className="editorial-site global-shell">
+      <a className="skip-link" href="#contenido-principal">Saltar al contenido principal</a>
       <SiteHeader />
-      <div className="site-public-content">{children}</div>
+      <div id="contenido-principal" className="site-public-content" tabIndex={-1}>{children}</div>
       <SiteFooter />
     </div>
   );
