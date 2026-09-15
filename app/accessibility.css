@@ -14,11 +14,39 @@
 .skip-link:focus{transform:translateY(0);}
 
 :where(a,button,input,select,textarea,summary,[tabindex]):focus-visible{
-  outline:3px solid #0A8298;
+  outline:3px solid #087A8F;
   outline-offset:3px;
 }
 
 :where(button,input,select,textarea){font:inherit;}
+
+/* Keep the bright brand blue for large surfaces and filled buttons,
+   but use a darker companion tone for normal-size interactive text so
+   contrast meets WCAG AA on white and warm off-white backgrounds. */
+.editorial-eyebrow,
+.editorial-role,
+.editorial-card-link,
+.editorial-about-copy a,
+.editorial-contact-place,
+.editorial-email:hover,
+.site-footer-column a:hover,
+.site-footer-bottom a:hover,
+.seo-breadcrumbs a,
+.seo-copy a,
+.seo-related a,
+.seo-authority-links a,
+.articles-kicker,
+.articles-filters a,
+.articles-card-category,
+.articles-card-link,
+.article-tags span,
+.article-toc a:hover,
+.article-prose a,
+.article-cta span,
+.article-related a,
+.article-back{
+  color:#087A8F!important;
+}
 
 .site-crisis-note{
   border-top:1px solid #E4E0D8;
@@ -33,7 +61,7 @@
   line-height:1.55;
 }
 .site-crisis-note p{margin:0;}
-.site-crisis-note a{color:#0A8298;text-decoration:underline;text-underline-offset:2px;}
+.site-crisis-note a{color:#087A8F;text-decoration:underline;text-underline-offset:2px;}
 
 @media (prefers-reduced-motion: reduce){
   html{scroll-behavior:auto!important;}
