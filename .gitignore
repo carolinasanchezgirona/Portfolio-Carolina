@@ -1,0 +1,10 @@
+node_modules/
+out/
+.next/
+.env
+.env.*
+!.env.example
+*.log
+supabase/.temp/
+*.tar.zst.cms
+*.tar.zst.cms.sha256

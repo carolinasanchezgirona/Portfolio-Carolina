@@ -1,0 +1,122 @@
+name: Copia clínica cifrada
+
+on:
+  schedule:
+    # Dos disparos UTC permiten mantener las 03:17 en Barcelona con el cambio horario.
+    - cron: "17 1 * * *"
+    - cron: "17 2 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: clinical-backup
+  cancel-in-progress: false
+
+jobs:
+  backup:
+    if: ${{ vars.CLINICAL_BACKUP_ENABLED == 'true' || github.event_name == 'workflow_dispatch' }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+
+    steps:
+      - name: Comprobar la hora local
+        id: schedule
+        shell: bash
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+        run: |
+          if [[ "$EVENT_NAME" == "schedule" && "$(TZ=Europe/Madrid date +%H)" != "03" ]]; then
+            echo "should_run=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          echo "should_run=true" >> "$GITHUB_OUTPUT"
+
+      - name: Descargar únicamente el código necesario
+        if: ${{ steps.schedule.outputs.should_run == 'true' }}
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+
+      - name: Instalar Supabase CLI
+        if: ${{ steps.schedule.outputs.should_run == 'true' }}
+        uses: supabase/setup-cli@46f7f98c7f948ad727d22c1e67fab04c223a0520 # v3
+        with:
+          version: 2.84.2
+
+      - name: Instalar herramientas de copia
+        if: ${{ steps.schedule.outputs.should_run == 'true' }}
+        shell: bash
+        run: |
+          sudo apt-get update
+          sudo apt-get install --yes --no-install-recommends rclone zstd
+
+      - name: Crear, cifrar y replicar la copia
+        if: ${{ steps.schedule.outputs.should_run == 'true' }}
+        shell: bash
+        env:
+          BACKUP_TIMEZONE: Europe/Madrid
+          BACKUP_RETENTION_DAYS: "30"
+          SUPABASE_PROJECT_REF: grgyvdxkjdstdyumdfyg
+          SUPABASE_DB_URL: ${{ secrets.CLINICAL_BACKUP_SUPABASE_DB_URL }}
+          SUPABASE_S3_ACCESS_KEY_ID: ${{ secrets.CLINICAL_BACKUP_SUPABASE_S3_ACCESS_KEY_ID }}
+          SUPABASE_S3_SECRET_ACCESS_KEY: ${{ secrets.CLINICAL_BACKUP_SUPABASE_S3_SECRET_ACCESS_KEY }}
+          SUPABASE_S3_ENDPOINT: https://grgyvdxkjdstdyumdfyg.storage.supabase.co/storage/v1/s3
+          SUPABASE_S3_REGION: ${{ vars.CLINICAL_BACKUP_SUPABASE_S3_REGION }}
+          BACKUP_ENCRYPTION_CERTIFICATE_B64: ${{ secrets.CLINICAL_BACKUP_ENCRYPTION_CERTIFICATE_B64 }}
+          BACKUP_ENCRYPTION_CERTIFICATE_SHA256: ${{ secrets.CLINICAL_BACKUP_ENCRYPTION_CERTIFICATE_SHA256 }}
+          GOOGLE_DRIVE_BACKUP_PATH: ${{ vars.CLINICAL_BACKUP_GOOGLE_DRIVE_PATH }}
+          R2_BACKUP_PATH: ${{ vars.CLINICAL_BACKUP_R2_PATH }}
+          B2_BACKUP_PATH: ${{ vars.CLINICAL_BACKUP_B2_PATH }}
+          RCLONE_CONFIG_SUPABASESOURCE_TYPE: s3
+          RCLONE_CONFIG_SUPABASESOURCE_PROVIDER: Other
+          RCLONE_CONFIG_SUPABASESOURCE_ACCESS_KEY_ID: ${{ secrets.CLINICAL_BACKUP_SUPABASE_S3_ACCESS_KEY_ID }}
+          RCLONE_CONFIG_SUPABASESOURCE_SECRET_ACCESS_KEY: ${{ secrets.CLINICAL_BACKUP_SUPABASE_S3_SECRET_ACCESS_KEY }}
+          RCLONE_CONFIG_SUPABASESOURCE_ENDPOINT: https://grgyvdxkjdstdyumdfyg.storage.supabase.co/storage/v1/s3
+          RCLONE_CONFIG_SUPABASESOURCE_REGION: ${{ vars.CLINICAL_BACKUP_SUPABASE_S3_REGION }}
+          RCLONE_CONFIG_SUPABASESOURCE_FORCE_PATH_STYLE: "true"
+          RCLONE_CONFIG_GDRIVE_TYPE: drive
+          RCLONE_CONFIG_GDRIVE_SCOPE: drive.file
+          RCLONE_CONFIG_GDRIVE_TOKEN: ${{ secrets.CLINICAL_BACKUP_GOOGLE_DRIVE_TOKEN }}
+          RCLONE_CONFIG_R2_TYPE: s3
+          RCLONE_CONFIG_R2_PROVIDER: Cloudflare
+          RCLONE_CONFIG_R2_ACCESS_KEY_ID: ${{ secrets.CLINICAL_BACKUP_R2_ACCESS_KEY_ID }}
+          RCLONE_CONFIG_R2_SECRET_ACCESS_KEY: ${{ secrets.CLINICAL_BACKUP_R2_SECRET_ACCESS_KEY }}
+          RCLONE_CONFIG_R2_ENDPOINT: ${{ secrets.CLINICAL_BACKUP_R2_ENDPOINT }}
+          RCLONE_CONFIG_R2_ACL: private
+          RCLONE_CONFIG_B2_TYPE: b2
+          RCLONE_CONFIG_B2_ACCOUNT: ${{ secrets.CLINICAL_BACKUP_B2_KEY_ID }}
+          RCLONE_CONFIG_B2_KEY: ${{ secrets.CLINICAL_BACKUP_B2_APPLICATION_KEY }}
+          RCLONE_CONFIG_B2_HARD_DELETE: "true"
+        run: scripts/backup/clinical-backup.sh
+
+      - name: Avisar si falla la copia
+        if: ${{ failure() && steps.schedule.outputs.should_run == 'true' }}
+        shell: bash
+        env:
+          BREVO_API_KEY: ${{ secrets.CLINICAL_BACKUP_BREVO_API_KEY }}
+          ALERT_EMAIL: ${{ secrets.CLINICAL_BACKUP_ALERT_EMAIL }}
+          SENDER_EMAIL: ${{ secrets.CLINICAL_BACKUP_SENDER_EMAIL }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          if [[ -z "$BREVO_API_KEY" || -z "$ALERT_EMAIL" || -z "$SENDER_EMAIL" ]]; then
+            echo "No se configuró Brevo; GitHub conservará el fallo en Actions."
+            exit 0
+          fi
+          jq -n \
+            --arg sender "$SENDER_EMAIL" \
+            --arg recipient "$ALERT_EMAIL" \
+            --arg run_url "$RUN_URL" \
+            '{
+              sender: {name: "Dememoria", email: $sender},
+              to: [{email: $recipient}],
+              subject: "Ha fallado la copia clínica diaria",
+              htmlContent: ("<p>La copia clínica cifrada no ha finalizado correctamente.</p><p><a href=\"" + $run_url + "\">Revisar ejecución</a></p>")
+            }' > "$RUNNER_TEMP/backup-alert.json"
+          curl --fail --silent --show-error \
+            --request POST \
+            --header "api-key: $BREVO_API_KEY" \
+            --header "content-type: application/json" \
+            --data-binary "@$RUNNER_TEMP/backup-alert.json" \
+            https://api.brevo.com/v3/smtp/email
