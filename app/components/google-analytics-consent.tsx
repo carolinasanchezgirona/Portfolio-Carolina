@@ -80,6 +80,10 @@ function denyAnalyticsConsent() {
   removeAnalyticsCookies();
 }
 
+function sendEvent(name: string, parameters: Record<string, string | number> = {}) {
+  window.gtag?.("event", name, parameters);
+}
+
 export default function GoogleAnalyticsConsent() {
   const [consent, setConsent] = useState<ConsentChoice | null>(null);
   const [isReady, setIsReady] = useState(false);
@@ -91,6 +95,39 @@ export default function GoogleAnalyticsConsent() {
     setIsPanelOpen(storedConsent === null);
     setIsReady(true);
   }, []);
+
+  useEffect(() => {
+    if (consent !== "accepted") return;
+
+    const onClick = (event: MouseEvent) => {
+      const target = event.target instanceof Element ? event.target.closest("a,button") : null;
+      if (!target) return;
+
+      if (target instanceof HTMLAnchorElement) {
+        const href = target.getAttribute("href") || "";
+        if (href.startsWith("tel:")) sendEvent("contact_phone_click");
+        else if (href.startsWith("mailto:")) sendEvent("contact_email_click");
+        else if (href === "/cita" || href === "/cita/" || href.startsWith("/cita/?")) sendEvent("booking_click");
+      }
+    };
+
+    document.addEventListener("click", onClick, true);
+
+    let bookingTracked = false;
+    const observer = new MutationObserver(() => {
+      const message = document.querySelector("#form-message");
+      if (!bookingTracked && message?.classList.contains("form-message-success")) {
+        bookingTracked = true;
+        sendEvent("booking_complete");
+      }
+    });
+    observer.observe(document.body, { subtree: true, childList: true, characterData: true, attributes: true });
+
+    return () => {
+      document.removeEventListener("click", onClick, true);
+      observer.disconnect();
+    };
+  }, [consent]);
 
   function chooseConsent(choice: ConsentChoice) {
     if (choice === "rejected") {
