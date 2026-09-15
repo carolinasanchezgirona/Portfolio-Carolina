@@ -20,6 +20,7 @@ export default function ClinicaLayout({ children }: Readonly<{ children: React.R
       <script src="/clinic-goals-manager.js?v=20260915-2" defer />
       <script src="/clinic-scale-trends.js?v=20260915-2" defer />
       <script src="/clinic-template-library.js?v=20260915-3" defer />
+      <script src="/clinic-admin-tasks.js?v=20260915-1" defer />
     </>
   );
 }
