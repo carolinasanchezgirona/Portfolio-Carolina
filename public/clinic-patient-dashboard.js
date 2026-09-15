@@ -140,4 +140,6 @@
     if (dialog.open && patientIdField.value) loadDashboard();
   });
   patientIdObserver.observe(patientIdField, { attributes: true, attributeFilter: ["value"] });
+
+  // Asset revision 2.
 })();
