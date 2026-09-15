@@ -1,0 +1,10 @@
+.preview-dialog{max-height:calc(100dvh - 24px);overflow:auto}
+@media(max-width:720px){
+  .preview-dialog{width:calc(100% - 16px);max-height:calc(100dvh - 16px);border-radius:14px}
+  .preview-toolbar{align-items:stretch;flex-direction:column}
+  .preview-toolbar>div:last-child{flex-wrap:wrap}
+  .preview-toolbar button{flex:1}
+  .articles-top-actions>*{flex:1 1 calc(50% - 5px)}
+  .editor-toolbar{max-width:100%;overflow-x:auto}
+  .rich-editor{overflow-wrap:anywhere}
+}
