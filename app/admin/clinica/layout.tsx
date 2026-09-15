@@ -8,5 +8,10 @@ export const metadata: Metadata = {
 };
 
 export default function ClinicaLayout({ children }: Readonly<{ children: React.ReactNode }>) {
-  return <>{children}</>;
+  return (
+    <>
+      {children}
+      <script src="/admin-clinica-print-fixes.js?v=20260915-1" defer />
+    </>
+  );
 }
