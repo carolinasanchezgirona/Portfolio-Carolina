@@ -20,9 +20,9 @@
 
 :where(button,input,select,textarea){font:inherit;}
 
-/* Keep the bright brand blue for large surfaces and filled buttons,
-   but use a darker companion tone for normal-size interactive text so
-   contrast meets WCAG AA on white and warm off-white backgrounds. */
+/* Keep #11A6C2 as the bright brand accent, but use this darker companion
+   for normal-size text and filled controls. It clears WCAG AA on white and
+   warm off-white backgrounds. */
 .editorial-eyebrow,
 .editorial-role,
 .editorial-card-link,
@@ -44,8 +44,48 @@
 .article-prose a,
 .article-cta span,
 .article-related a,
-.article-back{
+.article-back,
+.booking-step,
+.service-fixed b,
+.first-slot-button,
+.text-button,
+.first-visit-note strong,
+.privacy-check a,
+.form-message-success{
   color:#087A8F!important;
+}
+
+.editorial-btn-primary,
+.editorial-site .nav a.nav-cta,
+.article-cta a,
+.booking-submit,
+.calendar-day.is-selected,
+.time-option:hover,
+.time-option.is-selected{
+  background:#087A8F!important;
+  border-color:#087A8F!important;
+  color:#fff!important;
+}
+
+.editorial-btn-primary:hover,
+.editorial-site .nav a.nav-cta:hover,
+.article-cta a:hover,
+.booking-submit:hover:not(:disabled){
+  background:#066B7D!important;
+  border-color:#066B7D!important;
+  color:#fff!important;
+}
+
+/* The bright Dememoria block remains a major brand surface. Dark ink on
+   this cyan gives sufficient contrast without changing the chosen block hue. */
+.editorial-dememoria{color:#1C2320!important;}
+.editorial-dememoria h2{color:#1C2320!important;}
+.editorial-dememoria .editorial-section-eyebrow{color:#263D42!important;}
+.editorial-dememoria p:last-child{color:#263D42!important;}
+
+.form-field input:focus{
+  border-color:#087A8F!important;
+  box-shadow:0 0 0 3px rgba(8,122,143,.16)!important;
 }
 
 .site-crisis-note{
