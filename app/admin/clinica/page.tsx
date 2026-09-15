@@ -281,6 +281,7 @@ export default function AdminClinicaPage() {
       </dialog>
 
       <Script src="/admin-clinica.js?v=20260914-5" strategy="afterInteractive" />
+      <Script src="/admin-clinica-audit-fixes.js?v=20260915-1" strategy="afterInteractive" />
     </main>
   );
 }
