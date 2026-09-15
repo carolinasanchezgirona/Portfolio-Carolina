@@ -1,0 +1,11 @@
+.clinic-dialog{max-height:calc(100dvh - 24px);overflow:auto}
+@media(max-width:620px){
+  .clinic-dialog{width:calc(100% - 16px);max-height:calc(100dvh - 16px);border-radius:14px}
+  .clinic-dialog-content{padding:18px}
+  .clinic-top-actions>*{flex:1 1 calc(50% - 5px);text-align:center}
+  .clinic-record-actions>*{flex:1 1 100%}
+  .clinic-report-toolbar{align-items:stretch;flex-direction:column}
+  .clinic-report-sheet{margin:12px 0;padding:24px 16px}
+  .clinic-report-sheet h1{font-size:24px}
+  .clinic-tabs{width:100%}
+}
