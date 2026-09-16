@@ -91,7 +91,76 @@ jobs:
           RCLONE_CONFIG_B2_HARD_DELETE: "true"
         run: scripts/backup/clinical-backup.sh
 
-      - name: Avisar si falla la copia
+      - name: Conservar la copia mensual
+        if: ${{ success() && steps.schedule.outputs.should_run == 'true' }}
+        shell: bash
+        env:
+          BACKUP_TIMEZONE: Europe/Madrid
+          MONTHLY_RETENTION_DAYS: "400"
+          GOOGLE_DRIVE_BACKUP_PATH: ${{ vars.CLINICAL_BACKUP_GOOGLE_DRIVE_PATH }}
+          GOOGLE_DRIVE_MONTHLY_BACKUP_PATH: ${{ vars.CLINICAL_BACKUP_GOOGLE_DRIVE_MONTHLY_PATH }}
+          R2_BACKUP_PATH: ${{ vars.CLINICAL_BACKUP_R2_PATH }}
+          R2_MONTHLY_BACKUP_PATH: ${{ vars.CLINICAL_BACKUP_R2_MONTHLY_PATH }}
+          B2_BACKUP_PATH: ${{ vars.CLINICAL_BACKUP_B2_PATH }}
+          B2_MONTHLY_BACKUP_PATH: ${{ vars.CLINICAL_BACKUP_B2_MONTHLY_PATH }}
+          RCLONE_CONFIG_GDRIVE_TYPE: drive
+          RCLONE_CONFIG_GDRIVE_SCOPE: drive.file
+          RCLONE_CONFIG_GDRIVE_TOKEN: ${{ secrets.CLINICAL_BACKUP_GOOGLE_DRIVE_TOKEN }}
+          RCLONE_CONFIG_R2_TYPE: s3
+          RCLONE_CONFIG_R2_PROVIDER: Cloudflare
+          RCLONE_CONFIG_R2_ACCESS_KEY_ID: ${{ secrets.CLINICAL_BACKUP_R2_ACCESS_KEY_ID }}
+          RCLONE_CONFIG_R2_SECRET_ACCESS_KEY: ${{ secrets.CLINICAL_BACKUP_R2_SECRET_ACCESS_KEY }}
+          RCLONE_CONFIG_R2_ENDPOINT: ${{ secrets.CLINICAL_BACKUP_R2_ENDPOINT }}
+          RCLONE_CONFIG_R2_ACL: private
+          RCLONE_CONFIG_B2_TYPE: b2
+          RCLONE_CONFIG_B2_ACCOUNT: ${{ secrets.CLINICAL_BACKUP_B2_KEY_ID }}
+          RCLONE_CONFIG_B2_KEY: ${{ secrets.CLINICAL_BACKUP_B2_APPLICATION_KEY }}
+          RCLONE_CONFIG_B2_HARD_DELETE: "true"
+        run: scripts/backup/archive-monthly.sh
+
+      - name: Avisar por Telegram y comprobar espacio
+        if: ${{ success() && steps.schedule.outputs.should_run == 'true' }}
+        shell: bash
+        env:
+          BACKUP_TIMEZONE: Europe/Madrid
+          TELEGRAM_BOT_TOKEN: ${{ secrets.CLINICAL_BACKUP_TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.CLINICAL_BACKUP_TELEGRAM_CHAT_ID }}
+          GOOGLE_DRIVE_WARN_FREE_PERCENT: ${{ vars.CLINICAL_BACKUP_GOOGLE_DRIVE_WARN_FREE_PERCENT }}
+          GOOGLE_DRIVE_CRITICAL_FREE_PERCENT: ${{ vars.CLINICAL_BACKUP_GOOGLE_DRIVE_CRITICAL_FREE_PERCENT }}
+          R2_SOFT_LIMIT_GB: ${{ vars.CLINICAL_BACKUP_R2_SOFT_LIMIT_GB }}
+          B2_SOFT_LIMIT_GB: ${{ vars.CLINICAL_BACKUP_B2_SOFT_LIMIT_GB }}
+          GOOGLE_DRIVE_BACKUP_PATH: ${{ vars.CLINICAL_BACKUP_GOOGLE_DRIVE_PATH }}
+          GOOGLE_DRIVE_MONTHLY_BACKUP_PATH: ${{ vars.CLINICAL_BACKUP_GOOGLE_DRIVE_MONTHLY_PATH }}
+          R2_BACKUP_PATH: ${{ vars.CLINICAL_BACKUP_R2_PATH }}
+          R2_MONTHLY_BACKUP_PATH: ${{ vars.CLINICAL_BACKUP_R2_MONTHLY_PATH }}
+          B2_BACKUP_PATH: ${{ vars.CLINICAL_BACKUP_B2_PATH }}
+          B2_MONTHLY_BACKUP_PATH: ${{ vars.CLINICAL_BACKUP_B2_MONTHLY_PATH }}
+          RCLONE_CONFIG_GDRIVE_TYPE: drive
+          RCLONE_CONFIG_GDRIVE_SCOPE: drive.file
+          RCLONE_CONFIG_GDRIVE_TOKEN: ${{ secrets.CLINICAL_BACKUP_GOOGLE_DRIVE_TOKEN }}
+          RCLONE_CONFIG_R2_TYPE: s3
+          RCLONE_CONFIG_R2_PROVIDER: Cloudflare
+          RCLONE_CONFIG_R2_ACCESS_KEY_ID: ${{ secrets.CLINICAL_BACKUP_R2_ACCESS_KEY_ID }}
+          RCLONE_CONFIG_R2_SECRET_ACCESS_KEY: ${{ secrets.CLINICAL_BACKUP_R2_SECRET_ACCESS_KEY }}
+          RCLONE_CONFIG_R2_ENDPOINT: ${{ secrets.CLINICAL_BACKUP_R2_ENDPOINT }}
+          RCLONE_CONFIG_R2_ACL: private
+          RCLONE_CONFIG_B2_TYPE: b2
+          RCLONE_CONFIG_B2_ACCOUNT: ${{ secrets.CLINICAL_BACKUP_B2_KEY_ID }}
+          RCLONE_CONFIG_B2_KEY: ${{ secrets.CLINICAL_BACKUP_B2_APPLICATION_KEY }}
+          RCLONE_CONFIG_B2_HARD_DELETE: "true"
+        run: scripts/backup/backup-notify.sh success
+
+      - name: Avisar por Telegram si falla la copia
+        if: ${{ failure() && steps.schedule.outputs.should_run == 'true' }}
+        shell: bash
+        env:
+          BACKUP_TIMEZONE: Europe/Madrid
+          TELEGRAM_BOT_TOKEN: ${{ secrets.CLINICAL_BACKUP_TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.CLINICAL_BACKUP_TELEGRAM_CHAT_ID }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: scripts/backup/backup-notify.sh failure
+
+      - name: Avisar por correo si falla la copia
         if: ${{ failure() && steps.schedule.outputs.should_run == 'true' }}
         shell: bash
         env:
