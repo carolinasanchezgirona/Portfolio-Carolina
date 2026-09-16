@@ -1,5 +1,6 @@
 import Script from "next/script";
 import type { Metadata } from "next";
+import PatientBulkImport from "./patient-bulk-import";
 import "./clinica.css";
 
 export const metadata: Metadata = {
@@ -70,9 +71,12 @@ export default function AdminClinicaPage() {
         <section id="clinic-patients-view" className="clinic-view" hidden>
           <div className="clinic-section-heading clinic-patients-heading">
             <div><p className="clinic-eyebrow">Dememoria</p><h2>Pacientes</h2></div>
-            <input id="clinic-patient-search" type="search" placeholder="Buscar por nombre, correo o teléfono" autoComplete="off" />
+            <div className="clinic-patients-actions">
+              <input id="clinic-patient-search" type="search" placeholder="Buscar por nombre, correo, teléfono o mutua" autoComplete="off" />
+              <PatientBulkImport />
+            </div>
           </div>
-          <p className="clinic-note">Las fichas clínicas están vinculadas a las reservas reales, pero conservan documentación independiente y privada.</p>
+          <p className="clinic-note">Las fichas clínicas usan el número propio de Dememoria. Las agendas externas conservan teléfono, mutua, centro, fecha y hora, pero nunca el número de historia de la clínica externa.</p>
           <div id="clinic-patient-list" className="clinic-patient-list" />
         </section>
       </section>

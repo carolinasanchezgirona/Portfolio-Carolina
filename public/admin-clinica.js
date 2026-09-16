@@ -70,6 +70,7 @@
   let session = null;
   let appointments = [];
   let patients = [];
+  let externalVisits = [];
   let clinicalSessions = [];
   let clinicalGoals = [];
   let exerciseTemplates = [];
@@ -158,6 +159,20 @@
     return clinicalSessions
       .filter((item) => item.patient_id === patientId)
       .sort((a, b) => new Date(b.session_date) - new Date(a.session_date));
+  }
+  function patientExternalVisits(patientId) {
+    return externalVisits
+      .filter((item) => item.patient_id === patientId)
+      .sort((a, b) => `${b.visit_date || "0000-00-00"}T${b.visit_time}`.localeCompare(`${a.visit_date || "0000-00-00"}T${a.visit_time}`));
+  }
+  function externalCenterLabel(center) {
+    return center === "arenys_2" ? "Arenys 2" : "Arenys 1";
+  }
+  function externalVisitWhen(item) {
+    const date = item.visit_date
+      ? dateShort.format(new Date(`${item.visit_date}T12:00:00Z`))
+      : "Fecha no indicada";
+    return `${date} · ${(item.visit_time || "").slice(0, 5)}`;
   }
   function patientById(id) { return patients.find((patient) => patient.id === id); }
   function patientGoals(patientId) {
@@ -402,7 +417,10 @@
     const exercises = exerciseAssignments.filter((item) => ["prepared", "sent", "assigned"].includes(item.status));
     const reports = clinicalReports.filter((item) => item.status === "draft");
     const now = new Date();
-    const withoutNext = patients.filter((patient) => !patientAppointments(patient.id).some((item) => new Date(item.starts_at) > now && !["cancelled", "canceled"].includes(item.status)));
+    const withoutNext = patients.filter((patient) =>
+      patient.care_context !== "creu_blava"
+      && !patientAppointments(patient.id).some((item) => new Date(item.starts_at) > now && !["cancelled", "canceled"].includes(item.status))
+    );
     const groups = [
       ["Sesiones sin cerrar", drafts, (item) => patientById(item.patient_id)],
       ["Ejercicios pendientes", exercises, (item) => patientById(item.patient_id)],
@@ -431,6 +449,11 @@
   function timelineItems(patient) {
     const items = [];
     patientAppointments(patient.id).forEach((x) => items.push({ date: x.starts_at, type: "Cita", text: statusLabel(x.status) }));
+    patientExternalVisits(patient.id).filter((x) => x.visit_date).forEach((x) => items.push({
+      date: `${x.visit_date}T${x.visit_time}`,
+      type: "Visita externa",
+      text: `${x.external_provider} · ${externalCenterLabel(x.center)} · ${x.insurance_provider}`,
+    }));
     patientSessions(patient.id).forEach((x) => items.push({ date: x.session_date, type: "Sesión", text: `${x.status === "approved" ? "Aprobada" : "Borrador"} · sesión ${x.session_number || ""}` }));
     patientExercises(patient.id).forEach((x) => items.push({ date: x.sent_at || x.created_at, type: "Ejercicio", text: `${x.title} · ${x.email_status === "sent" ? "enviado" : "preparado"}` }));
     clinicalReports.filter((x) => x.patient_id === patient.id).forEach((x) => items.push({ date: x.approved_at || x.created_at, type: "Informe", text: `${x.title} · ${x.status === "approved" ? "aprobado" : "borrador"}` }));
@@ -581,10 +604,21 @@
   function renderHistory(patient) {
     els.patientHistory.replaceChildren();
     const bookings = patientAppointments(patient.id).sort((a, b) => new Date(b.starts_at) - new Date(a.starts_at));
-    if (!bookings.length) {
+    const visits = patientExternalVisits(patient.id);
+    if (!bookings.length && !visits.length) {
       els.patientHistory.append(create("p", "clinic-empty-inline", "No hay citas vinculadas."));
       return;
     }
+    visits.forEach((visit) => {
+      const row = create("article");
+      const info = create("div");
+      info.append(
+        create("strong", "", externalVisitWhen(visit)),
+        create("span", "", `${visit.external_provider} · ${externalCenterLabel(visit.center)} · ${visit.insurance_provider}`)
+      );
+      row.append(info, create("span", "clinic-status-pill", "Visita externa"));
+      els.patientHistory.append(row);
+    });
     bookings.forEach((appointment) => {
       const row = create("article");
       const info = create("div");
@@ -608,6 +642,12 @@
     els.patientContact.replaceChildren();
     if (patient.email) els.patientContact.append(create("span", "", patient.email));
     if (patient.phone) els.patientContact.append(create("span", "", patient.phone));
+    const latestExternalVisit = patientExternalVisits(patient.id)[0];
+    if (latestExternalVisit) {
+      els.patientContact.append(create("span", "", `${latestExternalVisit.external_provider} · ${externalCenterLabel(latestExternalVisit.center)} · ${latestExternalVisit.insurance_provider}`));
+      els.patientContact.append(create("span", "", externalVisitWhen(latestExternalVisit)));
+    }
+    if (patient.care_context === "combined") els.patientContact.append(create("span", "", "Consulta propia + Creu Blava"));
     els.summaryNote.value = patient.clinical_summary || "";
     els.nextFocus.value = patient.next_session_focus || "";
     els.medication.value = patient.medication_notes || "";
@@ -657,9 +697,13 @@
 
   function renderPatients(query = "") {
     const term = query.trim().toLowerCase();
-    const filtered = patients.filter((patient) =>
-      [patient.full_name, patient.email, patient.phone].some((value) => (value || "").toLowerCase().includes(term))
-    );
+    const filtered = patients.filter((patient) => {
+      const externalText = patientExternalVisits(patient.id)
+        .map((item) => `${item.insurance_provider} ${item.external_provider} ${externalCenterLabel(item.center)} ${item.visit_date || ""} ${item.visit_time || ""}`)
+        .join(" ");
+      return [patient.full_name, patient.email, patient.phone, externalText]
+        .some((value) => (value || "").toLowerCase().includes(term));
+    });
     els.patientList.replaceChildren();
     if (!filtered.length) {
       els.patientList.append(create("div", "clinic-empty", "No se han encontrado pacientes."));
@@ -667,10 +711,14 @@
     }
     filtered.forEach((patient) => {
       const bookings = patientAppointments(patient.id);
+      const visits = patientExternalVisits(patient.id);
       const card = create("article", "clinic-patient-card");
       const body = create("div");
       body.append(create("h3", "", patient.public_code), create("p", "", "Identidad oculta en el listado general"));
-      const summary = create("p", "", `${bookings.length} cita(s) · ${patientSessions(patient.id).length} sesión(es) clínica(s)`);
+      if (visits[0]) {
+        body.append(create("p", "", `${visits[0].external_provider} · ${externalCenterLabel(visits[0].center)} · ${visits[0].insurance_provider} · ${externalVisitWhen(visits[0])}`));
+      }
+      const summary = create("p", "", `${bookings.length} cita(s) propia(s) · ${visits.length} visita(s) externa(s) · ${patientSessions(patient.id).length} sesión(es) clínica(s)`);
       const button = create("button", "clinic-secondary", "Abrir ficha");
       button.type = "button";
       button.addEventListener("click", () => openPatient(patient));
@@ -681,9 +729,10 @@
 
   async function loadData() {
     setMessage("Cargando información clínica…");
-    const [bookingRows, patientRows, sessionRows, goalRows, templateRows, assignmentRows, reportRows, documentRows, scaleRows] = await Promise.all([
+    const [bookingRows, patientRows, externalVisitRows, sessionRows, goalRows, templateRows, assignmentRows, reportRows, documentRows, scaleRows] = await Promise.all([
       rest(`appointment_bookings?select=id,patient_name,patient_email,patient_phone,patient_type,status,starts_at,ends_at,service_code,clinical_patient_id&order=starts_at.desc&limit=1000`),
       rest("clinical_patients?select=*&order=full_name.asc"),
+      rest("clinical_external_visits?select=*&order=visit_date.desc.nullslast,visit_time.desc"),
       rest("clinical_sessions?select=*&order=session_date.desc"),
       rest("clinical_goals?select=*&order=created_at.asc"),
       rest("clinical_exercise_templates?select=*&status=eq.active&order=title.asc"),
@@ -694,6 +743,7 @@
     ]);
     appointments = bookingRows || [];
     patients = patientRows || [];
+    externalVisits = externalVisitRows || [];
     clinicalSessions = sessionRows || [];
     clinicalGoals = goalRows || [];
     exerciseTemplates = templateRows || [];
