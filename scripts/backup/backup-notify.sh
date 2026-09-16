@@ -88,7 +88,11 @@ check_soft_limit "Cloudflare R2" "${R2_RCLONE_REMOTE:-r2}" "${R2_BACKUP_PATH:-}"
 check_soft_limit "Backblaze B2" "${B2_RCLONE_REMOTE:-b2}" "${B2_BACKUP_PATH:-}" "$B2_SOFT_LIMIT_GB"
 
 if [[ "$local_day" == "01" ]]; then
-  message+="\n📦 La copia mensual ha quedado archivada. Conviene descargar una copia mensual y conservarla fuera de línea."
+  if [[ -n "${GOOGLE_DRIVE_MONTHLY_BACKUP_PATH:-}" && -n "${R2_MONTHLY_BACKUP_PATH:-}" && -n "${B2_MONTHLY_BACKUP_PATH:-}" ]]; then
+    message+="\n📦 La copia mensual ha quedado archivada con conservación prolongada. Conviene descargar una copia mensual y conservarla fuera de línea."
+  else
+    message+="\n📦 Recordatorio mensual: descarga una copia cifrada y consérvala fuera de línea."
+  fi
 fi
 
 send_telegram "$message"
