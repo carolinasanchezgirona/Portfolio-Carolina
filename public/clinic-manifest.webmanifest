@@ -5,7 +5,7 @@
   "start_url": "/admin/clinica/?source=pwa",
   "scope": "/admin/clinica/",
   "display": "standalone",
-  "background_color": "#F7F5F0",
+  "background_color": "#FBF9F5",
   "theme_color": "#11A6C2",
   "lang": "es",
   "icons": [
