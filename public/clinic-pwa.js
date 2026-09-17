@@ -11,7 +11,6 @@
     installButton.id = "clinic-pwa-install";
     installButton.className = "clinic-secondary";
     installButton.type = "button";
-    installButton.hidden = true;
     installButton.textContent = "Instalar app";
     actions.insertBefore(installButton, actions.lastElementChild);
   }
@@ -28,6 +27,7 @@
 
   const isStandalone = window.matchMedia("(display-mode: standalone)").matches || window.navigator.standalone === true;
   const isIOS = /iphone|ipad|ipod/i.test(window.navigator.userAgent);
+  const isAndroid = /android/i.test(window.navigator.userAgent);
 
   if ("serviceWorker" in navigator) {
     window.addEventListener("load", () => {
@@ -37,12 +37,16 @@
     });
   }
 
-  if (isStandalone) return;
+  if (isStandalone) {
+    installButton.hidden = true;
+    return;
+  }
+
+  installButton.hidden = false;
 
   window.addEventListener("beforeinstallprompt", (event) => {
     event.preventDefault();
     deferredPrompt = event;
-    installButton.hidden = false;
   });
 
   installButton.addEventListener("click", async () => {
@@ -50,17 +54,20 @@
       deferredPrompt.prompt();
       await deferredPrompt.userChoice;
       deferredPrompt = null;
-      installButton.hidden = true;
       return;
     }
 
-    if (isIOS && installHint) {
-      installHint.textContent = "En iPhone o iPad: toca Compartir y después “Añadir a pantalla de inicio”.";
-      installHint.hidden = false;
-    }
-  });
+    if (!installHint) return;
 
-  if (isIOS) installButton.hidden = false;
+    if (isIOS) {
+      installHint.textContent = "En iPhone o iPad: toca Compartir y después “Añadir a pantalla de inicio”.";
+    } else if (isAndroid) {
+      installHint.textContent = "Si no aparece la ventana de instalación, abre el menú del navegador y toca “Instalar aplicación” o “Añadir a pantalla de inicio”.";
+    } else {
+      installHint.textContent = "Abre el menú del navegador y elige “Instalar aplicación” o “Crear acceso directo”.";
+    }
+    installHint.hidden = false;
+  });
 
   window.addEventListener("appinstalled", () => {
     installButton.hidden = true;
