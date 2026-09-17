@@ -1,4 +1,6 @@
 /es/cita.html /cita/ 301
+/es/cita /cita/ 301
+/es/cita/ /cita/ 301
 /es/index.html / 301
 /es / 301
 /es/ / 301
@@ -7,6 +9,8 @@
 /es/psicologia.html /psicologia/ 301
 /es/neuropsicologia.html /neuropsicologia/ 301
 /es/contacto.html /cita/ 301
-/articulos/leer/ /articulos/ 302
-/articulos/:slug/ /articulos/leer/ 200
-/articulos/:slug /articulos/leer/ 200
+/writing /articulos/ 301
+/writing/ /articulos/ 301
+/projects/brain-health-data /sobre-mi/ 301
+/projects/brain-health-data/ /sobre-mi/ 301
+/articulos/leer/ /articulos/ 301
