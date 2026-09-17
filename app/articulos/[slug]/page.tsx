@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { getPublishedArticle, getPublishedArticles, isArticleVisible } from "../articles-data";
+import { getAutomaticRelatedPage, getPublishedArticle, getPublishedArticles, isArticleVisible } from "../articles-data";
 import "../articles.css";
 
 type ArticlePageProps = {
@@ -90,6 +90,7 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
   const tags = Array.isArray(article.tags) ? article.tags : [];
   const ctaLabel = article.cta_label || "Pedir cita";
   const ctaUrl = article.cta_url || "/cita/";
+  const relatedPage = getAutomaticRelatedPage(article);
 
   const schema = {
     "@context": "https://schema.org",
@@ -152,12 +153,10 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
             <a href={ctaUrl}>{ctaLabel} →</a>
           </aside>
 
-          {article.related_page ? (
-            <aside className="article-related">
-              <strong>También puede interesarte</strong>
-              <a href={article.related_page}>Ver {relatedLabel(article.related_page)} →</a>
-            </aside>
-          ) : null}
+          <aside className="article-related">
+            <strong>También puede interesarte</strong>
+            <a href={relatedPage}>Ver {relatedLabel(relatedPage)} →</a>
+          </aside>
         </article>
       </div>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }} />
