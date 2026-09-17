@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Script from "next/script";
 import { getPublishedArticles, isArticleVisible } from "./articles-data";
 import "./articles.css";
 
@@ -36,18 +37,11 @@ function readingMinutes(html: string) {
   return words ? Math.max(1, Math.ceil(words / 220)) : 0;
 }
 
-type ArticlesPageProps = {
-  searchParams?: Promise<{ categoria?: string | string[] }>;
-};
-
-export default async function ArticlesPage({ searchParams }: ArticlesPageProps) {
-  const params = searchParams ? await searchParams : {};
-  const rawCategory = Array.isArray(params.categoria) ? params.categoria[0] : params.categoria;
-  const category = rawCategory === "psicologia" || rawCategory === "neuropsicologia" ? rawCategory : undefined;
-  const articles = (await getPublishedArticles(category)).filter((article) => isArticleVisible(article));
+export default async function ArticlesPage() {
+  const articles = (await getPublishedArticles()).filter((article) => isArticleVisible(article));
 
   return (
-    <main className="articles-page">
+    <main className="articles-page" data-articles-view="list">
       <section className="articles-hero">
         <div className="articles-wrap">
           <p className="articles-kicker">Recursos</p>
@@ -58,43 +52,43 @@ export default async function ArticlesPage({ searchParams }: ArticlesPageProps) 
       <div className="articles-wrap">
         <div className="articles-toolbar">
           <div className="articles-filters" aria-label="Filtrar artículos">
-            <a className={!category ? "active" : undefined} href="/articulos/">Todos</a>
-            <a className={category === "psicologia" ? "active" : undefined} href="/articulos/?categoria=psicologia">Psicología</a>
-            <a className={category === "neuropsicologia" ? "active" : undefined} href="/articulos/?categoria=neuropsicologia">Neuropsicología</a>
+            <a data-category="all" className="active" href="/articulos/">Todos</a>
+            <a data-category="psicologia" href="/articulos/?categoria=psicologia">Psicología</a>
+            <a data-category="neuropsicologia" href="/articulos/?categoria=neuropsicologia">Neuropsicología</a>
           </div>
         </div>
 
-        {articles.length ? (
-          <section className="articles-grid" aria-label="Listado de artículos">
-            {articles.map((article) => {
-              const href = `/articulos/${encodeURIComponent(article.slug)}/`;
-              const summary = article.subtitle || article.excerpt || "";
-              const minutes = readingMinutes(article.content);
-              return (
-                <article key={article.id} className={`articles-card${article.featured ? " featured" : ""}`}>
-                  {article.image_url ? (
-                    <a className="articles-card-image" href={href} aria-label={`Leer ${article.title}`}>
-                      <img src={article.image_url} alt={article.image_alt || ""} loading="lazy" decoding="async" />
-                    </a>
-                  ) : null}
-                  <div className="articles-card-body">
-                    <div className="articles-card-meta">
-                      <span className="articles-card-category">{categoryLabel(article.category)}</span>
-                      {article.published_at ? <span>{formatDate(article.published_at)}</span> : null}
-                      {minutes ? <span>{minutes} min</span> : null}
-                    </div>
-                    <h2><a href={href}>{article.title}</a></h2>
-                    {summary ? <p>{summary}</p> : null}
-                    <a className="articles-card-link" href={href}>Leer artículo →</a>
+        <p id="articles-status" className="articles-empty" hidden={articles.length > 0}>
+          {articles.length ? "" : "Próximamente encontrarás aquí nuevos artículos."}
+        </p>
+        <section id="articles-grid" className="articles-grid" aria-label="Listado de artículos">
+          {articles.map((article) => {
+            const href = `/articulos/${encodeURIComponent(article.slug)}/`;
+            const summary = article.subtitle || article.excerpt || "";
+            const minutes = readingMinutes(article.content);
+            return (
+              <article key={article.id} className={`articles-card${article.featured ? " featured" : ""}`}>
+                {article.image_url ? (
+                  <a className="articles-card-image" href={href} aria-label={`Leer ${article.title}`}>
+                    <img src={article.image_url} alt={article.image_alt || ""} loading="lazy" decoding="async" />
+                  </a>
+                ) : null}
+                <div className="articles-card-body">
+                  <div className="articles-card-meta">
+                    <span className="articles-card-category">{categoryLabel(article.category)}</span>
+                    {article.published_at ? <span>{formatDate(article.published_at)}</span> : null}
+                    {minutes ? <span>{minutes} min</span> : null}
                   </div>
-                </article>
-              );
-            })}
-          </section>
-        ) : (
-          <p className="articles-empty">Próximamente encontrarás aquí nuevos artículos.</p>
-        )}
+                  <h2><a href={href}>{article.title}</a></h2>
+                  {summary ? <p>{summary}</p> : null}
+                  <a className="articles-card-link" href={href}>Leer artículo →</a>
+                </div>
+              </article>
+            );
+          })}
+        </section>
       </div>
+      <Script src="/articles-public.js?v=20260917-seo-hybrid-1" strategy="afterInteractive" />
     </main>
   );
 }
