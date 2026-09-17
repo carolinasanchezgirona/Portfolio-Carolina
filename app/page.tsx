@@ -3,7 +3,23 @@ import Image from "next/image";
 import "./home-improvements.css";
 
 export const metadata: Metadata = {
+  title: "Carolina Sánchez | Psicóloga y Neuropsicóloga en Arenys de Mar",
+  description:
+    "Psicología sanitaria y neuropsicología clínica en Arenys de Mar y online. Atención psicológica para adultos, evaluación neuropsicológica y seguimiento cognitivo.",
   alternates: { canonical: "/" },
+  openGraph: {
+    title: "Carolina Sánchez | Psicóloga y Neuropsicóloga en Arenys de Mar",
+    description:
+      "Psicología sanitaria y neuropsicología clínica en Arenys de Mar y online.",
+    url: "https://carolinasanchezgirona.com/",
+    type: "website",
+  },
+  twitter: {
+    card: "summary",
+    title: "Carolina Sánchez | Psicóloga y Neuropsicóloga en Arenys de Mar",
+    description:
+      "Psicología sanitaria y neuropsicología clínica en Arenys de Mar y online.",
+  },
 };
 
 const Arrow = () => <span aria-hidden="true">↗</span>;
