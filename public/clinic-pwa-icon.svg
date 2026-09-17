@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Mi clínica">
+  <rect width="512" height="512" rx="112" fill="#11A6C2"/>
+  <path d="M144 128h224c26.5 0 48 21.5 48 48v160c0 26.5-21.5 48-48 48H144c-26.5 0-48-21.5-48-48V176c0-26.5 21.5-48 48-48Z" fill="#FBF9F5"/>
+  <path d="M256 176c-44.2 0-80 35.8-80 80s35.8 80 80 80 80-35.8 80-80-35.8-80-80-80Zm-16 40h32v24h24v32h-24v24h-32v-24h-24v-32h24v-24Z" fill="#075A68"/>
+</svg>
