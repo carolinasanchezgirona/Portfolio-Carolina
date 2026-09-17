@@ -1,11 +1,16 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { getPublishedArticle, isArticleVisible } from "../articles-data";
+import { getPublishedArticle, getPublishedArticles, isArticleVisible } from "../articles-data";
 import "../articles.css";
 
 type ArticlePageProps = {
   params: Promise<{ slug: string }>;
 };
+
+export async function generateStaticParams() {
+  const articles = (await getPublishedArticles()).filter((article) => isArticleVisible(article));
+  return articles.map((article) => ({ slug: article.slug }));
+}
 
 function formatDate(value: string | null) {
   if (!value) return "";
