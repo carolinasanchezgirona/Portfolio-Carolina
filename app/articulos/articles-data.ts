@@ -4,20 +4,27 @@ const KEY = "sb_publishable_b2MRfP0bPti87V2FXCzHGw_Y9vvcbii";
 export type PublicArticle = {
   id: string;
   title: string;
+  subtitle: string | null;
   slug: string;
   excerpt: string | null;
   content: string;
   category: "psicologia" | "neuropsicologia";
   featured: boolean;
   image_url: string | null;
+  image_alt: string | null;
+  image_caption: string | null;
   related_page: string | null;
   seo_title: string | null;
   seo_description: string | null;
+  tags: string[] | null;
+  cta_label: string | null;
+  cta_url: string | null;
   published_at: string | null;
+  scheduled_at: string | null;
   updated_at: string;
 };
 
-const select = "id,title,slug,excerpt,content,category,featured,image_url,related_page,seo_title,seo_description,published_at,updated_at";
+const select = "id,title,subtitle,slug,excerpt,content,category,featured,image_url,image_alt,image_caption,related_page,seo_title,seo_description,tags,cta_label,cta_url,published_at,scheduled_at,updated_at";
 
 export async function getPublishedArticles(category?: string): Promise<PublicArticle[]> {
   const filters = [`select=${encodeURIComponent(select)}`, "status=eq.published", "order=featured.desc,published_at.desc"];
@@ -38,4 +45,8 @@ export async function getPublishedArticle(slug: string): Promise<PublicArticle |
   if (!response.ok) return null;
   const rows = await response.json();
   return rows?.[0] ?? null;
+}
+
+export function isArticleVisible(article: PublicArticle, now = Date.now()) {
+  return !article.published_at || new Date(article.published_at).getTime() <= now;
 }
