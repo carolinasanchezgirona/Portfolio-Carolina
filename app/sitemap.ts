@@ -3,6 +3,8 @@ import { getPublishedArticles, isArticleVisible } from "./articulos/articles-dat
 
 const base = "https://carolinasanchezgirona.com";
 
+export const dynamic = "force-static";
+
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const staticPages: MetadataRoute.Sitemap = [
     { url: `${base}/`, changeFrequency: "weekly", priority: 1 },
