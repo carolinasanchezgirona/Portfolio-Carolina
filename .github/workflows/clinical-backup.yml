@@ -56,9 +56,10 @@ jobs:
         if: ${{ steps.schedule.outputs.should_run == 'true' }}
         shell: bash
         env:
-          SUPABASE_DB_URL: ${{ secrets.CLINICAL_BACKUP_SUPABASE_DB_URL }}
+          SUPABASE_DB_PASSWORD: ${{ secrets.CLINICAL_BACKUP_SUPABASE_DB_PASSWORD }}
         run: |
           set -euo pipefail
+          export SUPABASE_DB_URL="postgresql://postgres.grgyvdxkjdstdyumdfyg:${SUPABASE_DB_PASSWORD}@aws-1-eu-west-1.pooler.supabase.com:5432/postgres"
           docker run --rm \
             --env SUPABASE_DB_URL \
             postgres:17-alpine \
@@ -72,7 +73,7 @@ jobs:
           BACKUP_TIMEZONE: Europe/Madrid
           BACKUP_RETENTION_DAYS: "30"
           SUPABASE_PROJECT_REF: grgyvdxkjdstdyumdfyg
-          SUPABASE_DB_URL: ${{ secrets.CLINICAL_BACKUP_SUPABASE_DB_URL }}
+          SUPABASE_DB_PASSWORD: ${{ secrets.CLINICAL_BACKUP_SUPABASE_DB_PASSWORD }}
           SUPABASE_S3_ACCESS_KEY_ID: ${{ secrets.CLINICAL_BACKUP_SUPABASE_S3_ACCESS_KEY_ID }}
           SUPABASE_S3_SECRET_ACCESS_KEY: ${{ secrets.CLINICAL_BACKUP_SUPABASE_S3_SECRET_ACCESS_KEY }}
           SUPABASE_S3_ENDPOINT: https://grgyvdxkjdstdyumdfyg.storage.supabase.co/storage/v1/s3
@@ -104,7 +105,10 @@ jobs:
           RCLONE_CONFIG_B2_ACCOUNT: ${{ secrets.CLINICAL_BACKUP_B2_KEY_ID }}
           RCLONE_CONFIG_B2_KEY: ${{ secrets.CLINICAL_BACKUP_B2_APPLICATION_KEY }}
           RCLONE_CONFIG_B2_HARD_DELETE: "true"
-        run: bash scripts/backup/clinical-backup.sh
+        run: |
+          set -euo pipefail
+          export SUPABASE_DB_URL="postgresql://postgres.grgyvdxkjdstdyumdfyg:${SUPABASE_DB_PASSWORD}@aws-1-eu-west-1.pooler.supabase.com:5432/postgres"
+          bash scripts/backup/clinical-backup.sh
 
       - name: Conservar la copia mensual
         if: ${{ success() && steps.schedule.outputs.should_run == 'true' }}
