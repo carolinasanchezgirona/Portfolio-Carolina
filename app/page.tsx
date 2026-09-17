@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Image from "next/image";
+import "./home-improvements.css";
 
 export const metadata: Metadata = {
   alternates: { canonical: "/" },
