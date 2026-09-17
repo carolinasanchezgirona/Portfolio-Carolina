@@ -7,7 +7,7 @@ export default function robots(): MetadataRoute.Robots {
     rules: {
       userAgent: "*",
       allow: "/",
-      disallow: ["/admin/", "/articulos/leer/"],
+      disallow: ["/admin/"],
     },
     sitemap: "https://carolinasanchezgirona.com/sitemap.xml",
   };

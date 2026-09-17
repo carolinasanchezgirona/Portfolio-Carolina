@@ -2,22 +2,23 @@ import type { MetadataRoute } from "next";
 import { getPublishedArticles, isArticleVisible } from "./articulos/articles-data";
 
 const base = "https://carolinasanchezgirona.com";
+const staticLastModified = new Date("2026-09-17T00:00:00+02:00");
 
 export const dynamic = "force-static";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const staticPages: MetadataRoute.Sitemap = [
-    { url: `${base}/`, changeFrequency: "weekly", priority: 1 },
-    { url: `${base}/psicologa-arenys-de-mar/`, changeFrequency: "monthly", priority: 0.95 },
-    { url: `${base}/psicologia/`, changeFrequency: "monthly", priority: 0.9 },
-    { url: `${base}/neuropsicologia/`, changeFrequency: "monthly", priority: 0.9 },
-    { url: `${base}/sobre-mi/`, changeFrequency: "monthly", priority: 0.85 },
-    { url: `${base}/ansiedad/`, changeFrequency: "monthly", priority: 0.82 },
-    { url: `${base}/duelo/`, changeFrequency: "monthly", priority: 0.82 },
-    { url: `${base}/evaluacion-neuropsicologica/`, changeFrequency: "monthly", priority: 0.85 },
-    { url: `${base}/deterioro-cognitivo/`, changeFrequency: "monthly", priority: 0.85 },
-    { url: `${base}/articulos/`, changeFrequency: "weekly", priority: 0.88 },
-    { url: `${base}/cita/`, changeFrequency: "daily", priority: 0.9 },
+    { url: `${base}/`, lastModified: staticLastModified, changeFrequency: "weekly", priority: 1 },
+    { url: `${base}/psicologa-arenys-de-mar/`, lastModified: staticLastModified, changeFrequency: "monthly", priority: 0.95 },
+    { url: `${base}/psicologia/`, lastModified: staticLastModified, changeFrequency: "monthly", priority: 0.9 },
+    { url: `${base}/neuropsicologia/`, lastModified: staticLastModified, changeFrequency: "monthly", priority: 0.9 },
+    { url: `${base}/sobre-mi/`, lastModified: staticLastModified, changeFrequency: "monthly", priority: 0.85 },
+    { url: `${base}/ansiedad/`, lastModified: staticLastModified, changeFrequency: "monthly", priority: 0.82 },
+    { url: `${base}/duelo/`, lastModified: staticLastModified, changeFrequency: "monthly", priority: 0.82 },
+    { url: `${base}/evaluacion-neuropsicologica/`, lastModified: staticLastModified, changeFrequency: "monthly", priority: 0.85 },
+    { url: `${base}/deterioro-cognitivo/`, lastModified: staticLastModified, changeFrequency: "monthly", priority: 0.85 },
+    { url: `${base}/articulos/`, lastModified: staticLastModified, changeFrequency: "weekly", priority: 0.88 },
+    { url: `${base}/cita/`, lastModified: staticLastModified, changeFrequency: "daily", priority: 0.9 },
   ];
 
   const articles = (await getPublishedArticles())
