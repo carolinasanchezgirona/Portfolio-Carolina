@@ -48,3 +48,18 @@ export async function getPublishedArticle(slug: string): Promise<PublicArticle |
 export function isArticleVisible(article: PublicArticle, now = Date.now()) {
   return !article.published_at || new Date(article.published_at).getTime() <= now;
 }
+
+export function getAutomaticRelatedPage(article: PublicArticle) {
+  if (article.related_page) return article.related_page;
+
+  const searchable = [article.title, article.subtitle, article.excerpt, ...(article.tags || [])]
+    .filter(Boolean)
+    .join(" ")
+    .toLocaleLowerCase("es");
+
+  if (/ansiedad|preocupaci[oó]n|p[aá]nico|miedo/.test(searchable)) return "/ansiedad/";
+  if (/duelo|p[eé]rdida|fallecimiento/.test(searchable)) return "/duelo/";
+  if (/deterioro|demencia|memoria|alzheimer/.test(searchable)) return "/deterioro-cognitivo/";
+  if (/evaluaci[oó]n neuropsicol[oó]gica|test neuropsicol[oó]gic|perfil cognitivo/.test(searchable)) return "/evaluacion-neuropsicologica/";
+  return article.category === "neuropsicologia" ? "/neuropsicologia/" : "/psicologia/";
+}
