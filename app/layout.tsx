@@ -74,6 +74,11 @@ export const metadata: Metadata = {
   },
 };
 
+const professionalProfiles = [
+  "https://www.linkedin.com/in/carolina-s%C3%A1nchez-girona-43b3b94a/",
+  "https://www.doctoralia.es/carolina-sanchez-girona/psicologo/arenys-de-mar",
+];
+
 const structuredData = {
   "@context": "https://schema.org",
   "@graph": [
@@ -89,9 +94,7 @@ const structuredData = {
         propertyID: "COPC",
         value: "24892",
       },
-      sameAs: [
-        "https://www.linkedin.com/in/carolina-s%C3%A1nchez-girona-43b3b94a/",
-      ],
+      sameAs: professionalProfiles,
       memberOf: {
         "@type": "Organization",
         name: "Grup de Treball Neuropsicologia i salut mental del Col·legi Oficial de Psicologia de Catalunya",
@@ -124,12 +127,16 @@ const structuredData = {
         addressRegion: "Cataluña",
         addressCountry: "ES",
       },
+      geo: {
+        "@type": "GeoCoordinates",
+        latitude: 41.5886713,
+        longitude: 2.5429864,
+      },
+      hasMap: "https://maps.app.goo.gl/ubCSFYZRgbv7vpqF9",
       areaServed: ["Arenys de Mar", "Maresme", "Barcelona", "España"],
       description:
         "Consulta de Psicología General Sanitaria y Neuropsicología en Arenys de Mar y online.",
-      sameAs: [
-        "https://www.linkedin.com/in/carolina-s%C3%A1nchez-girona-43b3b94a/",
-      ],
+      sameAs: professionalProfiles,
       founder: {
         "@id": "https://carolinasanchezgirona.com/#carolina-sanchez-girona",
       },
