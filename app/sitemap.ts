@@ -1,8 +1,6 @@
 import type { MetadataRoute } from "next";
 import { getPublishedArticles, isArticleVisible } from "./articulos/articles-data";
 
-export const revalidate = 300;
-
 const base = "https://carolinasanchezgirona.com";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
