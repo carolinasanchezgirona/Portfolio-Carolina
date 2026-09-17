@@ -31,7 +31,6 @@ export async function getPublishedArticles(category?: string): Promise<PublicArt
   if (category === "psicologia" || category === "neuropsicologia") filters.push(`category=eq.${category}`);
   const response = await fetch(`${SUPABASE_URL}/rest/v1/articles?${filters.join("&")}`, {
     headers: { apikey: KEY },
-    next: { revalidate: 300 },
   });
   if (!response.ok) return [];
   return response.json();
@@ -40,7 +39,6 @@ export async function getPublishedArticles(category?: string): Promise<PublicArt
 export async function getPublishedArticle(slug: string): Promise<PublicArticle | null> {
   const response = await fetch(`${SUPABASE_URL}/rest/v1/articles?select=${encodeURIComponent(select)}&status=eq.published&slug=eq.${encodeURIComponent(slug)}&limit=1`, {
     headers: { apikey: KEY },
-    next: { revalidate: 300 },
   });
   if (!response.ok) return null;
   const rows = await response.json();
