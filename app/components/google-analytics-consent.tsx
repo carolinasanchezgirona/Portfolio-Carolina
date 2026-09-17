@@ -5,12 +5,19 @@ import { useEffect, useState } from "react";
 
 const GA_ID = "G-DMEDMEHMCJ";
 const STORAGE_KEY = "carolina_analytics_consent_v1";
+const BOOKING_SOURCE_KEY = "carolina_booking_source_v1";
 const CONSENT_MAX_AGE = 1000 * 60 * 60 * 24 * 180;
 
 type ConsentChoice = "accepted" | "rejected";
 type StoredConsent = {
   choice: ConsentChoice;
   updatedAt: number;
+};
+
+type BookingSource = {
+  sourcePath: string;
+  sourceTitle: string;
+  linkText: string;
 };
 
 declare global {
@@ -22,14 +29,10 @@ declare global {
 function readStoredConsent(): ConsentChoice | null {
   try {
     const rawConsent = window.localStorage.getItem(STORAGE_KEY);
-
-    if (!rawConsent) {
-      return null;
-    }
+    if (!rawConsent) return null;
 
     const storedConsent = JSON.parse(rawConsent) as StoredConsent;
-    const isValidChoice =
-      storedConsent.choice === "accepted" || storedConsent.choice === "rejected";
+    const isValidChoice = storedConsent.choice === "accepted" || storedConsent.choice === "rejected";
     const isCurrent = Date.now() - storedConsent.updatedAt < CONSENT_MAX_AGE;
 
     if (!isValidChoice || !isCurrent) {
@@ -45,11 +48,7 @@ function readStoredConsent(): ConsentChoice | null {
 }
 
 function storeConsent(choice: ConsentChoice) {
-  const storedConsent: StoredConsent = {
-    choice,
-    updatedAt: Date.now(),
-  };
-
+  const storedConsent: StoredConsent = { choice, updatedAt: Date.now() };
   window.localStorage.setItem(STORAGE_KEY, JSON.stringify(storedConsent));
 }
 
@@ -63,7 +62,6 @@ function removeAnalyticsCookies() {
 
   for (const name of cookieNames) {
     document.cookie = `${name}=; Max-Age=0; path=/; SameSite=Lax`;
-
     for (const domain of domains) {
       document.cookie = `${name}=; Max-Age=0; path=/; domain=${domain}; SameSite=Lax`;
     }
@@ -82,6 +80,23 @@ function denyAnalyticsConsent() {
 
 function sendEvent(name: string, parameters: Record<string, string | number> = {}) {
   window.gtag?.("event", name, parameters);
+}
+
+function saveBookingSource(source: BookingSource) {
+  try {
+    window.sessionStorage.setItem(BOOKING_SOURCE_KEY, JSON.stringify(source));
+  } catch {
+    // La atribución es opcional y nunca debe bloquear la reserva.
+  }
+}
+
+function readBookingSource(): BookingSource | null {
+  try {
+    const raw = window.sessionStorage.getItem(BOOKING_SOURCE_KEY);
+    return raw ? (JSON.parse(raw) as BookingSource) : null;
+  } catch {
+    return null;
+  }
 }
 
 export default function GoogleAnalyticsConsent() {
@@ -103,11 +118,32 @@ export default function GoogleAnalyticsConsent() {
       const target = event.target instanceof Element ? event.target.closest("a,button") : null;
       if (!target) return;
 
+      const sourcePath = window.location.pathname;
+      const sourceTitle = document.title;
+      const linkText = (target.textContent || "").replace(/\s+/g, " ").trim().slice(0, 120);
+
       if (target instanceof HTMLAnchorElement) {
         const href = target.getAttribute("href") || "";
-        if (href.startsWith("tel:")) sendEvent("contact_phone_click");
-        else if (href.startsWith("mailto:")) sendEvent("contact_email_click");
-        else if (href === "/cita" || href === "/cita/" || href.startsWith("/cita/?")) sendEvent("booking_click");
+        if (href.startsWith("tel:")) {
+          sendEvent("contact_phone_click", { source_path: sourcePath, source_title: sourceTitle });
+        } else if (href.startsWith("mailto:")) {
+          sendEvent("contact_email_click", { source_path: sourcePath, source_title: sourceTitle });
+        } else if (href === "/cita" || href === "/cita/" || href.startsWith("/cita/?")) {
+          saveBookingSource({ sourcePath, sourceTitle, linkText });
+          sendEvent("booking_click", {
+            source_path: sourcePath,
+            source_title: sourceTitle,
+            link_text: linkText,
+            destination: href,
+          });
+        } else if (href.startsWith("/") && sourcePath.startsWith("/articulos/")) {
+          sendEvent("article_internal_click", {
+            source_path: sourcePath,
+            source_title: sourceTitle,
+            destination: href,
+            link_text: linkText,
+          });
+        }
       }
     };
 
@@ -118,7 +154,12 @@ export default function GoogleAnalyticsConsent() {
       const message = document.querySelector("#form-message");
       if (!bookingTracked && message?.classList.contains("form-message-success")) {
         bookingTracked = true;
-        sendEvent("booking_complete");
+        const source = readBookingSource();
+        sendEvent("booking_complete", {
+          source_path: source?.sourcePath || "direct_or_unknown",
+          source_title: source?.sourceTitle || "direct_or_unknown",
+          link_text: source?.linkText || "direct_or_unknown",
+        });
       }
     });
     observer.observe(document.body, { subtree: true, childList: true, characterData: true, attributes: true });
@@ -130,30 +171,20 @@ export default function GoogleAnalyticsConsent() {
   }, [consent]);
 
   function chooseConsent(choice: ConsentChoice) {
-    if (choice === "rejected") {
-      denyAnalyticsConsent();
-    }
-
+    if (choice === "rejected") denyAnalyticsConsent();
     storeConsent(choice);
     setConsent(choice);
     setIsPanelOpen(false);
   }
 
-  if (!isReady) {
-    return null;
-  }
+  if (!isReady) return null;
 
   return (
     <>
       {consent === "accepted" ? <GoogleAnalytics gaId={GA_ID} /> : null}
 
       {isPanelOpen ? (
-        <section
-          className="analytics-consent"
-          role="dialog"
-          aria-label="Preferencias de cookies"
-          aria-live="polite"
-        >
+        <section className="analytics-consent" role="dialog" aria-label="Preferencias de cookies" aria-live="polite">
           <div className="analytics-consent-copy">
             <strong>Cookies analíticas</strong>
             <p>
@@ -163,25 +194,14 @@ export default function GoogleAnalyticsConsent() {
             <a href="/privacidad/#cookies">Más información sobre las cookies</a>
           </div>
           <div className="analytics-consent-actions">
-            <button type="button" onClick={() => chooseConsent("rejected")}>
-              Rechazar
-            </button>
-            <button
-              className="analytics-consent-accept"
-              type="button"
-              onClick={() => chooseConsent("accepted")}
-            >
+            <button type="button" onClick={() => chooseConsent("rejected")}>Rechazar</button>
+            <button className="analytics-consent-accept" type="button" onClick={() => chooseConsent("accepted")}>
               Aceptar analíticas
             </button>
           </div>
         </section>
       ) : (
-        <button
-          className="analytics-consent-settings"
-          type="button"
-          onClick={() => setIsPanelOpen(true)}
-          aria-label="Configurar cookies"
-        >
+        <button className="analytics-consent-settings" type="button" onClick={() => setIsPanelOpen(true)} aria-label="Configurar cookies">
           Cookies
         </button>
       )}
