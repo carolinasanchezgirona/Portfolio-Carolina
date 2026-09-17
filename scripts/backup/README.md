@@ -21,7 +21,8 @@ Las contraseñas, claves API y tokens OAuth no se incluyen: deben regenerarse o 
 ## Horario y conservación
 
 - Ejecución diaria: 03:17, zona `Europe/Madrid`.
-- Conservación: 30 días en cada destino.
+- Conservación diaria: 30 días en cada destino.
+- Conservación mensual: 400 días en cada destino configurado.
 - La doble expresión cron compensa automáticamente CET/CEST; solo continúa la ejecución cuyo horario local sea las 03:00.
 - Cada subida se vuelve a leer y se compara con el archivo cifrado local antes de considerarse correcta.
 
@@ -45,10 +46,13 @@ El paquete se cifra con AES-256-GCM y la clave de contenido se protege mediante 
 
 ### Google Drive
 
-- `CLINICAL_BACKUP_GOOGLE_DRIVE_TOKEN`: token OAuth de rclone autorizado exclusivamente en la cuenta de destino.
-- Variable `CLINICAL_BACKUP_GOOGLE_DRIVE_PATH`, por ejemplo `Dememoria/Backups`.
+- `CLINICAL_BACKUP_GOOGLE_DRIVE_CLIENT_ID`: Client ID del cliente OAuth propio de tipo aplicación de escritorio.
+- `CLINICAL_BACKUP_GOOGLE_DRIVE_CLIENT_SECRET`: Client Secret del mismo cliente OAuth.
+- `CLINICAL_BACKUP_GOOGLE_DRIVE_TOKEN`: token OAuth generado por rclone con ese mismo cliente.
+- Variable `CLINICAL_BACKUP_GOOGLE_DRIVE_PATH`: ruta de copias diarias.
+- Variable `CLINICAL_BACKUP_GOOGLE_DRIVE_MONTHLY_PATH`: ruta de copias mensuales.
 
-No se necesita la contraseña de Google. El token se obtiene mediante el flujo oficial OAuth de Google/rclone.
+El cliente OAuth debe tener Google Drive API habilitada y rclone se autoriza con alcance `drive`. El Client ID, Client Secret y token deben pertenecer a la misma configuración OAuth. No se necesita la contraseña de Google.
 
 ### Cloudflare R2
 
@@ -56,7 +60,8 @@ No se necesita la contraseña de Google. El token se obtiene mediante el flujo o
 - `CLINICAL_BACKUP_R2_ACCESS_KEY_ID`.
 - `CLINICAL_BACKUP_R2_SECRET_ACCESS_KEY`.
 - `CLINICAL_BACKUP_R2_ENDPOINT`.
-- Variable `CLINICAL_BACKUP_R2_PATH`, por ejemplo `dememoria-backups/clinical`.
+- Variable `CLINICAL_BACKUP_R2_PATH`.
+- Variable `CLINICAL_BACKUP_R2_MONTHLY_PATH`.
 
 El token debe limitarse al bucket de copias y a lectura/escritura de objetos.
 
@@ -65,11 +70,19 @@ El token debe limitarse al bucket de copias y a lectura/escritura de objetos.
 - Bucket privado creado en la región europea.
 - `CLINICAL_BACKUP_B2_KEY_ID`.
 - `CLINICAL_BACKUP_B2_APPLICATION_KEY`.
-- Variable `CLINICAL_BACKUP_B2_PATH`, por ejemplo `dememoria-backups/clinical`.
+- Variable `CLINICAL_BACKUP_B2_PATH`.
+- Variable `CLINICAL_BACKUP_B2_MONTHLY_PATH`.
 
-La *application key* debe limitarse al bucket. La eliminación permanente se usa únicamente para los archivos con prefijo `dememoria-backup-` que superen los 30 días.
+La *application key* debe limitarse al bucket. La eliminación permanente se usa únicamente para los archivos con prefijo `dememoria-backup-` que superen la retención configurada.
 
 ### Avisos
+
+Telegram utiliza:
+
+- `CLINICAL_BACKUP_TELEGRAM_BOT_TOKEN`.
+- `CLINICAL_BACKUP_TELEGRAM_CHAT_ID`.
+
+El aviso de éxito comprueba además el espacio de los destinos configurados. Google Drive usa por defecto avisos al 20 % y 10 % de espacio libre; estos valores pueden ajustarse con `CLINICAL_BACKUP_GOOGLE_DRIVE_WARN_FREE_PERCENT` y `CLINICAL_BACKUP_GOOGLE_DRIVE_CRITICAL_FREE_PERCENT`. R2 y B2 admiten límites operativos configurables mediante `CLINICAL_BACKUP_R2_SOFT_LIMIT_GB` y `CLINICAL_BACKUP_B2_SOFT_LIMIT_GB`.
 
 Opcionalmente, el aviso de error por Brevo utiliza:
 
@@ -77,7 +90,7 @@ Opcionalmente, el aviso de error por Brevo utiliza:
 - `CLINICAL_BACKUP_ALERT_EMAIL`.
 - `CLINICAL_BACKUP_SENDER_EMAIL`.
 
-El mensaje solo informa del fallo y enlaza a la ejecución; no contiene información clínica.
+Los avisos no contienen información clínica.
 
 ## Activación
 
