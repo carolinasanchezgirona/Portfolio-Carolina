@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Image from "next/image";
+import "./home-improvements.css";
 
 export const metadata: Metadata = {
   alternates: { canonical: "/" },
@@ -19,7 +20,7 @@ export default function HomePage() {
           <a href="#areas">Áreas</a>
           <a href="#como-trabajo">Cómo trabajo</a>
           <a href="/sobre-mi/">Sobre mí</a>
-          <a className="nav-cta" href="/cita">Pedir cita</a>
+          <a className="nav-cta" href="/cita/">Pedir cita</a>
         </nav>
       </header>
 
@@ -33,7 +34,7 @@ export default function HomePage() {
               individualizado, cercano y basado en evidencia, adaptado a la persona, su contexto y sus objetivos.
             </p>
             <div className="editorial-actions">
-              <a className="editorial-btn editorial-btn-primary" href="/cita">Pedir cita <Arrow /></a>
+              <a className="editorial-btn editorial-btn-primary" href="/cita/">Pedir cita <Arrow /></a>
               <a className="editorial-btn editorial-btn-secondary" href="#como-trabajo">Cómo trabajo</a>
             </div>
             <div className="editorial-meta" aria-label="Información práctica">
@@ -55,6 +56,15 @@ export default function HomePage() {
               unoptimized
             />
           </figure>
+        </div>
+      </section>
+
+      <section className="editorial-trust" aria-label="Información profesional y práctica">
+        <div className="editorial-wrap editorial-trust-grid">
+          <div><strong>COPC 24892</strong><span>Psicóloga General Sanitaria</span></div>
+          <div><strong>5,0 / 5</strong><span>20 reseñas en Google</span></div>
+          <div><strong>Arenys de Mar</strong><span>Consulta presencial</span></div>
+          <div><strong>Reserva online</strong><span>Disponibilidad en tiempo real</span></div>
         </div>
       </section>
 
@@ -149,6 +159,25 @@ export default function HomePage() {
         </div>
       </section>
 
+      <section className="editorial-section editorial-local" aria-labelledby="local-title">
+        <div className="editorial-wrap editorial-local-grid">
+          <div>
+            <p className="editorial-section-eyebrow">Consulta en el Maresme</p>
+            <h2 id="local-title">Psicología y neuropsicología en Arenys de Mar.</h2>
+          </div>
+          <div className="editorial-local-copy">
+            <p>
+              La consulta está en Carrer Barcelona 8, Local, en Arenys de Mar. Puedes revisar cómo es la primera visita,
+              las áreas de atención y la información práctica antes de reservar.
+            </p>
+            <div className="editorial-actions">
+              <a className="editorial-btn editorial-btn-primary" href="/cita/">Consultar disponibilidad</a>
+              <a className="editorial-btn editorial-btn-secondary" href="/psicologa-arenys-de-mar/">Ver consulta en Arenys de Mar</a>
+            </div>
+          </div>
+        </div>
+      </section>
+
       <section className="editorial-section editorial-dememoria" aria-labelledby="dememoria-title">
         <div className="editorial-wrap editorial-dememoria-inner">
           <p className="editorial-section-eyebrow">Dememoria · Consulta clínica</p>
@@ -182,6 +211,16 @@ export default function HomePage() {
             <p><a href="/sobre-mi/">Conocer mi trayectoria profesional →</a></p>
             <p><a href="/psicologa-arenys-de-mar/">Consulta de Psicología y Neuropsicología en Arenys de Mar →</a></p>
           </div>
+        </div>
+      </section>
+
+      <section className="editorial-section editorial-closing-cta" aria-labelledby="closing-cta-title">
+        <div className="editorial-wrap editorial-closing-cta-inner">
+          <div>
+            <p className="editorial-section-eyebrow">Reserva</p>
+            <h2 id="closing-cta-title">Si quieres valorar tu caso, puedes consultar la disponibilidad directamente.</h2>
+          </div>
+          <a className="editorial-btn editorial-btn-primary" href="/cita/">Pedir cita <Arrow /></a>
         </div>
       </section>
 
