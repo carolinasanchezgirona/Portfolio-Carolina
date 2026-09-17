@@ -8,3 +8,5 @@
 /es/neuropsicologia.html /neuropsicologia/ 301
 /es/contacto.html /cita/ 301
 /articulos/leer/ /articulos/ 302
+/articulos/:slug/ /articulos/leer/ 200
+/articulos/:slug /articulos/leer/ 200
