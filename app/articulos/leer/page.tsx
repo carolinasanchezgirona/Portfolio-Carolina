@@ -1,5 +1,17 @@
+import type { Metadata } from "next";
 import Script from "next/script";
 import "../articles.css";
+
+export const metadata: Metadata = {
+  robots: {
+    index: false,
+    follow: false,
+    googleBot: {
+      index: false,
+      follow: false,
+    },
+  },
+};
 
 export default function ArticleReaderPage() {
   return (
