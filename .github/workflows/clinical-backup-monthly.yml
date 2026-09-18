@@ -3,8 +3,11 @@ name: Copia clínica mensual
 on:
   workflow_dispatch:
 
+  schedule:
+    - cron: "30 3 1 * *"
+
 jobs:
-  test-r2:
+  monthly-backup:
     runs-on: ubuntu-24.04
 
     steps:
@@ -14,12 +17,35 @@ jobs:
           sudo apt-get install -y rclone
           rclone version
 
-      - name: Crear archivo de prueba
+      - name: Descargar última copia desde Google Drive
+        env:
+          RCLONE_CONFIG_GDRIVE_TYPE: drive
+          RCLONE_CONFIG_GDRIVE_SCOPE: drive
+          RCLONE_CONFIG_GDRIVE_CLIENT_ID: ${{ secrets.CLINICAL_BACKUP_GOOGLE_DRIVE_CLIENT_ID }}
+          RCLONE_CONFIG_GDRIVE_CLIENT_SECRET: ${{ secrets.CLINICAL_BACKUP_GOOGLE_DRIVE_CLIENT_SECRET }}
+          RCLONE_CONFIG_GDRIVE_TOKEN: ${{ secrets.CLINICAL_BACKUP_GOOGLE_DRIVE_TOKEN }}
+          GOOGLE_DRIVE_BACKUP_PATH: ${{ vars.CLINICAL_BACKUP_GOOGLE_DRIVE_PATH }}
         run: |
-          echo "prueba-r2-dememoria" > prueba-r2.txt
-          cat prueba-r2.txt
+          mkdir -p monthly
 
-      - name: Subir archivo de prueba a Cloudflare R2
+          LATEST=$(rclone lsf \
+            "gdrive:${GOOGLE_DRIVE_BACKUP_PATH}" \
+            --files-only \
+            --include "dememoria-*.dump.enc" \
+            | sort \
+            | tail -n 1)
+
+          test -n "$LATEST"
+
+          echo "Última copia encontrada: $LATEST"
+
+          rclone copyto \
+            "gdrive:${GOOGLE_DRIVE_BACKUP_PATH}/${LATEST}" \
+            "monthly/${LATEST}"
+
+          test -s "monthly/${LATEST}"
+
+      - name: Subir copia mensual a Cloudflare R2
         env:
           RCLONE_CONFIG_R2_TYPE: s3
           RCLONE_CONFIG_R2_PROVIDER: Cloudflare
@@ -30,10 +56,33 @@ jobs:
           RCLONE_CONFIG_R2_ACL: private
           RCLONE_CONFIG_R2_NO_CHECK_BUCKET: "true"
         run: |
-          echo "Probando escritura en R2..."
+          FILE=$(find monthly -name 'dememoria-*.dump.enc' -type f | head -n 1)
+          NAME=$(basename "$FILE")
 
           rclone copyto \
-            prueba-r2.txt \
-            "r2:dememoria-clinical-backups/prueba-r2.txt"
+            "$FILE" \
+            "r2:dememoria-clinical-backups/monthly/${NAME}"
 
-          echo "Archivo de prueba enviado a R2."
+          echo "Copia mensual subida a R2: $NAME"
+
+      - name: Verificar copia mensual en R2
+        env:
+          RCLONE_CONFIG_R2_TYPE: s3
+          RCLONE_CONFIG_R2_PROVIDER: Cloudflare
+          RCLONE_CONFIG_R2_ACCESS_KEY_ID: ${{ secrets.CLINICAL_BACKUP_R2_ACCESS_KEY_ID }}
+          RCLONE_CONFIG_R2_SECRET_ACCESS_KEY: ${{ secrets.CLINICAL_BACKUP_R2_SECRET_ACCESS_KEY }}
+          RCLONE_CONFIG_R2_ENDPOINT: ${{ secrets.CLINICAL_BACKUP_R2_ENDPOINT }}
+          RCLONE_CONFIG_R2_REGION: auto
+          RCLONE_CONFIG_R2_ACL: private
+          RCLONE_CONFIG_R2_NO_CHECK_BUCKET: "true"
+        run: |
+          FILE=$(find monthly -name 'dememoria-*.dump.enc' -type f | head -n 1)
+          NAME=$(basename "$FILE")
+
+          rclone copyto \
+            "r2:dememoria-clinical-backups/monthly/${NAME}" \
+            "monthly/verificacion-${NAME}"
+
+          test -s "monthly/verificacion-${NAME}"
+
+          echo "Copia mensual de R2 verificada correctamente."
