@@ -157,6 +157,7 @@ export default function MemoryProblemsPage() {
               <a href="/neuropsicologia/">Neuropsicología</a>
               <a href="/evaluacion-neuropsicologica/">Evaluación neuropsicológica</a>
               <a href="/deterioro-cognitivo/">Deterioro cognitivo</a>
+              <a href="/demencias/">Demencias y Alzheimer</a>
               <a href="/psicologa-arenys-de-mar/">Consulta en Arenys de Mar</a>
             </div>
           </div>
