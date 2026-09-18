@@ -38,6 +38,7 @@
   let currentUser = null;
   let appointments = [];
   let scheduleBlocks = [];
+  let currentAppointment = null;
   let weekStartKey = mondayKey(todayKey());
 
   const dateLong = new Intl.DateTimeFormat("es-ES", { weekday: "long", day: "numeric", month: "long", timeZone: ZONE });
@@ -109,6 +110,23 @@
   function setStatus(text) { if (els.status) els.status.textContent = text || ""; }
   function setFormMessage(text) { if (els.message) els.message.textContent = text || ""; }
   function setAccessMessage(text) { if (els.accessMessage) els.accessMessage.textContent = text || ""; }
+
+  function ensureFutureCancelButton() {
+    const existing = $("#appointment-cancel-future");
+    if (existing) return existing;
+    const actions = els.cancelBooking?.parentElement;
+    if (!actions || !els.cancelBooking) return null;
+    const button = document.createElement("button");
+    button.id = "appointment-cancel-future";
+    button.className = "admin-danger";
+    button.type = "button";
+    button.hidden = true;
+    button.textContent = "Cancelar próximas citas";
+    actions.insertBefore(button, els.cancelBooking);
+    return button;
+  }
+
+  const cancelFutureButton = ensureFutureCancelButton();
   function setBlockMessage(text) { if (els.blockMessage) els.blockMessage.textContent = text || ""; }
 
   function setView(name) {
@@ -304,13 +322,16 @@
     els.appointmentStatus.value = "confirmed";
     els.patientType.value = "existing";
     els.price.value = "60";
+    currentAppointment = null;
     els.cancelBooking.hidden = true;
+    if (cancelFutureButton) cancelFutureButton.hidden = true;
     els.saveAppointment.textContent = "Crear cita";
     setFormMessage("");
     els.dialog.showModal();
   }
 
   function openEdit(a) {
+    currentAppointment = a;
     els.id.value = a.id;
     els.dialogTitle.textContent = "Modificar cita";
     els.date.value = keyFromIso(a.starts_at);
@@ -323,6 +344,10 @@
     els.patientType.value = a.patient_type || "existing";
     els.price.value = a.price_eur ?? 60;
     els.cancelBooking.hidden = ["cancelled", "canceled"].includes(a.status);
+    if (cancelFutureButton) {
+      cancelFutureButton.hidden = false;
+      cancelFutureButton.textContent = "Cancelar próximas citas";
+    }
     els.saveAppointment.textContent = "Guardar cambios";
     setFormMessage("");
     els.dialog.showModal();
@@ -368,6 +393,42 @@
     } catch (error) {
       setFormMessage(error.message);
     } finally {
+      els.cancelBooking.disabled = false;
+      els.saveAppointment.disabled = false;
+    }
+  }
+
+  async function cancelFutureAppointments() {
+    if (!els.id.value) return;
+    const patientName = currentAppointment?.patient_name || els.name.value.trim() || "esta paciente";
+    const confirmed = window.confirm(
+      `¿Cancelar todas las citas activas posteriores a la visita seleccionada de ${patientName}? La visita seleccionada y el historial anterior se conservarán sin cambios.`
+    );
+    if (!confirmed) return;
+
+    if (cancelFutureButton) cancelFutureButton.disabled = true;
+    els.cancelBooking.disabled = true;
+    els.saveAppointment.disabled = true;
+    setFormMessage("Cancelando próximas citas…");
+
+    try {
+      const count = Number(await rpc("admin_cancel_future_patient_appointments", {
+        p_id: els.id.value,
+        p_include_selected: false,
+      })) || 0;
+
+      if (count === 0) {
+        setFormMessage("No hay citas futuras activas de esta paciente después de la visita seleccionada.");
+        return;
+      }
+
+      setFormMessage(`Se han cancelado ${count} cita${count === 1 ? "" : "s"} futura${count === 1 ? "" : "s"}.`);
+      await loadWeek();
+      setTimeout(() => els.dialog.close(), 350);
+    } catch (error) {
+      setFormMessage(error.message || "No se han podido cancelar las citas futuras.");
+    } finally {
+      if (cancelFutureButton) cancelFutureButton.disabled = false;
       els.cancelBooking.disabled = false;
       els.saveAppointment.disabled = false;
     }
@@ -495,6 +556,7 @@
   els.dialogClose?.addEventListener("click", () => els.dialog.close());
   els.closeForm?.addEventListener("click", () => els.dialog.close());
   els.cancelBooking?.addEventListener("click", cancelAppointment);
+  cancelFutureButton?.addEventListener("click", cancelFutureAppointments);
   els.blockClose?.addEventListener("click", () => els.blockDialog.close());
   els.blockCancel?.addEventListener("click", () => els.blockDialog.close());
   els.accessClose?.addEventListener("click", () => els.accessDialog.close());
