@@ -35,15 +35,20 @@ jobs:
             | sudo tee /etc/apt/sources.list.d/pgdg.list
           sudo apt-get update
           sudo apt-get install -y postgresql-client-17
+
           /usr/lib/postgresql/17/bin/pg_dump --version
           rclone version
           openssl version
+          tar --version
 
-      - name: Preparar carpetas de copia
+      - name: Preparar estructura de copia
         if: steps.horario.outputs.should_run == 'true'
         run: |
           mkdir -p backup/database
-          mkdir -p backup/storage
+          mkdir -p backup/storage/article-images
+          mkdir -p backup/storage/clinical-documents
+
+          echo "Estructura temporal preparada."
 
       - name: Exportar base de datos de Supabase
         if: steps.horario.outputs.should_run == 'true'
@@ -57,7 +62,9 @@ jobs:
             --file=backup/database/supabase-db.dump
 
           test -s backup/database/supabase-db.dump
+
           echo "Base de datos exportada correctamente."
+          ls -lh backup/database/supabase-db.dump
 
       - name: Descargar Supabase Storage
         if: steps.horario.outputs.should_run == 'true'
@@ -70,12 +77,14 @@ jobs:
           RCLONE_CONFIG_SUPABASESOURCE_REGION: ${{ vars.CLINICAL_BACKUP_SUPABASE_S3_REGION }}
           RCLONE_CONFIG_SUPABASESOURCE_FORCE_PATH_STYLE: "true"
         run: |
-          echo "Descargando article-images..."
+          echo "Descargando bucket article-images..."
+
           rclone copy \
             "supabasesource:article-images" \
             "backup/storage/article-images"
 
-          echo "Descargando clinical-documents..."
+          echo "Descargando bucket clinical-documents..."
+
           rclone copy \
             "supabasesource:clinical-documents" \
             "backup/storage/clinical-documents"
@@ -86,9 +95,11 @@ jobs:
         if: steps.horario.outputs.should_run == 'true'
         run: |
           test -s backup/database/supabase-db.dump
+          test -d backup/storage/article-images
+          test -d backup/storage/clinical-documents
 
-          echo "Contenido del paquete:"
-          find backup -type f | sort
+          echo "Estructura del backup:"
+          find backup -maxdepth 4 -print | sort
 
       - name: Crear paquete único
         if: steps.horario.outputs.should_run == 'true'
@@ -98,6 +109,7 @@ jobs:
           tar -czf "dememoria-${DATE}.tar.gz" backup
 
           test -s "dememoria-${DATE}.tar.gz"
+
           echo "Paquete creado correctamente."
           ls -lh "dememoria-${DATE}.tar.gz"
 
@@ -117,13 +129,17 @@ jobs:
             -pass env:BACKUP_ENCRYPTION_PASSWORD
 
           test -s "dememoria-${DATE}.tar.gz.enc"
+
           echo "Paquete cifrado correctamente."
+          ls -lh "dememoria-${DATE}.tar.gz.enc"
 
       - name: Eliminar contenido sin cifrar
         if: steps.horario.outputs.should_run == 'true'
         run: |
           rm -rf backup
           rm -f dememoria-*.tar.gz
+
+          test ! -d backup
 
           echo "Contenido sin cifrar eliminado."
 
@@ -138,13 +154,15 @@ jobs:
           GOOGLE_DRIVE_BACKUP_PATH: ${{ vars.CLINICAL_BACKUP_GOOGLE_DRIVE_PATH }}
         run: |
           FILE=$(find . -maxdepth 1 -name 'dememoria-*.tar.gz.enc' -type f | head -n 1)
+          test -n "$FILE"
+
           NAME=$(basename "$FILE")
 
           rclone copyto \
             "$FILE" \
             "gdrive:${GOOGLE_DRIVE_BACKUP_PATH}/${NAME}"
 
-          echo "Copia completa subida a Google Drive."
+          echo "Copia completa subida a Google Drive: $NAME"
 
       - name: Verificar copia en Google Drive
         if: steps.horario.outputs.should_run == 'true'
@@ -157,11 +175,13 @@ jobs:
           GOOGLE_DRIVE_BACKUP_PATH: ${{ vars.CLINICAL_BACKUP_GOOGLE_DRIVE_PATH }}
         run: |
           FILE=$(find . -maxdepth 1 -name 'dememoria-*.tar.gz.enc' -type f | head -n 1)
+          test -n "$FILE"
+
           NAME=$(basename "$FILE")
 
           rclone lsf "gdrive:${GOOGLE_DRIVE_BACKUP_PATH}" | grep -Fx "$NAME"
 
-          echo "Copia completa confirmada en Google Drive: $NAME"
+          echo "Copia confirmada en Google Drive: $NAME"
 
       - name: Eliminar copias de Google Drive de más de 30 días
         if: steps.horario.outputs.should_run == 'true'
@@ -178,4 +198,4 @@ jobs:
             --min-age 30d \
             --include "dememoria-*.tar.gz.enc"
 
-          echo "Retención de 30 días aplicada."
+          echo "Retención de 30 días aplicada correctamente."
