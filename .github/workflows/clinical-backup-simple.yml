@@ -11,7 +11,7 @@ jobs:
       - name: Instalar PostgreSQL 17 y herramientas
         run: |
           sudo apt-get update
-          sudo apt-get install -y wget ca-certificates openssl
+          sudo apt-get install -y wget ca-certificates openssl rclone
           sudo install -d /usr/share/postgresql-common/pgdg
           sudo wget -qO /usr/share/postgresql-common/pgdg/apt.postgresql.org.asc \
             https://www.postgresql.org/media/keys/ACCC4CF8.asc
@@ -21,6 +21,7 @@ jobs:
           sudo apt-get install -y postgresql-client-17
           /usr/lib/postgresql/17/bin/pg_dump --version
           openssl version
+          rclone version
 
       - name: Exportar base de datos de Supabase
         env:
@@ -43,22 +44,61 @@ jobs:
         env:
           BACKUP_ENCRYPTION_PASSWORD: ${{ secrets.BACKUP_ENCRYPTION_PASSWORD }}
         run: |
+          DATE=$(date +%F)
+
           openssl enc -aes-256-cbc \
             -salt \
             -pbkdf2 \
             -iter 200000 \
             -in backup/supabase-db.dump \
-            -out backup/supabase-db.dump.enc \
+            -out "backup/dememoria-${DATE}.dump.enc" \
             -pass env:BACKUP_ENCRYPTION_PASSWORD
 
       - name: Comprobar archivo cifrado
         run: |
-          test -s backup/supabase-db.dump.enc
+          FILE=$(find backup -name 'dememoria-*.dump.enc' -type f | head -n 1)
+          test -n "$FILE"
+          test -s "$FILE"
+
           echo "Copia cifrada creada correctamente."
-          ls -lh backup/supabase-db.dump.enc
+          ls -lh "$FILE"
 
       - name: Eliminar copia sin cifrar
         run: |
           rm -f backup/supabase-db.dump
           test ! -f backup/supabase-db.dump
           echo "Archivo sin cifrar eliminado."
+
+      - name: Subir copia cifrada a Google Drive
+        env:
+          RCLONE_CONFIG_GDRIVE_TYPE: drive
+          RCLONE_CONFIG_GDRIVE_SCOPE: drive
+          RCLONE_CONFIG_GDRIVE_CLIENT_ID: ${{ secrets.CLINICAL_BACKUP_GOOGLE_DRIVE_CLIENT_ID }}
+          RCLONE_CONFIG_GDRIVE_CLIENT_SECRET: ${{ secrets.CLINICAL_BACKUP_GOOGLE_DRIVE_CLIENT_SECRET }}
+          RCLONE_CONFIG_GDRIVE_TOKEN: ${{ secrets.CLINICAL_BACKUP_GOOGLE_DRIVE_TOKEN }}
+          GOOGLE_DRIVE_BACKUP_PATH: ${{ vars.CLINICAL_BACKUP_GOOGLE_DRIVE_PATH }}
+        run: |
+          FILE=$(find backup -name 'dememoria-*.dump.enc' -type f | head -n 1)
+          NAME=$(basename "$FILE")
+
+          rclone copyto \
+            "$FILE" \
+            "gdrive:${GOOGLE_DRIVE_BACKUP_PATH}/${NAME}"
+
+          echo "Archivo enviado a Google Drive."
+
+      - name: Verificar copia en Google Drive
+        env:
+          RCLONE_CONFIG_GDRIVE_TYPE: drive
+          RCLONE_CONFIG_GDRIVE_SCOPE: drive
+          RCLONE_CONFIG_GDRIVE_CLIENT_ID: ${{ secrets.CLINICAL_BACKUP_GOOGLE_DRIVE_CLIENT_ID }}
+          RCLONE_CONFIG_GDRIVE_CLIENT_SECRET: ${{ secrets.CLINICAL_BACKUP_GOOGLE_DRIVE_CLIENT_SECRET }}
+          RCLONE_CONFIG_GDRIVE_TOKEN: ${{ secrets.CLINICAL_BACKUP_GOOGLE_DRIVE_TOKEN }}
+          GOOGLE_DRIVE_BACKUP_PATH: ${{ vars.CLINICAL_BACKUP_GOOGLE_DRIVE_PATH }}
+        run: |
+          FILE=$(find backup -name 'dememoria-*.dump.enc' -type f | head -n 1)
+          NAME=$(basename "$FILE")
+
+          rclone lsf "gdrive:${GOOGLE_DRIVE_BACKUP_PATH}" | grep -Fx "$NAME"
+
+          echo "Copia confirmada en Google Drive: $NAME"
