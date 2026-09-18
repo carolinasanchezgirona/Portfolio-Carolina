@@ -17,7 +17,7 @@ jobs:
           sudo apt-get install -y rclone
           rclone version
 
-      - name: Descargar última copia desde Google Drive
+      - name: Descargar última copia completa desde Google Drive
         env:
           RCLONE_CONFIG_GDRIVE_TYPE: drive
           RCLONE_CONFIG_GDRIVE_SCOPE: drive
@@ -31,13 +31,13 @@ jobs:
           LATEST=$(rclone lsf \
             "gdrive:${GOOGLE_DRIVE_BACKUP_PATH}" \
             --files-only \
-            --include "dememoria-*.dump.enc" \
+            --include "dememoria-*.tar.gz.enc" \
             | sort \
             | tail -n 1)
 
           test -n "$LATEST"
 
-          echo "Última copia encontrada: $LATEST"
+          echo "Última copia completa encontrada: $LATEST"
 
           rclone copyto \
             "gdrive:${GOOGLE_DRIVE_BACKUP_PATH}/${LATEST}" \
@@ -56,7 +56,9 @@ jobs:
           RCLONE_CONFIG_R2_ACL: private
           RCLONE_CONFIG_R2_NO_CHECK_BUCKET: "true"
         run: |
-          FILE=$(find monthly -name 'dememoria-*.dump.enc' -type f | head -n 1)
+          FILE=$(find monthly -name 'dememoria-*.tar.gz.enc' -type f | head -n 1)
+          test -n "$FILE"
+
           NAME=$(basename "$FILE")
 
           rclone copyto \
@@ -76,7 +78,7 @@ jobs:
           RCLONE_CONFIG_R2_ACL: private
           RCLONE_CONFIG_R2_NO_CHECK_BUCKET: "true"
         run: |
-          FILE=$(find monthly -name 'dememoria-*.dump.enc' -type f | head -n 1)
+          FILE=$(find monthly -name 'dememoria-*.tar.gz.enc' -type f | head -n 1)
           NAME=$(basename "$FILE")
 
           rclone copyto \
@@ -86,3 +88,21 @@ jobs:
           test -s "monthly/verificacion-${NAME}"
 
           echo "Copia mensual de R2 verificada correctamente."
+
+      - name: Eliminar copias mensuales de más de 400 días
+        env:
+          RCLONE_CONFIG_R2_TYPE: s3
+          RCLONE_CONFIG_R2_PROVIDER: Cloudflare
+          RCLONE_CONFIG_R2_ACCESS_KEY_ID: ${{ secrets.CLINICAL_BACKUP_R2_ACCESS_KEY_ID }}
+          RCLONE_CONFIG_R2_SECRET_ACCESS_KEY: ${{ secrets.CLINICAL_BACKUP_R2_SECRET_ACCESS_KEY }}
+          RCLONE_CONFIG_R2_ENDPOINT: ${{ secrets.CLINICAL_BACKUP_R2_ENDPOINT }}
+          RCLONE_CONFIG_R2_REGION: auto
+          RCLONE_CONFIG_R2_ACL: private
+          RCLONE_CONFIG_R2_NO_CHECK_BUCKET: "true"
+        run: |
+          rclone delete \
+            "r2:dememoria-clinical-backups/monthly" \
+            --min-age 400d \
+            --include "dememoria-*.tar.gz.enc"
+
+          echo "Retención mensual aplicada correctamente."
