@@ -4,6 +4,10 @@ import "../legal.css";
 export const metadata: Metadata = {
   title: "Consentimiento informado psicológico | Carolina Sánchez Girona",
   description: "Consentimiento informado para intervención psicológica en Dememoria.",
+  robots: {
+    index: false,
+    follow: true,
+  },
 };
 
 export default function PsychologicalConsentPage() {
