@@ -344,7 +344,7 @@
     }
   }
 
-  function createDayAppointmentCard(appointment) {
+  function createDayAppointmentCard(appointment, allowQuickActions = true) {
     const card = document.createElement("article");
     card.className = `appointment-card day-card${appointment.service_code === "neuropsicologia" ? " neuro" : ""}${["cancelled", "canceled"].includes(appointment.status) ? " cancelled" : ""}`;
     card.innerHTML = `
@@ -362,7 +362,7 @@
     const active = !["cancelled", "canceled", "completed", "no_show"].includes(appointment.status);
     const complete = card.querySelector(".quick-complete");
     const noShow = card.querySelector(".quick-noshow");
-    if (!active) {
+    if (!active || !allowQuickActions) {
       complete?.setAttribute("hidden", "");
       noShow?.setAttribute("hidden", "");
     } else {
@@ -380,26 +380,26 @@
     return card;
   }
 
-  function renderDay(key, titleEl, summaryEl, listEl, emptyLabel) {
+  function renderDay(key, titleEl, summaryEl, listEl, emptyLabel, allowQuickActions = false) {
     const dayAppointments = appointments.filter((a) => keyFromIso(a.starts_at) === key);
     const active = dayAppointments.filter((a) => !["cancelled", "canceled"].includes(a.status));
     titleEl.textContent = dateLong.format(new Date(madridLocalToIso(key, "12:00")));
     summaryEl.innerHTML = `<article><strong>${active.length}</strong><span>Citas activas</span></article><article><strong>${active.filter((a) => a.status === "confirmed").length}</strong><span>Confirmadas</span></article><article><strong>${active.filter((a) => a.status === "pending").length}</strong><span>Pendientes</span></article>`;
     listEl.replaceChildren();
     scheduleBlocks.filter((b) => keyFromIso(b.starts_at) === key).forEach((b) => listEl.append(createBlockCard(b)));
-    dayAppointments.forEach((a) => listEl.append(createDayAppointmentCard(a)));
+    dayAppointments.forEach((a) => listEl.append(createDayAppointmentCard(a, allowQuickActions)));
     if (!dayAppointments.length && !scheduleBlocks.some((b) => keyFromIso(b.starts_at) === key)) {
       listEl.innerHTML = `<div class="empty-today"><strong>No hay citas ${emptyLabel}</strong><span>Puedes añadir una cita o bloquear una franja.</span></div>`;
     }
   }
 
   function renderToday() {
-    renderDay(todayKey(), els.todayTitle, els.todaySummary, els.todayList, "hoy");
+    renderDay(todayKey(), els.todayTitle, els.todaySummary, els.todayList, "hoy", true);
   }
 
   function renderTomorrow() {
     const key = addDaysKey(todayKey(), 1);
-    renderDay(key, els.tomorrowTitle, els.tomorrowSummary, els.tomorrowList, "mañana");
+    renderDay(key, els.tomorrowTitle, els.tomorrowSummary, els.tomorrowList, "mañana", false);
   }
 
   function escapeHtml(value) {
@@ -755,7 +755,7 @@
 
   els.logout?.addEventListener("click", () => { saveSession(null); currentUser = null; appointments = []; showLogin(); });
   els.accessButton?.addEventListener("click", openAccess);
-  els.newButton?.addEventListener("click", openNew);
+  els.newButton?.addEventListener("click", () => openNew(todayKey()));
   els.todayNew?.addEventListener("click", () => openNew(todayKey()));
   els.tomorrowNew?.addEventListener("click", () => openNew(addDaysKey(todayKey(), 1)));
   els.blockButton?.addEventListener("click", openBlock);
