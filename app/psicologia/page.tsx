@@ -149,6 +149,7 @@ export default function PsychologyPage() {
               <a href="/dependencia-emocional/">Dependencia emocional</a>
               <a href="/limites-y-relaciones-dificiles/">Límites y relaciones difíciles</a>
               <a href="/autoestima-y-autocritica/">Autoestima y autocrítica</a>
+              <a href="/perfeccionismo-y-autoexigencia/">Perfeccionismo y autoexigencia</a>
               <a href="/psicologa-arenys-de-mar/">Consulta en Arenys de Mar</a>
               <a href="/neuropsicologia/">Neuropsicología</a>
             </div>
