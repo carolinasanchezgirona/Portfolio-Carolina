@@ -5,11 +5,22 @@ on:
 
   schedule:
     - cron: "17 1 * * *"
+    - cron: "17 2 * * *"
 
 jobs:
   backup:
     runs-on: ubuntu-latest
+    steps:
+      - name: Comprobar hora local
+        id: horario
+        run: |
+          if [[ "${{ github.event_name }}" == "schedule" && "$(TZ=Europe/Madrid date +%H)" != "03" ]]; then
+            echo "should_run=false" >> "$GITHUB_OUTPUT"
+            echo "No corresponde ejecutar la copia en este disparo."
+            exit 0
+          fi
 
+          echo "should_run=true" >> "$GITHUB_OUTPUT"
     steps:
       - name: Instalar PostgreSQL 17 y herramientas
         run: |
