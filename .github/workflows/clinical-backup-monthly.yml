@@ -14,7 +14,7 @@ jobs:
           sudo apt-get install -y rclone
           rclone version
 
-      - name: Comprobar conexión con Cloudflare R2
+      - name: Comprobar acceso al bucket de Cloudflare R2
         env:
           RCLONE_CONFIG_R2_TYPE: s3
           RCLONE_CONFIG_R2_PROVIDER: Cloudflare
@@ -22,7 +22,10 @@ jobs:
           RCLONE_CONFIG_R2_SECRET_ACCESS_KEY: ${{ secrets.CLINICAL_BACKUP_R2_SECRET_ACCESS_KEY }}
           RCLONE_CONFIG_R2_ENDPOINT: ${{ secrets.CLINICAL_BACKUP_R2_ENDPOINT }}
           RCLONE_CONFIG_R2_ACL: private
+          R2_MONTHLY_PATH: ${{ vars.CLINICAL_BACKUP_R2_MONTHLY_PATH }}
         run: |
-          echo "Comprobando acceso a Cloudflare R2..."
-          rclone lsd r2:
-          echo "Conexión con Cloudflare R2 correcta."
+          echo "Comprobando acceso al bucket clínico de Cloudflare R2..."
+
+          rclone lsf "r2:${R2_MONTHLY_PATH}" --max-depth 1
+
+          echo "Acceso al bucket clínico de Cloudflare R2 correcto."
