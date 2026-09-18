@@ -135,7 +135,7 @@ export default function CognitiveDeclinePage() {
             <h3>Relacionados</h3>
             <div className="seo-related">
               <a href="/neuropsicologia/">Neuropsicología</a>
-              <a href="/evaluacion-neuropsicologica/">Evaluación neuropsicológica</a>
+              <a href="/evaluacion-neuropsicologica/">Evaluación neuropsicológica</a>\n              <a href="/problemas-de-memoria/">Problemas de memoria y olvidos</a>
               <a href="/psicologa-arenys-de-mar/">Consulta en Arenys de Mar</a>
             </div>
           </div>
