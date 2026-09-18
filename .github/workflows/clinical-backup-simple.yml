@@ -8,10 +8,10 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Instalar PostgreSQL 17
+      - name: Instalar PostgreSQL 17 y herramientas
         run: |
           sudo apt-get update
-          sudo apt-get install -y wget ca-certificates
+          sudo apt-get install -y wget ca-certificates openssl
           sudo install -d /usr/share/postgresql-common/pgdg
           sudo wget -qO /usr/share/postgresql-common/pgdg/apt.postgresql.org.asc \
             https://www.postgresql.org/media/keys/ACCC4CF8.asc
@@ -20,6 +20,7 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y postgresql-client-17
           /usr/lib/postgresql/17/bin/pg_dump --version
+          openssl version
 
       - name: Exportar base de datos de Supabase
         env:
@@ -32,8 +33,32 @@ jobs:
             --no-privileges \
             --file=backup/supabase-db.dump
 
-      - name: Comprobar que la exportación existe
+      - name: Comprobar exportación
         run: |
           test -s backup/supabase-db.dump
           echo "Exportación de Supabase creada correctamente."
           ls -lh backup/supabase-db.dump
+
+      - name: Cifrar copia
+        env:
+          BACKUP_ENCRYPTION_PASSWORD: ${{ secrets.BACKUP_ENCRYPTION_PASSWORD }}
+        run: |
+          openssl enc -aes-256-cbc \
+            -salt \
+            -pbkdf2 \
+            -iter 200000 \
+            -in backup/supabase-db.dump \
+            -out backup/supabase-db.dump.enc \
+            -pass env:BACKUP_ENCRYPTION_PASSWORD
+
+      - name: Comprobar archivo cifrado
+        run: |
+          test -s backup/supabase-db.dump.enc
+          echo "Copia cifrada creada correctamente."
+          ls -lh backup/supabase-db.dump.enc
+
+      - name: Eliminar copia sin cifrar
+        run: |
+          rm -f backup/supabase-db.dump
+          test ! -f backup/supabase-db.dump
+          echo "Archivo sin cifrar eliminado."
