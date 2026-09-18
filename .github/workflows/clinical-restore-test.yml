@@ -11,10 +11,22 @@ jobs:
       - name: Instalar herramientas
         run: |
           sudo apt-get update
-          sudo apt-get install -y rclone openssl tar
+          sudo apt-get install -y wget ca-certificates rclone openssl tar
+
+          sudo install -d /usr/share/postgresql-common/pgdg
+          sudo wget -qO /usr/share/postgresql-common/pgdg/apt.postgresql.org.asc \
+            https://www.postgresql.org/media/keys/ACCC4CF8.asc
+
+          echo "deb [signed-by=/usr/share/postgresql-common/pgdg/apt.postgresql.org.asc] https://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" \
+            | sudo tee /etc/apt/sources.list.d/pgdg.list
+
+          sudo apt-get update
+          sudo apt-get install -y postgresql-client-17
+
           rclone version
           openssl version
           tar --version
+          /usr/lib/postgresql/17/bin/pg_restore --version
 
       - name: Descargar última copia desde Google Drive
         env:
@@ -81,6 +93,19 @@ jobs:
 
           echo "Base de datos presente."
 
+      - name: Validar dump PostgreSQL
+        run: |
+          /usr/lib/postgresql/17/bin/pg_restore \
+            --list \
+            restore/unpacked/backup/database/supabase-db.dump \
+            > restore/database-contents.txt
+
+          test -s restore/database-contents.txt
+
+          echo "El dump PostgreSQL es legible."
+          echo "Número de entradas restaurables:"
+          grep -vc '^;' restore/database-contents.txt
+
       - name: Verificar Supabase Storage
         run: |
           test -d restore/unpacked/backup/storage/article-images
@@ -95,3 +120,4 @@ jobs:
 
           echo ""
           echo "PRUEBA DE RESTAURACIÓN COMPLETADA CORRECTAMENTE."
+          echo "El paquete se descarga, se descifra, se abre y el dump PostgreSQL es legible."
