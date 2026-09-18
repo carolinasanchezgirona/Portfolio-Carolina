@@ -14,18 +14,26 @@ jobs:
           sudo apt-get install -y rclone
           rclone version
 
-      - name: Comprobar acceso al bucket de Cloudflare R2
+      - name: Crear archivo de prueba
+        run: |
+          echo "prueba-r2-dememoria" > prueba-r2.txt
+          cat prueba-r2.txt
+
+      - name: Subir archivo de prueba a Cloudflare R2
         env:
           RCLONE_CONFIG_R2_TYPE: s3
           RCLONE_CONFIG_R2_PROVIDER: Cloudflare
           RCLONE_CONFIG_R2_ACCESS_KEY_ID: ${{ secrets.CLINICAL_BACKUP_R2_ACCESS_KEY_ID }}
           RCLONE_CONFIG_R2_SECRET_ACCESS_KEY: ${{ secrets.CLINICAL_BACKUP_R2_SECRET_ACCESS_KEY }}
           RCLONE_CONFIG_R2_ENDPOINT: ${{ secrets.CLINICAL_BACKUP_R2_ENDPOINT }}
+          RCLONE_CONFIG_R2_REGION: auto
           RCLONE_CONFIG_R2_ACL: private
-          R2_MONTHLY_PATH: ${{ vars.CLINICAL_BACKUP_R2_MONTHLY_PATH }}
+          RCLONE_CONFIG_R2_NO_CHECK_BUCKET: "true"
         run: |
-          echo "Comprobando acceso al bucket clínico de Cloudflare R2..."
+          echo "Probando escritura en R2..."
 
-          rclone lsf "r2:${R2_MONTHLY_PATH}" --max-depth 1
+          rclone copyto \
+            prueba-r2.txt \
+            "r2:dememoria-clinical-backups/prueba-r2.txt"
 
-          echo "Acceso al bucket clínico de Cloudflare R2 correcto."
+          echo "Archivo de prueba enviado a R2."
