@@ -102,3 +102,18 @@ jobs:
           rclone lsf "gdrive:${GOOGLE_DRIVE_BACKUP_PATH}" | grep -Fx "$NAME"
 
           echo "Copia confirmada en Google Drive: $NAME"
+      - name: Eliminar copias de Google Drive de más de 30 días
+        env:
+          RCLONE_CONFIG_GDRIVE_TYPE: drive
+          RCLONE_CONFIG_GDRIVE_SCOPE: drive
+          RCLONE_CONFIG_GDRIVE_CLIENT_ID: ${{ secrets.CLINICAL_BACKUP_GOOGLE_DRIVE_CLIENT_ID }}
+          RCLONE_CONFIG_GDRIVE_CLIENT_SECRET: ${{ secrets.CLINICAL_BACKUP_GOOGLE_DRIVE_CLIENT_SECRET }}
+          RCLONE_CONFIG_GDRIVE_TOKEN: ${{ secrets.CLINICAL_BACKUP_GOOGLE_DRIVE_TOKEN }}
+          GOOGLE_DRIVE_BACKUP_PATH: ${{ vars.CLINICAL_BACKUP_GOOGLE_DRIVE_PATH }}
+        run: |
+          rclone delete \
+            "gdrive:${GOOGLE_DRIVE_BACKUP_PATH}" \
+            --min-age 30d \
+            --include "dememoria-*.dump.enc"
+
+          echo "Retención de 30 días aplicada correctamente."
