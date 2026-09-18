@@ -162,6 +162,7 @@ export default function DepressionPage() {
               <a href="/ansiedad/">Ansiedad</a>
               <a href="/duelo/">Duelo y pérdidas</a>
               <a href="/rupturas-de-pareja/">Rupturas de pareja</a>
+              <a href="/dependencia-emocional/">Dependencia emocional</a>
               <a href="/psicologa-arenys-de-mar/">Consulta en Arenys de Mar</a>
             </div>
           </div>
