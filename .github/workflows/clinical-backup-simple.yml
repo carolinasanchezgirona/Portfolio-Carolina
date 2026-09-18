@@ -9,7 +9,7 @@ on:
 
 jobs:
   backup:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
 
     steps:
       - name: Comprobar hora local
@@ -27,7 +27,7 @@ jobs:
         if: steps.horario.outputs.should_run == 'true'
         run: |
           sudo apt-get update
-          sudo apt-get install -y wget ca-certificates openssl rclone
+          sudo apt-get install -y wget ca-certificates openssl rclone tar
           sudo install -d /usr/share/postgresql-common/pgdg
           sudo wget -qO /usr/share/postgresql-common/pgdg/apt.postgresql.org.asc \
             https://www.postgresql.org/media/keys/ACCC4CF8.asc
@@ -36,29 +36,72 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y postgresql-client-17
           /usr/lib/postgresql/17/bin/pg_dump --version
-          openssl version
           rclone version
+          openssl version
+
+      - name: Preparar carpetas de copia
+        if: steps.horario.outputs.should_run == 'true'
+        run: |
+          mkdir -p backup/database
+          mkdir -p backup/storage
 
       - name: Exportar base de datos de Supabase
         if: steps.horario.outputs.should_run == 'true'
         env:
           SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
         run: |
-          mkdir -p backup
           /usr/lib/postgresql/17/bin/pg_dump "$SUPABASE_DB_URL" \
             --format=custom \
             --no-owner \
             --no-privileges \
-            --file=backup/supabase-db.dump
+            --file=backup/database/supabase-db.dump
 
-      - name: Comprobar exportación
+          test -s backup/database/supabase-db.dump
+          echo "Base de datos exportada correctamente."
+
+      - name: Descargar Supabase Storage
+        if: steps.horario.outputs.should_run == 'true'
+        env:
+          RCLONE_CONFIG_SUPABASESOURCE_TYPE: s3
+          RCLONE_CONFIG_SUPABASESOURCE_PROVIDER: Other
+          RCLONE_CONFIG_SUPABASESOURCE_ACCESS_KEY_ID: ${{ secrets.CLINICAL_BACKUP_SUPABASE_S3_ACCESS_KEY_ID }}
+          RCLONE_CONFIG_SUPABASESOURCE_SECRET_ACCESS_KEY: ${{ secrets.CLINICAL_BACKUP_SUPABASE_S3_SECRET_ACCESS_KEY }}
+          RCLONE_CONFIG_SUPABASESOURCE_ENDPOINT: https://grgyvdxkjdstdyumdfyg.storage.supabase.co/storage/v1/s3
+          RCLONE_CONFIG_SUPABASESOURCE_REGION: ${{ vars.CLINICAL_BACKUP_SUPABASE_S3_REGION }}
+          RCLONE_CONFIG_SUPABASESOURCE_FORCE_PATH_STYLE: "true"
+        run: |
+          echo "Descargando article-images..."
+          rclone copy \
+            "supabasesource:article-images" \
+            "backup/storage/article-images"
+
+          echo "Descargando clinical-documents..."
+          rclone copy \
+            "supabasesource:clinical-documents" \
+            "backup/storage/clinical-documents"
+
+          echo "Supabase Storage descargado correctamente."
+
+      - name: Comprobar contenido del backup
         if: steps.horario.outputs.should_run == 'true'
         run: |
-          test -s backup/supabase-db.dump
-          echo "Exportación de Supabase creada correctamente."
-          ls -lh backup/supabase-db.dump
+          test -s backup/database/supabase-db.dump
 
-      - name: Cifrar copia
+          echo "Contenido del paquete:"
+          find backup -type f | sort
+
+      - name: Crear paquete único
+        if: steps.horario.outputs.should_run == 'true'
+        run: |
+          DATE=$(TZ=Europe/Madrid date +%F)
+
+          tar -czf "dememoria-${DATE}.tar.gz" backup
+
+          test -s "dememoria-${DATE}.tar.gz"
+          echo "Paquete creado correctamente."
+          ls -lh "dememoria-${DATE}.tar.gz"
+
+      - name: Cifrar paquete
         if: steps.horario.outputs.should_run == 'true'
         env:
           BACKUP_ENCRYPTION_PASSWORD: ${{ secrets.BACKUP_ENCRYPTION_PASSWORD }}
@@ -69,26 +112,20 @@ jobs:
             -salt \
             -pbkdf2 \
             -iter 200000 \
-            -in backup/supabase-db.dump \
-            -out "backup/dememoria-${DATE}.dump.enc" \
+            -in "dememoria-${DATE}.tar.gz" \
+            -out "dememoria-${DATE}.tar.gz.enc" \
             -pass env:BACKUP_ENCRYPTION_PASSWORD
 
-      - name: Comprobar archivo cifrado
+          test -s "dememoria-${DATE}.tar.gz.enc"
+          echo "Paquete cifrado correctamente."
+
+      - name: Eliminar contenido sin cifrar
         if: steps.horario.outputs.should_run == 'true'
         run: |
-          FILE=$(find backup -name 'dememoria-*.dump.enc' -type f | head -n 1)
-          test -n "$FILE"
-          test -s "$FILE"
+          rm -rf backup
+          rm -f dememoria-*.tar.gz
 
-          echo "Copia cifrada creada correctamente."
-          ls -lh "$FILE"
-
-      - name: Eliminar copia sin cifrar
-        if: steps.horario.outputs.should_run == 'true'
-        run: |
-          rm -f backup/supabase-db.dump
-          test ! -f backup/supabase-db.dump
-          echo "Archivo sin cifrar eliminado."
+          echo "Contenido sin cifrar eliminado."
 
       - name: Subir copia cifrada a Google Drive
         if: steps.horario.outputs.should_run == 'true'
@@ -100,14 +137,14 @@ jobs:
           RCLONE_CONFIG_GDRIVE_TOKEN: ${{ secrets.CLINICAL_BACKUP_GOOGLE_DRIVE_TOKEN }}
           GOOGLE_DRIVE_BACKUP_PATH: ${{ vars.CLINICAL_BACKUP_GOOGLE_DRIVE_PATH }}
         run: |
-          FILE=$(find backup -name 'dememoria-*.dump.enc' -type f | head -n 1)
+          FILE=$(find . -maxdepth 1 -name 'dememoria-*.tar.gz.enc' -type f | head -n 1)
           NAME=$(basename "$FILE")
 
           rclone copyto \
             "$FILE" \
             "gdrive:${GOOGLE_DRIVE_BACKUP_PATH}/${NAME}"
 
-          echo "Archivo enviado a Google Drive."
+          echo "Copia completa subida a Google Drive."
 
       - name: Verificar copia en Google Drive
         if: steps.horario.outputs.should_run == 'true'
@@ -119,12 +156,12 @@ jobs:
           RCLONE_CONFIG_GDRIVE_TOKEN: ${{ secrets.CLINICAL_BACKUP_GOOGLE_DRIVE_TOKEN }}
           GOOGLE_DRIVE_BACKUP_PATH: ${{ vars.CLINICAL_BACKUP_GOOGLE_DRIVE_PATH }}
         run: |
-          FILE=$(find backup -name 'dememoria-*.dump.enc' -type f | head -n 1)
+          FILE=$(find . -maxdepth 1 -name 'dememoria-*.tar.gz.enc' -type f | head -n 1)
           NAME=$(basename "$FILE")
 
           rclone lsf "gdrive:${GOOGLE_DRIVE_BACKUP_PATH}" | grep -Fx "$NAME"
 
-          echo "Copia confirmada en Google Drive: $NAME"
+          echo "Copia completa confirmada en Google Drive: $NAME"
 
       - name: Eliminar copias de Google Drive de más de 30 días
         if: steps.horario.outputs.should_run == 'true'
@@ -139,6 +176,6 @@ jobs:
           rclone delete \
             "gdrive:${GOOGLE_DRIVE_BACKUP_PATH}" \
             --min-age 30d \
-            --include "dememoria-*.dump.enc"
+            --include "dememoria-*.tar.gz.enc"
 
-          echo "Retención de 30 días aplicada correctamente."
+          echo "Retención de 30 días aplicada."
