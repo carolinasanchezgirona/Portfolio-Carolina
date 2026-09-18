@@ -204,7 +204,28 @@ jobs:
 
           echo "Retención de 30 días aplicada correctamente."
 
-      - name: Avisar por Telegram si falla la copia
+      - name: Avisar por Telegram si la copia diaria termina correctamente
+        if: ${{ success() && steps.horario.outputs.should_run == 'true' }}
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.CLINICAL_BACKUP_TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.CLINICAL_BACKUP_TELEGRAM_CHAT_ID }}
+        run: |
+          MESSAGE="✅ Copia clínica diaria completada correctamente.
+
+          Fecha: $(TZ=Europe/Madrid date '+%d/%m/%Y %H:%M')
+          Destino: Google Drive
+          Contenido: base de datos + Storage
+          Estado: copia verificada correctamente."
+
+          curl --fail --silent --show-error \
+            --request POST \
+            "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" \
+            --data-urlencode "chat_id=${TELEGRAM_CHAT_ID}" \
+            --data-urlencode "text=${MESSAGE}"
+
+          echo "Notificación de éxito enviada por Telegram."
+
+      - name: Avisar por Telegram si falla la copia diaria
         if: ${{ failure() && steps.horario.outputs.should_run == 'true' }}
         env:
           TELEGRAM_BOT_TOKEN: ${{ secrets.CLINICAL_BACKUP_TELEGRAM_BOT_TOKEN }}
@@ -214,6 +235,8 @@ jobs:
           MESSAGE="❌ Ha fallado la copia clínica diaria de Dememoria.
 
           Fecha: $(TZ=Europe/Madrid date '+%d/%m/%Y %H:%M')
+          Destino previsto: Google Drive
+
           Revisa la ejecución:
           ${RUN_URL}"
 
