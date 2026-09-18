@@ -142,7 +142,7 @@ export default function NeuropsychologyPage() {
             <h3>Áreas relacionadas</h3>
             <div className="seo-related">
               <a href="/evaluacion-neuropsicologica/">Evaluación neuropsicológica</a>
-              <a href="/deterioro-cognitivo/">Deterioro cognitivo y memoria</a>
+              <a href="/problemas-de-memoria/">Problemas de memoria y olvidos</a>\n              <a href="/deterioro-cognitivo/">Deterioro cognitivo</a>
               <a href="/psicologa-arenys-de-mar/">Consulta en Arenys de Mar</a>
               <a href="/psicologia/">Psicología General Sanitaria</a>
             </div>
