@@ -177,7 +177,7 @@ export default function AdminAgendaPage() {
         </form>
       </dialog>
 
-      <Script src="/admin-agenda-v3.js?v=20260913-app" strategy="afterInteractive" />
+      <Script src="/admin-agenda-v3.js?v=20260918-cancel-future" strategy="afterInteractive" />
       <Script src="/pwa.js?v=20260915-admin-2" strategy="afterInteractive" />
     </main>
   );
