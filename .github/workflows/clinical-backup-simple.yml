@@ -27,12 +27,16 @@ jobs:
         if: steps.horario.outputs.should_run == 'true'
         run: |
           sudo apt-get update
-          sudo apt-get install -y wget ca-certificates openssl rclone tar
+          sudo apt-get install -y wget ca-certificates openssl rclone tar curl
+
           sudo install -d /usr/share/postgresql-common/pgdg
+
           sudo wget -qO /usr/share/postgresql-common/pgdg/apt.postgresql.org.asc \
             https://www.postgresql.org/media/keys/ACCC4CF8.asc
+
           echo "deb [signed-by=/usr/share/postgresql-common/pgdg/apt.postgresql.org.asc] https://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" \
             | sudo tee /etc/apt/sources.list.d/pgdg.list
+
           sudo apt-get update
           sudo apt-get install -y postgresql-client-17
 
@@ -199,3 +203,23 @@ jobs:
             --include "dememoria-*.tar.gz.enc"
 
           echo "Retención de 30 días aplicada correctamente."
+
+      - name: Avisar por Telegram si falla la copia
+        if: ${{ failure() && steps.horario.outputs.should_run == 'true' }}
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.CLINICAL_BACKUP_TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.CLINICAL_BACKUP_TELEGRAM_CHAT_ID }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          MESSAGE="❌ Ha fallado la copia clínica diaria de Dememoria.
+
+          Fecha: $(TZ=Europe/Madrid date '+%d/%m/%Y %H:%M')
+          Revisa la ejecución:
+          ${RUN_URL}"
+
+          curl --silent --show-error \
+            --request POST \
+            "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" \
+            --data-urlencode "chat_id=${TELEGRAM_CHAT_ID}" \
+            --data-urlencode "text=${MESSAGE}" \
+            || echo "No se pudo enviar la notificación de Telegram."
