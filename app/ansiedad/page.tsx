@@ -125,6 +125,7 @@ export default function AnxietyPage() {
             <h3>Relacionados</h3>
             <div className="seo-related">
               <a href="/psicologia/">Psicología General Sanitaria</a>
+              <a href="/depresion/">Depresión y bajo estado de ánimo</a>
               <a href="/duelo/">Duelo y pérdidas</a>
               <a href="/psicologa-arenys-de-mar/">Consulta en Arenys de Mar</a>
             </div>
