@@ -2,10 +2,7 @@ name: Aviso diario de agenda
 
 on:
   workflow_dispatch:
-
   schedule:
-    # GitHub Actions usa UTC. Se lanzan ambos horarios posibles y se filtra
-    # por la hora real de Europe/Madrid para cubrir horario de verano/invierno.
     - cron: "0 17 * * *"
     - cron: "0 18 * * *"
 
@@ -23,7 +20,6 @@ jobs:
             echo "Este disparo no corresponde a las 19:00 en Europe/Madrid."
             exit 0
           fi
-
           echo "should_run=true" >> "$GITHUB_OUTPUT"
 
       - name: Instalar cliente PostgreSQL
@@ -39,11 +35,15 @@ jobs:
           SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
         shell: bash
         run: |
-          TOMORROW=$(TZ=Europe/Madrid date -d tomorrow +%F)
-          TOMORROW_LABEL=$(TZ=Europe/Madrid date -d tomorrow '+%A %d/%m/%Y')
+          set -euo pipefail
 
-          # Seleccionamos solo datos administrativos mínimos.
-          # No se incluyen nombres, correos, teléfonos ni información clínica.
+          if [[ -z "${SUPABASE_DB_URL:-}" ]]; then
+            echo "Falta el secret SUPABASE_DB_URL."
+            exit 1
+          fi
+
+          TOMORROW="$(TZ=Europe/Madrid date -d tomorrow +%F)"
+
           QUERY=$(cat <<'SQL'
           with tomorrow_appointments as (
             select
@@ -78,45 +78,32 @@ jobs:
           )
 
           mapfile -t APPOINTMENTS < <(
-            psql "$SUPABASE_DB_URL"               --no-align               --tuples-only               --quiet               --command "$QUERY"             | sed '/^[[:space:]]*$/d'
+            psql "$SUPABASE_DB_URL" --no-align --tuples-only --quiet --command "$QUERY" |
+              sed '/^[[:space:]]*$/d'
           )
 
           COUNT=${#APPOINTMENTS[@]}
 
           if [[ "$COUNT" -eq 0 ]]; then
-            MESSAGE="📅 Agenda de mañana · ${TOMORROW}
-
-No tienes citas programadas para mañana.
-
-Resumen enviado automáticamente a las 19:00."
+            printf -v MESSAGE '📅 Agenda de mañana · %s\n\nNo tienes citas programadas para mañana.\n\nResumen enviado automáticamente a las 19:00.' "$TOMORROW"
           else
             LIST=""
             for ITEM in "${APPOINTMENTS[@]}"; do
-              LIST+="
-• ${ITEM}"
+              LIST+="\n• ${ITEM}"
             done
 
-            MESSAGE="📅 Agenda de mañana · ${TOMORROW}
-
-Tienes ${COUNT} cita"
-            if [[ "$COUNT" -ne 1 ]]; then
-              MESSAGE+="s"
+            if [[ "$COUNT" -eq 1 ]]; then
+              LABEL="Tienes 1 cita programada:"
+            else
+              LABEL="Tienes ${COUNT} citas programadas:"
             fi
 
-            MESSAGE+=" programada"
-            if [[ "$COUNT" -ne 1 ]]; then
-              MESSAGE+="s"
-            fi
-
-            MESSAGE+=":
-${LIST}
-
-Resumen enviado automáticamente a las 19:00."
+            printf -v MESSAGE '📅 Agenda de mañana · %s\n\n%s%b\n\nResumen enviado automáticamente a las 19:00.' "$TOMORROW" "$LABEL" "$LIST"
           fi
 
           {
             echo "message<<EOF"
-            echo "$MESSAGE"
+            printf '%s\n' "$MESSAGE"
             echo "EOF"
           } >> "$GITHUB_OUTPUT"
 
@@ -128,6 +115,17 @@ Resumen enviado automáticamente a las 19:00."
           MESSAGE: ${{ steps.resumen.outputs.message }}
         shell: bash
         run: |
-          curl --fail --silent --show-error             --request POST             "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage"             --data-urlencode "chat_id=${TELEGRAM_CHAT_ID}"             --data-urlencode "text=${MESSAGE}"
+          set -euo pipefail
+
+          if [[ -z "${TELEGRAM_BOT_TOKEN:-}" || -z "${TELEGRAM_CHAT_ID:-}" ]]; then
+            echo "Faltan las credenciales de Telegram."
+            exit 1
+          fi
+
+          curl --fail --silent --show-error \
+            --request POST \
+            "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" \
+            --data-urlencode "chat_id=${TELEGRAM_CHAT_ID}" \
+            --data-urlencode "text=${MESSAGE}"
 
           echo "Aviso de agenda enviado correctamente."
