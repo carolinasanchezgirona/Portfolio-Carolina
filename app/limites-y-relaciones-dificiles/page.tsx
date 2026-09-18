@@ -27,7 +27,8 @@ export default function BoundariesPage() {
     <main className="editorial-site">
       <header className="site-header">
         <a className="brand" href="/" aria-label="Carolina Sánchez, inicio"><span className="brand-name">Carolina Sánchez</span><span className="brand-sub">Psicóloga · Neuropsicóloga</span></a>
-        <nav className="nav" aria-label="Navegación principal"><a href="/psicologia/">Psicología</a><a href="/dependencia-emocional/">Dependencia emocional</a><a className="nav-cta" href="/cita/">Pedir cita</a></nav>
+        <nav className="nav" aria-label="Navegación principal"><a href="/psicologia/">Psicología</a><a href="/dependencia-emocional/">Dependencia emocional</a>
+              <a href="/autoestima-y-autocritica/">Autoestima y autocrítica</a><a className="nav-cta" href="/cita/">Pedir cita</a></nav>
       </header>
 
       <section className="seo-hero">
