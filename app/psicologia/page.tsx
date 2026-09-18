@@ -145,6 +145,7 @@ export default function PsychologyPage() {
               <a href="/ataques-de-panico/">Ataques de pánico</a>
               <a href="/depresion/">Depresión y bajo estado de ánimo</a>
               <a href="/duelo/">Duelo y pérdidas</a>
+              <a href="/rupturas-de-pareja/">Rupturas de pareja</a>
               <a href="/psicologa-arenys-de-mar/">Consulta en Arenys de Mar</a>
               <a href="/neuropsicologia/">Neuropsicología</a>
             </div>
