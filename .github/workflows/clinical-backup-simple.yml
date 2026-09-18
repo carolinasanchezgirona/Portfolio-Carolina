@@ -4,10 +4,28 @@ on:
   workflow_dispatch:
 
 jobs:
-  test:
+  backup:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Comprobar que el nuevo sistema arranca
+      - name: Instalar PostgreSQL
         run: |
-          echo "Nuevo sistema de copia clínica iniciado correctamente."
+          sudo apt-get update
+          sudo apt-get install -y postgresql-client
+
+      - name: Exportar base de datos de Supabase
+        env:
+          SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
+        run: |
+          mkdir -p backup
+          pg_dump "$SUPABASE_DB_URL" \
+            --format=custom \
+            --no-owner \
+            --no-privileges \
+            --file=backup/supabase-db.dump
+
+      - name: Comprobar que la exportación existe
+        run: |
+          test -s backup/supabase-db.dump
+          echo "Exportación de Supabase creada correctamente."
+          ls -lh backup/supabase-db.dump
