@@ -16,7 +16,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${base}/ansiedad/`, lastModified: staticLastModified, changeFrequency: "monthly", priority: 0.82 },
     { url: `${base}/duelo/`, lastModified: staticLastModified, changeFrequency: "monthly", priority: 0.82 },
     { url: `${base}/evaluacion-neuropsicologica/`, lastModified: staticLastModified, changeFrequency: "monthly", priority: 0.85 },
-    { url: `${base}/problemas-de-memoria/`, lastModified: staticLastModified, changeFrequency: "monthly", priority: 0.86 },\n    { url: `${base}/deterioro-cognitivo/`, lastModified: staticLastModified, changeFrequency: "monthly", priority: 0.85 },
+    { url: `${base}/problemas-de-memoria/`, lastModified: staticLastModified, changeFrequency: "monthly", priority: 0.86 },
+    { url: `${base}/deterioro-cognitivo/`, lastModified: staticLastModified, changeFrequency: "monthly", priority: 0.85 },
     { url: `${base}/articulos/`, lastModified: staticLastModified, changeFrequency: "weekly", priority: 0.88 },
     { url: `${base}/cita/`, lastModified: staticLastModified, changeFrequency: "daily", priority: 0.9 },
   ];
