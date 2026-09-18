@@ -57,6 +57,7 @@ export default function AdminAgendaPage() {
 
         <nav className="admin-view-tabs" aria-label="Vistas de la agenda">
           <button id="view-today" className="active" type="button">Hoy</button>
+          <button id="view-tomorrow" type="button">Mañana</button>
           <button id="view-week" type="button">Semana</button>
           <button id="view-patients" type="button">Pacientes</button>
         </nav>
@@ -68,6 +69,15 @@ export default function AdminAgendaPage() {
           </div>
           <div id="today-summary" className="today-summary" />
           <div id="today-list" className="today-list" />
+        </section>
+
+        <section id="tomorrow-view" className="admin-view" hidden>
+          <div className="today-heading">
+            <div><p className="admin-eyebrow">Vista rápida</p><h2 id="tomorrow-title">Mañana</h2></div>
+            <button id="tomorrow-new" className="admin-primary" type="button">Añadir cita</button>
+          </div>
+          <div id="tomorrow-summary" className="today-summary" />
+          <div id="tomorrow-list" className="today-list" />
         </section>
 
         <section id="week-view" className="admin-view" hidden>
@@ -179,7 +189,7 @@ export default function AdminAgendaPage() {
         </form>
       </dialog>
 
-      <Script src="/admin-agenda-v3.js?v=20260918-agenda-tools" strategy="afterInteractive" />
+      <Script src="/admin-agenda-v3.js?v=20260918-daily-tools" strategy="afterInteractive" />
       <Script src="/pwa.js?v=20260915-admin-2" strategy="afterInteractive" />
     </main>
   );
