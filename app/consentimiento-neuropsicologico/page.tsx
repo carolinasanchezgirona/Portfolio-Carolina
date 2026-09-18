@@ -4,6 +4,10 @@ import "../legal.css";
 export const metadata: Metadata = {
   title: "Consentimiento informado neuropsicológico | Carolina Sánchez Girona",
   description: "Consentimiento informado para intervención neuropsicológica en Dememoria.",
+  robots: {
+    index: false,
+    follow: true,
+  },
 };
 
 export default function NeuropsychologicalConsentPage() {
