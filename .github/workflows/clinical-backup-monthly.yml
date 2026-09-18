@@ -11,10 +11,10 @@ jobs:
     runs-on: ubuntu-24.04
 
     steps:
-      - name: Instalar rclone
+      - name: Instalar herramientas
         run: |
           sudo apt-get update
-          sudo apt-get install -y rclone
+          sudo apt-get install -y rclone curl
           rclone version
 
       - name: Descargar última copia completa desde Google Drive
@@ -44,6 +44,8 @@ jobs:
             "monthly/${LATEST}"
 
           test -s "monthly/${LATEST}"
+
+          echo "Copia descargada desde Google Drive."
 
       - name: Subir copia mensual a Cloudflare R2
         env:
@@ -79,6 +81,8 @@ jobs:
           RCLONE_CONFIG_R2_NO_CHECK_BUCKET: "true"
         run: |
           FILE=$(find monthly -name 'dememoria-*.tar.gz.enc' -type f | head -n 1)
+          test -n "$FILE"
+
           NAME=$(basename "$FILE")
 
           rclone copyto \
@@ -106,3 +110,45 @@ jobs:
             --include "dememoria-*.tar.gz.enc"
 
           echo "Retención mensual aplicada correctamente."
+
+      - name: Avisar por Telegram si la copia mensual termina correctamente
+        if: ${{ success() }}
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.CLINICAL_BACKUP_TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.CLINICAL_BACKUP_TELEGRAM_CHAT_ID }}
+        run: |
+          MESSAGE="✅ Copia clínica mensual completada correctamente.
+
+          Fecha: $(TZ=Europe/Madrid date '+%d/%m/%Y %H:%M')
+          Destino: Cloudflare R2
+          Estado: copia verificada correctamente."
+
+          curl --fail --silent --show-error \
+            --request POST \
+            "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" \
+            --data-urlencode "chat_id=${TELEGRAM_CHAT_ID}" \
+            --data-urlencode "text=${MESSAGE}"
+
+          echo "Notificación de éxito enviada por Telegram."
+
+      - name: Avisar por Telegram si falla la copia mensual
+        if: ${{ failure() }}
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.CLINICAL_BACKUP_TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.CLINICAL_BACKUP_TELEGRAM_CHAT_ID }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          MESSAGE="❌ Ha fallado la copia clínica mensual de Dememoria.
+
+          Fecha: $(TZ=Europe/Madrid date '+%d/%m/%Y %H:%M')
+          Destino: Cloudflare R2
+
+          Revisa la ejecución:
+          ${RUN_URL}"
+
+          curl --silent --show-error \
+            --request POST \
+            "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" \
+            --data-urlencode "chat_id=${TELEGRAM_CHAT_ID}" \
+            --data-urlencode "text=${MESSAGE}" \
+            || echo "No se pudo enviar la notificación de Telegram."
