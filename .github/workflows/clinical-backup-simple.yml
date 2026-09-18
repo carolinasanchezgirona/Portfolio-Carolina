@@ -10,6 +10,7 @@ on:
 jobs:
   backup:
     runs-on: ubuntu-latest
+
     steps:
       - name: Comprobar hora local
         id: horario
@@ -21,8 +22,9 @@ jobs:
           fi
 
           echo "should_run=true" >> "$GITHUB_OUTPUT"
-    steps:
+
       - name: Instalar PostgreSQL 17 y herramientas
+        if: steps.horario.outputs.should_run == 'true'
         run: |
           sudo apt-get update
           sudo apt-get install -y wget ca-certificates openssl rclone
@@ -38,6 +40,7 @@ jobs:
           rclone version
 
       - name: Exportar base de datos de Supabase
+        if: steps.horario.outputs.should_run == 'true'
         env:
           SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
         run: |
@@ -49,16 +52,18 @@ jobs:
             --file=backup/supabase-db.dump
 
       - name: Comprobar exportación
+        if: steps.horario.outputs.should_run == 'true'
         run: |
           test -s backup/supabase-db.dump
           echo "Exportación de Supabase creada correctamente."
           ls -lh backup/supabase-db.dump
 
       - name: Cifrar copia
+        if: steps.horario.outputs.should_run == 'true'
         env:
           BACKUP_ENCRYPTION_PASSWORD: ${{ secrets.BACKUP_ENCRYPTION_PASSWORD }}
         run: |
-          DATE=$(date +%F)
+          DATE=$(TZ=Europe/Madrid date +%F)
 
           openssl enc -aes-256-cbc \
             -salt \
@@ -69,6 +74,7 @@ jobs:
             -pass env:BACKUP_ENCRYPTION_PASSWORD
 
       - name: Comprobar archivo cifrado
+        if: steps.horario.outputs.should_run == 'true'
         run: |
           FILE=$(find backup -name 'dememoria-*.dump.enc' -type f | head -n 1)
           test -n "$FILE"
@@ -78,12 +84,14 @@ jobs:
           ls -lh "$FILE"
 
       - name: Eliminar copia sin cifrar
+        if: steps.horario.outputs.should_run == 'true'
         run: |
           rm -f backup/supabase-db.dump
           test ! -f backup/supabase-db.dump
           echo "Archivo sin cifrar eliminado."
 
       - name: Subir copia cifrada a Google Drive
+        if: steps.horario.outputs.should_run == 'true'
         env:
           RCLONE_CONFIG_GDRIVE_TYPE: drive
           RCLONE_CONFIG_GDRIVE_SCOPE: drive
@@ -102,6 +110,7 @@ jobs:
           echo "Archivo enviado a Google Drive."
 
       - name: Verificar copia en Google Drive
+        if: steps.horario.outputs.should_run == 'true'
         env:
           RCLONE_CONFIG_GDRIVE_TYPE: drive
           RCLONE_CONFIG_GDRIVE_SCOPE: drive
@@ -116,7 +125,9 @@ jobs:
           rclone lsf "gdrive:${GOOGLE_DRIVE_BACKUP_PATH}" | grep -Fx "$NAME"
 
           echo "Copia confirmada en Google Drive: $NAME"
+
       - name: Eliminar copias de Google Drive de más de 30 días
+        if: steps.horario.outputs.should_run == 'true'
         env:
           RCLONE_CONFIG_GDRIVE_TYPE: drive
           RCLONE_CONFIG_GDRIVE_SCOPE: drive
