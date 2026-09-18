@@ -14,7 +14,7 @@
     login: $("#admin-login"), app: $("#admin-app"), loginForm: $("#admin-login-form"),
     email: $("#admin-email"), password: $("#admin-password"), loginMessage: $("#admin-login-message"),
     forgot: $("#admin-forgot-password"), logout: $("#admin-logout"), accessButton: $("#admin-access"),
-    newButton: $("#admin-new"), todayNew: $("#today-new"), blockButton: $("#admin-block"), print: $("#admin-print"), prev: $("#week-prev"), next: $("#week-next"), today: $("#week-today"),
+    newButton: $("#admin-new"), todayNew: $("#today-new"), tomorrowNew: $("#tomorrow-new"), blockButton: $("#admin-block"), print: $("#admin-print"), prev: $("#week-prev"), next: $("#week-next"), today: $("#week-today"),
     weekTitle: $("#week-title"), weekSubtitle: $("#week-subtitle"), calendar: $("#week-calendar"), status: $("#admin-status"),
     total: $("#summary-total"), confirmed: $("#summary-confirmed"), pending: $("#summary-pending"), cancelled: $("#summary-cancelled"),
     dialog: $("#appointment-dialog"), dialogTitle: $("#dialog-title"), dialogClose: $("#dialog-close"),
@@ -27,9 +27,10 @@
     accessDialog: $("#access-dialog"), accessForm: $("#access-form"), accessClose: $("#access-close"), accessCancel: $("#access-cancel"),
     currentEmail: $("#access-current-email"), newEmail: $("#access-new-email"), newPassword: $("#access-new-password"),
     repeatPassword: $("#access-repeat-password"), accessMessage: $("#access-message"),
-    viewToday: $("#view-today"), viewWeek: $("#view-week"), viewPatients: $("#view-patients"),
-    todayView: $("#today-view"), weekView: $("#week-view"), patientsView: $("#patients-view"),
+    viewToday: $("#view-today"), viewTomorrow: $("#view-tomorrow"), viewWeek: $("#view-week"), viewPatients: $("#view-patients"),
+    todayView: $("#today-view"), tomorrowView: $("#tomorrow-view"), weekView: $("#week-view"), patientsView: $("#patients-view"),
     todayTitle: $("#today-title"), todaySummary: $("#today-summary"), todayList: $("#today-list"),
+    tomorrowTitle: $("#tomorrow-title"), tomorrowSummary: $("#tomorrow-summary"), tomorrowList: $("#tomorrow-list"),
     patientSearch: $("#patient-search"), patientSearchStatus: $("#patient-search-status"), patientResults: $("#patient-results"),
     blockDialog: $("#block-dialog"), blockForm: $("#block-form"), blockClose: $("#block-close"), blockCancel: $("#block-cancel"),
     blockDate: $("#block-date"), blockStart: $("#block-start"), blockEnd: $("#block-end"), blockReason: $("#block-reason"), blockMessage: $("#block-message"),
@@ -131,8 +132,8 @@
   function setBlockMessage(text) { if (els.blockMessage) els.blockMessage.textContent = text || ""; }
 
   function setView(name) {
-    const views = { today: els.todayView, week: els.weekView, patients: els.patientsView };
-    const buttons = { today: els.viewToday, week: els.viewWeek, patients: els.viewPatients };
+    const views = { today: els.todayView, tomorrow: els.tomorrowView, week: els.weekView, patients: els.patientsView };
+    const buttons = { today: els.viewToday, tomorrow: els.viewTomorrow, week: els.viewWeek, patients: els.viewPatients };
     Object.entries(views).forEach(([key, view]) => { view.hidden = key !== name; });
     Object.entries(buttons).forEach(([key, button]) => button.classList.toggle("active", key === name));
     if (name === "patients") els.patientSearch?.focus();
@@ -234,6 +235,7 @@
     scheduleBlocks = blocksResponse.ok ? await blocksResponse.json() : [];
     renderWeek();
     renderToday();
+    renderTomorrow();
     setStatus("");
   }
 
@@ -287,6 +289,89 @@
     return button;
   }
 
+  function patientIdentityMatches(a, b) {
+    const emailA = (a.patient_email || "").trim().toLowerCase();
+    const emailB = (b.patient_email || "").trim().toLowerCase();
+    const phoneA = (a.patient_phone || "").replace(/\D/g, "");
+    const phoneB = (b.patient_phone || "").replace(/\D/g, "");
+    const nameA = (a.patient_name || "").trim().toLowerCase();
+    const nameB = (b.patient_name || "").trim().toLowerCase();
+    if (emailA && emailB) return emailA === emailB;
+    if (phoneA && phoneB) return phoneA === phoneB;
+    return nameA && nameA === nameB;
+  }
+
+  async function findFutureAppointment(appointment) {
+    const start = new Date();
+    const end = new Date(start.getTime() + 180 * 24 * 60 * 60 * 1000);
+    const select = "id,patient_name,patient_email,patient_phone,status,starts_at";
+    const url = `${REST_URL}/appointment_bookings?select=${encodeURIComponent(select)}&starts_at=gt.${encodeURIComponent(start.toISOString())}&starts_at=lt.${encodeURIComponent(end.toISOString())}&status=in.(confirmed,pending,rescheduled)&order=starts_at.asc&limit=100`;
+    const response = await fetch(url, { headers: authHeaders(), cache: "no-store" });
+    const rows = await response.json().catch(() => []);
+    if (!response.ok) return null;
+    return rows.find((row) => patientIdentityMatches(appointment, row) && row.id !== appointment.id) || null;
+  }
+
+  async function quickSetStatus(appointment, status) {
+    if (!appointment?.id || ["cancelled", "canceled"].includes(appointment.status)) return;
+    const label = status === "completed" ? "realizada" : "no presentado";
+    const confirmed = window.confirm(`¿Marcar la cita de ${appointment.patient_name} como ${label}?`);
+    if (!confirmed) return;
+
+    try {
+      await rpc("admin_update_appointment", {
+        p_id: appointment.id,
+        p_starts_at: appointment.starts_at,
+        p_patient_name: appointment.patient_name,
+        p_patient_email: appointment.patient_email || null,
+        p_patient_phone: appointment.patient_phone || null,
+        p_patient_type: appointment.patient_type || "existing",
+        p_service_code: appointment.service_code || "psicologia_general_sanitaria",
+        p_status: status,
+        p_price_eur: Number(appointment.price_eur ?? 60),
+      });
+      appointment.status = status;
+      await loadWeek();
+
+      if (status === "completed") {
+        const next = await findFutureAppointment(appointment);
+        if (!next) {
+          window.alert(`Sesión marcada como realizada. ${appointment.patient_name} no tiene una próxima cita programada.`);
+        }
+      }
+    } catch (error) {
+      window.alert(error.message || "No se ha podido actualizar la cita.");
+    }
+  }
+
+  function createDayAppointmentCard(appointment) {
+    const card = document.createElement("article");
+    card.className = `appointment-card day-card${appointment.service_code === "neuropsicologia" ? " neuro" : ""}${["cancelled", "canceled"].includes(appointment.status) ? " cancelled" : ""}`;
+    card.innerHTML = `
+      <button type="button" class="day-card-main">
+        <time>${timeFmt.format(new Date(appointment.starts_at))}</time>
+        <strong>${escapeHtml(appointment.patient_name)}</strong>
+        <small>${serviceLabel(appointment.service_code)} · ${statusLabel(appointment.status)}</small>
+        <span class="appointment-card-action">Ver o modificar</span>
+      </button>
+      <div class="day-card-actions">
+        <button type="button" class="quick-complete">Realizada</button>
+        <button type="button" class="quick-noshow">No presentado</button>
+      </div>`;
+    card.querySelector(".day-card-main")?.addEventListener("click", () => openEdit(appointment));
+    const active = !["cancelled", "canceled", "completed", "no_show"].includes(appointment.status);
+    const complete = card.querySelector(".quick-complete");
+    const noShow = card.querySelector(".quick-noshow");
+    if (!active) {
+      complete?.setAttribute("hidden", "");
+      noShow?.setAttribute("hidden", "");
+    } else {
+      complete?.addEventListener("click", () => quickSetStatus(appointment, "completed"));
+      noShow?.addEventListener("click", () => quickSetStatus(appointment, "no_show"));
+    }
+    return card;
+  }
+
   function createBlockCard(block) {
     const card = document.createElement("article");
     card.className = "schedule-block-card";
@@ -295,29 +380,37 @@
     return card;
   }
 
-  function renderToday() {
-    const key = todayKey();
-    const todayAppointments = appointments.filter((a) => keyFromIso(a.starts_at) === key);
-    const active = todayAppointments.filter((a) => !["cancelled", "canceled"].includes(a.status));
-    els.todayTitle.textContent = dateLong.format(new Date(madridLocalToIso(key, "12:00")));
-    els.todaySummary.innerHTML = `<article><strong>${active.length}</strong><span>Citas activas</span></article><article><strong>${active.filter((a) => a.status === "confirmed").length}</strong><span>Confirmadas</span></article><article><strong>${active.filter((a) => a.status === "pending").length}</strong><span>Pendientes</span></article>`;
-    els.todayList.replaceChildren();
-    scheduleBlocks.filter((b) => keyFromIso(b.starts_at) === key).forEach((b) => els.todayList.append(createBlockCard(b)));
-    todayAppointments.forEach((a) => els.todayList.append(createAppointmentCard(a, true)));
-    if (!todayAppointments.length && !scheduleBlocks.some((b) => keyFromIso(b.starts_at) === key)) {
-      els.todayList.innerHTML = '<div class="empty-today"><strong>No hay citas hoy</strong><span>Puedes añadir una cita o bloquear una franja.</span></div>';
+  function renderDay(key, titleEl, summaryEl, listEl, emptyLabel) {
+    const dayAppointments = appointments.filter((a) => keyFromIso(a.starts_at) === key);
+    const active = dayAppointments.filter((a) => !["cancelled", "canceled"].includes(a.status));
+    titleEl.textContent = dateLong.format(new Date(madridLocalToIso(key, "12:00")));
+    summaryEl.innerHTML = `<article><strong>${active.length}</strong><span>Citas activas</span></article><article><strong>${active.filter((a) => a.status === "confirmed").length}</strong><span>Confirmadas</span></article><article><strong>${active.filter((a) => a.status === "pending").length}</strong><span>Pendientes</span></article>`;
+    listEl.replaceChildren();
+    scheduleBlocks.filter((b) => keyFromIso(b.starts_at) === key).forEach((b) => listEl.append(createBlockCard(b)));
+    dayAppointments.forEach((a) => listEl.append(createDayAppointmentCard(a)));
+    if (!dayAppointments.length && !scheduleBlocks.some((b) => keyFromIso(b.starts_at) === key)) {
+      listEl.innerHTML = `<div class="empty-today"><strong>No hay citas ${emptyLabel}</strong><span>Puedes añadir una cita o bloquear una franja.</span></div>`;
     }
+  }
+
+  function renderToday() {
+    renderDay(todayKey(), els.todayTitle, els.todaySummary, els.todayList, "hoy");
+  }
+
+  function renderTomorrow() {
+    const key = addDaysKey(todayKey(), 1);
+    renderDay(key, els.tomorrowTitle, els.tomorrowSummary, els.tomorrowList, "mañana");
   }
 
   function escapeHtml(value) {
     return String(value || "").replace(/[&<>'"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "'": "&#39;", '"': "&quot;" })[c]);
   }
 
-  function openNew() {
+  function openNew(dateKey = todayKey()) {
     els.form.reset();
     els.id.value = "";
     els.dialogTitle.textContent = "Nueva cita";
-    els.date.value = todayKey();
+    els.date.value = dateKey;
     els.time.value = "09:00";
     els.service.value = "psicologia_general_sanitaria";
     els.appointmentStatus.value = "confirmed";
@@ -362,8 +455,44 @@
     return data;
   }
 
+  async function checkAppointmentConflict(startsAt, ignoreId = null) {
+    const start = new Date(startsAt);
+    const end = new Date(start.getTime() + 60 * 60 * 1000);
+    const dayKey = keyFromIso(startsAt);
+    const dayStart = madridLocalToIso(dayKey, "00:00");
+    const dayEnd = madridLocalToIso(addDaysKey(dayKey, 1), "00:00");
+    const select = "id,patient_name,status,starts_at,ends_at";
+    const appointmentUrl = `${REST_URL}/appointment_bookings?select=${encodeURIComponent(select)}&starts_at=gte.${encodeURIComponent(dayStart)}&starts_at=lt.${encodeURIComponent(dayEnd)}&order=starts_at.asc`;
+    const blockUrl = `${REST_URL}/appointment_schedule_blocks?select=id,starts_at,ends_at,reason&starts_at=lt.${encodeURIComponent(end.toISOString())}&ends_at=gt.${encodeURIComponent(start.toISOString())}`;
+    const [appointmentResponse, blockResponse] = await Promise.all([
+      fetch(appointmentUrl, { headers: authHeaders(), cache: "no-store" }),
+      fetch(blockUrl, { headers: authHeaders(), cache: "no-store" }),
+    ]);
+    const rows = await appointmentResponse.json().catch(() => []);
+    const blocks = blockResponse.ok ? await blockResponse.json().catch(() => []) : [];
+
+    const conflict = appointmentResponse.ok ? rows.find((row) => {
+      if (row.id === ignoreId || ["cancelled", "canceled", "completed", "no_show"].includes(row.status)) return false;
+      const rowStart = new Date(row.starts_at);
+      const rowEnd = row.ends_at ? new Date(row.ends_at) : new Date(rowStart.getTime() + 60 * 60 * 1000);
+      return rowStart < end && rowEnd > start;
+    }) : null;
+
+    if (conflict) {
+      return `Ya existe una cita de ${conflict.patient_name} a las ${timeFmt.format(new Date(conflict.starts_at))}.`;
+    }
+    if (blocks.length) {
+      return `Ese horario coincide con un bloqueo de agenda${blocks[0].reason ? `: ${blocks[0].reason}` : "."}`;
+    }
+    return "";
+  }
+
   async function saveAppointment() {
     const startsAt = madridLocalToIso(els.date.value, els.time.value);
+    const conflictMessage = await checkAppointmentConflict(startsAt, els.id.value || null);
+    if (conflictMessage && !window.confirm(`${conflictMessage}\n\n¿Quieres guardar la cita de todos modos?`)) {
+      throw new Error("No se ha guardado la cita para evitar un solapamiento.");
+    }
     const common = {
       p_starts_at: startsAt,
       p_patient_name: els.name.value.trim(),
@@ -374,8 +503,16 @@
       p_status: els.appointmentStatus.value,
       p_price_eur: Number(els.price.value || 60),
     };
+    const editedAppointment = currentAppointment;
     if (els.id.value) await rpc("admin_update_appointment", { p_id: els.id.value, ...common });
     else await rpc("admin_create_appointment", common);
+
+    if (common.p_status === "completed" && editedAppointment) {
+      const next = await findFutureAppointment({ ...editedAppointment, status: "completed", starts_at: startsAt });
+      if (!next) {
+        window.alert(`Sesión marcada como realizada. ${common.p_patient_name} no tiene una próxima cita programada.`);
+      }
+    }
   }
 
   function repeatCurrentAppointment() {
@@ -619,12 +756,21 @@
   els.logout?.addEventListener("click", () => { saveSession(null); currentUser = null; appointments = []; showLogin(); });
   els.accessButton?.addEventListener("click", openAccess);
   els.newButton?.addEventListener("click", openNew);
-  els.todayNew?.addEventListener("click", openNew);
+  els.todayNew?.addEventListener("click", () => openNew(todayKey()));
+  els.tomorrowNew?.addEventListener("click", () => openNew(addDaysKey(todayKey(), 1)));
   els.blockButton?.addEventListener("click", openBlock);
   els.viewToday?.addEventListener("click", async () => {
     setView("today");
     if (weekStartKey !== mondayKey(todayKey())) {
       weekStartKey = mondayKey(todayKey());
+      await loadWeek().catch((e) => setStatus(e.message));
+    }
+  });
+  els.viewTomorrow?.addEventListener("click", async () => {
+    setView("tomorrow");
+    const tomorrowWeek = mondayKey(addDaysKey(todayKey(), 1));
+    if (weekStartKey !== tomorrowWeek) {
+      weekStartKey = tomorrowWeek;
       await loadWeek().catch((e) => setStatus(e.message));
     }
   });
