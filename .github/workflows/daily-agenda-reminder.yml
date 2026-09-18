@@ -1,0 +1,133 @@
+name: Aviso diario de agenda
+
+on:
+  workflow_dispatch:
+
+  schedule:
+    # GitHub Actions usa UTC. Se lanzan ambos horarios posibles y se filtra
+    # por la hora real de Europe/Madrid para cubrir horario de verano/invierno.
+    - cron: "0 17 * * *"
+    - cron: "0 18 * * *"
+
+jobs:
+  agenda-reminder:
+    runs-on: ubuntu-24.04
+
+    steps:
+      - name: Comprobar hora local
+        id: horario
+        shell: bash
+        run: |
+          if [[ "${{ github.event_name }}" == "schedule" && "$(TZ=Europe/Madrid date +%H:%M)" != "19:00" ]]; then
+            echo "should_run=false" >> "$GITHUB_OUTPUT"
+            echo "Este disparo no corresponde a las 19:00 en Europe/Madrid."
+            exit 0
+          fi
+
+          echo "should_run=true" >> "$GITHUB_OUTPUT"
+
+      - name: Instalar cliente PostgreSQL
+        if: steps.horario.outputs.should_run == 'true'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y postgresql-client curl
+
+      - name: Preparar resumen de mañana
+        if: steps.horario.outputs.should_run == 'true'
+        id: resumen
+        env:
+          SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
+        shell: bash
+        run: |
+          TOMORROW=$(TZ=Europe/Madrid date -d tomorrow +%F)
+          TOMORROW_LABEL=$(TZ=Europe/Madrid date -d tomorrow '+%A %d/%m/%Y')
+
+          # Seleccionamos solo datos administrativos mínimos.
+          # No se incluyen nombres, correos, teléfonos ni información clínica.
+          QUERY=$(cat <<'SQL'
+          with tomorrow_appointments as (
+            select
+              starts_at,
+              patient_type,
+              service_code,
+              status
+            from public.appointment_bookings
+            where (starts_at at time zone 'Europe/Madrid')::date =
+                  ((now() at time zone 'Europe/Madrid')::date + 1)
+              and status in ('confirmed', 'pending')
+          )
+          select
+            to_char(starts_at at time zone 'Europe/Madrid', 'HH24:MI')
+            || ' · '
+            || case
+                 when patient_type = 'new' then 'Primera visita'
+                 else 'Paciente existente'
+               end
+            || ' · '
+            || case
+                 when service_code = 'neuropsicologia' then 'Neuropsicología'
+                 else 'Psicología'
+               end
+            || case
+                 when status = 'pending' then ' · Pendiente'
+                 else ''
+               end
+          from tomorrow_appointments
+          order by starts_at;
+          SQL
+          )
+
+          mapfile -t APPOINTMENTS < <(
+            psql "$SUPABASE_DB_URL"               --no-align               --tuples-only               --quiet               --command "$QUERY"             | sed '/^[[:space:]]*$/d'
+          )
+
+          COUNT=${#APPOINTMENTS[@]}
+
+          if [[ "$COUNT" -eq 0 ]]; then
+            MESSAGE="📅 Agenda de mañana · ${TOMORROW}
+
+No tienes citas programadas para mañana.
+
+Resumen enviado automáticamente a las 19:00."
+          else
+            LIST=""
+            for ITEM in "${APPOINTMENTS[@]}"; do
+              LIST+="
+• ${ITEM}"
+            done
+
+            MESSAGE="📅 Agenda de mañana · ${TOMORROW}
+
+Tienes ${COUNT} cita"
+            if [[ "$COUNT" -ne 1 ]]; then
+              MESSAGE+="s"
+            fi
+
+            MESSAGE+=" programada"
+            if [[ "$COUNT" -ne 1 ]]; then
+              MESSAGE+="s"
+            fi
+
+            MESSAGE+=":
+${LIST}
+
+Resumen enviado automáticamente a las 19:00."
+          fi
+
+          {
+            echo "message<<EOF"
+            echo "$MESSAGE"
+            echo "EOF"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Enviar aviso por Telegram
+        if: steps.horario.outputs.should_run == 'true'
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.CLINICAL_BACKUP_TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.CLINICAL_BACKUP_TELEGRAM_CHAT_ID }}
+          MESSAGE: ${{ steps.resumen.outputs.message }}
+        shell: bash
+        run: |
+          curl --fail --silent --show-error             --request POST             "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage"             --data-urlencode "chat_id=${TELEGRAM_CHAT_ID}"             --data-urlencode "text=${MESSAGE}"
+
+          echo "Aviso de agenda enviado correctamente."
