@@ -31,3 +31,17 @@
 .patient-history-actions{display:flex;align-items:flex-end;gap:10px;flex-direction:column}
 .patient-history-actions .patient-finalize{min-height:34px;padding:7px 11px;font-size:.75rem}
 @media(max-width:620px){.patient-history-actions{align-items:stretch}.patient-session-summary{display:grid;gap:5px}.patient-history-actions .patient-finalize{width:100%}}
+
+
+/* Vista diaria y acciones rápidas */
+.day-card{display:grid!important;grid-template-columns:minmax(0,1fr) auto!important;align-items:center;gap:12px;padding:0!important;overflow:hidden}
+.day-card-main{display:grid;grid-template-columns:90px minmax(180px,1fr) minmax(160px,auto) auto;align-items:center;gap:14px;width:100%;padding:16px;border:0;background:transparent;color:inherit;text-align:left;cursor:pointer;font:inherit}
+.day-card-main time,.day-card-main strong,.day-card-main small,.day-card-main .appointment-card-action{margin:0}
+.day-card-actions{display:flex;gap:7px;padding:10px 12px 10px 0}
+.day-card-actions button{min-height:34px;padding:7px 11px;border:1px solid #b9cbd5;border-radius:999px;background:#fffdf9;color:#2f5f78;font:inherit;font-size:.74rem;font-weight:700;cursor:pointer;white-space:nowrap}
+.day-card-actions button:hover{border-color:#2f5f78;background:#edf4f7}
+.day-card-actions .quick-noshow{border-color:#d8ccbc;color:#7b5b49}
+.day-card.cancelled .day-card-main{text-decoration:line-through}
+.day-card.cancelled .appointment-card-action{text-decoration:none}
+@media(max-width:900px){.day-card{grid-template-columns:1fr!important}.day-card-actions{padding:0 12px 12px 12px;justify-content:flex-end}}
+@media(max-width:620px){.day-card-main{grid-template-columns:68px 1fr;gap:6px 12px;padding:14px}.day-card-main small,.day-card-main .appointment-card-action{grid-column:2}.day-card-actions{justify-content:stretch}.day-card-actions button{flex:1}}
