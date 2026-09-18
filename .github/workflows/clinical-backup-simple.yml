@@ -3,6 +3,9 @@ name: Copia clínica simple
 on:
   workflow_dispatch:
 
+  schedule:
+    - cron: "17 1 * * *"
+
 jobs:
   backup:
     runs-on: ubuntu-latest
