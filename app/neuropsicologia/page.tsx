@@ -144,6 +144,7 @@ export default function NeuropsychologyPage() {
               <a href="/evaluacion-neuropsicologica/">Evaluación neuropsicológica</a>
               <a href="/problemas-de-memoria/">Problemas de memoria y olvidos</a>
               <a href="/deterioro-cognitivo/">Deterioro cognitivo</a>
+              <a href="/demencias/">Demencias y Alzheimer</a>
               <a href="/psicologa-arenys-de-mar/">Consulta en Arenys de Mar</a>
               <a href="/psicologia/">Psicología General Sanitaria</a>
             </div>
