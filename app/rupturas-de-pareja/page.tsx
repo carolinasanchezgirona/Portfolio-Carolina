@@ -155,6 +155,7 @@ export default function BreakupPage() {
             <h3>Áreas relacionadas</h3>
             <div className="seo-related">
               <a href="/dependencia-emocional/">Dependencia emocional</a>
+              <a href="/limites-y-relaciones-dificiles/">Límites y relaciones difíciles</a>
               <a href="/duelo/">Duelo y pérdidas</a>
               <a href="/ansiedad/">Ansiedad</a>
               <a href="/depresion/">Depresión y bajo estado de ánimo</a>
