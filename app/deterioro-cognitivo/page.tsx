@@ -137,6 +137,7 @@ export default function CognitiveDeclinePage() {
               <a href="/neuropsicologia/">Neuropsicología</a>
               <a href="/evaluacion-neuropsicologica/">Evaluación neuropsicológica</a>
               <a href="/problemas-de-memoria/">Problemas de memoria y olvidos</a>
+              <a href="/demencias/">Demencias y Alzheimer</a>
               <a href="/psicologa-arenys-de-mar/">Consulta en Arenys de Mar</a>
             </div>
           </div>
