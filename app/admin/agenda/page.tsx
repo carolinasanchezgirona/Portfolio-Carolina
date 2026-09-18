@@ -148,6 +148,8 @@ export default function AdminAgendaPage() {
 
           <div className="dialog-actions">
             <button id="appointment-close" className="admin-secondary" type="button">Cerrar sin guardar</button>
+            <button id="appointment-repeat" className="admin-secondary" type="button" hidden>Repetir cita</button>
+            <button id="appointment-finalize" className="admin-danger" type="button" hidden>Finalizar seguimiento</button>
             <button id="appointment-cancel-booking" className="admin-danger" type="button" hidden>Cancelar cita</button>
             <button id="appointment-save" className="admin-primary" type="submit">Crear cita</button>
           </div>
@@ -177,7 +179,7 @@ export default function AdminAgendaPage() {
         </form>
       </dialog>
 
-      <Script src="/admin-agenda-v3.js?v=20260918-cancel-future" strategy="afterInteractive" />
+      <Script src="/admin-agenda-v3.js?v=20260918-agenda-tools" strategy="afterInteractive" />
       <Script src="/pwa.js?v=20260915-admin-2" strategy="afterInteractive" />
     </main>
   );
