@@ -33,8 +33,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${base}/dificultad-para-desconectar-del-trabajo/`, lastModified: staticLastModified, changeFrequency: "monthly", priority: 0.8 },
     { url: `${base}/burnout-y-agotamiento-laboral/`, lastModified: staticLastModified, changeFrequency: "monthly", priority: 0.81 },
     { url: `${base}/ansiedad-social-y-miedo-al-ridiculo/`, lastModified: staticLastModified, changeFrequency: "monthly", priority: 0.82 },
-    { url: `${base}/ansiedad-anticipatoria-y-preocupacion-excesiva/`, lastModified: staticLastModified, changeFrequency: "monthly", priority: 0.82 },
-    { url: `${base}/ansiedad-por-la-salud-e-hipocondria/`, lastModified: staticLastModified, changeFrequency: "monthly", priority: 0.82 },
     { url: `${base}/pensamientos-intrusivos-y-miedo-a-perder-el-control/`, lastModified: staticLastModified, changeFrequency: "monthly", priority: 0.81 },
     { url: `${base}/toc-obsesiones-y-compulsiones/`, lastModified: staticLastModified, changeFrequency: "monthly", priority: 0.82 },
     { url: `${base}/agorafobia-y-miedo-a-salir/`, lastModified: staticLastModified, changeFrequency: "monthly", priority: 0.82 },
