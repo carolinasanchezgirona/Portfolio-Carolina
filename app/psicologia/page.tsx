@@ -158,8 +158,6 @@ export default function PsychologyPage() {
               <a href="/culpa-y-dificultad-para-perdonarse/">Culpa y dificultad para perdonarse</a>
               <a href="/miedo-al-rechazo-y-necesidad-de-aprobacion/">Miedo al rechazo y necesidad de aprobación</a>
               <a href="/procrastinacion-y-bloqueo/">Procrastinación y bloqueo</a>
-              <a href="/dificultad-para-desconectar-del-trabajo/">Dificultad para desconectar del trabajo</a>
-              <a href="/burnout-y-agotamiento-laboral/">Burnout y agotamiento laboral</a>
               <a href="/ansiedad-social-y-miedo-al-ridiculo/">Ansiedad social y miedo al ridículo</a>
               <a href="/pensamientos-intrusivos-y-miedo-a-perder-el-control/">Pensamientos intrusivos y miedo a perder el control</a>
               <a href="/toc-obsesiones-y-compulsiones/">TOC, obsesiones y compulsiones</a>
