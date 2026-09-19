@@ -79,6 +79,20 @@ export default function AnxietyPage() {
           </section>
 
           <section>
+            <h2>Ansiedad anticipatoria y preocupación excesiva</h2>
+            <p>
+              Cuando la mente intenta prever todos los escenarios posibles, buscar certeza total o comprobar repetidamente que nada va mal, la preocupación puede convertirse en parte del problema. En terapia se trabaja la diferencia entre problemas reales y escenarios hipotéticos, la tolerancia a la incertidumbre y la reducción de conductas de comprobación o búsqueda de tranquilidad.
+            </p>
+          </section>
+
+          <section>
+            <h2>Ansiedad por la salud</h2>
+            <p>
+              Algunas personas viven con un miedo persistente a estar enfermas, interpretan sensaciones corporales como señales de peligro o necesitan revisar, buscar información o pedir confirmación de forma repetida. El trabajo psicológico puede ayudar a reducir esa vigilancia y esas conductas sin convertir síntomas físicos reales en algo “solo psicológico”. Cuando existen síntomas nuevos o dudas médicas, la valoración sanitaria sigue siendo importante.
+            </p>
+          </section>
+
+          <section>
             <h2>Cómo se trabaja la ansiedad en terapia</h2>
             <p>
               La intervención empieza por identificar el patrón concreto de ansiedad: qué la activa, qué pensamientos o imágenes aparecen, qué sensaciones físicas la acompañan, qué haces para intentar reducirla y qué consecuencias tienen esas estrategias a corto y largo plazo.
@@ -134,8 +148,6 @@ export default function AnxietyPage() {
               <a href="/miedo-al-rechazo-y-necesidad-de-aprobacion/">Miedo al rechazo y necesidad de aprobación</a>
               <a href="/procrastinacion-y-bloqueo/">Procrastinación y bloqueo</a>
               <a href="/ansiedad-social-y-miedo-al-ridiculo/">Ansiedad social y miedo al ridículo</a>
-              <a href="/ansiedad-anticipatoria-y-preocupacion-excesiva/">Ansiedad anticipatoria y preocupación excesiva</a>
-              <a href="/ansiedad-por-la-salud-e-hipocondria/">Ansiedad por la salud e hipocondría</a>
               <a href="/pensamientos-intrusivos-y-miedo-a-perder-el-control/">Pensamientos intrusivos y miedo a perder el control</a>
               <a href="/toc-obsesiones-y-compulsiones/">TOC, obsesiones y compulsiones</a>
               <a href="/agorafobia-y-miedo-a-salir/">Agorafobia y miedo a salir</a>
