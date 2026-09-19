@@ -65,6 +65,16 @@ export default function CognitiveDeclinePage() {
             </p>
           </section>
 
+          <section>
+            <h2>Qué significa deterioro cognitivo leve</h2>
+            <p>
+              El deterioro cognitivo leve describe una situación en la que existen dificultades cognitivas objetivables, por ejemplo en memoria, atención, lenguaje o funciones ejecutivas, pero la autonomía cotidiana está relativamente conservada. No es sinónimo de demencia.
+            </p>
+            <p>
+              Algunas personas permanecen estables durante años, otras mejoran cuando existen factores reversibles y otras muestran progresión. Por eso el seguimiento debe centrarse en la evolución, el funcionamiento cotidiano y el contexto clínico, no solo en una puntuación aislada.
+            </p>
+          </section>
+
           <section id="cuando-consultar">
             <h2>Cuándo puede ser recomendable una valoración</h2>
             <ul>
@@ -137,7 +147,6 @@ export default function CognitiveDeclinePage() {
               <a href="/neuropsicologia/">Neuropsicología</a>
               <a href="/evaluacion-neuropsicologica/">Evaluación neuropsicológica</a>
               <a href="/problemas-de-memoria/">Problemas de memoria y olvidos</a>
-              <a href="/deterioro-cognitivo-leve/">Deterioro cognitivo leve</a>
               <a href="/demencias/">Demencias y Alzheimer</a>
               <a href="/estimulacion-cognitiva/">Estimulación cognitiva</a>
               <a href="/familiares-y-cuidadores-de-personas-con-demencia/">Familiares y cuidadores</a>
