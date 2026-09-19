@@ -160,6 +160,7 @@ export default function PsychologyPage() {
               <a href="/procrastinacion-y-bloqueo/">Procrastinación y bloqueo</a>
               <a href="/dificultad-para-desconectar-del-trabajo/">Dificultad para desconectar del trabajo</a>
               <a href="/burnout-y-agotamiento-laboral/">Burnout y agotamiento laboral</a>
+              <a href="/ansiedad-social-y-miedo-al-ridiculo/">Ansiedad social y miedo al ridículo</a>
               <a href="/psicologa-arenys-de-mar/">Consulta en Arenys de Mar</a>
               <a href="/neuropsicologia/">Neuropsicología</a>
             </div>

@@ -133,6 +133,7 @@ export default function AnxietyPage() {
               <a href="/cambios-vitales-y-adaptacion/">Cambios vitales y adaptación</a>
               <a href="/miedo-al-rechazo-y-necesidad-de-aprobacion/">Miedo al rechazo y necesidad de aprobación</a>
               <a href="/procrastinacion-y-bloqueo/">Procrastinación y bloqueo</a>
+              <a href="/ansiedad-social-y-miedo-al-ridiculo/">Ansiedad social y miedo al ridículo</a>
               <a href="/perfeccionismo-y-autoexigencia/">Perfeccionismo y autoexigencia</a>
               <a href="/depresion/">Depresión y bajo estado de ánimo</a>
               <a href="/duelo/">Duelo y pérdidas</a>
