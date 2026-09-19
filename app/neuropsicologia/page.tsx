@@ -157,6 +157,7 @@ export default function NeuropsychologyPage() {
               <a href="/esclerosis-multiple-y-cambios-cognitivos/">Esclerosis múltiple y cambios cognitivos</a>
               <a href="/epilepsia-y-cambios-cognitivos/">Epilepsia y cambios cognitivos</a>
               <a href="/covid-persistente-y-niebla-mental/">COVID persistente y niebla mental</a>
+              <a href="/rehabilitacion-neuropsicologica/">Rehabilitación neuropsicológica</a>
               <a href="/psicologa-arenys-de-mar/">Consulta en Arenys de Mar</a>
               <a href="/psicologia/">Psicología General Sanitaria</a>
             </div>
