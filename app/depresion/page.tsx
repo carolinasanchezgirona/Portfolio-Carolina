@@ -41,6 +41,7 @@ export default function DepressionPage() {
           <a href="/psicologia/">Psicología</a>
           <a href="/ansiedad/">Ansiedad</a>
               <a href="/rumiacion-y-pensamientos-repetitivos/">Rumiación y pensamientos repetitivos</a>
+              <a href="/estres-y-sobrecarga/">Estrés y sobrecarga</a>
               <a href="/ataques-de-panico/">Ataques de pánico</a>
           <a className="nav-cta" href="/cita/">Pedir cita</a>
         </nav>
