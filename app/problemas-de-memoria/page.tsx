@@ -160,6 +160,7 @@ export default function MemoryProblemsPage() {
               <a href="/deterioro-cognitivo-leve/">Deterioro cognitivo leve</a>
               <a href="/demencias/">Demencias y Alzheimer</a>
               <a href="/familiares-y-cuidadores-de-personas-con-demencia/">Familiares y cuidadores</a>
+              <a href="/problemas-de-atencion-y-concentracion-en-adultos/">Problemas de atención y concentración</a>
               <a href="/psicologa-arenys-de-mar/">Consulta en Arenys de Mar</a>
             </div>
           </div>
