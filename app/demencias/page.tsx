@@ -42,6 +42,7 @@ export default function DementiaPage() {
           <a href="/deterioro-cognitivo/">Deterioro cognitivo</a>
               <a href="/deterioro-cognitivo-leve/">Deterioro cognitivo leve</a>
               <a href="/envejecimiento-cognitivo-normal-o-deterioro/">Envejecimiento cognitivo normal o deterioro</a>
+              <a href="/alzheimer-primeros-sintomas-y-evaluacion/">Alzheimer: primeros síntomas y evaluación</a>
               <a href="/estimulacion-cognitiva/">Estimulación cognitiva</a>
               <a href="/familiares-y-cuidadores-de-personas-con-demencia/">Familiares y cuidadores</a>
           <a className="nav-cta" href="/cita/">Pedir cita</a>
