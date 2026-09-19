@@ -54,6 +54,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${base}/epilepsia-y-cambios-cognitivos/`, lastModified: staticLastModified, changeFrequency: "monthly", priority: 0.82 },
     { url: `${base}/covid-persistente-y-niebla-mental/`, lastModified: staticLastModified, changeFrequency: "monthly", priority: 0.81 },
     { url: `${base}/rehabilitacion-neuropsicologica/`, lastModified: staticLastModified, changeFrequency: "monthly", priority: 0.85 },
+    { url: `${base}/envejecimiento-cognitivo-normal-o-deterioro/`, lastModified: staticLastModified, changeFrequency: "monthly", priority: 0.85 },
     { url: `${base}/demencias/`, lastModified: staticLastModified, changeFrequency: "monthly", priority: 0.86 },
     { url: `${base}/estimulacion-cognitiva/`, lastModified: staticLastModified, changeFrequency: "monthly", priority: 0.84 },
     { url: `${base}/familiares-y-cuidadores-de-personas-con-demencia/`, lastModified: staticLastModified, changeFrequency: "monthly", priority: 0.84 },
