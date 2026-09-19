@@ -48,7 +48,7 @@ export default function AlzheimerEarlySymptomsPage() {
         <aside className="seo-sidebar" aria-label="Información práctica">
           <div className="seo-card"><h2>Primera visita</h2><ul className="seo-facts"><li><span>Duración</span><strong>60 minutos</strong></li><li><span>Tarifa</span><strong>60 €</strong></li><li><span>Ubicación</span><strong>Arenys de Mar</strong></li><li><span>Área</span><strong>Neuropsicología</strong></li></ul><a className="editorial-btn editorial-btn-primary" href="/cita/">Consultar disponibilidad</a></div>
           <div className="seo-card"><h3>Áreas relacionadas</h3><div className="seo-related"><a href="/problemas-de-memoria/">Problemas de memoria</a><a href="/deterioro-cognitivo-leve/">Deterioro cognitivo leve</a><a href="/demencias/">Demencias</a><a href="/familiares-y-cuidadores-de-personas-con-demencia/">Familiares y cuidadores</a>
-              <a href="/demencia-con-cuerpos-de-lewy/">Demencia con cuerpos de Lewy</a></div></div>
+</div></div>
         </aside>
       </div>
       <section className="editorial-section seo-authority"><div className="editorial-wrap seo-authority-grid"><div><p className="editorial-section-eyebrow">Profesional responsable</p><h2>Carolina Sánchez Girona</h2><p className="editorial-role">Psicóloga General Sanitaria · Neuropsicóloga</p></div><div className="seo-authority-copy"><p>Mi experiencia está especialmente vinculada a la evaluación y seguimiento de problemas de memoria, deterioro cognitivo y demencias, integrando perfil cognitivo, funcionamiento cotidiano y evolución clínica.</p><div className="seo-authority-links"><a href="/sobre-mi/">Conocer mi trayectoria profesional →</a><a href="/neuropsicologia/">Ver Neuropsicología →</a></div></div></div></section>
