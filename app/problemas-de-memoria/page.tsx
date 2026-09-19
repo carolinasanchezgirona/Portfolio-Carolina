@@ -109,6 +109,16 @@ export default function MemoryProblemsPage() {
           </section>
 
           <section>
+            <h2>Qué cambios pueden formar parte del envejecimiento normal</h2>
+            <p>
+              Con la edad puede ser normal necesitar algo más de tiempo para recuperar una palabra, aprender información nueva con menor rapidez o notar menos agilidad cuando se realizan varias tareas a la vez. Estos cambios, por sí solos, no indican una enfermedad neurodegenerativa.
+            </p>
+            <p>
+              Conviene prestar más atención cuando los olvidos son repetitivos, existe desorientación, aparecen dificultades nuevas para gestionar medicación, dinero o citas, la familia observa una progresión clara o empieza a reducirse la autonomía. En esos casos, una evaluación puede ayudar a distinguir cambios esperables de un patrón que requiera seguimiento.
+            </p>
+          </section>
+
+          <section>
             <h2>Cómo es la valoración</h2>
             <h3>1. Entrevista clínica</h3>
             <p>
@@ -162,7 +172,6 @@ export default function MemoryProblemsPage() {
               <a href="/problemas-de-atencion-y-concentracion-en-adultos/">Problemas de atención y concentración</a>
               <a href="/epilepsia-y-cambios-cognitivos/">Epilepsia y cambios cognitivos</a>
               <a href="/covid-persistente-y-niebla-mental/">COVID persistente y niebla mental</a>
-              <a href="/envejecimiento-cognitivo-normal-o-deterioro/">Envejecimiento cognitivo normal o deterioro</a>
               <a href="/alzheimer-primeros-sintomas-y-evaluacion/">Alzheimer: primeros síntomas y evaluación</a>
               <a href="/psicologa-arenys-de-mar/">Consulta en Arenys de Mar</a>
             </div>
