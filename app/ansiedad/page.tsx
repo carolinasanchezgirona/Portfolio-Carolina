@@ -93,6 +93,16 @@ export default function AnxietyPage() {
           </section>
 
           <section>
+            <h2>Fobias específicas y evitación</h2>
+            <p>
+              Algunos miedos se concentran en objetos o situaciones concretas, como animales, alturas, volar, conducir, sangre o agujas. El problema aparece cuando el miedo es desproporcionado, genera una evitación persistente o limita actividades importantes.
+            </p>
+            <p>
+              Cuando está indicado, la exposición gradual permite aprender que la ansiedad puede disminuir sin escapar ni depender de conductas de seguridad. El proceso se planifica de forma progresiva y no consiste en forzar a la persona a enfrentarse de golpe a aquello que teme.
+            </p>
+          </section>
+
+          <section>
             <h2>Cómo se trabaja la ansiedad en terapia</h2>
             <p>
               La intervención empieza por identificar el patrón concreto de ansiedad: qué la activa, qué pensamientos o imágenes aparecen, qué sensaciones físicas la acompañan, qué haces para intentar reducirla y qué consecuencias tienen esas estrategias a corto y largo plazo.
@@ -143,15 +153,9 @@ export default function AnxietyPage() {
               <a href="/rumiacion-y-pensamientos-repetitivos/">Rumiación y pensamientos repetitivos</a>
               <a href="/estres-y-sobrecarga/">Estrés y sobrecarga</a>
               <a href="/insomnio-y-dificultades-para-dormir/">Insomnio y dificultades para dormir</a>
-              <a href="/toma-de-decisiones-e-indecision/">Toma de decisiones e indecisión</a>
               <a href="/cambios-vitales-y-adaptacion/">Cambios vitales y adaptación</a>
-              <a href="/miedo-al-rechazo-y-necesidad-de-aprobacion/">Miedo al rechazo y necesidad de aprobación</a>
-              <a href="/procrastinacion-y-bloqueo/">Procrastinación y bloqueo</a>
               <a href="/ansiedad-social-y-miedo-al-ridiculo/">Ansiedad social y miedo al ridículo</a>
-              <a href="/pensamientos-intrusivos-y-miedo-a-perder-el-control/">Pensamientos intrusivos y miedo a perder el control</a>
               <a href="/toc-obsesiones-y-compulsiones/">TOC, obsesiones y compulsiones</a>
-              <a href="/agorafobia-y-miedo-a-salir/">Agorafobia y miedo a salir</a>
-              <a href="/fobias-especificas/">Fobias específicas</a>
               <a href="/trauma-psicologico-y-estres-postraumatico/">Trauma psicológico y estrés postraumático</a>
               <a href="/perfeccionismo-y-autoexigencia/">Perfeccionismo y autoexigencia</a>
               <a href="/depresion/">Depresión y bajo estado de ánimo</a>
