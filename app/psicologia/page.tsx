@@ -166,6 +166,7 @@ export default function PsychologyPage() {
               <a href="/pensamientos-intrusivos-y-miedo-a-perder-el-control/">Pensamientos intrusivos y miedo a perder el control</a>
               <a href="/toc-obsesiones-y-compulsiones/">TOC, obsesiones y compulsiones</a>
               <a href="/agorafobia-y-miedo-a-salir/">Agorafobia y miedo a salir</a>
+              <a href="/fobias-especificas/">Fobias específicas</a>
               <a href="/psicologa-arenys-de-mar/">Consulta en Arenys de Mar</a>
               <a href="/neuropsicologia/">Neuropsicología</a>
             </div>
