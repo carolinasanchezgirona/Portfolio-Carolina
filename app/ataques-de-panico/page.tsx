@@ -40,10 +40,6 @@ export default function PanicPage() {
         <nav className="nav" aria-label="Navegación principal">
           <a href="/psicologia/">Psicología</a>
           <a href="/ansiedad/">Ansiedad</a>
-              <a href="/ansiedad-por-la-salud-e-hipocondria/">Ansiedad por la salud</a>
-              <a href="/pensamientos-intrusivos-y-miedo-a-perder-el-control/">Pensamientos intrusivos</a>
-              <a href="/agorafobia-y-miedo-a-salir/">Agorafobia y miedo a salir</a>
-              <a href="/fobias-especificas/">Fobias específicas</a>
           <a className="nav-cta" href="/cita/">Pedir cita</a>
         </nav>
       </header>
@@ -129,6 +125,16 @@ export default function PanicPage() {
             </p>
             <p>
               Si la preocupación es más generalizada, persistente y no se centra principalmente en crisis de pánico, puede ser útil consultar también la información sobre <a href="/ansiedad/">ansiedad</a>.
+            </p>
+          </section>
+
+          <section>
+            <h2>Agorafobia y miedo a alejarse de lugares seguros</h2>
+            <p>
+              En algunas personas el miedo se extiende a situaciones en las que escapar parece difícil o donde temen no recibir ayuda si aparece una crisis: transporte público, espacios abiertos o concurridos, conducir, hacer colas o alejarse de casa. La evitación puede ir reduciendo progresivamente la autonomía.
+            </p>
+            <p>
+              El tratamiento suele trabajar de forma gradual la exposición a esas situaciones y la reducción de conductas de seguridad, ajustando el ritmo al caso concreto. La presencia de agorafobia no implica necesariamente haber tenido ataques de pánico, aunque ambos problemas pueden aparecer juntos.
             </p>
           </section>
 
