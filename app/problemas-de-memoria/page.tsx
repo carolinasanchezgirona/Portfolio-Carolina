@@ -157,8 +157,7 @@ export default function MemoryProblemsPage() {
               <a href="/neuropsicologia/">Neuropsicología</a>
               <a href="/evaluacion-neuropsicologica/">Evaluación neuropsicológica</a>
               <a href="/deterioro-cognitivo/">Deterioro cognitivo</a>
-              <a href="/deterioro-cognitivo-leve/">Deterioro cognitivo leve</a>
-              <a href="/demencias/">Demencias y Alzheimer</a>
+                            <a href="/demencias/">Demencias y Alzheimer</a>
               <a href="/familiares-y-cuidadores-de-personas-con-demencia/">Familiares y cuidadores</a>
               <a href="/problemas-de-atencion-y-concentracion-en-adultos/">Problemas de atención y concentración</a>
               <a href="/epilepsia-y-cambios-cognitivos/">Epilepsia y cambios cognitivos</a>
