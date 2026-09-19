@@ -27,7 +27,8 @@ export default function AphasiaLanguagePage() {
     <main className="editorial-site">
       <header className="site-header">
         <a className="brand" href="/" aria-label="Carolina Sánchez, inicio"><span className="brand-name">Carolina Sánchez</span><span className="brand-sub">Psicóloga · Neuropsicóloga</span></a>
-        <nav className="nav" aria-label="Navegación principal"><a href="/neuropsicologia/">Neuropsicología</a><a href="/ictus-y-dano-cerebral-adquirido/">Ictus y daño cerebral</a><a className="nav-cta" href="/cita/">Pedir cita</a></nav>
+        <nav className="nav" aria-label="Navegación principal"><a href="/neuropsicologia/">Neuropsicología</a>
+              <a href="/demencia-frontotemporal/">Demencia frontotemporal</a><a href="/ictus-y-dano-cerebral-adquirido/">Ictus y daño cerebral</a><a className="nav-cta" href="/cita/">Pedir cita</a></nav>
       </header>
       <section className="seo-hero"><div className="editorial-wrap seo-hero-inner">
         <p className="seo-breadcrumbs"><a href="/">Inicio</a><span>·</span><a href="/neuropsicologia/">Neuropsicología</a><span>·</span><span>Afasia y lenguaje</span></p>
