@@ -40,6 +40,7 @@ export default function PanicPage() {
         <nav className="nav" aria-label="Navegación principal">
           <a href="/psicologia/">Psicología</a>
           <a href="/ansiedad/">Ansiedad</a>
+              <a href="/ansiedad-por-la-salud-e-hipocondria/">Ansiedad por la salud</a>
           <a className="nav-cta" href="/cita/">Pedir cita</a>
         </nav>
       </header>
