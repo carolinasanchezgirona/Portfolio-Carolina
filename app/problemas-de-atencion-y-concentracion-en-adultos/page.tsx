@@ -31,7 +31,8 @@ export default function AttentionAdultsPage() {
               <a href="/funciones-ejecutivas-y-planificacion-en-adultos/">Funciones ejecutivas y planificación</a>
               <a href="/conmocion-cerebral-y-tce-leve/">Conmoción cerebral y TCE leve</a>
               <a href="/esclerosis-multiple-y-cambios-cognitivos/">Esclerosis múltiple y cambios cognitivos</a>
-              <a href="/epilepsia-y-cambios-cognitivos/">Epilepsia y cambios cognitivos</a><a href="/evaluacion-neuropsicologica/">Evaluación</a><a className="nav-cta" href="/cita/">Pedir cita</a></nav>
+              <a href="/epilepsia-y-cambios-cognitivos/">Epilepsia y cambios cognitivos</a>
+              <a href="/covid-persistente-y-niebla-mental/">COVID persistente y niebla mental</a><a href="/evaluacion-neuropsicologica/">Evaluación</a><a className="nav-cta" href="/cita/">Pedir cita</a></nav>
       </header>
       <section className="seo-hero"><div className="editorial-wrap seo-hero-inner">
         <p className="seo-breadcrumbs"><a href="/">Inicio</a><span>·</span><a href="/neuropsicologia/">Neuropsicología</a><span>·</span><span>Atención y concentración</span></p>

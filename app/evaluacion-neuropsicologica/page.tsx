@@ -146,6 +146,7 @@ export default function NeuropsychAssessmentPage() {
               <a href="/parkinson-y-cambios-cognitivos/">Parkinson y cambios cognitivos</a>
               <a href="/esclerosis-multiple-y-cambios-cognitivos/">Esclerosis múltiple y cambios cognitivos</a>
               <a href="/epilepsia-y-cambios-cognitivos/">Epilepsia y cambios cognitivos</a>
+              <a href="/covid-persistente-y-niebla-mental/">COVID persistente y niebla mental</a>
               <a href="/psicologa-arenys-de-mar/">Consulta en Arenys de Mar</a>
             </div>
           </div>
