@@ -40,6 +40,7 @@ export default function DementiaPage() {
         <nav className="nav" aria-label="Navegación principal">
           <a href="/neuropsicologia/">Neuropsicología</a>
           <a href="/deterioro-cognitivo/">Deterioro cognitivo</a>
+              <a href="/cambios-de-conducta-y-personalidad-en-demencia/">Cambios de conducta y personalidad</a>
               <a href="/deterioro-cognitivo-leve/">Deterioro cognitivo leve</a>
               <a href="/envejecimiento-cognitivo-normal-o-deterioro/">Envejecimiento cognitivo normal o deterioro</a>
               <a href="/alzheimer-primeros-sintomas-y-evaluacion/">Alzheimer: primeros síntomas y evaluación</a>
