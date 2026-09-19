@@ -130,6 +130,7 @@ export default function AnxietyPage() {
               <a href="/estres-y-sobrecarga/">Estrés y sobrecarga</a>
               <a href="/insomnio-y-dificultades-para-dormir/">Insomnio y dificultades para dormir</a>
               <a href="/toma-de-decisiones-e-indecision/">Toma de decisiones e indecisión</a>
+              <a href="/cambios-vitales-y-adaptacion/">Cambios vitales y adaptación</a>
               <a href="/perfeccionismo-y-autoexigencia/">Perfeccionismo y autoexigencia</a>
               <a href="/depresion/">Depresión y bajo estado de ánimo</a>
               <a href="/duelo/">Duelo y pérdidas</a>

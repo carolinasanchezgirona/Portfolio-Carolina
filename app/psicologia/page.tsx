@@ -154,6 +154,7 @@ export default function PsychologyPage() {
               <a href="/estres-y-sobrecarga/">Estrés y sobrecarga</a>
               <a href="/insomnio-y-dificultades-para-dormir/">Insomnio y dificultades para dormir</a>
               <a href="/toma-de-decisiones-e-indecision/">Toma de decisiones e indecisión</a>
+              <a href="/cambios-vitales-y-adaptacion/">Cambios vitales y adaptación</a>
               <a href="/psicologa-arenys-de-mar/">Consulta en Arenys de Mar</a>
               <a href="/neuropsicologia/">Neuropsicología</a>
             </div>
