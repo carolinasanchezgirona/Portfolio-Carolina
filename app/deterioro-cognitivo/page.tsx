@@ -150,8 +150,7 @@ export default function CognitiveDeclinePage() {
               <a href="/demencias/">Demencias y Alzheimer</a>
               <a href="/estimulacion-cognitiva/">Estimulación cognitiva</a>
               <a href="/familiares-y-cuidadores-de-personas-con-demencia/">Familiares y cuidadores</a>
-              <a href="/envejecimiento-cognitivo-normal-o-deterioro/">Envejecimiento cognitivo normal o deterioro</a>
-              <a href="/demencia-vascular-y-cambios-cognitivos/">Demencia vascular y cambios cognitivos</a>
+                            <a href="/demencia-vascular-y-cambios-cognitivos/">Demencia vascular y cambios cognitivos</a>
               <a href="/psicologa-arenys-de-mar/">Consulta en Arenys de Mar</a>
             </div>
           </div>
