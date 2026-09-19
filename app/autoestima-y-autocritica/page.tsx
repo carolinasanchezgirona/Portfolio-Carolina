@@ -54,7 +54,8 @@ export default function SelfEsteemPage() {
           </section>
 
           <section><h2>Cómo se trabaja en terapia</h2><p>La intervención puede incluir revisión de creencias centrales, identificación de estándares poco realistas, reducción de conductas de comparación, trabajo sobre autocrítica y entrenamiento en decisiones más alineadas con necesidades y valores propios.</p><p>También puede ser necesario trabajar exposición a situaciones evitadas, límites, habilidades sociales o patrones relacionales cuando la inseguridad se mantiene a través de la búsqueda constante de aprobación.</p></section>
-          <section><h2>Autoestima, relaciones y dependencia emocional</h2><p>La baja autoestima puede aparecer junto a <a href="/dependencia-emocional/">dependencia emocional</a> o dificultad para poner <a href="/limites-y-relaciones-dificiles/">límites</a>, pero no son exactamente lo mismo. La formulación clínica permite identificar qué procesos son relevantes en cada caso.</p></section>
+          <section><h2>Autoestima, relaciones y dependencia emocional</h2><p>La baja autoestima puede aparecer junto a
+ o dificultad para poner <a href="/limites-y-relaciones-dificiles/">límites</a>, pero no son exactamente lo mismo. La formulación clínica permite identificar qué procesos son relevantes en cada caso.</p></section>
           <section><h2>El objetivo no es construir una imagen perfecta</h2><p>Trabajar la autoestima no consiste en convencerte de que todo en ti es positivo. El objetivo es desarrollar una valoración más amplia, realista y estable que no dependa de cada resultado o reacción externa.</p><div className="seo-callout"><strong>La seguridad no exige ausencia de dudas.</strong><span>Puede construirse aprendiendo a actuar incluso cuando la autocrítica todavía aparece.</span></div></section>
         </article>
 
@@ -64,7 +65,8 @@ export default function SelfEsteemPage() {
               <a href="/toma-de-decisiones-e-indecision/">Toma de decisiones e indecisión</a>
               <a href="/procrastinacion-y-bloqueo/">Procrastinación y bloqueo</a>
               <a href="/ansiedad-social-y-miedo-al-ridiculo/">Ansiedad social</a>
-              <a href="/limites-y-relaciones-dificiles/">Límites y relaciones difíciles</a><a href="/dependencia-emocional/">Dependencia emocional</a><a href="/ansiedad/">Ansiedad</a><a href="/depresion/">Depresión y bajo estado de ánimo</a></div></div>
+              <a href="/limites-y-relaciones-dificiles/">Límites y relaciones difíciles</a>
+<a href="/ansiedad/">Ansiedad</a><a href="/depresion/">Depresión y bajo estado de ánimo</a></div></div>
         </aside>
       </div>
 
