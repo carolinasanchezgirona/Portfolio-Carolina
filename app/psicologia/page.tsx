@@ -153,11 +153,7 @@ export default function PsychologyPage() {
               <a href="/rumiacion-y-pensamientos-repetitivos/">Rumiación y pensamientos repetitivos</a>
               <a href="/estres-y-sobrecarga/">Estrés y sobrecarga</a>
               <a href="/insomnio-y-dificultades-para-dormir/">Insomnio y dificultades para dormir</a>
-              <a href="/toma-de-decisiones-e-indecision/">Toma de decisiones e indecisión</a>
               <a href="/cambios-vitales-y-adaptacion/">Cambios vitales y adaptación</a>
-              <a href="/culpa-y-dificultad-para-perdonarse/">Culpa y dificultad para perdonarse</a>
-              <a href="/miedo-al-rechazo-y-necesidad-de-aprobacion/">Miedo al rechazo y necesidad de aprobación</a>
-              <a href="/procrastinacion-y-bloqueo/">Procrastinación y bloqueo</a>
               <a href="/ansiedad-social-y-miedo-al-ridiculo/">Ansiedad social y miedo al ridículo</a>
               <a href="/pensamientos-intrusivos-y-miedo-a-perder-el-control/">Pensamientos intrusivos y miedo a perder el control</a>
               <a href="/toc-obsesiones-y-compulsiones/">TOC, obsesiones y compulsiones</a>
