@@ -54,6 +54,7 @@ export default function SelfEsteemPage() {
               <a href="/toma-de-decisiones-e-indecision/">Toma de decisiones e indecisión</a>
               <a href="/culpa-y-dificultad-para-perdonarse/">Culpa y dificultad para perdonarse</a>
               <a href="/miedo-al-rechazo-y-necesidad-de-aprobacion/">Miedo al rechazo y necesidad de aprobación</a>
+              <a href="/procrastinacion-y-bloqueo/">Procrastinación y bloqueo</a>
               <a href="/limites-y-relaciones-dificiles/">Límites y relaciones difíciles</a><a href="/dependencia-emocional/">Dependencia emocional</a><a href="/ansiedad/">Ansiedad</a><a href="/depresion/">Depresión y bajo estado de ánimo</a></div></div>
         </aside>
       </div>
