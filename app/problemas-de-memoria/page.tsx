@@ -163,6 +163,7 @@ export default function MemoryProblemsPage() {
               <a href="/problemas-de-atencion-y-concentracion-en-adultos/">Problemas de atención y concentración</a>
               <a href="/epilepsia-y-cambios-cognitivos/">Epilepsia y cambios cognitivos</a>
               <a href="/covid-persistente-y-niebla-mental/">COVID persistente y niebla mental</a>
+              <a href="/envejecimiento-cognitivo-normal-o-deterioro/">Envejecimiento cognitivo normal o deterioro</a>
               <a href="/psicologa-arenys-de-mar/">Consulta en Arenys de Mar</a>
             </div>
           </div>
