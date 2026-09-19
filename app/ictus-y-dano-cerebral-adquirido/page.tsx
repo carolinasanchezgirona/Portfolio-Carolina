@@ -28,10 +28,8 @@ export default function StrokeBrainInjuryPage() {
       <header className="site-header">
         <a className="brand" href="/" aria-label="Carolina Sánchez, inicio"><span className="brand-name">Carolina Sánchez</span><span className="brand-sub">Psicóloga · Neuropsicóloga</span></a>
         <nav className="nav" aria-label="Navegación principal"><a href="/neuropsicologia/">Neuropsicología</a>
-              <a href="/afasia-y-problemas-de-lenguaje/">Afasia y problemas de lenguaje</a>
               <a href="/problemas-de-atencion-y-concentracion-en-adultos/">Problemas de atención y concentración</a>
               <a href="/funciones-ejecutivas-y-planificacion-en-adultos/">Funciones ejecutivas y planificación</a>
-              <a href="/conmocion-cerebral-y-tce-leve/">Conmoción cerebral y TCE leve</a>
               <a href="/rehabilitacion-neuropsicologica/">Rehabilitación neuropsicológica</a>
 <a href="/evaluacion-neuropsicologica/">Evaluación</a><a className="nav-cta" href="/cita/">Pedir cita</a></nav>
       </header>
@@ -46,6 +44,18 @@ export default function StrokeBrainInjuryPage() {
         <article className="seo-copy">
           <section><h2>El impacto cognitivo puede ser muy diferente entre personas</h2><p>No todos los ictus ni todas las lesiones cerebrales producen el mismo perfil. La localización y extensión de la lesión, el tiempo transcurrido, la edad, el estado previo y otros factores médicos influyen en la forma en que se expresa el daño.</p><p>Por eso no basta con saber que ha habido un ictus: es necesario comprender qué capacidades concretas han cambiado y cómo afectan a la autonomía.</p></section>
           <section id="que-valorar"><h2>Qué se puede valorar</h2><ul><li>Atención sostenida, selectiva y dividida.</li><li>Memoria verbal y visual.</li><li>Lenguaje y acceso a palabras.</li><li>Funciones ejecutivas, planificación y flexibilidad mental.</li><li>Velocidad de procesamiento.</li><li>Percepción y habilidades visuoespaciales.</li><li>Cambios emocionales o conductuales que interfieren en la adaptación.</li><li>Impacto funcional en tareas cotidianas.</li></ul></section>
+          <section>
+            <h2>Conmoción cerebral y TCE leve</h2>
+            <p>Tras una conmoción cerebral o un traumatismo craneoencefálico leve pueden aparecer fatiga mental, lentitud, dificultades de atención, memoria o tolerancia al esfuerzo cognitivo. En muchas personas estos síntomas mejoran con el tiempo, pero cuando persisten o interfieren en trabajo, estudios o autonomía puede ser útil objetivar el perfil cognitivo.</p>
+            <p>La interpretación debe considerar también sueño, dolor, estado emocional y fatiga. Los síntomas persistentes no implican por sí solos daño cognitivo permanente, y si aparecen signos neurológicos nuevos o un empeoramiento claro corresponde valoración médica.</p>
+          </section>
+
+          <section>
+            <h2>Afasia y problemas de lenguaje tras daño cerebral</h2>
+            <p>Después de un ictus u otra lesión cerebral pueden aparecer dificultades para comprender, encontrar palabras, construir frases, leer o escribir. La afasia no es lo mismo que la disartria y tampoco todas las dificultades comunicativas tienen un origen lingüístico primario.</p>
+            <p>La evaluación ayuda a describir comprensión, expresión, denominación, repetición, lectura, escritura y comunicación funcional. Cuando se necesita tratamiento específico del lenguaje, la coordinación con logopedia puede ser importante.</p>
+          </section>
+
           <section><h2>Cuándo puede ser útil una evaluación neuropsicológica</h2><p>Puede ser especialmente útil cuando existen dudas sobre el grado de recuperación, cuando la persona refiere dificultades persistentes, cuando la familia observa cambios que no siempre son evidentes en consulta médica o cuando se necesita orientar una intervención o un seguimiento.</p><p>También puede ayudar a objetivar la evolución mediante comparaciones posteriores cuando existe una evaluación previa.</p></section>
           <section><h2>Evaluación no significa únicamente pasar pruebas</h2><p>La <a href="/evaluacion-neuropsicologica/">evaluación neuropsicológica</a> integra entrevista clínica, pruebas estandarizadas, observación, antecedentes médicos y funcionamiento cotidiano.</p><p>El objetivo es construir un perfil útil para la vida real: qué tareas puede realizar la persona de forma autónoma, cuáles requieren apoyo y qué estrategias pueden compensar las dificultades.</p></section>
           <section><h2>Intervención y estrategias compensatorias</h2><p>Según el perfil, el trabajo puede incluir entrenamiento de funciones cognitivas, uso de ayudas externas, planificación de rutinas, adaptación de tareas y estrategias para reducir errores o sobrecarga.</p><p>La <a href="/estimulacion-cognitiva/">estimulación cognitiva</a> tiene más sentido cuando responde a objetivos funcionales concretos y se integra con el resto del tratamiento médico y rehabilitador.</p></section>
