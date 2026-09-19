@@ -148,6 +148,7 @@ export default function NeuropsychAssessmentPage() {
               <a href="/epilepsia-y-cambios-cognitivos/">Epilepsia y cambios cognitivos</a>
               <a href="/covid-persistente-y-niebla-mental/">COVID persistente y niebla mental</a>
               <a href="/rehabilitacion-neuropsicologica/">Rehabilitación neuropsicológica</a>
+              <a href="/cuando-acudir-a-un-neuropsicologo/">Cuándo acudir a un neuropsicólogo</a>
               <a href="/psicologa-arenys-de-mar/">Consulta en Arenys de Mar</a>
             </div>
           </div>
