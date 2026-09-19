@@ -162,6 +162,7 @@ export default function PsychologyPage() {
               <a href="/burnout-y-agotamiento-laboral/">Burnout y agotamiento laboral</a>
               <a href="/ansiedad-social-y-miedo-al-ridiculo/">Ansiedad social y miedo al ridículo</a>
               <a href="/ansiedad-anticipatoria-y-preocupacion-excesiva/">Ansiedad anticipatoria y preocupación excesiva</a>
+              <a href="/ansiedad-por-la-salud-e-hipocondria/">Ansiedad por la salud e hipocondría</a>
               <a href="/psicologa-arenys-de-mar/">Consulta en Arenys de Mar</a>
               <a href="/neuropsicologia/">Neuropsicología</a>
             </div>
