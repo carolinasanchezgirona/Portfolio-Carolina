@@ -158,6 +158,7 @@ export default function CognitiveStimulationPage() {
               <a href="/evaluacion-neuropsicologica/">Evaluación neuropsicológica</a>
               <a href="/deterioro-cognitivo/">Deterioro cognitivo</a>
               <a href="/demencias/">Demencias y Alzheimer</a>
+              <a href="/familiares-y-cuidadores-de-personas-con-demencia/">Familiares y cuidadores</a>
             </div>
           </div>
         </aside>
