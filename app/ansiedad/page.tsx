@@ -126,6 +126,7 @@ export default function AnxietyPage() {
             <div className="seo-related">
               <a href="/psicologia/">Psicología General Sanitaria</a>
               <a href="/ataques-de-panico/">Ataques de pánico</a>
+              <a href="/perfeccionismo-y-autoexigencia/">Perfeccionismo y autoexigencia</a>
               <a href="/depresion/">Depresión y bajo estado de ánimo</a>
               <a href="/duelo/">Duelo y pérdidas</a>
               <a href="/psicologa-arenys-de-mar/">Consulta en Arenys de Mar</a>
