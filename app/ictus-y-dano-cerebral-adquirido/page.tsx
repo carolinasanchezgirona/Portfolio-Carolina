@@ -30,7 +30,8 @@ export default function StrokeBrainInjuryPage() {
         <nav className="nav" aria-label="Navegación principal"><a href="/neuropsicologia/">Neuropsicología</a>
               <a href="/afasia-y-problemas-de-lenguaje/">Afasia y problemas de lenguaje</a>
               <a href="/problemas-de-atencion-y-concentracion-en-adultos/">Problemas de atención y concentración</a>
-              <a href="/funciones-ejecutivas-y-planificacion-en-adultos/">Funciones ejecutivas y planificación</a><a href="/evaluacion-neuropsicologica/">Evaluación</a><a className="nav-cta" href="/cita/">Pedir cita</a></nav>
+              <a href="/funciones-ejecutivas-y-planificacion-en-adultos/">Funciones ejecutivas y planificación</a>
+              <a href="/conmocion-cerebral-y-tce-leve/">Conmoción cerebral y TCE leve</a><a href="/evaluacion-neuropsicologica/">Evaluación</a><a className="nav-cta" href="/cita/">Pedir cita</a></nav>
       </header>
       <section className="seo-hero"><div className="editorial-wrap seo-hero-inner">
         <p className="seo-breadcrumbs"><a href="/">Inicio</a><span>·</span><a href="/neuropsicologia/">Neuropsicología</a><span>·</span><span>Ictus y daño cerebral adquirido</span></p>
