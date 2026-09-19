@@ -48,7 +48,8 @@ export default function AnticipatoryAnxietyPage() {
         <aside className="seo-sidebar" aria-label="Información práctica">
           <div className="seo-card"><h2>Sesión de psicología</h2><ul className="seo-facts"><li><span>Duración</span><strong>60 minutos</strong></li><li><span>Tarifa</span><strong>60 €</strong></li><li><span>Modalidad</span><strong>Presencial y online</strong></li><li><span>Pacientes</span><strong>Adultos</strong></li></ul><a className="editorial-btn editorial-btn-primary" href="/cita/">Consultar disponibilidad</a></div>
           <div className="seo-card"><h3>Áreas relacionadas</h3><div className="seo-related"><a href="/ansiedad/">Ansiedad</a><a href="/rumiacion-y-pensamientos-repetitivos/">Rumiación</a><a href="/toma-de-decisiones-e-indecision/">Toma de decisiones</a><a href="/ansiedad-social-y-miedo-al-ridiculo/">Ansiedad social</a>
-              <a href="/ansiedad-por-la-salud-e-hipocondria/">Ansiedad por la salud</a></div></div>
+              <a href="/ansiedad-por-la-salud-e-hipocondria/">Ansiedad por la salud</a>
+              <a href="/agorafobia-y-miedo-a-salir/">Agorafobia y miedo a salir</a></div></div>
         </aside>
       </div>
       <section className="editorial-section seo-authority"><div className="editorial-wrap seo-authority-grid"><div><p className="editorial-section-eyebrow">Profesional responsable</p><h2>Carolina Sánchez Girona</h2><p className="editorial-role">Psicóloga General Sanitaria · Neuropsicóloga</p></div><div className="seo-authority-copy"><p>Trabajo con adultos en ansiedad, preocupación excesiva, rumiación e indecisión desde una formulación clínica individualizada.</p><div className="seo-authority-links"><a href="/sobre-mi/">Conocer mi trayectoria profesional →</a><a href="/psicologia/">Ver Psicología General Sanitaria →</a></div></div></div></section>
