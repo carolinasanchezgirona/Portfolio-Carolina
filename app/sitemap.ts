@@ -43,7 +43,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${base}/evaluacion-neuropsicologica/`, lastModified: staticLastModified, changeFrequency: "monthly", priority: 0.85 },
     { url: `${base}/problemas-de-memoria/`, lastModified: staticLastModified, changeFrequency: "monthly", priority: 0.86 },
     { url: `${base}/deterioro-cognitivo/`, lastModified: staticLastModified, changeFrequency: "monthly", priority: 0.85 },
-    { url: `${base}/deterioro-cognitivo-leve/`, lastModified: staticLastModified, changeFrequency: "monthly", priority: 0.86 },
     { url: `${base}/ictus-y-dano-cerebral-adquirido/`, lastModified: staticLastModified, changeFrequency: "monthly", priority: 0.84 },
     { url: `${base}/afasia-y-problemas-de-lenguaje/`, lastModified: staticLastModified, changeFrequency: "monthly", priority: 0.82 },
     { url: `${base}/problemas-de-atencion-y-concentracion-en-adultos/`, lastModified: staticLastModified, changeFrequency: "monthly", priority: 0.82 },
