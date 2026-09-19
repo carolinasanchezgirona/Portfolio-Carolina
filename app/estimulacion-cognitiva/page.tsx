@@ -162,6 +162,7 @@ export default function CognitiveStimulationPage() {
               <a href="/ictus-y-dano-cerebral-adquirido/">Ictus y daño cerebral adquirido</a>
               <a href="/parkinson-y-cambios-cognitivos/">Parkinson y cambios cognitivos</a>
               <a href="/esclerosis-multiple-y-cambios-cognitivos/">Esclerosis múltiple y cambios cognitivos</a>
+              <a href="/rehabilitacion-neuropsicologica/">Rehabilitación neuropsicológica</a>
             </div>
           </div>
         </aside>
