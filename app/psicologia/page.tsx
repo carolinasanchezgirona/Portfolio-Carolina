@@ -159,6 +159,7 @@ export default function PsychologyPage() {
               <a href="/miedo-al-rechazo-y-necesidad-de-aprobacion/">Miedo al rechazo y necesidad de aprobación</a>
               <a href="/procrastinacion-y-bloqueo/">Procrastinación y bloqueo</a>
               <a href="/dificultad-para-desconectar-del-trabajo/">Dificultad para desconectar del trabajo</a>
+              <a href="/burnout-y-agotamiento-laboral/">Burnout y agotamiento laboral</a>
               <a href="/psicologa-arenys-de-mar/">Consulta en Arenys de Mar</a>
               <a href="/neuropsicologia/">Neuropsicología</a>
             </div>
