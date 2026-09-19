@@ -107,6 +107,16 @@ export default function NeuropsychologyPage() {
           </section>
 
           <section>
+            <h2>Cambios cognitivos en enfermedades neurológicas</h2>
+            <p>
+              La neuropsicología también puede ser útil cuando aparecen cambios cognitivos asociados a enfermedades neurológicas o médicas, por ejemplo en esclerosis múltiple, epilepsia o COVID persistente. En estos casos pueden verse afectadas la atención, la velocidad de procesamiento, la memoria, las funciones ejecutivas o la tolerancia a la fatiga.
+            </p>
+            <p>
+              La interpretación debe considerar siempre el contexto clínico completo: evolución, medicación, sueño, dolor, fatiga y estado emocional pueden influir de forma importante en el rendimiento. La evaluación neuropsicológica complementa el seguimiento médico y ayuda a objetivar qué dificultades están presentes y cómo repercuten en la vida diaria.
+            </p>
+          </section>
+
+          <section>
             <h2>Deterioro cognitivo y demencias</h2>
             <p>
               En personas mayores, la valoración neuropsicológica puede ayudar a distinguir entre cambios esperables asociados a la edad, dificultades relacionadas con factores emocionales o médicos y patrones que requieren una exploración más profunda.
@@ -151,9 +161,6 @@ export default function NeuropsychologyPage() {
               <a href="/problemas-de-atencion-y-concentracion-en-adultos/">Problemas de atención y concentración</a>
               <a href="/funciones-ejecutivas-y-planificacion-en-adultos/">Funciones ejecutivas y planificación</a>
               <a href="/parkinson-y-cambios-cognitivos/">Parkinson y cambios cognitivos</a>
-              <a href="/esclerosis-multiple-y-cambios-cognitivos/">Esclerosis múltiple y cambios cognitivos</a>
-              <a href="/epilepsia-y-cambios-cognitivos/">Epilepsia y cambios cognitivos</a>
-              <a href="/covid-persistente-y-niebla-mental/">COVID persistente y niebla mental</a>
               <a href="/rehabilitacion-neuropsicologica/">Rehabilitación neuropsicológica</a>
                             <a href="/alzheimer-primeros-sintomas-y-evaluacion/">Alzheimer: primeros síntomas y evaluación</a>
               <a href="/psicologa-arenys-de-mar/">Consulta en Arenys de Mar</a>
