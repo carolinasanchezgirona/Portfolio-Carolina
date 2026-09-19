@@ -28,8 +28,6 @@ export default function StrokeBrainInjuryPage() {
       <header className="site-header">
         <a className="brand" href="/" aria-label="Carolina Sánchez, inicio"><span className="brand-name">Carolina Sánchez</span><span className="brand-sub">Psicóloga · Neuropsicóloga</span></a>
         <nav className="nav" aria-label="Navegación principal"><a href="/neuropsicologia/">Neuropsicología</a>
-              <a href="/problemas-de-atencion-y-concentracion-en-adultos/">Problemas de atención y concentración</a>
-              <a href="/funciones-ejecutivas-y-planificacion-en-adultos/">Funciones ejecutivas y planificación</a>
               <a href="/rehabilitacion-neuropsicologica/">Rehabilitación neuropsicológica</a>
 <a href="/evaluacion-neuropsicologica/">Evaluación</a><a className="nav-cta" href="/cita/">Pedir cita</a></nav>
       </header>
