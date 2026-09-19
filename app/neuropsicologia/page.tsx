@@ -154,6 +154,7 @@ export default function NeuropsychologyPage() {
               <a href="/funciones-ejecutivas-y-planificacion-en-adultos/">Funciones ejecutivas y planificación</a>
               <a href="/conmocion-cerebral-y-tce-leve/">Conmoción cerebral y TCE leve</a>
               <a href="/parkinson-y-cambios-cognitivos/">Parkinson y cambios cognitivos</a>
+              <a href="/esclerosis-multiple-y-cambios-cognitivos/">Esclerosis múltiple y cambios cognitivos</a>
               <a href="/psicologa-arenys-de-mar/">Consulta en Arenys de Mar</a>
               <a href="/psicologia/">Psicología General Sanitaria</a>
             </div>
