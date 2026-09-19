@@ -127,6 +127,7 @@ export default function GriefPage() {
               <a href="/ansiedad/">Ansiedad</a>
               <a href="/depresion/">Depresión y bajo estado de ánimo</a>
               <a href="/cambios-vitales-y-adaptacion/">Cambios vitales y adaptación</a>
+              <a href="/culpa-y-dificultad-para-perdonarse/">Culpa y dificultad para perdonarse</a>
               <a href="/rupturas-de-pareja/">Rupturas de pareja</a>
               <a href="/psicologa-arenys-de-mar/">Consulta en Arenys de Mar</a>
             </div>
