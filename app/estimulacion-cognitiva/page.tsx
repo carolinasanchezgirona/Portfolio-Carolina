@@ -159,6 +159,7 @@ export default function CognitiveStimulationPage() {
               <a href="/deterioro-cognitivo/">Deterioro cognitivo</a>
               <a href="/demencias/">Demencias y Alzheimer</a>
               <a href="/familiares-y-cuidadores-de-personas-con-demencia/">Familiares y cuidadores</a>
+              <a href="/ictus-y-dano-cerebral-adquirido/">Ictus y daño cerebral adquirido</a>
             </div>
           </div>
         </aside>
