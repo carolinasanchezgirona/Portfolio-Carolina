@@ -161,8 +161,6 @@ export default function PsychologyPage() {
               <a href="/dificultad-para-desconectar-del-trabajo/">Dificultad para desconectar del trabajo</a>
               <a href="/burnout-y-agotamiento-laboral/">Burnout y agotamiento laboral</a>
               <a href="/ansiedad-social-y-miedo-al-ridiculo/">Ansiedad social y miedo al ridículo</a>
-              <a href="/ansiedad-anticipatoria-y-preocupacion-excesiva/">Ansiedad anticipatoria y preocupación excesiva</a>
-              <a href="/ansiedad-por-la-salud-e-hipocondria/">Ansiedad por la salud e hipocondría</a>
               <a href="/pensamientos-intrusivos-y-miedo-a-perder-el-control/">Pensamientos intrusivos y miedo a perder el control</a>
               <a href="/toc-obsesiones-y-compulsiones/">TOC, obsesiones y compulsiones</a>
               <a href="/agorafobia-y-miedo-a-salir/">Agorafobia y miedo a salir</a>
