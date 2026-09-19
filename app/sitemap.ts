@@ -58,6 +58,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${base}/alzheimer-primeros-sintomas-y-evaluacion/`, lastModified: staticLastModified, changeFrequency: "monthly", priority: 0.86 },
     { url: `${base}/demencia-vascular-y-cambios-cognitivos/`, lastModified: staticLastModified, changeFrequency: "monthly", priority: 0.84 },
     { url: `${base}/demencia-con-cuerpos-de-lewy/`, lastModified: staticLastModified, changeFrequency: "monthly", priority: 0.84 },
+    { url: `${base}/demencia-frontotemporal/`, lastModified: staticLastModified, changeFrequency: "monthly", priority: 0.84 },
     { url: `${base}/demencias/`, lastModified: staticLastModified, changeFrequency: "monthly", priority: 0.86 },
     { url: `${base}/estimulacion-cognitiva/`, lastModified: staticLastModified, changeFrequency: "monthly", priority: 0.84 },
     { url: `${base}/familiares-y-cuidadores-de-personas-con-demencia/`, lastModified: staticLastModified, changeFrequency: "monthly", priority: 0.84 },
