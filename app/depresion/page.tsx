@@ -40,6 +40,7 @@ export default function DepressionPage() {
         <nav className="nav" aria-label="Navegación principal">
           <a href="/psicologia/">Psicología</a>
           <a href="/ansiedad/">Ansiedad</a>
+              <a href="/rumiacion-y-pensamientos-repetitivos/">Rumiación y pensamientos repetitivos</a>
               <a href="/ataques-de-panico/">Ataques de pánico</a>
           <a className="nav-cta" href="/cita/">Pedir cita</a>
         </nav>
