@@ -163,6 +163,7 @@ export default function NeuropsychologyPage() {
               <a href="/demencia-vascular-y-cambios-cognitivos/">Demencia vascular y cambios cognitivos</a>
               <a href="/demencia-con-cuerpos-de-lewy/">Demencia con cuerpos de Lewy</a>
               <a href="/demencia-frontotemporal/">Demencia frontotemporal</a>
+              <a href="/cambios-de-conducta-y-personalidad-en-demencia/">Cambios de conducta y personalidad en demencia</a>
               <a href="/psicologa-arenys-de-mar/">Consulta en Arenys de Mar</a>
               <a href="/psicologia/">Psicología General Sanitaria</a>
             </div>
