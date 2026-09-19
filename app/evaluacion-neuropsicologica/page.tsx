@@ -78,6 +78,16 @@ export default function NeuropsychAssessmentPage() {
             </ul>
           </section>
 
+          <section>
+            <h2>Atención, concentración y funciones ejecutivas</h2>
+            <p>
+              Las dificultades para concentrarse, organizarse o planificar no identifican por sí solas una causa concreta. La atención incluye procesos como mantener el foco, seleccionar información relevante o alternar entre tareas, mientras que las funciones ejecutivas intervienen en planificación, memoria de trabajo, flexibilidad mental, inhibición y resolución de problemas.
+            </p>
+            <p>
+              El sueño, la ansiedad, la depresión, el estrés, el dolor, la fatiga, la medicación y distintas condiciones neurológicas pueden modificar el rendimiento. Por eso la evaluación debe integrar estas variables y no interpretar un resultado aislado como un diagnóstico, incluido el TDAH.
+            </p>
+          </section>
+
           <section id="proceso">
             <h2>Cómo es el proceso de evaluación</h2>
             <h3>Primera entrevista</h3>
@@ -137,10 +147,7 @@ export default function NeuropsychAssessmentPage() {
             <div className="seo-related">
               <a href="/neuropsicologia/">Neuropsicología</a>
               <a href="/deterioro-cognitivo/">Deterioro cognitivo</a>
-              <a href="/deterioro-cognitivo-leve/">Deterioro cognitivo leve</a>
               <a href="/ictus-y-dano-cerebral-adquirido/">Ictus y daño cerebral adquirido</a>
-              <a href="/problemas-de-atencion-y-concentracion-en-adultos/">Problemas de atención y concentración</a>
-              <a href="/funciones-ejecutivas-y-planificacion-en-adultos/">Funciones ejecutivas y planificación</a>
               <a href="/parkinson-y-cambios-cognitivos/">Parkinson y cambios cognitivos</a>
               <a href="/rehabilitacion-neuropsicologica/">Rehabilitación neuropsicológica</a>
               <a href="/psicologa-arenys-de-mar/">Consulta en Arenys de Mar</a>
