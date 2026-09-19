@@ -44,8 +44,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${base}/problemas-de-memoria/`, lastModified: staticLastModified, changeFrequency: "monthly", priority: 0.86 },
     { url: `${base}/deterioro-cognitivo/`, lastModified: staticLastModified, changeFrequency: "monthly", priority: 0.85 },
     { url: `${base}/ictus-y-dano-cerebral-adquirido/`, lastModified: staticLastModified, changeFrequency: "monthly", priority: 0.84 },
-    { url: `${base}/problemas-de-atencion-y-concentracion-en-adultos/`, lastModified: staticLastModified, changeFrequency: "monthly", priority: 0.82 },
-    { url: `${base}/funciones-ejecutivas-y-planificacion-en-adultos/`, lastModified: staticLastModified, changeFrequency: "monthly", priority: 0.82 },
     { url: `${base}/parkinson-y-cambios-cognitivos/`, lastModified: staticLastModified, changeFrequency: "monthly", priority: 0.83 },
     { url: `${base}/rehabilitacion-neuropsicologica/`, lastModified: staticLastModified, changeFrequency: "monthly", priority: 0.85 },
     { url: `${base}/alzheimer-primeros-sintomas-y-evaluacion/`, lastModified: staticLastModified, changeFrequency: "monthly", priority: 0.86 },
