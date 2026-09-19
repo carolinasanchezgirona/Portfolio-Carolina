@@ -49,6 +49,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${base}/problemas-de-atencion-y-concentracion-en-adultos/`, lastModified: staticLastModified, changeFrequency: "monthly", priority: 0.82 },
     { url: `${base}/funciones-ejecutivas-y-planificacion-en-adultos/`, lastModified: staticLastModified, changeFrequency: "monthly", priority: 0.82 },
     { url: `${base}/conmocion-cerebral-y-tce-leve/`, lastModified: staticLastModified, changeFrequency: "monthly", priority: 0.82 },
+    { url: `${base}/parkinson-y-cambios-cognitivos/`, lastModified: staticLastModified, changeFrequency: "monthly", priority: 0.83 },
     { url: `${base}/demencias/`, lastModified: staticLastModified, changeFrequency: "monthly", priority: 0.86 },
     { url: `${base}/estimulacion-cognitiva/`, lastModified: staticLastModified, changeFrequency: "monthly", priority: 0.84 },
     { url: `${base}/familiares-y-cuidadores-de-personas-con-demencia/`, lastModified: staticLastModified, changeFrequency: "monthly", priority: 0.84 },
