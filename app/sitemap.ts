@@ -30,8 +30,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${base}/culpa-y-dificultad-para-perdonarse/`, lastModified: staticLastModified, changeFrequency: "monthly", priority: 0.8 },
     { url: `${base}/miedo-al-rechazo-y-necesidad-de-aprobacion/`, lastModified: staticLastModified, changeFrequency: "monthly", priority: 0.8 },
     { url: `${base}/procrastinacion-y-bloqueo/`, lastModified: staticLastModified, changeFrequency: "monthly", priority: 0.8 },
-    { url: `${base}/dificultad-para-desconectar-del-trabajo/`, lastModified: staticLastModified, changeFrequency: "monthly", priority: 0.8 },
-    { url: `${base}/burnout-y-agotamiento-laboral/`, lastModified: staticLastModified, changeFrequency: "monthly", priority: 0.81 },
     { url: `${base}/ansiedad-social-y-miedo-al-ridiculo/`, lastModified: staticLastModified, changeFrequency: "monthly", priority: 0.82 },
     { url: `${base}/pensamientos-intrusivos-y-miedo-a-perder-el-control/`, lastModified: staticLastModified, changeFrequency: "monthly", priority: 0.81 },
     { url: `${base}/toc-obsesiones-y-compulsiones/`, lastModified: staticLastModified, changeFrequency: "monthly", priority: 0.82 },
