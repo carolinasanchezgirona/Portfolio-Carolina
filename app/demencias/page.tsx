@@ -40,12 +40,7 @@ export default function DementiaPage() {
         <nav className="nav" aria-label="Navegación principal">
           <a href="/neuropsicologia/">Neuropsicología</a>
           <a href="/deterioro-cognitivo/">Deterioro cognitivo</a>
-              <a href="/deterioro-cognitivo-leve/">Deterioro cognitivo leve</a>
-              <a href="/envejecimiento-cognitivo-normal-o-deterioro/">Envejecimiento cognitivo normal o deterioro</a>
               <a href="/alzheimer-primeros-sintomas-y-evaluacion/">Alzheimer: primeros síntomas y evaluación</a>
-              <a href="/demencia-vascular-y-cambios-cognitivos/">Demencia vascular y cambios cognitivos</a>
-              <a href="/demencia-con-cuerpos-de-lewy/">Demencia con cuerpos de Lewy</a>
-              <a href="/demencia-frontotemporal/">Demencia frontotemporal</a>
               <a href="/estimulacion-cognitiva/">Estimulación cognitiva</a>
               <a href="/familiares-y-cuidadores-de-personas-con-demencia/">Familiares y cuidadores</a>
           <a className="nav-cta" href="/cita/">Pedir cita</a>
@@ -80,6 +75,19 @@ export default function DementiaPage() {
             </p>
             <p>
               La enfermedad de Alzheimer es una de las causas más frecuentes, pero no es la única. También existen otros cuadros neurodegenerativos y condiciones neurológicas que pueden producir deterioro cognitivo. La valoración neuropsicológica aporta información sobre el patrón de capacidades preservadas y alteradas, siempre integrada con la historia clínica y la valoración médica.
+            </p>
+          </section>
+
+          <section>
+            <h2>Algunos perfiles de demencia pueden ser muy distintos</h2>
+            <p>
+              Además de la enfermedad de Alzheimer, existen otros perfiles que pueden afectar de forma diferente a la cognición y la autonomía. En el deterioro de origen vascular pueden destacar la lentitud, la atención y las funciones ejecutivas, especialmente cuando existe enfermedad cerebrovascular o antecedentes de ictus.
+            </p>
+            <p>
+              En la demencia con cuerpos de Lewy pueden aparecer fluctuaciones marcadas del rendimiento, dificultades atencionales y visuoespaciales, junto con otros síntomas neurológicos que requieren valoración médica especializada. En la demencia frontotemporal pueden predominar cambios tempranos de conducta, personalidad, lenguaje o funciones ejecutivas antes que los problemas de memoria.
+            </p>
+            <p>
+              Estos patrones no se diagnostican únicamente por una prueba cognitiva. La interpretación requiere integrar evolución, funcionamiento cotidiano, historia médica, exploración neurológica y, cuando corresponde, otras pruebas complementarias.
             </p>
           </section>
 
