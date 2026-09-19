@@ -50,7 +50,8 @@ export default function StressPage() {
           <div className="seo-card"><h3>Áreas relacionadas</h3><div className="seo-related"><a href="/ansiedad/">Ansiedad</a><a href="/perfeccionismo-y-autoexigencia/">Perfeccionismo y autoexigencia</a><a href="/rumiacion-y-pensamientos-repetitivos/">Rumiación</a>
               <a href="/insomnio-y-dificultades-para-dormir/">Insomnio y dificultades para dormir</a>
               <a href="/cambios-vitales-y-adaptacion/">Cambios vitales y adaptación</a>
-              <a href="/dificultad-para-desconectar-del-trabajo/">Dificultad para desconectar del trabajo</a><a href="/depresion/">Depresión y bajo estado de ánimo</a></div></div>
+              <a href="/dificultad-para-desconectar-del-trabajo/">Dificultad para desconectar del trabajo</a>
+              <a href="/burnout-y-agotamiento-laboral/">Burnout y agotamiento laboral</a><a href="/depresion/">Depresión y bajo estado de ánimo</a></div></div>
         </aside>
       </div>
       <section className="editorial-section seo-authority"><div className="editorial-wrap seo-authority-grid"><div><p className="editorial-section-eyebrow">Profesional responsable</p><h2>Carolina Sánchez Girona</h2><p className="editorial-role">Psicóloga General Sanitaria · Neuropsicóloga</p></div><div className="seo-authority-copy"><p>Trabajo con adultos en ansiedad, sobrecarga, autoexigencia y cambios vitales desde una formulación clínica individualizada y orientada a objetivos concretos.</p><div className="seo-authority-links"><a href="/sobre-mi/">Conocer mi trayectoria profesional →</a><a href="/psicologia/">Ver Psicología General Sanitaria →</a></div></div></div></section>
