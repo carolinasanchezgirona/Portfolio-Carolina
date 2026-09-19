@@ -137,6 +137,7 @@ export default function NeuropsychAssessmentPage() {
             <div className="seo-related">
               <a href="/neuropsicologia/">Neuropsicología</a>
               <a href="/deterioro-cognitivo/">Deterioro cognitivo</a>
+              <a href="/deterioro-cognitivo-leve/">Deterioro cognitivo leve</a>
               <a href="/psicologa-arenys-de-mar/">Consulta en Arenys de Mar</a>
             </div>
           </div>

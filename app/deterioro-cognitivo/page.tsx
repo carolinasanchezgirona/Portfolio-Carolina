@@ -137,6 +137,7 @@ export default function CognitiveDeclinePage() {
               <a href="/neuropsicologia/">Neuropsicología</a>
               <a href="/evaluacion-neuropsicologica/">Evaluación neuropsicológica</a>
               <a href="/problemas-de-memoria/">Problemas de memoria y olvidos</a>
+              <a href="/deterioro-cognitivo-leve/">Deterioro cognitivo leve</a>
               <a href="/demencias/">Demencias y Alzheimer</a>
               <a href="/estimulacion-cognitiva/">Estimulación cognitiva</a>
               <a href="/familiares-y-cuidadores-de-personas-con-demencia/">Familiares y cuidadores</a>

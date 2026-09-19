@@ -40,6 +40,7 @@ export default function DementiaPage() {
         <nav className="nav" aria-label="Navegación principal">
           <a href="/neuropsicologia/">Neuropsicología</a>
           <a href="/deterioro-cognitivo/">Deterioro cognitivo</a>
+              <a href="/deterioro-cognitivo-leve/">Deterioro cognitivo leve</a>
               <a href="/estimulacion-cognitiva/">Estimulación cognitiva</a>
               <a href="/familiares-y-cuidadores-de-personas-con-demencia/">Familiares y cuidadores</a>
           <a className="nav-cta" href="/cita/">Pedir cita</a>
