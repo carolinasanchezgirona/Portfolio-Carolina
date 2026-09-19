@@ -42,6 +42,7 @@ export default function PanicPage() {
           <a href="/ansiedad/">Ansiedad</a>
               <a href="/ansiedad-por-la-salud-e-hipocondria/">Ansiedad por la salud</a>
               <a href="/pensamientos-intrusivos-y-miedo-a-perder-el-control/">Pensamientos intrusivos</a>
+              <a href="/agorafobia-y-miedo-a-salir/">Agorafobia y miedo a salir</a>
           <a className="nav-cta" href="/cita/">Pedir cita</a>
         </nav>
       </header>
