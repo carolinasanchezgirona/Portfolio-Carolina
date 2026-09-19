@@ -31,6 +31,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${base}/miedo-al-rechazo-y-necesidad-de-aprobacion/`, lastModified: staticLastModified, changeFrequency: "monthly", priority: 0.8 },
     { url: `${base}/procrastinacion-y-bloqueo/`, lastModified: staticLastModified, changeFrequency: "monthly", priority: 0.8 },
     { url: `${base}/dificultad-para-desconectar-del-trabajo/`, lastModified: staticLastModified, changeFrequency: "monthly", priority: 0.8 },
+    { url: `${base}/burnout-y-agotamiento-laboral/`, lastModified: staticLastModified, changeFrequency: "monthly", priority: 0.81 },
     { url: `${base}/evaluacion-neuropsicologica/`, lastModified: staticLastModified, changeFrequency: "monthly", priority: 0.85 },
     { url: `${base}/problemas-de-memoria/`, lastModified: staticLastModified, changeFrequency: "monthly", priority: 0.86 },
     { url: `${base}/deterioro-cognitivo/`, lastModified: staticLastModified, changeFrequency: "monthly", priority: 0.85 },
