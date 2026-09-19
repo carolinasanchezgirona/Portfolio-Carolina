@@ -136,6 +136,7 @@ export default function AnxietyPage() {
               <a href="/ansiedad-social-y-miedo-al-ridiculo/">Ansiedad social y miedo al ridículo</a>
               <a href="/ansiedad-anticipatoria-y-preocupacion-excesiva/">Ansiedad anticipatoria y preocupación excesiva</a>
               <a href="/ansiedad-por-la-salud-e-hipocondria/">Ansiedad por la salud e hipocondría</a>
+              <a href="/pensamientos-intrusivos-y-miedo-a-perder-el-control/">Pensamientos intrusivos y miedo a perder el control</a>
               <a href="/perfeccionismo-y-autoexigencia/">Perfeccionismo y autoexigencia</a>
               <a href="/depresion/">Depresión y bajo estado de ánimo</a>
               <a href="/duelo/">Duelo y pérdidas</a>
