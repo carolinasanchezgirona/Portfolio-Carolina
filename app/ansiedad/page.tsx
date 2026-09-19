@@ -128,6 +128,7 @@ export default function AnxietyPage() {
               <a href="/ataques-de-panico/">Ataques de pánico</a>
               <a href="/rumiacion-y-pensamientos-repetitivos/">Rumiación y pensamientos repetitivos</a>
               <a href="/estres-y-sobrecarga/">Estrés y sobrecarga</a>
+              <a href="/insomnio-y-dificultades-para-dormir/">Insomnio y dificultades para dormir</a>
               <a href="/perfeccionismo-y-autoexigencia/">Perfeccionismo y autoexigencia</a>
               <a href="/depresion/">Depresión y bajo estado de ánimo</a>
               <a href="/duelo/">Duelo y pérdidas</a>
