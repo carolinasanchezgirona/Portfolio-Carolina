@@ -30,7 +30,8 @@ export default function RuminationPage() {
         <nav className="nav" aria-label="Navegación principal"><a href="/psicologia/">Psicología</a><a href="/ansiedad/">Ansiedad</a>
               <a href="/insomnio-y-dificultades-para-dormir/">Insomnio y dificultades para dormir</a>
               <a href="/toma-de-decisiones-e-indecision/">Toma de decisiones e indecisión</a>
-              <a href="/culpa-y-dificultad-para-perdonarse/">Culpa y dificultad para perdonarse</a><a className="nav-cta" href="/cita/">Pedir cita</a></nav>
+              <a href="/culpa-y-dificultad-para-perdonarse/">Culpa y dificultad para perdonarse</a>
+              <a href="/ansiedad-anticipatoria-y-preocupacion-excesiva/">Ansiedad anticipatoria y preocupación excesiva</a><a className="nav-cta" href="/cita/">Pedir cita</a></nav>
       </header>
       <section className="seo-hero"><div className="editorial-wrap seo-hero-inner">
         <p className="seo-breadcrumbs"><a href="/">Inicio</a><span>·</span><a href="/psicologia/">Psicología</a><span>·</span><span>Rumiación</span></p>
