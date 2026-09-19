@@ -22,6 +22,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${base}/limites-y-relaciones-dificiles/`, lastModified: staticLastModified, changeFrequency: "monthly", priority: 0.8 },
     { url: `${base}/autoestima-y-autocritica/`, lastModified: staticLastModified, changeFrequency: "monthly", priority: 0.8 },
     { url: `${base}/perfeccionismo-y-autoexigencia/`, lastModified: staticLastModified, changeFrequency: "monthly", priority: 0.8 },
+    { url: `${base}/rumiacion-y-pensamientos-repetitivos/`, lastModified: staticLastModified, changeFrequency: "monthly", priority: 0.81 },
     { url: `${base}/evaluacion-neuropsicologica/`, lastModified: staticLastModified, changeFrequency: "monthly", priority: 0.85 },
     { url: `${base}/problemas-de-memoria/`, lastModified: staticLastModified, changeFrequency: "monthly", priority: 0.86 },
     { url: `${base}/deterioro-cognitivo/`, lastModified: staticLastModified, changeFrequency: "monthly", priority: 0.85 },
