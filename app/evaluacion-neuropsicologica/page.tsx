@@ -139,6 +139,7 @@ export default function NeuropsychAssessmentPage() {
               <a href="/deterioro-cognitivo/">Deterioro cognitivo</a>
               <a href="/deterioro-cognitivo-leve/">Deterioro cognitivo leve</a>
               <a href="/ictus-y-dano-cerebral-adquirido/">Ictus y daño cerebral adquirido</a>
+              <a href="/afasia-y-problemas-de-lenguaje/">Afasia y problemas de lenguaje</a>
               <a href="/psicologa-arenys-de-mar/">Consulta en Arenys de Mar</a>
             </div>
           </div>
