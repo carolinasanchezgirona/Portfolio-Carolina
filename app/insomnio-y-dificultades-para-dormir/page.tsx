@@ -48,7 +48,6 @@ export default function InsomniaPage() {
         <aside className="seo-sidebar" aria-label="Información práctica">
           <div className="seo-card"><h2>Sesión de psicología</h2><ul className="seo-facts"><li><span>Duración</span><strong>60 minutos</strong></li><li><span>Tarifa</span><strong>60 €</strong></li><li><span>Modalidad</span><strong>Presencial y online</strong></li><li><span>Pacientes</span><strong>Adultos</strong></li></ul><a className="editorial-btn editorial-btn-primary" href="/cita/">Consultar disponibilidad</a></div>
           <div className="seo-card"><h3>Áreas relacionadas</h3><div className="seo-related"><a href="/ansiedad/">Ansiedad</a><a href="/estres-y-sobrecarga/">Estrés y sobrecarga</a><a href="/rumiacion-y-pensamientos-repetitivos/">Rumiación</a><a href="/depresion/">Depresión y bajo estado de ánimo</a>
-              <a href="/dificultad-para-desconectar-del-trabajo/">Dificultad para desconectar del trabajo</a>
               <a href="/trauma-psicologico-y-estres-postraumatico/">Trauma psicológico y estrés postraumático</a></div></div>
         </aside>
       </div>
