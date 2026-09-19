@@ -51,7 +51,8 @@ export default function PerfectionismPage() {
               <a href="/estres-y-sobrecarga/">Estrés y sobrecarga</a>
               <a href="/autoestima-y-autocritica/">Autoestima y autocrítica</a>
               <a href="/toma-de-decisiones-e-indecision/">Toma de decisiones e indecisión</a>
-              <a href="/culpa-y-dificultad-para-perdonarse/">Culpa y dificultad para perdonarse</a><a href="/ansiedad/">Ansiedad</a><a href="/limites-y-relaciones-dificiles/">Límites y relaciones difíciles</a><a href="/psicologia/">Psicología General Sanitaria</a></div></div>
+              <a href="/culpa-y-dificultad-para-perdonarse/">Culpa y dificultad para perdonarse</a>
+              <a href="/procrastinacion-y-bloqueo/">Procrastinación y bloqueo</a><a href="/ansiedad/">Ansiedad</a><a href="/limites-y-relaciones-dificiles/">Límites y relaciones difíciles</a><a href="/psicologia/">Psicología General Sanitaria</a></div></div>
         </aside>
       </div>
       <section className="editorial-section seo-authority"><div className="editorial-wrap seo-authority-grid"><div><p className="editorial-section-eyebrow">Profesional responsable</p><h2>Carolina Sánchez Girona</h2><p className="editorial-role">Psicóloga General Sanitaria · Neuropsicóloga</p></div><div className="seo-authority-copy"><p>Trabajo con adultos en ansiedad, autoexigencia, autocrítica, límites y toma de decisiones desde una formulación clínica individualizada.</p><div className="seo-authority-links"><a href="/sobre-mi/">Conocer mi trayectoria profesional →</a><a href="/psicologia/">Ver Psicología General Sanitaria →</a></div></div></div></section>
