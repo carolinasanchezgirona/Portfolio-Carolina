@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import Image from "next/image";
-import "./home-improvements.css";
 
 export const metadata: Metadata = {
   title: "Carolina Sánchez | Psicóloga y Neuropsicóloga en Arenys de Mar",
@@ -27,19 +26,6 @@ const Arrow = () => <span aria-hidden="true">↗</span>;
 export default function HomePage() {
   return (
     <main className="editorial-site">
-      <header className="site-header">
-        <a className="brand" href="#inicio" aria-label="Carolina Sánchez, inicio">
-          <span className="brand-name">Carolina Sánchez</span>
-          <span className="brand-sub">Psicóloga · Neuropsicóloga</span>
-        </a>
-        <nav className="nav" aria-label="Navegación principal">
-          <a href="#areas">Áreas</a>
-          <a href="#como-trabajo">Cómo trabajo</a>
-          <a href="/sobre-mi/">Sobre mí</a>
-          <a className="nav-cta" href="/cita/">Pedir cita</a>
-        </nav>
-      </header>
-
       <section className="editorial-hero" id="inicio">
         <div className="editorial-wrap editorial-hero-grid">
           <div className="editorial-hero-copy">
@@ -68,7 +54,8 @@ export default function HomePage() {
               width={720}
               height={927}
               sizes="(max-width: 680px) calc(100vw - 36px), (max-width: 900px) 520px, 360px"
-              preload
+              loading="eager"
+              fetchPriority="high"
               unoptimized
             />
           </figure>
@@ -240,18 +227,6 @@ export default function HomePage() {
         </div>
       </section>
 
-      <footer className="editorial-footer">
-        <div className="editorial-wrap editorial-footer-inner">
-          <div>
-            <p className="editorial-footer-brand">Carolina Sánchez | Psicóloga</p>
-            <p>Dememoria · Consulta de Psicología y Neuropsicología</p>
-          </div>
-          <div>
-            <p>Arenys de Mar · Atención online</p>
-            <p>© 2026 Carolina Sánchez Girona</p>
-          </div>
-        </div>
-      </footer>
     </main>
   );
 }
