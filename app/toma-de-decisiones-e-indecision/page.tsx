@@ -48,7 +48,8 @@ export default function DecisionMakingPage() {
         <aside className="seo-sidebar" aria-label="Información práctica">
           <div className="seo-card"><h2>Sesión de psicología</h2><ul className="seo-facts"><li><span>Duración</span><strong>60 minutos</strong></li><li><span>Tarifa</span><strong>60 €</strong></li><li><span>Modalidad</span><strong>Presencial y online</strong></li><li><span>Pacientes</span><strong>Adultos</strong></li></ul><a className="editorial-btn editorial-btn-primary" href="/cita/">Consultar disponibilidad</a></div>
           <div className="seo-card"><h3>Áreas relacionadas</h3><div className="seo-related"><a href="/rumiacion-y-pensamientos-repetitivos/">Rumiación</a><a href="/perfeccionismo-y-autoexigencia/">Perfeccionismo</a><a href="/ansiedad/">Ansiedad</a><a href="/autoestima-y-autocritica/">Autoestima y autocrítica</a>
-              <a href="/procrastinacion-y-bloqueo/">Procrastinación y bloqueo</a></div></div>
+              <a href="/procrastinacion-y-bloqueo/">Procrastinación y bloqueo</a>
+              <a href="/ansiedad-anticipatoria-y-preocupacion-excesiva/">Ansiedad anticipatoria y preocupación excesiva</a></div></div>
         </aside>
       </div>
       <section className="editorial-section seo-authority"><div className="editorial-wrap seo-authority-grid"><div><p className="editorial-section-eyebrow">Profesional responsable</p><h2>Carolina Sánchez Girona</h2><p className="editorial-role">Psicóloga General Sanitaria · Neuropsicóloga</p></div><div className="seo-authority-copy"><p>Trabajo con adultos en ansiedad, rumiación, autoexigencia, límites y toma de decisiones desde una formulación clínica individualizada.</p><div className="seo-authority-links"><a href="/sobre-mi/">Conocer mi trayectoria profesional →</a><a href="/psicologia/">Ver Psicología General Sanitaria →</a></div></div></div></section>
