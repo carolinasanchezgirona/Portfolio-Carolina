@@ -33,7 +33,8 @@ export default function RuminationPage() {
               <a href="/culpa-y-dificultad-para-perdonarse/">Culpa y dificultad para perdonarse</a>
               <a href="/ansiedad-anticipatoria-y-preocupacion-excesiva/">Ansiedad anticipatoria y preocupación excesiva</a>
               <a href="/ansiedad-por-la-salud-e-hipocondria/">Ansiedad por la salud</a>
-              <a href="/pensamientos-intrusivos-y-miedo-a-perder-el-control/">Pensamientos intrusivos</a><a className="nav-cta" href="/cita/">Pedir cita</a></nav>
+              <a href="/pensamientos-intrusivos-y-miedo-a-perder-el-control/">Pensamientos intrusivos</a>
+              <a href="/toc-obsesiones-y-compulsiones/">TOC, obsesiones y compulsiones</a><a className="nav-cta" href="/cita/">Pedir cita</a></nav>
       </header>
       <section className="seo-hero"><div className="editorial-wrap seo-hero-inner">
         <p className="seo-breadcrumbs"><a href="/">Inicio</a><span>·</span><a href="/psicologia/">Psicología</a><span>·</span><span>Rumiación</span></p>
