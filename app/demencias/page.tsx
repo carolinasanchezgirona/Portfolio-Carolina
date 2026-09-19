@@ -44,6 +44,7 @@ export default function DementiaPage() {
               <a href="/envejecimiento-cognitivo-normal-o-deterioro/">Envejecimiento cognitivo normal o deterioro</a>
               <a href="/alzheimer-primeros-sintomas-y-evaluacion/">Alzheimer: primeros síntomas y evaluación</a>
               <a href="/demencia-vascular-y-cambios-cognitivos/">Demencia vascular y cambios cognitivos</a>
+              <a href="/demencia-con-cuerpos-de-lewy/">Demencia con cuerpos de Lewy</a>
               <a href="/estimulacion-cognitiva/">Estimulación cognitiva</a>
               <a href="/familiares-y-cuidadores-de-personas-con-demencia/">Familiares y cuidadores</a>
           <a className="nav-cta" href="/cita/">Pedir cita</a>
