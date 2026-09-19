@@ -147,6 +147,7 @@ export default function NeuropsychologyPage() {
               <a href="/demencias/">Demencias y Alzheimer</a>
               <a href="/estimulacion-cognitiva/">Estimulación cognitiva</a>
               <a href="/familiares-y-cuidadores-de-personas-con-demencia/">Familiares y cuidadores</a>
+              <a href="/deterioro-cognitivo-leve/">Deterioro cognitivo leve</a>
               <a href="/psicologa-arenys-de-mar/">Consulta en Arenys de Mar</a>
               <a href="/psicologia/">Psicología General Sanitaria</a>
             </div>
