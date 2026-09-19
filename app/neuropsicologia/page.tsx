@@ -158,8 +158,6 @@ export default function NeuropsychologyPage() {
               <a href="/estimulacion-cognitiva/">Estimulación cognitiva</a>
               <a href="/familiares-y-cuidadores-de-personas-con-demencia/">Familiares y cuidadores</a>
                             <a href="/ictus-y-dano-cerebral-adquirido/">Ictus y daño cerebral adquirido</a>
-              <a href="/problemas-de-atencion-y-concentracion-en-adultos/">Problemas de atención y concentración</a>
-              <a href="/funciones-ejecutivas-y-planificacion-en-adultos/">Funciones ejecutivas y planificación</a>
               <a href="/parkinson-y-cambios-cognitivos/">Parkinson y cambios cognitivos</a>
               <a href="/rehabilitacion-neuropsicologica/">Rehabilitación neuropsicológica</a>
                             <a href="/alzheimer-primeros-sintomas-y-evaluacion/">Alzheimer: primeros síntomas y evaluación</a>
