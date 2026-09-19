@@ -27,10 +27,9 @@ export default function BoundariesPage() {
     <main className="editorial-site">
       <header className="site-header">
         <a className="brand" href="/" aria-label="Carolina Sánchez, inicio"><span className="brand-name">Carolina Sánchez</span><span className="brand-sub">Psicóloga · Neuropsicóloga</span></a>
-        <nav className="nav" aria-label="Navegación principal"><a href="/psicologia/">Psicología</a><a href="/dependencia-emocional/">Dependencia emocional</a>
+        <nav className="nav" aria-label="Navegación principal"><a href="/psicologia/">Psicología</a>
               <a href="/autoestima-y-autocritica/">Autoestima y autocrítica</a>
-              <a href="/miedo-al-rechazo-y-necesidad-de-aprobacion/">Miedo al rechazo y necesidad de aprobación</a>
-              <a href="/dificultad-para-desconectar-del-trabajo/">Dificultad para desconectar del trabajo</a><a className="nav-cta" href="/cita/">Pedir cita</a></nav>
+<a className="nav-cta" href="/cita/">Pedir cita</a></nav>
       </header>
 
       <section className="seo-hero">
@@ -48,14 +47,22 @@ export default function BoundariesPage() {
           <section><h2>Poner límites no es controlar a los demás</h2><p>Un límite define qué estás dispuesto a hacer, aceptar o sostener y cómo actuarás cuando una situación te sobrepase. No garantiza que la otra persona esté de acuerdo ni sirve para cambiar su conducta por la fuerza.</p><p>Las dificultades aparecen cuando expresar una necesidad activa mucha culpa, miedo al rechazo o sensación de estar siendo egoísta. En esos casos es frecuente ceder de forma repetida y acumular malestar hasta llegar al agotamiento o al conflicto.</p></section>
           <section id="cuando-consultar"><h2>Cuándo puede ser útil trabajar los límites</h2><ul><li>Dices que sí cuando en realidad quieres decir que no.</li><li>Te cuesta expresar desacuerdo por miedo a generar conflicto.</li><li>Asumes responsabilidades que corresponden a otras personas.</li><li>Te sientes culpable después de priorizar una necesidad propia.</li><li>Acumulas enfado y terminas reaccionando cuando ya estás saturada.</li><li>Las mismas discusiones se repiten sin producir cambios claros.</li><li>Te cuesta diferenciar ayudar de hacerte cargo de todo.</li></ul></section>
           <section><h2>Qué puede dificultar poner límites</h2><h3>Miedo al rechazo</h3><p>Si el desacuerdo se interpreta como una amenaza para el vínculo, puede resultar más fácil ceder que tolerar la posibilidad de que la otra persona se moleste.</p><h3>Culpa y sobreexigencia</h3><p>Algunas personas sienten que deben estar disponibles, resolver problemas o evitar el malestar ajeno para ser consideradas buenas parejas, hijas, amigas o profesionales.</p><h3>Confundir empatía con responsabilidad</h3><p>Comprender que alguien está enfadado o triste no obliga a asumir como propia la tarea de eliminar esa emoción.</p><h3>Falta de práctica</h3><p>A veces el problema no es saber qué límite se necesita, sino no tener experiencia expresándolo de forma breve, clara y sostenida.</p></section>
+          <section>
+            <h2>Dependencia emocional y miedo al abandono</h2>
+            <p>En algunas relaciones el vínculo se convierte en la principal fuente de seguridad, valoración o estabilidad. Pueden aparecer miedo intenso a perder a la otra persona, necesidad frecuente de confirmación, dificultad para sostener desacuerdos o renuncia repetida a necesidades propias.</p>
+            <p>El trabajo terapéutico busca comprender el patrón, recuperar autonomía, practicar límites y tolerar mejor la distancia, la incertidumbre o el conflicto sin interpretar automáticamente esas experiencias como una amenaza de abandono.</p>
+          </section>
+
           <section><h2>Cómo se trabaja en terapia</h2><p>La intervención puede incluir identificación de necesidades, revisión de creencias sobre conflicto y culpa, entrenamiento en comunicación asertiva, preparación de conversaciones difíciles y práctica de respuestas ante presión, insistencia o invalidación.</p><p>También se trabaja qué hacer después de expresar el límite, porque la dificultad suele aparecer cuando la otra persona protesta, discute o intenta negociar una decisión ya tomada.</p></section>
-          <section><h2>Límites, dependencia emocional y rupturas</h2><p>La dificultad para poner límites puede formar parte de un patrón más amplio de <a href="/dependencia-emocional/">dependencia emocional</a>, especialmente cuando existe mucho miedo al abandono o necesidad de validación. También puede hacerse especialmente visible durante una <a href="/rupturas-de-pareja/">ruptura de pareja</a>.</p><p>La formulación clínica permite diferenciar si el problema es principalmente comunicativo, si existe un patrón relacional más profundo o si determinadas relaciones están generando un nivel de desgaste que requiere decisiones adicionales.</p></section>
+          <section><h2>Límites, dependencia emocional y rupturas</h2><p>La dificultad para poner límites puede formar parte de un patrón más amplio de
+, especialmente cuando existe mucho miedo al abandono o necesidad de validación. También puede hacerse especialmente visible durante una <a href="/rupturas-de-pareja/">ruptura de pareja</a>.</p><p>La formulación clínica permite diferenciar si el problema es principalmente comunicativo, si existe un patrón relacional más profundo o si determinadas relaciones están generando un nivel de desgaste que requiere decisiones adicionales.</p></section>
           <section><h2>Un límite útil debe poder sostenerse</h2><p>Expresar una necesidad de forma impecable no evita que otra persona pueda reaccionar mal. Por eso el trabajo no se limita a encontrar la frase perfecta: también implica tolerar cierta incomodidad y actuar de forma coherente con el límite planteado.</p><div className="seo-callout"><strong>Un límite no necesita convencer.</strong><span>Necesita ser claro, proporcional y coherente con lo que realmente puedes sostener.</span></div></section>
         </article>
 
         <aside className="seo-sidebar" aria-label="Información práctica">
           <div className="seo-card"><h2>Sesión de psicología</h2><ul className="seo-facts"><li><span>Duración</span><strong>60 minutos</strong></li><li><span>Tarifa</span><strong>60 €</strong></li><li><span>Modalidad</span><strong>Presencial y online</strong></li><li><span>Pacientes</span><strong>Adultos</strong></li></ul><a className="editorial-btn editorial-btn-primary" href="/cita/">Consultar disponibilidad</a></div>
-          <div className="seo-card"><h3>Áreas relacionadas</h3><div className="seo-related"><a href="/dependencia-emocional/">Dependencia emocional</a><a href="/rupturas-de-pareja/">Rupturas de pareja</a><a href="/ansiedad/">Ansiedad</a><a href="/psicologia/">Psicología General Sanitaria</a></div></div>
+          <div className="seo-card"><h3>Áreas relacionadas</h3><div className="seo-related">
+<a href="/rupturas-de-pareja/">Rupturas de pareja</a><a href="/ansiedad/">Ansiedad</a><a href="/psicologia/">Psicología General Sanitaria</a></div></div>
         </aside>
       </div>
 
