@@ -18,7 +18,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${base}/depresion/`, lastModified: staticLastModified, changeFrequency: "monthly", priority: 0.83 },
     { url: `${base}/duelo/`, lastModified: staticLastModified, changeFrequency: "monthly", priority: 0.82 },
     { url: `${base}/rupturas-de-pareja/`, lastModified: staticLastModified, changeFrequency: "monthly", priority: 0.81 },
-    { url: `${base}/dependencia-emocional/`, lastModified: staticLastModified, changeFrequency: "monthly", priority: 0.81 },
     { url: `${base}/limites-y-relaciones-dificiles/`, lastModified: staticLastModified, changeFrequency: "monthly", priority: 0.8 },
     { url: `${base}/autoestima-y-autocritica/`, lastModified: staticLastModified, changeFrequency: "monthly", priority: 0.8 },
     { url: `${base}/perfeccionismo-y-autoexigencia/`, lastModified: staticLastModified, changeFrequency: "monthly", priority: 0.8 },
