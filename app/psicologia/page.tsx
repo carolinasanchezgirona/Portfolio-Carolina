@@ -154,10 +154,7 @@ export default function PsychologyPage() {
               <a href="/insomnio-y-dificultades-para-dormir/">Insomnio y dificultades para dormir</a>
               <a href="/cambios-vitales-y-adaptacion/">Cambios vitales y adaptación</a>
               <a href="/ansiedad-social-y-miedo-al-ridiculo/">Ansiedad social y miedo al ridículo</a>
-              <a href="/pensamientos-intrusivos-y-miedo-a-perder-el-control/">Pensamientos intrusivos y miedo a perder el control</a>
               <a href="/toc-obsesiones-y-compulsiones/">TOC, obsesiones y compulsiones</a>
-              <a href="/agorafobia-y-miedo-a-salir/">Agorafobia y miedo a salir</a>
-              <a href="/fobias-especificas/">Fobias específicas</a>
               <a href="/trauma-psicologico-y-estres-postraumatico/">Trauma psicológico y estrés postraumático</a>
               <a href="/psicologa-arenys-de-mar/">Consulta en Arenys de Mar</a>
               <a href="/neuropsicologia/">Neuropsicología</a>
