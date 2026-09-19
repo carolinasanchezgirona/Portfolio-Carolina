@@ -148,10 +148,8 @@ export default function NeuropsychologyPage() {
               <a href="/estimulacion-cognitiva/">Estimulación cognitiva</a>
               <a href="/familiares-y-cuidadores-de-personas-con-demencia/">Familiares y cuidadores</a>
                             <a href="/ictus-y-dano-cerebral-adquirido/">Ictus y daño cerebral adquirido</a>
-              <a href="/afasia-y-problemas-de-lenguaje/">Afasia y problemas de lenguaje</a>
               <a href="/problemas-de-atencion-y-concentracion-en-adultos/">Problemas de atención y concentración</a>
               <a href="/funciones-ejecutivas-y-planificacion-en-adultos/">Funciones ejecutivas y planificación</a>
-              <a href="/conmocion-cerebral-y-tce-leve/">Conmoción cerebral y TCE leve</a>
               <a href="/parkinson-y-cambios-cognitivos/">Parkinson y cambios cognitivos</a>
               <a href="/esclerosis-multiple-y-cambios-cognitivos/">Esclerosis múltiple y cambios cognitivos</a>
               <a href="/epilepsia-y-cambios-cognitivos/">Epilepsia y cambios cognitivos</a>
