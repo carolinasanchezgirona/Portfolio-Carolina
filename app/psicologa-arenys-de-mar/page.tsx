@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import "../seo-pages.css";
 
 export const metadata: Metadata = {
-  title: "Psicóloga en Arenys de Mar | Psicología y Neuropsicología",
+  title: "Psicóloga en Arenys de Mar | Carolina Sánchez Girona",
   description:
     "Psicóloga General Sanitaria y Neuropsicóloga en Arenys de Mar. Atención psicológica para adultos, evaluación e intervención neuropsicológica, presencial y online.",
   alternates: { canonical: "/psicologa-arenys-de-mar/" },
