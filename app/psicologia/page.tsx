@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import "../seo-pages.css";
 
 export const metadata: Metadata = {
-  title: "Psicóloga General Sanitaria en Arenys de Mar",
+  title: "Psicología para adultos en Arenys de Mar y online",
   description:
     "Psicología General Sanitaria para adultos en Arenys de Mar y online. Ansiedad, estado de ánimo, duelo, relaciones, sobrecarga y cambios vitales.",
   alternates: { canonical: "/psicologia/" },
