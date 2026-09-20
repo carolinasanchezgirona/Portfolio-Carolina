@@ -43,6 +43,12 @@ function relatedLabel(path: string) {
     "/duelo/": "Duelo",
     "/deterioro-cognitivo/": "Deterioro cognitivo y memoria",
     "/evaluacion-neuropsicologica/": "Evaluación neuropsicológica",
+    "/rumiacion-y-pensamientos-repetitivos/": "Rumiación y pensamientos repetitivos",
+    "/ataques-de-panico/": "Ataques de pánico",
+    "/depresion/": "Depresión y bajo estado de ánimo",
+    "/problemas-de-memoria/": "Problemas de memoria",
+    "/alzheimer-primeros-sintomas-y-evaluacion/": "Alzheimer: primeros síntomas y evaluación",
+    "/demencias/": "Demencias",
   } as Record<string, string>)[path] || "Información relacionada";
 }
 
