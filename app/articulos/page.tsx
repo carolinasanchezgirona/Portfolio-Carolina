@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Script from "next/script";
 import { getPublishedArticles, isArticleVisible } from "./articles-data";
 import "./articles.css";
 
@@ -36,14 +37,8 @@ function readingMinutes(html: string) {
   return words ? Math.max(1, Math.ceil(words / 220)) : 0;
 }
 
-type ArticlesPageProps = {
-  searchParams: Promise<{ categoria?: string }>;
-};
-
-export default async function ArticlesPage({ searchParams }: ArticlesPageProps) {
-  const { categoria } = await searchParams;
-  const activeCategory = categoria === "psicologia" || categoria === "neuropsicologia" ? categoria : undefined;
-  const articles = (await getPublishedArticles(activeCategory)).filter((article) => isArticleVisible(article));
+export default async function ArticlesPage() {
+  const articles = (await getPublishedArticles()).filter((article) => isArticleVisible(article));
 
   return (
     <main className="articles-page" data-articles-view="list">
@@ -57,9 +52,9 @@ export default async function ArticlesPage({ searchParams }: ArticlesPageProps) 
       <div className="articles-wrap">
         <div className="articles-toolbar">
           <div className="articles-filters" aria-label="Filtrar artículos">
-            <a data-category="all" className={!activeCategory ? "active" : undefined} href="/articulos/">Todos</a>
-            <a data-category="psicologia" className={activeCategory === "psicologia" ? "active" : undefined} href="/articulos/?categoria=psicologia">Psicología</a>
-            <a data-category="neuropsicologia" className={activeCategory === "neuropsicologia" ? "active" : undefined} href="/articulos/?categoria=neuropsicologia">Neuropsicología</a>
+            <a data-category="all" className="active" href="/articulos/">Todos</a>
+            <a data-category="psicologia" href="/articulos/?categoria=psicologia">Psicología</a>
+            <a data-category="neuropsicologia" href="/articulos/?categoria=neuropsicologia">Neuropsicología</a>
           </div>
         </div>
 
@@ -72,7 +67,7 @@ export default async function ArticlesPage({ searchParams }: ArticlesPageProps) 
             const summary = article.subtitle || article.excerpt || "";
             const minutes = readingMinutes(article.content);
             return (
-              <article key={article.id} className={`articles-card${article.featured ? " featured" : ""}`}>
+              <article key={article.id} data-article-category={article.category} className={`articles-card${article.featured ? " featured" : ""}`}>
                 {article.image_url ? (
                   <a className="articles-card-image" href={href} aria-label={`Leer ${article.title}`}>
                     <img src={article.image_url} alt={article.image_alt || ""} loading="lazy" decoding="async" />
@@ -93,6 +88,7 @@ export default async function ArticlesPage({ searchParams }: ArticlesPageProps) 
           })}
         </section>
       </div>
+      <Script src="/articles-filter.js?v=20260920-1" strategy="afterInteractive" />
     </main>
   );
 }
