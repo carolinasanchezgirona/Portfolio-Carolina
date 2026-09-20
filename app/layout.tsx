@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { Inter, Newsreader } from "next/font/google";
 import GoogleAnalyticsConsent from "./components/google-analytics-consent";
 import SiteShell from "./components/site-shell";
-import CrisisNotice from "./components/crisis-notice";
 import "./globals.css";
 import "./mineuri-theme.css";
 import "./type-scale.css";
@@ -178,7 +177,6 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
       </head>
       <body>
         <SiteShell>{children}</SiteShell>
-        <CrisisNotice />
         <GoogleAnalyticsConsent />
         <script
           type="application/ld+json"
