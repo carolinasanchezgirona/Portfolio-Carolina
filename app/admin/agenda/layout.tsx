@@ -13,7 +13,7 @@ export default function AgendaLayout({ children }: Readonly<{ children: React.Re
       <script src="/admin-series-edit.js?v=20260915-1" defer />
       <script src="/admin-rebook-receiver.js?v=20260915-1" defer />
       <script src="/admin-ux-guards.js?v=20260915-1" defer />
-      <script src="/admin-month-view.js?v=20260915-2" defer />
+      <script src="/admin-month-view.js?v=20260920-holidays-1" defer />
       <script src="/admin-quick-reschedule.js?v=20260915-2" defer />
       <script src="/admin-waitlist.js?v=20260915-2" defer />
     </>
