@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "../seo-pages.css";
+import SocialLinks from "../components/social-links";
 
 export const metadata: Metadata = {
   title: "Carolina Sánchez Girona | Psicóloga General Sanitaria y Neuropsicóloga",
@@ -30,6 +31,7 @@ const profileSchema = {
       value: "24892",
     },
     sameAs: [
+      "https://www.instagram.com/carolinasanchez.psicologia/",
       "https://www.linkedin.com/in/carolina-s%C3%A1nchez-girona-43b3b94a/",
       "https://www.doctoralia.es/carolina-sanchez-girona/psicologo/arenys-de-mar",
     ],
@@ -161,8 +163,8 @@ export default function AboutPage() {
 
           <div className="seo-card">
             <h3>Perfil profesional</h3>
+            <SocialLinks className="seo-social-links" />
             <div className="seo-related">
-              <a href="https://www.linkedin.com/in/carolina-s%C3%A1nchez-girona-43b3b94a/" target="_blank" rel="noopener noreferrer">LinkedIn ↗</a>
               <a href="/psicologia/">Psicología General Sanitaria</a>
               <a href="/neuropsicologia/">Neuropsicología</a>
               <a href="/evaluacion-neuropsicologica/">Evaluación neuropsicológica</a>
