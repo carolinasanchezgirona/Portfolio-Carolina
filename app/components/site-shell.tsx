@@ -18,7 +18,7 @@ function isAdministrativeRoute(pathname: string) {
 }
 
 function usesGlobalChrome(pathname: string) {
-  return pathname === "/" || pathname === "/articulos" || pathname === "/articulos/" || pathname.startsWith("/articulos/") || pathname === "/recursos" || pathname === "/recursos/";
+  return pathname === "/" || pathname === "/articulos" || pathname === "/articulos/" || pathname.startsWith("/articulos/") || pathname === "/recursos" || pathname === "/recursos/" || pathname.startsWith("/recursos/");
 }
 
 function SiteHeader() {
