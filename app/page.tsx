@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Image from "next/image";
+import SocialLinks from "./components/social-links";
 
 export const metadata: Metadata = {
   title: "Carolina Sánchez Girona | Psicóloga y Neuropsicóloga",
@@ -213,6 +214,7 @@ export default function HomePage() {
             </p>
             <p><a href="/sobre-mi/">Conocer mi trayectoria profesional →</a></p>
             <p><a href="/psicologa-arenys-de-mar/">Consulta de Psicología y Neuropsicología en Arenys de Mar →</a></p>
+            <SocialLinks className="editorial-about-social" />
           </div>
         </div>
       </section>
