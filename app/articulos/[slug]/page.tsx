@@ -91,6 +91,8 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
   const ctaLabel = article.cta_label || "Pedir cita";
   const ctaUrl = article.cta_url || "/cita/";
   const relatedPage = getAutomaticRelatedPage(article);
+  const categoryPage = article.category === "neuropsicologia" ? "/neuropsicologia/" : "/psicologia/";
+  const categoryPageLabel = article.category === "neuropsicologia" ? "Explorar Neuropsicología" : "Explorar Psicología";
 
   const schema = {
     "@context": "https://schema.org",
@@ -156,6 +158,7 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
           <aside className="article-related">
             <strong>También puede interesarte</strong>
             <a href={relatedPage}>Ver {relatedLabel(relatedPage)} →</a>
+            {relatedPage !== categoryPage ? <a href={categoryPage}>{categoryPageLabel} →</a> : null}
           </aside>
         </article>
       </div>
