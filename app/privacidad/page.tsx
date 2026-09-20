@@ -4,6 +4,14 @@ import "../legal.css";
 export const metadata: Metadata = {
   title: "Política de privacidad | Carolina Sánchez Girona",
   description: "Política de privacidad y protección de datos de Dememoria.",
+  robots: {
+    index: false,
+    follow: true,
+    googleBot: {
+      index: false,
+      follow: true,
+    },
+  },
 };
 
 export default function PrivacyPage() {
