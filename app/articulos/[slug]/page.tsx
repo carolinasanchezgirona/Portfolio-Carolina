@@ -108,15 +108,15 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
     datePublished: article.published_at || undefined,
     dateModified: article.updated_at || undefined,
     author: {
-      "@type": "Person",
-      name: "Carolina Sánchez Girona",
-      url: "https://carolinasanchezgirona.com/sobre-mi/",
+      "@id": "https://carolinasanchezgirona.com/#carolina-sanchez-girona",
     },
     publisher: {
-      "@type": "Person",
-      name: "Carolina Sánchez Girona",
+      "@id": "https://carolinasanchezgirona.com/#dememoria",
     },
-    mainEntityOfPage: canonical,
+    mainEntityOfPage: {
+      "@type": "WebPage",
+      "@id": canonical,
+    },
     image: article.image_url || "https://carolinasanchezgirona.com/carolina-sanchez-retrato.jpg",
     keywords: tags.length ? tags.join(", ") : undefined,
   };
