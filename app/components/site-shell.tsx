@@ -17,6 +17,10 @@ function isAdministrativeRoute(pathname: string) {
   );
 }
 
+function usesGlobalChrome(pathname: string) {
+  return pathname === "/" || pathname === "/articulos" || pathname === "/articulos/" || pathname.startsWith("/articulos/");
+}
+
 function SiteHeader() {
   return (
     <header className="site-header site-global-header">
@@ -115,6 +119,16 @@ export default function SiteShell({ children }: { children: ReactNode }) {
 
   if (isAdministrativeRoute(pathname)) {
     return <>{children}</>;
+  }
+
+  if (!usesGlobalChrome(pathname)) {
+    return (
+      <div className="editorial-site public-page-shell">
+        <a className="skip-link" href="#contenido-principal">Saltar al contenido principal</a>
+        <div id="contenido-principal" tabIndex={-1}>{children}</div>
+        <CrisisNotice />
+      </div>
+    );
   }
 
   return (
