@@ -17,7 +17,9 @@ const serviceSchema = {
   "@context": "https://schema.org",
   "@type": "Service",
   name: "Evaluación neuropsicológica",
-  provider: { "@type": "Person", name: "Carolina Sánchez Girona", jobTitle: "Neuropsicóloga" },
+  provider: {
+    "@id": "https://carolinasanchezgirona.com/#carolina-sanchez-girona",
+  },
   areaServed: ["Arenys de Mar", "Maresme", "Barcelona"],
   serviceType: "Evaluación neuropsicológica",
   url: "https://carolinasanchezgirona.com/evaluacion-neuropsicologica/",
