@@ -1,51 +1,45 @@
-import type { Metadata } from "next";
-import {
-  createSignedDownload,
-  getPublishedResourceById,
-  retrieveCheckoutSession,
-  upsertPaidOrder,
-} from "../../lib/commerce-server";
+"use client";
 
-export const metadata: Metadata = {
-  title: "Compra completada",
-  robots: { index: false, follow: false, nocache: true },
-};
+import { useEffect, useState } from "react";
 
-export const dynamic = "force-dynamic";
+const SUPABASE_URL = "https://grgyvdxkjdstdyumdfyg.supabase.co";
+const KEY = "sb_publishable_b2MRfP0bPti87V2FXCzHGw_Y9vvcbii";
 
-export default async function CompraCompletadaPage({
-  searchParams,
-}: {
-  searchParams: Promise<{ session_id?: string }>;
-}) {
-  const { session_id: sessionId } = await searchParams;
+export default function CompraCompletadaPage() {
+  const [state, setState] = useState<"checking" | "ready" | "error">("checking");
+  const [message, setMessage] = useState("Estamos verificando tu compra…");
+  const [downloadUrl, setDownloadUrl] = useState<string | null>(null);
+  const [title, setTitle] = useState("Compra completada");
 
-  let title = "Estamos verificando tu compra";
-  let message = "No hemos podido localizar una sesión de pago válida.";
-  let downloadUrl: string | null = null;
-
-  if (sessionId) {
-    try {
-      const session = await retrieveCheckoutSession(sessionId);
-      const resourceId = session.metadata?.resource_id;
-
-      if (session.payment_status === "paid" && resourceId) {
-        const resource = await getPublishedResourceById(resourceId);
-        if (resource?.file_path) {
-          await upsertPaidOrder(session).catch(() => undefined);
-          downloadUrl = await createSignedDownload(resource.file_path, 600);
-          title = "Compra completada";
-          message = `Tu recurso “${resource.title}” está preparado. El enlace de descarga caduca en 10 minutos.`;
-        } else {
-          message = "El pago está confirmado, pero el archivo no está disponible. Contacta con nosotros para que podamos resolverlo.";
-        }
-      } else if (session.status === "complete") {
-        message = "La compra se ha completado, pero el pago todavía está pendiente de confirmación.";
-      }
-    } catch {
-      message = "No hemos podido verificar la compra en este momento.";
+  useEffect(() => {
+    const sessionId = new URLSearchParams(window.location.search).get("session_id");
+    if (!sessionId) {
+      setState("error");
+      setMessage("No hemos podido localizar una sesión de pago válida.");
+      return;
     }
-  }
+
+    fetch(`${SUPABASE_URL}/functions/v1/resource-download`, {
+      method: "POST",
+      headers: { apikey: KEY, "Content-Type": "application/json" },
+      body: JSON.stringify({ sessionId }),
+    })
+      .then(async (response) => {
+        const body = await response.json().catch(() => ({}));
+        if (!response.ok || !body?.url) throw new Error(body?.error || "No se ha podido preparar la descarga.");
+        return body;
+      })
+      .then((body) => {
+        setTitle(body.title || "Compra completada");
+        setMessage("El pago está confirmado. El enlace de descarga es temporal y caduca en 10 minutos.");
+        setDownloadUrl(body.url);
+        setState("ready");
+      })
+      .catch((error) => {
+        setState("error");
+        setMessage(error instanceof Error ? error.message : "No se ha podido verificar la compra.");
+      });
+  }, []);
 
   return (
     <main className="resources-success-page">
@@ -53,6 +47,7 @@ export default async function CompraCompletadaPage({
         <p className="editorial-eyebrow">Recursos digitales</p>
         <h1>{title}</h1>
         <p>{message}</p>
+        {state === "checking" ? <div className="resources-success-progress">Verificando pago…</div> : null}
         {downloadUrl ? (
           <a className="editorial-btn editorial-btn-primary" href={downloadUrl}>
             Descargar recurso
