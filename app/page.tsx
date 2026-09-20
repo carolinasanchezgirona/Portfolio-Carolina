@@ -2,12 +2,12 @@ import type { Metadata } from "next";
 import Image from "next/image";
 
 export const metadata: Metadata = {
-  title: "Carolina Sánchez | Psicóloga y Neuropsicóloga en Arenys de Mar",
+  title: "Carolina Sánchez Girona | Psicóloga y Neuropsicóloga",
   description:
     "Psicología sanitaria y neuropsicología clínica en Arenys de Mar y online. Atención psicológica para adultos, evaluación neuropsicológica y seguimiento cognitivo.",
   alternates: { canonical: "/" },
   openGraph: {
-    title: "Carolina Sánchez | Psicóloga y Neuropsicóloga en Arenys de Mar",
+    title: "Carolina Sánchez Girona | Psicóloga y Neuropsicóloga",
     description:
       "Psicología sanitaria y neuropsicología clínica en Arenys de Mar y online.",
     url: "https://carolinasanchezgirona.com/",
@@ -15,7 +15,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary",
-    title: "Carolina Sánchez | Psicóloga y Neuropsicóloga en Arenys de Mar",
+    title: "Carolina Sánchez Girona | Psicóloga y Neuropsicóloga",
     description:
       "Psicología sanitaria y neuropsicología clínica en Arenys de Mar y online.",
   },
