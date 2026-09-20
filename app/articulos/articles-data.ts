@@ -57,9 +57,15 @@ export function getAutomaticRelatedPage(article: PublicArticle) {
     .join(" ")
     .toLocaleLowerCase("es");
 
-  if (/ansiedad|preocupaci[oó]n|p[aá]nico|miedo/.test(searchable)) return "/ansiedad/";
+  if (/rumiaci[oó]n|sobrepensar|pensamientos repetitivos|darle vueltas/.test(searchable)) return "/rumiacion-y-pensamientos-repetitivos/";
+  if (/p[aá]nico|crisis de ansiedad|agorafobia/.test(searchable)) return "/ataques-de-panico/";
+  if (/ansiedad|preocupaci[oó]n|miedo|incertidumbre/.test(searchable)) return "/ansiedad/";
   if (/duelo|p[eé]rdida|fallecimiento/.test(searchable)) return "/duelo/";
-  if (/deterioro|demencia|memoria|alzheimer/.test(searchable)) return "/deterioro-cognitivo/";
+  if (/depresi[oó]n|apat[ií]a|bajo estado de [aá]nimo/.test(searchable)) return "/depresion/";
+  if (/alzheimer/.test(searchable)) return "/alzheimer-primeros-sintomas-y-evaluacion/";
+  if (/demencia|demencias/.test(searchable)) return "/demencias/";
+  if (/memoria|olvidos/.test(searchable)) return "/problemas-de-memoria/";
+  if (/deterioro cognitivo/.test(searchable)) return "/deterioro-cognitivo/";
   if (/evaluaci[oó]n neuropsicol[oó]gica|test neuropsicol[oó]gic|perfil cognitivo/.test(searchable)) return "/evaluacion-neuropsicologica/";
   return article.category === "neuropsicologia" ? "/neuropsicologia/" : "/psicologia/";
 }
