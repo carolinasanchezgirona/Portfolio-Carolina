@@ -19,10 +19,7 @@ const serviceSchema = {
   "@type": "Service",
   name: "Psicología General Sanitaria",
   provider: {
-    "@type": "Person",
-    name: "Carolina Sánchez Girona",
-    jobTitle: "Psicóloga General Sanitaria",
-    url: "https://carolinasanchezgirona.com",
+    "@id": "https://carolinasanchezgirona.com/#carolina-sanchez-girona",
   },
   areaServed: ["Arenys de Mar", "Maresme", "Barcelona", "España"],
   serviceType: "Psicología General Sanitaria para adultos",
