@@ -32,7 +32,8 @@ export default function AdminArticlesPage() {
             <p>Escribe, diseña, revisa y publica manteniendo una presentación coherente.</p>
           </div>
           <div className="articles-top-actions">
-            <a className="articles-secondary" href="/admin/agenda/">Agenda</a>\n            <a className="articles-secondary" href="/admin/recursos/">Recursos</a>
+            <a className="articles-secondary" href="/admin/agenda/">Agenda</a>
+            <a className="articles-secondary" href="/admin/recursos/">Recursos</a>
             <a className="articles-secondary" href="/articulos/" target="_blank" rel="noopener noreferrer">Ver artículos</a>
             <button id="article-new" className="articles-primary" type="button">Nuevo artículo</button>
             <button id="articles-logout" className="articles-text" type="button">Cerrar sesión</button>
