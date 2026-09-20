@@ -138,7 +138,44 @@ export default function AdminArticlesPage() {
                     <div>
                       <label className="featured-check"><input id="article-featured" type="checkbox" /><span>Artículo destacado</span></label>
                       <label className="field">Etiquetas<input id="article-tags" type="text" placeholder="memoria, ansiedad, atención" /></label>
-                      <label className="field">Página relacionada<select id="article-related-page"><option value="">Sin enlace automático</option><option value="/psicologia/">Psicología</option><option value="/neuropsicologia/">Neuropsicología</option><option value="/ansiedad/">Ansiedad</option><option value="/duelo/">Duelo</option><option value="/deterioro-cognitivo/">Deterioro cognitivo</option><option value="/evaluacion-neuropsicologica/">Evaluación neuropsicológica</option></select></label>
+                      <label className="field">Página relacionada<select id="article-related-page">
+                        <option value="">Selección automática</option>
+                        <optgroup label="Psicología">
+                          <option value="/psicologia/">Psicología General Sanitaria</option>
+                          <option value="/ansiedad/">Ansiedad</option>
+                          <option value="/ataques-de-panico/">Ataques de pánico</option>
+                          <option value="/depresion/">Depresión y bajo estado de ánimo</option>
+                          <option value="/duelo/">Duelo y pérdidas</option>
+                          <option value="/rumiacion-y-pensamientos-repetitivos/">Rumiación y pensamientos repetitivos</option>
+                          <option value="/estres-y-sobrecarga/">Estrés y sobrecarga</option>
+                          <option value="/insomnio-y-dificultades-para-dormir/">Insomnio y dificultades para dormir</option>
+                          <option value="/autoestima-y-autocritica/">Autoestima y autocrítica</option>
+                          <option value="/perfeccionismo-y-autoexigencia/">Perfeccionismo y autoexigencia</option>
+                          <option value="/rupturas-de-pareja/">Rupturas de pareja</option>
+                          <option value="/limites-y-relaciones-dificiles/">Límites y relaciones difíciles</option>
+                          <option value="/cambios-vitales-y-adaptacion/">Cambios vitales y adaptación</option>
+                          <option value="/ansiedad-social-y-miedo-al-ridiculo/">Ansiedad social</option>
+                          <option value="/toc-obsesiones-y-compulsiones/">TOC, obsesiones y compulsiones</option>
+                          <option value="/trauma-psicologico-y-estres-postraumatico/">Trauma psicológico y estrés postraumático</option>
+                        </optgroup>
+                        <optgroup label="Neuropsicología">
+                          <option value="/neuropsicologia/">Neuropsicología</option>
+                          <option value="/evaluacion-neuropsicologica/">Evaluación neuropsicológica</option>
+                          <option value="/problemas-de-memoria/">Problemas de memoria</option>
+                          <option value="/deterioro-cognitivo/">Deterioro cognitivo</option>
+                          <option value="/alzheimer-primeros-sintomas-y-evaluacion/">Alzheimer: primeros síntomas y evaluación</option>
+                          <option value="/demencias/">Demencias</option>
+                          <option value="/estimulacion-cognitiva/">Estimulación cognitiva</option>
+                          <option value="/rehabilitacion-neuropsicologica/">Rehabilitación neuropsicológica</option>
+                          <option value="/ictus-y-dano-cerebral-adquirido/">Ictus y daño cerebral adquirido</option>
+                          <option value="/parkinson-y-cambios-cognitivos/">Parkinson y cambios cognitivos</option>
+                          <option value="/familiares-y-cuidadores-de-personas-con-demencia/">Familiares y cuidadores</option>
+                        </optgroup>
+                        <optgroup label="Consulta">
+                          <option value="/psicologa-arenys-de-mar/">Consulta en Arenys de Mar</option>
+                          <option value="/sobre-mi/">Sobre mí</option>
+                        </optgroup>
+                      </select></label>
                       <div className="two-cols"><label className="field">CTA · texto<input id="article-cta-label" type="text" maxLength={80} placeholder="Pedir cita" /></label><label className="field">CTA · enlace<input id="article-cta-url" type="text" maxLength={240} placeholder="/cita/" /></label></div>
                       <label className="field">Programar publicación<input id="article-scheduled-at" type="datetime-local" /></label>
                     </div>
