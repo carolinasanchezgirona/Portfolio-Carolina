@@ -35,6 +35,13 @@ function categoryLabel(value: string) {
   return value === "neuropsicologia" ? "Neuropsicología" : "Psicología";
 }
 
+function displayArticleTitle(article: { slug: string; title: string }) {
+  if (article.slug === "volver-a-la-rutina-sin-intentar-cambiarlo-todo-como-recuperar-habitos-de-forma-sostenible") {
+    return "Volver a la rutina: cómo recuperar hábitos de forma sostenible";
+  }
+  return article.title;
+}
+
 function relatedLabel(path: string) {
   return ({
     "/psicologia/": "Psicología General Sanitaria",
@@ -91,6 +98,7 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
   if (!article || !isArticleVisible(article)) notFound();
 
   const canonical = `https://carolinasanchezgirona.com/articulos/${encodeURIComponent(article.slug)}/`;
+  const displayTitle = displayArticleTitle(article);
   const description = article.seo_description || article.excerpt || article.subtitle || "Artículo de Psicología y Neuropsicología de Carolina Sánchez Girona.";
   const minutes = readingMinutes(article.content);
   const tags = Array.isArray(article.tags) ? article.tags : [];
@@ -103,7 +111,7 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
   const schema = {
     "@context": "https://schema.org",
     "@type": "Article",
-    headline: article.title,
+    headline: displayTitle,
     description,
     datePublished: article.published_at || undefined,
     dateModified: article.updated_at || undefined,
@@ -128,7 +136,7 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
         <article>
           <header className="article-header">
             <p className="articles-kicker">{categoryLabel(article.category)}</p>
-            <h1>{article.title}</h1>
+            <h1>{displayTitle}</h1>
             {article.subtitle ? <p className="article-subtitle">{article.subtitle}</p> : null}
             {article.excerpt ? <p className="article-excerpt">{article.excerpt}</p> : null}
             <div className="article-meta">
