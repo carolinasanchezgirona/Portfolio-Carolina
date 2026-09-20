@@ -39,6 +39,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${base}/estimulacion-cognitiva/`, lastModified: staticLastModified, changeFrequency: "monthly", priority: 0.84 },
     { url: `${base}/familiares-y-cuidadores-de-personas-con-demencia/`, lastModified: staticLastModified, changeFrequency: "monthly", priority: 0.84 },
     { url: `${base}/articulos/`, lastModified: staticLastModified, changeFrequency: "weekly", priority: 0.88 },
+    { url: `${base}/recursos/`, lastModified: staticLastModified, changeFrequency: "weekly", priority: 0.78 },
     { url: `${base}/cita/`, lastModified: staticLastModified, changeFrequency: "daily", priority: 0.9 },
   ];
 
