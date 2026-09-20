@@ -51,7 +51,8 @@
     if(rr.status===401){saveSession(null);showLogin();return;}
     const rb=await rr.json().catch(()=>[]), ab=await ar.json().catch(()=>[]);
     if(!rr.ok)throw new Error(rb.message||"No se han podido cargar los recursos.");
-    resources=rb; articles=ar;
+    if(!ar.ok)throw new Error(ab.message||"No se han podido cargar los artículos.");
+    resources=Array.isArray(rb)?rb:[]; articles=Array.isArray(ab)?ab:[];
     renderArticleOptions(); renderList();
     if(selectId){const item=resources.find(r=>r.id===selectId);if(item)openResource(item);}
   }
