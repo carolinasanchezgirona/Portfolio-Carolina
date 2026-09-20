@@ -11,16 +11,28 @@ jobs:
     runs-on: ubuntu-24.04
 
     steps:
-      - name: Comprobar hora local
+      - name: Comprobar horario de verano/invierno
         id: horario
         shell: bash
         run: |
-          if [[ "${{ github.event_name }}" == "schedule" && "$(TZ=Europe/Madrid date +%H:%M)" != "19:00" ]]; then
-            echo "should_run=false" >> "$GITHUB_OUTPUT"
-            echo "Este disparo no corresponde a las 19:00 en Europe/Madrid."
+          if [[ "${{ github.event_name }}" != "schedule" ]]; then
+            echo "should_run=true" >> "$GITHUB_OUTPUT"
             exit 0
           fi
-          echo "should_run=true" >> "$GITHUB_OUTPUT"
+
+          OFFSET="$(TZ=Europe/Madrid date +%z)"
+          SCHEDULE="${{ github.event.schedule }}"
+
+          if [[ "$OFFSET" == "+0200" && "$SCHEDULE" == "0 17 * * *" ]]; then
+            echo "should_run=true" >> "$GITHUB_OUTPUT"
+            echo "Horario de verano: corresponde enviar el aviso."
+          elif [[ "$OFFSET" == "+0100" && "$SCHEDULE" == "0 18 * * *" ]]; then
+            echo "should_run=true" >> "$GITHUB_OUTPUT"
+            echo "Horario de invierno: corresponde enviar el aviso."
+          else
+            echo "should_run=false" >> "$GITHUB_OUTPUT"
+            echo "Disparo secundario omitido para evitar duplicados."
+          fi
 
       - name: Instalar cliente PostgreSQL
         if: steps.horario.outputs.should_run == 'true'
