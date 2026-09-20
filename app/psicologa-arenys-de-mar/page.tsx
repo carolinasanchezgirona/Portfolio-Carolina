@@ -19,10 +19,7 @@ const serviceSchema = {
   "@type": "Service",
   name: "Psicología y Neuropsicología en Arenys de Mar",
   provider: {
-    "@type": "Person",
-    name: "Carolina Sánchez Girona",
-    jobTitle: "Psicóloga General Sanitaria y Neuropsicóloga",
-    url: "https://carolinasanchezgirona.com",
+    "@id": "https://carolinasanchezgirona.com/#carolina-sanchez-girona",
   },
   areaServed: ["Arenys de Mar", "Maresme", "Barcelona"],
   serviceType: ["Psicología General Sanitaria", "Neuropsicología"],
