@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import Script from "next/script";
 import { getPublishedArticles, isArticleVisible } from "./articles-data";
 import "./articles.css";
 
@@ -37,8 +36,14 @@ function readingMinutes(html: string) {
   return words ? Math.max(1, Math.ceil(words / 220)) : 0;
 }
 
-export default async function ArticlesPage() {
-  const articles = (await getPublishedArticles()).filter((article) => isArticleVisible(article));
+type ArticlesPageProps = {
+  searchParams: Promise<{ categoria?: string }>;
+};
+
+export default async function ArticlesPage({ searchParams }: ArticlesPageProps) {
+  const { categoria } = await searchParams;
+  const activeCategory = categoria === "psicologia" || categoria === "neuropsicologia" ? categoria : undefined;
+  const articles = (await getPublishedArticles(activeCategory)).filter((article) => isArticleVisible(article));
 
   return (
     <main className="articles-page" data-articles-view="list">
@@ -52,9 +57,9 @@ export default async function ArticlesPage() {
       <div className="articles-wrap">
         <div className="articles-toolbar">
           <div className="articles-filters" aria-label="Filtrar artículos">
-            <a data-category="all" className="active" href="/articulos/">Todos</a>
-            <a data-category="psicologia" href="/articulos/?categoria=psicologia">Psicología</a>
-            <a data-category="neuropsicologia" href="/articulos/?categoria=neuropsicologia">Neuropsicología</a>
+            <a data-category="all" className={!activeCategory ? "active" : undefined} href="/articulos/">Todos</a>
+            <a data-category="psicologia" className={activeCategory === "psicologia" ? "active" : undefined} href="/articulos/?categoria=psicologia">Psicología</a>
+            <a data-category="neuropsicologia" className={activeCategory === "neuropsicologia" ? "active" : undefined} href="/articulos/?categoria=neuropsicologia">Neuropsicología</a>
           </div>
         </div>
 
@@ -88,7 +93,6 @@ export default async function ArticlesPage() {
           })}
         </section>
       </div>
-      <Script src="/articles-public.js?v=20260917-seo-hybrid-1" strategy="afterInteractive" />
     </main>
   );
 }
