@@ -34,12 +34,28 @@
     node.setAttribute("href", url);
   }
 
-  function articleHref(slug) { return `/articulos/${encodeURIComponent(slug)}/`; }
+  function staticArticleSlugs(grid) {
+    const slugs = new Set();
+    grid.querySelectorAll('a[href^="/articulos/"]').forEach((link) => {
+      try {
+        const path = new URL(link.getAttribute("href"), window.location.origin).pathname;
+        const parts = path.split("/").filter(Boolean);
+        if (parts[0] === "articulos" && parts[1] && parts[1] !== "leer") slugs.add(decodeURIComponent(parts[1]));
+      } catch {}
+    });
+    return slugs;
+  }
+
+  function articleHref(slug, staticSlugs) {
+    const clean = `/articulos/${encodeURIComponent(slug)}/`;
+    return staticSlugs?.has(slug) ? clean : `/articulos/leer/?slug=${encodeURIComponent(slug)}`;
+  }
 
   async function renderList() {
     const grid = document.querySelector("#articles-grid");
     const status = document.querySelector("#articles-status");
     const category = new URLSearchParams(window.location.search).get("categoria");
+    const staticSlugs = staticArticleSlugs(grid);
     document.querySelectorAll(".articles-filters a").forEach((link) => {
       const value = link.dataset.category;
       link.classList.toggle("active", (!category && value === "all") || category === value);
@@ -55,7 +71,7 @@
       articles.forEach((article) => {
         const card = document.createElement("article");
         card.className = `articles-card${article.featured ? " featured" : ""}`;
-        const href = articleHref(article.slug);
+        const href = articleHref(article.slug, staticSlugs);
         const summary = article.subtitle || article.excerpt || "";
         const mins = readingMinutes(article.content);
         card.innerHTML = `${article.image_url ? `<a class="articles-card-image" href="${href}" aria-label="Leer ${escapeHtml(article.title)}"><img src="${escapeHtml(article.image_url)}" alt="${escapeHtml(article.image_alt || "")}" loading="lazy" decoding="async"></a>` : ""}<div class="articles-card-body"><div class="articles-card-meta"><span class="articles-card-category">${categoryLabel(article.category)}</span>${article.published_at ? `<span>${formatDate(article.published_at)}</span>` : ""}${mins ? `<span>${mins} min</span>` : ""}</div><h2><a href="${href}">${escapeHtml(article.title)}</a></h2>${summary ? `<p>${escapeHtml(summary)}</p>` : ""}<a class="articles-card-link" href="${href}">Leer artículo →</a></div>`;

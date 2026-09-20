@@ -88,7 +88,7 @@ export default async function ArticlesPage() {
           })}
         </section>
       </div>
-      <Script src="/articles-filter.js?v=20260920-2" strategy="afterInteractive" />
+      <Script src="/articles-public.js?v=20260920-live-1" strategy="afterInteractive" />
     </main>
   );
 }

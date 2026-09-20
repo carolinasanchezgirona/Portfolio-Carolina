@@ -49,7 +49,7 @@ export default function ArticleReaderPage() {
           </aside>
         </div>
       </div>
-      <Script src="/articles-public.js?v=20260913-editor-2" strategy="afterInteractive" />
+      <Script src="/articles-public.js?v=20260920-live-1" strategy="afterInteractive" />
     </main>
   );
 }
