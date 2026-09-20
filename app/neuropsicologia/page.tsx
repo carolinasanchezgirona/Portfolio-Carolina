@@ -82,7 +82,7 @@ export default function NeuropsychologyPage() {
               <li>Necesidad de seguimiento para comparar cambios a lo largo del tiempo.</li>
             </ul>
             <p>
-              No toda queja cognitiva implica una enfermedad neurodegenerativa. El sueño, el estado de ánimo, la ansiedad, el dolor, la medicación, el estrés y otros factores médicos también pueden influir en el rendimiento. Por eso es importante interpretar los resultados dentro del contexto completo de la persona.
+              No toda queja cognitiva implica una enfermedad neurodegenerativa. El sueño, el estado de ánimo, la ansiedad, el dolor, la medicación, el estrés y otros factores médicos también pueden influir en el rendimiento. Por eso es importante interpretar los resultados dentro del contexto completo de la persona. Si la preocupación principal son los olvidos, puedes consultar <a href="/problemas-de-memoria/">problemas de memoria</a>.
             </p>
           </section>
 
