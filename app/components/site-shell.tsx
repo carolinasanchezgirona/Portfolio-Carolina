@@ -18,7 +18,7 @@ function isAdministrativeRoute(pathname: string) {
 }
 
 function usesGlobalChrome(pathname: string) {
-  return pathname === "/" || pathname === "/articulos" || pathname === "/articulos/" || pathname.startsWith("/articulos/");
+  return pathname === "/" || pathname === "/articulos" || pathname === "/articulos/" || pathname.startsWith("/articulos/") || pathname === "/recursos" || pathname === "/recursos/";
 }
 
 function SiteHeader() {
@@ -34,6 +34,7 @@ function SiteHeader() {
         <a href="/neuropsicologia/">Neuropsicología</a>
         <a href="/sobre-mi/">Sobre mí</a>
         <a href="/articulos/">Artículos</a>
+        <a href="/recursos/">Recursos</a>
         <a className="nav-cta" href="/cita/">Pedir cita</a>
       </nav>
 
@@ -49,6 +50,7 @@ function SiteHeader() {
           <a href="/deterioro-cognitivo/">Deterioro cognitivo</a>
           <a href="/sobre-mi/">Sobre mí</a>
           <a href="/articulos/">Artículos</a>
+          <a href="/recursos/">Recursos</a>
           <a href="/psicologa-arenys-de-mar/">Consulta en Arenys de Mar</a>
           <a href="/cita/">Pedir cita</a>
         </div>
@@ -101,6 +103,7 @@ function SiteFooter() {
           <p className="site-footer-heading">Consulta</p>
           <a href="/sobre-mi/">Sobre mí</a>
           <a href="/articulos/">Artículos</a>
+          <a href="/recursos/">Recursos</a>
           <a href="/psicologa-arenys-de-mar/">Psicóloga en Arenys de Mar</a>
           <a href="/cita/">Pedir cita</a>
         </nav>
