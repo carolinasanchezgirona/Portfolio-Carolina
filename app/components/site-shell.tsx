@@ -111,7 +111,27 @@ function SiteFooter() {
 
       <div className="editorial-wrap site-footer-bottom">
         <span>© 2026 Carolina Sánchez Girona</span>
-        <a href="mailto:contact@carolinasanchezgirona.com">contact@carolinasanchezgirona.com</a>
+        <span>
+          <a href="mailto:contact@carolinasanchezgirona.com">contact@carolinasanchezgirona.com</a>
+          {" · "}
+          <a
+            href="https://www.instagram.com/carolinasanchez.psicologia/"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Instagram de Carolina Sánchez | Psicóloga"
+          >
+            Instagram
+          </a>
+          {" · "}
+          <a
+            href="https://es.linkedin.com/in/carolina-s%C3%A1nchez-girona-43b3b94a"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="LinkedIn de Carolina Sánchez Girona"
+          >
+            LinkedIn
+          </a>
+        </span>
       </div>
     </footer>
   );
