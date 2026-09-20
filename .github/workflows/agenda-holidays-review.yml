@@ -1,0 +1,72 @@
+name: Revisar festivos de agenda
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "15 8 15 11 *"
+    - cron: "15 8 1 12 *"
+
+jobs:
+  review-holidays:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Instalar PostgreSQL
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y postgresql-client curl
+
+      - name: Comprobar calendario del próximo año
+        id: check
+        env:
+          SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          NEXT_YEAR=$(TZ=Europe/Madrid date -d '+1 year' +%Y)
+          COUNTS=$(psql "$SUPABASE_DB_URL" --no-align --tuples-only --quiet --command "
+            select scope || ':' || count(*)
+            from public.appointment_calendar_holidays
+            where extract(year from holiday_date) = ${NEXT_YEAR}
+            group by scope
+            order by scope;
+          ")
+          echo "Calendario encontrado:"
+          echo "$COUNTS"
+
+          for SCOPE in national catalonia barcelona arenys_de_mar; do
+            if ! grep -q "^$SCOPE:" <<< "$COUNTS"; then
+              echo "complete=false" >> "$GITHUB_OUTPUT"
+              echo "year=$NEXT_YEAR" >> "$GITHUB_OUTPUT"
+              exit 0
+            fi
+          done
+
+          echo "complete=true" >> "$GITHUB_OUTPUT"
+          echo "year=$NEXT_YEAR" >> "$GITHUB_OUTPUT"
+
+      - name: Avisar por Telegram si falta actualizar
+        if: steps.check.outputs.complete == 'false'
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.CLINICAL_BACKUP_TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.CLINICAL_BACKUP_TELEGRAM_CHAT_ID }}
+          YEAR: ${{ steps.check.outputs.year }}
+        run: |
+          MESSAGE="📅 La agenda todavía no tiene completo el calendario oficial de festivos de ${YEAR}.
+
+          Hay que revisar:
+          • festivos nacionales
+          • Catalunya
+          • Barcelona
+          • Arenys de Mar
+
+          Los festivos son informativos y no bloquean reservas automáticamente."
+
+          curl --fail --silent --show-error \
+            --request POST \
+            "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" \
+            --data-urlencode "chat_id=${TELEGRAM_CHAT_ID}" \
+            --data-urlencode "text=${MESSAGE}"
+
+      - name: Confirmar calendario completo
+        if: steps.check.outputs.complete == 'true'
+        run: echo "El calendario del próximo año ya contiene todos los ámbitos."
