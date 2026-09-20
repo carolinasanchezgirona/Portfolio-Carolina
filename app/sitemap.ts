@@ -2,7 +2,7 @@ import type { MetadataRoute } from "next";
 import { getPublishedArticles, isArticleVisible } from "./articulos/articles-data";
 
 const base = "https://carolinasanchezgirona.com";
-const staticLastModified = new Date("2026-09-18T00:00:00+02:00");
+const staticLastModified = new Date("2026-09-20T00:00:00+02:00");
 
 export const dynamic = "force-static";
 
