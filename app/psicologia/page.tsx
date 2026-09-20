@@ -79,7 +79,7 @@ export default function PsychologyPage() {
             </p>
             <h3>Estado de ánimo y apatía</h3>
             <p>
-              Periodos de tristeza, pérdida de interés, agotamiento, irritabilidad o sensación de desconexión. La intervención puede centrarse en recuperar funcionamiento, identificar factores de mantenimiento y reconstruir rutinas, vínculos y objetivos que tengan sentido para la persona.
+              Periodos de tristeza, pérdida de interés, agotamiento, irritabilidad o sensación de desconexión. La intervención puede centrarse en recuperar funcionamiento, identificar factores de mantenimiento y reconstruir rutinas, vínculos y objetivos que tengan sentido para la persona. <a href="/depresion/">Más información sobre depresión y bajo estado de ánimo.</a>
             </p>
             <h3>Duelo y pérdidas</h3>
             <p>
@@ -87,11 +87,11 @@ export default function PsychologyPage() {
             </p>
             <h3>Relaciones, límites y decisiones</h3>
             <p>
-              Dificultades para poner límites, relaciones que generan sufrimiento, dependencia emocional, conflictos repetidos o decisiones que se vuelven difíciles de sostener. En estos casos se trabaja sobre patrones relacionales, necesidades, expectativas y capacidad de elección.
+              Dificultades para poner límites, relaciones que generan sufrimiento, dependencia emocional, conflictos repetidos o decisiones que se vuelven difíciles de sostener. En estos casos se trabaja sobre patrones relacionales, necesidades, expectativas y capacidad de elección. Puedes ampliar información sobre <a href="/limites-y-relaciones-dificiles/">límites y relaciones difíciles</a> o <a href="/rupturas-de-pareja/">rupturas de pareja</a>.
             </p>
             <h3>Sobrecarga y cambios vitales</h3>
             <p>
-              Etapas de mucha exigencia, responsabilidades acumuladas, cambios laborales, familiares o personales pueden generar sensación de saturación. La terapia ayuda a discriminar qué puede modificarse, qué necesita ser aceptado y qué recursos conviene reforzar.
+              Etapas de mucha exigencia, responsabilidades acumuladas, cambios laborales, familiares o personales pueden generar sensación de saturación. La terapia ayuda a discriminar qué puede modificarse, qué necesita ser aceptado y qué recursos conviene reforzar. <a href="/estres-y-sobrecarga/">Más información sobre estrés y sobrecarga.</a>
             </p>
           </section>
 
