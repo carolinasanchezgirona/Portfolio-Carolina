@@ -110,6 +110,70 @@ export default function AdminClinicaPage() {
             <button className="clinic-primary" type="submit">Guardar ficha</button>
           </div>
 
+          <section className="clinic-record-sections" aria-label="Historia clínica estructurada">
+            <details className="clinic-record-section" open>
+              <summary><span>Historia y antecedentes</span><small>Motivo, evolución, antecedentes y contexto</small></summary>
+              <div className="clinic-record-section-body clinic-form-grid">
+                <label className="clinic-full">Motivo de consulta<textarea id="clinic-reason-consultation" rows={3} placeholder="Demanda principal, quién solicita la consulta, motivo referido y expectativas…" /></label>
+                <label className="clinic-full">Historia del problema actual<textarea id="clinic-problem-history" rows={4} placeholder="Inicio, evolución, desencadenantes, fluctuaciones, impacto funcional y estrategias utilizadas…" /></label>
+                <label>Antecedentes psicológicos / psiquiátricos<textarea id="clinic-psych-history" rows={4} placeholder="Episodios previos, diagnósticos, tratamientos, ingresos, profesionales y evolución…" /></label>
+                <label>Antecedentes médicos<textarea id="clinic-medical-history" rows={4} placeholder="Patologías relevantes, intervenciones, antecedentes neurológicos, dolor, sueño y otros factores médicos…" /></label>
+                <label className="clinic-full">Antecedentes familiares<textarea id="clinic-family-history" rows={3} placeholder="Antecedentes psicológicos, psiquiátricos, neurológicos o médicos familiares relevantes…" /></label>
+                <label>Contexto personal y familiar<textarea id="clinic-personal-family-context" rows={4} placeholder="Convivencia, relaciones significativas, apoyos, conflictos y acontecimientos familiares relevantes…" /></label>
+                <label>Contexto social<textarea id="clinic-social-context" rows={4} placeholder="Red de apoyo, amistades, aislamiento, actividades, participación social y recursos comunitarios…" /></label>
+                <label>Contexto académico / laboral<textarea id="clinic-work-academic-context" rows={4} placeholder="Estudios, ocupación, funcionamiento actual, bajas, conflictos, cambios y factores de estrés…" /></label>
+                <label>Acontecimientos vitales relevantes<textarea id="clinic-life-events" rows={4} placeholder="Pérdidas, separaciones, enfermedad, migraciones, accidentes, cambios vitales u otros acontecimientos significativos…" /></label>
+              </div>
+            </details>
+
+            <details className="clinic-record-section">
+              <summary><span>Evaluación y diagnóstico</span><small>Exploración clínica, pruebas e hipótesis</small></summary>
+              <div className="clinic-record-section-body clinic-form-grid">
+                <label className="clinic-full">Exploración clínica<textarea id="clinic-clinical-examination" rows={4} placeholder="Estado emocional, conducta, discurso, pensamiento, percepción, cognición, insight y otros hallazgos relevantes…" /></label>
+                <label>Evaluación psicométrica<textarea id="clinic-psychometric-assessment" rows={4} placeholder="Prueba, fecha, puntuaciones, interpretación clínica y limitaciones…" /></label>
+                <label>Evaluación neuropsicológica<textarea id="clinic-neuropsych-assessment" rows={4} placeholder="Funciones exploradas, pruebas administradas, resultados, perfil cognitivo e interpretación…" /></label>
+                <label className="clinic-full">Diagnósticos registrados<textarea id="clinic-diagnoses" rows={4} placeholder="Diagnóstico, código DSM-5-TR/CIE-11, fecha, profesional y estado…" /></label>
+                <label>Hipótesis diagnósticas<textarea id="clinic-diagnostic-hypotheses" rows={4} placeholder="Hipótesis de trabajo, datos que la apoyan, datos que la cuestionan y aspectos por explorar…" /></label>
+                <label>Diagnóstico diferencial<textarea id="clinic-differential-diagnosis" rows={4} placeholder="Alternativas consideradas y elementos clínicos a favor o en contra…" /></label>
+              </div>
+            </details>
+
+            <details className="clinic-record-section">
+              <summary><span>Formulación clínica</span><small>Problemas y factores explicativos del caso</small></summary>
+              <div className="clinic-record-section-body clinic-form-grid">
+                <label className="clinic-full">Problemas clínicos actuales<textarea id="clinic-current-problems" rows={4} placeholder="Dificultades principales que requieren intervención o seguimiento…" /></label>
+                <label>Factores predisponentes<textarea id="clinic-predisposing-factors" rows={4} placeholder="Variables biográficas, temperamentales, familiares, médicas o contextuales que aumentan vulnerabilidad…" /></label>
+                <label>Factores precipitantes<textarea id="clinic-precipitating-factors" rows={4} placeholder="Acontecimientos o cambios asociados temporalmente al inicio o empeoramiento…" /></label>
+                <label>Factores perpetuantes<textarea id="clinic-perpetuating-factors" rows={4} placeholder="Conductas, cogniciones, dinámicas relacionales o factores ambientales que mantienen el problema…" /></label>
+                <label>Factores protectores<textarea id="clinic-protective-factors" rows={4} placeholder="Apoyos, capacidades, recursos personales, motivación y condiciones favorables…" /></label>
+                <label className="clinic-full">Formulación clínica integradora<textarea id="clinic-integrative-formulation" rows={5} placeholder="Hipótesis explicativa integradora del caso y relación entre problemas, antecedentes y mecanismos de mantenimiento…" /></label>
+              </div>
+            </details>
+
+            <details className="clinic-record-section">
+              <summary><span>Tratamiento y evolución</span><small>Objetivos, plan e integración longitudinal</small></summary>
+              <div className="clinic-record-section-body clinic-form-grid">
+                <label>Objetivos terapéuticos<textarea id="clinic-therapeutic-goals" rows={4} placeholder="Objetivo, prioridad, indicadores de cambio, estado y evolución…" /></label>
+                <label>Plan terapéutico<textarea id="clinic-treatment-plan" rows={4} placeholder="Focos de intervención, estrategias previstas, frecuencia y criterios de revisión…" /></label>
+                <label>Intervenciones realizadas<textarea id="clinic-interventions-summary" rows={4} placeholder="Técnicas utilizadas, objetivo, respuesta observada y resultado clínico relevante…" /></label>
+                <label>Evolución clínica<textarea id="clinic-evolution-summary" rows={4} placeholder="Cambios en síntomas, funcionamiento, recursos, dificultades y respuesta al tratamiento…" /></label>
+              </div>
+            </details>
+
+            <details className="clinic-record-section">
+              <summary><span>Seguridad y coordinación</span><small>Riesgo, profesionales y observaciones relevantes</small></summary>
+              <div className="clinic-record-section-body clinic-form-grid">
+                <label className="clinic-full">Riesgo y seguridad<textarea id="clinic-risk-safety" rows={4} placeholder="Ideación autolesiva/suicida, planificación, antecedentes, factores de riesgo, protectores y medidas adoptadas…" /></label>
+                <label>Coordinación con otros profesionales<textarea id="clinic-professional-coordination" rows={4} placeholder="Profesional, fecha, motivo, información intercambiada y acuerdos…" /></label>
+                <label>Observaciones clínicas<textarea id="clinic-clinical-observations" rows={4} placeholder="Información relevante que no encaja en los apartados anteriores…" /></label>
+              </div>
+            </details>
+          </section>
+
+          <div className="clinic-form-actions clinic-form-actions-bottom">
+            <button className="clinic-primary" type="submit">Guardar ficha completa</button>
+          </div>
+
           <section className="clinic-exercises-section">
             <div className="clinic-goals-heading"><div><p className="clinic-eyebrow">Continuidad terapéutica</p><h3>Ejercicios</h3></div><button id="clinic-new-exercise" className="clinic-secondary" type="button">Asignar ejercicio</button></div>
             <div id="clinic-exercise-suggestions" className="clinic-exercise-suggestions" />
@@ -285,7 +349,7 @@ export default function AdminClinicaPage() {
         </form>
       </dialog>
 
-      <Script src="/admin-clinica.js?v=20260914-5" strategy="afterInteractive" />
+      <Script src="/admin-clinica.js?v=20260921-1" strategy="afterInteractive" />
       <Script src="/admin-clinica-audit-fixes.js?v=20260915-1" strategy="afterInteractive" />
     </main>
   );
