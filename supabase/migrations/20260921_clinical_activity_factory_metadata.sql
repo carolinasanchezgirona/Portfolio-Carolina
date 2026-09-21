@@ -32,6 +32,3 @@ create index if not exists clinical_exercise_templates_area_tags_gin
 
 create index if not exists clinical_exercise_templates_goal_tags_gin
   on public.clinical_exercise_templates using gin(goal_tags);
-
-create index if not exists clinical_exercise_templates_process_tags_gin
-  on public.clinical_exercise_templates using gin(process_tags);
