@@ -2,13 +2,13 @@ import type { Metadata } from "next";
 import "../seo-pages.css";
 
 export const metadata: Metadata = {
-  title: "Psicóloga para ansiedad en Arenys de Mar y online",
+  title: "Psicóloga para ansiedad en Arenys de Mar y Maresme",
   description:
-    "Atención psicológica para ansiedad en adultos en Arenys de Mar y online. Preocupación persistente, anticipación, bloqueo, síntomas físicos y sensación de desbordamiento.",
+    "Psicóloga para ansiedad en adultos en Arenys de Mar y Maresme, con atención presencial y online. Preocupación, anticipación, evitación y síntomas físicos.",
   alternates: { canonical: "/ansiedad/" },
   openGraph: {
-    title: "Psicóloga para ansiedad | Carolina Sánchez Girona",
-    description: "Psicología para ansiedad en adultos, presencial en Arenys de Mar y online.",
+    title: "Psicóloga para ansiedad en Arenys de Mar y Maresme | Carolina Sánchez Girona",
+    description: "Atención psicológica para ansiedad en adultos en Arenys de Mar, Maresme y online.",
     url: "https://carolinasanchezgirona.com/ansiedad/",
   },
 };
@@ -18,7 +18,7 @@ const serviceSchema = {
   "@type": "Service",
   name: "Atención psicológica para ansiedad",
   provider: { "@type": "Person", name: "Carolina Sánchez Girona", jobTitle: "Psicóloga General Sanitaria" },
-  areaServed: ["Arenys de Mar", "Maresme", "España"],
+  areaServed: ["Arenys de Mar", "Maresme", "Arenys de Munt", "Canet de Mar", "Caldes d’Estrac", "Sant Vicenç de Montalt", "Sant Andreu de Llavaneres", "Mataró", "España"],
   serviceType: "Psicología General Sanitaria para ansiedad en adultos",
   url: "https://carolinasanchezgirona.com/ansiedad/",
 };
@@ -42,9 +42,9 @@ export default function AnxietyPage() {
         <div className="editorial-wrap seo-hero-inner">
           <p className="seo-breadcrumbs"><a href="/">Inicio</a><span>·</span><a href="/psicologia/">Psicología</a><span>·</span><span>Ansiedad</span></p>
           <p className="editorial-eyebrow">Psicología General Sanitaria · Adultos</p>
-          <h1>Psicóloga para ansiedad en Arenys de Mar y online</h1>
+          <h1>Psicóloga para ansiedad en Arenys de Mar</h1>
           <p className="seo-lead">
-            La ansiedad puede aparecer como preocupación constante, anticipación, tensión, síntomas físicos, evitación o sensación de no poder desconectar. El trabajo terapéutico busca comprender qué la mantiene y recuperar margen de acción en la vida cotidiana.
+            La ansiedad puede aparecer como preocupación constante, anticipación, tensión, síntomas físicos, evitación o sensación de no poder desconectar. El trabajo terapéutico busca comprender qué la mantiene y recuperar margen de acción en la vida cotidiana. La atención presencial se realiza en Arenys de Mar para personas adultas del Maresme, con opción online cuando esta modalidad encaja con el caso.
           </p>
           <div className="seo-actions">
             <a className="editorial-btn editorial-btn-primary" href="/cita/">Pedir cita</a>
@@ -127,6 +127,16 @@ export default function AnxietyPage() {
           </section>
 
           <section>
+            <h2>Psicóloga para ansiedad en Arenys de Mar y Maresme</h2>
+            <p>
+              La consulta presencial está en Arenys de Mar y atiendo a personas adultas de distintas poblaciones del Maresme, entre ellas Arenys de Munt, Canet de Mar, Caldes d’Estrac, Sant Vicenç de Montalt, Sant Andreu de Llavaneres y Mataró. También ofrezco atención online cuando esta modalidad resulta adecuada para las necesidades y circunstancias de la persona.
+            </p>
+            <p>
+              La proximidad geográfica puede facilitar la continuidad de la terapia, pero el criterio principal para iniciar un tratamiento es que el enfoque clínico y la modalidad de atención sean adecuados para el problema que se quiere trabajar.
+            </p>
+          </section>
+
+          <section>
             <h2>Primera visita</h2>
             <p>
               La primera sesión dura 60 minutos. Revisaremos qué está ocurriendo, desde cuándo, cómo afecta a tu vida y qué has intentado hasta ahora. Si tienes informes de otros profesionales sanitarios que consideres relevantes, puedes traerlos a la consulta.
@@ -141,7 +151,7 @@ export default function AnxietyPage() {
               <li><span>Duración</span><strong>60 minutos</strong></li>
               <li><span>Tarifa</span><strong>60 €</strong></li>
               <li><span>Modalidad</span><strong>Presencial y online</strong></li>
-              <li><span>Ubicación</span><strong>Arenys de Mar</strong></li>
+              <li><span>Ubicación</span><strong>Arenys de Mar · Maresme</strong></li>
             </ul>
             <a className="editorial-btn editorial-btn-primary" href="/cita/">Consultar disponibilidad</a>
           </div>
@@ -169,7 +179,7 @@ export default function AnxietyPage() {
       <footer className="editorial-footer">
         <div className="editorial-wrap editorial-footer-inner">
           <div><p className="editorial-footer-brand">Carolina Sánchez | Psicóloga</p><p>Dememoria · Consulta de Psicología y Neuropsicología</p></div>
-          <div><p>Arenys de Mar · Atención online</p><p>© 2026 Carolina Sánchez Girona</p></div>
+          <div><p>Arenys de Mar · Maresme · Atención online</p><p>© 2026 Carolina Sánchez Girona</p></div>
         </div>
       </footer>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(serviceSchema) }} />
