@@ -322,7 +322,10 @@
     });
   }
   function clinicalProfilePayload() {
-    return Object.fromEntries(clinicalProfileSchema.map((field) => [field.key, clinicalProfileFields[field.key]?.value.trim() || null]));
+    return {
+      ...clinicalProfile(currentPatient),
+      ...Object.fromEntries(clinicalProfileSchema.map((field) => [field.key, clinicalProfileFields[field.key]?.value.trim() || null])),
+    };
   }
   function clinicalProfilePrintHtml(patient) {
     const profile = clinicalProfile(patient);
