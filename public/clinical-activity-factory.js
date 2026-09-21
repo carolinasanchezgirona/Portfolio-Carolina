@@ -3,6 +3,7 @@
   const SUPABASE_URL="https://grgyvdxkjdstdyumdfyg.supabase.co";
   const REST_URL=SUPABASE_URL+"/rest/v1";
   const AUTH_URL=SUPABASE_URL+"/auth/v1";
+  const AI_URL=SUPABASE_URL+"/functions/v1/generate-clinical-activity-ai";
   const KEY="sb_publishable_b2MRfP0bPti87V2FXCzHGw_Y9vvcbii";
   const SESSION_KEY="dememoria_admin_session";
   const ALLOWED_USER_ID="9d2cfdb1-fed6-4f76-b47a-d58507eb14f2";
@@ -107,8 +108,9 @@
   }
   function render(a){
     current=a;$("#factory-empty").hidden=true;$("#factory-output").hidden=false;$("#factory-save").disabled=false;
-    $("#factory-output-title").value=a.title;$("#factory-output-code").textContent="Borrador generado · código al guardar";
-    $("#factory-output-meta").textContent=`${labels.area[a.spec.area]||a.spec.area} · ${labels.process[a.spec.process]||a.spec.process} · ${labels.format[a.format]||a.format} · ${a.spec.duration} min`;
+    $("#factory-output-title").value=a.title;$("#factory-output-code").textContent=a.aiModel?"Borrador enriquecido con IA · código al guardar":"Borrador generado · código al guardar";
+    const aiMeta=a.aiModel?` · IA: ${a.aiModel}`:"";
+    $("#factory-output-meta").textContent=`${labels.area[a.spec.area]||a.spec.area} · ${labels.process[a.spec.process]||a.spec.process} · ${labels.format[a.format]||a.format} · ${a.spec.duration} min${aiMeta}`;
     $("#factory-professional-preview").innerHTML=`<h2>Finalidad clínica</h2><p>${esc(a.professional.purpose)}</p><div class="factory-callout">${esc(a.professional.rationale)}</div><h2>Mecanismos de cambio</h2><p>${esc(a.professional.mechanisms.join(" · "))}</p><h2>Técnicas</h2><p>${esc(a.professional.techniques.join(" · "))}</p><h2>Indicaciones</h2><ul>${a.professional.indications.map(x=>"<li>"+esc(x)+"</li>").join("")}</ul><h2>Precauciones</h2><ul>${a.professional.cautions.map(x=>"<li>"+esc(x)+"</li>").join("")}</ul><h2>Aplicación</h2><ol>${a.professional.steps.map(x=>"<li>"+esc(x)+"</li>").join("")}</ol><h2>Preguntas de profundización</h2><ul>${a.professional.questions.map(x=>"<li>"+esc(x)+"</li>").join("")}</ul><h2>Cierre</h2><p>${esc(a.professional.close)}</p>`;
     $("#factory-patient-preview").innerHTML=`<h2>${esc(a.title)}</h2><p>${esc(a.patient.intro)}</p><ol>${a.patient.steps.map(x=>"<li>"+esc(x)+"</li>").join("")}</ol><h2>Para cerrar</h2><ul>${a.patient.reflection.map(x=>"<li>"+esc(x)+"</li>").join("")}</ul><div class="factory-callout"><strong>Entre sesiones</strong><br>${esc(a.patient.homework)}</div>`;
   }
@@ -116,23 +118,71 @@
     variants=list;const host=$("#factory-variants-preview");host.innerHTML=list.map((a,i)=>`<article class="factory-variant"><h3>${esc(a.title)}</h3><p>${esc(labels.format[a.format]||a.format)} · ${esc(a.professional.mechanisms.join(" · "))}</p><button class="factory-primary" type="button" data-use-variant="${i}">Usar esta propuesta</button></article>`).join("");
     host.querySelectorAll("[data-use-variant]").forEach(b=>b.addEventListener("click",()=>{render(list[Number(b.dataset.useVariant)]);showPreview("professional")}))
   }
-  function showPreview(name){$$("[data-preview]").forEach(b=>b.classList.toggle("active",b.dataset.preview===name));$("#factory-professional-preview").hidden=name!=="professional";$("#factory-patient-preview").hidden=name!=="patient";$("#factory-variants-preview").hidden=name!=="variants"}
-  function generate(){
+  function showPreview(name){$("[data-preview]").forEach(b=>b.classList.toggle("active",b.dataset.preview===name));$("#factory-professional-preview").hidden=name!=="professional";$("#factory-patient-preview").hidden=name!=="patient";$("#factory-variants-preview").hidden=name!=="variants"}
+  async function enrichWithAI(activity){
+    const response=await fetch(AI_URL,{method:"POST",headers:headers(),body:JSON.stringify({base:activity,spec:activity.spec})});
+    const body=await response.json().catch(()=>({}));
+    if(!response.ok){
+      const error=new Error(body?.error||"No se ha podido enriquecer con IA.");
+      error.code=body?.code||"";
+      throw error;
+    }
+    const enriched=body.enriched;
+    return {
+      ...activity,
+      title:enriched.title,
+      summary:enriched.summary,
+      professional:enriched.professional,
+      patient:enriched.patient,
+      instructions:enriched.patient.intro+"\n\n"+enriched.patient.steps.map((x,i)=>`${i+1}. ${x}`).join("\n")+"\n\n"+enriched.patient.homework,
+      aiModel:body.model,
+      aiEnrichedAt:new Date().toISOString()
+    };
+  }
+  async function enrichCurrent(){
+    if(!current)return;
+    $("#factory-message").textContent="Enriqueciendo con IA…";
+    $("#factory-ai-refresh").disabled=true;
+    try{
+      current=await enrichWithAI(current);
+      render(current);
+      $("#factory-message").textContent="Versión enriquecida con IA. Revisa el contenido antes de guardarlo.";
+    }catch(error){
+      $("#factory-message").textContent=error.code==="ai_not_configured"
+        ?"El motor clínico está operativo. Falta configurar la clave de IA para activar el enriquecimiento."
+        :error.message;
+    }finally{$("#factory-ai-refresh").disabled=false}
+  }
+  async function generate(){
     const s=spec();
     if(mode==="surprise"){
       const choices=["experimento","experiencial","hoja"];
-      const list=choices.map(f=>createActivity({...s,format:f},f));render(list[0]);renderVariants(list);showPreview("variants");return;
+      const list=choices.map(f=>createActivity({...s,format:f},f));render(list[0]);renderVariants(list);showPreview("variants");
+      $("#factory-message").textContent="Tres arquitecturas generadas. Elige una y, si quieres, enriquécela con IA.";
+      return;
     }
-    render(createActivity(s));renderVariants([createActivity({...s,format:"experimento"},"experimento"),createActivity({...s,format:"experiencial"},"experiencial"),createActivity({...s,format:"hoja"},"hoja")]);showPreview("professional");
+    const base=createActivity(s);
+    render(base);
+    renderVariants([createActivity({...s,format:"experimento"},"experimento"),createActivity({...s,format:"experiencial"},"experiencial"),createActivity({...s,format:"hoja"},"hoja")]);
+    showPreview("professional");
+    if($("#factory-use-ai")?.checked){
+      await enrichCurrent();
+    }else{
+      $("#factory-message").textContent="Actividad generada con el motor clínico.";
+    }
   }
-  function nextCode(a,count){const area=areaCodes[a.spec.area]||"CLI",proc=processCodes[a.spec.process]||"GEN";return `ACT-${area}-${proc}-${String(count+1).padStart(4,"0")}`}
+  async function nextCode(a){
+    const area=areaCodes[a.spec.area]||"CLI",proc=processCodes[a.spec.process]||"GEN",prefix=`ACT-${area}-${proc}-`;
+    const rows=await api(`clinical_exercise_templates?select=activity_code&activity_code=like.${encodeURIComponent(prefix+"%")}`);
+    const max=(rows||[]).reduce((acc,row)=>{const n=Number(String(row.activity_code||"").slice(prefix.length));return Number.isFinite(n)?Math.max(acc,n):acc},0);
+    return prefix+String(max+1).padStart(4,"0");
+  }
   async function save(){
     if(!current)return;
     const title=$("#factory-output-title").value.trim();if(!title)throw new Error("El título no puede quedar vacío.");
     $("#factory-message").textContent="Guardando en biblioteca…";
-    const rows=await api("clinical_exercise_templates?select=id&origin=eq.factory",{headers:{Prefer:"count=exact"}});
-    const code=nextCode(current,Array.isArray(rows)?rows.length:0);
-    const payload={title,summary:current.summary,instructions:current.instructions,process_tags:[labels.process[current.spec.process]||current.spec.process],duration_minutes:current.spec.duration,burden:"medium",status:"active",activity_code:code,version:1,review_status:"generated",phase:current.spec.phase,area_tags:[labels.area[current.spec.area]||current.spec.area],goal_tags:[labels.goal[current.spec.goal]||current.spec.goal],mechanism_tags:current.professional.mechanisms,approach_tags:[labels.approach[current.spec.approach]||current.spec.approach],technique_tags:current.professional.techniques,format_code:current.format,population:current.spec.population,use_context:current.spec.use,depth:current.spec.depth,structure_level:"structured",professional_content:current.professional,patient_content:current.patient,generation_spec:current.spec,origin:"factory",generated_at:new Date().toISOString()};
+    const code=await nextCode(current);
+    const payload={title,summary:current.summary,instructions:current.instructions,process_tags:[labels.process[current.spec.process]||current.spec.process],duration_minutes:current.spec.duration,burden:"medium",status:"active",activity_code:code,version:1,review_status:"generated",phase:current.spec.phase,area_tags:[labels.area[current.spec.area]||current.spec.area],goal_tags:[labels.goal[current.spec.goal]||current.spec.goal],mechanism_tags:current.professional.mechanisms,approach_tags:[labels.approach[current.spec.approach]||current.spec.approach],technique_tags:current.professional.techniques,format_code:current.format,population:current.spec.population,use_context:current.spec.use,depth:current.spec.depth,structure_level:"structured",professional_content:current.professional,patient_content:current.patient,generation_spec:{...current.spec,ai_model:current.aiModel||null},origin:current.aiModel?"factory_ai":"factory",generated_at:new Date().toISOString(),ai_model:current.aiModel||null,ai_enriched_at:current.aiEnrichedAt||null};
     const saved=await api("clinical_exercise_templates?select=*",{method:"POST",headers:{Prefer:"return=representation"},body:JSON.stringify(payload)});
     current.id=saved?.[0]?.id||null;$("#factory-output-code").textContent=`${code} · v1.0 · GENERADA`;$("#factory-message").textContent="Guardada. Ya está disponible en la biblioteca clínica.";
   }
@@ -144,6 +194,6 @@
     render(current);
   }
   function reset(){current=null;variants=[];$("#factory-empty").hidden=false;$("#factory-output").hidden=true;$("#factory-save").disabled=true;$("#factory-message").textContent=""}
-  async function init(){const ok=await validateSession();$("#factory-login-required").hidden=ok;$("#factory-app").hidden=!ok;if(!ok)return;$$("[data-mode]").forEach(b=>b.addEventListener("click",()=>setMode(b.dataset.mode)));$$("[data-preview]").forEach(b=>b.addEventListener("click",()=>showPreview(b.dataset.preview)));$$("[data-adapt]").forEach(b=>b.addEventListener("click",()=>adapt(b.dataset.adapt)));$("#factory-generate").addEventListener("click",generate);$("#factory-save").addEventListener("click",()=>save().catch(e=>$("#factory-message").textContent=e.message));$("#factory-new").addEventListener("click",reset)}
+  async function init(){const ok=await validateSession();$("#factory-login-required").hidden=ok;$("#factory-app").hidden=!ok;if(!ok)return;$("[data-mode]").forEach(b=>b.addEventListener("click",()=>setMode(b.dataset.mode)));$("[data-preview]").forEach(b=>b.addEventListener("click",()=>showPreview(b.dataset.preview)));$("[data-adapt]").forEach(b=>b.addEventListener("click",()=>adapt(b.dataset.adapt)));$("#factory-generate").addEventListener("click",()=>generate().catch(e=>$("#factory-message").textContent=e.message));$("#factory-ai-refresh").addEventListener("click",enrichCurrent);$("#factory-save").addEventListener("click",()=>save().catch(e=>$("#factory-message").textContent=e.message));$("#factory-new").addEventListener("click",reset)}
   init().catch(()=>{$("#factory-login-required").hidden=false;$("#factory-app").hidden=true});
 })();
