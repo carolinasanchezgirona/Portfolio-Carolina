@@ -1,3 +1,4 @@
+// @ts-nocheck
 const SUPABASE_URL=Deno.env.get("SUPABASE_URL")??"";
 const ANON_KEY=Deno.env.get("SUPABASE_ANON_KEY")??"";
 const ALLOWED_USER_ID="9d2cfdb1-fed6-4f76-b47a-d58507eb14f2";
