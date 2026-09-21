@@ -191,8 +191,13 @@ export default function ClinicalFactoryPage() {
               </div>
             </section>
 
+            <label className="factory-ai-option">
+              <input id="factory-use-ai" type="checkbox" defaultChecked />
+              <span><strong>Enriquecer con IA</strong><small>El motor clínico fija objetivo, mecanismos y técnicas. La IA solo adapta y mejora la redacción.</small></span>
+            </label>
+            <p className="factory-privacy-note">No introduzcas nombres, correos, teléfonos ni otros datos identificativos en el contexto clínico.</p>
             <button id="factory-generate" className="factory-generate" type="button">Generar actividad</button>
-            <p id="factory-message" className="factory-message" role="status" />
+            <p id="factory-message" className="factory-message" role="status" aria-live="polite" />
           </aside>
 
           <section className="factory-result">
@@ -213,6 +218,7 @@ export default function ClinicalFactoryPage() {
                   <button type="button" className="factory-secondary" data-adapt="shorter">Más breve</button>
                   <button type="button" className="factory-secondary" data-adapt="experiential">Más experiencial</button>
                   <button type="button" className="factory-secondary" data-adapt="homework">Convertir en tarea</button>
+                  <button id="factory-ai-refresh" type="button" className="factory-secondary">Variar con IA</button>
                 </div>
               </div>
 
@@ -230,7 +236,7 @@ export default function ClinicalFactoryPage() {
         </div>
       </section>
 
-      <Script src="/clinical-activity-factory.js?v=20260921-1" strategy="afterInteractive" />
+      <Script src="/clinical-activity-factory.js?v=20260921-2" strategy="afterInteractive" />
     </main>
   );
 }
