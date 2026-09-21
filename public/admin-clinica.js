@@ -67,6 +67,39 @@
     saveReport: $("#clinic-save-report"), approveReport: $("#clinic-approve-report"), printReport: $("#clinic-print-report"),
   };
 
+
+  const clinicalProfileSchema = [
+    { key: "reason_for_consultation", id: "clinic-reason-consultation", label: "Motivo de consulta", group: "Historia y antecedentes" },
+    { key: "current_problem_history", id: "clinic-problem-history", label: "Historia del problema actual", group: "Historia y antecedentes" },
+    { key: "psychological_psychiatric_history", id: "clinic-psych-history", label: "Antecedentes psicológicos / psiquiátricos", group: "Historia y antecedentes" },
+    { key: "medical_history", id: "clinic-medical-history", label: "Antecedentes médicos", group: "Historia y antecedentes" },
+    { key: "family_history", id: "clinic-family-history", label: "Antecedentes familiares", group: "Historia y antecedentes" },
+    { key: "personal_family_context", id: "clinic-personal-family-context", label: "Contexto personal y familiar", group: "Historia y antecedentes" },
+    { key: "social_context", id: "clinic-social-context", label: "Contexto social", group: "Historia y antecedentes" },
+    { key: "academic_work_context", id: "clinic-work-academic-context", label: "Contexto académico / laboral", group: "Historia y antecedentes" },
+    { key: "significant_life_events", id: "clinic-life-events", label: "Acontecimientos vitales relevantes", group: "Historia y antecedentes" },
+    { key: "clinical_examination", id: "clinic-clinical-examination", label: "Exploración clínica", group: "Evaluación y diagnóstico" },
+    { key: "psychometric_assessment", id: "clinic-psychometric-assessment", label: "Evaluación psicométrica", group: "Evaluación y diagnóstico" },
+    { key: "neuropsychological_assessment", id: "clinic-neuropsych-assessment", label: "Evaluación neuropsicológica", group: "Evaluación y diagnóstico" },
+    { key: "diagnoses", id: "clinic-diagnoses", label: "Diagnósticos registrados", group: "Evaluación y diagnóstico" },
+    { key: "diagnostic_hypotheses", id: "clinic-diagnostic-hypotheses", label: "Hipótesis diagnósticas", group: "Evaluación y diagnóstico" },
+    { key: "differential_diagnosis", id: "clinic-differential-diagnosis", label: "Diagnóstico diferencial", group: "Evaluación y diagnóstico" },
+    { key: "current_clinical_problems", id: "clinic-current-problems", label: "Problemas clínicos actuales", group: "Formulación clínica" },
+    { key: "predisposing_factors", id: "clinic-predisposing-factors", label: "Factores predisponentes", group: "Formulación clínica" },
+    { key: "precipitating_factors", id: "clinic-precipitating-factors", label: "Factores precipitantes", group: "Formulación clínica" },
+    { key: "perpetuating_factors", id: "clinic-perpetuating-factors", label: "Factores perpetuantes", group: "Formulación clínica" },
+    { key: "protective_factors", id: "clinic-protective-factors", label: "Factores protectores", group: "Formulación clínica" },
+    { key: "integrative_formulation", id: "clinic-integrative-formulation", label: "Formulación clínica integradora", group: "Formulación clínica" },
+    { key: "therapeutic_goals", id: "clinic-therapeutic-goals", label: "Objetivos terapéuticos", group: "Tratamiento y evolución" },
+    { key: "treatment_plan", id: "clinic-treatment-plan", label: "Plan terapéutico", group: "Tratamiento y evolución" },
+    { key: "interventions_summary", id: "clinic-interventions-summary", label: "Intervenciones realizadas", group: "Tratamiento y evolución" },
+    { key: "clinical_evolution_summary", id: "clinic-evolution-summary", label: "Evolución clínica", group: "Tratamiento y evolución" },
+    { key: "risk_safety", id: "clinic-risk-safety", label: "Riesgo y seguridad", group: "Seguridad y coordinación" },
+    { key: "professional_coordination", id: "clinic-professional-coordination", label: "Coordinación con otros profesionales", group: "Seguridad y coordinación" },
+    { key: "clinical_observations", id: "clinic-clinical-observations", label: "Observaciones clínicas", group: "Seguridad y coordinación" },
+  ];
+  const clinicalProfileFields = Object.fromEntries(clinicalProfileSchema.map((field) => [field.key, $(`#${field.id}`)]));
+
   let session = null;
   let appointments = [];
   let patients = [];
@@ -278,6 +311,30 @@
   function escapeHtml(value) {
     return String(value || "").replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;").replaceAll("'", "&#039;");
   }
+  function clinicalProfile(patient) {
+    const value = patient?.clinical_profile;
+    return value && typeof value === "object" && !Array.isArray(value) ? value : {};
+  }
+  function fillClinicalProfile(patient) {
+    const profile = clinicalProfile(patient);
+    clinicalProfileSchema.forEach((field) => {
+      if (clinicalProfileFields[field.key]) clinicalProfileFields[field.key].value = profile[field.key] || "";
+    });
+  }
+  function clinicalProfilePayload() {
+    return Object.fromEntries(clinicalProfileSchema.map((field) => [field.key, clinicalProfileFields[field.key]?.value.trim() || null]));
+  }
+  function clinicalProfilePrintHtml(patient) {
+    const profile = clinicalProfile(patient);
+    const groups = [...new Set(clinicalProfileSchema.map((field) => field.group))];
+    return groups.map((group) => {
+      const entries = clinicalProfileSchema
+        .filter((field) => field.group === group && profile[field.key])
+        .map((field) => `<h3>${escapeHtml(field.label)}</h3><div class="text">${escapeHtml(profile[field.key])}</div>`)
+        .join("");
+      return entries ? `<section class="entry"><h2>${escapeHtml(group)}</h2>${entries}</section>` : "";
+    }).join("");
+  }
   function reportTypeLabel(type) {
     return ({ evolution: "Informe de evolución", clinical_summary: "Resumen clínico", referral: "Informe de derivación" })[type] || "Informe clínico";
   }
@@ -299,8 +356,14 @@
   function printClinicalHistory() {
     if (!currentPatient) return;
     const sessions = patientSessions(currentPatient.id).filter((item) => item.status === "approved").sort((a, b) => new Date(a.session_date) - new Date(b.session_date));
+    const profileEntries = clinicalProfilePrintHtml(currentPatient);
+    const overview = [
+      currentPatient.clinical_summary ? `<section class="entry"><h2>Síntesis clínica</h2><div class="text">${escapeHtml(currentPatient.clinical_summary)}</div></section>` : "",
+      currentPatient.medication_notes ? `<section class="entry"><h2>Medicación registrada</h2><div class="text">${escapeHtml(currentPatient.medication_notes)}</div></section>` : "",
+      currentPatient.next_session_focus ? `<section class="entry"><h2>Focos pendientes</h2><div class="text">${escapeHtml(currentPatient.next_session_focus)}</div></section>` : "",
+    ].join("");
     const entries = sessions.map((item) => `<section class="entry"><h2>Sesión ${item.session_number || ""} · ${escapeHtml(dateShort.format(new Date(item.session_date)))}</h2>${item.evolution_note ? `<h3>Evolución</h3><div class="text">${escapeHtml(item.evolution_note)}</div>` : ""}${item.intervention_note ? `<h3>Intervención</h3><div class="text">${escapeHtml(item.intervention_note)}</div>` : ""}${item.response_note ? `<h3>Respuesta</h3><div class="text">${escapeHtml(item.response_note)}</div>` : ""}${item.agreements_note ? `<h3>Acuerdos</h3><div class="text">${escapeHtml(item.agreements_note)}</div>` : ""}${item.homework_note ? `<h3>Tarea</h3><div class="text">${escapeHtml(item.homework_note)}</div>` : ""}</section>`).join("");
-    printableWindow("Historial clínico", `<header><p>Carolina Sánchez Girona · Psicóloga General Sanitaria y Neuropsicóloga</p><h1>Historial clínico</h1><p class="meta">Paciente: ${escapeHtml(currentPatient.full_name)} · Código: ${escapeHtml(currentPatient.public_code)} · Emitido: ${escapeHtml(dateShort.format(new Date()))}</p></header>${entries || "<p>No constan sesiones clínicas aprobadas.</p>"}<p class="privacy">Documento confidencial que contiene datos de salud.</p>`);
+    printableWindow("Historial clínico", `<header><p>Carolina Sánchez Girona · Psicóloga General Sanitaria y Neuropsicóloga</p><h1>Historial clínico</h1><p class="meta">Paciente: ${escapeHtml(currentPatient.full_name)} · Código: ${escapeHtml(currentPatient.public_code)} · Emitido: ${escapeHtml(dateShort.format(new Date()))}</p></header>${overview}${profileEntries}<h2>Sesiones aprobadas</h2>${entries || "<p>No constan sesiones clínicas aprobadas.</p>"}<p class="privacy">Documento confidencial que contiene datos de salud.</p>`);
   }
   function openReport(report = null) {
     if (!currentPatient) return;
@@ -329,13 +392,24 @@
     if (!currentPatient) return;
     const sessions = approvedSessionsInPeriod(currentPatient.id);
     const goals = patientGoals(currentPatient.id);
+    const profile = clinicalProfile(currentPatient);
     els.reportTitlePreview.textContent = reportTypeLabel(els.reportType.value);
-    els.reportContext.value = currentPatient.clinical_summary || "No consta una síntesis clínica redactada.";
-    els.reportEvolution.value = sessions.map((item) => `${dateShort.format(new Date(item.session_date))}: ${item.evolution_note || "Sin descripción de evolución."}`).join("\n\n");
-    els.reportInterventions.value = sessions.filter((item) => item.intervention_note).map((item) => `${dateShort.format(new Date(item.session_date))}: ${item.intervention_note}`).join("\n\n");
+    els.reportContext.value = [
+      profile.reason_for_consultation ? `Motivo de consulta: ${profile.reason_for_consultation}` : "",
+      currentPatient.clinical_summary ? `Síntesis clínica: ${currentPatient.clinical_summary}` : "",
+      profile.integrative_formulation ? `Formulación clínica: ${profile.integrative_formulation}` : "",
+      profile.diagnoses ? `Diagnósticos registrados: ${profile.diagnoses}` : "",
+    ].filter(Boolean).join("\n\n") || "No consta información clínica estructurada suficiente.";
+    els.reportEvolution.value = sessions.map((item) => `${dateShort.format(new Date(item.session_date))}: ${item.evolution_note || "Sin descripción de evolución."}`).join("\n\n") || profile.clinical_evolution_summary || "";
+    els.reportInterventions.value = sessions.filter((item) => item.intervention_note).map((item) => `${dateShort.format(new Date(item.session_date))}: ${item.intervention_note}`).join("\n\n") || profile.interventions_summary || "";
     const activeGoals = goals.map((goal) => goal.title).join("; ");
-    els.reportCurrent.value = [currentPatient.next_session_focus ? `Focos clínicos pendientes: ${currentPatient.next_session_focus}` : "", activeGoals ? `Objetivos activos: ${activeGoals}.` : ""].filter(Boolean).join("\n\n");
-    els.reportMessage.textContent = `Borrador generado a partir de ${sessions.length} sesión(es) aprobada(s). Revísalo antes de aprobar.`;
+    els.reportCurrent.value = [
+      currentPatient.next_session_focus ? `Focos clínicos pendientes: ${currentPatient.next_session_focus}` : "",
+      activeGoals ? `Objetivos activos: ${activeGoals}.` : "",
+      profile.therapeutic_goals ? `Objetivos terapéuticos: ${profile.therapeutic_goals}` : "",
+      profile.treatment_plan ? `Plan terapéutico: ${profile.treatment_plan}` : "",
+    ].filter(Boolean).join("\n\n");
+    els.reportMessage.textContent = `Borrador generado a partir de ${sessions.length} sesión(es) aprobada(s) y de la ficha clínica estructurada. Revísalo antes de aprobar.`;
   }
   function reportPayload(status) {
     const sessions = approvedSessionsInPeriod(currentPatient.id);
@@ -551,12 +625,18 @@
   function renderPreparation(patient) {
     els.preparation.replaceChildren();
     const recent = patientSessions(patient.id).filter((item) => item.status === "approved").slice(0, 3);
+    const profile = clinicalProfile(patient);
     const list = create("div", "clinic-preparation-grid");
     const summary = create("article");
     summary.append(create("strong", "", "Síntesis actual"), create("p", "", patient.clinical_summary || "Todavía no consta una síntesis clínica."));
     const focus = create("article");
     focus.append(create("strong", "", "Para hoy"), create("p", "", patient.next_session_focus || "No hay focos pendientes registrados."));
     list.append(summary, focus);
+    if (profile.risk_safety) {
+      const risk = create("article", "clinic-full clinic-preparation-alert");
+      risk.append(create("strong", "", "Seguridad / seguimiento"), create("p", "", profile.risk_safety));
+      list.append(risk);
+    }
     if (recent.length) {
       const previous = create("article", "clinic-full");
       previous.append(create("strong", "", "Últimas sesiones"));
@@ -651,6 +731,7 @@
     els.summaryNote.value = patient.clinical_summary || "";
     els.nextFocus.value = patient.next_session_focus || "";
     els.medication.value = patient.medication_notes || "";
+    fillClinicalProfile(patient);
     els.patientMessage.textContent = "";
     els.patientName.textContent = `${patient.public_code} · ${patient.full_name}`;
     renderPreparation(patient);
@@ -767,6 +848,7 @@
         clinical_summary: els.summaryNote.value.trim() || null,
         next_session_focus: els.nextFocus.value.trim() || null,
         medication_notes: els.medication.value.trim() || null,
+        clinical_profile: clinicalProfilePayload(),
         updated_at: new Date().toISOString(),
       }),
     });
@@ -774,9 +856,11 @@
     if (updated) {
       patients = patients.map((patient) => patient.id === updated.id ? updated : patient);
       currentPatient = updated;
+      fillClinicalProfile(updated);
       renderPreparation(updated);
+      renderTimeline(updated);
     }
-    els.patientMessage.textContent = "Ficha guardada.";
+    els.patientMessage.textContent = "Ficha completa guardada.";
   }
 
   function generateStructuredDraft() {
