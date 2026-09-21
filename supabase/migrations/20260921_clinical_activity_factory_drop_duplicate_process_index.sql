@@ -1,1 +1,0 @@
-drop index if exists public.clinical_exercise_templates_process_tags_gin;\n
