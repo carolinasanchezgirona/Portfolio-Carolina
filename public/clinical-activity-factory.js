@@ -45,7 +45,7 @@
   async function validateSession(){const s=session();if(!s?.access_token)return false;const r=await fetch(AUTH_URL+"/user",{headers:{apikey:KEY,Authorization:"Bearer "+s.access_token},cache:"no-store"});if(!r.ok)return false;const u=await r.json();return u?.id===ALLOWED_USER_ID}
   const value=id=>$(id)?.value||"";
   const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]));
-  function setMode(next){mode=next;$$("[data-mode]").forEach(b=>b.classList.toggle("active",b.dataset.mode===next));["guided","clinical","surprise"].forEach(x=>$("#factory-"+x+"-panel").hidden=x!==next)}
+  function setMode(next){mode=next;$$$("[data-mode]").forEach(b=>b.classList.toggle("active",b.dataset.mode===next));["guided","clinical","surprise"].forEach(x=>$("#factory-"+x+"-panel").hidden=x!==next)}
   function infer(text){
     const t=text.toLowerCase();
     const pick=(pairs,fallback)=>pairs.find(([words])=>words.some(w=>t.includes(w)))?.[1]||fallback;
@@ -118,7 +118,7 @@
     variants=list;const host=$("#factory-variants-preview");host.innerHTML=list.map((a,i)=>`<article class="factory-variant"><h3>${esc(a.title)}</h3><p>${esc(labels.format[a.format]||a.format)} · ${esc(a.professional.mechanisms.join(" · "))}</p><button class="factory-primary" type="button" data-use-variant="${i}">Usar esta propuesta</button></article>`).join("");
     host.querySelectorAll("[data-use-variant]").forEach(b=>b.addEventListener("click",()=>{render(list[Number(b.dataset.useVariant)]);showPreview("professional")}))
   }
-  function showPreview(name){$("[data-preview]").forEach(b=>b.classList.toggle("active",b.dataset.preview===name));$("#factory-professional-preview").hidden=name!=="professional";$("#factory-patient-preview").hidden=name!=="patient";$("#factory-variants-preview").hidden=name!=="variants"}
+  function showPreview(name){$$("[data-preview]").forEach(b=>b.classList.toggle("active",b.dataset.preview===name));$("#factory-professional-preview").hidden=name!=="professional";$("#factory-patient-preview").hidden=name!=="patient";$("#factory-variants-preview").hidden=name!=="variants"}
   async function enrichWithAI(activity){
     const response=await fetch(AI_URL,{method:"POST",headers:headers(),body:JSON.stringify({base:activity,spec:activity.spec})});
     const body=await response.json().catch(()=>({}));
@@ -194,6 +194,6 @@
     render(current);
   }
   function reset(){current=null;variants=[];$("#factory-empty").hidden=false;$("#factory-output").hidden=true;$("#factory-save").disabled=true;$("#factory-message").textContent=""}
-  async function init(){const ok=await validateSession();$("#factory-login-required").hidden=ok;$("#factory-app").hidden=!ok;if(!ok)return;$("[data-mode]").forEach(b=>b.addEventListener("click",()=>setMode(b.dataset.mode)));$("[data-preview]").forEach(b=>b.addEventListener("click",()=>showPreview(b.dataset.preview)));$("[data-adapt]").forEach(b=>b.addEventListener("click",()=>adapt(b.dataset.adapt)));$("#factory-generate").addEventListener("click",()=>generate().catch(e=>$("#factory-message").textContent=e.message));$("#factory-ai-refresh").addEventListener("click",enrichCurrent);$("#factory-save").addEventListener("click",()=>save().catch(e=>$("#factory-message").textContent=e.message));$("#factory-new").addEventListener("click",reset)}
+  async function init(){const ok=await validateSession();$("#factory-login-required").hidden=ok;$("#factory-app").hidden=!ok;if(!ok)return;$("[data-mode]").forEach(b=>b.addEventListener("click",()=>setMode(b.dataset.mode)));$("[data-preview]").forEach(b=>b.addEventListener("click",()=>showPreview(b.dataset.preview)));$$("[data-adapt]").forEach(b=>b.addEventListener("click",()=>adapt(b.dataset.adapt)));$("#factory-generate").addEventListener("click",()=>generate().catch(e=>$("#factory-message").textContent=e.message));$("#factory-ai-refresh").addEventListener("click",enrichCurrent);$("#factory-save").addEventListener("click",()=>save().catch(e=>$("#factory-message").textContent=e.message));$("#factory-new").addEventListener("click",reset)}
   init().catch(()=>{$("#factory-login-required").hidden=false;$("#factory-app").hidden=true});
 })();
