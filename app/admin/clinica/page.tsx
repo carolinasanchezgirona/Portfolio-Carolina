@@ -35,7 +35,7 @@ export default function AdminClinicaPage() {
           <div className="clinic-top-actions">
             <a className="clinic-secondary" href="/admin/agenda/">Agenda</a>
             <a className="clinic-secondary" href="/admin/articulos/">Artículos</a>
-            <a className="clinic-secondary" href="/admin/recursos/">Recursos</a>\n            <a className="clinic-secondary" href="/admin/clinica/fabrica/">Fábrica clínica</a>
+            <a className="clinic-secondary" href="/admin/recursos/">Recursos</a>
             <button id="clinic-refresh" className="clinic-secondary" type="button">Actualizar</button>
             <button id="clinic-logout" className="clinic-text" type="button">Cerrar sesión</button>
           </div>
