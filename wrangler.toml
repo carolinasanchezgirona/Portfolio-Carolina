@@ -11,5 +11,9 @@ directory = "./out"
 binding = "ASSETS"
 run_worker_first = [ "/api/stripe/webhook", "/api/stripe/webhook/" ]
 
+[secrets]
+required = [ "STRIPE_WEBHOOK_SECRET" ]
+
 # Stripe webhook runs in the Worker; all other requests are served from static assets.
 # keep_vars preserves dashboard-managed variables and secrets across Wrangler deploys.
+# secrets.required makes deploy fail clearly if the runtime secret is missing.
