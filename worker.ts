@@ -1,5 +1,6 @@
 interface Env {
   STRIPE_WEBHOOK_SECRET: string;
+  STRIPE_WEBHOOK_SECRET_TEST?: string;
   ASSETS: {
     fetch(request: Request): Promise<Response>;
   };
@@ -82,7 +83,17 @@ async function handleStripeWebhook(request: Request, env: Env): Promise<Response
   }
 
   const body = await request.text();
-  const valid = await verifyStripeSignature(body, signature, env.STRIPE_WEBHOOK_SECRET);
+  const secrets = [env.STRIPE_WEBHOOK_SECRET, env.STRIPE_WEBHOOK_SECRET_TEST].filter(
+    (secret): secret is string => Boolean(secret),
+  );
+
+  let valid = false;
+  for (const secret of secrets) {
+    if (await verifyStripeSignature(body, signature, secret)) {
+      valid = true;
+      break;
+    }
+  }
 
   if (!valid) {
     return new Response("Invalid Stripe signature", { status: 400 });
