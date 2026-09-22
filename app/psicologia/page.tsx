@@ -129,7 +129,7 @@ export default function PsychologyPage() {
             <h2>Sesión de psicología</h2>
             <ul className="seo-facts">
               <li><span>Duración</span><strong>60 minutos</strong></li>
-              <li><span>Tarifa</span><strong>75 €</strong></li>
+              <li><span>Tarifa</span><strong>60 €</strong></li>
               <li><span>Modalidad</span><strong>Presencial y online</strong></li>
               <li><span>Pacientes</span><strong>Adultos</strong></li>
             </ul>
