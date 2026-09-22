@@ -139,7 +139,7 @@ export default function NeuropsychologyPage() {
             <h2>Consulta de neuropsicología</h2>
             <ul className="seo-facts">
               <li><span>Primera sesión</span><strong>60 minutos</strong></li>
-              <li><span>Tarifa sesión</span><strong>60 €</strong></li>
+              <li><span>Tarifa sesión</span><strong>75 €</strong></li>
               <li><span>Ubicación</span><strong>Arenys de Mar</strong></li>
               <li><span>Área</span><strong>Maresme</strong></li>
             </ul>
