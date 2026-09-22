@@ -1,0 +1,131 @@
+name: Aviso diario de Pregunta a Carolina
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 7 * * *"
+    - cron: "0 8 * * *"
+
+concurrency:
+  group: daily-expert-questions-reminder
+  cancel-in-progress: false
+
+jobs:
+  expert-questions-reminder:
+    runs-on: ubuntu-24.04
+
+    steps:
+      - name: Comprobar horario de verano/invierno
+        id: horario
+        shell: bash
+        run: |
+          if [[ "${{ github.event_name }}" != "schedule" ]]; then
+            echo "should_run=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          OFFSET="$(TZ=Europe/Madrid date +%z)"
+          SCHEDULE="${{ github.event.schedule }}"
+
+          if [[ "$OFFSET" == "+0200" && "$SCHEDULE" == "0 7 * * *" ]]; then
+            echo "should_run=true" >> "$GITHUB_OUTPUT"
+            echo "Horario de verano: corresponde enviar el aviso."
+          elif [[ "$OFFSET" == "+0100" && "$SCHEDULE" == "0 8 * * *" ]]; then
+            echo "should_run=true" >> "$GITHUB_OUTPUT"
+            echo "Horario de invierno: corresponde enviar el aviso."
+          else
+            echo "should_run=false" >> "$GITHUB_OUTPUT"
+            echo "Disparo secundario omitido para evitar duplicados."
+          fi
+
+      - name: Instalar cliente PostgreSQL
+        if: steps.horario.outputs.should_run == 'true'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y postgresql-client curl
+
+      - name: Preparar resumen de preguntas
+        if: steps.horario.outputs.should_run == 'true'
+        id: resumen
+        env:
+          SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          if [[ -z "${SUPABASE_DB_URL:-}" ]]; then
+            echo "Falta el secret SUPABASE_DB_URL."
+            exit 1
+          fi
+
+          QUERY=$(cat <<'SQL'
+          with bounds as (
+            select
+              (
+                ((now() at time zone 'Europe/Madrid')::date - 1) + time '09:00'
+              ) at time zone 'Europe/Madrid' as start_at,
+              (
+                (now() at time zone 'Europe/Madrid')::date + time '09:00'
+              ) at time zone 'Europe/Madrid' as end_at
+          )
+          select
+            count(*) filter (
+              where created_at >= bounds.start_at
+                and created_at < bounds.end_at
+            )::text
+            || '|'
+            || count(*) filter (where status = 'pending')::text
+          from public.expert_questions
+          cross join bounds;
+          SQL
+          )
+
+          RESULT="$(
+            psql "$SUPABASE_DB_URL" --no-align --tuples-only --quiet --command "$QUERY" |
+              tr -d '[:space:]'
+          )"
+
+          if [[ ! "$RESULT" =~ ^[0-9]+\|[0-9]+$ ]]; then
+            echo "No se pudo obtener un recuento válido de preguntas."
+            exit 1
+          fi
+
+          IFS='|' read -r NEW_COUNT PENDING_COUNT <<< "$RESULT"
+          TODAY="$(TZ=Europe/Madrid date +%d/%m/%Y)"
+
+          if [[ "$NEW_COUNT" -eq 0 ]]; then
+            printf -v MESSAGE '📭 Pregunta a Carolina · %s\n\nNo hay preguntas nuevas desde el aviso de ayer.\n\nPendientes de revisar en total: %s\n\nAviso diario de las 09:00.' "$TODAY" "$PENDING_COUNT"
+          elif [[ "$NEW_COUNT" -eq 1 ]]; then
+            printf -v MESSAGE '📬 Pregunta a Carolina · %s\n\nTienes 1 pregunta nueva desde el aviso de ayer.\n\nPendientes de revisar en total: %s\n\nAbrir panel: https://carolinasanchezgirona.com/admin/preguntas/\n\nAviso diario de las 09:00.' "$TODAY" "$PENDING_COUNT"
+          else
+            printf -v MESSAGE '📬 Pregunta a Carolina · %s\n\nTienes %s preguntas nuevas desde el aviso de ayer.\n\nPendientes de revisar en total: %s\n\nAbrir panel: https://carolinasanchezgirona.com/admin/preguntas/\n\nAviso diario de las 09:00.' "$TODAY" "$NEW_COUNT" "$PENDING_COUNT"
+          fi
+
+          {
+            echo "message<<EOF"
+            printf '%s\n' "$MESSAGE"
+            echo "EOF"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Enviar aviso por Telegram
+        if: steps.horario.outputs.should_run == 'true'
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.CLINICAL_BACKUP_TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.CLINICAL_BACKUP_TELEGRAM_CHAT_ID }}
+          MESSAGE: ${{ steps.resumen.outputs.message }}
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          if [[ -z "${TELEGRAM_BOT_TOKEN:-}" || -z "${TELEGRAM_CHAT_ID:-}" ]]; then
+            echo "Faltan las credenciales de Telegram."
+            exit 1
+          fi
+
+          curl --fail --silent --show-error \
+            --request POST \
+            "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" \
+            --data-urlencode "chat_id=${TELEGRAM_CHAT_ID}" \
+            --data-urlencode "text=${MESSAGE}"
+
+          echo "Aviso de Pregunta a Carolina enviado correctamente."
