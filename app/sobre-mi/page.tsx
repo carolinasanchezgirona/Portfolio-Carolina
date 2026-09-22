@@ -131,7 +131,7 @@ export default function AboutPage() {
               <a href="https://psiara.cat/2026/08/05/la-capacitat-per-testar-en-el-dret-civil-catala-des-duna-perspectiva-neuropsicologica/" target="_blank" rel="noopener noreferrer">
                 La capacitat per testar en el dret civil català des d’una perspectiva neuropsicològica ↗
               </a>
-              <a href="https://icab.cat/ca/actualitat/noticies/noticia/El-numero-de-la-revista-Mon-Juridic-365-ja-disponible-al-web-de-lICAB-en-format-PDF/" target="_blank" rel="noopener noreferrer">
+              <a href="https://icab.cat/export/sites/icab/.content/icab-document/Mon-Juridic-365-Juliol-Agost.pdf" target="_blank" rel="noopener noreferrer">
                 La ficció de la lucidesa? Capacitat testamentària, captació de voluntat i prova de la vulnerabilitat · Món Jurídic (ICAB) ↗
               </a>
             </div>
