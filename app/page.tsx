@@ -42,7 +42,7 @@ export default function HomePage() {
             </div>
             <div className="editorial-meta" aria-label="Información práctica">
               <span>60 minutos</span>
-              <span>75 €</span>
+              <span>Psicología 60 € · Neuropsicología 75 €</span>
               <span>Presencial y online</span>
             </div>
           </div>
