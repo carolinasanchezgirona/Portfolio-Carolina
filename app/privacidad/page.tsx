@@ -73,6 +73,15 @@ export default function PrivacyPage() {
           </ul>
           <h3>2.5. Investigación y mejora de la práctica clínica (solo con consentimiento expreso)</h3>
           <p>Uso de datos anonimizados para estudios científicos o publicaciones.</p>
+          <h3>2.6. Buzón «Pregunta a Carolina»</h3>
+          <p>El buzón permite enviar preguntas generales para su posible respuesta divulgativa. Para gestionarlo se tratan la pregunta original, el tema elegido, las confirmaciones de consentimiento y, solo si el usuario decide facilitarlo, su correo electrónico.</p>
+          <ul>
+            <li>La pregunta original y el correo se mantienen en el área privada y no se publican.</li>
+            <li>Antes de publicar se prepara una versión revisada y anonimizada, separada del texto original.</li>
+            <li>La publicación solo se realiza cuando existe una autorización expresa para ello.</li>
+            <li>El correo, cuando se facilita, se utiliza exclusivamente para confirmar la recepción y avisar de la publicación de la respuesta.</li>
+          </ul>
+          <p>Se recomienda no incluir nombres, diagnósticos, medicación ni otros datos identificativos. Este buzón no constituye una consulta clínica, no permite realizar diagnósticos y no atiende urgencias.</p>
         </section>
 
         <section>
@@ -94,6 +103,7 @@ export default function PrivacyPage() {
             <li>Historia clínica y datos de salud: durante el período mínimo exigido por la normativa sanitaria aplicable y, cuando proceda, por los plazos adicionales legalmente exigibles.</li>
             <li>Facturación y datos fiscales: durante los plazos establecidos por la normativa fiscal y mercantil.</li>
             <li>Datos utilizados con fines de investigación: únicamente cuando exista base jurídica suficiente y, cuando sea posible, de forma anonimizada.</li>
+            <li>Preguntas enviadas al buzón: mientras sean necesarias para su revisión y respuesta o hasta que se solicite su supresión. Las preguntas descartadas y sus datos de contacto se eliminarán cuando dejen de ser necesarios. Las versiones efectivamente anonimizadas y publicadas podrán conservarse como contenido divulgativo.</li>
           </ul>
         </section>
 
@@ -107,7 +117,7 @@ export default function PrivacyPage() {
             <li>Proveedores tecnológicos que prestan servicios de alojamiento, infraestructura web, base de datos, gestión de reservas o comunicaciones, actuando bajo las condiciones contractuales y de protección de datos que correspondan.</li>
           </ul>
           <p>
-            La web utiliza servicios tecnológicos de terceros, entre ellos Cloudflare para infraestructura web y Supabase para funciones de base de datos y reservas. Cuando un proveedor pueda implicar tratamiento de datos fuera del Espacio Económico Europeo, se aplicarán los mecanismos y garantías previstos en el RGPD que resulten exigibles.
+            La web utiliza servicios tecnológicos de terceros, entre ellos Cloudflare para infraestructura web, Supabase para funciones de base de datos y reservas, y Brevo para el envío de comunicaciones transaccionales. Cuando un proveedor pueda implicar tratamiento de datos fuera del Espacio Económico Europeo, se aplicarán los mecanismos y garantías previstos en el RGPD que resulten exigibles.
           </p>
           <p>
             Google Analytics solo se activa con consentimiento. Su uso puede implicar tratamientos internacionales de datos conforme a los mecanismos y garantías descritos por Google en su documentación de privacidad.
@@ -148,7 +158,8 @@ export default function PrivacyPage() {
           <ul>
             <li>Los formularios públicos recogen únicamente la información necesaria para la finalidad indicada.</li>
             <li>No se solicita información clínica o de salud en el formulario público de reserva.</li>
-            <li>La información especialmente sensible se gestiona por los canales profesionales habilitados para ello.</li>
+            <li>El buzón «Pregunta a Carolina» puede recibir información relacionada con la salud únicamente con consentimiento expreso, acceso restringido y revisión previa a cualquier publicación.</li>
+            <li>La información clínica necesaria para prestar atención profesional se gestiona por los canales habilitados para ello.</li>
           </ul>
         </section>
 

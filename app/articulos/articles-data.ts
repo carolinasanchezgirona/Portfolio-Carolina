@@ -1,5 +1,4 @@
-const SUPABASE_URL = "https://grgyvdxkjdstdyumdfyg.supabase.co";
-const KEY = "sb_publishable_b2MRfP0bPti87V2FXCzHGw_Y9vvcbii";
+import { SUPABASE_PUBLISHABLE_KEY, SUPABASE_URL } from "../lib/supabase-public";
 
 export type PublicArticle = {
   id: string;
@@ -30,7 +29,7 @@ export async function getPublishedArticles(category?: string): Promise<PublicArt
   const filters = [`select=${encodeURIComponent(select)}`, "status=eq.published", "order=featured.desc,published_at.desc"];
   if (category === "psicologia" || category === "neuropsicologia") filters.push(`category=eq.${category}`);
   const response = await fetch(`${SUPABASE_URL}/rest/v1/articles?${filters.join("&")}`, {
-    headers: { apikey: KEY },
+    headers: { apikey: SUPABASE_PUBLISHABLE_KEY },
   });
   if (!response.ok) return [];
   return response.json();
@@ -38,7 +37,7 @@ export async function getPublishedArticles(category?: string): Promise<PublicArt
 
 export async function getPublishedArticle(slug: string): Promise<PublicArticle | null> {
   const response = await fetch(`${SUPABASE_URL}/rest/v1/articles?select=${encodeURIComponent(select)}&status=eq.published&slug=eq.${encodeURIComponent(slug)}&limit=1`, {
-    headers: { apikey: KEY },
+    headers: { apikey: SUPABASE_PUBLISHABLE_KEY },
   });
   if (!response.ok) return null;
   const rows = await response.json();

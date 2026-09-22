@@ -34,6 +34,7 @@ export default function AdminArticlesPage() {
           <div className="articles-top-actions">
             <a className="articles-secondary" href="/admin/agenda/">Agenda</a>
             <a className="articles-secondary" href="/admin/recursos/">Recursos</a>
+            <a className="articles-secondary" href="/admin/preguntas/">Preguntas</a>
             <a className="articles-secondary" href="/articulos/" target="_blank" rel="noopener noreferrer">Ver artículos</a>
             <button id="article-new" className="articles-primary" type="button">Nuevo artículo</button>
             <button id="articles-logout" className="articles-text" type="button">Cerrar sesión</button>

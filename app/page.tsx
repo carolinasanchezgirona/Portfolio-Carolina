@@ -141,6 +141,27 @@ export default function HomePage() {
         </div>
       </section>
 
+      <section className="editorial-section home-question-card" aria-labelledby="home-question-title">
+        <div className="editorial-wrap home-question-grid">
+          <div>
+            <p className="editorial-section-eyebrow">Un espacio para tus dudas</p>
+            <h2 id="home-question-title">Pregunta a Carolina</h2>
+          </div>
+          <div className="home-question-copy">
+            <p>
+              Puedes enviarme una pregunta general sobre psicología, relaciones, memoria o neuropsicología. Revisaré
+              las consultas y publicaré respuestas claras y profesionales, siempre de forma anonimizada.
+            </p>
+            <div className="home-question-points" aria-label="Características del buzón">
+              <span><strong>Privado</strong>Tu pregunta original no se publica.</span>
+              <span><strong>Revisado</strong>Cada respuesta pasa por revisión profesional.</span>
+              <span><strong>Divulgativo</strong>Orientación general, no diagnóstico individual.</span>
+            </div>
+            <a className="editorial-btn editorial-btn-primary home-question-link" href="/pregunta-a-carolina/">Enviar una pregunta <Arrow /></a>
+          </div>
+        </div>
+      </section>
+
       <section className="editorial-section editorial-reviews" aria-labelledby="google-reviews-title">
         <div className="editorial-wrap editorial-reviews-grid">
           <div>

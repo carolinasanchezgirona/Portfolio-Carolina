@@ -1,12 +1,18 @@
 import type { MetadataRoute } from "next";
 import { getPublishedArticles, isArticleVisible } from "./articulos/articles-data";
+import { getPublishedExpertQuestions } from "./pregunta-a-carolina/questions-data";
 
 const base = "https://carolinasanchezgirona.com";
-const staticLastModified = new Date("2026-09-20T00:00:00+02:00");
+const staticLastModified = new Date("2026-09-22T00:00:00+02:00");
 
 export const dynamic = "force-static";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+  const publishedQuestions = await getPublishedExpertQuestions();
+  const questionsLastModified = publishedQuestions.reduce(
+    (latest, question) => Math.max(latest, new Date(question.updated_at).getTime()),
+    staticLastModified.getTime(),
+  );
   const staticPages: MetadataRoute.Sitemap = [
     { url: `${base}/`, lastModified: staticLastModified, changeFrequency: "weekly", priority: 1 },
     { url: `${base}/psicologa-arenys-de-mar/`, lastModified: staticLastModified, changeFrequency: "monthly", priority: 0.95 },
@@ -39,6 +45,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${base}/estimulacion-cognitiva/`, lastModified: staticLastModified, changeFrequency: "monthly", priority: 0.84 },
     { url: `${base}/familiares-y-cuidadores-de-personas-con-demencia/`, lastModified: staticLastModified, changeFrequency: "monthly", priority: 0.84 },
     { url: `${base}/articulos/`, lastModified: staticLastModified, changeFrequency: "weekly", priority: 0.88 },
+    { url: `${base}/pregunta-a-carolina/`, lastModified: new Date(questionsLastModified), changeFrequency: "weekly", priority: 0.88 },
     { url: `${base}/recursos/`, lastModified: staticLastModified, changeFrequency: "weekly", priority: 0.78 },
     { url: `${base}/cita/`, lastModified: staticLastModified, changeFrequency: "daily", priority: 0.9 },
   ];
