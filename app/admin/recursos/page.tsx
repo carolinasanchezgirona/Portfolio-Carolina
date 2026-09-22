@@ -34,6 +34,7 @@ export default function AdminRecursosPage() {
           <div className="resources-top-actions">
             <a className="resources-secondary" href="/admin/agenda/">Agenda</a>
             <a className="resources-secondary" href="/admin/articulos/">Artículos</a>
+            <a className="resources-secondary" href="/admin/preguntas/">Preguntas</a>
             <a className="resources-secondary" href="/recursos/" target="_blank" rel="noopener noreferrer">Ver recursos</a>
             <button id="resource-new" className="resources-primary" type="button">Nuevo recurso</button>
             <button id="resources-logout" className="resources-text" type="button">Cerrar sesión</button>
