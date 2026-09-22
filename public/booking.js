@@ -15,11 +15,13 @@
   const SERVICES = {
     psicologia_general_sanitaria: {
       label: "Psicología General Sanitaria",
+      price: 60,
       consentHref: "/consentimiento-psicologico/",
       consentText: "consentimiento informado para intervención psicológica",
     },
     neuropsicologia: {
       label: "Neuropsicología",
+      price: 75,
       consentHref: "/consentimiento-neuropsicologico/",
       consentText: "consentimiento informado para intervención neuropsicológica",
     },
@@ -44,6 +46,7 @@
     newInformation: $("#new-patient-information"),
     firstVisitNote: $(".first-visit-note"),
     selectedServiceName: $("#selected-service-name"),
+    selectedServicePrice: $("#selected-service-price"),
     consentLink: $("#consent-link"),
     consentDescription: $("#consent-description"),
   };
@@ -114,6 +117,7 @@
   function updateServiceChoice() {
     const service = SERVICES[serviceCodeValue()];
     if (els.selectedServiceName) els.selectedServiceName.textContent = service.label;
+    if (els.selectedServicePrice) els.selectedServicePrice.textContent = `${service.price} €`;
     if (els.consentLink) {
       els.consentLink.href = service.consentHref;
       els.consentLink.textContent = service.consentText;
@@ -183,7 +187,7 @@
     }
     els.status.textContent = "Primera cita disponible";
     const label = document.createElement("span");
-    label.textContent = `${state.duration} minutos · 75 €`;
+    label.textContent = `${state.duration} minutos · ${SERVICES[serviceCodeValue()].price} €`;
     els.first?.append(slotButton(state.slots[0], "first-slot-button"), label);
     if (els.first) els.first.hidden = false;
     if (els.toggle) els.toggle.hidden = false;
