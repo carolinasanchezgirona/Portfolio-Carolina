@@ -108,7 +108,7 @@
   function updateSelectionSummary() {
     if (!state.selected || !els.summary) return;
     const service = SERVICES[serviceCodeValue()];
-    els.summary.innerHTML = `<strong>${formatSlot(state.selected)}</strong><span>${service.label} · ${state.duration} minutos · 60 €</span>`;
+    els.summary.innerHTML = `<strong>${formatSlot(state.selected)}</strong><span>${service.label} · ${state.duration} minutos · 75 €</span>`;
   }
 
   function updateServiceChoice() {
@@ -183,7 +183,7 @@
     }
     els.status.textContent = "Primera cita disponible";
     const label = document.createElement("span");
-    label.textContent = `${state.duration} minutos · 60 €`;
+    label.textContent = `${state.duration} minutos · 75 €`;
     els.first?.append(slotButton(state.slots[0], "first-slot-button"), label);
     if (els.first) els.first.hidden = false;
     if (els.toggle) els.toggle.hidden = false;
