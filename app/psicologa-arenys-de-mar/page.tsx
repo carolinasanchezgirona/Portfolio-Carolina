@@ -123,10 +123,11 @@ export default function LocalPsychologistPage() {
             <h2>Información práctica</h2>
             <ul className="seo-facts">
               <li><span>Duración</span><strong>60 minutos</strong></li>
-              <li><span>Tarifa</span><strong>60 €</strong></li>
+              <li><span>Tarifa</span><strong>75 €</strong></li>
               <li><span>Modalidad</span><strong>Presencial y online</strong></li>
               <li><span>Ubicación</span><strong>Arenys de Mar</strong></li>
             </ul>
+            <p className="seo-card-note">Tarifa única de consulta individual: 75 € por 60 minutos, tanto en Psicología General Sanitaria como en Neuropsicología. Las evaluaciones neuropsicológicas que requieran varias sesiones, pruebas específicas o informe se valoran aparte.</p>
             <a className="editorial-btn editorial-btn-primary" href="/cita/">Consultar disponibilidad</a>
           </div>
 
