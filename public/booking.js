@@ -111,7 +111,7 @@
   function updateSelectionSummary() {
     if (!state.selected || !els.summary) return;
     const service = SERVICES[serviceCodeValue()];
-    els.summary.innerHTML = `<strong>${formatSlot(state.selected)}</strong><span>${service.label} · ${state.duration} minutos · 75 €</span>`;
+    els.summary.innerHTML = `<strong>${formatSlot(state.selected)}</strong><span>${service.label} · ${state.duration} minutos · ${service.price} €</span>`;
   }
 
   function updateServiceChoice() {
