@@ -9,7 +9,7 @@
   const STORE=SB+"/rest/v1/instagram_posts",ARTICLES=SB+"/rest/v1/articles";
   const SESSION_KEY="dememoria_admin_session";
   const $=function(id){return document.getElementById(id);};
-  const state={current:null,articles:[],posts:[],sourceText:"",slide:0,busy:false,renderer:null,paintToken:0,loaded:false};
+  const state={current:null,articles:[],posts:[],sourceText:"",slide:0,busy:false,renderer:null,paintToken:0,loaded:false,quick:{format:"auto",goal:"auto",humor:"auto",style:"auto"}};
   function session(){try{return JSON.parse(sessionStorage.getItem(SESSION_KEY)||"null");}catch{return null;}}
   function auth(extra){const s=session();if(!s?.access_token)throw Error("Accede con tu cuenta del área privada.");return Object.assign({apikey:KEY,Authorization:"Bearer "+s.access_token,"Content-Type":"application/json"},extra||{});}
   function text(value){return String(value||"").trim();}
@@ -26,12 +26,12 @@
       '<section class="ig-panel">',
         '<header class="ig-shell-header"><div><span class="ig-kicker">Carolina Sánchez · Instagram</span><h2>Fábrica de publicaciones</h2></div>',
         '<div class="ig-actions"><button id="ig-generate" type="button" class="ig-btn ig-btn-accent">Crear publicación completa</button><button id="ig-save" type="button" class="ig-btn">Guardar</button><button id="ig-export" type="button" class="ig-btn ig-btn-primary">Descargar paquete ZIP</button></div></header>',
-        '<div class="ig-content"><div class="ig-controls">',
+        '<section class="ig-quick"><div class="ig-quick-heading"><span class="ig-kicker">MODO RÁPIDO · GENERACIÓN COMPLETA</span><h3>Solo tienes que elegir el tema.</h3><p>La fábrica prepara el enfoque, los textos, las fotografías y una llamada a la acción adecuada. Con humor cuando tenga sentido.</p></div><label class="ig-field ig-quick-topic">¿De qué hablamos?<input id="ig-quick-topic" maxlength="200" placeholder="Ej. darle mil vueltas a una conversación" /></label><div class="ig-quick-options"><label class="ig-field">Formato<select id="ig-quick-format"><option value="auto">Automático</option><option value="carrusel">Carrusel</option><option value="individual">Post</option><option value="story">Story</option><option value="reel">Reel · guion y storyboard</option></select></label><label class="ig-field">Objetivo<select id="ig-quick-goal"><option value="auto">Automático</option><option value="alcance">Alcance</option><option value="guardados">Guardados</option><option value="interaccion">Interacción</option><option value="web">Visitas a la web</option><option value="consultas">Consultas</option></select></label><label class="ig-field">Humor<select id="ig-quick-humor"><option value="auto">Automático · si encaja</option><option value="sin">Sin humor</option><option value="sutil">Un toque</option><option value="protagonista">Humor protagonista</option><option value="ironia">Ironía inteligente</option><option value="cotidiano">Humor cotidiano</option></select></label><label class="ig-field">Enfoque<select id="ig-quick-style"><option value="auto">Automático</option><option value="educativo">Educativo útil</option><option value="identificacion">Identificación cotidiana</option><option value="pregunta">Pregunta frecuente</option><option value="profesional">Perspectiva profesional</option><option value="objeciones">Derribar objeciones</option><option value="herramienta">Microherramienta</option><option value="humor">Humor y psicoeducación</option></select></label></div><div class="ig-quick-actions"><button id="ig-quick-generate" class="ig-btn ig-btn-accent" type="button">✦ Generar publicación completa</button><button id="ig-quick-more" class="ig-btn" type="button" aria-expanded="false">Ajustes y editor avanzado ↓</button></div><div class="ig-quick-result" id="ig-quick-result" hidden></div><p class="ig-help">Los reels se preparan como guion, portada y storyboard descargable, no como vídeo renderizado. Las publicaciones requieren tu revisión clínica antes de exportarlas.</p></section><div class="ig-content"><div class="ig-controls" id="ig-advanced" hidden>',
           '<section class="ig-block"><h3>1 · Brief editorial</h3>',
             '<label class="ig-field">Tema<input id="ig-topic" maxlength="200" placeholder="P. ej. ¿Por qué me cuesta desconectar?" /></label>',
             '<div class="ig-two"><label class="ig-field">Familia<select id="ig-family"><option value="educativa">Educativa</option><option value="pregunta">Pregunta a Carolina (ejemplo)</option><option value="profesional">Perspectiva profesional</option></select></label>',
-              '<label class="ig-field">Formato<select id="ig-format"><option value="carrusel">Carrusel</option><option value="individual">Publicación individual</option></select></label></div>',
-            '<div class="ig-two"><label class="ig-field">Número de diapositivas<select id="ig-count"><option value="3">3</option><option value="4">4</option><option value="5" selected>5</option><option value="6">6</option><option value="7">7</option></select></label>',
+              '<label class="ig-field">Formato<select id="ig-format"><option value="carrusel">Carrusel</option><option value="individual">Publicación individual</option><option value="story">Story</option><option value="reel">Reel · storyboard</option></select></label></div>',
+            '<div class="ig-two"><label class="ig-field">Número de diapositivas<select id="ig-count"><option value="1">1</option><option value="3">3</option><option value="4">4</option><option value="5" selected>5</option><option value="6">6</option><option value="7">7</option></select></label>',
               '<label class="ig-field">Artículo de origen<select id="ig-source"><option value="">Sin artículo vinculado</option></select></label></div>',
             '<button class="ig-btn" type="button" id="ig-current-article">Usar artículo abierto en el editor</button>',
             '<div class="ig-link-note" id="ig-link-note" hidden></div>',
@@ -70,9 +70,9 @@
             '<p class="ig-help" id="ig-status">Borrador sin revisar</p><button type="button" id="ig-delete" class="ig-btn">Eliminar borrador guardado</button>',
           '</section>',
         '</div>',
-        '<aside class="ig-preview"><div class="ig-preview-heading"><h2>Vista previa real</h2><span id="ig-page">1 / 5</span></div>',
+        '<aside class="ig-preview" id="ig-preview"><div class="ig-preview-heading"><h2>Vista previa real</h2><span id="ig-page">1 / 5</span></div>',
           '<canvas id="ig-canvas" width="1080" height="1350" aria-label="Vista previa de diapositiva de Instagram"></canvas>',
-          '<div class="ig-preview-toolbar"><button class="ig-btn" type="button" id="ig-prev">← Anterior</button><span>1080 × 1350 px</span><button class="ig-btn" type="button" id="ig-next">Siguiente →</button></div>',
+          '<div class="ig-preview-toolbar"><button class="ig-btn" type="button" id="ig-prev">← Anterior</button><span id="ig-preview-size">1080 × 1350 px</span><button class="ig-btn" type="button" id="ig-next">Siguiente →</button></div>',
           '<button class="ig-btn" id="ig-download-one" type="button">Descargar diapositiva actual</button>',
           '<div id="ig-preview-alert" class="ig-notice">El cuadrado central de la cuadrícula de Instagram conserva los titulares. Descarga solo después de las dos revisiones.</div>',
         '</aside></div>',
@@ -83,7 +83,7 @@
   root.innerHTML=markup;
 
   function note(message,kind){const el=$("ig-message");el.textContent=message;el.className="ig-notice"+(kind?" "+kind:"");}
-  function busy(value){state.busy=value;["ig-generate","ig-save","ig-export","ig-photo-generate","ig-delete"].forEach(function(id){$(id).disabled=value;});}
+  function busy(value){state.busy=value;["ig-quick-generate","ig-generate","ig-save","ig-export","ig-photo-generate","ig-delete"].forEach(function(id){$(id).disabled=value;});}
   async function jsonResponse(r){const body=await r.json().catch(function(){return {};});if(!r.ok)throw Error(body.error||body.message||(r.status===404?"La fábrica aún no está instalada en el servidor.":"Error "+r.status));return body;}
   function published(a){return a && a.status==="published" && (!a.published_at || new Date(a.published_at).getTime()<=Date.now());}
   function sourceArticle(a,preserveTopic) {
@@ -124,12 +124,12 @@
     state.current=Object.assign(blank(),db,{content:Object.assign(blank().content,db.content||{})});
     state.current.content.diapositivas=(Array.isArray(db.content?.diapositivas)?db.content.diapositivas:[]).map(function(s){return Object.assign(skeleton(db.family),s);});
     if(!state.current.content.diapositivas.length)state.current.content.diapositivas=[skeleton(db.family)];
-    state.slide=0;state.sourceText="";const source=state.articles.find(function(a){return a.id===db.source_article_id;});
+    state.slide=0;state.sourceText="";state.quick.format=db.format||"auto";$("ig-quick-result").hidden=true;const source=state.articles.find(function(a){return a.id===db.source_article_id;});
     if(source)sourceArticle(source,true);else {state.current.source_article_slug=null;const label=$("ig-link-note");label.hidden=!db.source_article_id;label.textContent=db.source_article_id?"No se ha podido confirmar el estado del artículo original. Se conserva su vínculo, pero no se exportará ninguna URL sin verificar.":"";}
     fill();renderLibrary();
   }
   function createNew() {
-    state.current=blank();
+    state.current=blank();$("ig-quick-result").hidden=true;
     const families=["educativa","pregunta","profesional"];
     const last=state.posts[0];
     if(last){const position=families.indexOf(last.family);state.current.family=families[(position+1)%families.length];state.current.accent=last.accent==="turquesa"?"coral":"turquesa";}
@@ -139,8 +139,8 @@
   }
   function fill(){
     const p=state.current,c=p.content;
-    $("ig-topic").value=p.topic;$("ig-family").value=p.family;$("ig-format").value=p.format;$("ig-count").value=String(p.format==="individual"?1:c.diapositivas.length);
-    $("ig-count").disabled=p.format==="individual";
+    $("ig-topic").value=p.topic;$("ig-quick-topic").value=p.topic;$("ig-quick-format").value=state.quick.format==="auto"?"auto":p.format;$("ig-quick-goal").value=state.quick.goal;$("ig-quick-humor").value=state.quick.humor;$("ig-quick-style").value=state.quick.style;$("ig-family").value=p.family;$("ig-format").value=p.format;$("ig-count").value=String(p.format==="individual"?1:c.diapositivas.length);
+    $("ig-count").disabled=p.format==="individual";$("ig-preview").setAttribute("data-format",p.format);$("ig-preview-size").textContent=["story","reel"].includes(p.format)?"1080 × 1920 px":"1080 × 1350 px";
     document.querySelectorAll('input[name="ig-accent"]').forEach(function(r){r.checked=r.value===p.accent;});
     $("ig-notes").value=p.notes||"";$("ig-concept").value=c.concepto||"";$("ig-title").value=c.titulo||"";$("ig-subtitle").value=c.subtitulo||"";
     $("ig-caption").value=c.pie||"";$("ig-cta").value=c.cta||"";
@@ -291,12 +291,12 @@
     try {
       note("Preparando narrativa y textos clínicos. Después se crearán las fotografías.");
       const r=await fetch("/api/editorial/generate",{method:"POST",headers:auth(),body:JSON.stringify({
-        topic:saved.topic,family:saved.family,slide_count:saved.format==="individual"?1:Number($("ig-count").value)||5,notes:saved.notes,source:source
+        topic:saved.topic,family:saved.family,format:saved.format,goal:state.quick.goal,humor:state.quick.humor,style:state.quick.style,slide_count:saved.format==="individual"?1:Number($("ig-count").value)||5,notes:saved.notes,source:source
       })});
       const generated=await jsonResponse(r);
       saved.content=generated;
       saved.content.diapositivas=generated.diapositivas.map(function(slide){return Object.assign(skeleton(saved.family),slide,{photo_url:""});});
-      state.slide=0;saved.evidence_reviewed=false;saved.design_reviewed=false;saved.status="draft";fill();
+      state.slide=0;saved.evidence_reviewed=false;saved.design_reviewed=false;saved.status="draft";fill();const result=$("ig-quick-result");result.hidden=false;const extras=[generated.guion_reel?"Guion para Reel:\n"+generated.guion_reel:"",generated.interacciones_story?"Interacción para stories:\n"+generated.interacciones_story:""].filter(Boolean);result.textContent="Publicación creada · "+saved.content.diapositivas.length+" pieza(s). "+(extras.length?"\n\n"+extras.join("\n\n"):"")+"\n\nRevisa el contenido y las imágenes antes de exportar.";
       try {await savePost(false);}catch(e){note("Texto generado, pero no se ha podido guardar: "+e.message,"error");}
       const wants=saved.content.diapositivas.map(function(slide,i){return {slide:slide,i:i};}).filter(function(item){
         return text(item.slide.foto_prompt)&&["fotografica","dividida","profesional"].includes(item.slide.composicion);
@@ -382,10 +382,10 @@
     const selected=state.articles.find(function(a){return a.id===$("ig-source").value;});sourceArticle(selected,false);fill();markEdited(false);
   });
   $("ig-format").addEventListener("change",function(){
-    const individual=$("ig-format").value==="individual";
+    state.quick.format=$("ig-format").value;const individual=$("ig-format").value==="individual";
     $("ig-count").disabled=individual;state.current.format=$("ig-format").value;
     const slides=state.current.content.diapositivas;
-    if(individual)slides.splice(1);else while(slides.length<5)slides.push(skeleton(state.current.family));
+    if(individual)slides.splice(1);else while(slides.length<(state.current.format==="story"||state.current.format==="reel"?4:5))slides.push(skeleton(state.current.family));
     state.slide=0;fill();markEdited(false);
   });
   $("ig-count").addEventListener("change",function(){
@@ -411,6 +411,22 @@
   $("ig-prev").addEventListener("click",function(){state.slide=(state.slide+state.current.content.diapositivas.length-1)%state.current.content.diapositivas.length;showSlide();});
   $("ig-next").addEventListener("click",function(){state.slide=(state.slide+1)%state.current.content.diapositivas.length;showSlide();});
   $("ig-save").addEventListener("click",async function(){if(state.busy)return;busy(true);try{await savePost(true);}catch(e){note(e.message,"error");}finally{busy(false);quality();}});
+  $("ig-quick-topic").addEventListener("input",function(){state.current.topic=this.value;$("ig-topic").value=this.value;});
+  ["format","goal","humor","style"].forEach(function(name){$("ig-quick-"+name).addEventListener("change",function(){state.quick[name]=this.value;});});
+  $("ig-quick-more").addEventListener("click",function(){const advanced=$("ig-advanced");advanced.hidden=!advanced.hidden;this.setAttribute("aria-expanded",String(!advanced.hidden));this.textContent=advanced.hidden?"Ajustes y editor avanzado ↓":"Ocultar editor avanzado ↑";});
+  $("ig-quick-generate").addEventListener("click",function(){
+    if(state.busy)return;
+    const topic=$("ig-quick-topic").value.trim();
+    if(topic.length<4)return note("Escribe un tema concreto para generar la publicación.","error");
+    const wanted=state.quick.format;
+    const format=wanted==="auto"?(state.posts.length%3===0?"reel":state.posts.length%3===1?"carrusel":"individual"):wanted;
+    state.current.topic=topic;state.current.format=format;
+    state.current.family=state.quick.style==="pregunta"?"pregunta":state.quick.style==="profesional"?"profesional":(state.posts.length%3===0?"educativa":state.posts.length%3===1?"pregunta":"profesional");
+    const count=format==="individual"?1:format==="story"?4:format==="reel"?4:5;
+    state.current.content.diapositivas=Array.from({length:count},function(){return skeleton(state.current.family);});
+    state.current.notes="";$("ig-quick-result").hidden=true;
+    $("ig-count").value=String(count);fill();generate();
+  });
   $("ig-generate").addEventListener("click",generate);
   $("ig-export").addEventListener("click",function(){exportPack(true);});
   $("ig-download-one").addEventListener("click",function(){exportPack(false);});
