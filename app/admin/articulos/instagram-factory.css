@@ -63,3 +63,9 @@
 .ig-empty{padding:21px;font-size:13px;line-height:1.5;color:#657984}
 @media(max-width:1180px){.ig-content{grid-template-columns:1fr}.ig-preview{position:static;width:min(430px,100%);margin:auto}.ig-workspace{grid-template-columns:230px minmax(0,1fr)}}
 @media(max-width:800px){.ig-workspace{grid-template-columns:1fr}.ig-sidebar{position:static}.ig-list{max-height:200px}.ig-shell-header{padding:18px}.ig-content{padding:14px;gap:19px}.ig-block{padding:15px}.ig-two{grid-template-columns:1fr}.ig-shell-header h2{font-size:25px}.editorial-tabs{width:100%}.editorial-tabs button{flex:1;padding:12px}.ig-actions{width:100%;justify-content:flex-start}.ig-btn{flex:1}}
+
+/* Estrategia de captación: misma identidad que el Centro editorial */
+.ig-strategy{display:grid;gap:13px;padding:15px;border:1px solid #b9e4e2;background:#f4fbfc;border-radius:14px}
+.ig-strategy h4{margin:0;font:700 19px/1.2 "Fraunces",Georgia,serif;color:#173a5e}
+.ig-strategy .ig-field{min-width:0}
+.ig-strategy select{max-width:100%}
