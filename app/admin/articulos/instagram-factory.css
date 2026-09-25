@@ -69,3 +69,19 @@
 .ig-strategy h4{margin:0;font:700 19px/1.2 "Fraunces",Georgia,serif;color:#173a5e}
 .ig-strategy .ig-field{min-width:0}
 .ig-strategy select{max-width:100%}
+
+/* Resultado visible sin desplazarse hasta el final del formulario */
+.ig-top-message{margin:18px 24px 0;font-size:14px;font-weight:650;border-left:4px solid #08a6a0}
+.ig-top-message.error{border-left-color:#d9564e}
+.ig-result{margin:18px 24px 0;padding:22px;border:1px solid #a4dfdd;border-radius:18px;background:#f3fbfc;display:grid;gap:16px}
+.ig-result[hidden]{display:none!important}
+.ig-result-heading{display:flex;align-items:start;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.ig-result h3{font:700 clamp(24px,3vw,34px)/1.17 "Fraunces",Georgia,serif;color:#173a5e;margin:5px 0 8px}
+.ig-result-heading p,.ig-result-copy p{margin:4px 0 0;line-height:1.65;white-space:pre-wrap;overflow-wrap:anywhere}
+.ig-result-status{border-radius:99px;background:#173a5e;color:#fff;padding:7px 11px;font-size:12px;font-weight:750}
+.ig-result-hook{padding:12px 15px;border-left:4px solid #08a6a0;background:#fff;border-radius:6px;font-weight:750;margin:0}
+.ig-result-copy{display:grid;grid-template-columns:2fr 1fr;gap:12px}
+.ig-result-copy>div{border:1px solid #d1e7ec;border-radius:12px;padding:14px;background:#fff;min-width:0}
+.ig-result-copy strong{color:#173a5e;font-size:13px}
+#ig-result-caption{max-height:220px;overflow:auto}
+@media(max-width:760px){.ig-top-message,.ig-result{margin:12px}.ig-result{padding:15px}.ig-result-copy{grid-template-columns:1fr}}
