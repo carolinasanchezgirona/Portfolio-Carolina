@@ -216,29 +216,43 @@ async function editorialRequest(request: Request, env: Env, operation: "content"
   }
 
   const topic = editorialText(data.topic, 200);
-  const family = editorialText(data.family, 24);
+  const requestedFamily = editorialText(data.family, 24) || "auto";
+  const requestedFormat = editorialText(data.format, 24) || "carrusel";
+  const goal = editorialText(data.goal, 32) || "automatico";
+  const humor = editorialText(data.humor, 32) || "automatico";
   const source = editorialText(data.source, 15000);
   const notes = editorialText(data.notes, 1600);
-  const slideCount = Number(data.slide_count) === 1 ? 1 : Math.min(7, Math.max(3, Number(data.slide_count) || 5));
-  if (topic.length < 4) return editorialJson({ error: "Introduce un tema concreto." }, 400);
-  if (!["educativa", "pregunta", "profesional"].includes(family)) return editorialJson({ error: "Familia editorial no reconocida." }, 400);
+  const remix = editorialText(data.remix, 120);
+  const recent = Array.isArray(data.recent) ? data.recent.slice(0, 8).map((post: unknown) => {
+    const item = post && typeof post === "object" ? post as Record<string, unknown> : {};
+    return { tema: editorialText(item.topic, 95), formato: editorialText(item.format, 24), enfoque: editorialText(item.angle, 45) };
+  }) : [];
+  const requestedCount = Number(data.slide_count) || 0;
+  if (topic.length < 4) return editorialJson({ error: "Introduce un tema concreto de al menos cuatro caracteres." }, 400);
+  if (!["auto", "educativa", "pregunta", "profesional"].includes(requestedFamily)) return editorialJson({ error: "Familia editorial no reconocida." }, 400);
+  if (!["auto", "carrusel", "individual", "story", "reel"].includes(requestedFormat)) return editorialJson({ error: "Formato no reconocido." }, 400);
+  if (!["automatico", "alcance", "interaccion", "guardados", "web", "leads", "consulta"].includes(goal)) return editorialJson({ error: "Objetivo editorial no reconocido." }, 400);
+  if (!["automatico", "sin", "toque", "protagonista", "ironia", "absurdo"].includes(humor)) return editorialJson({ error: "Tipo de humor no reconocido." }, 400);
   const system = [
-    "Eres editora científica y directora de arte de Carolina Sánchez, psicóloga y neuropsicóloga en España.",
-    "Redacta en español de España, con rigor clínico, originalidad y lenguaje claro.",
-    "No hagas diagnósticos categóricos, no prometas eficacia ni inventes testimonios, estudios, citas ni estadísticas.",
-    "No infieras problemas psicológicos a partir de frases aisladas. Diferencia psicoeducación de consejo personalizado.",
-    "La familia 'pregunta' es una pregunta frecuente ILUSTRATIVA, nunca un mensaje real de una persona.",
-    "Si existe texto de artículo úsalo como material de apoyo, no copies bloques literales ni inventes datos que el artículo no sostenga.",
-    "En Instagram construye una narrativa: portada atractiva, desarrollo comprensible, ejemplo útil y cierre con CTA no manipulador.",
-    "Varía encuadres y composiciones, sin repetir más de dos disposiciones consecutivas; si la familia es pregunta comienza por pregunta y si es profesional comienza por profesional.",
-    "Fotografía editorial luminosa, realista, colores vivos y naturalidad; sin filtros sepia ni clichés clínicos.",
-    "Devuelve SOLO JSON con forma {concepto:string,titulo:string,subtitulo:string,diapositivas:[{titulo:string,texto:string,composicion:'fotografica'|'tipografica'|'dividida'|'pregunta'|'profesional',foto_prompt:string,alt:string}],pie:string,cta:string,hashtags:string[],referencias:string[],aviso_revision:string}.",
-    "Usa 1 a 3 diapositivas con foto_prompt EN INGLÉS y otras diapositivas tipográficas.",
-    "No inventes referencias: referencias=[] salvo que el material aportado incluya una identificación bibliográfica completa que puedas transcribir exactamente.",
-    "El aviso_revision debe explicar que hay que verificar las afirmaciones clínicas y las referencias antes de compartir.",
-    "Incluye exactamente " + slideCount + " diapositivas; cada titulo <= 70 caracteres, texto <= 340 caracteres y alt <= 180.",
-    "En diapositivas fotográficas, el prompt debe describir una escena concreta pertinente al tema SIN texto dentro de la foto.",
-    "No escribas más de 2000 caracteres en el pie ni más de 6 hashtags."
+    "Eres directora editorial, estratega de captación y editora científica de Carolina Sánchez, psicóloga y neuropsicóloga en España.",
+    "Crea contenido ORIGINAL en español de España, claro, brillante, útil y con voz profesional reconocible. Ni lenguaje de autoayuda genérica ni titulares sensacionalistas.",
+    "La audiencia debe descubrir, confiar y, cuando encaje, visitar carolinasanchezgirona.com o informarse sobre la consulta. No prometas seguidores, resultados ni conversiones.",
+    "Elige un ÁNGULO concreto: humor cotidiano, educación útil, pregunta ilustrativa, objeción a la terapia, microherramienta, identificación, perspectiva profesional o conversión ética.",
+    "Cuando el humor encaje, usa ironía inteligente, observaciones cotidianas, diálogos divertidos o contradicciones humanas. No bromees sobre el sufrimiento, los pacientes, diagnósticos, violencia, trauma, crisis, duelo ni sobre terceras personas. Si un tema sensible no admite humor, devuelve humor='sin' incluso si se solicita.",
+    "Cuando se pida humor protagonista, la pieza debe ser ingeniosa sin perder la enseñanza psicológica. El humor automático puede elegir sin humor, un toque, ironía o protagonista según el tema.",
+    "No hagas diagnósticos, estadísticas, promesas terapéuticas ni afirmaciones causales sin fundamento; evita las frases 'no estás rota', 'tu cerebro te está diciendo' y similares.",
+    "No inventes pacientes, testimonios, preguntas reales, citas bibliográficas ni experiencias propias de la profesional. Si usas familia='pregunta', indica de forma legible que es un ejemplo ilustrativo.",
+    "Si hay un artículo de origen úsalo como material de apoyo, sin copiar extensamente ni inventar resultados, datos o referencias.",
+    "Sigue identidad visual: Fraunces + DM Sans, azul #173A5E, un solo acento turquesa #08A6A0 o coral #F2766B, fondos blancos y #EAF6FB, fotografía editorial natural de colores vivos y cero clichés clínicos, sepia o beige apagado.",
+    "Para 'carrusel' crea 4 a 7 diapositivas con portada potente, narrativa, utilidad y cierre. Para 'individual' UNA diapositiva con frase central y un pie desarrollado. Para 'story' crea 3 a 6 pantallas verticales 9:16, una o dos con encuesta/pregunta/llamada a visitar la web. Para 'reel' entrega 3 a 5 ESCENAS de storyboard vertical 9:16 con gancho de 0-3 s, guion hablado/voz en off, plano, duración aproximada y texto en pantalla. La aplicación generará imágenes del storyboard y portada, NO un vídeo MP4.",
+    "Si formato='auto', elige el formato que mejor conecte el tema con el objetivo de captación y explica brevemente tu motivo. El formato solicitado explícitamente es obligatorio.",
+    "El objetivo puede ser alcance, interaccion, guardados, web, leads o consulta; si es automatico escoge uno. Usa CTA acorde al objetivo, sin urgencia artificial ni manipulación.",
+    "Los textos de pantalla deben ser breves y legibles; distribuye información entre caption y escenas. Varia composiciones, no repitas mas de dos seguidas.",
+    "Fotografías: 1 a 3 escenas con foto_prompt EN INGLÉS, con composición fotografica, dividida o profesional. Resto tipograficas o pregunta. Foto_prompt describe escena y espacio negativo, NO texto incrustado.",
+    "Devuelve SOLO JSON: {formato:'carrusel'|'individual'|'story'|'reel',familia:'educativa'|'pregunta'|'profesional',objetivo:'alcance'|'interaccion'|'guardados'|'web'|'leads'|'consulta',humor:'sin'|'toque'|'protagonista'|'ironia'|'absurdo',enfoque:string,motivo:string,concepto:string,titulo:string,subtitulo:string,diapositivas:[{titulo:string,texto:string,composicion:'fotografica'|'tipografica'|'dividida'|'pregunta'|'profesional',foto_prompt:string,alt:string,interaccion:string,voz:string,plano:string,duracion:string,texto_pantalla:string}],guion_reel:string,pie:string,cta:string,hashtags:string[]}.",
+    "Para reels escribe guion_reel completo y en cada escena voz, plano, duracion y texto_pantalla. Para stories indica interaccion por pantalla cuando proceda. No finjas tener fotografías reales ni resultado de vídeo.",
+    "Cada título de diapositiva máximo 70 caracteres, texto máximo 340, ALT máximo 180, caption máximo 2000, 3 a 6 hashtags pertinentes. No añadas referencias bibliográficas que no se hayan verificado.",
+    "Evita repetir los enfoques de publicaciones recientes aportadas. La revisión clínica, visual y bibliográfica humana es obligatoria."
   ].join("\n");
   try {
     const response = await fetch("https://api.openai.com/v1/chat/completions", {
@@ -246,11 +260,16 @@ async function editorialRequest(request: Request, env: Env, operation: "content"
       headers: { Authorization: "Bearer " + env.OPENAI_API_KEY, "Content-Type": "application/json" },
       body: JSON.stringify({
         model: env.OPENAI_TEXT_MODEL || "gpt-4.1-mini",
-        temperature: 0.65,
+        temperature: 0.7,
         response_format: { type: "json_object" },
         messages: [
           { role: "system", content: system },
-          { role: "user", content: JSON.stringify({ tema: topic, familia: family, instrucciones: notes, texto_articulo: source, diapositivas: slideCount }) }
+          { role: "user", content: JSON.stringify({
+            tema: topic, formato: requestedFormat, familia: requestedFamily,
+            objetivo: goal, humor: humor, ajuste: remix, instrucciones: notes,
+            texto_articulo: source, publicaciones_recientes: recent,
+            numero_diapositivas: requestedCount > 0 ? requestedCount : "automático según formato"
+          }) }
         ]
       })
     });
@@ -260,25 +279,45 @@ async function editorialRequest(request: Request, env: Env, operation: "content"
       return editorialJson({ error: response.status === 429 ? "Límite de generación alcanzado. Prueba más tarde." : "No se ha podido generar el contenido." }, response.status === 429 ? 429 : 502);
     }
     const draft = JSON.parse(result.choices[0].message.content) as Record<string, unknown>;
-    const slides = Array.isArray(draft.diapositivas) ? draft.diapositivas.slice(0, slideCount) : [];
-    if (slides.length !== slideCount) return editorialJson({ error: "La respuesta estaba incompleta. Vuelve a generar el borrador." }, 502);
+    const allowedFormats = ["carrusel", "individual", "story", "reel"];
+    const format = requestedFormat === "auto" && allowedFormats.includes(String(draft.formato)) ? String(draft.formato) : requestedFormat === "auto" ? "carrusel" : requestedFormat;
+    const max = format === "individual" ? 1 : format === "story" ? 6 : format === "reel" ? 5 : 7;
+    const min = format === "individual" ? 1 : format === "carrusel" ? 4 : 3;
+    const slides = Array.isArray(draft.diapositivas) ? draft.diapositivas.slice(0, max) : [];
+    if (slides.length < min || slides.length > max || (requestedFormat !== "auto" && requestedCount > 0 && slides.length !== (format === "individual" ? 1 : Math.min(max,Math.max(min,requestedCount))))) {
+      return editorialJson({ error: "La IA ha devuelto una estructura incompleta. Prueba a generar de nuevo." }, 502);
+    }
     const allowedLayouts = ["fotografica", "tipografica", "dividida", "pregunta", "profesional"];
+    const allowedFamilies = ["educativa", "pregunta", "profesional"];
+    const family = requestedFamily === "auto" && allowedFamilies.includes(String(draft.familia)) ? String(draft.familia) : requestedFamily === "auto" ? "educativa" : requestedFamily;
     const normalized = {
+      formato: format,
+      familia: family,
+      objetivo: goal === "automatico" && ["alcance","interaccion","guardados","web","leads","consulta"].includes(String(draft.objetivo)) ? draft.objetivo : goal,
+      humor: humor === "automatico" ? editorialText(draft.humor, 32) || "sin" : editorialText(draft.humor,32) || humor,
+      enfoque: editorialText(draft.enfoque, 120),
+      motivo: editorialText(draft.motivo, 350),
       concepto: editorialText(draft.concepto, 320),
       titulo: editorialText(draft.titulo, 90) || topic,
       subtitulo: editorialText(draft.subtitulo, 160),
       diapositivas: slides.map((slide: Record<string, unknown>, i: number) => ({
         titulo: editorialText(slide.titulo, 90) || "Diapositiva " + (i + 1),
         texto: editorialText(slide.texto, 480),
-        composicion: allowedLayouts.includes(String(slide.composicion)) ? slide.composicion : "tipografica",
+        composicion: allowedLayouts.includes(String(slide.composicion)) ? String(slide.composicion) : "tipografica",
         foto_prompt: editorialText(slide.foto_prompt, 900),
         alt: editorialText(slide.alt, 200),
+        interaccion: editorialText(slide.interaccion, 240),
+        voz: editorialText(slide.voz, 700),
+        plano: editorialText(slide.plano, 280),
+        duracion: editorialText(slide.duracion, 65),
+        texto_pantalla: editorialText(slide.texto_pantalla, 200)
       })),
+      guion_reel: format === "reel" ? editorialText(draft.guion_reel, 4000) : "",
       pie: editorialText(draft.pie, 2300),
       cta: editorialText(draft.cta, 260),
       hashtags: Array.isArray(draft.hashtags) ? draft.hashtags.slice(0, 6).map((tag: unknown) => editorialText(tag, 45)) : [],
-      referencias: [], // References must be reviewed and entered by the professional, never auto-invented.
-      aviso_revision: "Borrador generado con IA: revisión clínica, bibliográfica y ortográfica pendiente."
+      referencias: [],
+      aviso_revision: "Borrador de IA pendiente de revisión clínica, bibliográfica y visual. Las imágenes sugeridas son ilustrativas."
     };
     return editorialJson(normalized);
   } catch (error) {
