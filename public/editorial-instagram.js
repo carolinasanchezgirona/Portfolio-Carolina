@@ -129,7 +129,13 @@
     fill();renderLibrary();
   }
   function createNew() {
-    state.current=blank();state.slide=0;state.sourceText="";fill();renderLibrary();note("Nuevo borrador. Define el tema o parte de un artículo.");
+    state.current=blank();
+    const families=["educativa","pregunta","profesional"];
+    const last=state.posts[0];
+    if(last){const position=families.indexOf(last.family);state.current.family=families[(position+1)%families.length];state.current.accent=last.accent==="turquesa"?"coral":"turquesa";}
+    if(state.current.family==="pregunta")state.current.content.diapositivas[0].composicion="pregunta";
+    if(state.current.family==="profesional")state.current.content.diapositivas[0].composicion="profesional";
+    state.slide=0;state.sourceText="";fill();renderLibrary();note("Nuevo borrador. Se alternan las familias y los acentos; puedes cambiarlos antes de generar.");
   }
   function fill(){
     const p=state.current,c=p.content;
