@@ -225,7 +225,7 @@ export default function AdminArticlesPage() {
       </dialog>
 
       <Script src="/admin-articles.js?v=20260913-editor-2" strategy="afterInteractive" />
-      <Script src="/editorial-instagram.js?v=20260925-results-3" strategy="afterInteractive" />
+      <Script src="/editorial-instagram.js?v=20260925-oneclick-4" strategy="afterInteractive" />
     </main>
   );
 }
