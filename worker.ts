@@ -216,12 +216,18 @@ async function editorialRequest(request: Request, env: Env, operation: "content"
   }
 
   const topic = editorialText(data.topic, 200);
-  const family = editorialText(data.family, 24);
+  const family = editorialText(data.family, 24) || "educativa";
   const source = editorialText(data.source, 15000);
   const notes = editorialText(data.notes, 1600);
-  const slideCount = Number(data.slide_count) === 1 ? 1 : Math.min(7, Math.max(3, Number(data.slide_count) || 5));
-  if (topic.length < 4) return editorialJson({ error: "Introduce un tema concreto." }, 400);
+  const requestedFormat = editorialText(data.format, 24) || "automatico";
+  const objective = editorialText(data.objective, 32) || "automatico";
+  const humor = editorialText(data.humor, 32) || "automatico";
+  const angles = ["automatico","educativo","identificacion","pregunta","errores","microherramienta","profesional","objeciones","humor_cotidiano","ironia"];
+  const angle = editorialText(data.angle, 32) || "automatico";
+  const slideCount = requestedFormat === "individual" ? 1 : requestedFormat === "story" || requestedFormat === "reel" ? 4 : Math.min(7, Math.max(3, Number(data.slide_count) || 5));
+  if (topic.length < 3) return editorialJson({ error: "Introduce un tema concreto." }, 400);
   if (!["educativa", "pregunta", "profesional"].includes(family)) return editorialJson({ error: "Familia editorial no reconocida." }, 400);
+  if (!["automatico","carrusel","individual","story","reel"].includes(requestedFormat) || !["automatico","alcance","interaccion","guardados","web","leads","consulta"].includes(objective) || !["automatico","sin_humor","toque","protagonista","ironia","absurdo"].includes(humor) || !angles.includes(angle)) return editorialJson({ error: "Configuración editorial no reconocida." }, 400);
   const system = [
     "Eres editora científica y directora de arte de Carolina Sánchez, psicóloga y neuropsicóloga en España.",
     "Redacta en español de España, con rigor clínico, originalidad y lenguaje claro.",
@@ -229,14 +235,23 @@ async function editorialRequest(request: Request, env: Env, operation: "content"
     "No infieras problemas psicológicos a partir de frases aisladas. Diferencia psicoeducación de consejo personalizado.",
     "La familia 'pregunta' es una pregunta frecuente ILUSTRATIVA, nunca un mensaje real de una persona.",
     "Si existe texto de artículo úsalo como material de apoyo, no copies bloques literales ni inventes datos que el artículo no sostenga.",
+    "Eres también estratega editorial: elige un ángulo original para cada publicación orientado al objetivo solicitado sin prometer conversiones ni recurrir al miedo.",
+    "Formatos: carrusel = 5 imágenes 1080x1350; individual = imagen única; story = secuencia de 4 pantallas 1080x1920 con propuesta de encuesta/pregunta si pertinente; reel = guion audiovisual grabable de 4 escenas y 4 tarjetas de storyboard 1080x1920, NO un vídeo final.",
+    "Si formato=automatico, elige carrusel, story o reel según el tema, el objetivo y el material. No elijas individual porque la entrega automática contiene varias piezas.",
+    "El humor es importante en la voz de Carolina: ironía inteligente, observaciones cotidianas, diálogos yo/cerebro y contradicciones reconocibles cuando el tema lo permita; sin infantilizar, frases prefabricadas o bromas a costa del sufrimiento.",
+    "No uses humor en trauma, duelo reciente, crisis, suicidio o situaciones de vulnerabilidad aguda, aunque se solicite: prioriza respeto y sensibilidad. Evita ridiculizar a pacientes, atribuir culpa o convertir hipótesis en diagnósticos.",
+    "Si humor=automatico selecciona el nivel según tema; toque = un detalle sutil; protagonista = humor como puerta de entrada seguido de psicoeducación; ironia = observación irónica sin cinismo; absurdo = escenas cotidianas reconocibles.",
+    "Para leads, alterna CTA honestos: guardar, comentar, leer un artículo real si se aporta, Pregunta a Carolina o pedir información de consulta cuando tenga sentido. Nada de testimonios, resultados garantizados, escasez artificial o miedo.",
+    "Devuelve una estrategia con formato_elegido, objetivo, enfoque, humor, razon_breve, publico, gancho, idea_story_interactivo, guion_reel y escenas_reel. Si reel, cada escena_reel incluye plano, locucion, texto_pantalla y duracion_segundos.",
+    "La entrega incluye contenido visual concreto y una narrativa distinta para cada formato, no adaptes únicamente las dimensiones.",
     "En Instagram construye una narrativa: portada atractiva, desarrollo comprensible, ejemplo útil y cierre con CTA no manipulador.",
     "Varía encuadres y composiciones, sin repetir más de dos disposiciones consecutivas; si la familia es pregunta comienza por pregunta y si es profesional comienza por profesional.",
     "Fotografía editorial luminosa, realista, colores vivos y naturalidad; sin filtros sepia ni clichés clínicos.",
-    "Devuelve SOLO JSON con forma {concepto:string,titulo:string,subtitulo:string,diapositivas:[{titulo:string,texto:string,composicion:'fotografica'|'tipografica'|'dividida'|'pregunta'|'profesional',foto_prompt:string,alt:string}],pie:string,cta:string,hashtags:string[],referencias:string[],aviso_revision:string}.",
+    "Devuelve SOLO JSON con forma {formato:'carrusel'|'individual'|'story'|'reel',estrategia:{objetivo:string,enfoque:string,humor:string,razon_breve:string,publico:string,gancho:string,idea_story_interactivo:string,guion_reel:string,escenas_reel:[{plano:string,locucion:string,texto_pantalla:string,duracion_segundos:number}]},concepto:string,titulo:string,subtitulo:string,diapositivas:[{titulo:string,texto:string,composicion:'fotografica'|'tipografica'|'dividida'|'pregunta'|'profesional',foto_prompt:string,alt:string}],pie:string,cta:string,hashtags:string[],referencias:string[],aviso_revision:string}.",
     "Usa 1 a 3 diapositivas con foto_prompt EN INGLÉS y otras diapositivas tipográficas.",
     "No inventes referencias: referencias=[] salvo que el material aportado incluya una identificación bibliográfica completa que puedas transcribir exactamente.",
     "El aviso_revision debe explicar que hay que verificar las afirmaciones clínicas y las referencias antes de compartir.",
-    "Incluye exactamente " + slideCount + " diapositivas; cada titulo <= 70 caracteres, texto <= 340 caracteres y alt <= 180.",
+    "Incluye exactamente " + slideCount + " diapositivas/tarjetas de storyboard; cada titulo <= 65 caracteres, texto <= 260 caracteres (story/reel <= 120), alt <= 180. Para reel ofrece guion de 30-45 segundos, tiempos orientativos y planos grabables.",
     "En diapositivas fotográficas, el prompt debe describir una escena concreta pertinente al tema SIN texto dentro de la foto.",
     "No escribas más de 2000 caracteres en el pie ni más de 6 hashtags."
   ].join("\n");
@@ -250,7 +265,7 @@ async function editorialRequest(request: Request, env: Env, operation: "content"
         response_format: { type: "json_object" },
         messages: [
           { role: "system", content: system },
-          { role: "user", content: JSON.stringify({ tema: topic, familia: family, instrucciones: notes, texto_articulo: source, diapositivas: slideCount }) }
+          { role: "user", content: JSON.stringify({ tema: topic, familia: family, formato_solicitado: requestedFormat, objetivo: objective, humor_solicitado: humor, enfoque_solicitado: angle, publicaciones_recientes: typeof data.recent === "string" ? data.recent.slice(0, 900) : "", instrucciones: notes, texto_articulo: source, diapositivas: slideCount }) }
         ]
       })
     });
@@ -263,7 +278,27 @@ async function editorialRequest(request: Request, env: Env, operation: "content"
     const slides = Array.isArray(draft.diapositivas) ? draft.diapositivas.slice(0, slideCount) : [];
     if (slides.length !== slideCount) return editorialJson({ error: "La respuesta estaba incompleta. Vuelve a generar el borrador." }, 502);
     const allowedLayouts = ["fotografica", "tipografica", "dividida", "pregunta", "profesional"];
+    const resolvedFormat = requestedFormat === "automatico" && ["carrusel","story","reel"].includes(String(draft.formato)) ? String(draft.formato) : requestedFormat === "automatico" ? "carrusel" : requestedFormat;
+    const rawStrategy = draft.estrategia && typeof draft.estrategia === "object" ? draft.estrategia as Record<string, unknown> : {};
+    const sceneArray = Array.isArray(rawStrategy.escenas_reel) ? rawStrategy.escenas_reel.slice(0, 8) : [];
     const normalized = {
+      formato: resolvedFormat,
+      estrategia: {
+        objetivo: editorialText(rawStrategy.objetivo, 80) || objective,
+        enfoque: editorialText(rawStrategy.enfoque, 90) || angle,
+        humor: editorialText(rawStrategy.humor, 90) || humor,
+        razon_breve: editorialText(rawStrategy.razon_breve, 350),
+        publico: editorialText(rawStrategy.publico, 180),
+        gancho: editorialText(rawStrategy.gancho, 230),
+        idea_story_interactivo: editorialText(rawStrategy.idea_story_interactivo, 420),
+        guion_reel: editorialText(rawStrategy.guion_reel, 3600),
+        escenas_reel: sceneArray.map((scene: Record<string, unknown>) => ({
+          plano: editorialText(scene.plano, 200),
+          locucion: editorialText(scene.locucion, 500),
+          texto_pantalla: editorialText(scene.texto_pantalla, 180),
+          duracion_segundos: Math.min(60, Math.max(1, Number(scene.duracion_segundos) || 5))
+        }))
+      },
       concepto: editorialText(draft.concepto, 320),
       titulo: editorialText(draft.titulo, 90) || topic,
       subtitulo: editorialText(draft.subtitulo, 160),
