@@ -160,6 +160,11 @@
     }
     footer(ctx,post,index,slides.length);
     canvas.textOverflows=ctx._textOverflows||[];
+    if(post.format==="story" || post.format==="reel"){
+      const tall=document.createElement("canvas");tall.width=1080;tall.height=1920;
+      const tc=tall.getContext("2d");tc.fillStyle=index%3===1?WHITE:PALE;tc.fillRect(0,0,1080,1920);
+      tc.drawImage(canvas,0,285,1080,1350);tall.textOverflows=canvas.textOverflows;return tall;
+    }
     return canvas;
   }
   function crc32(bytes) {
@@ -214,7 +219,7 @@
     const notes=[
       "CAROLINA SÁNCHEZ | INSTAGRAM", "Tema: "+post.topic,"Familia: "+post.family,
       "Identidad visual: Fraunces + DM Sans. #173A5E y acento "+accent(post)+".",
-      "TEXTO DE LA PUBLICACIÓN","",caption,"","TEXTOS ALTERNATIVOS",""
+      "TEXTO DE LA PUBLICACIÓN","",caption,"",post.content.guion_reel?"GUION REEL\n"+post.content.guion_reel:"",post.content.interacciones_story?"INTERACCIONES STORY\n"+post.content.interacciones_story:"","TEXTOS ALTERNATIVOS",""
     ];
     slides.forEach(function(s,i){notes.push("Imagen "+(i+1)+": "+(s.alt||"Pendiente de descripción."));});
     notes.push("","REFERENCIAS REVISADAS",...(post.content.referencias||[]),"","Control clínico: revisión humana imprescindible.");
