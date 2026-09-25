@@ -312,6 +312,11 @@ export default {
       return handleStripeWebhook(request, env);
     }
 
+    if (url.pathname === "/api/editorial/status" || url.pathname === "/api/editorial/status/") {
+      if (request.method !== "GET") return editorialJson({ error: "Método no permitido." }, 405);
+      if (!await verifyEditorialOwner(request)) return editorialJson({ error: "Sesión no autorizada." }, 401);
+      return editorialJson({ configured: Boolean(env.OPENAI_API_KEY) });
+    }
     if (url.pathname === "/api/editorial/generate" || url.pathname === "/api/editorial/generate/") return editorialRequest(request, env, "content");
     if (url.pathname === "/api/editorial/image" || url.pathname === "/api/editorial/image/") return editorialRequest(request, env, "image");
     return env.ASSETS.fetch(request);

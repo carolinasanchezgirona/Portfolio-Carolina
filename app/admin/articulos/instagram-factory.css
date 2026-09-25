@@ -85,3 +85,15 @@
 .ig-result-copy strong{color:#173a5e;font-size:13px}
 #ig-result-caption{max-height:220px;overflow:auto}
 @media(max-width:760px){.ig-top-message,.ig-result{margin:12px}.ig-result{padding:15px}.ig-result-copy{grid-template-columns:1fr}}
+
+/* Flujo de un clic: la acción principal está justo después del brief */
+.ig-create-panel{display:grid;gap:10px;border:1px solid #7ed2cd;border-radius:14px;padding:16px;background:#f0fbfa}
+.ig-btn-generate{width:100%;min-height:60px;font-size:16px;box-shadow:0 9px 20px #08a6a020}
+.ig-api-status{font-size:12px;font-weight:750;color:#57707a;line-height:1.5;margin:0}
+.ig-api-status.ready{color:#007f76}.ig-api-status.error{color:#b83f39}
+.ig-preview-stage{position:relative}
+.ig-preview-empty{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:16px;padding:24px;text-align:center;border-radius:13px;background:#eaf6fbe8;color:#173a5e}
+.ig-preview-empty[hidden]{display:none!important}
+.ig-preview-empty strong{font:700 27px/1.2 "Fraunces",Georgia,serif;max-width:300px}
+.ig-preview-empty span{font-size:14px;line-height:1.65;max-width:300px}
+.ig-preview-empty button{min-height:50px}
