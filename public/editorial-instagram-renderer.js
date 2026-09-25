@@ -49,13 +49,15 @@
       if(lines.length <= (opts.maxLines || 6)) break;
       size-=2;
     } while(size >= (opts.minSize || 28));
-    const maxLines = opts.maxLines || 6, shown=lines.slice(0,maxLines);
+    const lineHeight=size*(opts.leading || 1.2);
+    const maxLines=Math.max(1,Math.min(opts.maxLines || 6,opts.maxBottom ? Math.floor((opts.maxBottom-y)/lineHeight) : (opts.maxLines || 6)));
+    const shown=lines.slice(0,maxLines);
     if(lines.length > maxLines && shown.length) {
       let last=shown[shown.length-1];
       while(last.length>1 && ctx.measureText(last+"…").width>width) last=last.slice(0,-1);
       shown[shown.length-1]=last+"…";
     }
-    const lh=size*(opts.leading || 1.2);
+    const lh=lineHeight;
     shown.forEach(function(line,i){ctx.fillText(line,x,y+i*lh);});
     return y+shown.length*lh;
   }
@@ -123,34 +125,34 @@
       rect(ctx,65,365,565,600,WHITE,22);
       eyebrow(ctx,post,label,104,400);
       const end=put(ctx,headline,104,485,480,{face:'"Fraunces",Georgia,serif',weight:700,size:76,minSize:55,maxLines:5,leading:1.09});
-      put(ctx,body,108,Math.min(end+27,855),468,{size:35,minSize:29,maxLines:4,leading:1.25});
+      put(ctx,body,108,Math.min(end+27,855),468,{size:35,minSize:29,maxLines:4,leading:1.25,maxBottom:1080});
       rect(ctx,60,60,290,12,tone,6);
     } else if(layout==="dividida" && slide.photo_url) {
-      await photo(ctx,slide.photo_url,75,145,930,470);
-      rect(ctx,75,630,930,460,WHITE,20);
-      eyebrow(ctx,post,label,107,669);
-      const end=put(ctx,headline,107,740,860,{face:'"Fraunces",Georgia,serif',weight:700,size:72,minSize:54,maxLines:3,leading:1.07});
-      put(ctx,body,110,end+19,847,{size:35,minSize:29,maxLines:4,leading:1.22});
+      await photo(ctx,slide.photo_url,75,145,930,360);
+      rect(ctx,75,520,930,570,WHITE,20);
+      eyebrow(ctx,post,label,107,557);
+      const end=put(ctx,headline,107,624,860,{face:'"Fraunces",Georgia,serif',weight:700,size:70,minSize:52,maxLines:3,leading:1.06});
+      put(ctx,body,110,end+19,847,{size:34,minSize:28,maxLines:5,leading:1.17,maxBottom:1080});
     } else if(layout==="pregunta" || post.family==="pregunta" && isCover) {
       rect(ctx,72,160,936,865,WHITE,26);
       rect(ctx,98,185,560,62,PALE,31);
       eyebrow(ctx,post,"PREGUNTA FRECUENTE · EJEMPLO",125,196);
       rect(ctx,107,297,12,540,tone,6);
       const end=put(ctx,headline,154,322,760,{face:'"Fraunces",Georgia,serif',weight:700,size:88,minSize:61,maxLines:5,leading:1.1});
-      put(ctx,body,158,Math.min(end+38,790),755,{size:39,minSize:32,maxLines:6,leading:1.28});
+      put(ctx,body,158,Math.min(end+38,790),755,{size:39,minSize:32,maxLines:6,leading:1.28,maxBottom:1080});
     } else if(layout==="profesional" && slide.photo_url) {
       await photo(ctx,slide.photo_url,600,165,406,866);
       rect(ctx,70,245,655,720,WHITE,22);
       eyebrow(ctx,post,"PERSPECTIVA PROFESIONAL",111,285);
       const end=put(ctx,headline,111,363,568,{face:'"Fraunces",Georgia,serif',weight:700,size:84,minSize:58,maxLines:5,leading:1.11});
-      put(ctx,body,113,Math.min(end+28,822),570,{size:35,minSize:28,maxLines:5,leading:1.25});
+      put(ctx,body,113,Math.min(end+28,822),570,{size:35,minSize:28,maxLines:5,leading:1.25,maxBottom:1080});
     } else {
       const offset=index%2===0 ? 0 : 28;
       rect(ctx,74,165+offset,19,145,tone,9);
       eyebrow(ctx,post,label,122,191+offset);
       const end=put(ctx,headline,98,337+offset,880,{face:'"Fraunces",Georgia,serif',weight:700,size:isCover?104:88,minSize:62,maxLines:5,leading:1.1});
       rect(ctx,99,Math.min(end+28,850),130,9,tone,4);
-      put(ctx,body,100,Math.min(end+72,877),865,{size:isCover?39:41,minSize:32,maxLines:6,leading:1.27});
+      put(ctx,body,100,Math.min(end+72,877),865,{size:isCover?39:41,minSize:32,maxLines:6,leading:1.27,maxBottom:1080});
       rect(ctx,876,825,120,120,tone,60);
       rect(ctx,925,871,35,35,PALE,17);
     }
