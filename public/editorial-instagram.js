@@ -74,7 +74,7 @@
           '<canvas id="ig-canvas" width="1080" height="1350" aria-label="Vista previa de diapositiva de Instagram"></canvas>',
           '<div class="ig-preview-toolbar"><button class="ig-btn" type="button" id="ig-prev">← Anterior</button><span>1080 × 1350 px</span><button class="ig-btn" type="button" id="ig-next">Siguiente →</button></div>',
           '<button class="ig-btn" id="ig-download-one" type="button">Descargar diapositiva actual</button>',
-          '<div class="ig-notice">El cuadrado central de la cuadrícula de Instagram conserva los titulares. Descarga solo después de las dos revisiones.</div>',
+          '<div id="ig-preview-alert" class="ig-notice">El cuadrado central de la cuadrícula de Instagram conserva los titulares. Descarga solo después de las dos revisiones.</div>',
         '</aside></div>',
         '<div class="ig-footer"><p id="ig-message" aria-live="polite" class="ig-notice">Redacta un brief o reutiliza un artículo existente.</p></div>',
       '</section>',
@@ -221,12 +221,16 @@
       const api=await renderer(),canvas=await api.draw(state.current,index);
       if(token!==state.paintToken)return;
       const screen=$("ig-canvas"),ctx=screen.getContext("2d");ctx.clearRect(0,0,1080,1350);ctx.drawImage(canvas,0,0);
+      const alert=$("ig-preview-alert");
+      const overfull=Boolean(canvas.textOverflows?.length);
+      alert.className="ig-notice"+(overfull?" error":"");
+      alert.textContent=overfull?"Esta composición corta parte del texto. Reduce la extensión o selecciona otra composición antes de exportar.":"Los titulares se mantienen dentro del recorte central de la cuadrícula de Instagram.";
     } catch(error) {if(token===state.paintToken)note(error.message||"No se ha podido dibujar la vista previa.","error");}
   }
   function caption(){
     const p=state.current,c=p.content,sections=[text(c.pie),text(c.cta)];
     if(p.source_article_slug)sections.push("Artículo completo en carolinasanchezgirona.com/articulos/"+p.source_article_slug+"/");
-    if(c.hashtags?.length)sections.push(c.hashtags.join(" "));
+    if(c.hashtags?.length)sections.push(c.hashtags.map(function(tag){return tag.startsWith("#")?tag:"#"+tag.replace(/^#+/,"");}).join(" "));
     return sections.filter(Boolean).join("\n\n");
   }
   async function savePost(announce) {
@@ -309,7 +313,9 @@
       const api=await renderer();
       if(!document.fonts.check('700 100px "Fraunces"')||!document.fonts.check('500 40px "DM Sans"'))throw Error("Las tipografías aún no se han cargado. Espera y vuelve a intentarlo.");
       if(all){await api.exportPack(state.current,caption(),function(i,n){note("Preparando imagen "+i+" de "+n+"…");});}
-      else{const canvas=await api.draw(state.current,state.slide),blob=await api.asBlob(canvas);api.save(blob,String(state.slide+1).padStart(2,"0")+"-instagram.png");}
+      else{const canvas=await api.draw(state.current,state.slide);
+        if(canvas.textOverflows?.length)throw Error("Esta diapositiva corta parte del texto. Simplifica el contenido antes de descargar.");
+        const blob=await api.asBlob(canvas);api.save(blob,String(state.slide+1).padStart(2,"0")+"-instagram.png");}
       state.current.status="exported";await savePost(false);note(all?"Paquete ZIP preparado con imágenes individuales, texto y ALT.":"Imagen individual lista.","success");
     }catch(error){note(error.message||"No se ha podido completar la exportación.","error");}
     finally{busy(false);quality();}
