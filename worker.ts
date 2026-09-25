@@ -219,6 +219,10 @@ async function editorialRequest(request: Request, env: Env, operation: "content"
   const family = editorialText(data.family, 24);
   const source = editorialText(data.source, 15000);
   const notes = editorialText(data.notes, 1600);
+  const contentFormat = editorialText(data.format, 20);
+  const goal = editorialText(data.goal, 32);
+  const humor = editorialText(data.humor, 32);
+  const style = editorialText(data.style, 36);
   const slideCount = Number(data.slide_count) === 1 ? 1 : Math.min(7, Math.max(3, Number(data.slide_count) || 5));
   if (topic.length < 4) return editorialJson({ error: "Introduce un tema concreto." }, 400);
   if (!["educativa", "pregunta", "profesional"].includes(family)) return editorialJson({ error: "Familia editorial no reconocida." }, 400);
@@ -230,9 +234,14 @@ async function editorialRequest(request: Request, env: Env, operation: "content"
     "La familia 'pregunta' es una pregunta frecuente ILUSTRATIVA, nunca un mensaje real de una persona.",
     "Si existe texto de artículo úsalo como material de apoyo, no copies bloques literales ni inventes datos que el artículo no sostenga.",
     "En Instagram construye una narrativa: portada atractiva, desarrollo comprensible, ejemplo útil y cierre con CTA no manipulador.",
+    "Estrategia editorial: adapta el contenido al objetivo alcance, guardados, interacción, tráfico web o consultas. No prometas resultados ni uses presión emocional, miedo o testimonios inventados. Cierra con UN CTA congruente.",
+    "Ángulos posibles: educativo útil, identificación cotidiana, pregunta frecuente ilustrativa, perspectiva profesional, objeciones habituales, microherramienta o humor más psicoeducación; prioriza el ángulo pedido o escoge uno variado.",
+    "El humor es parte de la voz de marca: humor observacional cotidiano, ironía inteligente, diálogos entre yo y mi cerebro, contradicciones humanas, autohumor sin humillar; evitar chistes genéricos o frases cliché. Si humor=sin no uses humor; sutil es una pincelada; protagonista requiere una premisa divertida con explicación fiable. Si humor=auto decide con sensibilidad: NO hagas bromas de trauma, suicidio, abuso, duelo agudo, crisis ni sufrimiento del paciente.",
+    "Para reels crea escenas grabables, guion hablado de unos 25-45 segundos con gancho inmediato y portada; devuelve guion_reel adicional. Las imágenes del reel son STORYBOARD para ayudar a grabar, NO un vídeo final.",
+    "Para stories: cada pantalla es breve e interactiva, con preguntas/encuestas sugeridas en interacciones_story adicional. Si son stories o reels se generarán imágenes verticales 9:16.",
     "Varía encuadres y composiciones, sin repetir más de dos disposiciones consecutivas; si la familia es pregunta comienza por pregunta y si es profesional comienza por profesional.",
     "Fotografía editorial luminosa, realista, colores vivos y naturalidad; sin filtros sepia ni clichés clínicos.",
-    "Devuelve SOLO JSON con forma {concepto:string,titulo:string,subtitulo:string,diapositivas:[{titulo:string,texto:string,composicion:'fotografica'|'tipografica'|'dividida'|'pregunta'|'profesional',foto_prompt:string,alt:string}],pie:string,cta:string,hashtags:string[],referencias:string[],aviso_revision:string}.",
+    "Devuelve SOLO JSON con forma {guion_reel:string,interacciones_story:string,concepto:string,titulo:string,subtitulo:string,diapositivas:[{titulo:string,texto:string,composicion:'fotografica'|'tipografica'|'dividida'|'pregunta'|'profesional',foto_prompt:string,alt:string}],pie:string,cta:string,hashtags:string[],referencias:string[],aviso_revision:string}.",
     "Usa 1 a 3 diapositivas con foto_prompt EN INGLÉS y otras diapositivas tipográficas.",
     "No inventes referencias: referencias=[] salvo que el material aportado incluya una identificación bibliográfica completa que puedas transcribir exactamente.",
     "El aviso_revision debe explicar que hay que verificar las afirmaciones clínicas y las referencias antes de compartir.",
@@ -250,7 +259,7 @@ async function editorialRequest(request: Request, env: Env, operation: "content"
         response_format: { type: "json_object" },
         messages: [
           { role: "system", content: system },
-          { role: "user", content: JSON.stringify({ tema: topic, familia: family, instrucciones: notes, texto_articulo: source, diapositivas: slideCount }) }
+          { role: "user", content: JSON.stringify({ tema: topic, familia: family, formato: contentFormat, objetivo: goal, humor: humor, enfoque: style, instrucciones: notes, texto_articulo: source, diapositivas: slideCount }) }
         ]
       })
     });
@@ -265,6 +274,8 @@ async function editorialRequest(request: Request, env: Env, operation: "content"
     const allowedLayouts = ["fotografica", "tipografica", "dividida", "pregunta", "profesional"];
     const normalized = {
       concepto: editorialText(draft.concepto, 320),
+       guion_reel: contentFormat === "reel" ? editorialText(draft.guion_reel, 3500) : "",
+       interacciones_story: contentFormat === "story" ? editorialText(draft.interacciones_story, 1000) : "",
       titulo: editorialText(draft.titulo, 90) || topic,
       subtitulo: editorialText(draft.subtitulo, 160),
       diapositivas: slides.map((slide: Record<string, unknown>, i: number) => ({
