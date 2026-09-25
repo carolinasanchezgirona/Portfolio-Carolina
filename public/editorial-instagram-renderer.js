@@ -46,13 +46,15 @@
     do {
       type(ctx,value,size,weight,face,opts.color || NAVY);
       lines=getLines(ctx,value,width);
-      if(lines.length <= (opts.maxLines || 6)) break;
+      const available=opts.maxBottom ? Math.floor((opts.maxBottom-y)/(size*(opts.leading || 1.2))) : (opts.maxLines || 6);
+      if(lines.length <= Math.max(1,Math.min(opts.maxLines || 6,available))) break;
       size-=2;
     } while(size >= (opts.minSize || 28));
     const lineHeight=size*(opts.leading || 1.2);
     const maxLines=Math.max(1,Math.min(opts.maxLines || 6,opts.maxBottom ? Math.floor((opts.maxBottom-y)/lineHeight) : (opts.maxLines || 6)));
     const shown=lines.slice(0,maxLines);
     if(lines.length > maxLines && shown.length) {
+      (ctx._textOverflows || (ctx._textOverflows=[])).push(String(value||"").slice(0,70));
       let last=shown[shown.length-1];
       while(last.length>1 && ctx.measureText(last+"…").width>width) last=last.slice(0,-1);
       shown[shown.length-1]=last+"…";
@@ -157,6 +159,7 @@
       rect(ctx,925,871,35,35,PALE,17);
     }
     footer(ctx,post,index,slides.length);
+    canvas.textOverflows=ctx._textOverflows||[];
     return canvas;
   }
   function crc32(bytes) {
@@ -203,7 +206,9 @@
     const slides=post.content.diapositivas||[],files=[];
     for(let i=0;i<slides.length;i++) {
       if(onProgress) onProgress(i+1,slides.length);
-      const canvas=await draw(post,i),blob=await asBlob(canvas,"image/png");
+      const canvas=await draw(post,i);
+      if(canvas.textOverflows?.length) throw new Error("La diapositiva "+(i+1)+" tiene demasiado texto para esta composición. Simplifica su desarrollo o elige otra plantilla.");
+      const blob=await asBlob(canvas,"image/png");
       files.push({name:String(i+1).padStart(2,"0")+"-instagram.png",data:new Uint8Array(await blob.arrayBuffer())});
     }
     const notes=[
