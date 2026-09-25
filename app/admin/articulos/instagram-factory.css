@@ -63,3 +63,17 @@
 .ig-empty{padding:21px;font-size:13px;line-height:1.5;color:#657984}
 @media(max-width:1180px){.ig-content{grid-template-columns:1fr}.ig-preview{position:static;width:min(430px,100%);margin:auto}.ig-workspace{grid-template-columns:230px minmax(0,1fr)}}
 @media(max-width:800px){.ig-workspace{grid-template-columns:1fr}.ig-sidebar{position:static}.ig-list{max-height:200px}.ig-shell-header{padding:18px}.ig-content{padding:14px;gap:19px}.ig-block{padding:15px}.ig-two{grid-template-columns:1fr}.ig-shell-header h2{font-size:25px}.editorial-tabs{width:100%}.editorial-tabs button{flex:1;padding:12px}.ig-actions{width:100%;justify-content:flex-start}.ig-btn{flex:1}}
+
+/* Generador rápido: un tema primero, herramientas avanzadas solo si se solicitan. */
+#ig-root .ig-quick{margin:22px 24px 0;padding:26px;border:1px solid #c8e3e9;border-radius:23px;background:linear-gradient(135deg,#eaf6fb 0%,#fff 76%);display:grid;gap:18px}
+#ig-root .ig-quick-heading h3{font:700 clamp(28px,3vw,42px)/1.15 "Fraunces",Georgia,serif;color:#173a5e;margin:7px 0}
+#ig-root .ig-quick-heading p{font:500 15px/1.6 "DM Sans",sans-serif;color:#546d79;margin:0;max-width:650px}
+#ig-root .ig-quick-topic input{padding:17px;font-size:17px;border:2px solid #a9dce0;border-radius:15px}
+#ig-root .ig-quick-options{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+#ig-root .ig-quick-actions{display:flex;flex-wrap:wrap;gap:12px;align-items:center}
+#ig-root .ig-quick-actions .ig-btn-accent{font-size:16px;padding:17px 25px;min-height:56px}
+#ig-root .ig-quick-result{padding:17px;border-radius:13px;background:#edfaf7;border:1px solid #a3d9cc;white-space:pre-wrap;line-height:1.6;font-size:14px}
+#ig-root #ig-advanced[hidden]{display:none!important}
+#ig-root .ig-preview[data-format="story"] canvas,#ig-root .ig-preview[data-format="reel"] canvas{aspect-ratio:9/16}
+@media(max-width:1050px){#ig-root .ig-quick-options{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:650px){#ig-root .ig-quick{margin:12px;padding:18px}#ig-root .ig-quick-options{grid-template-columns:1fr}#ig-root .ig-quick-actions{display:grid}#ig-root .ig-quick-actions button{width:100%}}
