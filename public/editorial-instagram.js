@@ -26,6 +26,8 @@
       '<section class="ig-panel">',
         '<header class="ig-shell-header"><div><span class="ig-kicker">Carolina Sánchez · Instagram</span><h2>Fábrica de publicaciones</h2></div>',
         '<div class="ig-actions"><button id="ig-generate" type="button" class="ig-btn ig-btn-accent">Crear publicación completa</button><button id="ig-save" type="button" class="ig-btn">Guardar</button><button id="ig-export" type="button" class="ig-btn ig-btn-primary">Descargar paquete ZIP</button></div></header>',
+        '<div id="ig-top-message" class="ig-notice ig-top-message" role="status" aria-live="polite">Escribe un tema y pulsa «Crear publicación completa». El resultado aparecerá aquí, antes del formulario.</div>',
+        '<section id="ig-result" class="ig-result" hidden aria-label="Resultado de la publicación generada"><div class="ig-result-heading"><div><span class="ig-kicker">Resultado generado</span><h3 id="ig-result-title"></h3><p id="ig-result-subtitle"></p></div><span class="ig-result-status" id="ig-result-format"></span></div><p class="ig-result-hook" id="ig-result-hook" hidden></p><div class="ig-result-copy"><div><strong>Pie de publicación</strong><p id="ig-result-caption"></p></div><div><strong>CTA</strong><p id="ig-result-cta"></p></div></div><p class="ig-help" id="ig-result-note"></p><div class="ig-actions"><button id="ig-result-edit" class="ig-btn ig-btn-primary" type="button">Editar contenido</button><button id="ig-result-preview" class="ig-btn" type="button">Ver diseño</button></div></section>',
         '<div class="ig-content"><div class="ig-controls">',
           '<section class="ig-block"><h3>1 · Brief editorial</h3>',
             '<label class="ig-field">Tema<input id="ig-topic" maxlength="200" placeholder="P. ej. ¿Por qué me cuesta desconectar?" /></label><button class="ig-btn" id="ig-surprise" type="button">✦ Sorpréndeme</button>',
@@ -82,7 +84,20 @@
   ].join("");
   root.innerHTML=markup;
 
-  function note(message,kind){const el=$("ig-message");el.textContent=message;el.className="ig-notice"+(kind?" "+kind:"");}
+  function note(message,kind){for(const id of ["ig-message","ig-top-message"]){const el=$(id);if(el){el.textContent=message;el.className="ig-notice"+(kind?" "+kind:"")+(id==="ig-top-message"?" ig-top-message":"");}}}
+  function renderResult(scroll){
+    const p=state.current,c=p?.content||{},root=$("ig-result");
+    if(!p||!text(c.titulo)){root.hidden=true;return;}
+    root.hidden=false;
+    $("ig-result-title").textContent=c.titulo;
+    $("ig-result-subtitle").textContent=c.subtitulo||"";
+    $("ig-result-format").textContent=({individual:"Post",carrusel:"Carrusel",story:"Story · guion",reel:"Reel · guion",automatico:"Formato automático"}[c.strategy?.delivery||p.format]||"Publicación")+" · "+(c.diapositivas?.length||0)+" escenas";
+    $("ig-result-hook").hidden=!c.hook;$("ig-result-hook").textContent=c.hook||"";
+    $("ig-result-caption").textContent=c.pie||"Pendiente de redactar";
+    $("ig-result-cta").textContent=c.cta||"Pendiente de redactar";
+    $("ig-result-note").textContent=["story","reel"].includes(c.strategy?.delivery)?"Guion generado para revisión. El montaje audiovisual y la exportación 9:16 aún no están disponibles.":"El contenido ya está disponible; puedes revisar las diapositivas y la vista previa antes de exportar.";
+    if(scroll)root.scrollIntoView({behavior:"smooth",block:"start"});
+  }
   function busy(value){state.busy=value;["ig-generate","ig-save","ig-export","ig-photo-generate","ig-delete"].forEach(function(id){$(id).disabled=value;});}
   async function jsonResponse(r){const body=await r.json().catch(function(){return {};});if(!r.ok)throw Error(body.error||body.message||(r.status===404?"La fábrica aún no está instalada en el servidor.":"Error "+r.status));return body;}
   function published(a){return a && a.status==="published" && (!a.published_at || new Date(a.published_at).getTime()<=Date.now());}
@@ -146,7 +161,7 @@
     $("ig-caption").value=c.pie||"";$("ig-cta").value=c.cta||"";
     $("ig-hashtags").value=(c.hashtags||[]).join(" ");$("ig-references").value=(c.referencias||[]).join("\n");
     $("ig-evidence").checked=Boolean(p.evidence_reviewed);$("ig-design").checked=Boolean(p.design_reviewed);
-    refreshSources();refreshSlides();showSlide();quality();
+    refreshSources();refreshSlides();showSlide();quality();renderResult(false);
   }
   function selectedSlide(){return state.current.content.diapositivas[state.slide];}
   function showSlide() {
@@ -183,7 +198,7 @@
       s.foto_prompt=$("ig-photo-prompt").value;s.alt=$("ig-slide-alt").value;
     }
     if(changed)markEdited(changed==="ig-layout"||changed==="ig-accent");
-    refreshSlides();preview();
+    refreshSlides();preview();renderResult(false);
   }
   function issues() {
     const p=state.current,c=p.content,slides=c.diapositivas||[],problems=[];
@@ -298,6 +313,8 @@
       saved.content=generated;saved.content.strategy=chosenStrategy;
       saved.content.diapositivas=generated.diapositivas.map(function(slide){return Object.assign(skeleton(saved.family),slide,{photo_url:""});});
       state.slide=0;saved.evidence_reviewed=false;saved.design_reviewed=false;saved.status="draft";fill();
+      note("Contenido generado. Ya puedes verlo arriba; ahora se prepararán las fotografías.","success");
+      renderResult(true);
       try {await savePost(false);}catch(e){note("Texto generado, pero no se ha podido guardar: "+e.message,"error");}
       const wants=saved.content.diapositivas.map(function(slide,i){return {slide:slide,i:i};}).filter(function(item){
         return text(item.slide.foto_prompt)&&["fotografica","dividida","profesional"].includes(item.slide.composicion);
@@ -308,8 +325,9 @@
         try{await createPhoto(item.i,true);}catch(error){failures++;console.error("Instagram photo could not be created",error?.message);}
       }
       try{await savePost(false);}catch(error){note("Comprueba la conexión y guarda el borrador: "+error.message,"error");return;}
-      note(failures?"Textos listos; "+failures+" fotografía(s) requieren reintento y revisión.":"Publicación creada con imágenes. Revisa rigurosamente antes de exportar.",failures?"error":"success");
-    }catch(error){note(error.message||"No se pudo generar el contenido.","error");}
+      renderResult(false);
+      note(failures?"Textos listos y visibles arriba. "+failures+" fotografía(s) requieren reintento.":"Publicación generada. Revisa el resultado superior y el diseño de cada diapositiva.",failures?"error":"success");
+    }catch(error){note("No se han generado resultados: "+(error.message||"Error desconocido")+". El editor manual sigue disponible.","error");$("ig-top-message").scrollIntoView({behavior:"smooth",block:"center"});}
     finally{busy(false);quality();}
   }
   async function exportPack(all){
@@ -378,6 +396,8 @@
   $("editorial-tab-instagram").addEventListener("click",function(){changeTab("instagram");});
   $("article-to-instagram")?.addEventListener("click",async function(){await changeTab("instagram");fromCurrentBlog();});
   $("ig-new").addEventListener("click",createNew);
+  $("ig-result-edit").addEventListener("click",function(){$("ig-title").scrollIntoView({behavior:"smooth",block:"center"});$("ig-title").focus();});
+  $("ig-result-preview").addEventListener("click",function(){$("ig-canvas").scrollIntoView({behavior:"smooth",block:"center"});});
   $("ig-surprise").addEventListener("click",function(){
     const ideas=["Cuando descansar no te descansa","La conversación que tu cerebro sigue teniendo a las tres de la mañana","¿Por qué cuesta tanto decir que no?","Cuando la memoria falla y la preocupación toma el mando","La autoexigencia que se disfraza de responsabilidad","Lo que nadie te explica sobre cuidar a una persona con demencia","El día que haces veinte cosas y sientes que no hiciste ninguna"];
     const publishedTopics=new Set(state.posts.map(function(p){return (p.topic||"").toLowerCase();}));
