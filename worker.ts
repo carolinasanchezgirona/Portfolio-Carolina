@@ -155,7 +155,7 @@ async function verifyEditorialOwner(request: Request): Promise<boolean> {
   try {
     const response = await fetch(EDITORIAL_SUPABASE + "/auth/v1/user", {
       headers: { apikey: EDITORIAL_PUBLISHABLE, Authorization: authorization },
-      cf: { cacheTtl: 0 },
+      cache: "no-store",
     });
     if (!response.ok) return false;
     const user = await response.json() as { id?: string };
