@@ -1,9 +1,10 @@
 import Script from "next/script";
 import type { Metadata } from "next";
 import "./admin-articles.css";
+import "./instagram-factory.css";
 
 export const metadata: Metadata = {
-  title: "Artículos | Administración",
+  title: "Centro editorial | Carolina Sánchez",
   description: "Gestión privada de artículos.",
   robots: { index: false, follow: false, nocache: true },
 };
@@ -28,8 +29,8 @@ export default function AdminArticlesPage() {
         <header className="articles-topbar">
           <div>
             <p className="articles-eyebrow">Administración editorial</p>
-            <h1>Artículos</h1>
-            <p>Escribe, diseña, revisa y publica manteniendo una presentación coherente.</p>
+            <h1>Centro editorial</h1>
+            <p>Artículos de la web y publicaciones de Instagram desde un mismo lugar.</p>
           </div>
           <div className="articles-top-actions">
             <a className="articles-secondary" href="/admin/agenda/">Agenda</a>
@@ -41,7 +42,11 @@ export default function AdminArticlesPage() {
           </div>
         </header>
 
-        <div className="articles-workspace">
+        <nav className="editorial-tabs" aria-label="Secciones del centro editorial">
+          <button id="editorial-tab-articles" type="button" aria-selected="true" aria-controls="article-workspace">Artículos del blog</button>
+          <button id="editorial-tab-instagram" type="button" aria-selected="false" aria-controls="ig-root">Fábrica Instagram</button>
+        </nav>
+        <div id="article-workspace" className="articles-workspace">
           <aside className="articles-list-panel">
             <div className="articles-list-heading"><strong>Biblioteca</strong><span id="articles-count">0</span></div>
             <div className="articles-filters">
@@ -64,6 +69,7 @@ export default function AdminArticlesPage() {
               <div className="editor-heading">
                 <div><p className="articles-eyebrow">Editor</p><h2 id="article-editor-title">Nuevo artículo</h2></div>
                 <div className="editor-actions">
+                  <button id="article-to-instagram" className="articles-secondary" type="button" title="Crear un carrusel a partir del artículo actual">Crear Instagram</button>
                   <button id="article-preview" className="articles-secondary" type="button">Previsualizar</button>
                   <button id="article-save-draft" className="articles-secondary" type="button">Guardar borrador</button>
                   <button id="article-schedule" className="articles-secondary" type="button">Programar</button>
@@ -200,6 +206,7 @@ export default function AdminArticlesPage() {
             </form>
           </section>
         </div>
+        <section id="ig-root" hidden aria-label="Fábrica de publicaciones de Instagram" />
       </section>
 
       <dialog id="article-preview-dialog" className="preview-dialog">
@@ -218,6 +225,7 @@ export default function AdminArticlesPage() {
       </dialog>
 
       <Script src="/admin-articles.js?v=20260913-editor-2" strategy="afterInteractive" />
+      <Script src="/editorial-instagram.js?v=20260925-1" strategy="afterInteractive" />
     </main>
   );
 }
