@@ -125,7 +125,7 @@
     state.current.content.diapositivas=(Array.isArray(db.content?.diapositivas)?db.content.diapositivas:[]).map(function(s){return Object.assign(skeleton(db.family),s);});
     if(!state.current.content.diapositivas.length)state.current.content.diapositivas=[skeleton(db.family)];
     state.slide=0;state.sourceText="";const source=state.articles.find(function(a){return a.id===db.source_article_id;});
-    if(source)sourceArticle(source,true);else sourceArticle(null,true);
+    if(source)sourceArticle(source,true);else {const label=$("ig-link-note");label.hidden=!db.source_article_id;label.textContent=db.source_article_id?"El artículo de origen no figura en la lista cargada; se conserva su vínculo guardado.":"";}
     fill();renderLibrary();
   }
   function createNew() {
