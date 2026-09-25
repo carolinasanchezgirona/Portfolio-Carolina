@@ -220,6 +220,13 @@ async function editorialRequest(request: Request, env: Env, operation: "content"
   const source = editorialText(data.source, 15000);
   const notes = editorialText(data.notes, 1600);
   const slideCount = Number(data.slide_count) === 1 ? 1 : Math.min(7, Math.max(3, Number(data.slide_count) || 5));
+  const strategy = (data.strategy && typeof data.strategy === "object" && !Array.isArray(data.strategy)) ? data.strategy as Record<string, unknown> : {};
+  const enumValue=(key: string, options: string[], fallback: string) => { const value=editorialText(strategy[key],30);return options.includes(value)?value:fallback; };
+  const delivery=enumValue("delivery",["automatico","individual","carrusel","story","reel"],"carrusel");
+  const objective=enumValue("objective",["automatico","alcance","interaccion","guardados","web","leads","consulta","recursos"],"automatico");
+  const angle=enumValue("angle",["automatico","educativo","cercano","autoridad","preguntas","objeciones","microherramienta","perspectiva","humor"],"automatico");
+  const humor=enumValue("humor",["automatico","ninguno","toque","protagonista","ironia","cotidiano"],"automatico");
+  const commercial=enumValue("commercial",["suave","equilibrada","directa"],"equilibrada");
   if (topic.length < 4) return editorialJson({ error: "Introduce un tema concreto." }, 400);
   if (!["educativa", "pregunta", "profesional"].includes(family)) return editorialJson({ error: "Familia editorial no reconocida." }, 400);
   const system = [
@@ -238,7 +245,12 @@ async function editorialRequest(request: Request, env: Env, operation: "content"
     "El aviso_revision debe explicar que hay que verificar las afirmaciones clínicas y las referencias antes de compartir.",
     "Incluye exactamente " + slideCount + " diapositivas; cada titulo <= 70 caracteres, texto <= 340 caracteres y alt <= 180.",
     "En diapositivas fotográficas, el prompt debe describir una escena concreta pertinente al tema SIN texto dentro de la foto.",
-    "No escribas más de 2000 caracteres en el pie ni más de 6 hashtags."
+    "No escribas más de 2000 caracteres en el pie ni más de 6 hashtags.",
+    "Objetivo de negocio: "+objective+". Enfoque editorial: "+angle+". Humor: "+humor+". Intensidad comercial: "+commercial+". Formato de entrega: "+delivery+".",
+    "El humor es observacional y respetuoso: nunca bromas sobre pacientes ni síntomas graves. En duelo, trauma, crisis o riesgo clínico prioriza tono sensible aunque se solicite humor protagonista.",
+    "El CTA debe ajustarse al objetivo, sin presión, falsa urgencia o promesas terapéuticas. Si el objetivo es web, invita a ampliar en un artículo solo si existe una URL real en el material de origen.",
+    "Incluye además hook:string (frase inicial breve y original) y guion:string. En reel, guion presenta escenas numeradas con plano sugerido, texto sobreimpreso, voz y duración aproximada; en story, secuencia y propuestas de stickers o interacción; en los otros formatos guion puede ser cadena vacía.",
+    "Las diapositivas de story y reel son únicamente un storyboard editable, NO equivalen a un archivo de vídeo ni a imágenes exportadas en formato 9:16."
   ].join("\n");
   try {
     const response = await fetch("https://api.openai.com/v1/chat/completions", {
@@ -250,7 +262,7 @@ async function editorialRequest(request: Request, env: Env, operation: "content"
         response_format: { type: "json_object" },
         messages: [
           { role: "system", content: system },
-          { role: "user", content: JSON.stringify({ tema: topic, familia: family, instrucciones: notes, texto_articulo: source, diapositivas: slideCount }) }
+          { role: "user", content: JSON.stringify({ tema: topic, familia: family, instrucciones: notes, texto_articulo: source, diapositivas: slideCount, formato:delivery, objetivo:objective, enfoque:angle, humor, intensidad_comercial:commercial }) }
         ]
       })
     });
@@ -265,6 +277,8 @@ async function editorialRequest(request: Request, env: Env, operation: "content"
     const allowedLayouts = ["fotografica", "tipografica", "dividida", "pregunta", "profesional"];
     const normalized = {
       concepto: editorialText(draft.concepto, 320),
+      hook:editorialText(draft.hook,200),
+      guion:editorialText(draft.guion,5000),
       titulo: editorialText(draft.titulo, 90) || topic,
       subtitulo: editorialText(draft.subtitulo, 160),
       diapositivas: slides.map((slide: Record<string, unknown>, i: number) => ({
