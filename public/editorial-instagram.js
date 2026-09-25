@@ -33,7 +33,7 @@
             '<label class="ig-field">Tema<input id="ig-topic" maxlength="200" placeholder="P. ej. ¿Por qué me cuesta desconectar?" /></label><button class="ig-btn" id="ig-surprise" type="button">✦ Sorpréndeme</button>',
             '<div class="ig-two"><label class="ig-field">Familia<select id="ig-family"><option value="educativa">Educativa</option><option value="pregunta">Pregunta a Carolina (ejemplo)</option><option value="profesional">Perspectiva profesional</option></select></label>',
               '<label class="ig-field">Formato<select id="ig-format"><option value="automatico">Automático</option><option value="carrusel">Carrusel</option><option value="individual">Post</option><option value="story">Story (guion visual)</option><option value="reel">Reel (guion y storyboard)</option></select></label></div>',
-            '<div class="ig-two"><label class="ig-field">Número de diapositivas<select id="ig-count"><option value="3">3</option><option value="4">4</option><option value="5" selected>5</option><option value="6">6</option><option value="7">7</option></select></label>',
+            '<div class="ig-two"><label class="ig-field">Número de diapositivas<select id="ig-count"><option value="1">1</option><option value="3">3</option><option value="4">4</option><option value="5" selected>5</option><option value="6">6</option><option value="7">7</option></select></label>',
               '<label class="ig-field">Artículo de origen<select id="ig-source"><option value="">Sin artículo vinculado</option></select></label></div>',
             '<button class="ig-btn" type="button" id="ig-current-article">Usar artículo abierto en el editor</button> <div class="ig-strategy"><h4>Estrategia de contenido</h4> <div class="ig-two"><label class="ig-field">Objetivo<select id="ig-objective"><option value="automatico">Automático</option><option value="alcance">Alcance</option><option value="interaccion">Interacción</option><option value="guardados">Guardados</option><option value="web">Visitas web</option><option value="leads">Captación de leads</option><option value="consulta">Consultas</option><option value="recursos">Promocionar recurso</option></select></label> <label class="ig-field">Enfoque<select id="ig-angle"><option value="automatico">Automático</option><option value="educativo">Educativo útil</option><option value="cercano">Cercano y validante</option><option value="autoridad">Autoridad profesional</option><option value="preguntas">Preguntas frecuentes</option><option value="objeciones">Derribar objeciones</option><option value="microherramienta">Microherramienta</option><option value="perspectiva">Perspectiva clínica</option><option value="humor">Humor observacional</option></select></label></div> <div class="ig-two"><label class="ig-field">Humor<select id="ig-humor"><option value="automatico">Automático</option><option value="ninguno">Sin humor</option><option value="toque">Un toque</option><option value="protagonista">Humor protagonista</option><option value="ironia">Ironía inteligente</option><option value="cotidiano">Humor cotidiano y absurdo</option></select></label> <label class="ig-field">Intensidad comercial<select id="ig-commercial"><option value="suave">Muy suave</option><option value="equilibrada" selected>Equilibrada</option><option value="directa">Orientada a consulta</option></select></label></div> <p class="ig-help">El humor se adapta a la sensibilidad clínica del tema. Los reels generan guion y escenas; no se produce un vídeo automáticamente.</p></div>',
             '<div class="ig-link-note" id="ig-link-note" hidden></div>',
@@ -42,6 +42,7 @@
               '<label class="ig-color"><input name="ig-accent" type="radio" value="coral"/><span class="ig-swatch" style="background:#F2766B"></span>Coral</label>',
             '</div></div>',
             '<label class="ig-field">Indicaciones adicionales para la IA<textarea id="ig-notes" rows="3" maxlength="1600" placeholder="Enfoque, población o conceptos importantes. Nunca introduzcas datos de pacientes."></textarea></label>',
+            '<div class="ig-create-panel"><button id="ig-generate-brief" type="button" class="ig-btn ig-btn-accent ig-btn-generate">✦ Generar publicación ahora</button><p class="ig-help">Solo necesitas elegir el tema y, si quieres, el formato, objetivo y humor. El resultado aparecerá arriba y el diseño a la derecha. Podrás modificarlo antes de descargar.</p><p id="ig-api-status" class="ig-api-status" role="status">Comprobando el generador…</p></div>',
             '<p class="ig-help">Las fotografías se generan automáticamente y el texto se compone después con Fraunces + DM Sans. Nunca se publica en Instagram desde aquí.</p>',
           '</section>',
           '<section class="ig-block"><h3>2 · Contenido de la publicación</h3>',
@@ -73,7 +74,7 @@
           '</section>',
         '</div>',
         '<aside class="ig-preview"><div class="ig-preview-heading"><h2>Vista previa real</h2><span id="ig-page">1 / 5</span></div>',
-          '<canvas id="ig-canvas" width="1080" height="1350" aria-label="Vista previa de diapositiva de Instagram"></canvas>',
+          '<div class="ig-preview-stage"><canvas id="ig-canvas" width="1080" height="1350" aria-label="Vista previa de diapositiva de Instagram"></canvas><div id="ig-preview-empty" class="ig-preview-empty"><strong>Tu publicación aparecerá aquí</strong><span>Elige el tema y pulsa «Generar publicación ahora». No tienes que rellenar el editor inferior.</span><button id="ig-preview-generate" class="ig-btn ig-btn-accent" type="button">Generar ahora</button></div></div>',
           '<div class="ig-preview-toolbar"><button class="ig-btn" type="button" id="ig-prev">← Anterior</button><span>1080 × 1350 px</span><button class="ig-btn" type="button" id="ig-next">Siguiente →</button></div>',
           '<button class="ig-btn" id="ig-download-one" type="button">Descargar diapositiva actual</button>',
           '<div id="ig-preview-alert" class="ig-notice">El cuadrado central de la cuadrícula de Instagram conserva los titulares. Descarga solo después de las dos revisiones.</div>',
@@ -85,8 +86,20 @@
   root.innerHTML=markup;
 
   function note(message,kind){for(const id of ["ig-message","ig-top-message"]){const el=$(id);if(el){el.textContent=message;el.className="ig-notice"+(kind?" "+kind:"")+(id==="ig-top-message"?" ig-top-message":"");}}}
+  async function checkGenerator(){
+    const status=$("ig-api-status");if(!session()?.access_token){status.textContent="Inicia sesión para generar contenido.";return;}
+    try {
+      const r=await fetch("/api/editorial/status",{headers:auth(),cache:"no-store"});
+      if(r.status===404){status.textContent="No se puede comprobar el motor. Pulsa generar para obtener un diagnóstico.";return;}
+      const result=await jsonResponse(r);
+      status.textContent=result.configured?"Generador conectado. Listo para crear.":"Generador sin configurar: falta OPENAI_API_KEY en Cloudflare.";
+      status.className="ig-api-status"+(result.configured?" ready":" error");
+      if(!result.configured)note("La generación con IA no está disponible porque falta configurar OPENAI_API_KEY en Cloudflare. El editor manual sí funciona.","error");
+    }catch(err){status.textContent="No se pudo verificar la conexión. "+(err?.message||"");status.className="ig-api-status error";}
+  }
   function renderResult(scroll){
     const p=state.current,c=p?.content||{},root=$("ig-result");
+    $("ig-preview-empty").hidden=Boolean(p&&text(c.titulo));
     if(!p||!text(c.titulo)){root.hidden=true;return;}
     root.hidden=false;
     $("ig-result-title").textContent=c.titulo;
@@ -98,7 +111,7 @@
     $("ig-result-note").textContent=["story","reel"].includes(c.strategy?.delivery)?"Guion generado para revisión. El montaje audiovisual y la exportación 9:16 aún no están disponibles.":"El contenido ya está disponible; puedes revisar las diapositivas y la vista previa antes de exportar.";
     if(scroll)root.scrollIntoView({behavior:"smooth",block:"start"});
   }
-  function busy(value){state.busy=value;["ig-generate","ig-save","ig-export","ig-photo-generate","ig-delete"].forEach(function(id){$(id).disabled=value;});}
+  function busy(value){state.busy=value;["ig-generate","ig-generate-brief","ig-preview-generate","ig-save","ig-export","ig-photo-generate","ig-delete"].forEach(function(id){$(id).disabled=value;});if(value){$("ig-generate").textContent="Generando…";$("ig-generate-brief").textContent="Generando publicación…";}else{$("ig-generate").textContent="Crear publicación completa";$("ig-generate-brief").textContent="✦ Generar publicación ahora";}}
   async function jsonResponse(r){const body=await r.json().catch(function(){return {};});if(!r.ok)throw Error(body.error||body.message||(r.status===404?"La fábrica aún no está instalada en el servidor.":"Error "+r.status));return body;}
   function published(a){return a && a.status==="published" && (!a.published_at || new Date(a.published_at).getTime()<=Date.now());}
   function sourceArticle(a,preserveTopic) {
@@ -304,6 +317,7 @@
     if(state.busy)return;
     syncFields(null);if(state.current.topic.length<4)return note("Escribe el tema de la publicación.","error");
     const saved=state.current,source=state.sourceText,chosenStrategy=Object.assign({},saved.content.strategy);busy(true);
+    $("ig-top-message").scrollIntoView({behavior:"smooth",block:"center"});
     try {
       note("Preparando narrativa y textos clínicos. Después se crearán las fotografías.");
       const r=await fetch("/api/editorial/generate",{method:"POST",headers:auth(),body:JSON.stringify({
@@ -384,6 +398,7 @@
     $("editorial-tab-articles").setAttribute("aria-selected",social?"false":"true");
     if(social){
       if(!state.current)createNew();
+      checkGenerator();
       if(!state.loaded){
         state.loaded=true;
         try{await Promise.all([loadSources(),loadPosts()]);refreshSources();}
@@ -439,6 +454,8 @@
   $("ig-next").addEventListener("click",function(){state.slide=(state.slide+1)%state.current.content.diapositivas.length;showSlide();});
   $("ig-save").addEventListener("click",async function(){if(state.busy)return;busy(true);try{await savePost(true);}catch(e){note(e.message,"error");}finally{busy(false);quality();}});
   $("ig-generate").addEventListener("click",generate);
+  $("ig-generate-brief").addEventListener("click",generate);
+  $("ig-preview-generate").addEventListener("click",generate);
   $("ig-export").addEventListener("click",function(){exportPack(true);});
   $("ig-download-one").addEventListener("click",function(){exportPack(false);});
   $("ig-delete").addEventListener("click",removePost);
