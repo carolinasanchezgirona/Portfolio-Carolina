@@ -38,7 +38,7 @@ function SiteHeader() {
         <a href="/neuropsicologia/">Neuropsicología</a>
         <a href="/sobre-mi/">Sobre mí</a>
         <a href="/articulos/">Artículos</a>
-        <a href="/pregunta-a-carolina/">Pregunta a Carolina</a>
+        <a href="/pregunta-a-carolina/">Tu Consulta</a>
         <a href="/recursos/">Recursos</a>
         <a className="nav-cta" href="/cita/">Pedir cita</a>
       </nav>
@@ -55,7 +55,7 @@ function SiteHeader() {
           <a href="/deterioro-cognitivo/">Deterioro cognitivo</a>
           <a href="/sobre-mi/">Sobre mí</a>
           <a href="/articulos/">Artículos</a>
-          <a href="/pregunta-a-carolina/">Pregunta a Carolina</a>
+          <a href="/pregunta-a-carolina/">Tu Consulta</a>
           <a href="/recursos/">Recursos</a>
           <a href="/psicologa-arenys-de-mar/">Consulta en Arenys de Mar</a>
           <a href="/cita/">Pedir cita</a>
@@ -109,7 +109,7 @@ function SiteFooter() {
           <p className="site-footer-heading">Consulta</p>
           <a href="/sobre-mi/">Sobre mí</a>
           <a href="/articulos/">Artículos</a>
-          <a href="/pregunta-a-carolina/">Pregunta a Carolina</a>
+          <a href="/pregunta-a-carolina/">Tu Consulta</a>
           <a href="/recursos/">Recursos</a>
           <a href="/psicologa-arenys-de-mar/">Psicóloga en Arenys de Mar</a>
           <a href="/cita/">Pedir cita</a>
