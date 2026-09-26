@@ -6,14 +6,19 @@ import "./questions.css";
 export const dynamic = "force-static";
 
 export const metadata: Metadata = {
-  title: { absolute: "Preguntas de psicología y neuropsicología | Carolina Sánchez" },
+  title: { absolute: "Tu Consulta: preguntas de psicología | Carolina Sánchez" },
   description: "Envía tu pregunta a Carolina Sánchez, psicóloga y neuropsicóloga, y consulta respuestas divulgativas sobre ansiedad, duelo, relaciones, memoria y deterioro cognitivo.",
   alternates: { canonical: "/pregunta-a-carolina/" },
   openGraph: {
-    title: "Pregunta a Carolina | Psicología y neuropsicología",
+    title: "Tu Consulta | Carolina Sánchez, psicóloga y neuropsicóloga",
     description: "Un buzón de preguntas y respuestas profesionales sobre psicología, memoria y neuropsicología.",
     url: "https://carolinasanchezgirona.com/pregunta-a-carolina/",
     type: "website",
+    images: [{ url: "/carolina-sanchez-tu-consulta.webp", width: 640, height: 640, alt: "Carolina Sánchez en Tu Consulta, espacio de preguntas de psicología y neuropsicología" }],
+  },
+  twitter: {
+    card: "summary",
+    images: ["/carolina-sanchez-tu-consulta.webp"],
   },
 };
 
