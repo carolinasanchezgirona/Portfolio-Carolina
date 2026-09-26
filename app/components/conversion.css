@@ -3,12 +3,13 @@
 @media (max-width: 760px) {
   .mobile-booking-shortcut {
     display: flex;
-    position: sticky;
-    bottom: 12px;
+    position: fixed;
+    bottom: max(12px, env(safe-area-inset-bottom));
+    right: 16px;
     z-index: 40;
     width: max-content;
     max-width: calc(100% - 32px);
-    margin: 18px auto;
+    margin: 0;
     padding: 12px 22px;
     border-radius: 999px;
     background: #173a5e;
