@@ -50,12 +50,13 @@ export default function HomePage() {
           <figure className="editorial-photo">
             <Image
               className="editorial-photo-image"
-              src="/carolina-sanchez-retrato-720.webp"
+              src="/carolina-sanchez-portada-720.webp"
               alt="Carolina Sánchez, psicóloga y neuropsicóloga"
               width={720}
-              height={927}
+              height={1080}
               sizes="(max-width: 680px) calc(100vw - 36px), (max-width: 900px) 520px, 360px"
-              loading="eager"
+              quality={82}
+              priority
               fetchPriority="high"
               unoptimized
             />
