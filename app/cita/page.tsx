@@ -37,7 +37,7 @@ export default function BookingPage() {
         <div className="editorial-wrap booking-intro-inner">
           <p className="editorial-eyebrow">Consulta profesional · Reserva online</p>
           <h1>Pedir cita</h1>
-          <p className="booking-lead">Consulta la primera cita disponible o abre el calendario para elegir otra fecha.</p>
+          <p className="booking-lead">Elige el tipo de atención, consulta la disponibilidad y reserva tu sesión. No tendrás que explicar tu motivo de consulta en este formulario.</p>
           <button id="pwa-install" className="text-button" type="button" hidden>Instalar citas en el móvil</button>
           <p id="pwa-install-hint" className="form-help" hidden />
         </div>
@@ -64,8 +64,8 @@ export default function BookingPage() {
           <fieldset className="patient-type-fieldset">
             <legend>¿Es tu primera visita?</legend>
             <div className="patient-type-options">
-              <label className="patient-type-option"><input type="radio" name="patient_type" value="new" form="booking-form" defaultChecked /><span><strong>Primera visita</strong><small>Completarás privacidad, consentimiento y firma electrónica.</small></span></label>
-              <label className="patient-type-option"><input type="radio" name="patient_type" value="existing" form="booking-form" /><span><strong>Paciente existente</strong><small>También completarás privacidad, consentimiento, cancelación y firma electrónica.</small></span></label>
+              <label className="patient-type-option"><input type="radio" name="patient_type" value="new" form="booking-form" defaultChecked /><span><strong>Primera visita</strong><small>Antes de confirmar, podrás consultar la información de privacidad y el consentimiento informado.</small></span></label>
+              <label className="patient-type-option"><input type="radio" name="patient_type" value="existing" form="booking-form" /><span><strong>Paciente existente</strong><small>Selecciona esta opción si ya has acudido a consulta. Se aplicará la política de cancelación.</small></span></label>
             </div>
           </fieldset>
         </section>
