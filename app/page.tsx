@@ -218,6 +218,9 @@ export default function HomePage() {
               La consulta está en Carrer Barcelona 8, Local, en Arenys de Mar. Puedes revisar cómo es la primera visita,
               las áreas de atención y la información práctica antes de reservar.
             </p>
+            <a className="editorial-local-photo" href="/psicologa-arenys-de-mar/" aria-label="Ver fotografías de la consulta en Arenys de Mar">
+              <Image src="/consulta-carolina-sanchez-despacho.webp" alt="Interior de la consulta de psicología y neuropsicología de Carolina Sánchez en Arenys de Mar" width={1448} height={1086} sizes="(max-width: 680px) calc(100vw - 36px), (max-width: 900px) 560px, 480px" loading="lazy" />
+            </a>
             <div className="editorial-actions">
               <a className="editorial-btn editorial-btn-primary" href="/cita/">Consultar disponibilidad</a>
               <a className="editorial-btn editorial-btn-secondary" href="/psicologa-arenys-de-mar/">Ver consulta en Arenys de Mar</a>

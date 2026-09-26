@@ -423,3 +423,6 @@
 .editorial-method-photo{margin:0;max-width:340px;justify-self:end}
 @media(max-width:900px){.editorial-method-photo-layout{grid-template-columns:1fr}.editorial-method-photo{justify-self:start;max-width:440px}}
 @media(max-width:680px){.editorial-about-photo{max-width:420px}.editorial-method-photo-layout .editorial-step-grid{grid-template-columns:1fr}.editorial-method-photo{max-width:420px;width:100%}}
+
+.editorial-local-photo{display:block;width:min(100%,480px);margin:0 0 24px;border-radius:16px;overflow:hidden;border:1px solid var(--e-line)}
+.editorial-local-photo img{display:block;width:100%;height:auto;aspect-ratio:4/3;object-fit:cover}

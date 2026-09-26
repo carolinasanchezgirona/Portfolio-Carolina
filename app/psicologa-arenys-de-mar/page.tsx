@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "../seo-pages.css";
+import Image from "next/image";
 
 export const metadata: Metadata = {
   title: "Psicóloga en Arenys de Mar | Carolina Sánchez Girona",
@@ -52,6 +53,26 @@ export default function LocalPsychologistPage() {
           <div className="seo-actions">
             <a className="editorial-btn editorial-btn-primary" href="/cita/">Pedir cita</a>
             <a className="editorial-btn editorial-btn-secondary" href="#como-puedo-ayudarte">Ver áreas de atención</a>
+          </div>
+        </div>
+      </section>
+
+      <section className="editorial-section consultation-gallery" aria-labelledby="consulta-gallery-title">
+        <div className="editorial-wrap">
+          <div className="editorial-section-head">
+            <p className="editorial-section-eyebrow">Conoce el espacio</p>
+            <h2 id="consulta-gallery-title">Tu consulta en Arenys de Mar</h2>
+            <p>Un espacio de atención presencial en el que puedes conocer el despacho y la zona de espera antes de tu visita.</p>
+          </div>
+          <div className="consultation-gallery-grid">
+            <figure className="consultation-gallery-main">
+              <Image src="/consulta-carolina-sanchez-despacho.webp" alt="Despacho de psicología y neuropsicología de Carolina Sánchez en Arenys de Mar, con mesa de trabajo y zona de atención" width={1448} height={1086} sizes="(max-width: 720px) calc(100vw - 36px), (max-width: 1100px) 65vw, 670px" loading="lazy" />
+              <figcaption>El despacho</figcaption>
+            </figure>
+            <figure>
+              <Image src="/consulta-carolina-sanchez-sala-espera.webp" alt="Sala de espera de la consulta de Carolina Sánchez en Arenys de Mar con dos sillas y una planta" width={1086} height={1448} sizes="(max-width: 720px) calc(100vw - 36px), (max-width: 1100px) 35vw, 330px" loading="lazy" />
+              <figcaption>La sala de espera</figcaption>
+            </figure>
           </div>
         </div>
       </section>
@@ -174,6 +195,10 @@ export default function LocalPsychologistPage() {
               Abrir en Google Maps →
             </a>
           </div>
+          <figure className="consultation-exterior-photo">
+            <Image src="/consulta-carolina-sanchez-fachada.webp" alt="Fachada de Dememòria, consulta de psicología y neuropsicología en Carrer Barcelona, Arenys de Mar" width={1122} height={1402} sizes="(max-width: 720px) calc(100vw - 36px), (max-width: 1100px) 55vw, 480px" loading="lazy" />
+            <figcaption>Entrada a la consulta</figcaption>
+          </figure>
           <div style={{ overflow: "hidden", border: "1px solid var(--e-line)", borderRadius: "14px", background: "#fff" }}>
             <iframe
               src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2984.1022207147844!2d2.5429863999999998!3d41.588671299999994!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x12bb370f7cb10fdd%3A0x163145da43e6593b!2sDememoria%20-%20Psic.%20Carolina%20S%C3%A1nchez!5e0!3m2!1ses!2ses!4v1789232018184!5m2!1ses!2ses"
