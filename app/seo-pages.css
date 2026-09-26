@@ -64,5 +64,6 @@
 }
 
 /* Retrato en la explicación del enfoque clínico. */
-.seo-professional-photo{max-width:480px;margin:24px 0 26px;overflow:hidden;border-radius:16px;background:#f1f3f1}
+/* El archivo actual es de 540 px. Limitar su ampliación hasta disponer del original de alta resolución. */
+.seo-professional-photo{width:100%;max-width:360px;margin:24px 0 26px;overflow:hidden;border-radius:16px;background:#f1f3f1}
 .seo-professional-photo img{display:block;width:100%;height:auto;aspect-ratio:2/3;object-fit:cover}
