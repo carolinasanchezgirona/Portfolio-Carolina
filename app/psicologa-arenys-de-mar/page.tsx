@@ -156,7 +156,7 @@ export default function LocalPsychologistPage() {
           <div className="seo-card">
             <p className="editorial-section-eyebrow">Valoraciones en Google</p>
             <h3>5,0 de 5 · 20 reseñas</h3>
-            <p>Valoración actual publicada en el perfil de empresa de Dememòria en Google.</p>
+            <p>Estas reseñas están publicadas en el perfil de Google de Dememòria, el nombre con el que también se conoce mi consulta de Arenys de Mar. La atención clínica la presta Carolina Sánchez Girona.</p>
             <div className="seo-related">
               <a
                 href="https://maps.app.goo.gl/ubCSFYZRgbv7vpqF9"
