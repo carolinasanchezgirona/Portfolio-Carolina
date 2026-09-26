@@ -54,9 +54,9 @@ export const metadata: Metadata = {
       "Psicología sanitaria y neuropsicología clínica en Arenys de Mar y online.",
     images: [
       {
-        url: "/carolina-sanchez-retrato.jpg",
-        width: 480,
-        height: 618,
+        url: "/carolina-sanchez-portada-720.webp",
+        width: 720,
+        height: 1080,
         alt: "Carolina Sánchez, psicóloga y neuropsicóloga",
       },
     ],
@@ -65,7 +65,7 @@ export const metadata: Metadata = {
     card: "summary",
     title: "Carolina Sánchez | Psicóloga y Neuropsicóloga",
     description: "Psicología sanitaria y neuropsicología clínica en Arenys de Mar y online.",
-    images: ["/carolina-sanchez-retrato.jpg"],
+    images: ["/carolina-sanchez-portada-720.webp"],
   },
   robots: {
     index: true,
@@ -88,7 +88,7 @@ const structuredData = {
       name: "Carolina Sánchez Girona",
       jobTitle: "Psicóloga General Sanitaria y Neuropsicóloga",
       url: "https://carolinasanchezgirona.com/sobre-mi/",
-      image: "https://carolinasanchezgirona.com/carolina-sanchez-retrato.jpg",
+      image: "https://carolinasanchezgirona.com/carolina-sanchez-portada-720.webp",
       identifier: {
         "@type": "PropertyValue",
         propertyID: "COPC",
@@ -116,7 +116,7 @@ const structuredData = {
       name: "Carolina Sánchez | Psicóloga y Neuropsicóloga",
       alternateName: "Dememoria",
       url: "https://carolinasanchezgirona.com",
-      image: "https://carolinasanchezgirona.com/carolina-sanchez-retrato.jpg",
+      image: "https://carolinasanchezgirona.com/carolina-sanchez-portada-720.webp",
       email: "contact@carolinasanchezgirona.com",
       telephone: "+34604974857",
       address: {
@@ -171,9 +171,9 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
     <html lang="es" className={`${inter.variable} ${newsreader.variable}`}>
       <head>
         <meta name="theme-color" content="#FBF9F5" />
-        <meta property="og:image" content="https://carolinasanchezgirona.com/carolina-sanchez-retrato.jpg" />
-        <meta property="og:image:width" content="480" />
-        <meta property="og:image:height" content="618" />
+        <meta property="og:image" content="https://carolinasanchezgirona.com/carolina-sanchez-portada-720.webp" />
+        <meta property="og:image:width" content="720" />
+        <meta property="og:image:height" content="1080" />
         <meta property="og:image:alt" content="Carolina Sánchez, psicóloga y neuropsicóloga" />
       </head>
       <body>
