@@ -1,5 +1,6 @@
-import Image from "next/image";
 "use client";
+
+import Image from "next/image";
 
 import { FormEvent, useEffect, useMemo, useState } from "react";
 import { SUPABASE_PUBLISHABLE_KEY, SUPABASE_URL } from "../lib/supabase-public";
