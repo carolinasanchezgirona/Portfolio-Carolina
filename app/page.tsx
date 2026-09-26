@@ -145,7 +145,17 @@ export default function HomePage() {
         <div className="editorial-wrap home-question-grid">
           <div>
             <p className="editorial-section-eyebrow">Un espacio para tus dudas</p>
-            <h2 id="home-question-title">Pregunta a Carolina</h2>
+            <h2 id="home-question-title">Tu Consulta</h2>
+            <figure className="home-question-photo">
+              <Image
+                src="/carolina-sanchez-tu-consulta.webp"
+                alt="Carolina Sánchez sentada ante una mesa, con gafas rosas, en un espacio luminoso"
+                width={640}
+                height={640}
+                sizes="(max-width: 680px) calc(100vw - 36px), (max-width: 920px) 370px, 340px"
+                loading="lazy"
+              />
+            </figure>
           </div>
           <div className="home-question-copy">
             <p>
