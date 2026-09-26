@@ -145,8 +145,8 @@ export default function HomePage() {
               src="/carolina-sanchez-como-trabajo.webp"
               alt="Carolina Sánchez con una libreta durante la preparación de su trabajo clínico"
               width={540}
-              height={810}
-              sizes="(max-width: 680px) calc(100vw - 36px), (max-width: 900px) 480px, 290px"
+              height={960}
+              sizes="(max-width: 680px) min(calc(100vw - 36px), 420px), (max-width: 900px) 440px, 340px"
               loading="lazy"
             />
           </figure>
