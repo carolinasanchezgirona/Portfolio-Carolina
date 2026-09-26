@@ -193,7 +193,7 @@ export default function HomePage() {
           </div>
           <div className="editorial-reviews-copy">
             <p>
-              Valoración actual publicada en el perfil de empresa de Dememòria en Google.
+              Las reseñas corresponden a Dememòria, nombre con el que también se conoce mi consulta en Arenys de Mar. La atención profesional la presta Carolina Sánchez Girona.
             </p>
             <a
               className="editorial-card-link"
@@ -231,11 +231,10 @@ export default function HomePage() {
 
       <section className="editorial-section editorial-dememoria" aria-labelledby="dememoria-title">
         <div className="editorial-wrap editorial-dememoria-inner">
-          <p className="editorial-section-eyebrow">Dememoria · Consulta clínica</p>
-          <h2 id="dememoria-title">La clínica no empieza en una etiqueta diagnóstica.</h2>
+          <p className="editorial-section-eyebrow">Carolina Sánchez · Dememòria</p>
+          <h2 id="dememoria-title">La misma consulta, una identidad profesional más personal.</h2>
           <p>
-            Diagnóstico, pruebas y síntomas aportan información, pero adquieren sentido cuando se integran con la
-            biografía, el funcionamiento cotidiano y las necesidades reales de la persona.
+            Dememòria es el nombre con el que se ha dado a conocer mi consulta en Arenys de Mar. En esta web encontrarás mi actividad profesional como Carolina Sánchez Girona, psicóloga sanitaria y neuropsicóloga, en el mismo espacio de atención.
           </p>
         </div>
       </section>
@@ -272,6 +271,20 @@ export default function HomePage() {
             <p><a href="/sobre-mi/">Conocer mi trayectoria profesional →</a></p>
             <p><a href="/psicologa-arenys-de-mar/">Consulta de Psicología y Neuropsicología en Arenys de Mar →</a></p>
             <SocialLinks className="editorial-about-social" />
+          </div>
+        </div>
+      </section>
+
+      <section className="editorial-section" aria-labelledby="first-visit-home-title">
+        <div className="editorial-wrap">
+          <div className="editorial-section-head">
+            <p className="editorial-section-eyebrow">Antes de venir</p>
+            <h2 id="first-visit-home-title">Tu primera visita, sin incertidumbres innecesarias.</h2>
+            <p>La primera sesión dura 60 minutos. Hablaremos del motivo de consulta, los antecedentes relevantes y lo que necesitas en este momento. Si dispones de informes previos, puedes traerlos, pero no es necesario enviarlos al reservar.</p>
+            <div className="editorial-actions">
+              <a className="editorial-btn editorial-btn-primary" href="/cita/">Consultar horarios y reservar <Arrow /></a>
+              <a className="editorial-btn editorial-btn-secondary" href="/psicologa-arenys-de-mar/">Ver el espacio y cómo llegar</a>
+            </div>
           </div>
         </div>
       </section>
