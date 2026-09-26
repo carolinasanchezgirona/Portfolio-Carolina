@@ -103,7 +103,7 @@ export default function AboutPage() {
                 alt="Retrato profesional de Carolina Sánchez con camisa blanca y gafas"
                 width={540}
                 height={810}
-                sizes="(max-width: 680px) calc(100vw - 36px), (max-width: 900px) 440px, 480px"
+                sizes="(max-width: 680px) min(calc(100vw - 36px), 360px), 360px"
                 loading="lazy"
               />
             </figure>
