@@ -3,6 +3,7 @@
 import type { ReactNode } from "react";
 import { usePathname } from "next/navigation";
 import SocialLinks from "./social-links";
+import "./conversion.css";
 
 const administrativeRoutes = [
   "/cita",
@@ -139,6 +140,7 @@ export default function SiteShell({ children }: { children: ReactNode }) {
       <div className="editorial-site public-page-shell">
         <a className="skip-link" href="#contenido-principal">Saltar al contenido principal</a>
         <div id="contenido-principal" tabIndex={-1}>{children}</div>
+        <a className="mobile-booking-shortcut" href="/cita/">Pedir cita</a>
         <CrisisNotice />
       </div>
     );
@@ -150,6 +152,7 @@ export default function SiteShell({ children }: { children: ReactNode }) {
       <SiteHeader />
       <div id="contenido-principal" className="site-public-content" tabIndex={-1}>{children}</div>
       <SiteFooter />
+      <a className="mobile-booking-shortcut" href="/cita/">Pedir cita</a>
       <CrisisNotice />
     </div>
   );
