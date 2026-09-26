@@ -113,6 +113,7 @@ export default function HomePage() {
             <h2 id="metodo-title">Comprender primero. Intervenir después.</h2>
           </div>
 
+          <div className="editorial-method-photo-layout">
           <div className="editorial-step-grid">
             <article className="editorial-step editorial-step-teal">
               <div className="editorial-accent" />
@@ -138,6 +139,17 @@ export default function HomePage() {
               <h3>Revisar</h3>
               <p>Valorar cambios, dificultades y siguientes pasos sin automatismos.</p>
             </article>
+          </div>
+          <figure className="editorial-method-photo">
+            <Image
+              src="/carolina-sanchez-como-trabajo.webp"
+              alt="Carolina Sánchez con una libreta durante la preparación de su trabajo clínico"
+              width={540}
+              height={810}
+              sizes="(max-width: 680px) calc(100vw - 36px), (max-width: 900px) 480px, 290px"
+              loading="lazy"
+            />
+          </figure>
           </div>
         </div>
       </section>
@@ -231,6 +243,16 @@ export default function HomePage() {
             <p className="editorial-section-eyebrow">Sobre mí</p>
             <h2 id="about-title">Carolina Sánchez Girona</h2>
             <p className="editorial-role">Psicóloga General Sanitaria · Neuropsicóloga</p>
+            <figure className="editorial-about-photo">
+              <Image
+                src="/carolina-sanchez-sobre-mi.webp"
+                alt="Carolina Sánchez sentada en una terraza luminosa rodeada de plantas"
+                width={540}
+                height={810}
+                sizes="(max-width: 680px) calc(100vw - 36px), (max-width: 900px) 480px, 340px"
+                loading="lazy"
+              />
+            </figure>
           </div>
           <div className="editorial-about-copy">
             <p>

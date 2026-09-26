@@ -62,3 +62,7 @@
   .seo-facts li{gap:12px;}
   .editorial-site iframe[title^="Mapa de Dememoria"]{height:300px;}
 }
+
+/* Retrato en la explicación del enfoque clínico. */
+.seo-professional-photo{max-width:480px;margin:24px 0 26px;overflow:hidden;border-radius:16px;background:#f1f3f1}
+.seo-professional-photo img{display:block;width:100%;height:auto;aspect-ratio:2/3;object-fit:cover}

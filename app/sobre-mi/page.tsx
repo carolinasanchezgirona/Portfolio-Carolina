@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import "../seo-pages.css";
 import SocialLinks from "../components/social-links";
 
@@ -96,6 +97,16 @@ export default function AboutPage() {
 
           <section>
             <h2>Psicología y neuropsicología dentro de una misma mirada clínica</h2>
+            <figure className="seo-professional-photo">
+              <Image
+                src="/carolina-sanchez-enfoque.webp"
+                alt="Retrato profesional de Carolina Sánchez con camisa blanca y gafas"
+                width={540}
+                height={810}
+                sizes="(max-width: 680px) calc(100vw - 36px), (max-width: 900px) 440px, 480px"
+                loading="lazy"
+              />
+            </figure>
             <p>
               La psicología y la neuropsicología aportan preguntas diferentes, pero comparten una misma necesidad: interpretar la información dentro de la historia, el entorno y el funcionamiento real de la persona.
             </p>
