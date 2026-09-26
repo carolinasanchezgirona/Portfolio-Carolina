@@ -1,3 +1,4 @@
+import Image from "next/image";
 "use client";
 
 import { FormEvent, useEffect, useMemo, useState } from "react";
@@ -128,11 +129,21 @@ export default function QuestionsExperience({ initialQuestions }: { initialQuest
         <div className="editorial-wrap question-hero-grid">
           <div className="question-hero-copy">
             <p className="editorial-eyebrow">Divulgación en psicología y neuropsicología</p>
-            <h1 id="question-page-title">Pregunta a Carolina</h1>
+            <h1 id="question-page-title">Tu Consulta</h1>
             <p className="question-intro">
               Envíame una duda general sobre bienestar emocional, relaciones, memoria o neuropsicología. Seleccionaré
               preguntas de interés común y responderé aquí con una mirada profesional, clara y comprensible.
             </p>
+            <figure className="question-portrait">
+              <Image
+                src="/carolina-sanchez-tu-consulta.webp"
+                alt="Carolina Sánchez sentada ante una mesa, con gafas rosas, en un espacio luminoso"
+                width={640}
+                height={640}
+                sizes="(max-width: 680px) calc(100vw - 36px), (max-width: 920px) 360px, 360px"
+                loading="lazy"
+              />
+            </figure>
             <div className="question-principles" aria-label="Cómo funciona">
               <span><strong>01</strong> Tú preguntas</span>
               <span><strong>02</strong> Yo reviso y anonimizo</span>
