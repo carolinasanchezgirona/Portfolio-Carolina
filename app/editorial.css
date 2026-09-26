@@ -116,9 +116,9 @@
   display:block;
   width:100%;
   height:auto;
-  aspect-ratio:480/618;
+  aspect-ratio:2/3;
   object-fit:cover;
-  object-position:center 28%;
+  object-position:center 32%;
   border:1px solid var(--e-line);
   border-radius:18px;
   background:#e9e6e1;
