@@ -2,9 +2,9 @@ import type { Metadata } from "next";
 import "../seo-pages.css";
 
 export const metadata: Metadata = {
-  title: "Neuropsicología en demencias y Alzheimer | Arenys de Mar",
+  title: "Neuropsicología en demencias y Alzheimer",
   description:
-    "Evaluación y seguimiento neuropsicológico en demencias y enfermedad de Alzheimer en Arenys de Mar. Orientación a familias, adaptación funcional e intervención cognitiva.",
+    "Evaluación y seguimiento neuropsicológico en demencias y Alzheimer. Orientación familiar e intervención cognitiva en Arenys de Mar.",
   alternates: { canonical: "/demencias/" },
   openGraph: {
     title: "Demencias y Alzheimer | Carolina Sánchez Girona",
@@ -156,7 +156,7 @@ export default function DementiaPage() {
             <h2>Primera visita</h2>
             <ul className="seo-facts">
               <li><span>Duración</span><strong>60 minutos</strong></li>
-              <li><span>Tarifa</span><strong>60 €</strong></li>
+              <li><span>Tarifa</span><strong>75 €</strong></li>
               <li><span>Ubicación</span><strong>Arenys de Mar</strong></li>
               <li><span>Área</span><strong>Neuropsicología</strong></li>
             </ul>

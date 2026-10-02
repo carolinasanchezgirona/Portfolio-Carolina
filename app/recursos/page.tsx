@@ -4,7 +4,7 @@ import ResourcesCatalog from "./resources-catalog";
 export const metadata: Metadata = {
   title: "Recursos psicológicos y neuropsicológicos",
   description:
-    "Recursos prácticos de psicología y neuropsicología para trabajar ansiedad, rumiación, sueño y funciones cognitivas. Materiales elaborados desde la práctica clínica.",
+    "Recursos prácticos de psicología y neuropsicología sobre ansiedad, rumiación, sueño y funciones cognitivas, elaborados desde la práctica clínica.",
   alternates: { canonical: "/recursos/" },
   openGraph: {
     title: "Recursos psicológicos y neuropsicológicos | Carolina Sánchez",

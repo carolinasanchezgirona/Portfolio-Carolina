@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import "../seo-pages.css";
 
 export const metadata: Metadata = {
-  title: "Ansiedad social y miedo a hacer el ridículo | Psicóloga en Arenys de Mar",
+  title: "Ansiedad social en Arenys de Mar",
   description: "Atención psicológica para ansiedad social, miedo al juicio, vergüenza y evitación de situaciones sociales. Consulta en Arenys de Mar y online.",
   alternates: { canonical: "/ansiedad-social-y-miedo-al-ridiculo/" },
   openGraph: {

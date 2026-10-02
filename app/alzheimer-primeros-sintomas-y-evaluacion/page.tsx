@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import "../seo-pages.css";
 
 export const metadata: Metadata = {
-  title: "Alzheimer: primeros síntomas y evaluación | Neuropsicóloga en Arenys de Mar",
+  title: "Alzheimer: primeros síntomas y evaluación",
   description: "Primeros síntomas de Alzheimer y papel de la evaluación neuropsicológica: memoria reciente, orientación, lenguaje, autonomía y cuándo consultar.",
   alternates: { canonical: "/alzheimer-primeros-sintomas-y-evaluacion/" },
   openGraph: {
@@ -46,7 +46,7 @@ export default function AlzheimerEarlySymptomsPage() {
           <section><h2>Cuándo conviene ampliar el estudio</h2><p>Si la valoración muestra un patrón preocupante, puede recomendarse consulta con neurología, geriatría u otros profesionales. La neuropsicología aporta información detallada sobre el funcionamiento cognitivo, pero no sustituye el diagnóstico médico etiológico.</p><div className="seo-callout"><strong>Detectar señales pronto no significa adelantar conclusiones.</strong><span>Significa obtener información útil antes de que la duda crezca sola y poder decidir qué seguimiento necesita cada persona.</span></div></section>
         </article>
         <aside className="seo-sidebar" aria-label="Información práctica">
-          <div className="seo-card"><h2>Primera visita</h2><ul className="seo-facts"><li><span>Duración</span><strong>60 minutos</strong></li><li><span>Tarifa</span><strong>60 €</strong></li><li><span>Ubicación</span><strong>Arenys de Mar</strong></li><li><span>Área</span><strong>Neuropsicología</strong></li></ul><a className="editorial-btn editorial-btn-primary" href="/cita/">Consultar disponibilidad</a></div>
+          <div className="seo-card"><h2>Primera visita</h2><ul className="seo-facts"><li><span>Duración</span><strong>60 minutos</strong></li><li><span>Tarifa</span><strong>75 €</strong></li><li><span>Ubicación</span><strong>Arenys de Mar</strong></li><li><span>Área</span><strong>Neuropsicología</strong></li></ul><a className="editorial-btn editorial-btn-primary" href="/cita/">Consultar disponibilidad</a></div>
           <div className="seo-card"><h3>Áreas relacionadas</h3><div className="seo-related"><a href="/problemas-de-memoria/">Problemas de memoria</a><a href="/deterioro-cognitivo/">Deterioro cognitivo leve</a><a href="/demencias/">Demencias</a><a href="/familiares-y-cuidadores-de-personas-con-demencia/">Familiares y cuidadores</a>
 </div></div>
         </aside>

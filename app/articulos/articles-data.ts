@@ -49,7 +49,9 @@ export function isArticleVisible(article: PublicArticle, now = Date.now()) {
 }
 
 export function getAutomaticRelatedPage(article: PublicArticle) {
-  if (article.related_page) return article.related_page;
+  if (article.related_page && !["/psicologia/", "/neuropsicologia/"].includes(article.related_page)) {
+    return article.related_page;
+  }
 
   const searchable = [article.title, article.subtitle, article.excerpt, ...(article.tags || [])]
     .filter(Boolean)
@@ -66,5 +68,5 @@ export function getAutomaticRelatedPage(article: PublicArticle) {
   if (/memoria|olvidos/.test(searchable)) return "/problemas-de-memoria/";
   if (/deterioro cognitivo/.test(searchable)) return "/deterioro-cognitivo/";
   if (/evaluaci[oó]n neuropsicol[oó]gica|test neuropsicol[oó]gic|perfil cognitivo/.test(searchable)) return "/evaluacion-neuropsicologica/";
-  return article.category === "neuropsicologia" ? "/neuropsicologia/" : "/psicologia/";
+  return article.related_page || (article.category === "neuropsicologia" ? "/neuropsicologia/" : "/psicologia/");
 }

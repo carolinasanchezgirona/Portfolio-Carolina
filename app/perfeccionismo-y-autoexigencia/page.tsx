@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import "../seo-pages.css";
 
 export const metadata: Metadata = {
-  title: "Perfeccionismo y autoexigencia | Psicóloga en Arenys de Mar",
+  title: "Perfeccionismo y autoexigencia",
   description: "Atención psicológica para perfeccionismo, autoexigencia, miedo a equivocarse y dificultad para descansar. Consulta en Arenys de Mar y online.",
   alternates: { canonical: "/perfeccionismo-y-autoexigencia/" },
   openGraph: {

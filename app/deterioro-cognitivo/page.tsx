@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import "../seo-pages.css";
 
 export const metadata: Metadata = {
-  title: "Deterioro cognitivo y problemas de memoria en Arenys de Mar",
+  title: "Deterioro cognitivo en Arenys de Mar",
   description:
     "Neuropsicología para deterioro cognitivo y problemas de memoria en Arenys de Mar. Evaluación, seguimiento, orientación a familias e intervención cognitiva.",
   alternates: { canonical: "/deterioro-cognitivo/" },
@@ -135,7 +135,7 @@ export default function CognitiveDeclinePage() {
             <h2>Primera visita</h2>
             <ul className="seo-facts">
               <li><span>Duración</span><strong>60 minutos</strong></li>
-              <li><span>Tarifa</span><strong>60 €</strong></li>
+              <li><span>Tarifa</span><strong>75 €</strong></li>
               <li><span>Ubicación</span><strong>Arenys de Mar</strong></li>
               <li><span>Área</span><strong>Neuropsicología</strong></li>
             </ul>
@@ -150,7 +150,7 @@ export default function CognitiveDeclinePage() {
               <a href="/demencias/">Demencias y Alzheimer</a>
               <a href="/estimulacion-cognitiva/">Estimulación cognitiva</a>
               <a href="/familiares-y-cuidadores-de-personas-con-demencia/">Familiares y cuidadores</a>
-                            <a href="/demencia-vascular-y-cambios-cognitivos/">Demencia vascular y cambios cognitivos</a>
+                            <a href="/demencias/">Demencia vascular y cambios cognitivos</a>
               <a href="/psicologa-arenys-de-mar/">Consulta en Arenys de Mar</a>
             </div>
           </div>

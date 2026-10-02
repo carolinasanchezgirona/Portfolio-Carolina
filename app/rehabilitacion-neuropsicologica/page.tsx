@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import "../seo-pages.css";
 
 export const metadata: Metadata = {
-  title: "Rehabilitación neuropsicológica | Neuropsicóloga en Arenys de Mar",
-  description: "Rehabilitación neuropsicológica en adultos tras ictus, TCE u otras condiciones neurológicas: atención, memoria, funciones ejecutivas, estrategias compensatorias y autonomía.",
+  title: "Rehabilitación neuropsicológica",
+  description: "Rehabilitación neuropsicológica tras ictus, TCE u otras condiciones neurológicas: atención, memoria, funciones ejecutivas y autonomía.",
   alternates: { canonical: "/rehabilitacion-neuropsicologica/" },
   openGraph: {
     title: "Rehabilitación neuropsicológica | Carolina Sánchez Girona",
@@ -46,7 +46,7 @@ export default function NeurorehabilitationPage() {
           <section><h2>Rehabilitación y estimulación cognitiva</h2><p>La <a href="/estimulacion-cognitiva/">estimulación cognitiva</a> puede utilizarse en distintos contextos, especialmente cuando el objetivo es mantener o activar funciones cognitivas. La rehabilitación neuropsicológica suele plantearse de forma más individualizada y funcional, con objetivos ligados a dificultades concretas.</p><div className="seo-callout"><strong>Mejorar una puntuación no basta si la vida diaria sigue igual.</strong><span>La intervención neuropsicológica tiene sentido cuando ayuda a recuperar, compensar o adaptar actividades reales.</span></div></section>
         </article>
         <aside className="seo-sidebar" aria-label="Información práctica">
-          <div className="seo-card"><h2>Primera visita</h2><ul className="seo-facts"><li><span>Duración</span><strong>60 minutos</strong></li><li><span>Tarifa</span><strong>60 €</strong></li><li><span>Ubicación</span><strong>Arenys de Mar</strong></li><li><span>Área</span><strong>Neuropsicología</strong></li></ul><a className="editorial-btn editorial-btn-primary" href="/cita/">Consultar disponibilidad</a></div>
+          <div className="seo-card"><h2>Primera visita</h2><ul className="seo-facts"><li><span>Duración</span><strong>60 minutos</strong></li><li><span>Tarifa</span><strong>75 €</strong></li><li><span>Ubicación</span><strong>Arenys de Mar</strong></li><li><span>Área</span><strong>Neuropsicología</strong></li></ul><a className="editorial-btn editorial-btn-primary" href="/cita/">Consultar disponibilidad</a></div>
           <div className="seo-card"><h3>Áreas relacionadas</h3><div className="seo-related"><a href="/evaluacion-neuropsicologica/">Evaluación neuropsicológica</a><a href="/ictus-y-dano-cerebral-adquirido/">Ictus y daño cerebral</a>
 <a href="/estimulacion-cognitiva/">Estimulación cognitiva</a></div></div>
         </aside>

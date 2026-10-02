@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import "../seo-pages.css";
 
 export const metadata: Metadata = {
-  title: "Autoestima y autocrítica | Psicóloga en Arenys de Mar",
+  title: "Autoestima, inseguridad y autocrítica",
   description: "Atención psicológica para baja autoestima, autocrítica intensa, inseguridad y dificultad para valorarse. Consulta en Arenys de Mar y online.",
   alternates: { canonical: "/autoestima-y-autocritica/" },
   openGraph: {
@@ -62,8 +62,8 @@ export default function SelfEsteemPage() {
         <aside className="seo-sidebar" aria-label="Información práctica">
           <div className="seo-card"><h2>Sesión de psicología</h2><ul className="seo-facts"><li><span>Duración</span><strong>60 minutos</strong></li><li><span>Tarifa</span><strong>60 €</strong></li><li><span>Modalidad</span><strong>Presencial y online</strong></li><li><span>Pacientes</span><strong>Adultos</strong></li></ul><a className="editorial-btn editorial-btn-primary" href="/cita/">Consultar disponibilidad</a></div>
           <div className="seo-card"><h3>Áreas relacionadas</h3><div className="seo-related"><a href="/perfeccionismo-y-autoexigencia/">Perfeccionismo y autoexigencia</a>
-              <a href="/toma-de-decisiones-e-indecision/">Toma de decisiones e indecisión</a>
-              <a href="/procrastinacion-y-bloqueo/">Procrastinación y bloqueo</a>
+              <a href="/rumiacion-y-pensamientos-repetitivos/">Toma de decisiones e indecisión</a>
+              <a href="/perfeccionismo-y-autoexigencia/">Procrastinación y bloqueo</a>
               <a href="/ansiedad-social-y-miedo-al-ridiculo/">Ansiedad social</a>
               <a href="/limites-y-relaciones-dificiles/">Límites y relaciones difíciles</a>
 <a href="/ansiedad/">Ansiedad</a><a href="/depresion/">Depresión y bajo estado de ánimo</a></div></div>

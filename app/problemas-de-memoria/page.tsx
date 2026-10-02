@@ -2,9 +2,9 @@ import type { Metadata } from "next";
 import "../seo-pages.css";
 
 export const metadata: Metadata = {
-  title: "Problemas de memoria y olvidos en adultos | Arenys de Mar",
+  title: "Problemas de memoria y olvidos",
   description:
-    "Valoración neuropsicológica de problemas de memoria y olvidos en adultos en Arenys de Mar. Diferenciar quejas subjetivas, factores emocionales y posibles cambios cognitivos.",
+    "Valoración neuropsicológica de problemas de memoria y olvidos en adultos para estudiar posibles cambios cognitivos. Consulta en Arenys de Mar.",
   alternates: { canonical: "/problemas-de-memoria/" },
   openGraph: {
     title: "Problemas de memoria y olvidos | Carolina Sánchez Girona",
@@ -155,7 +155,7 @@ export default function MemoryProblemsPage() {
             <h2>Primera visita</h2>
             <ul className="seo-facts">
               <li><span>Duración</span><strong>60 minutos</strong></li>
-              <li><span>Tarifa</span><strong>60 €</strong></li>
+              <li><span>Tarifa</span><strong>75 €</strong></li>
               <li><span>Ubicación</span><strong>Arenys de Mar</strong></li>
               <li><span>Área</span><strong>Neuropsicología</strong></li>
             </ul>
@@ -169,7 +169,7 @@ export default function MemoryProblemsPage() {
               <a href="/deterioro-cognitivo/">Deterioro cognitivo</a>
                             <a href="/demencias/">Demencias y Alzheimer</a>
               <a href="/familiares-y-cuidadores-de-personas-con-demencia/">Familiares y cuidadores</a>
-              <a href="/problemas-de-atencion-y-concentracion-en-adultos/">Problemas de atención y concentración</a>
+              <a href="/evaluacion-neuropsicologica/">Problemas de atención y concentración</a>
               <a href="/alzheimer-primeros-sintomas-y-evaluacion/">Alzheimer: primeros síntomas y evaluación</a>
               <a href="/psicologa-arenys-de-mar/">Consulta en Arenys de Mar</a>
             </div>

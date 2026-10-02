@@ -3,7 +3,7 @@ import { getPublishedArticles, isArticleVisible } from "./articulos/articles-dat
 import { getPublishedExpertQuestions } from "./pregunta-a-carolina/questions-data";
 
 const base = "https://carolinasanchezgirona.com";
-const staticLastModified = new Date("2026-09-22T00:00:00+02:00");
+const staticLastModified = new Date("2026-10-02T09:45:00+02:00");
 
 export const dynamic = "force-static";
 

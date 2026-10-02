@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import "../seo-pages.css";
 
 export const metadata: Metadata = {
-  title: "Familiares y cuidadores de personas con demencia | Neuropsicóloga en Arenys de Mar",
-  description: "Orientación para familiares y cuidadores de personas con demencia: comunicación, cambios de conducta, sobrecarga, rutinas y acompañamiento. Consulta en Arenys de Mar y online.",
+  title: "Familiares y cuidadores en demencias",
+  description: "Orientación para familiares y cuidadores sobre comunicación, cambios de conducta, sobrecarga y rutinas. Consulta en Arenys de Mar y online.",
   alternates: { canonical: "/familiares-y-cuidadores-de-personas-con-demencia/" },
   openGraph: {
     title: "Familiares y cuidadores de personas con demencia | Carolina Sánchez Girona",
@@ -48,7 +48,7 @@ export default function CaregiversDementiaPage() {
           <section><h2>El objetivo es hacer el día a día más manejable</h2><p>No existe una única forma correcta de cuidar. Las estrategias deben adaptarse a la fase de la enfermedad, al perfil de la persona, a su historia previa y a los recursos reales de la familia.</p><div className="seo-callout"><strong>Cuidar también implica adaptar expectativas.</strong><span>Cuando cambia la capacidad de la persona, muchas veces también debe cambiar la forma en que el entorno le pide, explica y acompaña.</span></div></section>
         </article>
         <aside className="seo-sidebar" aria-label="Información práctica">
-          <div className="seo-card"><h2>Consulta de orientación</h2><ul className="seo-facts"><li><span>Duración</span><strong>60 minutos</strong></li><li><span>Tarifa</span><strong>60 €</strong></li><li><span>Modalidad</span><strong>Presencial y online</strong></li><li><span>Dirigido a</span><strong>Familiares y cuidadores</strong></li></ul><a className="editorial-btn editorial-btn-primary" href="/cita/">Consultar disponibilidad</a></div>
+          <div className="seo-card"><h2>Consulta de orientación</h2><ul className="seo-facts"><li><span>Duración</span><strong>60 minutos</strong></li><li><span>Tarifa</span><strong>75 €</strong></li><li><span>Modalidad</span><strong>Presencial y online</strong></li><li><span>Dirigido a</span><strong>Familiares y cuidadores</strong></li></ul><a className="editorial-btn editorial-btn-primary" href="/cita/">Consultar disponibilidad</a></div>
           <div className="seo-card"><h3>Áreas relacionadas</h3><div className="seo-related"><a href="/demencias/">Demencias</a><a href="/deterioro-cognitivo/">Deterioro cognitivo</a><a href="/problemas-de-memoria/">Problemas de memoria</a><a href="/estimulacion-cognitiva/">Estimulación cognitiva</a></div></div>
         </aside>
       </div>

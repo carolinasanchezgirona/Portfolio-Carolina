@@ -2,9 +2,9 @@ import type { Metadata } from "next";
 import "../seo-pages.css";
 
 export const metadata: Metadata = {
-  title: "Estimulación cognitiva en adultos y mayores | Arenys de Mar",
+  title: "Estimulación cognitiva en Arenys de Mar",
   description:
-    "Estimulación cognitiva individualizada para adultos y personas mayores en Arenys de Mar. Intervención basada en perfil cognitivo, autonomía y objetivos funcionales.",
+    "Estimulación cognitiva individualizada para adultos y mayores en Arenys de Mar, adaptada al perfil cognitivo y a objetivos funcionales.",
   alternates: { canonical: "/estimulacion-cognitiva/" },
   openGraph: {
     title: "Estimulación cognitiva | Carolina Sánchez Girona",
@@ -145,7 +145,7 @@ export default function CognitiveStimulationPage() {
             <h2>Primera visita</h2>
             <ul className="seo-facts">
               <li><span>Duración</span><strong>60 minutos</strong></li>
-              <li><span>Tarifa</span><strong>60 €</strong></li>
+              <li><span>Tarifa</span><strong>75 €</strong></li>
               <li><span>Ubicación</span><strong>Arenys de Mar</strong></li>
               <li><span>Área</span><strong>Neuropsicología</strong></li>
             </ul>

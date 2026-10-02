@@ -4,7 +4,7 @@ import "../seo-pages.css";
 export const metadata: Metadata = {
   title: "Psicóloga para duelo en Arenys de Mar y online",
   description:
-    "Acompañamiento psicológico en procesos de duelo y pérdida para adultos en Arenys de Mar y online. Rupturas, fallecimientos, cambios vitales y otras pérdidas significativas.",
+    "Atención psicológica para procesos de duelo, fallecimientos, rupturas y otras pérdidas. Consulta para adultos en Arenys de Mar y online.",
   alternates: { canonical: "/duelo/" },
   openGraph: {
     title: "Psicóloga para duelo | Carolina Sánchez Girona",
@@ -127,7 +127,7 @@ export default function GriefPage() {
               <a href="/ansiedad/">Ansiedad</a>
               <a href="/depresion/">Depresión y bajo estado de ánimo</a>
               <a href="/cambios-vitales-y-adaptacion/">Cambios vitales y adaptación</a>
-              <a href="/culpa-y-dificultad-para-perdonarse/">Culpa y dificultad para perdonarse</a>
+              <a href="/autoestima-y-autocritica/">Culpa y dificultad para perdonarse</a>
               <a href="/rupturas-de-pareja/">Rupturas de pareja</a>
               <a href="/psicologa-arenys-de-mar/">Consulta en Arenys de Mar</a>
             </div>
