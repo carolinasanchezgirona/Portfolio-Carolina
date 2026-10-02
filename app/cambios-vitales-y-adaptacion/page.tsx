@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import "../seo-pages.css";
 
 export const metadata: Metadata = {
-  title: "Cambios vitales y adaptación | Psicóloga en Arenys de Mar",
+  title: "Cambios vitales y adaptación",
   description: "Atención psicológica para cambios vitales, transiciones, adaptación a nuevas etapas y sensación de desbordamiento. Consulta en Arenys de Mar y online.",
   alternates: { canonical: "/cambios-vitales-y-adaptacion/" },
   openGraph: {
@@ -47,7 +47,7 @@ export default function LifeChangesPage() {
         </article>
         <aside className="seo-sidebar" aria-label="Información práctica">
           <div className="seo-card"><h2>Sesión de psicología</h2><ul className="seo-facts"><li><span>Duración</span><strong>60 minutos</strong></li><li><span>Tarifa</span><strong>60 €</strong></li><li><span>Modalidad</span><strong>Presencial y online</strong></li><li><span>Pacientes</span><strong>Adultos</strong></li></ul><a className="editorial-btn editorial-btn-primary" href="/cita/">Consultar disponibilidad</a></div>
-          <div className="seo-card"><h3>Áreas relacionadas</h3><div className="seo-related"><a href="/ansiedad/">Ansiedad</a><a href="/duelo/">Duelo</a><a href="/estres-y-sobrecarga/">Estrés y sobrecarga</a><a href="/toma-de-decisiones-e-indecision/">Toma de decisiones</a></div></div>
+          <div className="seo-card"><h3>Áreas relacionadas</h3><div className="seo-related"><a href="/ansiedad/">Ansiedad</a><a href="/duelo/">Duelo</a><a href="/estres-y-sobrecarga/">Estrés y sobrecarga</a><a href="/rumiacion-y-pensamientos-repetitivos/">Toma de decisiones</a></div></div>
         </aside>
       </div>
       <section className="editorial-section seo-authority"><div className="editorial-wrap seo-authority-grid"><div><p className="editorial-section-eyebrow">Profesional responsable</p><h2>Carolina Sánchez Girona</h2><p className="editorial-role">Psicóloga General Sanitaria · Neuropsicóloga</p></div><div className="seo-authority-copy"><p>Trabajo con adultos en procesos de adaptación, ansiedad, duelo, sobrecarga y toma de decisiones desde una formulación clínica individualizada.</p><div className="seo-authority-links"><a href="/sobre-mi/">Conocer mi trayectoria profesional →</a><a href="/psicologia/">Ver Psicología General Sanitaria →</a></div></div></div></section>

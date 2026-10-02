@@ -4,7 +4,7 @@ import "../seo-pages.css";
 export const metadata: Metadata = {
   title: "Psicóloga para rupturas de pareja | Arenys de Mar",
   description:
-    "Atención psicológica para rupturas de pareja, separación y duelo afectivo en adultos en Arenys de Mar y online. Intervención individualizada para recuperar estabilidad y autonomía.",
+    "Atención psicológica para rupturas, separación y duelo afectivo en adultos. Consulta individualizada en Arenys de Mar y online.",
   alternates: { canonical: "/rupturas-de-pareja/" },
   openGraph: {
     title: "Rupturas de pareja | Carolina Sánchez Girona",
@@ -155,7 +155,7 @@ export default function BreakupPage() {
             <h3>Áreas relacionadas</h3>
             <div className="seo-related">
               <a href="/limites-y-relaciones-dificiles/">Límites y relaciones difíciles</a>
-              <a href="/culpa-y-dificultad-para-perdonarse/">Culpa y dificultad para perdonarse</a>
+              <a href="/autoestima-y-autocritica/">Culpa y dificultad para perdonarse</a>
               <a href="/duelo/">Duelo y pérdidas</a>
               <a href="/ansiedad/">Ansiedad</a>
               <a href="/depresion/">Depresión y bajo estado de ánimo</a>

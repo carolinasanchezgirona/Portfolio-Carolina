@@ -4,7 +4,7 @@ import "../seo-pages.css";
 import SocialLinks from "../components/social-links";
 
 export const metadata: Metadata = {
-  title: "Carolina Sánchez Girona | Psicóloga General Sanitaria y Neuropsicóloga",
+  title: { absolute: "Sobre Carolina Sánchez | Psicóloga y neuropsicóloga" },
   description:
     "Conoce la trayectoria profesional de Carolina Sánchez Girona, Psicóloga General Sanitaria y Neuropsicóloga en Arenys de Mar, colegiada 24892.",
   alternates: { canonical: "/sobre-mi/" },
@@ -32,9 +32,8 @@ const profileSchema = {
       value: "24892",
     },
     sameAs: [
-      "https://www.instagram.com/carolinasanchez.psicologia/",
+      "https://www.instagram.com/carolina_tupsicologa/",
       "https://www.linkedin.com/in/carolina-s%C3%A1nchez-girona-43b3b94a/",
-      "https://www.doctoralia.es/carolina-sanchez-girona/psicologo/arenys-de-mar",
     ],
     memberOf: {
       "@type": "Organization",

@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import "../seo-pages.css";
 
 export const metadata: Metadata = {
-  title: "Poner límites en relaciones | Psicóloga en Arenys de Mar",
+  title: "Poner límites en las relaciones",
   description: "Atención psicológica para dificultad para poner límites, relaciones desgastantes, culpa al decir no y conflictos repetidos. Consulta en Arenys de Mar y online.",
   alternates: { canonical: "/limites-y-relaciones-dificiles/" },
   openGraph: {

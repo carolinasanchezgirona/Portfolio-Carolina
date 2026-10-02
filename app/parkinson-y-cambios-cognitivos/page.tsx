@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import "../seo-pages.css";
 
 export const metadata: Metadata = {
-  title: "Cambios cognitivos en Parkinson | Neuropsicóloga en Arenys de Mar",
+  title: "Cambios cognitivos en Parkinson",
   description: "Evaluación neuropsicológica de cambios cognitivos en enfermedad de Parkinson: atención, velocidad de procesamiento, funciones ejecutivas, memoria y autonomía.",
   alternates: { canonical: "/parkinson-y-cambios-cognitivos/" },
   openGraph: {
@@ -46,7 +46,7 @@ export default function ParkinsonCognitionPage() {
           <section><h2>La evolución importa tanto como una fotografía puntual</h2><p>Una evaluación inicial puede servir como referencia para comparar cambios posteriores. Esto resulta especialmente útil cuando existen dudas sobre progresión o cuando se modifican las demandas de la vida cotidiana.</p><div className="seo-callout"><strong>Una puntuación aislada no cuenta toda la historia.</strong><span>Lo clínicamente útil es integrar el perfil cognitivo, la evolución y el impacto real en la autonomía.</span></div></section>
         </article>
         <aside className="seo-sidebar" aria-label="Información práctica">
-          <div className="seo-card"><h2>Primera visita</h2><ul className="seo-facts"><li><span>Duración</span><strong>60 minutos</strong></li><li><span>Tarifa</span><strong>60 €</strong></li><li><span>Ubicación</span><strong>Arenys de Mar</strong></li><li><span>Área</span><strong>Neuropsicología</strong></li></ul><a className="editorial-btn editorial-btn-primary" href="/cita/">Consultar disponibilidad</a></div>
+          <div className="seo-card"><h2>Primera visita</h2><ul className="seo-facts"><li><span>Duración</span><strong>60 minutos</strong></li><li><span>Tarifa</span><strong>75 €</strong></li><li><span>Ubicación</span><strong>Arenys de Mar</strong></li><li><span>Área</span><strong>Neuropsicología</strong></li></ul><a className="editorial-btn editorial-btn-primary" href="/cita/">Consultar disponibilidad</a></div>
           <div className="seo-card"><h3>Áreas relacionadas</h3><div className="seo-related"><a href="/evaluacion-neuropsicologica/">Evaluación neuropsicológica</a>
 <a href="/estimulacion-cognitiva/">Estimulación cognitiva</a>
 </div></div>

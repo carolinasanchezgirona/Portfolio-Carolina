@@ -5,7 +5,7 @@ import SocialLinks from "./components/social-links";
 export const metadata: Metadata = {
   title: "Carolina Sánchez Girona | Psicóloga y Neuropsicóloga",
   description:
-    "Psicología sanitaria y neuropsicología clínica en Arenys de Mar y online. Atención psicológica para adultos, evaluación neuropsicológica y seguimiento cognitivo.",
+    "Psicóloga sanitaria y neuropsicóloga en Arenys de Mar y online. Terapia para adultos, evaluación neuropsicológica y seguimiento cognitivo.",
   alternates: { canonical: "/" },
   openGraph: {
     title: "Carolina Sánchez Girona | Psicóloga y Neuropsicóloga",

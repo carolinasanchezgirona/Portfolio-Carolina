@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import "../seo-pages.css";
 
 export const metadata: Metadata = {
-  title: "Secuelas cognitivas tras ictus y daño cerebral | Neuropsicóloga en Arenys de Mar",
-  description: "Evaluación y seguimiento neuropsicológico tras ictus y daño cerebral adquirido: memoria, atención, lenguaje, funciones ejecutivas y autonomía. Consulta en Arenys de Mar.",
+  title: "Neuropsicología tras un ictus",
+  description: "Evaluación neuropsicológica tras ictus o daño cerebral adquirido: memoria, atención, lenguaje, funciones ejecutivas y autonomía.",
   alternates: { canonical: "/ictus-y-dano-cerebral-adquirido/" },
   openGraph: {
     title: "Secuelas cognitivas tras ictus y daño cerebral | Carolina Sánchez Girona",
@@ -60,7 +60,7 @@ export default function StrokeBrainInjuryPage() {
           <section><h2>El entorno también forma parte de la recuperación</h2><p>Los cambios cognitivos pueden modificar la dinámica familiar y generar frustración si se interpretan como falta de esfuerzo o desinterés. Explicar el perfil neuropsicológico ayuda a ajustar expectativas y a ofrecer apoyos de forma más eficaz.</p><div className="seo-callout"><strong>Recuperar no siempre significa volver exactamente al punto de partida.</strong><span>La neuropsicología también busca identificar recursos, compensaciones y nuevas formas de recuperar autonomía.</span></div></section>
         </article>
         <aside className="seo-sidebar" aria-label="Información práctica">
-          <div className="seo-card"><h2>Primera visita</h2><ul className="seo-facts"><li><span>Duración</span><strong>60 minutos</strong></li><li><span>Tarifa</span><strong>60 €</strong></li><li><span>Ubicación</span><strong>Arenys de Mar</strong></li><li><span>Área</span><strong>Neuropsicología</strong></li></ul><a className="editorial-btn editorial-btn-primary" href="/cita/">Consultar disponibilidad</a></div>
+          <div className="seo-card"><h2>Primera visita</h2><ul className="seo-facts"><li><span>Duración</span><strong>60 minutos</strong></li><li><span>Tarifa</span><strong>75 €</strong></li><li><span>Ubicación</span><strong>Arenys de Mar</strong></li><li><span>Área</span><strong>Neuropsicología</strong></li></ul><a className="editorial-btn editorial-btn-primary" href="/cita/">Consultar disponibilidad</a></div>
           <div className="seo-card"><h3>Áreas relacionadas</h3><div className="seo-related"><a href="/evaluacion-neuropsicologica/">Evaluación neuropsicológica</a><a href="/estimulacion-cognitiva/">Estimulación cognitiva</a><a href="/problemas-de-memoria/">Problemas de memoria</a><a href="/neuropsicologia/">Neuropsicología</a></div></div>
         </aside>
       </div>

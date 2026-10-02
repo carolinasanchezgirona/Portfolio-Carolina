@@ -72,7 +72,7 @@ export default function SocialLinks({ className = "", compact = false }: SocialL
   return (
     <div className={classes} aria-label="Redes profesionales">
       <a
-        href="https://www.instagram.com/carolinasanchez.psicologia/"
+        href="https://www.instagram.com/carolina_tupsicologa/"
         target="_blank"
         rel="noopener noreferrer"
         aria-label="Instagram de Carolina Sánchez | Psicóloga"

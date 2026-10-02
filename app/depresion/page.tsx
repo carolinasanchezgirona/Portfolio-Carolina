@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import "../seo-pages.css";
 
 export const metadata: Metadata = {
-  title: "Psicóloga para depresión y bajo estado de ánimo | Arenys de Mar",
+  title: "Psicóloga para depresión en Arenys de Mar",
   description:
     "Atención psicológica para depresión, apatía y bajo estado de ánimo en adultos en Arenys de Mar y online. Evaluación clínica e intervención individualizada.",
   alternates: { canonical: "/depresion/" },
@@ -164,7 +164,7 @@ export default function DepressionPage() {
               <a href="/ansiedad/">Ansiedad</a>
               <a href="/duelo/">Duelo y pérdidas</a>
               <a href="/rupturas-de-pareja/">Rupturas de pareja</a>
-              <a href="/dependencia-emocional/">Dependencia emocional</a>
+              <a href="/limites-y-relaciones-dificiles/">Dependencia emocional</a>
               <a href="/psicologa-arenys-de-mar/">Consulta en Arenys de Mar</a>
             </div>
           </div>

@@ -3,7 +3,7 @@ import Script from "next/script";
 import "./booking.css";
 
 export const metadata: Metadata = {
-  title: "Pedir cita | Carolina Sánchez Girona",
+  title: { absolute: "Pedir cita | Carolina Sánchez Girona" },
   description: "Reserva una sesión de psicología o neuropsicología con Carolina Sánchez Girona.",
   alternates: {
     canonical: "/cita/",

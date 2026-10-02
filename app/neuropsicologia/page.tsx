@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import "../seo-pages.css";
 
 export const metadata: Metadata = {
-  title: "Neuropsicóloga en Arenys de Mar | Evaluación Neuropsicológica",
+  title: "Neuropsicóloga en Arenys de Mar",
   description:
     "Neuropsicología en Arenys de Mar: evaluación e intervención en memoria, atención, lenguaje, funciones ejecutivas, deterioro cognitivo y demencias.",
   alternates: { canonical: "/neuropsicologia/" },

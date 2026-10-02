@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import "../seo-pages.css";
 
 export const metadata: Metadata = {
-  title: "Rumiación y pensamientos repetitivos | Psicóloga en Arenys de Mar",
+  title: "Rumiación y pensamientos repetitivos",
   description: "Atención psicológica para rumiación, sobrepensar y pensamientos repetitivos que generan ansiedad o bajo estado de ánimo. Consulta en Arenys de Mar y online.",
   alternates: { canonical: "/rumiacion-y-pensamientos-repetitivos/" },
   openGraph: {
@@ -29,10 +29,10 @@ export default function RuminationPage() {
         <a className="brand" href="/" aria-label="Carolina Sánchez, inicio"><span className="brand-name">Carolina Sánchez</span><span className="brand-sub">Psicóloga · Neuropsicóloga</span></a>
         <nav className="nav" aria-label="Navegación principal"><a href="/psicologia/">Psicología</a><a href="/ansiedad/">Ansiedad</a>
               <a href="/insomnio-y-dificultades-para-dormir/">Insomnio y dificultades para dormir</a>
-              <a href="/culpa-y-dificultad-para-perdonarse/">Culpa y dificultad para perdonarse</a>
-              <a href="/ansiedad-anticipatoria-y-preocupacion-excesiva/">Ansiedad anticipatoria y preocupación excesiva</a>
-              <a href="/ansiedad-por-la-salud-e-hipocondria/">Ansiedad por la salud</a>
-              <a href="/pensamientos-intrusivos-y-miedo-a-perder-el-control/">Pensamientos intrusivos</a>
+              <a href="/autoestima-y-autocritica/">Culpa y dificultad para perdonarse</a>
+              <a href="/ansiedad/">Ansiedad anticipatoria y preocupación excesiva</a>
+              <a href="/ansiedad/">Ansiedad por la salud</a>
+              <a href="/toc-obsesiones-y-compulsiones/">Pensamientos intrusivos</a>
               <a href="/toc-obsesiones-y-compulsiones/">TOC, obsesiones y compulsiones</a><a className="nav-cta" href="/cita/">Pedir cita</a></nav>
       </header>
       <section className="seo-hero"><div className="editorial-wrap seo-hero-inner">

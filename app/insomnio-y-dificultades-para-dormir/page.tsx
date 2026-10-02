@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import "../seo-pages.css";
 
 export const metadata: Metadata = {
-  title: "Insomnio y dificultades para dormir | Psicóloga en Arenys de Mar",
+  title: "Insomnio y problemas de sueño",
   description: "Atención psicológica para insomnio, dificultad para conciliar o mantener el sueño y preocupación por no dormir. Consulta en Arenys de Mar y online.",
   alternates: { canonical: "/insomnio-y-dificultades-para-dormir/" },
   openGraph: {

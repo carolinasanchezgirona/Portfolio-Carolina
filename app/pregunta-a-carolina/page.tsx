@@ -7,7 +7,7 @@ export const dynamic = "force-static";
 
 export const metadata: Metadata = {
   title: { absolute: "Tu Consulta: preguntas de psicología | Carolina Sánchez" },
-  description: "Envía tu pregunta a Carolina Sánchez, psicóloga y neuropsicóloga, y consulta respuestas divulgativas sobre ansiedad, duelo, relaciones, memoria y deterioro cognitivo.",
+  description: "Envía tu pregunta de psicología o neuropsicología y consulta respuestas divulgativas sobre ansiedad, duelo, relaciones, memoria y deterioro cognitivo.",
   alternates: { canonical: "/pregunta-a-carolina/" },
   openGraph: {
     title: "Tu Consulta | Carolina Sánchez, psicóloga y neuropsicóloga",

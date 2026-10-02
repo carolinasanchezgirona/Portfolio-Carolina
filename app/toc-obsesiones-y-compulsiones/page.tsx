@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import "../seo-pages.css";
 
 export const metadata: Metadata = {
-  title: "TOC, obsesiones y compulsiones | Psicóloga en Arenys de Mar",
+  title: "TOC, obsesiones y compulsiones",
   description: "Atención psicológica para trastorno obsesivo-compulsivo, obsesiones, compulsiones, comprobaciones y rituales. Consulta en Arenys de Mar y online.",
   alternates: { canonical: "/toc-obsesiones-y-compulsiones/" },
   openGraph: {

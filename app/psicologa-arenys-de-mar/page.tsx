@@ -3,9 +3,9 @@ import "../seo-pages.css";
 import Image from "next/image";
 
 export const metadata: Metadata = {
-  title: "Psicóloga en Arenys de Mar | Carolina Sánchez Girona",
+  title: "Psicóloga en Arenys de Mar",
   description:
-    "Psicóloga General Sanitaria y Neuropsicóloga en Arenys de Mar. Atención psicológica para adultos, evaluación e intervención neuropsicológica, presencial y online.",
+    "Psicóloga sanitaria y neuropsicóloga en Arenys de Mar. Terapia para adultos y evaluación neuropsicológica, presencial y online.",
   alternates: { canonical: "/psicologa-arenys-de-mar/" },
   openGraph: {
     title: "Psicóloga en Arenys de Mar | Carolina Sánchez Girona",

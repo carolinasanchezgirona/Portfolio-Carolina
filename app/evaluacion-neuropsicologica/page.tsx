@@ -4,7 +4,7 @@ import "../seo-pages.css";
 export const metadata: Metadata = {
   title: "Evaluación neuropsicológica en Arenys de Mar",
   description:
-    "Evaluación neuropsicológica en Arenys de Mar: memoria, atención, lenguaje, funciones ejecutivas y funcionamiento cotidiano. Valoración individualizada y devolución clínica.",
+    "Evaluación neuropsicológica en Arenys de Mar de memoria, atención, lenguaje, funciones ejecutivas y funcionamiento cotidiano.",
   alternates: { canonical: "/evaluacion-neuropsicologica/" },
   openGraph: {
     title: "Evaluación neuropsicológica | Carolina Sánchez Girona",
@@ -137,7 +137,7 @@ export default function NeuropsychAssessmentPage() {
             <h2>Primera visita</h2>
             <ul className="seo-facts">
               <li><span>Duración</span><strong>60 minutos</strong></li>
-              <li><span>Tarifa</span><strong>60 €</strong></li>
+              <li><span>Tarifa</span><strong>75 €</strong></li>
               <li><span>Ubicación</span><strong>Arenys de Mar</strong></li>
               <li><span>Área</span><strong>Neuropsicología</strong></li>
             </ul>
