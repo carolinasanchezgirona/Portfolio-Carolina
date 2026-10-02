@@ -46,7 +46,7 @@ export default function OCDPage() {
           <section><h2>La terapia no busca demostrar que el miedo es imposible</h2><p>Intentar demostrar una seguridad total suele alimentar el ciclo. El objetivo es poder convivir con un grado razonable de incertidumbre sin responder automáticamente con compulsiones.</p><div className="seo-callout"><strong>La certeza absoluta es una trampa frecuente en el TOC.</strong><span>El tratamiento ayuda a reducir la necesidad de comprobar y a recuperar libertad de acción.</span></div></section>
         </article>
         <aside className="seo-sidebar" aria-label="Información práctica">
-          <div className="seo-card"><h2>Sesión de psicología</h2><ul className="seo-facts"><li><span>Duración</span><strong>60 minutos</strong></li><li><span>Tarifa</span><strong>60 €</strong></li><li><span>Modalidad</span><strong>Presencial y online</strong></li><li><span>Pacientes</span><strong>Adultos</strong></li></ul><a className="editorial-btn editorial-btn-primary" href="/cita/">Consultar disponibilidad</a></div>
+          <div className="seo-card"><h2>Sesión de psicología</h2><ul className="seo-facts"><li><span>Duración</span><strong>60 minutos</strong></li><li><span>Tarifa</span><strong>75 €</strong></li><li><span>Modalidad</span><strong>Presencial y online</strong></li><li><span>Pacientes</span><strong>Adultos</strong></li></ul><a className="editorial-btn editorial-btn-primary" href="/cita/">Consultar disponibilidad</a></div>
           <div className="seo-card"><h3>Áreas relacionadas</h3><div className="seo-related">
 <a href="/ansiedad/">Ansiedad</a><a href="/rumiacion-y-pensamientos-repetitivos/">Rumiación</a>
 </div></div>

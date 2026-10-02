@@ -60,9 +60,10 @@ export default function BoundariesPage() {
         </article>
 
         <aside className="seo-sidebar" aria-label="Información práctica">
-          <div className="seo-card"><h2>Sesión de psicología</h2><ul className="seo-facts"><li><span>Duración</span><strong>60 minutos</strong></li><li><span>Tarifa</span><strong>60 €</strong></li><li><span>Modalidad</span><strong>Presencial y online</strong></li><li><span>Pacientes</span><strong>Adultos</strong></li></ul><a className="editorial-btn editorial-btn-primary" href="/cita/">Consultar disponibilidad</a></div>
+          <div className="seo-card"><h2>Sesión de psicología</h2><ul className="seo-facts"><li><span>Duración</span><strong>60 minutos</strong></li><li><span>Tarifa</span><strong>75 €</strong></li><li><span>Modalidad</span><strong>Presencial y online</strong></li><li><span>Pacientes</span><strong>Adultos</strong></li></ul><a className="editorial-btn editorial-btn-primary" href="/cita/">Consultar disponibilidad</a></div>
           <div className="seo-card"><h3>Áreas relacionadas</h3><div className="seo-related">
 <a href="/rupturas-de-pareja/">Rupturas de pareja</a><a href="/ansiedad/">Ansiedad</a><a href="/psicologia/">Psicología General Sanitaria</a></div></div>
+          <div className="seo-card"><h3>Artículo relacionado</h3><div className="seo-related"><a href="/articulos/culpa-al-poner-limites/">Por qué aparece culpa al poner límites</a></div></div>
         </aside>
       </div>
 

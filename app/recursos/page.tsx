@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
+import JsonLd from "../components/json-ld";
 import ResourcesCatalog from "./resources-catalog";
+import { getPublishedResources } from "./resources-data";
 
 export const metadata: Metadata = {
   title: "Recursos psicológicos y neuropsicológicos",
@@ -15,9 +17,40 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RecursosPage() {
+export default async function RecursosPage() {
+  const resources = await getPublishedResources();
+  const productSchema = resources.length ? {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    name: "Recursos psicológicos y neuropsicológicos",
+    itemListElement: resources.map((resource, index) => ({
+      "@type": "ListItem",
+      position: index + 1,
+      item: {
+        "@type": "Product",
+        name: resource.title,
+        description: resource.description || resource.subtitle || resource.format_label,
+        image: resource.cover_url || undefined,
+        url: `https://carolinasanchezgirona.com/recursos/#recurso-${resource.slug}`,
+        category: resource.category,
+        brand: {
+          "@type": "Brand",
+          name: "Carolina Sánchez Girona",
+        },
+        offers: {
+          "@type": "Offer",
+          price: (resource.price_cents / 100).toFixed(2),
+          priceCurrency: "EUR",
+          availability: "https://schema.org/InStock",
+          url: `https://carolinasanchezgirona.com/recursos/#recurso-${resource.slug}`,
+        },
+      },
+    })),
+  } : null;
+
   return (
     <main className="resources-page">
+      {productSchema ? <JsonLd id="resources-structured-data" data={productSchema} /> : null}
       <section className="resources-hero">
         <div className="editorial-wrap resources-hero-grid">
           <div>
@@ -49,7 +82,7 @@ export default function RecursosPage() {
               catálogo masivo de materiales.
             </p>
           </div>
-          <ResourcesCatalog />
+          <ResourcesCatalog initialResources={resources} />
         </div>
       </section>
 

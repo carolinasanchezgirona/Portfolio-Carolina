@@ -52,24 +52,22 @@ export const metadata: Metadata = {
     title: "Carolina Sánchez | Psicóloga y Neuropsicóloga",
     description:
       "Psicología sanitaria y neuropsicología clínica en Arenys de Mar y online.",
-    images: [
-      {
-        url: "/carolina-sanchez-portada-720.webp",
-        width: 720,
-        height: 1080,
-        alt: "Carolina Sánchez, psicóloga y neuropsicóloga",
-      },
-    ],
   },
   twitter: {
-    card: "summary",
+    card: "summary_large_image",
     title: "Carolina Sánchez | Psicóloga y Neuropsicóloga",
     description: "Psicología sanitaria y neuropsicología clínica en Arenys de Mar y online.",
-    images: ["/carolina-sanchez-portada-720.webp"],
   },
   robots: {
     index: true,
     follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+      "max-video-preview": -1,
+    },
   },
 };
 
@@ -81,6 +79,17 @@ const professionalProfiles = [
 const structuredData = {
   "@context": "https://schema.org",
   "@graph": [
+    {
+      "@type": "WebSite",
+      "@id": "https://carolinasanchezgirona.com/#website",
+      url: "https://carolinasanchezgirona.com/",
+      name: "Carolina Sánchez | Psicóloga y Neuropsicóloga",
+      alternateName: "Dememoria",
+      inLanguage: "es-ES",
+      publisher: {
+        "@id": "https://carolinasanchezgirona.com/#dememoria",
+      },
+    },
     {
       "@type": "Person",
       "@id": "https://carolinasanchezgirona.com/#carolina-sanchez-girona",
@@ -110,7 +119,7 @@ const structuredData = {
       ],
     },
     {
-      "@type": "ProfessionalService",
+      "@type": ["LocalBusiness", "ProfessionalService"],
       "@id": "https://carolinasanchezgirona.com/#dememoria",
       name: "Carolina Sánchez | Psicóloga y Neuropsicóloga",
       alternateName: "Dememoria",
@@ -118,6 +127,8 @@ const structuredData = {
       image: "https://carolinasanchezgirona.com/carolina-sanchez-portada-720.webp",
       email: "contact@carolinasanchezgirona.com",
       telephone: "+34604974857",
+      priceRange: "75 €",
+      currenciesAccepted: "EUR",
       address: {
         "@type": "PostalAddress",
         streetAddress: "Carrer Barcelona 8, Local",
@@ -145,6 +156,8 @@ const structuredData = {
         itemListElement: [
           {
             "@type": "Offer",
+            price: 75,
+            priceCurrency: "EUR",
             itemOffered: {
               "@type": "Service",
               name: "Psicología General Sanitaria",
@@ -153,6 +166,8 @@ const structuredData = {
           },
           {
             "@type": "Offer",
+            price: 75,
+            priceCurrency: "EUR",
             itemOffered: {
               "@type": "Service",
               name: "Neuropsicología",
@@ -170,10 +185,6 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
     <html lang="es" className={`${inter.variable} ${newsreader.variable}`}>
       <head>
         <meta name="theme-color" content="#FBF9F5" />
-        <meta property="og:image" content="https://carolinasanchezgirona.com/carolina-sanchez-portada-720.webp" />
-        <meta property="og:image:width" content="720" />
-        <meta property="og:image:height" content="1080" />
-        <meta property="og:image:alt" content="Carolina Sánchez, psicóloga y neuropsicóloga" />
       </head>
       <body>
         <SiteShell>{children}</SiteShell>

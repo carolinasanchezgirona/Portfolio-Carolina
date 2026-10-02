@@ -17,7 +17,7 @@ export const metadata: Metadata = {
     images: [{ url: "/carolina-sanchez-tu-consulta.webp", width: 640, height: 640, alt: "Carolina Sánchez en Tu Consulta, espacio de preguntas de psicología y neuropsicología" }],
   },
   twitter: {
-    card: "summary",
+    card: "summary_large_image",
     images: ["/carolina-sanchez-tu-consulta.webp"],
   },
 };

@@ -2,26 +2,12 @@
 
 import { useEffect, useState } from "react";
 import Image from "next/image";
+import type { Resource } from "./resources-data";
 
 const SUPABASE_URL = "https://grgyvdxkjdstdyumdfyg.supabase.co";
 const KEY = "sb_publishable_b2MRfP0bPti87V2FXCzHGw_Y9vvcbii";
 const PAYMENT_LINKS: Record<string, string> = {
   "salir-del-bucle": "https://buy.stripe.com/9B6cN69V2bbXbJa5Czcwg00",
-};
-
-type Resource = {
-  id: string;
-  title: string;
-  slug: string;
-  subtitle: string | null;
-  description: string | null;
-  category: "psicologia" | "neuropsicologia" | "profesionales";
-  audience: "general" | "pacientes" | "familias" | "profesionales";
-  format_label: string;
-  price_cents: number;
-  featured: boolean;
-  cover_url: string | null;
-  cover_alt: string | null;
 };
 
 const plannedResources = [
@@ -58,13 +44,20 @@ function euro(cents: number) {
   return new Intl.NumberFormat("es-ES", { style: "currency", currency: "EUR" }).format(cents / 100);
 }
 
-export default function ResourcesCatalog() {
-  const [resources, setResources] = useState<Resource[] | null>(null);
+function usefulCoverAlt(value: string | null, title: string) {
+  if (!value || /^\d+(?:[-_].*)?$/.test(value) || /\.(?:png|jpe?g|webp|avif)$/i.test(value)) {
+    return `Portada del recurso psicológico ${title}`;
+  }
+  return value;
+}
+
+export default function ResourcesCatalog({ initialResources }: { initialResources: Resource[] }) {
+  const [resources, setResources] = useState<Resource[]>(initialResources);
   const [buyingId, setBuyingId] = useState<string | null>(null);
   const [message, setMessage] = useState("");
 
   useEffect(() => {
-    const select = "id,title,slug,subtitle,description,category,audience,format_label,price_cents,featured,cover_url,cover_alt";
+    const select = "id,title,slug,subtitle,description,category,audience,format_label,price_cents,featured,cover_url,cover_alt,updated_at";
     fetch(
       `${SUPABASE_URL}/rest/v1/digital_resources?select=${encodeURIComponent(select)}&status=eq.published&order=featured.desc,created_at.desc`,
       { headers: { apikey: KEY }, cache: "no-store" },
@@ -104,10 +97,6 @@ export default function ResourcesCatalog() {
     }
   }
 
-  if (resources === null) {
-    return <div className="resources-loading">Cargando recursos…</div>;
-  }
-
   if (!resources.length) {
     return (
       <>
@@ -136,12 +125,12 @@ export default function ResourcesCatalog() {
       {message ? <p className="resources-catalog-message" role="status">{message}</p> : null}
       <div className="resources-grid">
         {resources.map((resource) => (
-          <article key={resource.id} className="resource-card">
+          <article key={resource.id} id={`recurso-${resource.slug}`} className="resource-card">
             {resource.cover_url ? (
               <div className="resource-card-cover">
                 <Image
                   src={resource.cover_url}
-                  alt={resource.cover_alt || resource.title}
+                  alt={usefulCoverAlt(resource.cover_alt, resource.title)}
                   width={560}
                   height={700}
                   sizes="(max-width: 900px) 100vw, 33vw"

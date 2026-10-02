@@ -1,6 +1,7 @@
 import type { MetadataRoute } from "next";
 import { getPublishedArticles, isArticleVisible } from "./articulos/articles-data";
 import { getPublishedExpertQuestions } from "./pregunta-a-carolina/questions-data";
+import { getPublishedResources } from "./recursos/resources-data";
 
 const base = "https://carolinasanchezgirona.com";
 const staticLastModified = new Date("2026-10-02T09:45:00+02:00");
@@ -8,9 +9,19 @@ const staticLastModified = new Date("2026-10-02T09:45:00+02:00");
 export const dynamic = "force-static";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const publishedQuestions = await getPublishedExpertQuestions();
+  const [publishedQuestions, publishedArticles, publishedResources] = await Promise.all([
+    getPublishedExpertQuestions(),
+    getPublishedArticles(),
+    getPublishedResources(),
+  ]);
   const questionsLastModified = publishedQuestions.reduce(
     (latest, question) => Math.max(latest, new Date(question.updated_at).getTime()),
+    staticLastModified.getTime(),
+  );
+  const resourcesLastModified = publishedResources.reduce(
+    (latest, resource) => resource.updated_at
+      ? Math.max(latest, new Date(resource.updated_at).getTime())
+      : latest,
     staticLastModified.getTime(),
   );
   const staticPages: MetadataRoute.Sitemap = [
@@ -46,11 +57,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${base}/familiares-y-cuidadores-de-personas-con-demencia/`, lastModified: staticLastModified, changeFrequency: "monthly", priority: 0.84 },
     { url: `${base}/articulos/`, lastModified: staticLastModified, changeFrequency: "weekly", priority: 0.88 },
     { url: `${base}/pregunta-a-carolina/`, lastModified: new Date(questionsLastModified), changeFrequency: "weekly", priority: 0.88 },
-    { url: `${base}/recursos/`, lastModified: staticLastModified, changeFrequency: "weekly", priority: 0.78 },
+    { url: `${base}/recursos/`, lastModified: new Date(resourcesLastModified), changeFrequency: "weekly", priority: 0.78 },
     { url: `${base}/cita/`, lastModified: staticLastModified, changeFrequency: "daily", priority: 0.9 },
   ];
 
-  const articles = (await getPublishedArticles())
+  const articles = publishedArticles
     .filter((article) => isArticleVisible(article))
     .map((article) => ({
       url: `${base}/articulos/${encodeURIComponent(article.slug)}/`,

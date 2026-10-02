@@ -15,7 +15,7 @@ export const metadata: Metadata = {
     type: "website",
   },
   twitter: {
-    card: "summary",
+    card: "summary_large_image",
     title: "Carolina Sánchez Girona | Psicóloga y Neuropsicóloga",
     description:
       "Psicología sanitaria y neuropsicología clínica en Arenys de Mar y online.",
@@ -42,7 +42,7 @@ export default function HomePage() {
             </div>
             <div className="editorial-meta" aria-label="Información práctica">
               <span>60 minutos</span>
-              <span>Psicología 60 € · Neuropsicología 75 €</span>
+              <span>Psicología y Neuropsicología · 75 €</span>
               <span>Presencial y online</span>
             </div>
           </div>
