@@ -1,0 +1,350 @@
+/* Unified admin software UI: shared density and visual language */
+:root{
+  --admin-bg:#f7f9fb;
+  --admin-surface:#ffffff;
+  --admin-line:#e1e7ec;
+  --admin-line-strong:#d3dde4;
+  --admin-text:#263f55;
+  --admin-muted:#788692;
+  --admin-navy:#173A5E;
+  --admin-accent:#08A6A0;
+  --admin-soft:#eef4f7;
+  --admin-radius:8px;
+}
+
+.admin-page,.articles-admin-page,.questions-admin-page,.resources-admin-page{
+  background:var(--admin-bg)!important;
+  color:var(--admin-text)!important;
+}
+
+/* Main shells */
+.admin-app,.articles-app{
+  width:min(1440px,calc(100% - 28px))!important;
+  padding:14px 0 42px!important;
+}
+.questions-admin-page,.resources-admin-page{
+  min-height:100vh;
+}
+
+/* Top headers */
+.admin-topbar,.articles-topbar,.questions-admin-topbar,.resources-topbar{
+  display:flex!important;
+  align-items:center!important;
+  justify-content:space-between!important;
+  gap:16px!important;
+  margin:0!important;
+  padding:10px 14px!important;
+  border:0!important;
+  border-bottom:1px solid var(--admin-line)!important;
+  background:transparent!important;
+  box-shadow:none!important;
+}
+.admin-topbar h1,.articles-topbar h1,.questions-admin-topbar h1,.resources-topbar h1{
+  margin:2px 0 0!important;
+  color:var(--admin-navy)!important;
+  font-size:1.35rem!important;
+  line-height:1.05!important;
+}
+.admin-eyebrow,.articles-eyebrow,.questions-admin-eyebrow,.resources-eyebrow{
+  margin:0 0 3px!important;
+  color:#536b7c!important;
+  font-size:.62rem!important;
+  letter-spacing:.07em!important;
+}
+.admin-topbar p,.articles-topbar p,.questions-admin-topbar>div>p:last-child,.resources-topbar p:last-child{
+  margin:3px 0 0!important;
+  color:var(--admin-muted)!important;
+  font-size:.72rem!important;
+}
+.admin-top-actions,.articles-top-actions,.questions-admin-topbar nav,.resources-top-actions{
+  display:flex!important;
+  align-items:center!important;
+  gap:6px!important;
+  flex-wrap:wrap!important;
+}
+
+/* Buttons */
+.admin-primary,.admin-secondary,.admin-text,.admin-danger,.admin-week-nav button,
+.articles-primary,.articles-secondary,.articles-text,.articles-danger,.articles-filters button,.editor-toolbar button,.preview-toolbar button,
+.questions-admin-login button,.questions-admin-topbar nav a,.questions-admin-topbar nav button,.questions-admin-actions button,.questions-admin-footer button,
+.resources-primary,.resources-secondary,.resources-text,.resources-danger,
+.resources-filters button{
+  min-height:32px!important;
+  padding:6px 10px!important;
+  border-radius:7px!important;
+  font-size:.74rem!important;
+  line-height:1.1!important;
+  box-shadow:none!important;
+}
+.admin-primary,.articles-primary,.questions-admin-actions .primary,.resources-primary{
+  border-color:var(--admin-navy)!important;
+  background:var(--admin-navy)!important;
+  color:#fff!important;
+}
+.admin-secondary,.admin-week-nav button,.articles-secondary,
+.questions-admin-topbar nav a,.questions-admin-topbar nav button,
+.resources-secondary{
+  border:1px solid var(--admin-line-strong)!important;
+  background:#fff!important;
+  color:var(--admin-navy)!important;
+}
+.admin-text,.articles-text,.resources-text{
+  color:#637482!important;
+}
+.admin-danger,.articles-danger,.resources-danger,.questions-admin-footer .danger{
+  border-radius:7px!important;
+}
+
+/* Agenda */
+.admin-view-tabs{
+  position:static!important;
+  display:flex!important;
+  gap:2px!important;
+  margin:10px 0 14px!important;
+  padding:2px!important;
+  border:1px solid var(--admin-line)!important;
+  border-radius:8px!important;
+  background:#fff!important;
+  box-shadow:none!important;
+}
+.admin-view-tabs button{
+  min-height:30px!important;
+  padding:5px 10px!important;
+  border:0!important;
+  border-radius:6px!important;
+  background:transparent!important;
+  color:#536b7c!important;
+  font-size:.75rem!important;
+}
+.admin-view-tabs button.active{
+  background:var(--admin-navy)!important;
+  color:#fff!important;
+}
+.admin-toolbar{
+  grid-template-columns:auto 1fr auto!important;
+  gap:12px!important;
+  padding:10px 12px!important;
+  border:1px solid var(--admin-line)!important;
+  border-radius:8px!important;
+  background:#fff!important;
+}
+.admin-summary{
+  gap:8px!important;
+  margin:10px 0 14px!important;
+}
+.admin-summary article{
+  padding:10px 12px!important;
+  border:1px solid var(--admin-line)!important;
+  border-radius:8px!important;
+  background:#fff!important;
+}
+.admin-summary strong{font-size:1.2rem!important}
+.admin-summary span{font-size:.7rem!important;color:var(--admin-muted)!important}
+.calendar-day-column{
+  min-height:440px!important;
+  border:1px solid var(--admin-line)!important;
+  border-radius:8px!important;
+  background:#fff!important;
+}
+.calendar-day-head{
+  padding:9px 10px!important;
+  border-color:var(--admin-line)!important;
+  background:#f4f7f9!important;
+}
+.calendar-day-body{padding:7px!important;gap:6px!important}
+.appointment-card{
+  padding:8px 9px!important;
+  border:1px solid var(--admin-line-strong)!important;
+  border-left:3px solid var(--admin-accent)!important;
+  border-radius:7px!important;
+  background:#fff!important;
+}
+.appointment-card time{margin-bottom:2px!important;font-size:.74rem!important}
+.appointment-card strong{font-size:.76rem!important}
+.appointment-card small{font-size:.67rem!important;color:var(--admin-muted)!important}
+.admin-note{
+  margin:10px 0 0!important;
+  padding:8px 10px!important;
+  border-radius:7px!important;
+  background:#f2f5f7!important;
+  font-size:.72rem!important;
+}
+
+/* Articles */
+.articles-workspace{
+  grid-template-columns:300px minmax(0,1fr)!important;
+  gap:10px!important;
+}
+.articles-list-panel,.articles-editor-panel{
+  border:1px solid var(--admin-line)!important;
+  border-radius:9px!important;
+  background:#fff!important;
+  box-shadow:none!important;
+}
+.articles-list-heading{
+  padding:12px 13px!important;
+  border-color:var(--admin-line)!important;
+}
+.articles-filters{
+  gap:3px!important;
+  padding:7px!important;
+  border-color:var(--admin-line)!important;
+}
+.articles-filters button{
+  min-height:28px!important;
+  border-radius:6px!important;
+}
+.article-list-item{
+  gap:4px!important;
+  padding:10px 12px!important;
+  border-color:var(--admin-line)!important;
+  background:#fff!important;
+}
+.articles-editor-panel form{padding:16px!important}
+.editor-section{
+  margin-top:14px!important;
+  padding:14px!important;
+  border:1px solid var(--admin-line)!important;
+  border-radius:8px!important;
+  background:#fff!important;
+}
+.editor-toolbar{
+  margin:12px 0 7px!important;
+  padding:5px!important;
+  border:1px solid var(--admin-line)!important;
+  border-radius:7px!important;
+  background:#f5f7f9!important;
+}
+.editor-toolbar select,.editor-toolbar button{
+  min-height:29px!important;
+  border-radius:6px!important;
+}
+.rich-editor{
+  min-height:440px!important;
+  padding:22px!important;
+  border:1px solid var(--admin-line-strong)!important;
+  border-radius:8px!important;
+}
+
+/* Questions */
+.questions-admin-workspace{
+  grid-template-columns:300px minmax(0,1fr)!important;
+  min-height:calc(100vh - 72px)!important;
+}
+.questions-admin-sidebar{
+  padding:14px!important;
+  border-color:var(--admin-line)!important;
+  background:#f9fbfc!important;
+}
+.questions-admin-filters{gap:4px!important;margin-bottom:12px!important}
+.questions-admin-filters button{
+  padding:5px 7px!important;
+  border-radius:6px!important;
+}
+.questions-admin-list{gap:5px!important}
+.questions-admin-list>button{
+  gap:4px!important;
+  padding:9px 10px!important;
+  border:1px solid var(--admin-line)!important;
+  border-radius:7px!important;
+  background:#fff!important;
+  box-shadow:none!important;
+}
+.questions-admin-editor{padding:18px 20px!important}
+.questions-admin-editor-heading{
+  margin-bottom:12px!important;
+}
+.questions-admin-editor-heading h2{
+  font-size:1.45rem!important;
+}
+.questions-admin-section{
+  margin-bottom:12px!important;
+  padding:15px!important;
+  border:1px solid var(--admin-line)!important;
+  border-radius:8px!important;
+  background:#fff!important;
+}
+.questions-admin-section-heading h3{font-size:1.05rem!important}
+.questions-admin-section blockquote{
+  margin:12px 0!important;
+  padding:12px 14px!important;
+  font-size:.82rem!important;
+}
+
+/* Resources */
+.resources-workspace{
+  grid-template-columns:290px minmax(0,1fr)!important;
+  min-height:calc(100vh - 72px)!important;
+}
+.resources-list-panel{
+  padding:14px!important;
+  border-color:var(--admin-line)!important;
+  background:#f9fbfc!important;
+}
+.resources-filters{gap:4px!important;margin-bottom:12px!important}
+.resources-filters button{
+  padding:5px 7px!important;
+  border-radius:6px!important;
+}
+.resources-list{gap:5px!important}
+.resource-list-item{
+  gap:4px!important;
+  padding:9px 10px!important;
+  border:1px solid var(--admin-line)!important;
+  border-radius:7px!important;
+  background:#fff!important;
+  box-shadow:none!important;
+}
+.resources-editor-panel{padding:18px 20px!important}
+.resource-editor-heading{margin-bottom:12px!important}
+.resource-editor-heading h2{font-size:1.45rem!important}
+.resource-section{
+  margin-bottom:12px!important;
+  padding:15px!important;
+  border:1px solid var(--admin-line)!important;
+  border-radius:8px!important;
+  background:#fff!important;
+}
+.resource-cover-preview{border-radius:8px!important}
+
+/* Forms and dialogs */
+.admin-login-card,.articles-login-card,.questions-admin-login,.resources-login-card,
+.appointment-dialog{
+  border-radius:12px!important;
+  box-shadow:0 12px 36px rgba(23,58,94,.08)!important;
+}
+.admin-login-card,.articles-login-card,.questions-admin-login,.resources-login-card{
+  padding:24px!important;
+}
+.admin-login-card input,.appointment-dialog input,.appointment-dialog select,
+.articles-login-card input,.field input,.field textarea,.field select,
+.questions-admin-login input,.questions-admin-form input,.questions-admin-form select,.questions-admin-form textarea,
+.resources-login-card input{
+  min-height:38px!important;
+  padding:8px 10px!important;
+  border:1px solid var(--admin-line-strong)!important;
+  border-radius:7px!important;
+  background:#fff!important;
+  font-size:.8rem!important;
+}
+.appointment-dialog form{padding:18px!important}
+.dialog-heading h2{font-size:1.35rem!important}
+
+/* Remove oversized pill language */
+.admin-top-actions a,.articles-top-actions a,.questions-admin-topbar nav a,.resources-top-actions a{
+  text-decoration:none!important;
+}
+
+/* Mobile */
+@media(max-width:900px){
+  .admin-topbar,.articles-topbar,.questions-admin-topbar,.resources-topbar{
+    align-items:flex-start!important;
+    flex-direction:column!important;
+  }
+  .admin-toolbar{grid-template-columns:1fr!important}
+  .articles-workspace,.questions-admin-workspace,.resources-workspace{grid-template-columns:1fr!important}
+}
+@media(max-width:620px){
+  .admin-app,.articles-app{width:calc(100% - 18px)!important}
+  .admin-topbar,.articles-topbar,.questions-admin-topbar,.resources-topbar{padding:10px!important}
+}
