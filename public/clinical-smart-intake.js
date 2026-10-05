@@ -186,7 +186,7 @@
 
   async function getTemplates() {
     if (templates) return templates;
-    const response = await fetch(REST_URL + "/clinical_exercise_templates?select=id,title,summary,process_tags,duration_minutes,burden&status=eq.active&order=title.asc", {
+    const response = await fetch(REST_URL + "/clinical_exercise_templates?select=id,title,summary,process_tags,duration_minutes,burden,material_type,phase,objectives,cautions,sequence_rank&status=eq.active&order=sequence_rank.asc,title.asc", {
       headers: authHeaders(), cache: "no-store"
     });
     if (!response.ok) return [];
@@ -258,27 +258,97 @@
     const target = el("clinic-smart-exercise-candidates");
     if (!target || !draft) return;
     target.replaceChildren();
+
     const all = await getTemplates();
+    const patientId = el("clinic-patient-id")?.value || "";
     const processNames = new Set((draft.processes || []).map((x) => x.process));
-    const candidates = all.filter((template) => (template.process_tags || []).some((tag) => processNames.has(tag))).slice(0, 12);
+    let assignments = [];
+
+    if (patientId) {
+      const response = await fetch(
+        REST_URL + "/clinical_exercise_assignments?select=template_id,status,assigned_at,reviewed_at&patient_id=eq." + encodeURIComponent(patientId) + "&order=created_at.desc",
+        { headers: authHeaders(), cache: "no-store" }
+      );
+      if (response.ok) assignments = await response.json();
+    }
+
+    const templateMap = new Map(all.map((template) => [template.id, template]));
+    const historyByProcess = new Map();
+    assignments.forEach((assignment) => {
+      const template = templateMap.get(assignment.template_id);
+      (template?.process_tags || []).forEach((tag) => {
+        const current = historyByProcess.get(tag) || { total: 0, reviewed: 0 };
+        current.total += 1;
+        if (["reviewed", "closed"].includes(assignment.status)) current.reviewed += 1;
+        historyByProcess.set(tag, current);
+      });
+    });
+
+    const candidates = all
+      .map((template) => {
+        const matches = (template.process_tags || []).filter((tag) => processNames.has(tag));
+        if (!matches.length) return null;
+
+        const same = assignments.filter((assignment) => assignment.template_id === template.id);
+        if (same.some((assignment) => ["prepared", "assigned", "sent"].includes(assignment.status))) return null;
+
+        const history = matches.reduce((sum, tag) => sum + (historyByProcess.get(tag)?.total || 0), 0);
+        const reviewed = matches.reduce((sum, tag) => sum + (historyByProcess.get(tag)?.reviewed || 0), 0);
+        let score = matches.length * 100;
+        const reasons = ["encaja con " + matches.join(", ")];
+
+        if (history === 0 && template.material_type === "psychoeducation") {
+          score += 50;
+          reasons.push("conviene orientar antes de practicar");
+        }
+        if (history === 0 && ["assessment", "skills"].includes(template.phase)) {
+          score += 30;
+          reasons.push("fase inicial");
+        }
+        if (history > 0 && ["skills", "practice", "exposure"].includes(template.phase)) {
+          score += 36;
+          reasons.push("ya existe trabajo previo");
+        }
+        if (reviewed >= 2 && template.phase === "consolidation") {
+          score += 28;
+          reasons.push("momento de consolidación");
+        }
+        if (reviewed >= 3 && template.phase === "relapse_prevention") {
+          score += 25;
+          reasons.push("compatible con mantenimiento");
+        }
+        if (same.some((assignment) => ["reviewed", "closed"].includes(assignment.status))) score -= 45;
+        if (template.burden === "low") score += 5;
+        score += Math.max(0, 22 - Math.min(22, Number(template.sequence_rank || 50) / 5));
+
+        return { template, score, reasons };
+      })
+      .filter(Boolean)
+      .sort((a, b) => b.score - a.score || Number(a.template.sequence_rank || 50) - Number(b.template.sequence_rank || 50))
+      .slice(0, 4);
 
     if (!candidates.length) {
       const node = document.createElement("div");
       node.className = "clinic-smart-item";
-      node.textContent = "No hay ejercicios de la biblioteca asociados todavía a estos procesos.";
+      node.textContent = "No hay una prescripción prioritaria con los procesos detectados. Puedes elegir material manualmente.";
       target.append(node);
       return;
     }
 
-    candidates.forEach((template) => {
+    candidates.forEach(({ template, reasons }, index) => {
       const row = document.createElement("div");
       row.className = "clinic-smart-exercise";
       const info = document.createElement("div");
       const title = document.createElement("strong");
-      title.textContent = template.title;
+      title.textContent = (index + 1) + ". " + template.title;
       const meta = document.createElement("small");
-      meta.textContent = (template.process_tags || []).join(" · ") + (template.duration_minutes ? " · " + template.duration_minutes + " min" : "");
+      meta.textContent =
+        (template.material_type === "psychoeducation" ? "Psicoeducación" : "Ejercicio") +
+        " · " + (template.process_tags || []).join(" · ") +
+        (template.duration_minutes ? " · " + template.duration_minutes + " min" : "") +
+        " · " + reasons.join(" · ");
       info.append(title, meta);
+
       const button = document.createElement("button");
       button.className = "clinic-secondary";
       button.type = "button";
@@ -290,6 +360,8 @@
         if (select) {
           select.value = template.id;
           select.dispatchEvent(new Event("change", { bubbles: true }));
+          const rationale = el("clinic-exercise-rationale");
+          if (rationale) rationale.value = "Prescripción sugerida: " + reasons.join(". ") + ".";
         }
       });
       row.append(info, button);
