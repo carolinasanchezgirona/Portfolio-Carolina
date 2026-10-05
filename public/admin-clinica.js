@@ -388,16 +388,86 @@
     els.exerciseLibrary.value = selectedId || "";
   }
 
+  function materialPatientDefaults(materialType = "exercise", summary = "", instructions = "") {
+    const psycho = materialType === "psychoeducation";
+    const focus = String(summary || "").trim();
+    return {
+      version: 1,
+      material_type: psycho ? "psychoeducation" : "exercise",
+      introduction: psycho
+        ? "Este material resume una idea trabajada en sesión para que puedas revisarla con calma y volver a ella cuando lo necesites."
+        : "Este material forma parte del trabajo acordado en sesión. Úsalo como una guía breve entre sesiones y adáptalo a tu ritmo.",
+      why: psycho
+        ? `Entender este proceso puede ayudarte a reconocer mejor qué está ocurriendo y disponer de un mapa más claro antes de decidir qué practicar.${focus ? " El foco de este material es: " + focus + "." : ""}`
+        : `Este ejercicio permite practicar fuera de sesión una habilidad concreta y observar cómo funciona en situaciones reales.${focus ? " El foco es: " + focus + "." : ""} No buscamos hacerlo perfecto ni eliminar el malestar de inmediato, sino obtener información útil y ampliar recursos.`,
+      objective: focus,
+      instructions: instructions || "",
+      example: "",
+      record_prompt: psycho ? "" : "Después de probarlo, anota brevemente en qué situación lo utilizaste, qué hiciste y qué observaste. No hace falta escribir mucho.",
+      remember: psycho
+        ? "No necesitas memorizarlo ni estar de acuerdo con todo a la primera. Quédate con las ideas que te ayuden a entender mejor lo que ocurre."
+        : "No se trata de hacerlo perfecto. Si algo no encaja, resulta demasiado difícil o genera dudas, déjalo anotado para revisarlo en sesión.",
+      session_questions: psycho
+        ? ["¿Qué idea te ha resultado más útil o relevante?", "¿Hay algo que no encaje con tu experiencia o quieras revisar?"]
+        : ["¿Qué te resultó más fácil o más difícil?", "¿Qué observaste al probarlo?", "¿Qué ajustarías para que te resulte más útil?"]
+    };
+  }
+
+  function normalizedPatientDocument(template = null) {
+    const type = template?.material_type === "psychoeducation" ? "psychoeducation" : "exercise";
+    const defaults = materialPatientDefaults(type, template?.summary || "", template?.instructions || "");
+    const raw = template?.patient_document && typeof template.patient_document === "object" && !Array.isArray(template.patient_document)
+      ? template.patient_document
+      : {};
+    return {
+      ...defaults,
+      ...raw,
+      version: 1,
+      material_type: type,
+      instructions: raw.instructions || template?.instructions || defaults.instructions,
+      session_questions: Array.isArray(raw.session_questions) ? raw.session_questions.filter(Boolean) : defaults.session_questions
+    };
+  }
+
+  function fillPatientDocument(document) {
+    const doc = document || materialPatientDefaults(els.materialType?.value || "exercise");
+    els.exerciseIntroduction.value = doc.introduction || "";
+    els.exerciseWhy.value = doc.why || "";
+    els.exerciseObjective.value = doc.objective || "";
+    els.exerciseExample.value = doc.example || "";
+    els.exerciseRecord.value = doc.record_prompt || "";
+    els.exerciseRemember.value = doc.remember || "";
+    els.exerciseSessionQuestions.value = Array.isArray(doc.session_questions) ? doc.session_questions.join("\n") : "";
+  }
+
+  function patientDocumentFromForm(materialType = "exercise") {
+    return {
+      version: 1,
+      material_type: materialType === "psychoeducation" ? "psychoeducation" : "exercise",
+      introduction: els.exerciseIntroduction.value.trim(),
+      why: els.exerciseWhy.value.trim(),
+      objective: els.exerciseObjective.value.trim(),
+      instructions: els.exerciseContent.value.trim(),
+      example: els.exerciseExample.value.trim(),
+      record_prompt: els.exerciseRecord.value.trim(),
+      remember: els.exerciseRemember.value.trim(),
+      session_questions: els.exerciseSessionQuestions.value.split(/\r?\n/).map((item) => item.trim()).filter(Boolean).slice(0, 6)
+    };
+  }
+
   function applyExerciseTemplate(template) {
     if (!template) {
       els.exerciseTemplateId.value = "";
       els.exerciseTitle.value = "";
       els.exerciseContent.value = "";
+      fillPatientDocument(materialPatientDefaults(els.materialType?.value || "exercise"));
       return;
     }
     els.exerciseTemplateId.value = template.id || "";
     els.exerciseTitle.value = template.title || "";
-    els.exerciseContent.value = template.instructions || "";
+    const patientDocument = normalizedPatientDocument(template);
+    els.exerciseContent.value = patientDocument.instructions || template.instructions || "";
+    fillPatientDocument(patientDocument);
   }
 
   function openExercise(template = null, rationale = "") {
