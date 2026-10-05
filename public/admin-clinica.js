@@ -42,6 +42,7 @@
     newExercise: $("#clinic-new-exercise"), exerciseDialog: $("#clinic-exercise-dialog"),
     exerciseForm: $("#clinic-exercise-form"), exerciseClose: $("#clinic-exercise-close"),
     exerciseTemplateId: $("#clinic-exercise-template-id"), exercisePatientCode: $("#clinic-exercise-patient-code"),
+    exerciseLibrary: $("#clinic-exercise-library"),
     exerciseTitle: $("#clinic-exercise-title"), exerciseContent: $("#clinic-exercise-content"),
     exerciseRationale: $("#clinic-exercise-rationale"), exerciseEmail: $("#clinic-exercise-email"),
     exerciseMessage: $("#clinic-exercise-message"), saveExercise: $("#clinic-save-exercise"),
@@ -223,12 +224,54 @@
       .sort((a, b) => b.matches.length - a.matches.length)
       .slice(0, 3);
   }
+  function populateExerciseLibrary(selectedId = "") {
+    if (!els.exerciseLibrary) return;
+    els.exerciseLibrary.replaceChildren();
+    const placeholder = document.createElement("option");
+    placeholder.value = "";
+    placeholder.textContent = "Seleccionar ejercicio…";
+    els.exerciseLibrary.append(placeholder);
+
+    const grouped = new Map();
+    exerciseTemplates.forEach((template) => {
+      const process = (template.process_tags || [])[0] || "Otros";
+      if (!grouped.has(process)) grouped.set(process, []);
+      grouped.get(process).push(template);
+    });
+
+    [...grouped.keys()].sort((a, b) => a.localeCompare(b, "es")).forEach((process) => {
+      const group = document.createElement("optgroup");
+      group.label = process;
+      grouped.get(process)
+        .sort((a, b) => a.title.localeCompare(b.title, "es"))
+        .forEach((template) => {
+          const option = document.createElement("option");
+          option.value = template.id;
+          option.textContent = template.title;
+          group.append(option);
+        });
+      els.exerciseLibrary.append(group);
+    });
+    els.exerciseLibrary.value = selectedId || "";
+  }
+
+  function applyExerciseTemplate(template) {
+    if (!template) {
+      els.exerciseTemplateId.value = "";
+      els.exerciseTitle.value = "";
+      els.exerciseContent.value = "";
+      return;
+    }
+    els.exerciseTemplateId.value = template.id || "";
+    els.exerciseTitle.value = template.title || "";
+    els.exerciseContent.value = template.instructions || "";
+  }
+
   function openExercise(template = null, rationale = "") {
     if (!currentPatient) return;
-    els.exerciseTemplateId.value = template?.id || "";
+    populateExerciseLibrary(template?.id || "");
+    applyExerciseTemplate(template);
     els.exercisePatientCode.textContent = `Paciente ${currentPatient.public_code} · La identidad no aparecerá en el correo.`;
-    els.exerciseTitle.value = template?.title || "";
-    els.exerciseContent.value = template?.instructions || "";
     els.exerciseRationale.value = rationale;
     els.exerciseEmail.value = currentPatient.email || "";
     els.exerciseMessage.textContent = "";
@@ -1008,6 +1051,13 @@
   els.approveReport.addEventListener("click", () => persistReport("approved").catch((error) => { els.reportMessage.textContent = error.message; }));
   els.printReport.addEventListener("click", () => { try { printCurrentReport(); } catch (error) { els.reportMessage.textContent = error.message; } });
   els.newExercise.addEventListener("click", () => openExercise());
+  els.exerciseLibrary?.addEventListener("change", () => {
+    const template = exerciseTemplates.find((item) => item.id === els.exerciseLibrary.value) || null;
+    applyExerciseTemplate(template);
+    if (template) {
+      els.exerciseRationale.value = template.summary || "";
+    }
+  });
   els.exerciseClose.addEventListener("click", () => els.exerciseDialog.close());
   els.saveExercise.addEventListener("click", () => saveExercise(false).catch((error) => { els.exerciseMessage.textContent = error.message; }));
   els.exerciseForm.addEventListener("submit", (event) => { event.preventDefault(); saveExercise(true).catch((error) => { els.exerciseMessage.textContent = error.message; }); });
