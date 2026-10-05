@@ -281,8 +281,14 @@ export default function AdminClinicaPage() {
               </select>
             </label>
             <div id="clinic-material-not-found" className="clinic-material-not-found" hidden>
-              <p>No aparece ningún material con esa búsqueda.</p>
-              <button id="clinic-material-use-search" className="clinic-secondary" type="button">Usar búsqueda como título</button>
+              <div>
+                <strong>No existe en la biblioteca</strong>
+                <p>La IA puede comprobar equivalencias y, si realmente falta, preparar una nueva ficha compatible con el material actual.</p>
+              </div>
+              <div className="clinic-material-not-found-actions">
+                <button id="clinic-material-ai-create" className="clinic-primary" type="button">Comprobar y crear con IA</button>
+                <button id="clinic-material-use-search" className="clinic-secondary" type="button">Usar búsqueda como título</button>
+              </div>
             </div>
           </div>
           <div className="clinic-material-create-row">
