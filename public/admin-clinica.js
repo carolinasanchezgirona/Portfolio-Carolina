@@ -531,17 +531,39 @@
     popup.document.write(`<!doctype html><html lang="es"><head><meta charset="utf-8"><title>${escapeHtml(title)}</title><style>@page{size:A4;margin:18mm}body{font-family:Arial,sans-serif;color:#1f2933;font-size:11pt;line-height:1.5}header{border-bottom:2px solid #1f5f99;margin-bottom:24px;padding-bottom:14px}h1{font-size:20pt;color:#1f5f99;margin:4px 0}h2{font-size:13pt;margin:24px 0 8px}h3{font-size:11pt;margin:18px 0 5px}.meta{color:#526b7a;font-size:9.5pt}.entry{break-inside:avoid;border-bottom:1px solid #d5e3ee;padding:0 0 14px;margin-bottom:16px}.text{white-space:pre-wrap}.signature{margin-top:48px}.privacy{margin-top:30px;color:#607786;font-size:8.5pt}@media print{button{display:none}}</style></head><body>${body}<script>window.onload=()=>window.print()<\/script></body></html>`);
     popup.document.close();
   }
+  function personalAdministrativePrintHtml(patient) {
+    const rows = [
+      ["Nombre y apellidos", patient.full_name],
+      ["Fecha de nacimiento", patient.birth_date ? dateShort.format(new Date(patient.birth_date + "T00:00:00")) : null],
+      ["Edad", patient.birth_date ? (patientAge(patient.birth_date) ? patientAge(patient.birth_date) + " años" : null) : null],
+      ["DNI / NIE", patient.national_id],
+      ["Teléfono", patient.phone],
+      ["Correo", patient.email],
+      ["Dirección", patient.address],
+      ["Profesión / ocupación", patient.occupation],
+      ["Estado civil / convivencia", patient.marital_status],
+      ["Persona de contacto", patient.emergency_contact_name],
+      ["Teléfono de contacto", patient.emergency_contact_phone],
+      ["Profesional de referencia", patient.referring_professional],
+      ["Mutua / cobertura", patient.insurance_provider],
+      ["Centro / proveedor externo", patient.external_provider],
+      ["Observaciones administrativas", patient.administrative_notes],
+    ].filter(([, value]) => value);
+    if (!rows.length) return "";
+    return `<section class="entry"><h2>Datos personales y administrativos</h2>${rows.map(([label, value]) => `<p><strong>${escapeHtml(label)}:</strong> ${escapeHtml(value)}</p>`).join("")}</section>`;
+  }
   function printClinicalHistory() {
     if (!currentPatient) return;
     const sessions = patientSessions(currentPatient.id).filter((item) => item.status === "approved").sort((a, b) => new Date(a.session_date) - new Date(b.session_date));
     const profileEntries = clinicalProfilePrintHtml(currentPatient);
+    const personalEntries = personalAdministrativePrintHtml(currentPatient);
     const overview = [
       currentPatient.clinical_summary ? `<section class="entry"><h2>Síntesis clínica</h2><div class="text">${escapeHtml(currentPatient.clinical_summary)}</div></section>` : "",
       currentPatient.medication_notes ? `<section class="entry"><h2>Medicación registrada</h2><div class="text">${escapeHtml(currentPatient.medication_notes)}</div></section>` : "",
       currentPatient.next_session_focus ? `<section class="entry"><h2>Focos pendientes</h2><div class="text">${escapeHtml(currentPatient.next_session_focus)}</div></section>` : "",
     ].join("");
     const entries = sessions.map((item) => `<section class="entry"><h2>Sesión ${item.session_number || ""} · ${escapeHtml(dateShort.format(new Date(item.session_date)))}</h2>${item.evolution_note ? `<h3>Evolución</h3><div class="text">${escapeHtml(item.evolution_note)}</div>` : ""}${item.intervention_note ? `<h3>Intervención</h3><div class="text">${escapeHtml(item.intervention_note)}</div>` : ""}${item.response_note ? `<h3>Respuesta</h3><div class="text">${escapeHtml(item.response_note)}</div>` : ""}${item.agreements_note ? `<h3>Acuerdos</h3><div class="text">${escapeHtml(item.agreements_note)}</div>` : ""}${item.homework_note ? `<h3>Tarea</h3><div class="text">${escapeHtml(item.homework_note)}</div>` : ""}</section>`).join("");
-    printableWindow("Historial clínico", `<header><p>Carolina Sánchez Girona · Psicóloga General Sanitaria y Neuropsicóloga</p><h1>Historial clínico</h1><p class="meta">Paciente: ${escapeHtml(currentPatient.full_name)} · Código: ${escapeHtml(currentPatient.public_code)} · Emitido: ${escapeHtml(dateShort.format(new Date()))}</p></header>${overview}${profileEntries}<h2>Sesiones aprobadas</h2>${entries || "<p>No constan sesiones clínicas aprobadas.</p>"}<p class="privacy">Documento confidencial que contiene datos de salud.</p>`);
+    printableWindow("Historial clínico", `<header><p>Carolina Sánchez Girona · Psicóloga General Sanitaria y Neuropsicóloga</p><h1>Historial clínico</h1><p class="meta">Paciente: ${escapeHtml(currentPatient.full_name)} · Código: ${escapeHtml(currentPatient.public_code)} · Emitido: ${escapeHtml(dateShort.format(new Date()))}</p></header>${overview}${personalEntries}${profileEntries}<h2>Sesiones aprobadas</h2>${entries || "<p>No constan sesiones clínicas aprobadas.</p>"}<p class="privacy">Documento confidencial que contiene datos de salud.</p>`);
   }
   function openReport(report = null) {
     if (!currentPatient) return;
@@ -924,6 +946,7 @@
   }
 
   function renderPatientIdentityHeader(patient) {
+    els.patientName.textContent = `${patient.public_code} · ${patient.full_name}`;
     els.patientContact.replaceChildren();
     if (patient.email) els.patientContact.append(create("span", "", patient.email));
     if (patient.phone) els.patientContact.append(create("span", "", patient.phone));
