@@ -28,6 +28,14 @@
     patientDialog: $("#clinic-patient-dialog"), patientForm: $("#clinic-patient-form"),
     patientClose: $("#clinic-patient-close"), patientId: $("#clinic-patient-id"),
     patientName: $("#clinic-patient-name"), patientContact: $("#clinic-patient-contact"),
+    personalFullName: $("#clinic-personal-full-name"), personalBirthDate: $("#clinic-personal-birth-date"),
+    personalAge: $("#clinic-personal-age"), personalNationalId: $("#clinic-personal-national-id"),
+    personalPhone: $("#clinic-personal-phone"), personalEmail: $("#clinic-personal-email"),
+    personalAddress: $("#clinic-personal-address"), personalOccupation: $("#clinic-personal-occupation"),
+    personalMaritalStatus: $("#clinic-personal-marital-status"), personalEmergencyName: $("#clinic-personal-emergency-name"),
+    personalEmergencyPhone: $("#clinic-personal-emergency-phone"), personalReferringProfessional: $("#clinic-personal-referring-professional"),
+    personalInsurance: $("#clinic-personal-insurance"), personalCareContext: $("#clinic-personal-care-context"),
+    personalExternalProvider: $("#clinic-personal-external-provider"), personalAdminNotes: $("#clinic-personal-admin-notes"),
     summaryNote: $("#clinic-summary-note"), nextFocus: $("#clinic-next-focus"), medication: $("#clinic-medication"),
     patientMessage: $("#clinic-patient-message"), patientHistory: $("#clinic-patient-history"),
     preparation: $("#clinic-preparation-content"),
@@ -523,17 +531,39 @@
     popup.document.write(`<!doctype html><html lang="es"><head><meta charset="utf-8"><title>${escapeHtml(title)}</title><style>@page{size:A4;margin:18mm}body{font-family:Arial,sans-serif;color:#1f2933;font-size:11pt;line-height:1.5}header{border-bottom:2px solid #1f5f99;margin-bottom:24px;padding-bottom:14px}h1{font-size:20pt;color:#1f5f99;margin:4px 0}h2{font-size:13pt;margin:24px 0 8px}h3{font-size:11pt;margin:18px 0 5px}.meta{color:#526b7a;font-size:9.5pt}.entry{break-inside:avoid;border-bottom:1px solid #d5e3ee;padding:0 0 14px;margin-bottom:16px}.text{white-space:pre-wrap}.signature{margin-top:48px}.privacy{margin-top:30px;color:#607786;font-size:8.5pt}@media print{button{display:none}}</style></head><body>${body}<script>window.onload=()=>window.print()<\/script></body></html>`);
     popup.document.close();
   }
+  function personalAdministrativePrintHtml(patient) {
+    const rows = [
+      ["Nombre y apellidos", patient.full_name],
+      ["Fecha de nacimiento", patient.birth_date ? dateShort.format(new Date(patient.birth_date + "T00:00:00")) : null],
+      ["Edad", patient.birth_date ? (patientAge(patient.birth_date) ? patientAge(patient.birth_date) + " años" : null) : null],
+      ["DNI / NIE", patient.national_id],
+      ["Teléfono", patient.phone],
+      ["Correo", patient.email],
+      ["Dirección", patient.address],
+      ["Profesión / ocupación", patient.occupation],
+      ["Estado civil / convivencia", patient.marital_status],
+      ["Persona de contacto", patient.emergency_contact_name],
+      ["Teléfono de contacto", patient.emergency_contact_phone],
+      ["Profesional de referencia", patient.referring_professional],
+      ["Mutua / cobertura", patient.insurance_provider],
+      ["Centro / proveedor externo", patient.external_provider],
+      ["Observaciones administrativas", patient.administrative_notes],
+    ].filter(([, value]) => value);
+    if (!rows.length) return "";
+    return `<section class="entry"><h2>Datos personales y administrativos</h2>${rows.map(([label, value]) => `<p><strong>${escapeHtml(label)}:</strong> ${escapeHtml(value)}</p>`).join("")}</section>`;
+  }
   function printClinicalHistory() {
     if (!currentPatient) return;
     const sessions = patientSessions(currentPatient.id).filter((item) => item.status === "approved").sort((a, b) => new Date(a.session_date) - new Date(b.session_date));
     const profileEntries = clinicalProfilePrintHtml(currentPatient);
+    const personalEntries = personalAdministrativePrintHtml(currentPatient);
     const overview = [
       currentPatient.clinical_summary ? `<section class="entry"><h2>Síntesis clínica</h2><div class="text">${escapeHtml(currentPatient.clinical_summary)}</div></section>` : "",
       currentPatient.medication_notes ? `<section class="entry"><h2>Medicación registrada</h2><div class="text">${escapeHtml(currentPatient.medication_notes)}</div></section>` : "",
       currentPatient.next_session_focus ? `<section class="entry"><h2>Focos pendientes</h2><div class="text">${escapeHtml(currentPatient.next_session_focus)}</div></section>` : "",
     ].join("");
     const entries = sessions.map((item) => `<section class="entry"><h2>Sesión ${item.session_number || ""} · ${escapeHtml(dateShort.format(new Date(item.session_date)))}</h2>${item.evolution_note ? `<h3>Evolución</h3><div class="text">${escapeHtml(item.evolution_note)}</div>` : ""}${item.intervention_note ? `<h3>Intervención</h3><div class="text">${escapeHtml(item.intervention_note)}</div>` : ""}${item.response_note ? `<h3>Respuesta</h3><div class="text">${escapeHtml(item.response_note)}</div>` : ""}${item.agreements_note ? `<h3>Acuerdos</h3><div class="text">${escapeHtml(item.agreements_note)}</div>` : ""}${item.homework_note ? `<h3>Tarea</h3><div class="text">${escapeHtml(item.homework_note)}</div>` : ""}</section>`).join("");
-    printableWindow("Historial clínico", `<header><p>Carolina Sánchez Girona · Psicóloga General Sanitaria y Neuropsicóloga</p><h1>Historial clínico</h1><p class="meta">Paciente: ${escapeHtml(currentPatient.full_name)} · Código: ${escapeHtml(currentPatient.public_code)} · Emitido: ${escapeHtml(dateShort.format(new Date()))}</p></header>${overview}${profileEntries}<h2>Sesiones aprobadas</h2>${entries || "<p>No constan sesiones clínicas aprobadas.</p>"}<p class="privacy">Documento confidencial que contiene datos de salud.</p>`);
+    printableWindow("Historial clínico", `<header><p>Carolina Sánchez Girona · Psicóloga General Sanitaria y Neuropsicóloga</p><h1>Historial clínico</h1><p class="meta">Paciente: ${escapeHtml(currentPatient.full_name)} · Código: ${escapeHtml(currentPatient.public_code)} · Emitido: ${escapeHtml(dateShort.format(new Date()))}</p></header>${overview}${personalEntries}${profileEntries}<h2>Sesiones aprobadas</h2>${entries || "<p>No constan sesiones clínicas aprobadas.</p>"}<p class="privacy">Documento confidencial que contiene datos de salud.</p>`);
   }
   function openReport(report = null) {
     if (!currentPatient) return;
@@ -885,19 +915,58 @@
     });
   }
 
-  function openPatient(patient) {
-    currentPatient = patient;
-    els.patientId.value = patient.id;
-    els.patientName.textContent = patient.full_name;
+  function patientAge(birthDate) {
+    if (!birthDate) return "";
+    const birth = new Date(birthDate + "T00:00:00");
+    if (Number.isNaN(birth.getTime())) return "";
+    const now = new Date();
+    let age = now.getFullYear() - birth.getFullYear();
+    const beforeBirthday = now.getMonth() < birth.getMonth() || (now.getMonth() === birth.getMonth() && now.getDate() < birth.getDate());
+    if (beforeBirthday) age -= 1;
+    return age >= 0 ? String(age) : "";
+  }
+
+  function fillPatientPersonalData(patient) {
+    els.personalFullName.value = patient.full_name || "";
+    els.personalBirthDate.value = patient.birth_date || "";
+    els.personalAge.value = patientAge(patient.birth_date);
+    els.personalNationalId.value = patient.national_id || "";
+    els.personalPhone.value = patient.phone || "";
+    els.personalEmail.value = patient.email || "";
+    els.personalAddress.value = patient.address || "";
+    els.personalOccupation.value = patient.occupation || "";
+    els.personalMaritalStatus.value = patient.marital_status || "";
+    els.personalEmergencyName.value = patient.emergency_contact_name || "";
+    els.personalEmergencyPhone.value = patient.emergency_contact_phone || "";
+    els.personalReferringProfessional.value = patient.referring_professional || "";
+    els.personalInsurance.value = patient.insurance_provider || "";
+    els.personalCareContext.value = patient.care_context || "private_practice";
+    els.personalExternalProvider.value = patient.external_provider || "";
+    els.personalAdminNotes.value = patient.administrative_notes || "";
+  }
+
+  function renderPatientIdentityHeader(patient) {
+    els.patientName.textContent = `${patient.public_code} · ${patient.full_name}`;
     els.patientContact.replaceChildren();
     if (patient.email) els.patientContact.append(create("span", "", patient.email));
     if (patient.phone) els.patientContact.append(create("span", "", patient.phone));
+    if (patient.birth_date) {
+      const age = patientAge(patient.birth_date);
+      els.patientContact.append(create("span", "", age ? `${dateShort.format(new Date(patient.birth_date + "T00:00:00"))} · ${age} años` : dateShort.format(new Date(patient.birth_date + "T00:00:00"))));
+    }
     const latestExternalVisit = patientExternalVisits(patient.id)[0];
     if (latestExternalVisit) {
       els.patientContact.append(create("span", "", `${latestExternalVisit.external_provider} · ${externalCenterLabel(latestExternalVisit.center)} · ${latestExternalVisit.insurance_provider}`));
       els.patientContact.append(create("span", "", externalVisitWhen(latestExternalVisit)));
     }
-    if (patient.care_context === "combined") els.patientContact.append(create("span", "", "Consulta propia + Creu Blava"));
+    if (patient.care_context === "combined") els.patientContact.append(create("span", "", "Consulta propia + centro externo"));
+  }
+
+  function openPatient(patient) {
+    currentPatient = patient;
+    els.patientId.value = patient.id;
+    fillPatientPersonalData(patient);
+    renderPatientIdentityHeader(patient);
     els.summaryNote.value = patient.clinical_summary || "";
     els.nextFocus.value = patient.next_session_focus || "";
     els.medication.value = patient.medication_notes || "";
@@ -952,7 +1021,7 @@
       const externalText = patientExternalVisits(patient.id)
         .map((item) => `${item.insurance_provider} ${item.external_provider} ${externalCenterLabel(item.center)} ${item.visit_date || ""} ${item.visit_time || ""}`)
         .join(" ");
-      return [patient.full_name, patient.email, patient.phone, externalText]
+      return [patient.full_name, patient.email, patient.phone, patient.national_id, patient.insurance_provider, patient.occupation, patient.referring_professional, externalText]
         .some((value) => (value || "").toLowerCase().includes(term));
     });
     els.patientList.replaceChildren();
@@ -1097,6 +1166,21 @@
       method: "PATCH",
       headers: { Prefer: "return=representation" },
       body: JSON.stringify({
+        full_name: els.personalFullName.value.trim(),
+        birth_date: els.personalBirthDate.value || null,
+        national_id: els.personalNationalId.value.trim() || null,
+        phone: normalizePatientPhone(els.personalPhone.value) || null,
+        email: els.personalEmail.value.trim().toLocaleLowerCase("es") || null,
+        address: els.personalAddress.value.trim() || null,
+        occupation: els.personalOccupation.value.trim() || null,
+        marital_status: els.personalMaritalStatus.value.trim() || null,
+        emergency_contact_name: els.personalEmergencyName.value.trim() || null,
+        emergency_contact_phone: els.personalEmergencyPhone.value.trim() || null,
+        referring_professional: els.personalReferringProfessional.value.trim() || null,
+        insurance_provider: els.personalInsurance.value.trim() || null,
+        care_context: els.personalCareContext.value || "private_practice",
+        external_provider: els.personalExternalProvider.value.trim() || null,
+        administrative_notes: els.personalAdminNotes.value.trim() || null,
         clinical_summary: els.summaryNote.value.trim() || null,
         next_session_focus: els.nextFocus.value.trim() || null,
         medication_notes: els.medication.value.trim() || null,
@@ -1108,9 +1192,12 @@
     if (updated) {
       patients = patients.map((patient) => patient.id === updated.id ? updated : patient);
       currentPatient = updated;
+      fillPatientPersonalData(updated);
+      renderPatientIdentityHeader(updated);
       fillClinicalProfile(updated);
       renderPreparation(updated);
       renderTimeline(updated);
+      renderPatients(els.patientSearch.value);
     }
     els.patientMessage.textContent = "Ficha completa guardada.";
   }
@@ -1240,6 +1327,7 @@
   els.newPatientForm?.addEventListener("submit", (event) => createManualPatient(event));
 
   els.patientClose.addEventListener("click", () => els.patientDialog.close());
+  els.personalBirthDate?.addEventListener("change", () => { els.personalAge.value = patientAge(els.personalBirthDate.value); });
   els.patientForm.addEventListener("submit", (event) => savePatient(event).catch((error) => { els.patientMessage.textContent = error.message; }));
   els.sessionClose.addEventListener("click", () => { if (isDictating) speechRecognition?.stop(); els.sessionDialog.close(); });
   els.refreshTimeline.addEventListener("click", () => currentPatient && renderTimeline(currentPatient));
