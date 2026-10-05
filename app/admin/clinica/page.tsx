@@ -421,7 +421,7 @@ export default function AdminClinicaPage() {
         </form>
       </dialog>
 
-      <Script src="/admin-clinica.js?v=20261005-2" strategy="afterInteractive" />
+      <Script src="/admin-clinica.js?v=20261005-new-patient-3" strategy="afterInteractive" />
       <Script src="/clinical-smart-intake.js?v=20261005-1" strategy="afterInteractive" />
       <Script src="/admin-clinica-audit-fixes.js?v=20260915-1" strategy="afterInteractive" />
     </main>
