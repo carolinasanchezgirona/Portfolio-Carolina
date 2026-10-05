@@ -260,13 +260,13 @@ export default function AdminClinicaPage() {
         <form id="clinic-exercise-form" className="clinic-dialog-content">
           <input id="clinic-exercise-template-id" type="hidden" />
           <div className="clinic-dialog-heading">
-            <div><p className="clinic-eyebrow">Material para el paciente</p><h2>Preparar ejercicio</h2></div>
+            <div><p className="clinic-eyebrow">Entre Sesiones</p><h2>Preparar material</h2></div>
             <button id="clinic-exercise-close" className="clinic-close" type="button" aria-label="Cerrar">×</button>
           </div>
           <p id="clinic-exercise-patient-code" className="clinic-note" />
           <label>Biblioteca clínica
             <select id="clinic-exercise-library" aria-label="Biblioteca de material entre sesiones">
-              <option value="">Seleccionar ejercicio…</option>
+              <option value="">Seleccionar material…</option>
             </select>
           </label>
           <label>Título<input id="clinic-exercise-title" required /></label>
