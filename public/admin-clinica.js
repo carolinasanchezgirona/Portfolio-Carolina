@@ -981,6 +981,7 @@
     renderReports(patient);
     renderHistory(patient);
     els.patientDialog.showModal();
+    window.dispatchEvent(new CustomEvent("clinical:patient-opened", { detail: { patientId: patient.id } }));
   }
 
   function appointmentCard(appointment) {
@@ -1325,6 +1326,14 @@
   els.newPatientClose?.addEventListener("click", () => els.newPatientDialog.close());
   els.newPatientCancel?.addEventListener("click", () => els.newPatientDialog.close());
   els.newPatientForm?.addEventListener("submit", (event) => createManualPatient(event));
+
+  window.addEventListener("clinical:patient-updated", (event) => {
+    const updated = event?.detail?.patient;
+    if (!updated?.id) return;
+    patients = patients.map((patient) => patient.id === updated.id ? updated : patient);
+    if (currentPatient?.id === updated.id) currentPatient = updated;
+    renderPatients(els.patientSearch.value);
+  });
 
   els.patientClose.addEventListener("click", () => els.patientDialog.close());
   els.personalBirthDate?.addEventListener("change", () => { els.personalAge.value = patientAge(els.personalBirthDate.value); });
