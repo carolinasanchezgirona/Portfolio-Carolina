@@ -449,8 +449,12 @@ async function clinicalMaterialDraftRequest(request: Request, env: Env): Promise
     "En TEA usa un enfoque neuroafirmativo y evita normalización forzada o entrenamiento de enmascaramiento.",
     "Devuelve SOLO JSON válido.",
     "Si existe: {status:'existing',existing_id:string,reason:string}.",
-    "Si falta: {status:'new',reason:string,material:{title:string,summary:string,instructions:string,process_tags:string[],material_type:'exercise'|'psychoeducation',phase:string,duration_minutes:number|null,burden:'low'|'medium'|'high',objectives:string[],cautions:string[],sequence_rank:number}}.",
+    "Si falta: {status:'new',reason:string,material:{title:string,summary:string,instructions:string,process_tags:string[],material_type:'exercise'|'psychoeducation',phase:string,duration_minutes:number|null,burden:'low'|'medium'|'high',objectives:string[],cautions:string[],sequence_rank:number,patient_document:{introduction:string,why:string,objective:string,instructions:string,example:string,record_prompt:string,remember:string,session_questions:string[]}}}.",
     "Las instrucciones deben estar dirigidas al paciente cuando sea material enviable.",
+    "patient_document es obligatorio en materiales nuevos y debe poder entregarse directamente al paciente.",
+    "introduction debe ser una introducción breve. why debe explicar en lenguaje claro por qué hacemos el ejercicio o para qué sirve el material, sin revelar formulación clínica interna ni diagnósticos no comunicados.",
+    "why debe explicar el proceso psicológico relevante, qué se entrena o comprende y dejar claro que no se busca hacerlo perfecto ni eliminar el malestar de inmediato cuando eso sea clínicamente pertinente.",
+    "record_prompt debe ser útil para ejercicios y puede quedar vacío en psicoeducación. session_questions debe contener de 1 a 4 preguntas breves para comentar en sesión.",
     "La ficha nueva debe complementar la biblioteca, no repetirla con un título distinto."
   ].join("\n");
 
@@ -501,10 +505,29 @@ async function clinicalMaterialDraftRequest(request: Request, env: Env): Promise
     const durationValue = Number(materialRaw.duration_minutes);
     const sequenceValue = Number(materialRaw.sequence_rank);
 
+    const patientDocumentRaw = materialRaw.patient_document && typeof materialRaw.patient_document === "object" && !Array.isArray(materialRaw.patient_document)
+      ? materialRaw.patient_document as Record<string, unknown>
+      : {};
+    const patientInstructions = editorialText(patientDocumentRaw.instructions, 7000) || editorialText(materialRaw.instructions, 7000);
+    const patientDocument = {
+      version: 1,
+      material_type: materialType,
+      introduction: editorialText(patientDocumentRaw.introduction, 1200),
+      why: editorialText(patientDocumentRaw.why, 2200),
+      objective: editorialText(patientDocumentRaw.objective, 900),
+      instructions: patientInstructions,
+      example: editorialText(patientDocumentRaw.example, 1800),
+      record_prompt: editorialText(patientDocumentRaw.record_prompt, 1800),
+      remember: editorialText(patientDocumentRaw.remember, 1400),
+      session_questions: Array.isArray(patientDocumentRaw.session_questions)
+        ? patientDocumentRaw.session_questions.slice(0, 4).map((item) => editorialText(item, 350)).filter(Boolean)
+        : []
+    };
+
     const material = {
       title: editorialText(materialRaw.title, 220) || query,
       summary: editorialText(materialRaw.summary, 700),
-      instructions: editorialText(materialRaw.instructions, 7000),
+      instructions: patientInstructions,
       process_tags: Array.isArray(materialRaw.process_tags)
         ? materialRaw.process_tags.slice(0, 5).map((tag) => editorialText(tag, 100)).filter(Boolean)
         : preferredProcess ? [preferredProcess] : [],
@@ -518,10 +541,11 @@ async function clinicalMaterialDraftRequest(request: Request, env: Env): Promise
       cautions: Array.isArray(materialRaw.cautions)
         ? materialRaw.cautions.slice(0, 8).map((item) => editorialText(item, 350)).filter(Boolean)
         : [],
-      sequence_rank: Number.isFinite(sequenceValue) ? Math.max(1, Math.min(100, Math.round(sequenceValue))) : 50
+      sequence_rank: Number.isFinite(sequenceValue) ? Math.max(1, Math.min(100, Math.round(sequenceValue))) : 50,
+      patient_document: patientDocument
     };
 
-    if (!material.instructions) return editorialJson({ error: "La IA no ha generado contenido suficiente para revisar." }, 502);
+    if (!material.instructions || !patientDocument.introduction || !patientDocument.why) return editorialJson({ error: "La IA no ha generado un documento para paciente suficientemente completo para revisar." }, 502);
     return editorialJson({ status: "new", reason: editorialText(raw.reason, 700), material });
   } catch (error) {
     console.error("Clinical material request failed", error instanceof Error ? error.name : "Unknown");

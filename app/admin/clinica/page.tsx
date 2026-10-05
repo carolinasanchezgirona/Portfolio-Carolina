@@ -404,10 +404,28 @@ export default function AdminClinicaPage() {
             <button id="clinic-add-material-library" className="clinic-secondary" type="button">Añadir a la biblioteca</button>
           </div>
           <label>Título<input id="clinic-exercise-title" required /></label>
-          <label>Contenido<textarea id="clinic-exercise-content" rows={12} required /></label>
-          <label>Motivo de la sugerencia<textarea id="clinic-exercise-rationale" rows={2} /></label>
+          <section className="clinic-patient-document">
+            <div>
+              <p className="clinic-eyebrow">Documento para el paciente</p>
+              <p className="clinic-material-helper">Esta información aparecerá en la lectura online y en el PDF descargable.</p>
+            </div>
+            <label>Introducción breve<textarea id="clinic-exercise-introduction" rows={2} required /></label>
+            <label>Por qué hacemos este ejercicio<textarea id="clinic-exercise-why" rows={4} required /></label>
+            <label>Cómo hacerlo / contenido<textarea id="clinic-exercise-content" rows={10} required /></label>
+            <details className="clinic-material-details">
+              <summary>Completar objetivo, ejemplo, registro y cierre</summary>
+              <div className="clinic-material-details-grid">
+                <label>Objetivo<input id="clinic-exercise-objective" /></label>
+                <label>Ejemplo opcional<textarea id="clinic-exercise-example" rows={3} /></label>
+                <label>Qué observar o registrar<textarea id="clinic-exercise-record" rows={3} /></label>
+                <label>Qué conviene recordar<textarea id="clinic-exercise-remember" rows={3} /></label>
+                <label>Para comentar en sesión <span>(una pregunta por línea)</span><textarea id="clinic-exercise-session-questions" rows={3} /></label>
+              </div>
+            </details>
+          </section>
+          <label>Motivo clínico de la sugerencia <span>(solo profesional, no se envía)</span><textarea id="clinic-exercise-rationale" rows={2} /></label>
           <label>Correo destinatario<input id="clinic-exercise-email" type="email" required /></label>
-          <p className="clinic-note">El correo será neutro. El contenido se abrirá mediante un enlace personal que caduca en 7 días.</p>
+          <p className="clinic-note">El correo será neutro. El paciente podrá leer el material online y descargar un PDF profesional. El enlace personal caduca en 7 días.</p>
           <p id="clinic-exercise-message" className="clinic-message" role="status" />
           <div className="clinic-dialog-actions">
             <button id="clinic-save-exercise" className="clinic-secondary" type="button">Guardar sin enviar</button>
@@ -479,7 +497,7 @@ export default function AdminClinicaPage() {
         </form>
       </dialog>
 
-      <Script src="/admin-clinica.js?v=20261005-smart-state-5" strategy="afterInteractive" />
+      <Script src="/admin-clinica.js?v=20261005-patient-pdf-6" strategy="afterInteractive" />
       <Script src="/clinical-smart-intake.js?v=20261005-smart-state-5" strategy="afterInteractive" />
       <Script src="/admin-clinica-audit-fixes.js?v=20260915-1" strategy="afterInteractive" />
     </main>
