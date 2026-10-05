@@ -1,5 +1,6 @@
 (() => {
   "use strict";
+  if (window.location.pathname.startsWith("/admin/clinica/acceso")) return;
 
   const SUPABASE_URL = "https://grgyvdxkjdstdyumdfyg.supabase.co";
   const REST_URL = `${SUPABASE_URL}/rest/v1`;
@@ -1094,8 +1095,7 @@
     const panelMode = new URL(window.location.href).searchParams.get("panel") === "1";
     if (!user) {
       saveSession(null);
-      if (panelMode) window.location.replace("/admin/clinica/");
-      else showLogin();
+      window.location.replace("/admin/clinica/acceso/");
       return;
     }
     if (!panelMode) {
