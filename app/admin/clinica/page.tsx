@@ -271,11 +271,34 @@ export default function AdminClinicaPage() {
             <button id="clinic-exercise-close" className="clinic-close" type="button" aria-label="Cerrar">×</button>
           </div>
           <p id="clinic-exercise-patient-code" className="clinic-note" />
-          <label>Biblioteca clínica
-            <select id="clinic-exercise-library" aria-label="Biblioteca de material entre sesiones">
-              <option value="">Seleccionar material…</option>
-            </select>
-          </label>
+          <div className="clinic-material-picker">
+            <label>Buscar en la biblioteca
+              <input id="clinic-material-search" type="search" placeholder="Buscar por título, proceso o tipo…" autoComplete="off" />
+            </label>
+            <label>Biblioteca clínica
+              <select id="clinic-exercise-library" aria-label="Biblioteca de material entre sesiones">
+                <option value="">Seleccionar material…</option>
+              </select>
+            </label>
+            <div id="clinic-material-not-found" className="clinic-material-not-found" hidden>
+              <p>No aparece ningún material con esa búsqueda.</p>
+              <button id="clinic-material-use-search" className="clinic-secondary" type="button">Usar búsqueda como título</button>
+            </div>
+          </div>
+          <div className="clinic-material-create-row">
+            <label>Tipo
+              <select id="clinic-material-type">
+                <option value="exercise">Ejercicio</option>
+                <option value="psychoeducation">Psicoeducación</option>
+              </select>
+            </label>
+            <label>Proceso / categoría
+              <select id="clinic-material-process">
+                <option value="">Seleccionar categoría…</option>
+              </select>
+            </label>
+            <button id="clinic-add-material-library" className="clinic-secondary" type="button">Añadir a la biblioteca</button>
+          </div>
           <label>Título<input id="clinic-exercise-title" required /></label>
           <label>Contenido<textarea id="clinic-exercise-content" rows={12} required /></label>
           <label>Motivo de la sugerencia<textarea id="clinic-exercise-rationale" rows={2} /></label>
