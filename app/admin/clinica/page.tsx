@@ -72,6 +72,7 @@ export default function AdminClinicaPage() {
                 <span className="clinic-search-icon" aria-hidden="true">⌕</span>
                 <input id="clinic-patient-search" type="search" placeholder="Buscar paciente, correo, teléfono o mutua" autoComplete="off" />
               </div>
+              <button id="clinic-new-patient" className="clinic-primary" type="button">+ Nuevo paciente</button>
               <PatientBulkImport />
             </div>
           </div>
@@ -79,6 +80,45 @@ export default function AdminClinicaPage() {
           <div id="clinic-patient-list" className="clinic-patient-list" />
         </section>
       </section>
+
+      <dialog id="clinic-new-patient-dialog" className="clinic-dialog clinic-small-dialog">
+        <form id="clinic-new-patient-form" className="clinic-dialog-content">
+          <div className="clinic-dialog-heading">
+            <div><p className="clinic-eyebrow">Alta manual</p><h2>Nuevo paciente</h2></div>
+            <button id="clinic-new-patient-close" className="clinic-close" type="button" aria-label="Cerrar">×</button>
+          </div>
+          <div className="clinic-form-grid">
+            <label className="clinic-full">Nombre y apellidos
+              <input id="clinic-new-patient-name" type="text" autoComplete="name" required />
+            </label>
+            <label>Teléfono
+              <input id="clinic-new-patient-phone" type="tel" inputMode="tel" autoComplete="tel" placeholder="Opcional" />
+            </label>
+            <label>Correo
+              <input id="clinic-new-patient-email" type="email" autoComplete="email" placeholder="Opcional" />
+            </label>
+            <label>Tipo de paciente
+              <select id="clinic-new-patient-type">
+                <option value="new">Nuevo</option>
+                <option value="existing">Ya atendido anteriormente</option>
+              </select>
+            </label>
+            <label>Contexto asistencial
+              <select id="clinic-new-patient-context">
+                <option value="private_practice">Consulta privada</option>
+                <option value="combined">Consulta + centro externo</option>
+                <option value="creu_blava">Centro externo</option>
+              </select>
+            </label>
+          </div>
+          <p className="clinic-note">El número clínico de Dememoria se genera automáticamente. Si el teléfono o correo ya pertenecen a una ficha existente, el sistema te avisará antes de crear otra.</p>
+          <p id="clinic-new-patient-message" className="clinic-message" role="status" aria-live="polite" />
+          <div className="clinic-dialog-actions">
+            <button id="clinic-new-patient-cancel" className="clinic-text" type="button">Cancelar</button>
+            <button id="clinic-new-patient-save" className="clinic-primary" type="submit">Crear ficha</button>
+          </div>
+        </form>
+      </dialog>
 
       <dialog id="clinic-patient-dialog" className="clinic-dialog clinic-patient-dialog">
         <form id="clinic-patient-form" className="clinic-dialog-content">
