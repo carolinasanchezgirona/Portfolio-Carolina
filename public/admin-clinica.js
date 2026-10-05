@@ -43,7 +43,9 @@
     newExercise: $("#clinic-new-exercise"), exerciseDialog: $("#clinic-exercise-dialog"),
     exerciseForm: $("#clinic-exercise-form"), exerciseClose: $("#clinic-exercise-close"),
     exerciseTemplateId: $("#clinic-exercise-template-id"), exercisePatientCode: $("#clinic-exercise-patient-code"),
-    exerciseLibrary: $("#clinic-exercise-library"),
+    exerciseLibrary: $("#clinic-exercise-library"), materialSearch: $("#clinic-material-search"),
+    materialNotFound: $("#clinic-material-not-found"), materialUseSearch: $("#clinic-material-use-search"),
+    materialType: $("#clinic-material-type"), materialProcess: $("#clinic-material-process"), addMaterialLibrary: $("#clinic-add-material-library"),
     exerciseTitle: $("#clinic-exercise-title"), exerciseContent: $("#clinic-exercise-content"),
     exerciseRationale: $("#clinic-exercise-rationale"), exerciseEmail: $("#clinic-exercise-email"),
     exerciseMessage: $("#clinic-exercise-message"), saveExercise: $("#clinic-save-exercise"),
@@ -294,7 +296,34 @@
       .sort((a, b) => b.score - a.score || Number(a.template.sequence_rank || 50) - Number(b.template.sequence_rank || 50))
       .slice(0, 4);
   }
-  function populateExerciseLibrary(selectedId = "") {
+  function populateMaterialProcessOptions(selected = "") {
+    if (!els.materialProcess) return;
+    const values = [...new Set(exerciseTemplates.flatMap((template) => template.process_tags || []))]
+      .filter(Boolean)
+      .sort((a, b) => a.localeCompare(b, "es"));
+    els.materialProcess.replaceChildren();
+    const placeholder = document.createElement("option");
+    placeholder.value = "";
+    placeholder.textContent = "Seleccionar categoría…";
+    els.materialProcess.append(placeholder);
+    values.forEach((value) => {
+      const option = document.createElement("option");
+      option.value = value;
+      option.textContent = value;
+      els.materialProcess.append(option);
+    });
+    els.materialProcess.value = selected || "";
+  }
+
+  function normalizeMaterialSearch(value) {
+    return String(value || "")
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .toLocaleLowerCase("es")
+      .trim();
+  }
+
+  function populateExerciseLibrary(selectedId = "", query = "") {
     if (!els.exerciseLibrary) return;
     els.exerciseLibrary.replaceChildren();
     const placeholder = document.createElement("option");
@@ -302,8 +331,21 @@
     placeholder.textContent = "Seleccionar material…";
     els.exerciseLibrary.append(placeholder);
 
+    const needle = normalizeMaterialSearch(query);
+    const filtered = exerciseTemplates.filter((template) => {
+      if (!needle) return true;
+      const typeLabel = template.material_type === "psychoeducation" ? "psicoeducacion" : "ejercicio";
+      const haystack = normalizeMaterialSearch([
+        template.title,
+        template.summary,
+        ...(template.process_tags || []),
+        typeLabel
+      ].filter(Boolean).join(" "));
+      return haystack.includes(needle);
+    });
+
     const grouped = new Map();
-    exerciseTemplates.forEach((template) => {
+    filtered.forEach((template) => {
       const process = (template.process_tags || [])[0] || "Otros";
       const typeLabel = template.material_type === "psychoeducation" ? "Psicoeducación" : "Ejercicios";
       const key = typeLabel + " · " + process;
@@ -324,6 +366,8 @@
         });
       els.exerciseLibrary.append(group);
     });
+
+    if (els.materialNotFound) els.materialNotFound.hidden = !needle || filtered.length > 0;
     els.exerciseLibrary.value = selectedId || "";
   }
 
@@ -341,7 +385,10 @@
 
   function openExercise(template = null, rationale = "") {
     if (!currentPatient) return;
+    if (els.materialSearch) els.materialSearch.value = "";
     populateExerciseLibrary(template?.id || "");
+    populateMaterialProcessOptions((template?.process_tags || [])[0] || "");
+    if (els.materialType) els.materialType.value = template?.material_type || "exercise";
     applyExerciseTemplate(template);
     els.exercisePatientCode.textContent = `Paciente ${currentPatient.public_code} · La identidad no aparecerá en el correo.`;
     els.exerciseRationale.value = rationale;
@@ -1120,6 +1167,60 @@
     applyExerciseTemplate(template);
     if (template) {
       els.exerciseRationale.value = template.summary || "";
+    }
+  });
+  els.materialSearch?.addEventListener("input", () => {
+    populateExerciseLibrary("", els.materialSearch.value);
+  });
+  els.materialUseSearch?.addEventListener("click", () => {
+    const value = els.materialSearch?.value?.trim() || "";
+    if (!value) return;
+    els.exerciseTitle.value = value;
+    els.exerciseContent.focus();
+  });
+  els.addMaterialLibrary?.addEventListener("click", async () => {
+    const title = els.exerciseTitle.value.trim();
+    const content = els.exerciseContent.value.trim();
+    const process = els.materialProcess?.value || "";
+    const materialType = els.materialType?.value || "exercise";
+    if (!title || !content || !process) {
+      els.exerciseMessage.textContent = "Para añadirlo a la biblioteca indica título, contenido y categoría.";
+      return;
+    }
+    els.exerciseMessage.textContent = "Añadiendo a la biblioteca…";
+    els.addMaterialLibrary.disabled = true;
+    try {
+      const rows = await rest("clinical_exercise_templates?select=*", {
+        method: "POST",
+        headers: { Prefer: "return=representation" },
+        body: JSON.stringify({
+          title,
+          summary: els.exerciseRationale.value.trim() || "Material incorporado manualmente a la biblioteca clínica.",
+          instructions: content,
+          process_tags: [process],
+          duration_minutes: materialType === "psychoeducation" ? 10 : null,
+          burden: "low",
+          status: "active",
+          material_type: materialType,
+          phase: materialType === "psychoeducation" ? "orientation" : "practice",
+          objectives: [],
+          cautions: [],
+          sequence_rank: 50,
+          patient_facing: true
+        })
+      });
+      const saved = rows?.[0];
+      if (!saved) throw new Error("No se ha podido recuperar el material creado.");
+      exerciseTemplates = [...exerciseTemplates, saved];
+      if (els.materialSearch) els.materialSearch.value = "";
+      populateExerciseLibrary(saved.id);
+      populateMaterialProcessOptions(process);
+      applyExerciseTemplate(saved);
+      els.exerciseMessage.textContent = "Añadido a la biblioteca. Ya puedes asignarlo o enviarlo.";
+    } catch (error) {
+      els.exerciseMessage.textContent = error?.message || "No se ha podido añadir el material.";
+    } finally {
+      els.addMaterialLibrary.disabled = false;
     }
   });
   els.exerciseClose.addEventListener("click", () => els.exerciseDialog.close());
