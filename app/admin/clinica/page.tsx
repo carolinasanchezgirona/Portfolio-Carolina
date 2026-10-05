@@ -133,6 +133,64 @@ export default function AdminClinicaPage() {
             <button id="clinic-new-report" className="clinic-primary" type="button">Generar informe</button>
           </div>
 
+          <details className="clinic-record-section clinic-personal-admin-section" open>
+            <summary><span>Datos personales y administrativos</span><small>Identificación, contacto y gestión asistencial</small></summary>
+            <div className="clinic-record-section-body clinic-form-grid">
+              <label className="clinic-full">Nombre y apellidos
+                <input id="clinic-personal-full-name" type="text" autoComplete="name" required />
+              </label>
+              <label>Fecha de nacimiento
+                <input id="clinic-personal-birth-date" type="date" />
+              </label>
+              <label>Edad
+                <input id="clinic-personal-age" type="text" readOnly placeholder="Se calcula automáticamente" />
+              </label>
+              <label>DNI / NIE
+                <input id="clinic-personal-national-id" type="text" autoComplete="off" placeholder="Opcional" />
+              </label>
+              <label>Teléfono
+                <input id="clinic-personal-phone" type="tel" inputMode="tel" autoComplete="tel" />
+              </label>
+              <label>Correo
+                <input id="clinic-personal-email" type="email" autoComplete="email" />
+              </label>
+              <label className="clinic-full">Dirección
+                <input id="clinic-personal-address" type="text" autoComplete="street-address" placeholder="Opcional" />
+              </label>
+              <label>Profesión / ocupación
+                <input id="clinic-personal-occupation" type="text" placeholder="Opcional" />
+              </label>
+              <label>Estado civil / convivencia
+                <input id="clinic-personal-marital-status" type="text" placeholder="Opcional" />
+              </label>
+              <label>Persona de contacto
+                <input id="clinic-personal-emergency-name" type="text" placeholder="Opcional" />
+              </label>
+              <label>Teléfono de contacto
+                <input id="clinic-personal-emergency-phone" type="tel" inputMode="tel" placeholder="Opcional" />
+              </label>
+              <label>Profesional de referencia
+                <input id="clinic-personal-referring-professional" type="text" placeholder="Médico/a u otro profesional, opcional" />
+              </label>
+              <label>Mutua / cobertura
+                <input id="clinic-personal-insurance" type="text" placeholder="Opcional" />
+              </label>
+              <label>Contexto asistencial
+                <select id="clinic-personal-care-context">
+                  <option value="private_practice">Consulta privada</option>
+                  <option value="combined">Consulta + centro externo</option>
+                  <option value="creu_blava">Centro externo</option>
+                </select>
+              </label>
+              <label>Centro / proveedor externo
+                <input id="clinic-personal-external-provider" type="text" placeholder="Opcional" />
+              </label>
+              <label className="clinic-full">Observaciones administrativas
+                <textarea id="clinic-personal-admin-notes" rows={3} placeholder="Información administrativa útil. No incluir aquí contenido clínico." />
+              </label>
+            </div>
+          </details>
+
           <section className="clinic-preparation">
             <p className="clinic-eyebrow">Preparar sesión</p>
             <div id="clinic-preparation-content" />
@@ -421,7 +479,7 @@ export default function AdminClinicaPage() {
         </form>
       </dialog>
 
-      <Script src="/admin-clinica.js?v=20261005-new-patient-3" strategy="afterInteractive" />
+      <Script src="/admin-clinica.js?v=20261005-personal-data-4" strategy="afterInteractive" />
       <Script src="/clinical-smart-intake.js?v=20261005-1" strategy="afterInteractive" />
       <Script src="/admin-clinica-audit-fixes.js?v=20260915-1" strategy="afterInteractive" />
     </main>
