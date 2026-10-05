@@ -274,6 +274,11 @@ export default function AdminClinicaPage() {
             <button id="clinic-exercise-close" className="clinic-close" type="button" aria-label="Cerrar">×</button>
           </div>
           <p id="clinic-exercise-patient-code" className="clinic-note" />
+          <label>Biblioteca clínica
+            <select id="clinic-exercise-library">
+              <option value="">Seleccionar ejercicio…</option>
+            </select>
+          </label>
           <label>Título<input id="clinic-exercise-title" required /></label>
           <label>Contenido<textarea id="clinic-exercise-content" rows={12} required /></label>
           <label>Motivo de la sugerencia<textarea id="clinic-exercise-rationale" rows={2} /></label>
