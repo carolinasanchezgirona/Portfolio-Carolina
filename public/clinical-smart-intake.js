@@ -98,7 +98,7 @@
     const style = document.createElement("style");
     style.id = "clinic-smart-intake-styles";
     style.textContent = `
-      .clinic-smart-intake{margin:22px 0;padding:22px;border:1px solid #cfe0e9;border-radius:18px;background:linear-gradient(145deg,#fff,#f4fafc)}
+      .clinic-smart-launcher{margin:14px 0 18px;display:inline-flex;align-items:center;gap:8px;min-height:36px;padding:8px 12px;border:1px solid #b9d2df;border-radius:8px;background:#fff;color:#173A5E;font:inherit;font-size:13px;font-weight:750;cursor:pointer}\n      .clinic-smart-launcher[hidden],.clinic-smart-intake[hidden]{display:none!important}\n      .clinic-smart-intake{margin:22px 0;padding:22px;border:1px solid #cfe0e9;border-radius:18px;background:linear-gradient(145deg,#fff,#f4fafc)}
       .clinic-smart-head,.clinic-smart-preview-head{display:flex;justify-content:space-between;align-items:flex-start;gap:18px;margin-bottom:16px}
       .clinic-smart-head h3,.clinic-smart-preview h4{margin:2px 0 5px;color:#173A5E}
       .clinic-smart-head p{margin:0;max-width:680px;color:#607483;line-height:1.5}
@@ -132,6 +132,13 @@
     if (!form || !prep || el("clinic-smart-intake")) return;
 
     addStyles();
+    const launcher = document.createElement("button");
+    launcher.id = "clinic-smart-launcher";
+    launcher.className = "clinic-smart-launcher";
+    launcher.type = "button";
+    launcher.hidden = true;
+    launcher.textContent = "Añadir más notas con IA";
+
     const section = document.createElement("section");
     section.id = "clinic-smart-intake";
     section.className = "clinic-smart-intake";
@@ -165,11 +172,33 @@
         <article class="clinic-smart-exercises"><h4>Procesos y ejercicios a considerar</h4><div id="clinic-smart-processes" class="clinic-smart-list"></div><div id="clinic-smart-exercise-candidates" class="clinic-smart-exercise-candidates"></div></article>
       </div>
     `;
-    prep.before(section);
+    prep.before(launcher, section);
 
+    launcher.addEventListener("click", () => {
+      clear();
+      showPanel();
+      setTimeout(() => el("clinic-smart-note")?.focus(), 0);
+    });
     el("clinic-smart-analyze")?.addEventListener("click", analyze);
     el("clinic-smart-clear")?.addEventListener("click", clear);
     el("clinic-smart-apply")?.addEventListener("click", applyDraft);
+  }
+
+  function showPanel() {
+    const section = el("clinic-smart-intake");
+    const launcher = el("clinic-smart-launcher");
+    if (section) section.hidden = false;
+    if (launcher) launcher.hidden = true;
+  }
+
+  function hidePanel(label = "Añadir más notas con IA") {
+    const section = el("clinic-smart-intake");
+    const launcher = el("clinic-smart-launcher");
+    if (section) section.hidden = true;
+    if (launcher) {
+      launcher.textContent = label;
+      launcher.hidden = false;
+    }
   }
 
   function scrubKnownIdentifiers(text) {
@@ -481,12 +510,14 @@
         updated_at: new Date().toISOString()
       };
 
-      const save = await fetch(REST_URL + "/clinical_patients?id=eq." + encodeURIComponent(patientId), {
+      const save = await fetch(REST_URL + "/clinical_patients?id=eq." + encodeURIComponent(patientId) + "&select=*", {
         method: "PATCH",
         headers: authHeaders({ Prefer: "return=representation" }),
         body: JSON.stringify(payload)
       });
+      const savedRows = await save.json().catch(() => []);
       if (!save.ok) throw new Error("No se ha podido guardar la integración.");
+      const updatedPatient = savedRows?.[0] || null;
 
       Object.entries(fieldMap).forEach(([key, id]) => {
         const node = el(id);
@@ -500,7 +531,11 @@
         node.dispatchEvent(new Event("input", { bubbles: true }));
       });
 
-      status.textContent = "Integrado y guardado. La nota original queda conservada en la trazabilidad.";
+      if (updatedPatient) {
+        window.dispatchEvent(new CustomEvent("clinical:patient-updated", { detail: { patient: updatedPatient } }));
+      }
+      clear();
+      hidePanel("✓ Integrado · Añadir más notas con IA");
     } catch (error) {
       status.textContent = error?.message || "No se ha podido guardar la integración.";
     } finally {
@@ -517,6 +552,11 @@
     if (status) status.textContent = "";
     draft = null;
   }
+
+  window.addEventListener("clinical:patient-opened", () => {
+    clear();
+    showPanel();
+  });
 
   const observer = new MutationObserver(() => buildUi());
   observer.observe(document.documentElement, { childList: true, subtree: true });
