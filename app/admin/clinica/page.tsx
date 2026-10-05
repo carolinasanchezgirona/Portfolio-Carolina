@@ -13,24 +13,40 @@ export default function AdminClinicaPage() {
   return (
     <main className="clinic-page">
       <section id="clinic-login" className="clinic-login-shell">
-        <form id="clinic-login-form" className="clinic-login-card">
-          <p className="clinic-eyebrow">Dememoria · Área privada</p>
-          <h1>Gestión clínica</h1>
-          <p>Acceso reservado a Carolina Sánchez.</p>
-          <label>Correo<input id="clinic-email" type="email" autoComplete="username" required /></label>
-          <label>Contraseña<input id="clinic-password" type="password" autoComplete="current-password" required /></label>
-          <p id="clinic-login-message" className="clinic-message" role="status" />
-          <button className="clinic-primary clinic-login-button" type="submit">Entrar</button>
-          <a className="clinic-back" href="/admin/agenda/">Volver a la agenda</a>
-        </form>
+        <div className="clinic-login-layout">
+          <div className="clinic-login-intro">
+            <p className="clinic-eyebrow">Dememoria · Espacio profesional</p>
+            <h1>Gestión clínica</h1>
+            <p>Accede al entorno privado de trabajo clínico. El panel se abrirá después de validar tu identidad.</p>
+            <div className="clinic-login-trust">
+              <span>Acceso restringido</span>
+              <span>Datos clínicos protegidos</span>
+              <span>Uso profesional</span>
+            </div>
+          </div>
+          <form id="clinic-login-form" className="clinic-login-card">
+            <div className="clinic-login-card-head">
+              <p className="clinic-eyebrow">Identificación</p>
+              <h2>Entrar</h2>
+            </div>
+            <label>Correo<input id="clinic-email" type="email" autoComplete="username" required /></label>
+            <label>Contraseña<input id="clinic-password" type="password" autoComplete="current-password" required /></label>
+            <p id="clinic-login-message" className="clinic-message" role="status" />
+            <button className="clinic-primary clinic-login-button" type="submit">Acceder a Gestión Clínica</button>
+            <a className="clinic-back" href="/admin/agenda/">Volver a la agenda</a>
+          </form>
+        </div>
       </section>
 
       <section id="clinic-app" className="clinic-app" hidden>
         <header className="clinic-topbar">
-          <div>
-            <p className="clinic-eyebrow">Dememoria</p>
-            <h1>Gestión clínica</h1>
-            <p id="clinic-date" className="clinic-muted" />
+          <div className="clinic-topbar-title">
+            <span className="clinic-brand-mark" aria-hidden="true">D</span>
+            <div>
+              <p className="clinic-eyebrow">Dememoria · Área profesional</p>
+              <h1>Gestión clínica</h1>
+              <p id="clinic-date" className="clinic-muted" />
+            </div>
           </div>
           <div className="clinic-top-actions">
             <a className="clinic-secondary" href="/admin/agenda/">Agenda</a>

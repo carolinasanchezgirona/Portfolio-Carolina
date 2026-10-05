@@ -1,5 +1,6 @@
 (() => {
   "use strict";
+  if (window.location.pathname.startsWith("/admin/clinica/acceso")) return;
 
   const SUPABASE_URL = "https://grgyvdxkjdstdyumdfyg.supabase.co";
   const REST_URL = `${SUPABASE_URL}/rest/v1`;
@@ -1022,10 +1023,12 @@
     els.loginMessage.textContent = "Comprobando acceso…";
     try {
       await signIn(els.email.value.trim(), els.password.value);
-      els.password.value = ""; els.loginMessage.textContent = ""; showApp(); await loadData();
+      els.password.value = "";
+      els.loginMessage.textContent = "";
+      window.location.assign("/admin/clinica/?panel=1");
     } catch (error) { els.loginMessage.textContent = error.message; }
   });
-  els.logout.addEventListener("click", () => { saveSession(null); showLogin(); });
+  els.logout.addEventListener("click", () => { saveSession(null); window.location.assign("/admin/clinica/"); });
   els.refresh.addEventListener("click", () => loadData().catch((error) => setMessage(error.message)));
   els.viewToday.addEventListener("click", () => setView("today"));
   els.viewPatients.addEventListener("click", () => setView("patients"));
@@ -1089,7 +1092,16 @@
     els.date.textContent = dateLong.format(new Date());
     session = getSession();
     const user = await fetchCurrentUser();
-    if (!user) { saveSession(null); showLogin(); return; }
+    const panelMode = new URL(window.location.href).searchParams.get("panel") === "1";
+    if (!user) {
+      saveSession(null);
+      window.location.replace("/admin/clinica/acceso/");
+      return;
+    }
+    if (!panelMode) {
+      window.location.replace("/admin/clinica/?panel=1");
+      return;
+    }
     showApp();
     loadData().catch((error) => setMessage(error.message));
   })();
