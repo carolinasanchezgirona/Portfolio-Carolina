@@ -1004,6 +1004,88 @@
     setMessage("");
   }
 
+
+  function normalizePatientPhone(value) {
+    const digits = String(value || "").replace(/\D/g, "");
+    return digits.length > 9 ? digits.slice(-9) : digits;
+  }
+
+  async function createManualPatient(event) {
+    event.preventDefault();
+    const fullName = els.newPatientName.value.trim();
+    const phone = normalizePatientPhone(els.newPatientPhone.value);
+    const email = els.newPatientEmail.value.trim().toLocaleLowerCase("es");
+    const patientType = els.newPatientType.value || "new";
+    const careContext = els.newPatientContext.value || "private_practice";
+
+    if (!fullName) {
+      els.newPatientMessage.textContent = "Indica el nombre y apellidos.";
+      return;
+    }
+    if (phone && phone.length !== 9) {
+      els.newPatientMessage.textContent = "El teléfono debe tener 9 cifras.";
+      return;
+    }
+
+    els.newPatientMessage.textContent = "Comprobando si ya existe…";
+    els.newPatientSave.disabled = true;
+
+    try {
+      let duplicate = null;
+      if (phone) {
+        const rows = await rest("clinical_patients?select=id,public_code,full_name,email,phone&phone=eq." + encodeURIComponent(phone) + "&limit=1");
+        duplicate = rows?.[0] || null;
+      }
+      if (!duplicate && email) {
+        const rows = await rest("clinical_patients?select=id,public_code,full_name,email,phone&email=eq." + encodeURIComponent(email) + "&limit=1");
+        duplicate = rows?.[0] || null;
+      }
+
+      if (duplicate) {
+        els.newPatientMessage.textContent = "Ya existe una ficha: " + duplicate.full_name + " · " + duplicate.public_code + ".";
+        return;
+      }
+
+      const identityKey = phone
+        ? "phone:" + phone
+        : email
+          ? "email:" + email
+          : "manual:" + (globalThis.crypto?.randomUUID?.() || Date.now().toString(36) + Math.random().toString(36).slice(2));
+
+      els.newPatientMessage.textContent = "Creando ficha…";
+      const rows = await rest("clinical_patients?select=*", {
+        method: "POST",
+        headers: { Prefer: "return=representation" },
+        body: JSON.stringify({
+          identity_key: identityKey,
+          full_name: fullName,
+          phone: phone || null,
+          email: email || null,
+          patient_type: patientType,
+          status: "active",
+          care_context: careContext,
+          external_provider: careContext === "private_practice" ? null : "Creu Blava",
+          clinical_profile: {}
+        })
+      });
+
+      const created = rows?.[0];
+      if (!created) throw new Error("No se ha podido recuperar la ficha creada.");
+
+      patients = [...patients, created].sort((a, b) => a.full_name.localeCompare(b.full_name, "es"));
+      renderPatients(els.patientSearch.value);
+      els.newPatientDialog.close();
+      els.newPatientForm.reset();
+      els.newPatientMessage.textContent = "";
+      currentPatient = created;
+      openPatient(created);
+    } catch (error) {
+      els.newPatientMessage.textContent = error?.message || "No se ha podido crear la ficha.";
+    } finally {
+      els.newPatientSave.disabled = false;
+    }
+  }
+
   async function savePatient(event) {
     event.preventDefault();
     els.patientMessage.textContent = "Guardando…";
@@ -1143,6 +1225,16 @@
   els.viewPatients.addEventListener("click", () => setView("patients"));
   els.viewPending.addEventListener("click", () => setView("pending"));
   els.patientSearch.addEventListener("input", () => renderPatients(els.patientSearch.value));
+  els.newPatient?.addEventListener("click", () => {
+    els.newPatientForm.reset();
+    els.newPatientMessage.textContent = "";
+    els.newPatientDialog.showModal();
+    setTimeout(() => els.newPatientName?.focus(), 0);
+  });
+  els.newPatientClose?.addEventListener("click", () => els.newPatientDialog.close());
+  els.newPatientCancel?.addEventListener("click", () => els.newPatientDialog.close());
+  els.newPatientForm?.addEventListener("submit", (event) => createManualPatient(event));
+
   els.patientClose.addEventListener("click", () => els.patientDialog.close());
   els.patientForm.addEventListener("submit", (event) => savePatient(event).catch((error) => { els.patientMessage.textContent = error.message; }));
   els.sessionClose.addEventListener("click", () => { if (isDictating) speechRecognition?.stop(); els.sessionDialog.close(); });
@@ -1329,7 +1421,7 @@
     event.preventDefault();
     persistClinicalSession("approved").catch((error) => { els.sessionMessage.textContent = error.message; });
   });
-  [els.patientDialog, els.sessionDialog, els.exerciseDialog, els.reportDialog, els.documentDialog, els.scaleDialog].forEach((dialog) => dialog.addEventListener("click", (event) => {
+  [els.newPatientDialog, els.patientDialog, els.sessionDialog, els.exerciseDialog, els.reportDialog, els.documentDialog, els.scaleDialog].filter(Boolean).forEach((dialog) => dialog.addEventListener("click", (event) => {
     if (event.target === dialog) dialog.close();
   }));
 
