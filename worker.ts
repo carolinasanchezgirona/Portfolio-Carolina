@@ -301,6 +301,107 @@ async function editorialRequest(request: Request, env: Env, operation: "content"
   }
 }
 
+
+/** Private clinical structuring. The professional reviews every proposal before it is saved. */
+async function clinicalStructureRequest(request: Request, env: Env): Promise<Response> {
+  if (request.method !== "POST") return editorialJson({ error: "Método no permitido." }, 405);
+  if (!await verifyEditorialOwner(request)) return editorialJson({ error: "Sesión no autorizada." }, 401);
+  if (!env.OPENAI_API_KEY) return editorialJson({ error: "El análisis clínico asistido no está configurado." }, 503);
+  if (Number(request.headers.get("content-length") || "0") > 45000) return editorialJson({ error: "La nota es demasiado extensa para una sola importación." }, 413);
+
+  let data: Record<string, unknown>;
+  try { data = await request.json() as Record<string, unknown>; }
+  catch { return editorialJson({ error: "Solicitud no válida." }, 400); }
+
+  const notes = editorialText(data.notes, 24000);
+  const existingProfile = data.existing_profile && typeof data.existing_profile === "object" && !Array.isArray(data.existing_profile)
+    ? data.existing_profile as Record<string, unknown>
+    : {};
+
+  if (notes.length < 20) return editorialJson({ error: "Añade notas clínicas suficientes para poder estructurarlas." }, 400);
+
+  const allowedFields = [
+    "clinical_summary","next_session_focus","medication_notes",
+    "reason_for_consultation","current_problem_history","psychological_psychiatric_history",
+    "medical_history","family_history","personal_family_context","social_context","academic_work_context",
+    "significant_life_events","clinical_examination","psychometric_assessment","neuropsychological_assessment",
+    "diagnoses","diagnostic_hypotheses","differential_diagnosis","current_clinical_problems",
+    "predisposing_factors","precipitating_factors","perpetuating_factors","protective_factors",
+    "integrative_formulation","therapeutic_goals","treatment_plan","interventions_summary",
+    "clinical_evolution_summary","risk_safety","professional_coordination","clinical_observations"
+  ];
+
+  const system = [
+    "Eres un asistente de documentación clínica para una psicóloga sanitaria y neuropsicóloga en España.",
+    "Tu tarea es convertir notas clínicas libres en una propuesta estructurada, conservadora y trazable.",
+    "No inventes hechos, diagnósticos, medicación, fechas, antecedentes, resultados de pruebas ni riesgo.",
+    "Distingue estrictamente entre información explícita, inferencias clínicas y aspectos pendientes de explorar.",
+    "Las inferencias deben ser útiles pero prudentes. Nunca las redactes como hechos confirmados.",
+    "Un síntoma o patrón aislado no equivale a un diagnóstico. No diagnostiques salvo que las notas indiquen de forma explícita un diagnóstico ya registrado por un profesional.",
+    "Si detectas una posible hipótesis diagnóstica, colócala únicamente en inferences o diagnostic_hypotheses y deja claro que requiere exploración/validación.",
+    "Si una información relevante no aparece, no escribas 'niega' ni 'ausente'. Añádela a missing_to_explore cuando sea clínicamente pertinente.",
+    "No dupliques innecesariamente información en muchos apartados. Distribuye cada dato donde resulte más útil.",
+    "Redacta en español clínico claro, profesional y conciso.",
+    "Devuelve SOLO JSON válido con esta forma exacta:",
+    "{fields:{},inferences:[{statement:string,basis:string,confidence:'high'|'plausible',target_field:string}],missing_to_explore:string[],processes:[{process:string,reason:string}]}.",
+    "fields solo puede usar estas claves: " + allowedFields.join(", ") + ".",
+    "processes debe usar, cuando encaje, etiquetas de procesos terapéuticos breves como Rumiación, Preocupación, Intolerancia a la incertidumbre, Regulación emocional, Autocrítica, Autoestima, Perfeccionismo, Necesidad de aprobación, Asertividad, Límites interpersonales, Activación conductual, Procrastinación, Resolución de problemas, Evitación o Comprobación.",
+    "Para riesgo y seguridad: si las notas contienen ideación autolesiva/suicida, violencia, abuso, descompensación grave u otra información de riesgo, conserva el dato en risk_safety sin minimizarlo y no infieras ausencia de riesgo por falta de mención.",
+    "No incluyas nombres, correos, teléfonos ni otros identificadores personales en la salida si aparecen accidentalmente."
+  ].join("\n");
+
+  try {
+    const response = await fetch("https://api.openai.com/v1/chat/completions", {
+      method: "POST",
+      headers: { Authorization: "Bearer " + env.OPENAI_API_KEY, "Content-Type": "application/json" },
+      body: JSON.stringify({
+        model: env.OPENAI_TEXT_MODEL || "gpt-4.1-mini",
+        temperature: 0.15,
+        response_format: { type: "json_object" },
+        messages: [
+          { role: "system", content: system },
+          { role: "user", content: JSON.stringify({ notas: notes, historial_existente: existingProfile }) }
+        ]
+      })
+    });
+
+    const result = await response.json() as { choices?: Array<{ message?: { content?: string } }> };
+    if (!response.ok || !result.choices?.[0]?.message?.content) {
+      console.error("Clinical structure generation failure", response.status);
+      return editorialJson({ error: response.status === 429 ? "Se ha alcanzado el límite de análisis. Prueba de nuevo más tarde." : "No se ha podido estructurar la nota clínica." }, response.status === 429 ? 429 : 502);
+    }
+
+    const raw = JSON.parse(result.choices[0].message.content) as Record<string, unknown>;
+    const rawFields = raw.fields && typeof raw.fields === "object" && !Array.isArray(raw.fields) ? raw.fields as Record<string, unknown> : {};
+    const fields: Record<string, string> = {};
+    for (const key of allowedFields) {
+      const value = editorialText(rawFields[key], 5000);
+      if (value) fields[key] = value;
+    }
+
+    const inferences = Array.isArray(raw.inferences) ? raw.inferences.slice(0, 16).map((item: Record<string, unknown>) => ({
+      statement: editorialText(item.statement, 700),
+      basis: editorialText(item.basis, 700),
+      confidence: item.confidence === "high" ? "high" : "plausible",
+      target_field: allowedFields.includes(String(item.target_field)) ? String(item.target_field) : "clinical_observations"
+    })).filter((item) => item.statement) : [];
+
+    const missingToExplore = Array.isArray(raw.missing_to_explore)
+      ? raw.missing_to_explore.slice(0, 18).map((item) => editorialText(item, 500)).filter(Boolean)
+      : [];
+
+    const processes = Array.isArray(raw.processes) ? raw.processes.slice(0, 12).map((item: Record<string, unknown>) => ({
+      process: editorialText(item.process, 120),
+      reason: editorialText(item.reason, 500)
+    })).filter((item) => item.process) : [];
+
+    return editorialJson({ fields, inferences, missing_to_explore: missingToExplore, processes });
+  } catch (error) {
+    console.error("Clinical structure request failed", error instanceof Error ? error.name : "Unknown");
+    return editorialJson({ error: "No se ha podido completar el análisis clínico. Revisa la nota y vuelve a intentarlo." }, 502);
+  }
+}
+
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
     const url = new URL(request.url);
@@ -319,6 +420,7 @@ export default {
     }
     if (url.pathname === "/api/editorial/generate" || url.pathname === "/api/editorial/generate/") return editorialRequest(request, env, "content");
     if (url.pathname === "/api/editorial/image" || url.pathname === "/api/editorial/image/") return editorialRequest(request, env, "image");
+    if (url.pathname === "/api/clinical/structure" || url.pathname === "/api/clinical/structure/") return clinicalStructureRequest(request, env);
     return env.ASSETS.fetch(request);
   },
 };
