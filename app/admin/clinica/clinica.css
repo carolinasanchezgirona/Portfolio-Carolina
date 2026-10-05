@@ -986,3 +986,8 @@
   .clinic-material-create-row{grid-template-columns:1fr}
   .clinic-material-create-row button{justify-self:start}
 }
+
+.clinic-material-not-found>div:first-child{display:grid;gap:3px}
+.clinic-material-not-found strong{color:#173A5E;font-size:.78rem}
+.clinic-material-not-found-actions{display:flex;gap:7px;flex-wrap:wrap;justify-content:flex-end}
+@media(max-width:700px){.clinic-material-not-found{align-items:stretch;flex-direction:column}.clinic-material-not-found-actions{justify-content:flex-start}}
