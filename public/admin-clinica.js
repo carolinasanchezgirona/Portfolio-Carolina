@@ -529,6 +529,9 @@
   async function saveExercise(sendAfterSave) {
     if (!currentPatient) return;
     if (!els.exerciseTitle.value.trim() || !els.exerciseContent.value.trim()) throw new Error("Completa el título y el contenido.");
+    if (!els.exerciseIntroduction.value.trim() || !els.exerciseWhy.value.trim()) throw new Error("Completa la introducción y «Por qué hacemos este ejercicio».");
+    const selectedTemplate = exerciseTemplates.find((item) => item.id === els.exerciseTemplateId.value) || null;
+    const materialType = selectedTemplate?.material_type || els.materialType?.value || "exercise";
     els.exerciseMessage.textContent = sendAfterSave ? "Preparando enlace seguro…" : "Guardando…";
     const rows = await rest("clinical_exercise_assignments?select=*", {
       method: "POST", headers: { Prefer: "return=representation" },
@@ -538,6 +541,7 @@
         title: els.exerciseTitle.value.trim(),
         content: els.exerciseContent.value.trim(),
         rationale: els.exerciseRationale.value.trim() || null,
+        patient_document: patientDocumentFromForm(materialType),
         recipient_email: els.exerciseEmail.value.trim() || null,
         status: "prepared",
       }),
