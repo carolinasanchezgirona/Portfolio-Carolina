@@ -166,7 +166,7 @@ export default function AdminClinicaPage() {
           </div>
 
           <section className="clinic-exercises-section">
-            <div className="clinic-goals-heading"><div><p className="clinic-eyebrow">Continuidad terapéutica</p><h3>Ejercicios</h3></div><button id="clinic-new-exercise" className="clinic-secondary" type="button">Asignar ejercicio</button></div>
+            <div className="clinic-goals-heading"><div><p className="clinic-eyebrow">Continuidad terapéutica</p><h3>Material entre sesiones</h3></div><button id="clinic-new-exercise" className="clinic-secondary" type="button">Asignar material</button></div>
             <div id="clinic-exercise-suggestions" className="clinic-exercise-suggestions" />
             <div id="clinic-patient-exercises" className="clinic-history" />
           </section>
@@ -265,7 +265,7 @@ export default function AdminClinicaPage() {
           </div>
           <p id="clinic-exercise-patient-code" className="clinic-note" />
           <label>Biblioteca clínica
-            <select id="clinic-exercise-library">
+            <select id="clinic-exercise-library" aria-label="Biblioteca de material entre sesiones">
               <option value="">Seleccionar ejercicio…</option>
             </select>
           </label>
