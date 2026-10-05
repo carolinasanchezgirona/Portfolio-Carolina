@@ -739,6 +739,11 @@
     try {
       await signIn(els.email.value.trim(), els.password.value);
       els.password.value = "";
+      const next = new URL(window.location.href).searchParams.get("next");
+      if (next && next.startsWith("/admin/")) {
+        window.location.assign(next);
+        return;
+      }
       showApp();
       await loadWeek();
       setLoginMessage("");
@@ -860,6 +865,11 @@
 
     currentUser = await fetchCurrentUser();
     if (currentUser) {
+      const next = new URL(window.location.href).searchParams.get("next");
+      if (next && next.startsWith("/admin/") && !recovery) {
+        window.location.replace(next);
+        return;
+      }
       showApp();
       loadWeek().catch((e) => setStatus(e.message));
       if (recovery) {

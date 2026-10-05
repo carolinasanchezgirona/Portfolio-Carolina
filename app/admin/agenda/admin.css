@@ -45,3 +45,19 @@
 .day-card.cancelled .appointment-card-action{text-decoration:none}
 @media(max-width:900px){.day-card{grid-template-columns:1fr!important}.day-card-actions{padding:0 12px 12px 12px;justify-content:flex-end}}
 @media(max-width:620px){.day-card-main{grid-template-columns:68px 1fr;gap:6px 12px;padding:14px}.day-card-main small,.day-card-main .appointment-card-action{grid-column:2}.day-card-actions{justify-content:stretch}.day-card-actions button{flex:1}}
+
+/* Final compact admin overrides */
+.admin-login-shell[hidden],.admin-app[hidden],.admin-view[hidden]{display:none!important}
+.admin-page{background:#f7f9fb!important}
+.admin-app{width:min(1440px,calc(100% - 28px))!important;padding:14px 0 42px!important}
+.admin-topbar{align-items:center!important;margin-bottom:12px!important;padding:10px 12px!important;border-bottom:1px solid #e1e7ec!important}
+.admin-topbar h1{font-size:1.35rem!important;color:#173A5E!important}
+.admin-top-actions{gap:6px!important}
+.admin-primary,.admin-secondary,.admin-text,.admin-danger,.admin-week-nav button{min-height:32px!important;padding:6px 10px!important;border-radius:7px!important;font-size:.74rem!important}
+.admin-view-tabs{position:static!important;margin:10px 0 14px!important;padding:2px!important;border-radius:8px!important}
+.admin-view-tabs button{min-height:30px!important;padding:5px 10px!important;border-radius:6px!important;font-size:.75rem!important}
+.admin-view-tabs button.active{background:#173A5E!important;color:#fff!important}
+.today-heading,.patients-heading{padding:14px 0!important;border-bottom:1px solid #e1e7ec!important}
+.today-heading h2,.patients-heading h2{font-size:1.45rem!important}
+.admin-summary article,.today-summary article{padding:10px 12px!important;border-radius:8px!important}
+.appointment-card{padding:8px 9px!important;border-radius:7px!important}
