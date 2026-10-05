@@ -11,6 +11,21 @@
   const message = document.getElementById("clinical-access-message");
   const submit = document.getElementById("clinical-access-submit");
 
+  async function currentUser() {
+    const raw = sessionStorage.getItem(SESSION_KEY);
+    if (!raw) return null;
+    let session;
+    try { session = JSON.parse(raw); } catch { return null; }
+    if (!session?.access_token) return null;
+    const response = await fetch(AUTH_URL + "/user", {
+      headers: { apikey: KEY, Authorization: "Bearer " + session.access_token },
+      cache: "no-store"
+    });
+    if (!response.ok) return null;
+    const user = await response.json().catch(() => null);
+    return user?.id === OWNER ? user : null;
+  }
+
   async function login() {
     const response = await fetch(AUTH_URL + "/token?grant_type=password", {
       method: "POST",
@@ -36,4 +51,13 @@
       submit.disabled = false;
     }
   });
+
+  (async function init() {
+    const user = await currentUser();
+    if (user) {
+      window.location.replace("/admin/clinica/?panel=1");
+      return;
+    }
+    window.location.replace("/admin/agenda/?next=" + encodeURIComponent("/admin/clinica/?panel=1"));
+  })();
 })();
