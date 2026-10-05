@@ -60,15 +60,22 @@ export default function AdminClinicaPage() {
           <div id="clinic-pending-list" className="clinic-pending-list" />
         </section>
 
-        <section id="clinic-patients-view" className="clinic-view" hidden>
-          <div className="clinic-section-heading clinic-patients-heading">
-            <div><p className="clinic-eyebrow">Dememoria</p><h2>Pacientes</h2></div>
+        <section id="clinic-patients-view" className="clinic-view clinic-patients-workspace" hidden>
+          <div className="clinic-page-heading">
+            <div>
+              <p className="clinic-eyebrow">Dememoria</p>
+              <h2>Pacientes</h2>
+              <p className="clinic-section-description">Base clínica, búsqueda y acceso a fichas.</p>
+            </div>
             <div className="clinic-patients-actions">
-              <input id="clinic-patient-search" type="search" placeholder="Buscar por nombre, correo, teléfono o mutua" autoComplete="off" />
+              <div className="clinic-search-field">
+                <span className="clinic-search-icon" aria-hidden="true">⌕</span>
+                <input id="clinic-patient-search" type="search" placeholder="Buscar paciente, correo, teléfono o mutua" autoComplete="off" />
+              </div>
               <PatientBulkImport />
             </div>
           </div>
-          <p className="clinic-note">Las fichas clínicas usan el número propio de Dememoria. Las agendas externas conservan teléfono, mutua, centro, fecha y hora, pero nunca el número de historia de la clínica externa.</p>
+          <p className="clinic-inline-info">Las fichas usan el número propio de Dememoria. Los datos de agendas externas se conservan sin importar números de historia ajenos.</p>
           <div id="clinic-patient-list" className="clinic-patient-list" />
         </section>
       </section>
