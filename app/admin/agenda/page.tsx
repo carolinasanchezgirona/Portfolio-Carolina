@@ -191,7 +191,7 @@ export default function AdminAgendaPage() {
         </form>
       </dialog>
 
-      <Script src="/admin-agenda-v3.js?v=20261005-unified-admin-1" strategy="afterInteractive" />
+      <Script src="/admin-agenda-v3.js?v=20261005-single-auth-2" strategy="afterInteractive" />
       <Script src="/pwa.js?v=20260915-admin-2" strategy="afterInteractive" />
     </main>
   );
