@@ -1000,3 +1000,20 @@
   outline:none;border-color:#6fa9bd;box-shadow:0 0 0 3px rgba(8,166,160,.08)
 }
 .clinic-record-section-body input[readonly]{background:#f1f4f6;color:#647786}
+
+
+.clinic-patient-document{
+  display:grid;
+  gap:12px;
+  margin:14px 0;
+  padding:16px;
+  border:1px solid #d5e3ee;
+  border-radius:14px;
+  background:#f8fbfd;
+}
+.clinic-patient-document .clinic-eyebrow{margin-bottom:4px}
+.clinic-material-helper{margin:0;color:#607786;font-size:.78rem;line-height:1.45}
+.clinic-material-details{border-top:1px solid #dbe7ef;padding-top:10px}
+.clinic-material-details summary{cursor:pointer;color:#173a5e;font-size:.82rem;font-weight:750}
+.clinic-material-details-grid{display:grid;gap:12px;margin-top:12px}
+.clinic-patient-document label span,.clinic-exercise-dialog label span{color:#71838e;font-size:.74rem;font-weight:500}
