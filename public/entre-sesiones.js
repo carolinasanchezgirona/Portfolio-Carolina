@@ -141,6 +141,12 @@
         referrerPolicy: "no-referrer",
       });
 
+      const contentType = response.headers.get("content-type") || "";
+      if (response.ok && !contentType.includes("application/json")) {
+        window.location.replace(ENDPOINT + "?token=" + encodeURIComponent(token));
+        return;
+      }
+
       const body = await response.json().catch(() => ({}));
       if (!response.ok) {
         sessionStorage.removeItem(SESSION_KEY);
