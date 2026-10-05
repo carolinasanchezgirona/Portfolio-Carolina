@@ -33,6 +33,7 @@ export default function AdminArticlesPage() {
             <p>Artículos de la web y publicaciones de Instagram desde un mismo lugar.</p>
           </div>
           <div className="articles-top-actions">
+            <a className="articles-secondary" href="/admin/clinica/?panel=1">Historiales</a>
             <a className="articles-secondary" href="/admin/agenda/">Agenda</a>
             <a className="articles-secondary" href="/admin/recursos/">Recursos</a>
             <a className="articles-secondary" href="/admin/preguntas/">Preguntas</a>

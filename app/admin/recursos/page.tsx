@@ -32,6 +32,7 @@ export default function AdminRecursosPage() {
             <p>Crea y prepara materiales descargables sin publicarlos hasta que el circuito de compra esté activo.</p>
           </div>
           <div className="resources-top-actions">
+            <a className="resources-secondary" href="/admin/clinica/?panel=1">Historiales</a>
             <a className="resources-secondary" href="/admin/agenda/">Agenda</a>
             <a className="resources-secondary" href="/admin/articulos/">Artículos</a>
             <a className="resources-secondary" href="/admin/preguntas/">Preguntas</a>

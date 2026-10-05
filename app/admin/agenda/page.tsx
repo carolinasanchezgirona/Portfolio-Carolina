@@ -42,7 +42,7 @@ export default function AdminAgendaPage() {
             <h1>Agenda de pacientes</h1>
           </div>
           <div className="admin-top-actions">
-            <a className="admin-secondary" href="/admin/clinica/">Clínica</a>
+            <a className="admin-secondary" href="/admin/clinica/?panel=1">Historiales</a>
             <a id="admin-articles-link" className="admin-secondary" href="/admin/articulos/">Artículos</a>
             <a className="admin-secondary" href="/admin/preguntas/">Preguntas</a>
             <a className="admin-secondary" href="/admin/recursos/">Recursos</a>

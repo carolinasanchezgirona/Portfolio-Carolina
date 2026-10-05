@@ -237,6 +237,7 @@ export default function AdminQuestionsPage() {
           <p>El texto original y el correo son privados. Solo se publica la versión revisada.</p>
         </div>
         <nav>
+          <a href="/admin/clinica/?panel=1">Historiales</a>
           <a href="/admin/agenda/">Agenda</a>
           <a href="/admin/articulos/">Artículos</a>
           <a href="/pregunta-a-carolina/" target="_blank" rel="noopener noreferrer">Ver página</a>
