@@ -44,7 +44,7 @@
     exerciseForm: $("#clinic-exercise-form"), exerciseClose: $("#clinic-exercise-close"),
     exerciseTemplateId: $("#clinic-exercise-template-id"), exercisePatientCode: $("#clinic-exercise-patient-code"),
     exerciseLibrary: $("#clinic-exercise-library"), materialSearch: $("#clinic-material-search"),
-    materialNotFound: $("#clinic-material-not-found"), materialUseSearch: $("#clinic-material-use-search"),
+    materialNotFound: $("#clinic-material-not-found"), materialUseSearch: $("#clinic-material-use-search"), materialAiCreate: $("#clinic-material-ai-create"),
     materialType: $("#clinic-material-type"), materialProcess: $("#clinic-material-process"), addMaterialLibrary: $("#clinic-add-material-library"),
     exerciseTitle: $("#clinic-exercise-title"), exerciseContent: $("#clinic-exercise-content"),
     exerciseRationale: $("#clinic-exercise-rationale"), exerciseEmail: $("#clinic-exercise-email"),
@@ -1177,6 +1177,83 @@
     if (!value) return;
     els.exerciseTitle.value = value;
     els.exerciseContent.focus();
+  });
+  els.materialAiCreate?.addEventListener("click", async () => {
+    const query = els.materialSearch?.value?.trim() || "";
+    if (!query) return;
+
+    const value = getSession();
+    if (!value?.access_token) {
+      els.exerciseMessage.textContent = "La sesión ha caducado. Vuelve a entrar en Gestión clínica.";
+      return;
+    }
+
+    els.exerciseMessage.textContent = "Comprobando la biblioteca y preparando una propuesta…";
+    els.materialAiCreate.disabled = true;
+
+    try {
+      const catalog = exerciseTemplates.map((template) => ({
+        id: template.id,
+        title: template.title,
+        summary: template.summary || "",
+        process_tags: template.process_tags || [],
+        material_type: template.material_type || "exercise"
+      }));
+
+      const response = await fetch("/api/clinical/material-draft", {
+        method: "POST",
+        headers: {
+          Authorization: "Bearer " + value.access_token,
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          query,
+          preferred_type: els.materialType?.value || "",
+          preferred_process: els.materialProcess?.value || "",
+          catalog
+        })
+      });
+
+      const body = await response.json().catch(() => ({}));
+      if (!response.ok) throw new Error(body.error || "No se ha podido comprobar la biblioteca.");
+
+      if (body.status === "existing" && body.existing_id) {
+        const existing = exerciseTemplates.find((template) => template.id === body.existing_id);
+        if (existing) {
+          if (els.materialSearch) els.materialSearch.value = "";
+          populateExerciseLibrary(existing.id);
+          populateMaterialProcessOptions((existing.process_tags || [])[0] || "");
+          if (els.materialType) els.materialType.value = existing.material_type || "exercise";
+          applyExerciseTemplate(existing);
+          els.exerciseRationale.value = existing.summary || body.reason || "";
+          els.exerciseMessage.textContent = "Ya existe un material equivalente: " + existing.title;
+          return;
+        }
+      }
+
+      const material = body.material || {};
+      els.exerciseTitle.value = material.title || query;
+      els.exerciseContent.value = material.instructions || "";
+      els.exerciseRationale.value = material.summary || body.reason || "";
+      if (els.materialType) els.materialType.value = material.material_type || "exercise";
+
+      const process = (material.process_tags || [])[0] || "";
+      populateMaterialProcessOptions(process);
+      if (process && els.materialProcess && !Array.from(els.materialProcess.options).some((option) => option.value === process)) {
+        const option = document.createElement("option");
+        option.value = process;
+        option.textContent = process;
+        els.materialProcess.append(option);
+        els.materialProcess.value = process;
+      }
+
+      els.exerciseMessage.textContent = "No estaba en la biblioteca. La IA ha preparado una propuesta. Revísala y pulsa «Añadir a la biblioteca» para incorporarla.";
+      els.exerciseContent.focus();
+    } catch (error) {
+      els.exerciseMessage.textContent = error?.message || "No se ha podido generar la propuesta.";
+    } finally {
+      els.materialAiCreate.disabled = false;
+    }
   });
   els.addMaterialLibrary?.addEventListener("click", async () => {
     const title = els.exerciseTitle.value.trim();
