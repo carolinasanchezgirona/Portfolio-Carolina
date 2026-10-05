@@ -69,7 +69,7 @@
   async function loadArticles(selectId = null) {
     const r = await fetch(`${REST_URL}/articles?select=*&order=updated_at.desc`, { headers: authHeaders(), cache: "no-store" });
     const body = await r.json().catch(() => []);
-    if (r.status === 401) { saveSession(null); showLogin(); return; }
+    if (r.status === 401) { saveSession(null); window.location.replace("/admin/agenda/?next=" + encodeURIComponent("/admin/articulos/")); return; }
     if (!r.ok) throw new Error(body.message || "No se han podido cargar los artículos.");
     articles = body;
     renderList();
@@ -340,7 +340,7 @@
     try { await signIn(els.email.value.trim(), els.password.value); els.password.value = ""; showApp(); await loadArticles(); setLoginMessage(""); }
     catch (error) { setLoginMessage(error.message); }
   });
-  els.logout?.addEventListener("click", () => { saveSession(null); showLogin(); });
+  els.logout?.addEventListener("click", () => { saveSession(null); window.location.assign("/admin/agenda/"); });
   els.newButton?.addEventListener("click", newArticle);
   els.title?.addEventListener("input", () => { if (!els.id.value) els.slug.value = slugify(els.title.value); updateLiveTools(); });
   [els.subtitle, els.excerpt, els.seoTitle, els.seoDescription, els.imageAlt, els.tags, els.ctaLabel, els.ctaUrl].forEach((el) => el?.addEventListener("input", updateLiveTools));
@@ -380,6 +380,6 @@
     session = getSession();
     const user = await currentUser();
     if (user) { showApp(); loadArticles().catch((e) => setMessage(e.message)); }
-    else { saveSession(null); showLogin(); }
+    else { saveSession(null); window.location.replace("/admin/agenda/?next=" + encodeURIComponent("/admin/articulos/")); }
   })();
 })();
