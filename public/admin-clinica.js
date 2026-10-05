@@ -1507,9 +1507,13 @@
       const material = body.material || {};
       pendingAiMaterial = material;
       els.exerciseTitle.value = material.title || query;
-      els.exerciseContent.value = material.instructions || "";
-      els.exerciseRationale.value = material.summary || body.reason || "";
       if (els.materialType) els.materialType.value = material.material_type || "exercise";
+      const aiPatientDocument = material.patient_document && typeof material.patient_document === "object" && !Array.isArray(material.patient_document)
+        ? { ...materialPatientDefaults(material.material_type || "exercise", material.summary || "", material.instructions || ""), ...material.patient_document, instructions: material.patient_document.instructions || material.instructions || "" }
+        : materialPatientDefaults(material.material_type || "exercise", material.summary || "", material.instructions || "");
+      els.exerciseContent.value = aiPatientDocument.instructions || material.instructions || "";
+      fillPatientDocument(aiPatientDocument);
+      els.exerciseRationale.value = material.summary || body.reason || "";
 
       const process = (material.process_tags || [])[0] || "";
       populateMaterialProcessOptions(process);
@@ -1538,6 +1542,10 @@
       els.exerciseMessage.textContent = "Para añadirlo a la biblioteca indica título, contenido y categoría.";
       return;
     }
+    if (!els.exerciseIntroduction.value.trim() || !els.exerciseWhy.value.trim()) {
+      els.exerciseMessage.textContent = "Completa la introducción y «Por qué hacemos este ejercicio» antes de incorporarlo.";
+      return;
+    }
     els.exerciseMessage.textContent = "Añadiendo a la biblioteca…";
     els.addMaterialLibrary.disabled = true;
     try {
@@ -1556,9 +1564,12 @@
           status: "active",
           material_type: materialType,
           phase: pendingAiMaterial?.phase || (materialType === "psychoeducation" ? "orientation" : "practice"),
-          objectives: Array.isArray(pendingAiMaterial?.objectives) ? pendingAiMaterial.objectives : [],
+          objectives: Array.isArray(pendingAiMaterial?.objectives) && pendingAiMaterial.objectives.length
+            ? pendingAiMaterial.objectives
+            : els.exerciseObjective.value.trim() ? [els.exerciseObjective.value.trim()] : [],
           cautions: Array.isArray(pendingAiMaterial?.cautions) ? pendingAiMaterial.cautions : [],
           sequence_rank: Number.isFinite(Number(pendingAiMaterial?.sequence_rank)) ? Number(pendingAiMaterial.sequence_rank) : 50,
+          patient_document: patientDocumentFromForm(materialType),
           patient_facing: true
         })
       });
