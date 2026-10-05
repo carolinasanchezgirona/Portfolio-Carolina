@@ -758,7 +758,7 @@
     } catch (error) { setLoginMessage(error.message); }
   });
 
-  els.logout?.addEventListener("click", () => { saveSession(null); currentUser = null; appointments = []; showLogin(); });
+  els.logout?.addEventListener("click", () => { saveSession(null); currentUser = null; appointments = []; window.location.assign("/admin/clinica/acceso/"); });
   els.accessButton?.addEventListener("click", openAccess);
   els.newButton?.addEventListener("click", () => openNew(todayKey()));
   els.todayNew?.addEventListener("click", () => openNew(todayKey()));
@@ -879,7 +879,7 @@
     } else {
       saveSession(null);
       currentUser = null;
-      showLogin();
+      window.location.replace("/admin/clinica/acceso/?next=" + encodeURIComponent("/admin/agenda/"));
     }
   })();
 })();

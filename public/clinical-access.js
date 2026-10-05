@@ -45,7 +45,8 @@
     try {
       await login();
       password.value = "";
-      window.location.assign("/admin/clinica/?panel=1");
+      const next = new URL(window.location.href).searchParams.get("next");
+      window.location.assign(next && next.startsWith("/admin/") ? next : "/admin/clinica/?panel=1");
     } catch (error) {
       message.textContent = error?.message || "No se ha podido iniciar sesión.";
       submit.disabled = false;
@@ -54,10 +55,11 @@
 
   (async function init() {
     const user = await currentUser();
-    if (user) {
-      window.location.replace("/admin/clinica/?panel=1");
+    if (!user) {
+      sessionStorage.removeItem(SESSION_KEY);
       return;
     }
-    window.location.replace("/admin/agenda/?next=" + encodeURIComponent("/admin/clinica/?panel=1"));
+    const next = new URL(window.location.href).searchParams.get("next");
+    window.location.replace(next && next.startsWith("/admin/") ? next : "/admin/clinica/?panel=1");
   })();
 })();

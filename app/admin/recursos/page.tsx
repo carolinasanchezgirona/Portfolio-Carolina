@@ -156,7 +156,7 @@ export default function AdminRecursosPage() {
         </div>
       </section>
 
-      <Script src="/admin-resources.js?v=20260920-2" strategy="afterInteractive" />
+      <Script src="/admin-resources.js?v=20261005-single-auth-2" strategy="afterInteractive" />
     </main>
   );
 }

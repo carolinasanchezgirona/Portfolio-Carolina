@@ -48,7 +48,7 @@
       fetch(`${REST_URL}/digital_resources?select=*&order=updated_at.desc`,{headers:authHeaders(),cache:"no-store"}),
       fetch(`${REST_URL}/articles?select=id,title,status&order=updated_at.desc`,{headers:authHeaders(),cache:"no-store"})
     ]);
-    if(rr.status===401){saveSession(null);showLogin();return;}
+    if(rr.status===401){saveSession(null);window.location.replace("/admin/clinica/acceso/?next="+encodeURIComponent("/admin/recursos/"));return;}
     const rb=await rr.json().catch(()=>[]), ab=await ar.json().catch(()=>[]);
     if(!rr.ok)throw new Error(rb.message||"No se han podido cargar los recursos.");
     if(!ar.ok)throw new Error(ab.message||"No se han podido cargar los artículos.");
@@ -138,7 +138,7 @@
     const path=await upload("resource-files",file,false);els.filePath.value=path;els.fileState.textContent=`Archivo privado: ${path}`;setMessage("Archivo subido de forma privada.");
   }
   els.loginForm?.addEventListener("submit",async e=>{e.preventDefault();setLoginMessage("Entrando…");try{await signIn(els.email.value.trim(),els.password.value);els.password.value="";showApp();await loadData();setLoginMessage("");}catch(err){setLoginMessage(err.message);}});
-  els.logout?.addEventListener("click",()=>{saveSession(null);showLogin();});
+  els.logout?.addEventListener("click",()=>{saveSession(null);window.location.assign("/admin/clinica/acceso/");});
   els.newButton?.addEventListener("click",newResource);
   els.title?.addEventListener("input",()=>{if(!els.id.value)els.slug.value=slugify(els.title.value);});
   els.coverFile?.addEventListener("change",()=>{const f=els.coverFile.files?.[0];els.coverFile.value="";if(f)uploadCover(f).catch(e=>setMessage(e.message));});
@@ -149,5 +149,5 @@
   els.archive?.addEventListener("click",()=>archiveResource().catch(e=>setMessage(e.message)));
   els.deleteButton?.addEventListener("click",()=>deleteResource().catch(e=>setMessage(e.message)));
   document.querySelectorAll(".resources-filters button").forEach(b=>b.addEventListener("click",()=>{activeFilter=b.dataset.filter;document.querySelectorAll(".resources-filters button").forEach(x=>x.classList.toggle("active",x===b));renderList();}));
-  (async function init(){session=getSession();const user=await currentUser();if(user){showApp();loadData().catch(e=>setMessage(e.message));}else{saveSession(null);showLogin();}})();
+  (async function init(){session=getSession();const user=await currentUser();if(user){showApp();loadData().catch(e=>setMessage(e.message));}else{saveSession(null);window.location.replace("/admin/clinica/acceso/?next="+encodeURIComponent("/admin/recursos/"));}})();
 })();

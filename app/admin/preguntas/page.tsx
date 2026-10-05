@@ -85,7 +85,10 @@ export default function AdminQuestionsPage() {
 
   useEffect(() => {
     const activeSession = storedSession();
-    if (!activeSession?.access_token) { setChecking(false); return; }
+    if (!activeSession?.access_token) {
+      window.location.replace("/admin/clinica/acceso/?next=" + encodeURIComponent("/admin/preguntas/"));
+      return;
+    }
     fetch(`${SUPABASE_URL}/auth/v1/user`, {
       headers: { apikey: SUPABASE_PUBLISHABLE_KEY, Authorization: `Bearer ${activeSession.access_token}` },
       cache: "no-store",
@@ -95,7 +98,10 @@ export default function AdminQuestionsPage() {
       if (user.id !== ADMIN_USER_ID) throw new Error();
       setSession(activeSession);
       await loadQuestions(activeSession);
-    }).catch(() => sessionStorage.removeItem(SESSION_KEY)).finally(() => setChecking(false));
+    }).catch(() => {
+      sessionStorage.removeItem(SESSION_KEY);
+      window.location.replace("/admin/clinica/acceso/?next=" + encodeURIComponent("/admin/preguntas/"));
+    }).finally(() => setChecking(false));
   }, [loadQuestions]);
 
   const counts = useMemo(() => questions.reduce<Record<string, number>>((acc, item) => {
@@ -214,26 +220,13 @@ export default function AdminQuestionsPage() {
     sessionStorage.removeItem(SESSION_KEY);
     setSession(null);
     setSelected(null);
+    window.location.assign("/admin/clinica/acceso/");
   }
 
   if (checking) return <main className="questions-admin-loading">Cargando el buzón privado…</main>;
 
-  if (!session) return (
-    <main className="questions-admin-page">
-      <section className="questions-admin-login-shell">
-        <form className="questions-admin-login" onSubmit={signIn}>
-          <p className="questions-admin-eyebrow">Área privada</p>
-          <h1>Preguntas</h1>
-          <p>Revisa, anonimiza y responde antes de publicar.</p>
-          <label>Correo<input name="email" type="email" autoComplete="username" required /></label>
-          <label>Contraseña<input name="password" type="password" autoComplete="current-password" required /></label>
-          <p className="questions-admin-message" role="status">{loginMessage}</p>
-          <button className="questions-admin-primary" type="submit">Entrar</button>
-          <a href="/admin/agenda/">Volver a agenda</a>
-        </form>
-      </section>
-    </main>
-  );
+  if (!session) return <main className="questions-admin-loading">Redirigiendo al acceso de Gestión Clínica…</main>;
+
 
   return (
     <main className="questions-admin-page">
