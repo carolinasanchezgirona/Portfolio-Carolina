@@ -296,7 +296,7 @@ export default function AdminClinicaPage() {
             <div>
               <p className="clinic-eyebrow">Procesos observados o referidos</p>
               <div id="clinic-process-markers" className="clinic-marker-grid">
-                {["Rumiación", "Preocupación", "Intolerancia a la incertidumbre", "Evitación", "Comprobación", "Insomnio", "Activación fisiológica", "Bajo estado de ánimo", "Regulación emocional", "Autocrítica", "Autoestima", "Perfeccionismo", "Necesidad de aprobación", "Asertividad", "Límites interpersonales", "Activación conductual", "Procrastinación", "Resolución de problemas", "Sexualidad", "Adicciones", "Habilidades sociales infantil", "TDAH adulto", "TDAH infantil", "TEA infantil", "TEA adulto"].map((item) => (
+                {["Rumiación", "Preocupación", "Intolerancia a la incertidumbre", "Evitación", "Comprobación", "Insomnio", "Activación fisiológica", "Bajo estado de ánimo", "Regulación emocional", "Autocrítica", "Autoestima", "Perfeccionismo", "Necesidad de aprobación", "Asertividad", "Límites interpersonales", "Activación conductual", "Procrastinación", "Resolución de problemas", "Sexualidad", "Adicciones", "Habilidades sociales infantil", "TDAH adulto", "TDAH infantil", "TEA infantil", "TEA adulto", "Duelo", "Trauma", "Pareja", "Dependencia emocional", "Celos", "Ira", "TOC", "Pánico", "Ansiedad social", "Fobias", "Sueño", "Dolor crónico", "Alimentación", "Habilidades parentales", "Neuropsicología"].map((item) => (
                   <label key={item}><input type="checkbox" value={item} />{item}</label>
                 ))}
               </div>
