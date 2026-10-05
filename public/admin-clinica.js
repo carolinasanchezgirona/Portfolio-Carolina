@@ -111,6 +111,7 @@
   let clinicalSessions = [];
   let clinicalGoals = [];
   let exerciseTemplates = [];
+  let pendingAiMaterial = null;
   let exerciseAssignments = [];
   let clinicalReports = [];
   let clinicalDocuments = [];
@@ -1175,6 +1176,7 @@
   els.materialUseSearch?.addEventListener("click", () => {
     const value = els.materialSearch?.value?.trim() || "";
     if (!value) return;
+    pendingAiMaterial = null;
     els.exerciseTitle.value = value;
     els.exerciseContent.focus();
   });
@@ -1232,6 +1234,7 @@
       }
 
       const material = body.material || {};
+      pendingAiMaterial = material;
       els.exerciseTitle.value = material.title || query;
       els.exerciseContent.value = material.instructions || "";
       els.exerciseRationale.value = material.summary || body.reason || "";
@@ -1272,23 +1275,26 @@
         headers: { Prefer: "return=representation" },
         body: JSON.stringify({
           title,
-          summary: els.exerciseRationale.value.trim() || "Material incorporado manualmente a la biblioteca clínica.",
+          summary: els.exerciseRationale.value.trim() || pendingAiMaterial?.summary || "Material incorporado manualmente a la biblioteca clínica.",
           instructions: content,
           process_tags: [process],
-          duration_minutes: materialType === "psychoeducation" ? 10 : null,
-          burden: "low",
+          duration_minutes: Number.isFinite(Number(pendingAiMaterial?.duration_minutes))
+            ? Number(pendingAiMaterial.duration_minutes)
+            : materialType === "psychoeducation" ? 10 : null,
+          burden: ["low", "medium", "high"].includes(pendingAiMaterial?.burden) ? pendingAiMaterial.burden : "low",
           status: "active",
           material_type: materialType,
-          phase: materialType === "psychoeducation" ? "orientation" : "practice",
-          objectives: [],
-          cautions: [],
-          sequence_rank: 50,
+          phase: pendingAiMaterial?.phase || (materialType === "psychoeducation" ? "orientation" : "practice"),
+          objectives: Array.isArray(pendingAiMaterial?.objectives) ? pendingAiMaterial.objectives : [],
+          cautions: Array.isArray(pendingAiMaterial?.cautions) ? pendingAiMaterial.cautions : [],
+          sequence_rank: Number.isFinite(Number(pendingAiMaterial?.sequence_rank)) ? Number(pendingAiMaterial.sequence_rank) : 50,
           patient_facing: true
         })
       });
       const saved = rows?.[0];
       if (!saved) throw new Error("No se ha podido recuperar el material creado.");
       exerciseTemplates = [...exerciseTemplates, saved];
+      pendingAiMaterial = null;
       if (els.materialSearch) els.materialSearch.value = "";
       populateExerciseLibrary(saved.id);
       populateMaterialProcessOptions(process);
