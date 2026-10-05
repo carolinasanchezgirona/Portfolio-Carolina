@@ -991,3 +991,12 @@
 .clinic-material-not-found strong{color:#173A5E;font-size:.78rem}
 .clinic-material-not-found-actions{display:flex;gap:7px;flex-wrap:wrap;justify-content:flex-end}
 @media(max-width:700px){.clinic-material-not-found{align-items:stretch;flex-direction:column}.clinic-material-not-found-actions{justify-content:flex-start}}
+
+.clinic-personal-admin-section{margin:16px 0}
+.clinic-record-section-body input,.clinic-record-section-body select{
+  width:100%;min-height:38px;padding:8px 10px;border:1px solid #d3dde4;border-radius:7px;background:#fff;color:#263f55;font:inherit
+}
+.clinic-record-section-body input:focus,.clinic-record-section-body select:focus{
+  outline:none;border-color:#6fa9bd;box-shadow:0 0 0 3px rgba(8,166,160,.08)
+}
+.clinic-record-section-body input[readonly]{background:#f1f4f6;color:#647786}
