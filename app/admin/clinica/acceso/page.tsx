@@ -52,7 +52,7 @@ export default function ClinicalAccessPage() {
         </form>
       </section>
 
-      <Script src="/clinical-access.js?v=20261005-unified-login-2" strategy="afterInteractive" />
+      <Script src="/clinical-access.js?v=20261005-single-auth-3" strategy="afterInteractive" />
     </main>
   );
 }
