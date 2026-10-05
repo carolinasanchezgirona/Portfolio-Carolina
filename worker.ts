@@ -402,6 +402,133 @@ async function clinicalStructureRequest(request: Request, env: Env): Promise<Res
   }
 }
 
+
+async function clinicalMaterialDraftRequest(request: Request, env: Env): Promise<Response> {
+  if (request.method !== "POST") return editorialJson({ error: "Método no permitido." }, 405);
+  if (!await verifyEditorialOwner(request)) return editorialJson({ error: "Sesión no autorizada." }, 401);
+  if (!env.OPENAI_API_KEY) return editorialJson({ error: "La generación clínica asistida no está configurada." }, 503);
+  if (Number(request.headers.get("content-length") || "0") > 140000) return editorialJson({ error: "La biblioteca enviada es demasiado grande para esta comprobación." }, 413);
+
+  let data: Record<string, unknown>;
+  try { data = await request.json() as Record<string, unknown>; }
+  catch { return editorialJson({ error: "Solicitud no válida." }, 400); }
+
+  const query = editorialText(data.query, 300);
+  const preferredType = data.preferred_type === "psychoeducation" ? "psychoeducation" : data.preferred_type === "exercise" ? "exercise" : "";
+  const preferredProcess = editorialText(data.preferred_process, 120);
+  const rawCatalog = Array.isArray(data.catalog) ? data.catalog.slice(0, 500) : [];
+  if (query.length < 3) return editorialJson({ error: "Escribe qué material necesitas." }, 400);
+
+  const catalog = rawCatalog.map((item) => {
+    const record = item && typeof item === "object" ? item as Record<string, unknown> : {};
+    return {
+      id: editorialText(record.id, 80),
+      title: editorialText(record.title, 220),
+      summary: editorialText(record.summary, 350),
+      process_tags: Array.isArray(record.process_tags)
+        ? record.process_tags.slice(0, 6).map((tag) => editorialText(tag, 100)).filter(Boolean)
+        : [],
+      material_type: record.material_type === "psychoeducation" ? "psychoeducation" : "exercise"
+    };
+  }).filter((item) => item.id && item.title);
+
+  const allowedPhases = ["orientation","assessment","skills","practice","exposure","consolidation","relapse_prevention"];
+  const allowedBurden = ["low","medium","high"];
+  const system = [
+    "Eres un asistente de biblioteca clínica para una psicóloga sanitaria y neuropsicóloga en España.",
+    "Debes decidir si la petición del profesional ya está cubierta por un material conceptualmente equivalente de la biblioteca existente.",
+    "No consideres duplicado solo por compartir palabras: debe cubrir sustancialmente el mismo objetivo clínico y uso.",
+    "Si ya existe, devuelve status='existing' y el id exacto del material más equivalente.",
+    "Si falta, crea UN material nuevo, listo para que la profesional lo revise antes de incorporarlo.",
+    "El contenido debe ser clínicamente prudente, claro, útil para paciente y no diagnosticar por sí solo.",
+    "No sustituyas valoración médica o especializada cuando el tema pueda requerirla.",
+    "En trauma prioriza estabilización salvo que la petición solicite explícitamente otra fase y sea apropiado.",
+    "En TOC evita reaseguro y discusiones para demostrar que una obsesión es falsa.",
+    "En adicciones no indiques retirada brusca de sustancias con posible dependencia física.",
+    "En alimentación evita restricciones, conteos o instrucciones que puedan reforzar un TCA.",
+    "En TEA usa un enfoque neuroafirmativo y evita normalización forzada o entrenamiento de enmascaramiento.",
+    "Devuelve SOLO JSON válido.",
+    "Si existe: {status:'existing',existing_id:string,reason:string}.",
+    "Si falta: {status:'new',reason:string,material:{title:string,summary:string,instructions:string,process_tags:string[],material_type:'exercise'|'psychoeducation',phase:string,duration_minutes:number|null,burden:'low'|'medium'|'high',objectives:string[],cautions:string[],sequence_rank:number}}.",
+    "Las instrucciones deben estar dirigidas al paciente cuando sea material enviable.",
+    "La ficha nueva debe complementar la biblioteca, no repetirla con un título distinto."
+  ].join("\n");
+
+  try {
+    const response = await fetch("https://api.openai.com/v1/chat/completions", {
+      method: "POST",
+      headers: { Authorization: "Bearer " + env.OPENAI_API_KEY, "Content-Type": "application/json" },
+      body: JSON.stringify({
+        model: env.OPENAI_TEXT_MODEL || "gpt-4.1-mini",
+        temperature: 0.2,
+        response_format: { type: "json_object" },
+        messages: [
+          { role: "system", content: system },
+          { role: "user", content: JSON.stringify({
+            peticion: query,
+            tipo_preferido: preferredType || null,
+            proceso_preferido: preferredProcess || null,
+            biblioteca: catalog
+          }) }
+        ]
+      })
+    });
+
+    const result = await response.json() as { choices?: Array<{ message?: { content?: string } }> };
+    if (!response.ok || !result.choices?.[0]?.message?.content) {
+      console.error("Clinical material generation failure", response.status);
+      return editorialJson({ error: response.status === 429 ? "Se ha alcanzado el límite de generación. Prueba de nuevo más tarde." : "No se ha podido comprobar o generar el material." }, response.status === 429 ? 429 : 502);
+    }
+
+    const raw = JSON.parse(result.choices[0].message.content) as Record<string, unknown>;
+    if (raw.status === "existing") {
+      const existingId = editorialText(raw.existing_id, 80);
+      if (catalog.some((item) => item.id === existingId)) {
+        return editorialJson({
+          status: "existing",
+          existing_id: existingId,
+          reason: editorialText(raw.reason, 700)
+        });
+      }
+    }
+
+    const materialRaw = raw.material && typeof raw.material === "object" && !Array.isArray(raw.material)
+      ? raw.material as Record<string, unknown>
+      : {};
+    const materialType = materialRaw.material_type === "psychoeducation" ? "psychoeducation" : "exercise";
+    const phaseCandidate = editorialText(materialRaw.phase, 80);
+    const burdenCandidate = editorialText(materialRaw.burden, 30);
+    const durationValue = Number(materialRaw.duration_minutes);
+    const sequenceValue = Number(materialRaw.sequence_rank);
+
+    const material = {
+      title: editorialText(materialRaw.title, 220) || query,
+      summary: editorialText(materialRaw.summary, 700),
+      instructions: editorialText(materialRaw.instructions, 7000),
+      process_tags: Array.isArray(materialRaw.process_tags)
+        ? materialRaw.process_tags.slice(0, 5).map((tag) => editorialText(tag, 100)).filter(Boolean)
+        : preferredProcess ? [preferredProcess] : [],
+      material_type: materialType,
+      phase: allowedPhases.includes(phaseCandidate) ? phaseCandidate : materialType === "psychoeducation" ? "orientation" : "practice",
+      duration_minutes: Number.isFinite(durationValue) && durationValue > 0 && durationValue <= 180 ? Math.round(durationValue) : null,
+      burden: allowedBurden.includes(burdenCandidate) ? burdenCandidate : "low",
+      objectives: Array.isArray(materialRaw.objectives)
+        ? materialRaw.objectives.slice(0, 8).map((item) => editorialText(item, 300)).filter(Boolean)
+        : [],
+      cautions: Array.isArray(materialRaw.cautions)
+        ? materialRaw.cautions.slice(0, 8).map((item) => editorialText(item, 350)).filter(Boolean)
+        : [],
+      sequence_rank: Number.isFinite(sequenceValue) ? Math.max(1, Math.min(100, Math.round(sequenceValue))) : 50
+    };
+
+    if (!material.instructions) return editorialJson({ error: "La IA no ha generado contenido suficiente para revisar." }, 502);
+    return editorialJson({ status: "new", reason: editorialText(raw.reason, 700), material });
+  } catch (error) {
+    console.error("Clinical material request failed", error instanceof Error ? error.name : "Unknown");
+    return editorialJson({ error: "No se ha podido completar la comprobación de la biblioteca." }, 502);
+  }
+}
+
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
     const url = new URL(request.url);
@@ -421,6 +548,7 @@ export default {
     if (url.pathname === "/api/editorial/generate" || url.pathname === "/api/editorial/generate/") return editorialRequest(request, env, "content");
     if (url.pathname === "/api/editorial/image" || url.pathname === "/api/editorial/image/") return editorialRequest(request, env, "image");
     if (url.pathname === "/api/clinical/structure" || url.pathname === "/api/clinical/structure/") return clinicalStructureRequest(request, env);
+    if (url.pathname === "/api/clinical/material-draft" || url.pathname === "/api/clinical/material-draft/") return clinicalMaterialDraftRequest(request, env);
     return env.ASSETS.fetch(request);
   },
 };
