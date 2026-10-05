@@ -149,8 +149,8 @@
     if (body.user?.id !== ALLOWED_USER_ID) throw new Error("Esta cuenta no tiene acceso al área clínica.");
     saveSession(body);
   }
-  function showLogin() { els.app.hidden = true; els.login.hidden = false; }
-  function showApp() { els.login.hidden = true; els.app.hidden = false; }
+  function showLogin() { window.location.replace("/admin/clinica/acceso/"); }
+  function showApp() { if (els.app) els.app.hidden = false; }
   function setMessage(text) { els.status.textContent = text || ""; }
   function create(tag, className, text) {
     const node = document.createElement(tag);
@@ -1018,17 +1018,7 @@
     if (name === "patients") els.patientSearch.focus();
   }
 
-  els.loginForm.addEventListener("submit", async (event) => {
-    event.preventDefault();
-    els.loginMessage.textContent = "Comprobando acceso…";
-    try {
-      await signIn(els.email.value.trim(), els.password.value);
-      els.password.value = "";
-      els.loginMessage.textContent = "";
-      window.location.assign("/admin/clinica/?panel=1");
-    } catch (error) { els.loginMessage.textContent = error.message; }
-  });
-  els.logout.addEventListener("click", () => { saveSession(null); window.location.assign("/admin/clinica/"); });
+  els.logout.addEventListener("click", () => { saveSession(null); window.location.assign("/admin/clinica/acceso/"); });
   els.refresh.addEventListener("click", () => loadData().catch((error) => setMessage(error.message)));
   els.viewToday.addEventListener("click", () => setView("today"));
   els.viewPatients.addEventListener("click", () => setView("patients"));
