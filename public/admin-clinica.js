@@ -1606,6 +1606,12 @@
     applyExerciseTemplate(template);
     if (template) {
       els.exerciseRationale.value = template.summary || "";
+      const document = normalizedPatientDocument(template);
+      if (!document.example) {
+        els.exerciseMessage.textContent = "Este material todavía no tiene un ejemplo trabajado. Puedes usar «Completar ficha con IA», revisarlo y actualizar la biblioteca.";
+      } else {
+        els.exerciseMessage.textContent = "";
+      }
     }
   });
   els.materialSearch?.addEventListener("input", () => {
