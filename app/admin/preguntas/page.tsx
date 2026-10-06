@@ -62,6 +62,7 @@ export default function AdminQuestionsPage() {
   const [message, setMessage] = useState("");
   const [loginMessage, setLoginMessage] = useState("");
   const [busy, setBusy] = useState(false);
+  const [aiReview, setAiReview] = useState("");
 
   const authHeaders = useCallback((activeSession = session) => ({
     apikey: SUPABASE_PUBLISHABLE_KEY,
@@ -182,6 +183,38 @@ export default function AdminQuestionsPage() {
     patchQuestion(editablePayload(), "Cambios guardados.");
   }
 
+  async function proposeWithAi() {
+    if (!selected || !session) return;
+    setBusy(true);
+    setAiReview("");
+    setMessage("Preparando propuesta con IA…");
+    try {
+      const response = await fetch("/api/questions/draft", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${session.access_token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ question: selected.question_text }),
+      });
+      const result = await response.json().catch(() => ({}));
+      if (!response.ok) throw new Error(result.error || "No se ha podido preparar la propuesta.");
+      setSelected((current) => current ? {
+        ...current,
+        question_public: result.question_public || current.question_public,
+        answer: result.answer || current.answer,
+        category: result.category || current.category,
+        anchor_slug: current.anchor_slug || (result.question_public ? slugify(result.question_public) : null),
+      } : current);
+      setAiReview(result.review_note || "Propuesta generada. Revisa anonimización, contenido clínico y tono antes de guardar o publicar.");
+      setMessage("Propuesta preparada. No se ha guardado ni publicado todavía.");
+    } catch (error) {
+      setMessage(error instanceof Error ? error.message : "No se ha podido preparar la propuesta.");
+    } finally {
+      setBusy(false);
+    }
+  }
+
   function publish() {
     if (!selected) return;
     const publicQuestion = selected.question_public?.trim() || "";
@@ -257,7 +290,7 @@ export default function AdminQuestionsPage() {
           </div>
           <div className="questions-admin-list">
             {visible.map((item) => (
-              <button type="button" key={item.id} className={selected?.id === item.id ? "active" : ""} onClick={() => { setSelected(item); setMessage(""); }}>
+              <button type="button" key={item.id} className={selected?.id === item.id ? "active" : ""} onClick={() => { setSelected(item); setMessage(""); setAiReview(""); }}>
                 <small><i className={item.status} />{statusLabels[item.status]} · {new Date(item.created_at).toLocaleDateString("es-ES")}</small>
                 <strong>{item.question_text}</strong>
               </button>
@@ -274,6 +307,7 @@ export default function AdminQuestionsPage() {
               <div className="questions-admin-editor-heading">
                 <div><p className="questions-admin-eyebrow">Revisión</p><h2>{statusLabels[selected.status]}</h2></div>
                 <div className="questions-admin-actions">
+                  <button type="button" onClick={proposeWithAi} disabled={busy}>Proponer con IA</button>
                   <button type="button" onClick={saveDraft} disabled={busy}>Guardar</button>
                   <button className="primary" type="button" onClick={publish} disabled={busy}>Publicar</button>
                 </div>
@@ -294,6 +328,7 @@ export default function AdminQuestionsPage() {
                 <div className="questions-admin-section-heading"><h3>Versión pública</h3><span>Revisa y elimina cualquier dato identificativo</span></div>
                 <label>Pregunta anonimizada<textarea rows={4} value={selected.question_public || ""} maxLength={1200} onChange={(event) => updateSelected("question_public", event.target.value)} /></label>
                 <label>Respuesta<textarea rows={12} value={selected.answer || ""} maxLength={8000} onChange={(event) => updateSelected("answer", event.target.value)} placeholder="Respuesta divulgativa, comprensible y prudente…" /></label>
+                {aiReview ? <p className="questions-admin-ai-review" role="note"><strong>Revisión IA:</strong> {aiReview}</p> : null}
                 <div className="questions-admin-two-cols">
                   <label>Tema<select value={selected.category} onChange={(event) => updateSelected("category", event.target.value)}>{categories.map(([value, label]) => <option key={value} value={value}>{label}</option>)}</select></label>
                   <label>Ancla URL<input value={selected.anchor_slug || ""} onChange={(event) => updateSelected("anchor_slug", slugify(event.target.value))} placeholder="se-genera-al-publicar" /></label>
