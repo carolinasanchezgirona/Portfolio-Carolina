@@ -1025,7 +1025,7 @@
 .clinic-inline-field span{color:#71838e;font-size:.78rem}
 .clinic-material-actions{flex-wrap:wrap}
 .clinic-exercise-card{gap:12px}
-.clinic-exercise-card .clinic-material-status{display:flex;gap:6px;flex-wrap:wrap;margin-top:7px}
+.clinic-material-status{display:flex;gap:6px;flex-wrap:wrap;margin-top:7px}
 .clinic-material-state{display:inline-flex;align-items:center;min-height:24px;padding:3px 8px;border-radius:999px;background:#eef4f8;color:#496577;font-size:.7rem;font-weight:700}
 .clinic-material-state.opened{background:#e8f6f2;color:#216556}
 .clinic-material-state.discuss{background:#fff1d9;color:#805c13}
