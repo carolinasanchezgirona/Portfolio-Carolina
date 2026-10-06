@@ -133,8 +133,11 @@ export default function AdminClinicaPage() {
             <button id="clinic-print-history" className="clinic-secondary" type="button">Imprimir historial clínico</button>
             <button id="clinic-new-report" className="clinic-primary" type="button">Generar informe</button>
             <button id="clinic-archive-patient" className="clinic-text" type="button">Archivar ficha</button>
-            <button id="clinic-delete-patient" className="clinic-danger" type="button">Eliminar ficha creada por error</button>
+            <button id="clinic-delete-patient" className="clinic-danger" type="button">Eliminar paciente</button>
           </div>
+          <p id="clinic-delete-patient-note" className="clinic-record-action-note">
+            Eliminar solo se usa para fichas creadas por error y sin actividad clínica. Si la ficha ya contiene historia, sesiones o documentos, utiliza Archivar.
+          </p>
 
           <details className="clinic-record-section clinic-personal-admin-section" open>
             <summary><span>Datos personales y administrativos</span><small>Identificación, contacto y gestión asistencial</small></summary>
@@ -516,7 +519,7 @@ export default function AdminClinicaPage() {
         </form>
       </dialog>
 
-      <Script src="/admin-clinica.js?v=20261006-patient-delete-intake-3" strategy="afterInteractive" />
+      <Script src="/admin-clinica.js?v=20261006-clinical-fix-4" strategy="afterInteractive" />
       <Script src="/clinical-smart-intake.js?v=20261005-smart-state-5" strategy="afterInteractive" />
       <Script src="/admin-clinica-audit-fixes.js?v=20260915-1" strategy="afterInteractive" />
     </main>
