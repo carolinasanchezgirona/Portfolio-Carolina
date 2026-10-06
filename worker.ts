@@ -1,6 +1,8 @@
 interface Env {
   STRIPE_WEBHOOK_SECRET: string;
   STRIPE_WEBHOOK_SECRET_TEST?: string;
+  STRIPE_SECRET_KEY?: string;
+  SUPABASE_SERVICE_ROLE_KEY?: string;
   OPENAI_API_KEY?: string;
   OPENAI_TEXT_MODEL?: string;
   OPENAI_CLINICAL_MODEL?: string;
@@ -11,6 +13,239 @@ interface Env {
 }
 
 const encoder = new TextEncoder();
+
+const RESOURCE_SUPABASE = "https://grgyvdxkjdstdyumdfyg.supabase.co";
+const RESOURCE_PUBLISHABLE = "sb_publishable_b2MRfP0bPti87V2FXCzHGw_Y9vvcbii";
+
+function resourceJson(payload: unknown, status = 200): Response {
+  return Response.json(payload, { status, headers: { "Cache-Control": "no-store", "X-Content-Type-Options": "nosniff" } });
+}
+
+function serviceHeaders(env: Env, extra: Record<string, string> = {}): Record<string, string> {
+  return {
+    apikey: env.SUPABASE_SERVICE_ROLE_KEY || "",
+    Authorization: `Bearer ${env.SUPABASE_SERVICE_ROLE_KEY || ""}`,
+    "Content-Type": "application/json",
+    ...extra,
+  };
+}
+
+async function sha256Hex(value: string): Promise<string> {
+  const digest = new Uint8Array(await crypto.subtle.digest("SHA-256", encoder.encode(value)));
+  return Array.from(digest, (b) => b.toString(16).padStart(2, "0")).join("");
+}
+
+function randomToken(bytes = 32): string {
+  const data = new Uint8Array(bytes);
+  crypto.getRandomValues(data);
+  return Array.from(data, (b) => b.toString(16).padStart(2, "0")).join("");
+}
+
+async function fetchPublishedResource(resourceId: string): Promise<Record<string, unknown> | null> {
+  const select = "id,title,slug,price_cents,status,file_path,format_label";
+  const url = `${RESOURCE_SUPABASE}/rest/v1/digital_resources?select=${encodeURIComponent(select)}&id=eq.${encodeURIComponent(resourceId)}&status=eq.published&limit=1`;
+  const response = await fetch(url, { headers: { apikey: RESOURCE_PUBLISHABLE }, cache: "no-store" });
+  if (!response.ok) return null;
+  const rows = await response.json() as Record<string, unknown>[];
+  return Array.isArray(rows) ? rows[0] || null : null;
+}
+
+async function stripeRequest(env: Env, path: string, init: RequestInit = {}): Promise<Response> {
+  if (!env.STRIPE_SECRET_KEY) return new Response("Stripe not configured", { status: 503 });
+  const headers = new Headers(init.headers || {});
+  headers.set("Authorization", `Bearer ${env.STRIPE_SECRET_KEY}`);
+  return fetch(`https://api.stripe.com/v1${path}`, { ...init, headers });
+}
+
+async function upsertResourceOrder(env: Env, session: Record<string, unknown>): Promise<void> {
+  if (!env.SUPABASE_SERVICE_ROLE_KEY) throw new Error("SUPABASE_SERVICE_ROLE_KEY missing");
+  const metadata = (session.metadata && typeof session.metadata === "object") ? session.metadata as Record<string, unknown> : {};
+  const resourceId = typeof metadata.resource_id === "string" ? metadata.resource_id : "";
+  const sessionId = typeof session.id === "string" ? session.id : "";
+  if (!resourceId || !sessionId) return;
+  const customerDetails = (session.customer_details && typeof session.customer_details === "object") ? session.customer_details as Record<string, unknown> : {};
+  const paymentIntent = typeof session.payment_intent === "string" ? session.payment_intent : null;
+  const amount = Number(session.amount_total || 0);
+  const payload = {
+    resource_id: resourceId,
+    stripe_session_id: sessionId,
+    stripe_payment_intent_id: paymentIntent,
+    customer_email: typeof customerDetails.email === "string" ? customerDetails.email : null,
+    amount_total: Number.isFinite(amount) ? Math.round(amount) : 0,
+    currency: typeof session.currency === "string" ? session.currency : "eur",
+    payment_status: typeof session.payment_status === "string" ? session.payment_status : "unpaid",
+    livemode: Boolean(session.livemode),
+    paid_at: session.payment_status === "paid" || session.payment_status === "no_payment_required" ? new Date().toISOString() : null,
+    updated_at: new Date().toISOString(),
+  };
+  const response = await fetch(`${RESOURCE_SUPABASE}/rest/v1/digital_resource_orders?on_conflict=stripe_session_id`, {
+    method: "POST",
+    headers: serviceHeaders(env, { Prefer: "resolution=merge-duplicates,return=minimal" }),
+    body: JSON.stringify(payload),
+  });
+  if (!response.ok) throw new Error("Could not persist resource order");
+}
+
+async function fetchStripeSession(env: Env, sessionId: string): Promise<Record<string, unknown> | null> {
+  if (!/^cs_(test|live)_[A-Za-z0-9_]+$/.test(sessionId)) return null;
+  const response = await stripeRequest(env, `/checkout/sessions/${encodeURIComponent(sessionId)}`, { method: "GET" });
+  if (!response.ok) return null;
+  return await response.json() as Record<string, unknown>;
+}
+
+async function handleResourceCheckout(request: Request, env: Env): Promise<Response> {
+  if (request.method !== "POST") return resourceJson({ error: "Método no permitido." }, 405);
+  if (!env.STRIPE_SECRET_KEY) return resourceJson({ error: "Stripe todavía no está configurado en el servidor." }, 503);
+  let data: Record<string, unknown>;
+  try { data = await request.json() as Record<string, unknown>; }
+  catch { return resourceJson({ error: "Solicitud no válida." }, 400); }
+  const resourceId = typeof data.resourceId === "string" ? data.resourceId : "";
+  const resource = resourceId ? await fetchPublishedResource(resourceId) : null;
+  if (!resource || !resource.file_path) return resourceJson({ error: "El recurso no está disponible para compra." }, 404);
+  const amount = Number(resource.price_cents || 0);
+  if (!Number.isInteger(amount) || amount < 50) return resourceJson({ error: "El precio del recurso no es válido." }, 400);
+
+  const origin = new URL(request.url).origin;
+  const params = new URLSearchParams();
+  params.set("mode", "payment");
+  params.set("success_url", `${origin}/recursos/gracias/?session_id={CHECKOUT_SESSION_ID}`);
+  params.set("cancel_url", `${origin}/recursos/`);
+  params.set("customer_creation", "always");
+  params.set("line_items[0][quantity]", "1");
+  params.set("line_items[0][price_data][currency]", "eur");
+  params.set("line_items[0][price_data][unit_amount]", String(amount));
+  params.set("line_items[0][price_data][product_data][name]", String(resource.title || "Recurso digital").slice(0, 120));
+  params.set("metadata[resource_id]", resourceId);
+  params.set("payment_intent_data[metadata][resource_id]", resourceId);
+
+  const response = await stripeRequest(env, "/checkout/sessions", {
+    method: "POST",
+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    body: params.toString(),
+  });
+  const body = await response.json().catch(() => ({})) as Record<string, unknown>;
+  if (!response.ok || typeof body.url !== "string") return resourceJson({ error: "No se ha podido iniciar el pago." }, 502);
+  return resourceJson({ url: body.url });
+}
+
+async function handleResourceAccess(request: Request, env: Env): Promise<Response> {
+  if (request.method !== "POST") return resourceJson({ error: "Método no permitido." }, 405);
+  if (!env.STRIPE_SECRET_KEY || !env.SUPABASE_SERVICE_ROLE_KEY) return resourceJson({ error: "La entrega segura todavía no está configurada." }, 503);
+  let data: Record<string, unknown>;
+  try { data = await request.json() as Record<string, unknown>; }
+  catch { return resourceJson({ error: "Solicitud no válida." }, 400); }
+  const sessionId = typeof data.sessionId === "string" ? data.sessionId : "";
+  const stripeSession = await fetchStripeSession(env, sessionId);
+  if (!stripeSession) return resourceJson({ error: "No se ha podido verificar la compra." }, 404);
+  if (!["paid", "no_payment_required"].includes(String(stripeSession.payment_status || ""))) {
+    return resourceJson({ error: "El pago todavía no figura como completado." }, 409);
+  }
+  await upsertResourceOrder(env, stripeSession);
+  const rawToken = randomToken();
+  const tokenHash = await sha256Hex(rawToken);
+  const expires = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString();
+  const response = await fetch(`${RESOURCE_SUPABASE}/rest/v1/digital_resource_orders?stripe_session_id=eq.${encodeURIComponent(sessionId)}`, {
+    method: "PATCH",
+    headers: serviceHeaders(env, { Prefer: "return=representation" }),
+    body: JSON.stringify({ download_token_hash: tokenHash, download_expires_at: expires, updated_at: new Date().toISOString() }),
+  });
+  const rows = await response.json().catch(() => []) as Record<string, unknown>[];
+  if (!response.ok || !Array.isArray(rows) || !rows[0]) return resourceJson({ error: "No se ha podido preparar la descarga." }, 502);
+  return resourceJson({ download_url: `/api/resources/download?token=${rawToken}`, expires_at: expires });
+}
+
+function storageObjectPath(path: string): string {
+  return path.split("/").map((segment) => encodeURIComponent(segment)).join("/");
+}
+
+async function handleResourceDownload(request: Request, env: Env): Promise<Response> {
+  if (request.method !== "GET") return new Response("Method Not Allowed", { status: 405 });
+  if (!env.SUPABASE_SERVICE_ROLE_KEY) return new Response("Delivery not configured", { status: 503 });
+  const token = new URL(request.url).searchParams.get("token") || "";
+  if (!/^[a-f0-9]{64}$/.test(token)) return new Response("Invalid download link", { status: 400 });
+  const tokenHash = await sha256Hex(token);
+  const orderResponse = await fetch(`${RESOURCE_SUPABASE}/rest/v1/digital_resource_orders?select=id,resource_id,payment_status,download_expires_at,download_count&download_token_hash=eq.${tokenHash}&limit=1`, {
+    headers: serviceHeaders(env),
+    cache: "no-store",
+  });
+  const orders = await orderResponse.json().catch(() => []) as Record<string, unknown>[];
+  const order = Array.isArray(orders) ? orders[0] : null;
+  if (!order || !["paid", "no_payment_required"].includes(String(order.payment_status || ""))) return new Response("Download not authorized", { status: 403 });
+  const expires = Date.parse(String(order.download_expires_at || ""));
+  if (!Number.isFinite(expires) || expires < Date.now()) return new Response("Download link expired", { status: 410 });
+
+  const resource = await fetchPublishedResource(String(order.resource_id || ""));
+  if (!resource?.file_path) return new Response("File unavailable", { status: 404 });
+  const fileResponse = await fetch(`${RESOURCE_SUPABASE}/storage/v1/object/authenticated/resource-files/${storageObjectPath(String(resource.file_path))}`, {
+    headers: { apikey: env.SUPABASE_SERVICE_ROLE_KEY, Authorization: `Bearer ${env.SUPABASE_SERVICE_ROLE_KEY}` },
+    cache: "no-store",
+  });
+  if (!fileResponse.ok) return new Response("File unavailable", { status: 404 });
+
+  await fetch(`${RESOURCE_SUPABASE}/rest/v1/digital_resource_orders?id=eq.${encodeURIComponent(String(order.id))}`, {
+    method: "PATCH",
+    headers: serviceHeaders(env, { Prefer: "return=minimal" }),
+    body: JSON.stringify({ download_count: Number(order.download_count || 0) + 1, updated_at: new Date().toISOString() }),
+  }).catch(() => null);
+
+  const ext = String(resource.file_path).split(".").pop()?.replace(/[^a-zA-Z0-9]/g, "") || "pdf";
+  const base = String(resource.slug || resource.title || "recurso").replace(/[^a-zA-Z0-9_-]+/g, "-").replace(/^-+|-+$/g, "") || "recurso";
+  const headers = new Headers(fileResponse.headers);
+  headers.set("Cache-Control", "private, no-store");
+  headers.set("Content-Disposition", `attachment; filename="${base}.${ext}"`);
+  headers.set("X-Content-Type-Options", "nosniff");
+  return new Response(fileResponse.body, { status: 200, headers });
+}
+
+async function handleQuestionDraft(request: Request, env: Env): Promise<Response> {
+  if (request.method !== "POST") return editorialJson({ error: "Método no permitido." }, 405);
+  if (!await verifyEditorialOwner(request)) return editorialJson({ error: "Sesión no autorizada." }, 401);
+  if (!env.OPENAI_API_KEY) return editorialJson({ error: "La IA editorial no está configurada." }, 503);
+  let data: Record<string, unknown>;
+  try { data = await request.json() as Record<string, unknown>; }
+  catch { return editorialJson({ error: "Solicitud no válida." }, 400); }
+  let question = editorialText(data.question, 6000);
+  if (question.length < 8) return editorialJson({ error: "La pregunta es demasiado breve." }, 400);
+  question = question
+    .replace(/[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/gi, "[correo omitido]")
+    .replace(/(?:\+34\s*)?(?:\d[\s.-]*){9}/g, "[teléfono omitido]");
+  const system = [
+    "Eres asistente editorial de una psicóloga sanitaria y neuropsicóloga en España.",
+    "Tu función es proponer un borrador divulgativo para revisión profesional, nunca publicar ni diagnosticar.",
+    "Anonimiza la pregunta: elimina nombres, lugares concretos, empresas, centros, fechas exactas y detalles que puedan identificar a una persona.",
+    "No inventes datos que no estén en la consulta. No conviertas síntomas en diagnósticos.",
+    "La respuesta debe ser clara, prudente, útil y compatible con práctica psicológica responsable.",
+    "Si detectas riesgo agudo, violencia, abuso, autolesión o urgencia médica, indícalo en review_note y evita una respuesta rutinaria.",
+    "Devuelve SOLO JSON: {question_public:string,answer:string,category:string,review_note:string}.",
+    "category debe ser uno de: psicologia, ansiedad-animo, relaciones-duelo, neuropsicologia, memoria-deterioro, familiares-cuidadores, otra."
+  ].join("\n");
+  try {
+    const response = await fetch("https://api.openai.com/v1/chat/completions", {
+      method: "POST",
+      headers: { Authorization: `Bearer ${env.OPENAI_API_KEY}`, "Content-Type": "application/json" },
+      body: JSON.stringify({
+        model: env.OPENAI_TEXT_MODEL || env.OPENAI_CLINICAL_MODEL || "gpt-5.6-sol",
+        temperature: 0.2,
+        response_format: { type: "json_object" },
+        messages: [{ role: "system", content: system }, { role: "user", content: question }],
+      }),
+    });
+    const body = await response.json() as any;
+    if (!response.ok) return editorialJson({ error: "No se ha podido generar la propuesta con IA." }, 502);
+    const content = body?.choices?.[0]?.message?.content;
+    const parsed = JSON.parse(typeof content === "string" ? content : "{}") as Record<string, unknown>;
+    const categories = new Set(["psicologia","ansiedad-animo","relaciones-duelo","neuropsicologia","memoria-deterioro","familiares-cuidadores","otra"]);
+    return editorialJson({
+      question_public: editorialText(parsed.question_public, 1200),
+      answer: editorialText(parsed.answer, 8000),
+      category: categories.has(String(parsed.category)) ? String(parsed.category) : "otra",
+      review_note: editorialText(parsed.review_note, 1200),
+    });
+  } catch {
+    return editorialJson({ error: "No se ha podido generar la propuesta con IA." }, 502);
+  }
+}
+
 
 function hexToBytes(hex: string): Uint8Array {
   if (hex.length % 2 !== 0) throw new Error("Invalid hex");
@@ -126,6 +361,10 @@ async function handleStripeWebhook(request: Request, env: Env): Promise<Response
         sessionId: session.id,
         paymentStatus: session.payment_status,
       });
+      if (env.SUPABASE_SERVICE_ROLE_KEY) {
+        try { await upsertResourceOrder(env, session); }
+        catch (error) { console.error("Could not persist resource order", error instanceof Error ? error.message : "Unknown"); }
+      }
       break;
     }
     default:
@@ -688,6 +927,11 @@ export default {
     ) {
       return handleStripeWebhook(request, env);
     }
+
+    if (url.pathname === "/api/resources/checkout" || url.pathname === "/api/resources/checkout/") return handleResourceCheckout(request, env);
+    if (url.pathname === "/api/resources/access" || url.pathname === "/api/resources/access/") return handleResourceAccess(request, env);
+    if (url.pathname === "/api/resources/download" || url.pathname === "/api/resources/download/") return handleResourceDownload(request, env);
+    if (url.pathname === "/api/questions/draft" || url.pathname === "/api/questions/draft/") return handleQuestionDraft(request, env);
 
     if (url.pathname === "/api/editorial/status" || url.pathname === "/api/editorial/status/") {
       if (request.method !== "GET") return editorialJson({ error: "Método no permitido." }, 405);

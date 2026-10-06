@@ -12,13 +12,15 @@ command = "npm run build"
 [assets]
 directory = "./out"
 binding = "ASSETS"
-run_worker_first = [ "/api/stripe/webhook", "/api/stripe/webhook/", "/api/editorial/status", "/api/editorial/status/", "/api/editorial/generate", "/api/editorial/generate/", "/api/editorial/image", "/api/editorial/image/", "/api/clinical/structure", "/api/clinical/structure/", "/api/clinical/material-draft", "/api/clinical/material-draft/", "/api/clinical/material-enrich", "/api/clinical/material-enrich/" ]
+run_worker_first = [ "/api/stripe/webhook", "/api/stripe/webhook/", "/api/resources/checkout", "/api/resources/checkout/", "/api/resources/access", "/api/resources/access/", "/api/resources/download", "/api/resources/download/", "/api/questions/draft", "/api/questions/draft/", "/api/editorial/status", "/api/editorial/status/", "/api/editorial/generate", "/api/editorial/generate/", "/api/editorial/image", "/api/editorial/image/", "/api/clinical/structure", "/api/clinical/structure/", "/api/clinical/material-draft", "/api/clinical/material-draft/", "/api/clinical/material-enrich", "/api/clinical/material-enrich/" ]
 
 [secrets]
 required = [ "STRIPE_WEBHOOK_SECRET" ]
 
-# Stripe webhook and private Instagram AI routes run in the Worker; all other requests are static assets.
+# Stripe checkout/webhook/download, question AI and private editorial/clinical AI routes run in the Worker; all other requests are static assets.
 # Set OPENAI_API_KEY as a Cloudflare secret to enable automatic generation.
 # The clinical history structurer uses GPT-5.6 Sol through OPENAI_CLINICAL_MODEL.
 # keep_vars preserves dashboard-managed variables and secrets across Wrangler deploys.
 # secrets.required makes deploy fail clearly if the runtime secret is missing.
+
+# For the complete resource purchase flow, configure STRIPE_SECRET_KEY and SUPABASE_SERVICE_ROLE_KEY as Cloudflare secrets.

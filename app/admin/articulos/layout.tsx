@@ -14,6 +14,7 @@ export default function AdminArticlesLayout({ children }: { children: ReactNode 
       {children}
       <script src="/admin-articles-layout.js?v=20260913-layout-2" defer />
       <script src="/articles-ux-guards.js?v=20260915-1" defer />
+      <script src="/article-versioning.js?v=20261006-1" defer />
     </>
   );
 }

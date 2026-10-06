@@ -5,10 +5,6 @@ import Image from "next/image";
 
 const SUPABASE_URL = "https://grgyvdxkjdstdyumdfyg.supabase.co";
 const KEY = "sb_publishable_b2MRfP0bPti87V2FXCzHGw_Y9vvcbii";
-const PAYMENT_LINKS: Record<string, string> = {
-  "salir-del-bucle": "https://buy.stripe.com/9B6cN69V2bbXbJa5Czcwg00",
-};
-
 type Resource = {
   id: string;
   title: string;
@@ -81,18 +77,12 @@ export default function ResourcesCatalog() {
   }, []);
 
   async function startCheckout(resource: Resource) {
-    const paymentLink = PAYMENT_LINKS[resource.slug];
-    if (paymentLink) {
-      window.location.href = paymentLink;
-      return;
-    }
-
     setBuyingId(resource.id);
     setMessage("");
     try {
-      const response = await fetch(`${SUPABASE_URL}/functions/v1/resource-checkout`, {
+      const response = await fetch("/api/resources/checkout", {
         method: "POST",
-        headers: { apikey: KEY, "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ resourceId: resource.id }),
       });
       const body = await response.json().catch(() => ({}));

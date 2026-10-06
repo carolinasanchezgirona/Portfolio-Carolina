@@ -18,7 +18,7 @@
     relatedPage:$("#resource-related-page"),relatedArticle:$("#resource-related-article"),seoTitle:$("#resource-seo-title"),seoDescription:$("#resource-seo-description"),
     saveDraft:$("#resource-save-draft"),publish:$("#resource-publish"),archive:$("#resource-archive"),deleteButton:$("#resource-delete"),statusLabel:$("#resource-status-label"),message:$("#resource-message")
   };
-  let session=null, resources=[], articles=[], activeFilter="all";
+  let session=null, resources=[], articles=[], orders=[], activeFilter="all";
 
   const slugify=(value)=>String(value||"").normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase().trim().replace(/[^a-z0-9]+/g,"-").replace(/^-+|-+$/g,"").slice(0,180);
   const escapeHtml=(value)=>String(value||"").replace(/[&<>'"]/g,(c)=>({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;",'"':"&quot;"}[c]));
@@ -44,18 +44,47 @@
   function euro(cents){return new Intl.NumberFormat("es-ES",{style:"currency",currency:"EUR"}).format((Number(cents)||0)/100);}
   function statusText(status){return status==="published"?"Publicado":status==="archived"?"Archivado":"Borrador";}
   async function loadData(selectId=null){
-    const [rr,ar]=await Promise.all([
+    const [rr,ar,or]=await Promise.all([
       fetch(`${REST_URL}/digital_resources?select=*&order=updated_at.desc`,{headers:authHeaders(),cache:"no-store"}),
-      fetch(`${REST_URL}/articles?select=id,title,status&order=updated_at.desc`,{headers:authHeaders(),cache:"no-store"})
+      fetch(`${REST_URL}/articles?select=id,title,status&order=updated_at.desc`,{headers:authHeaders(),cache:"no-store"}),
+      fetch(`${REST_URL}/digital_resource_orders?select=id,resource_id,customer_email,amount_total,currency,payment_status,livemode,created_at,paid_at,download_count&order=created_at.desc&limit=100`,{headers:authHeaders(),cache:"no-store"})
     ]);
     if(rr.status===401){saveSession(null);window.location.replace("/admin/clinica/acceso/?next="+encodeURIComponent("/admin/recursos/"));return;}
-    const rb=await rr.json().catch(()=>[]), ab=await ar.json().catch(()=>[]);
+    const rb=await rr.json().catch(()=>[]), ab=await ar.json().catch(()=>[]), ob=await or.json().catch(()=>[]);
     if(!rr.ok)throw new Error(rb.message||"No se han podido cargar los recursos.");
     if(!ar.ok)throw new Error(ab.message||"No se han podido cargar los artículos.");
-    resources=Array.isArray(rb)?rb:[]; articles=Array.isArray(ab)?ab:[];
-    renderArticleOptions(); renderList();
+    resources=Array.isArray(rb)?rb:[]; articles=Array.isArray(ab)?ab:[]; orders=or.ok&&Array.isArray(ob)?ob:[];
+    renderArticleOptions(); renderList(); renderOrdersSummary();
     if(selectId){const item=resources.find(r=>r.id===selectId);if(item)openResource(item);}
   }
+  function renderOrdersSummary(){
+    let panel=document.querySelector("#resources-sales-summary");
+    if(!panel){
+      panel=document.createElement("section");
+      panel.id="resources-sales-summary";
+      panel.className="resources-sales-summary";
+      const topbar=document.querySelector(".resources-topbar");
+      topbar?.after(panel);
+    }
+    const paid=orders.filter(o=>["paid","no_payment_required"].includes(o.payment_status));
+    const total=paid.reduce((sum,o)=>sum+(Number(o.amount_total)||0),0);
+    const recent=paid.slice(0,5);
+    panel.replaceChildren();
+    const head=document.createElement("div");head.className="resources-sales-head";
+    head.innerHTML=`<div><p class="resources-eyebrow">Ventas</p><strong>${paid.length} compra(s) confirmada(s) · ${euro(total)}</strong></div><span>${orders.length} pedido(s) registrados</span>`;
+    panel.append(head);
+    if(!recent.length){const empty=document.createElement("p");empty.className="resources-sales-empty";empty.textContent="Todavía no hay ventas registradas.";panel.append(empty);return;}
+    const list=document.createElement("div");list.className="resources-sales-list";
+    recent.forEach(order=>{
+      const resource=resources.find(r=>r.id===order.resource_id);
+      const row=document.createElement("article");
+      const when=order.paid_at||order.created_at;
+      row.innerHTML=`<div><strong>${escapeHtml(resource?.title||"Recurso")}</strong><span>${escapeHtml(order.customer_email||"Correo no disponible")} · ${when?new Date(when).toLocaleString("es-ES"):""}</span></div><div><strong>${euro(order.amount_total)}</strong><span>${Number(order.download_count)||0} descarga(s)</span></div>`;
+      list.append(row);
+    });
+    panel.append(list);
+  }
+
   function renderArticleOptions(){
     const current=els.relatedArticle.value;
     els.relatedArticle.replaceChildren(new Option("Sin artículo relacionado",""));
