@@ -1701,6 +1701,51 @@
       els.materialAiCreate.disabled = false;
     }
   });
+  els.materialAiEnrich?.addEventListener("click", async () => {
+    const title = els.exerciseTitle.value.trim();
+    if (!title || !els.exerciseContent.value.trim()) {
+      els.exerciseMessage.textContent = "Selecciona o prepara un material antes de completar la ficha con IA.";
+      return;
+    }
+    const value = getSession();
+    if (!value?.access_token) {
+      els.exerciseMessage.textContent = "La sesión ha caducado. Vuelve a entrar en Gestión clínica.";
+      return;
+    }
+
+    const existing = exerciseTemplates.find((item) => item.id === els.exerciseTemplateId.value) || null;
+    els.exerciseMessage.textContent = "Completando ejemplo y ficha para paciente…";
+    els.materialAiEnrich.disabled = true;
+    try {
+      const response = await fetch("/api/clinical/material-enrich", {
+        method: "POST",
+        headers: {
+          Authorization: "Bearer " + value.access_token,
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          title,
+          material_type: els.materialType?.value || existing?.material_type || "exercise",
+          summary: existing?.summary || pendingAiMaterial?.summary || els.exerciseObjective.value.trim(),
+          process_tags: els.materialProcess?.value ? [els.materialProcess.value] : (existing?.process_tags || []),
+          patient_document: patientDocumentFromForm(els.materialType?.value || existing?.material_type || "exercise")
+        })
+      });
+      const body = await response.json().catch(() => ({}));
+      if (!response.ok) throw new Error(body.error || "No se ha podido completar la ficha.");
+      const document = body.patient_document || {};
+      fillPatientDocument(document);
+      els.exerciseContent.value = document.instructions || els.exerciseContent.value;
+      els.exerciseMessage.textContent = existing
+        ? "Ficha completada. Revísala y pulsa «Actualizar biblioteca» si quieres conservar esta versión."
+        : "Ficha completada. Revísala antes de añadirla a la biblioteca o enviarla.";
+    } catch (error) {
+      els.exerciseMessage.textContent = error?.message || "No se ha podido completar la ficha con IA.";
+    } finally {
+      els.materialAiEnrich.disabled = false;
+    }
+  });
+
   els.addMaterialLibrary?.addEventListener("click", async () => {
     const title = els.exerciseTitle.value.trim();
     const content = els.exerciseContent.value.trim();
