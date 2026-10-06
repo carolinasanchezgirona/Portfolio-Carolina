@@ -137,6 +137,7 @@ export default function AdminQuestionsPage() {
 
   async function patchQuestion(payload: Partial<AdminQuestion>, successMessage: string, notify = false) {
     if (!selected || !session) return;
+    if (!window.confirm("La consulta se enviará al proveedor de IA para preparar un borrador. No se guardará ni publicará automáticamente. ¿Continuar?")) return;
     setBusy(true);
     setMessage("Guardando…");
     try {
