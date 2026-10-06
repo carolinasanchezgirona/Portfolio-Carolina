@@ -1683,7 +1683,7 @@
       els.exerciseTitle.value = material.title || query;
       if (els.materialType) els.materialType.value = material.material_type || "exercise";
       const aiPatientDocument = material.patient_document && typeof material.patient_document === "object" && !Array.isArray(material.patient_document)
-        ? { ...materialPatientDefaults(material.material_type || "exercise", material.summary || "", material.instructions || "", material.duration_minutes), ...material.patient_document, instructions: material.patient_document.instructions || material.instructions || "" }
+        ? { ...materialPatientDefaults(material.material_type || "exercise", material.summary || "", material.instructions || "", material.duration_minutes), ...material.patient_document, frequency: material.patient_document.frequency || materialPatientDefaults(material.material_type || "exercise", material.summary || "", material.instructions || "", material.duration_minutes).frequency, instructions: material.patient_document.instructions || material.instructions || "" }
         : materialPatientDefaults(material.material_type || "exercise", material.summary || "", material.instructions || "", material.duration_minutes);
       els.exerciseContent.value = aiPatientDocument.instructions || material.instructions || "";
       fillPatientDocument(aiPatientDocument);
