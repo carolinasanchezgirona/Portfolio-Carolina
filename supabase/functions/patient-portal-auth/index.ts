@@ -57,12 +57,15 @@ async function requestCode(email: string) {
   if (!SERVICE_ROLE_KEY || !BREVO_API_KEY) return json({ error: "El acceso por correo no está configurado." }, 503);
 
   const patientsResponse = await fetch(
-    SUPABASE_URL + "/rest/v1/clinical_patients?select=id,status&email=ilike." + encodeURIComponent(email) + "&status=neq.archived&limit=3",
+    SUPABASE_URL + "/rest/v1/clinical_patients?select=id,email,status&status=neq.archived&limit=500",
     { headers: serviceHeaders, cache: "no-store" },
   );
   if (!patientsResponse.ok) return json(generic);
-  const patients = await patientsResponse.json().catch(() => []);
-  if (!Array.isArray(patients) || patients.length !== 1) return json(generic);
+  const patientRows = await patientsResponse.json().catch(() => []);
+  const patients = Array.isArray(patientRows)
+    ? patientRows.filter((row) => String(row?.email ?? "").trim().toLowerCase() === email)
+    : [];
+  if (patients.length !== 1) return json(generic);
 
   const patient = patients[0] as { id?: string };
   if (!patient.id) return json(generic);
