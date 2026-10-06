@@ -67,6 +67,7 @@
     exerciseSessionQuestions: $("#clinic-exercise-session-questions"),
     exerciseRationale: $("#clinic-exercise-rationale"), exerciseEmail: $("#clinic-exercise-email"),
     exerciseMessage: $("#clinic-exercise-message"), saveExercise: $("#clinic-save-exercise"),
+    materialQuality: $("#clinic-material-quality"), materialQualityLabel: $("#clinic-material-quality-label"), materialQualityNote: $("#clinic-material-quality-note"),
     previewMaterial: $("#clinic-preview-material"), previewPdf: $("#clinic-preview-pdf"),
     printHistory: $("#clinic-print-history"), newReport: $("#clinic-new-report"), patientReports: $("#clinic-patient-reports"),
     patientTimeline: $("#clinic-patient-timeline"), refreshTimeline: $("#clinic-refresh-timeline"),
@@ -441,6 +442,34 @@
     };
   }
 
+  function patientDocumentQuality(document) {
+    const doc = document || {};
+    const missing = [];
+    if (!String(doc.introduction || "").trim()) missing.push("introducción");
+    if (!String(doc.why || "").trim()) missing.push("explicación");
+    if (!String(doc.objective || "").trim()) missing.push("objetivo");
+    if (!String(doc.instructions || "").trim()) missing.push("instrucciones");
+    if (!String(doc.example || "").trim()) missing.push("ejemplo");
+    if (!String(doc.frequency || "").trim()) missing.push("frecuencia");
+    if (!Number(doc.duration_minutes || 0)) missing.push("tiempo");
+    if (!String(doc.remember || "").trim()) missing.push("cierre");
+    if (doc.material_type !== "psychoeducation" && !String(doc.record_prompt || "").trim()) missing.push("registro");
+    if (!Array.isArray(doc.session_questions) || !doc.session_questions.filter(Boolean).length) missing.push("preguntas para sesión");
+    return { complete: missing.length === 0, missing };
+  }
+
+  function renderPatientDocumentQuality(document = null) {
+    if (!els.materialQuality || !els.materialQualityLabel || !els.materialQualityNote) return;
+    const doc = document || patientDocumentFromForm(els.materialType?.value || "exercise");
+    const quality = patientDocumentQuality(doc);
+    els.materialQuality.classList.toggle("is-complete", quality.complete);
+    els.materialQualityLabel.textContent = quality.complete ? "Ficha completa" : "Ficha básica";
+    els.materialQualityNote.textContent = quality.complete
+      ? "Lista para enviar. Puedes revisarla o mejorarla si lo deseas."
+      : `Recomendable completar antes de enviar · falta ${quality.missing.slice(0, 4).join(", ")}${quality.missing.length > 4 ? "…" : ""}.`;
+    if (els.materialAiEnrich) els.materialAiEnrich.textContent = quality.complete ? "Mejorar ficha con IA" : "Completar ficha con IA";
+  }
+
   function fillPatientDocument(document) {
     const doc = document || materialPatientDefaults(els.materialType?.value || "exercise");
     els.exerciseIntroduction.value = doc.introduction || "";
@@ -453,6 +482,7 @@
     els.exerciseSafety.value = doc.safety_note || "";
     els.exerciseRemember.value = doc.remember || "";
     els.exerciseSessionQuestions.value = Array.isArray(doc.session_questions) ? doc.session_questions.join("\n") : "";
+    renderPatientDocumentQuality(doc);
   }
 
   function patientDocumentFromForm(materialType = "exercise") {
@@ -695,6 +725,17 @@
 
   async function saveExercise(sendAfterSave) {
     if (!currentPatient) return;
+    if (sendAfterSave) {
+      const materialTypeForQuality = els.materialType?.value || "exercise";
+      const quality = patientDocumentQuality(patientDocumentFromForm(materialTypeForQuality));
+      if (!quality.complete) {
+        const proceed = window.confirm(`Esta ficha todavía está marcada como básica. Falta: ${quality.missing.join(", ")}.\n\nPuedes enviarla igualmente o cancelar para completarla con IA.`);
+        if (!proceed) {
+          els.exerciseMessage.textContent = "Envío cancelado. Puedes completar la ficha antes de enviarla.";
+          return;
+        }
+      }
+    }
     if (!els.exerciseTitle.value.trim() || !els.exerciseContent.value.trim()) throw new Error("Completa el título y el contenido.");
     if (!els.exerciseIntroduction.value.trim() || !els.exerciseWhy.value.trim()) throw new Error("Completa la introducción y «Por qué hacemos este ejercicio».");
     const selectedTemplate = exerciseTemplates.find((item) => item.id === els.exerciseTemplateId.value) || null;
@@ -1707,6 +1748,10 @@
       els.materialAiCreate.disabled = false;
     }
   });
+  [els.exerciseDuration, els.exerciseFrequency, els.exerciseIntroduction, els.exerciseWhy, els.exerciseObjective, els.exerciseContent, els.exerciseExample, els.exerciseRecord, els.exerciseSafety, els.exerciseRemember, els.exerciseSessionQuestions]
+    .filter(Boolean)
+    .forEach((field) => field.addEventListener("input", () => renderPatientDocumentQuality()));
+
   els.materialAiEnrich?.addEventListener("click", async () => {
     const title = els.exerciseTitle.value.trim();
     if (!title || !els.exerciseContent.value.trim()) {
