@@ -1615,6 +1615,7 @@
     const value = els.materialSearch?.value?.trim() || "";
     if (!value) return;
     pendingAiMaterial = null;
+    applyExerciseTemplate(null);
     els.exerciseTitle.value = value;
     els.exerciseContent.focus();
   });
@@ -1676,8 +1677,8 @@
       els.exerciseTitle.value = material.title || query;
       if (els.materialType) els.materialType.value = material.material_type || "exercise";
       const aiPatientDocument = material.patient_document && typeof material.patient_document === "object" && !Array.isArray(material.patient_document)
-        ? { ...materialPatientDefaults(material.material_type || "exercise", material.summary || "", material.instructions || ""), ...material.patient_document, instructions: material.patient_document.instructions || material.instructions || "" }
-        : materialPatientDefaults(material.material_type || "exercise", material.summary || "", material.instructions || "");
+        ? { ...materialPatientDefaults(material.material_type || "exercise", material.summary || "", material.instructions || "", material.duration_minutes), ...material.patient_document, instructions: material.patient_document.instructions || material.instructions || "" }
+        : materialPatientDefaults(material.material_type || "exercise", material.summary || "", material.instructions || "", material.duration_minutes);
       els.exerciseContent.value = aiPatientDocument.instructions || material.instructions || "";
       fillPatientDocument(aiPatientDocument);
       els.exerciseRationale.value = material.summary || body.reason || "";
@@ -1705,56 +1706,95 @@
     const content = els.exerciseContent.value.trim();
     const process = els.materialProcess?.value || "";
     const materialType = els.materialType?.value || "exercise";
+    const existing = exerciseTemplates.find((item) => item.id === els.exerciseTemplateId.value) || null;
     if (!title || !content || !process) {
-      els.exerciseMessage.textContent = "Para añadirlo a la biblioteca indica título, contenido y categoría.";
+      els.exerciseMessage.textContent = "Para guardar el material indica título, contenido y categoría.";
       return;
     }
     if (!els.exerciseIntroduction.value.trim() || !els.exerciseWhy.value.trim()) {
-      els.exerciseMessage.textContent = "Completa la introducción y «Por qué hacemos este ejercicio» antes de incorporarlo.";
+      els.exerciseMessage.textContent = "Completa la introducción y «Por qué hacemos este ejercicio» antes de guardarlo.";
       return;
     }
-    els.exerciseMessage.textContent = "Añadiendo a la biblioteca…";
+
+    const duration = Number(els.exerciseDuration.value);
+    const payload = {
+      title,
+      summary: existing?.summary || pendingAiMaterial?.summary || els.exerciseObjective.value.trim() || "Material de la biblioteca clínica.",
+      instructions: content,
+      process_tags: [process],
+      duration_minutes: Number.isFinite(duration) && duration > 0 ? Math.min(180, Math.round(duration)) : existing?.duration_minutes || (materialType === "psychoeducation" ? 10 : null),
+      burden: ["low", "medium", "high"].includes(pendingAiMaterial?.burden)
+        ? pendingAiMaterial.burden
+        : existing?.burden || "low",
+      status: "active",
+      material_type: materialType,
+      phase: pendingAiMaterial?.phase || existing?.phase || (materialType === "psychoeducation" ? "orientation" : "practice"),
+      objectives: Array.isArray(pendingAiMaterial?.objectives) && pendingAiMaterial.objectives.length
+        ? pendingAiMaterial.objectives
+        : els.exerciseObjective.value.trim() ? [els.exerciseObjective.value.trim()] : (existing?.objectives || []),
+      cautions: Array.isArray(pendingAiMaterial?.cautions) ? pendingAiMaterial.cautions : (existing?.cautions || []),
+      sequence_rank: Number.isFinite(Number(pendingAiMaterial?.sequence_rank))
+        ? Number(pendingAiMaterial.sequence_rank)
+        : Number(existing?.sequence_rank || 50),
+      patient_document: patientDocumentFromForm(materialType),
+      patient_facing: true,
+      updated_at: new Date().toISOString()
+    };
+
+    els.exerciseMessage.textContent = existing ? "Actualizando biblioteca…" : "Añadiendo a la biblioteca…";
     els.addMaterialLibrary.disabled = true;
     try {
-      const rows = await rest("clinical_exercise_templates?select=*", {
-        method: "POST",
-        headers: { Prefer: "return=representation" },
-        body: JSON.stringify({
-          title,
-          summary: els.exerciseRationale.value.trim() || pendingAiMaterial?.summary || "Material incorporado manualmente a la biblioteca clínica.",
-          instructions: content,
-          process_tags: [process],
-          duration_minutes: Number.isFinite(Number(pendingAiMaterial?.duration_minutes))
-            ? Number(pendingAiMaterial.duration_minutes)
-            : materialType === "psychoeducation" ? 10 : null,
-          burden: ["low", "medium", "high"].includes(pendingAiMaterial?.burden) ? pendingAiMaterial.burden : "low",
-          status: "active",
-          material_type: materialType,
-          phase: pendingAiMaterial?.phase || (materialType === "psychoeducation" ? "orientation" : "practice"),
-          objectives: Array.isArray(pendingAiMaterial?.objectives) && pendingAiMaterial.objectives.length
-            ? pendingAiMaterial.objectives
-            : els.exerciseObjective.value.trim() ? [els.exerciseObjective.value.trim()] : [],
-          cautions: Array.isArray(pendingAiMaterial?.cautions) ? pendingAiMaterial.cautions : [],
-          sequence_rank: Number.isFinite(Number(pendingAiMaterial?.sequence_rank)) ? Number(pendingAiMaterial.sequence_rank) : 50,
-          patient_document: patientDocumentFromForm(materialType),
-          patient_facing: true
-        })
-      });
+      const rows = existing
+        ? await rest(`clinical_exercise_templates?id=eq.${encodeURIComponent(existing.id)}&select=*`, {
+            method: "PATCH",
+            headers: { Prefer: "return=representation" },
+            body: JSON.stringify(payload)
+          })
+        : await rest("clinical_exercise_templates?select=*", {
+            method: "POST",
+            headers: { Prefer: "return=representation" },
+            body: JSON.stringify(payload)
+          });
       const saved = rows?.[0];
-      if (!saved) throw new Error("No se ha podido recuperar el material creado.");
-      exerciseTemplates = [...exerciseTemplates, saved];
+      if (!saved) throw new Error("No se ha podido recuperar el material guardado.");
+      exerciseTemplates = existing
+        ? exerciseTemplates.map((item) => item.id === saved.id ? saved : item)
+        : [...exerciseTemplates, saved];
       pendingAiMaterial = null;
       if (els.materialSearch) els.materialSearch.value = "";
       populateExerciseLibrary(saved.id);
       populateMaterialProcessOptions(process);
       applyExerciseTemplate(saved);
-      els.exerciseMessage.textContent = "Añadido a la biblioteca. Ya puedes asignarlo o enviarlo.";
+      els.exerciseMessage.textContent = existing
+        ? "Biblioteca actualizada. La nueva versión queda lista para futuras asignaciones."
+        : "Añadido a la biblioteca. Ya puedes asignarlo o enviarlo.";
     } catch (error) {
-      els.exerciseMessage.textContent = error?.message || "No se ha podido añadir el material.";
+      els.exerciseMessage.textContent = error?.message || "No se ha podido guardar el material.";
     } finally {
       els.addMaterialLibrary.disabled = false;
     }
   });
+
+  els.previewMaterial?.addEventListener("click", () => {
+    const title = els.exerciseTitle.value.trim();
+    if (!title || !els.exerciseContent.value.trim()) {
+      els.exerciseMessage.textContent = "Completa al menos el título y el contenido para ver la vista del paciente.";
+      return;
+    }
+    openPatientMaterialPreview(title, patientDocumentFromForm(els.materialType?.value || "exercise"), "html", false)
+      .catch((error) => { els.exerciseMessage.textContent = error.message; });
+  });
+
+  els.previewPdf?.addEventListener("click", () => {
+    const title = els.exerciseTitle.value.trim();
+    if (!title || !els.exerciseContent.value.trim()) {
+      els.exerciseMessage.textContent = "Completa al menos el título y el contenido para generar el PDF de prueba.";
+      return;
+    }
+    openPatientMaterialPreview(title, patientDocumentFromForm(els.materialType?.value || "exercise"), "pdf", true)
+      .catch((error) => { els.exerciseMessage.textContent = error.message; });
+  });
+
   els.exerciseClose.addEventListener("click", () => els.exerciseDialog.close());
   els.saveExercise.addEventListener("click", () => saveExercise(false).catch((error) => { els.exerciseMessage.textContent = error.message; }));
   els.exerciseForm.addEventListener("submit", (event) => { event.preventDefault(); saveExercise(true).catch((error) => { els.exerciseMessage.textContent = error.message; }); });
