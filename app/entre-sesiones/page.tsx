@@ -13,6 +13,7 @@ export default function EntreSesionesPage() {
     <main className="between-page">
       <section className="between-hero">
         <div className="between-wrap">
+          <a className="between-back" href="/mi-espacio/">← Mi espacio</a>
           <p className="between-eyebrow">Carolina Sánchez · Área privada</p>
           <h1>Entre Sesiones</h1>
           <p className="between-lead">
