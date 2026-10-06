@@ -58,13 +58,16 @@
     exerciseLibrary: $("#clinic-exercise-library"), materialSearch: $("#clinic-material-search"),
     materialNotFound: $("#clinic-material-not-found"), materialUseSearch: $("#clinic-material-use-search"), materialAiCreate: $("#clinic-material-ai-create"),
     materialType: $("#clinic-material-type"), materialProcess: $("#clinic-material-process"), addMaterialLibrary: $("#clinic-add-material-library"),
+    materialAiEnrich: $("#clinic-material-ai-enrich"),
     exerciseTitle: $("#clinic-exercise-title"), exerciseContent: $("#clinic-exercise-content"),
     exerciseIntroduction: $("#clinic-exercise-introduction"), exerciseWhy: $("#clinic-exercise-why"),
+    exerciseDuration: $("#clinic-exercise-duration"), exerciseFrequency: $("#clinic-exercise-frequency"),
     exerciseObjective: $("#clinic-exercise-objective"), exerciseExample: $("#clinic-exercise-example"),
-    exerciseRecord: $("#clinic-exercise-record"), exerciseRemember: $("#clinic-exercise-remember"),
+    exerciseRecord: $("#clinic-exercise-record"), exerciseSafety: $("#clinic-exercise-safety"), exerciseRemember: $("#clinic-exercise-remember"),
     exerciseSessionQuestions: $("#clinic-exercise-session-questions"),
     exerciseRationale: $("#clinic-exercise-rationale"), exerciseEmail: $("#clinic-exercise-email"),
     exerciseMessage: $("#clinic-exercise-message"), saveExercise: $("#clinic-save-exercise"),
+    previewMaterial: $("#clinic-preview-material"), previewPdf: $("#clinic-preview-pdf"),
     printHistory: $("#clinic-print-history"), newReport: $("#clinic-new-report"), patientReports: $("#clinic-patient-reports"),
     patientTimeline: $("#clinic-patient-timeline"), refreshTimeline: $("#clinic-refresh-timeline"),
     addDocument: $("#clinic-add-document"), patientDocuments: $("#clinic-patient-documents"),
@@ -388,12 +391,17 @@
     els.exerciseLibrary.value = selectedId || "";
   }
 
-  function materialPatientDefaults(materialType = "exercise", summary = "", instructions = "") {
+  function materialPatientDefaults(materialType = "exercise", summary = "", instructions = "", durationMinutes = null) {
     const psycho = materialType === "psychoeducation";
     const focus = String(summary || "").trim();
+    const duration = Number(durationMinutes);
     return {
       version: 1,
       material_type: psycho ? "psychoeducation" : "exercise",
+      duration_minutes: Number.isFinite(duration) && duration > 0 ? Math.round(duration) : psycho ? 10 : null,
+      frequency: psycho
+        ? "Revísalo una vez esta semana y vuelve a él si te resulta útil."
+        : "Practícalo según lo acordado en sesión. Si no concretamos frecuencia, prueba una vez y anota qué observas.",
       introduction: psycho
         ? "Este material resume una idea trabajada en sesión para que puedas revisarla con calma y volver a ella cuando lo necesites."
         : "Este material forma parte del trabajo acordado en sesión. Úsalo como una guía breve entre sesiones y adáptalo a tu ritmo.",
@@ -404,6 +412,7 @@
       instructions: instructions || "",
       example: "",
       record_prompt: psycho ? "" : "Después de probarlo, anota brevemente en qué situación lo utilizaste, qué hiciste y qué observaste. No hace falta escribir mucho.",
+      safety_note: "",
       remember: psycho
         ? "No necesitas memorizarlo ni estar de acuerdo con todo a la primera. Quédate con las ideas que te ayuden a entender mejor lo que ocurre."
         : "No se trata de hacerlo perfecto. Si algo no encaja, resulta demasiado difícil o genera dudas, déjalo anotado para revisarlo en sesión.",
@@ -415,7 +424,7 @@
 
   function normalizedPatientDocument(template = null) {
     const type = template?.material_type === "psychoeducation" ? "psychoeducation" : "exercise";
-    const defaults = materialPatientDefaults(type, template?.summary || "", template?.instructions || "");
+    const defaults = materialPatientDefaults(type, template?.summary || "", template?.instructions || "", template?.duration_minutes);
     const raw = template?.patient_document && typeof template.patient_document === "object" && !Array.isArray(template.patient_document)
       ? template.patient_document
       : {};
@@ -424,6 +433,9 @@
       ...raw,
       version: 1,
       material_type: type,
+      duration_minutes: Number(raw.duration_minutes || template?.duration_minutes || defaults.duration_minutes) || null,
+      frequency: raw.frequency || defaults.frequency,
+      safety_note: raw.safety_note || "",
       instructions: raw.instructions || template?.instructions || defaults.instructions,
       session_questions: Array.isArray(raw.session_questions) ? raw.session_questions.filter(Boolean) : defaults.session_questions
     };
@@ -433,9 +445,12 @@
     const doc = document || materialPatientDefaults(els.materialType?.value || "exercise");
     els.exerciseIntroduction.value = doc.introduction || "";
     els.exerciseWhy.value = doc.why || "";
+    els.exerciseDuration.value = doc.duration_minutes || "";
+    els.exerciseFrequency.value = doc.frequency || "";
     els.exerciseObjective.value = doc.objective || "";
     els.exerciseExample.value = doc.example || "";
     els.exerciseRecord.value = doc.record_prompt || "";
+    els.exerciseSafety.value = doc.safety_note || "";
     els.exerciseRemember.value = doc.remember || "";
     els.exerciseSessionQuestions.value = Array.isArray(doc.session_questions) ? doc.session_questions.join("\n") : "";
   }
@@ -444,12 +459,17 @@
     return {
       version: 1,
       material_type: materialType === "psychoeducation" ? "psychoeducation" : "exercise",
+      duration_minutes: Number.isFinite(Number(els.exerciseDuration.value)) && Number(els.exerciseDuration.value) > 0
+        ? Math.min(180, Math.round(Number(els.exerciseDuration.value)))
+        : null,
+      frequency: els.exerciseFrequency.value.trim(),
       introduction: els.exerciseIntroduction.value.trim(),
       why: els.exerciseWhy.value.trim(),
       objective: els.exerciseObjective.value.trim(),
       instructions: els.exerciseContent.value.trim(),
       example: els.exerciseExample.value.trim(),
       record_prompt: els.exerciseRecord.value.trim(),
+      safety_note: els.exerciseSafety.value.trim(),
       remember: els.exerciseRemember.value.trim(),
       session_questions: els.exerciseSessionQuestions.value.split(/\r?\n/).map((item) => item.trim()).filter(Boolean).slice(0, 6)
     };
@@ -461,6 +481,7 @@
       els.exerciseTitle.value = "";
       els.exerciseContent.value = "";
       fillPatientDocument(materialPatientDefaults(els.materialType?.value || "exercise"));
+      if (els.addMaterialLibrary) els.addMaterialLibrary.textContent = "Añadir a la biblioteca";
       return;
     }
     els.exerciseTemplateId.value = template.id || "";
@@ -468,6 +489,7 @@
     const patientDocument = normalizedPatientDocument(template);
     els.exerciseContent.value = patientDocument.instructions || template.instructions || "";
     fillPatientDocument(patientDocument);
+    if (els.addMaterialLibrary) els.addMaterialLibrary.textContent = "Actualizar biblioteca";
   }
 
   function openExercise(template = null, rationale = "") {
@@ -483,6 +505,91 @@
     els.exerciseMessage.textContent = "";
     els.exerciseDialog.showModal();
   }
+  function patientStateLabel(value) {
+    return ({ pending: "Pendiente", reviewed: "Lo ha revisado", discuss: "Quiere comentarlo en sesión" })[value] || "Pendiente";
+  }
+
+  function previewFileName(title) {
+    const slug = String(title || "material")
+      .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+      .toLocaleLowerCase("es").replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 70);
+    return `entre-sesiones-${slug || "material"}.pdf`;
+  }
+
+  async function openPatientMaterialPreview(title, patientDocument, format = "html", download = false) {
+    const value = getSession();
+    if (!value?.access_token) throw new Error("La sesión ha caducado. Vuelve a entrar en Gestión clínica.");
+    let previewWindow = null;
+    if (!download) {
+      previewWindow = window.open("about:blank", "_blank");
+      if (!previewWindow) throw new Error("El navegador ha bloqueado la vista previa.");
+      previewWindow.document.write("<p style=\"font-family:Arial,sans-serif;padding:24px\">Preparando vista previa…</p>");
+    }
+    try {
+      const response = await fetch(`${SUPABASE_URL}/functions/v1/view-clinical-exercise`, {
+        method: "POST",
+        headers: authHeaders(),
+        body: JSON.stringify({ mode: "preview", title, patient_document: patientDocument, format, patient_id: currentPatient?.id || null })
+      });
+      if (!response.ok) {
+        const body = await response.json().catch(() => ({}));
+        throw new Error(body.error || "No se ha podido generar la vista previa.");
+      }
+      const blob = await response.blob();
+      const objectUrl = URL.createObjectURL(blob);
+      if (download) {
+        const link = document.createElement("a");
+        link.href = objectUrl;
+        link.download = previewFileName(title);
+        document.body.append(link);
+        link.click();
+        link.remove();
+      } else if (previewWindow) {
+        previewWindow.location.replace(objectUrl);
+      }
+      window.setTimeout(() => URL.revokeObjectURL(objectUrl), 120000);
+    } catch (error) {
+      if (previewWindow) previewWindow.close();
+      throw error;
+    }
+  }
+
+  async function refreshCurrentPatientMaterials(patientId) {
+    await loadData();
+    const freshPatient = patients.find((item) => item.id === patientId) || currentPatient;
+    if (freshPatient) currentPatient = freshPatient;
+    if (currentPatient) {
+      renderExercises(currentPatient);
+      renderTimeline(currentPatient);
+      renderPending();
+    }
+  }
+
+  async function sendExistingAssignment(item, resend = false) {
+    els.patientMessage.textContent = resend ? "Reenviando material…" : "Enviando material…";
+    const response = await fetch(`${SUPABASE_URL}/functions/v1/send-clinical-exercise`, {
+      method: "POST",
+      headers: authHeaders(),
+      body: JSON.stringify({ assignment_id: item.id, resend })
+    });
+    const body = await response.json().catch(() => ({}));
+    if (!response.ok) throw new Error(body.error || "No se ha podido enviar el material.");
+    els.patientMessage.textContent = resend ? "Material reenviado con un enlace nuevo." : "Material enviado.";
+    await refreshCurrentPatientMaterials(item.patient_id);
+  }
+
+  async function revokeAssignment(item) {
+    if (!window.confirm("¿Revocar este enlace? El paciente dejará de poder abrirlo inmediatamente.")) return;
+    const rows = await rest(`clinical_exercise_assignments?id=eq.${encodeURIComponent(item.id)}&select=*`, {
+      method: "PATCH",
+      headers: { Prefer: "return=representation" },
+      body: JSON.stringify({ revoked_at: new Date().toISOString(), updated_at: new Date().toISOString() })
+    });
+    if (rows?.[0]) exerciseAssignments = exerciseAssignments.map((value) => value.id === item.id ? rows[0] : value);
+    renderExercises(currentPatient);
+    renderTimeline(currentPatient);
+  }
+
   function renderExercises(patient) {
     els.exerciseSuggestions.replaceChildren();
     const suggestions = prescriptionSuggestions(patient.id);
@@ -500,32 +607,92 @@
     } else {
       els.exerciseSuggestions.append(create("p", "clinic-empty-inline", "No hay una prescripción prioritaria con los datos registrados. Puedes seleccionar cualquier material de la biblioteca."));
     }
+
     els.patientExercises.replaceChildren();
     const assigned = patientExercises(patient.id);
     if (!assigned.length) {
       els.patientExercises.append(create("p", "clinic-empty-inline", "Todavía no hay material entre sesiones asignado."));
       return;
     }
+
     assigned.forEach((item) => {
       const row = create("article");
       const info = create("div");
-      const state = item.email_status === "sent" ? `Enviado · enlace hasta ${dateShort.format(new Date(item.access_expires_at))}` : item.status === "prepared" ? "Preparado, sin enviar" : item.status;
-      info.append(create("strong", "", item.title), create("span", "", state));
-      row.append(info);
+      const title = create("strong", "", item.title);
+      const statusLine = item.revoked_at
+        ? "Enlace revocado"
+        : item.email_status === "sent"
+          ? `Enviado${item.access_expires_at ? " · enlace hasta " + dateShort.format(new Date(item.access_expires_at)) : ""}`
+          : item.status === "prepared" ? "Preparado, sin enviar" : item.status;
+      info.append(title, create("span", "", statusLine));
+
+      const states = create("div", "clinic-material-status");
+      if (item.first_opened_at) states.append(create("span", "clinic-material-state opened", `Abierto ${dateShort.format(new Date(item.first_opened_at))}`));
+      else if (item.email_status === "sent" && !item.revoked_at) states.append(create("span", "clinic-material-state", "Aún no abierto"));
+      if (item.email_status === "sent") {
+        const patientStateClass = item.patient_state === "discuss" ? "clinic-material-state discuss" : "clinic-material-state";
+        states.append(create("span", patientStateClass, patientStateLabel(item.patient_state)));
+      }
+      if (item.revoked_at) states.append(create("span", "clinic-material-state revoked", "Revocado"));
+      if (states.childNodes.length) info.append(states);
+
+      const actions = create("div", "clinic-material-row-actions");
+
+      const preview = create("button", "clinic-text", "Ver");
+      preview.type = "button";
+      preview.addEventListener("click", () => openPatientMaterialPreview(item.title, item.patient_document || { instructions: item.content }, "html", false).catch((error) => { els.patientMessage.textContent = error.message; }));
+      actions.append(preview);
+
+      const pdf = create("button", "clinic-text", "Descargar copia");
+      pdf.type = "button";
+      pdf.addEventListener("click", () => openPatientMaterialPreview(item.title, item.patient_document || { instructions: item.content }, "pdf", true).catch((error) => { els.patientMessage.textContent = error.message; }));
+      actions.append(pdf);
+
+      if (item.email_status !== "sent") {
+        const send = create("button", "clinic-secondary", "Enviar");
+        send.type = "button";
+        send.addEventListener("click", () => sendExistingAssignment(item, false).catch((error) => { els.patientMessage.textContent = error.message; }));
+        actions.append(send);
+      } else {
+        const resend = create("button", "clinic-secondary", "Reenviar");
+        resend.type = "button";
+        resend.addEventListener("click", () => sendExistingAssignment(item, true).catch((error) => { els.patientMessage.textContent = error.message; }));
+        actions.append(resend);
+      }
+
+      if (item.email_status === "sent" && !item.revoked_at) {
+        const revoke = create("button", "clinic-text", "Revocar enlace");
+        revoke.type = "button";
+        revoke.addEventListener("click", () => revokeAssignment(item).catch((error) => { els.patientMessage.textContent = error.message; }));
+        actions.append(revoke);
+      }
+
       if (["sent", "assigned"].includes(item.status)) {
-        const reviewed = create("button", "clinic-secondary", "Marcar revisado"); reviewed.type = "button";
+        const reviewed = create("button", "clinic-text", "Marcar revisado");
+        reviewed.type = "button";
         reviewed.addEventListener("click", async () => {
           try {
-            const rows = await rest(`clinical_exercise_assignments?id=eq.${encodeURIComponent(item.id)}&select=*`, { method: "PATCH", headers: { Prefer: "return=representation" }, body: JSON.stringify({ status: "reviewed", reviewed_at: new Date().toISOString(), updated_at: new Date().toISOString() }) });
-            if (rows?.[0]) exerciseAssignments = exerciseAssignments.map((x) => x.id === item.id ? rows[0] : x);
-            renderExercises(currentPatient); renderTimeline(currentPatient); renderPending();
-          } catch (error) { els.patientMessage.textContent = error.message; }
+            const rows = await rest(`clinical_exercise_assignments?id=eq.${encodeURIComponent(item.id)}&select=*`, {
+              method: "PATCH",
+              headers: { Prefer: "return=representation" },
+              body: JSON.stringify({ status: "reviewed", reviewed_at: new Date().toISOString(), updated_at: new Date().toISOString() })
+            });
+            if (rows?.[0]) exerciseAssignments = exerciseAssignments.map((value) => value.id === item.id ? rows[0] : value);
+            renderExercises(currentPatient);
+            renderTimeline(currentPatient);
+            renderPending();
+          } catch (error) {
+            els.patientMessage.textContent = error.message;
+          }
         });
-        row.append(reviewed);
+        actions.append(reviewed);
       }
+
+      row.append(info, actions);
       els.patientExercises.append(row);
     });
   }
+
   async function saveExercise(sendAfterSave) {
     if (!currentPatient) return;
     if (!els.exerciseTitle.value.trim() || !els.exerciseContent.value.trim()) throw new Error("Completa el título y el contenido.");
@@ -1439,6 +1606,12 @@
     applyExerciseTemplate(template);
     if (template) {
       els.exerciseRationale.value = template.summary || "";
+      const document = normalizedPatientDocument(template);
+      if (!document.example) {
+        els.exerciseMessage.textContent = "Este material todavía no tiene un ejemplo trabajado. Puedes usar «Completar ficha con IA», revisarlo y actualizar la biblioteca.";
+      } else {
+        els.exerciseMessage.textContent = "";
+      }
     }
   });
   els.materialSearch?.addEventListener("input", () => {
@@ -1448,6 +1621,7 @@
     const value = els.materialSearch?.value?.trim() || "";
     if (!value) return;
     pendingAiMaterial = null;
+    applyExerciseTemplate(null);
     els.exerciseTitle.value = value;
     els.exerciseContent.focus();
   });
@@ -1509,8 +1683,8 @@
       els.exerciseTitle.value = material.title || query;
       if (els.materialType) els.materialType.value = material.material_type || "exercise";
       const aiPatientDocument = material.patient_document && typeof material.patient_document === "object" && !Array.isArray(material.patient_document)
-        ? { ...materialPatientDefaults(material.material_type || "exercise", material.summary || "", material.instructions || ""), ...material.patient_document, instructions: material.patient_document.instructions || material.instructions || "" }
-        : materialPatientDefaults(material.material_type || "exercise", material.summary || "", material.instructions || "");
+        ? { ...materialPatientDefaults(material.material_type || "exercise", material.summary || "", material.instructions || "", material.duration_minutes), ...material.patient_document, frequency: material.patient_document.frequency || materialPatientDefaults(material.material_type || "exercise", material.summary || "", material.instructions || "", material.duration_minutes).frequency, instructions: material.patient_document.instructions || material.instructions || "" }
+        : materialPatientDefaults(material.material_type || "exercise", material.summary || "", material.instructions || "", material.duration_minutes);
       els.exerciseContent.value = aiPatientDocument.instructions || material.instructions || "";
       fillPatientDocument(aiPatientDocument);
       els.exerciseRationale.value = material.summary || body.reason || "";
@@ -1533,61 +1707,145 @@
       els.materialAiCreate.disabled = false;
     }
   });
+  els.materialAiEnrich?.addEventListener("click", async () => {
+    const title = els.exerciseTitle.value.trim();
+    if (!title || !els.exerciseContent.value.trim()) {
+      els.exerciseMessage.textContent = "Selecciona o prepara un material antes de completar la ficha con IA.";
+      return;
+    }
+    const value = getSession();
+    if (!value?.access_token) {
+      els.exerciseMessage.textContent = "La sesión ha caducado. Vuelve a entrar en Gestión clínica.";
+      return;
+    }
+
+    const existing = exerciseTemplates.find((item) => item.id === els.exerciseTemplateId.value) || null;
+    els.exerciseMessage.textContent = "Completando ejemplo y ficha para paciente…";
+    els.materialAiEnrich.disabled = true;
+    try {
+      const response = await fetch("/api/clinical/material-enrich", {
+        method: "POST",
+        headers: {
+          Authorization: "Bearer " + value.access_token,
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          title,
+          material_type: els.materialType?.value || existing?.material_type || "exercise",
+          summary: existing?.summary || pendingAiMaterial?.summary || els.exerciseObjective.value.trim(),
+          process_tags: els.materialProcess?.value ? [els.materialProcess.value] : (existing?.process_tags || []),
+          patient_document: patientDocumentFromForm(els.materialType?.value || existing?.material_type || "exercise")
+        })
+      });
+      const body = await response.json().catch(() => ({}));
+      if (!response.ok) throw new Error(body.error || "No se ha podido completar la ficha.");
+      const document = body.patient_document || {};
+      fillPatientDocument(document);
+      els.exerciseContent.value = document.instructions || els.exerciseContent.value;
+      els.exerciseMessage.textContent = existing
+        ? "Ficha completada. Revísala y pulsa «Actualizar biblioteca» si quieres conservar esta versión."
+        : "Ficha completada. Revísala antes de añadirla a la biblioteca o enviarla.";
+    } catch (error) {
+      els.exerciseMessage.textContent = error?.message || "No se ha podido completar la ficha con IA.";
+    } finally {
+      els.materialAiEnrich.disabled = false;
+    }
+  });
+
   els.addMaterialLibrary?.addEventListener("click", async () => {
     const title = els.exerciseTitle.value.trim();
     const content = els.exerciseContent.value.trim();
     const process = els.materialProcess?.value || "";
     const materialType = els.materialType?.value || "exercise";
+    const existing = exerciseTemplates.find((item) => item.id === els.exerciseTemplateId.value) || null;
     if (!title || !content || !process) {
-      els.exerciseMessage.textContent = "Para añadirlo a la biblioteca indica título, contenido y categoría.";
+      els.exerciseMessage.textContent = "Para guardar el material indica título, contenido y categoría.";
       return;
     }
     if (!els.exerciseIntroduction.value.trim() || !els.exerciseWhy.value.trim()) {
-      els.exerciseMessage.textContent = "Completa la introducción y «Por qué hacemos este ejercicio» antes de incorporarlo.";
+      els.exerciseMessage.textContent = "Completa la introducción y «Por qué hacemos este ejercicio» antes de guardarlo.";
       return;
     }
-    els.exerciseMessage.textContent = "Añadiendo a la biblioteca…";
+
+    const duration = Number(els.exerciseDuration.value);
+    const payload = {
+      title,
+      summary: existing?.summary || pendingAiMaterial?.summary || els.exerciseObjective.value.trim() || "Material de la biblioteca clínica.",
+      instructions: content,
+      process_tags: [process],
+      duration_minutes: Number.isFinite(duration) && duration > 0 ? Math.min(180, Math.round(duration)) : existing?.duration_minutes || (materialType === "psychoeducation" ? 10 : null),
+      burden: ["low", "medium", "high"].includes(pendingAiMaterial?.burden)
+        ? pendingAiMaterial.burden
+        : existing?.burden || "low",
+      status: "active",
+      material_type: materialType,
+      phase: pendingAiMaterial?.phase || existing?.phase || (materialType === "psychoeducation" ? "orientation" : "practice"),
+      objectives: Array.isArray(pendingAiMaterial?.objectives) && pendingAiMaterial.objectives.length
+        ? pendingAiMaterial.objectives
+        : els.exerciseObjective.value.trim() ? [els.exerciseObjective.value.trim()] : (existing?.objectives || []),
+      cautions: Array.isArray(pendingAiMaterial?.cautions) ? pendingAiMaterial.cautions : (existing?.cautions || []),
+      sequence_rank: Number.isFinite(Number(pendingAiMaterial?.sequence_rank))
+        ? Number(pendingAiMaterial.sequence_rank)
+        : Number(existing?.sequence_rank || 50),
+      patient_document: patientDocumentFromForm(materialType),
+      patient_facing: true,
+      updated_at: new Date().toISOString()
+    };
+
+    els.exerciseMessage.textContent = existing ? "Actualizando biblioteca…" : "Añadiendo a la biblioteca…";
     els.addMaterialLibrary.disabled = true;
     try {
-      const rows = await rest("clinical_exercise_templates?select=*", {
-        method: "POST",
-        headers: { Prefer: "return=representation" },
-        body: JSON.stringify({
-          title,
-          summary: els.exerciseRationale.value.trim() || pendingAiMaterial?.summary || "Material incorporado manualmente a la biblioteca clínica.",
-          instructions: content,
-          process_tags: [process],
-          duration_minutes: Number.isFinite(Number(pendingAiMaterial?.duration_minutes))
-            ? Number(pendingAiMaterial.duration_minutes)
-            : materialType === "psychoeducation" ? 10 : null,
-          burden: ["low", "medium", "high"].includes(pendingAiMaterial?.burden) ? pendingAiMaterial.burden : "low",
-          status: "active",
-          material_type: materialType,
-          phase: pendingAiMaterial?.phase || (materialType === "psychoeducation" ? "orientation" : "practice"),
-          objectives: Array.isArray(pendingAiMaterial?.objectives) && pendingAiMaterial.objectives.length
-            ? pendingAiMaterial.objectives
-            : els.exerciseObjective.value.trim() ? [els.exerciseObjective.value.trim()] : [],
-          cautions: Array.isArray(pendingAiMaterial?.cautions) ? pendingAiMaterial.cautions : [],
-          sequence_rank: Number.isFinite(Number(pendingAiMaterial?.sequence_rank)) ? Number(pendingAiMaterial.sequence_rank) : 50,
-          patient_document: patientDocumentFromForm(materialType),
-          patient_facing: true
-        })
-      });
+      const rows = existing
+        ? await rest(`clinical_exercise_templates?id=eq.${encodeURIComponent(existing.id)}&select=*`, {
+            method: "PATCH",
+            headers: { Prefer: "return=representation" },
+            body: JSON.stringify(payload)
+          })
+        : await rest("clinical_exercise_templates?select=*", {
+            method: "POST",
+            headers: { Prefer: "return=representation" },
+            body: JSON.stringify(payload)
+          });
       const saved = rows?.[0];
-      if (!saved) throw new Error("No se ha podido recuperar el material creado.");
-      exerciseTemplates = [...exerciseTemplates, saved];
+      if (!saved) throw new Error("No se ha podido recuperar el material guardado.");
+      exerciseTemplates = existing
+        ? exerciseTemplates.map((item) => item.id === saved.id ? saved : item)
+        : [...exerciseTemplates, saved];
       pendingAiMaterial = null;
       if (els.materialSearch) els.materialSearch.value = "";
       populateExerciseLibrary(saved.id);
       populateMaterialProcessOptions(process);
       applyExerciseTemplate(saved);
-      els.exerciseMessage.textContent = "Añadido a la biblioteca. Ya puedes asignarlo o enviarlo.";
+      els.exerciseMessage.textContent = existing
+        ? "Biblioteca actualizada. La nueva versión queda lista para futuras asignaciones."
+        : "Añadido a la biblioteca. Ya puedes asignarlo o enviarlo.";
     } catch (error) {
-      els.exerciseMessage.textContent = error?.message || "No se ha podido añadir el material.";
+      els.exerciseMessage.textContent = error?.message || "No se ha podido guardar el material.";
     } finally {
       els.addMaterialLibrary.disabled = false;
     }
   });
+
+  els.previewMaterial?.addEventListener("click", () => {
+    const title = els.exerciseTitle.value.trim();
+    if (!title || !els.exerciseContent.value.trim()) {
+      els.exerciseMessage.textContent = "Completa al menos el título y el contenido para ver la vista del paciente.";
+      return;
+    }
+    openPatientMaterialPreview(title, patientDocumentFromForm(els.materialType?.value || "exercise"), "html", false)
+      .catch((error) => { els.exerciseMessage.textContent = error.message; });
+  });
+
+  els.previewPdf?.addEventListener("click", () => {
+    const title = els.exerciseTitle.value.trim();
+    if (!title || !els.exerciseContent.value.trim()) {
+      els.exerciseMessage.textContent = "Completa al menos el título y el contenido para generar el PDF de prueba.";
+      return;
+    }
+    openPatientMaterialPreview(title, patientDocumentFromForm(els.materialType?.value || "exercise"), "pdf", true)
+      .catch((error) => { els.exerciseMessage.textContent = error.message; });
+  });
+
   els.exerciseClose.addEventListener("click", () => els.exerciseDialog.close());
   els.saveExercise.addEventListener("click", () => saveExercise(false).catch((error) => { els.exerciseMessage.textContent = error.message; }));
   els.exerciseForm.addEventListener("submit", (event) => { event.preventDefault(); saveExercise(true).catch((error) => { els.exerciseMessage.textContent = error.message; }); });

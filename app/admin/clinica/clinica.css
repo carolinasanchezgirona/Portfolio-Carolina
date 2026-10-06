@@ -1017,3 +1017,23 @@
 .clinic-material-details summary{cursor:pointer;color:#173a5e;font-size:.82rem;font-weight:750}
 .clinic-material-details-grid{display:grid;gap:12px;margin-top:12px}
 .clinic-patient-document label span,.clinic-exercise-dialog label span{color:#71838e;font-size:.74rem;font-weight:500}
+
+.clinic-patient-document-heading{display:flex;align-items:flex-start;justify-content:space-between;gap:14px}
+.clinic-material-meta-grid{display:grid;grid-template-columns:160px minmax(0,1fr);gap:12px}
+.clinic-inline-field{display:flex;align-items:center;gap:7px}
+.clinic-inline-field input{min-width:0}
+.clinic-inline-field span{color:#71838e;font-size:.78rem}
+.clinic-material-actions{flex-wrap:wrap}
+.clinic-exercise-card{gap:12px}
+.clinic-material-status{display:flex;gap:6px;flex-wrap:wrap;margin-top:7px}
+.clinic-material-state{display:inline-flex;align-items:center;min-height:24px;padding:3px 8px;border-radius:999px;background:#eef4f8;color:#496577;font-size:.7rem;font-weight:700}
+.clinic-material-state.opened{background:#e8f6f2;color:#216556}
+.clinic-material-state.discuss{background:#fff1d9;color:#805c13}
+.clinic-material-state.revoked{background:#fff0ed;color:#963d2f}
+.clinic-material-row-actions{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
+.clinic-material-row-actions button{min-height:31px;padding:6px 9px;font-size:.72rem}
+@media(max-width:620px){
+  .clinic-patient-document-heading{flex-direction:column}
+  .clinic-material-meta-grid{grid-template-columns:1fr}
+  .clinic-material-row-actions{justify-content:flex-start}
+}
