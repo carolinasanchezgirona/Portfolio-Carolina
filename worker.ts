@@ -542,6 +542,23 @@ async function editorialRequest(request: Request, env: Env, operation: "content"
 }
 
 
+function openAIResponseText(payload: Record<string, unknown>): string {
+  if (typeof payload.output_text === "string" && payload.output_text.trim()) return payload.output_text.trim();
+  const output = Array.isArray(payload.output) ? payload.output : [];
+  for (const item of output) {
+    if (!item || typeof item !== "object" || Array.isArray(item)) continue;
+    const content = Array.isArray((item as Record<string, unknown>).content)
+      ? (item as Record<string, unknown>).content as unknown[]
+      : [];
+    for (const part of content) {
+      if (!part || typeof part !== "object" || Array.isArray(part)) continue;
+      const record = part as Record<string, unknown>;
+      if (record.type === "output_text" && typeof record.text === "string" && record.text.trim()) return record.text.trim();
+    }
+  }
+  return "";
+}
+
 /** Private clinical structuring. The professional reviews every proposal before it is saved. */
 async function clinicalStructureRequest(request: Request, env: Env): Promise<Response> {
   if (request.method !== "POST") return editorialJson({ error: "Método no permitido." }, 405);
@@ -594,27 +611,37 @@ async function clinicalStructureRequest(request: Request, env: Env): Promise<Res
   ].join("\n");
 
   try {
-    const response = await fetch("https://api.openai.com/v1/chat/completions", {
+    const response = await fetch("https://api.openai.com/v1/responses", {
       method: "POST",
-      headers: { Authorization: "Bearer " + env.OPENAI_API_KEY, "Content-Type": "application/json" },
+      headers: {
+        Authorization: "Bearer " + env.OPENAI_API_KEY,
+        "Content-Type": "application/json",
+        "X-Client-Request-Id": crypto.randomUUID()
+      },
       body: JSON.stringify({
-        model: env.OPENAI_CLINICAL_MODEL || "gpt-6-astra",
-        temperature: 0.1,
-        response_format: { type: "json_object" },
-        messages: [
-          { role: "system", content: system },
-          { role: "user", content: JSON.stringify({ notas: notes, historial_existente: existingProfile }) }
-        ]
+        model: env.OPENAI_CLINICAL_MODEL || "gpt-5.6-sol",
+        store: false,
+        instructions: system,
+        input: JSON.stringify({ notas: notes, historial_existente: existingProfile }),
+        text: { format: { type: "json_object" } }
       })
     });
 
-    const result = await response.json() as { choices?: Array<{ message?: { content?: string } }> };
-    if (!response.ok || !result.choices?.[0]?.message?.content) {
-      console.error("Clinical structure generation failure", response.status);
-      return editorialJson({ error: response.status === 429 ? "Se ha alcanzado el límite de análisis. Prueba de nuevo más tarde." : "No se ha podido estructurar la nota clínica." }, response.status === 429 ? 429 : 502);
+    const result = await response.json() as Record<string, unknown>;
+    const outputText = openAIResponseText(result);
+    if (!response.ok || !outputText) {
+      const apiError = result.error && typeof result.error === "object" && !Array.isArray(result.error)
+        ? result.error as Record<string, unknown>
+        : {};
+      console.error("Clinical structure generation failure", response.status, editorialText(apiError.code, 120));
+      if (response.status === 401) return editorialJson({ error: "La clave de OpenAI configurada no es válida o ha sido revocada." }, 502);
+      if (response.status === 403) return editorialJson({ error: "La clave está configurada, pero este proyecto no tiene permiso para usar el modelo clínico." }, 502);
+      if (response.status === 404) return editorialJson({ error: "El modelo clínico configurado no está disponible para este proyecto." }, 502);
+      if (response.status === 429) return editorialJson({ error: "Se ha alcanzado el límite de análisis o de crédito de la API. Revisa la facturación y prueba de nuevo." }, 429);
+      return editorialJson({ error: "OpenAI ha rechazado el análisis clínico. Vuelve a intentarlo y, si continúa, revisaremos la configuración de la API." }, 502);
     }
 
-    const raw = JSON.parse(result.choices[0].message.content) as Record<string, unknown>;
+    const raw = JSON.parse(outputText) as Record<string, unknown>;
     const rawFields = raw.fields && typeof raw.fields === "object" && !Array.isArray(raw.fields) ? raw.fields as Record<string, unknown> : {};
     const fields: Record<string, string> = {};
     for (const key of allowedFields) {

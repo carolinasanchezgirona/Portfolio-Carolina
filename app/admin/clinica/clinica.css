@@ -1071,3 +1071,41 @@
   color:#295d4d;
 }
 .clinic-material-quality span{line-height:1.4}
+
+.clinic-archived-toggle{
+  display:inline-flex;
+  align-items:center;
+  gap:7px;
+  min-height:38px;
+  padding:0 4px;
+  color:#607786;
+  font-size:.78rem;
+  white-space:nowrap;
+}
+.clinic-archived-toggle input{margin:0}
+.clinic-danger{
+  min-height:36px;
+  padding:8px 11px;
+  border:1px solid #e2b6ae;
+  border-radius:9px;
+  background:#fff7f5;
+  color:#983f32;
+  font:inherit;
+  font-size:.78rem;
+  font-weight:750;
+  cursor:pointer;
+}
+.clinic-danger:hover{background:#fff0ed;border-color:#d99a8f}
+.clinic-patient-card.is-archived{opacity:.72;background:#f5f7f8}
+.clinic-patient-card .clinic-archived-badge{
+  display:inline-flex;
+  align-items:center;
+  min-height:22px;
+  margin-top:5px;
+  padding:2px 7px;
+  border-radius:999px;
+  background:#e9eef1;
+  color:#5c6d77;
+  font-size:.68rem;
+  font-weight:700;
+}

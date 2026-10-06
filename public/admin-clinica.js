@@ -19,6 +19,7 @@
     todayView: $("#clinic-today-view"), patientsView: $("#clinic-patients-view"), pendingView: $("#clinic-pending-view"),
     pendingBadge: $("#clinic-pending-badge"), pendingSummary: $("#clinic-pending-summary"), pendingList: $("#clinic-pending-list"),
     todayList: $("#clinic-today-list"), patientList: $("#clinic-patient-list"), patientSearch: $("#clinic-patient-search"),
+    showArchived: $("#clinic-show-archived"),
     newPatient: $("#clinic-new-patient"), newPatientDialog: $("#clinic-new-patient-dialog"), newPatientForm: $("#clinic-new-patient-form"),
     newPatientClose: $("#clinic-new-patient-close"), newPatientCancel: $("#clinic-new-patient-cancel"), newPatientSave: $("#clinic-new-patient-save"),
     newPatientName: $("#clinic-new-patient-name"), newPatientPhone: $("#clinic-new-patient-phone"), newPatientEmail: $("#clinic-new-patient-email"),
@@ -28,6 +29,7 @@
     patientDialog: $("#clinic-patient-dialog"), patientForm: $("#clinic-patient-form"),
     patientClose: $("#clinic-patient-close"), patientId: $("#clinic-patient-id"),
     patientName: $("#clinic-patient-name"), patientContact: $("#clinic-patient-contact"),
+    archivePatient: $("#clinic-archive-patient"), deletePatient: $("#clinic-delete-patient"),
     personalFullName: $("#clinic-personal-full-name"), personalBirthDate: $("#clinic-personal-birth-date"),
     personalAge: $("#clinic-personal-age"), personalNationalId: $("#clinic-personal-national-id"),
     personalPhone: $("#clinic-personal-phone"), personalEmail: $("#clinic-personal-email"),
@@ -239,6 +241,47 @@
   function patientExercises(patientId) {
     return exerciseAssignments.filter((item) => item.patient_id === patientId).sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
   }
+  function patientHasClinicalActivity(patient) {
+    if (!patient) return false;
+    const profile = patient.clinical_profile && typeof patient.clinical_profile === "object" ? patient.clinical_profile : {};
+    const profileHasContent = Object.values(profile).some((value) => {
+      if (typeof value === "string") return value.trim().length > 0;
+      if (Array.isArray(value)) return value.length > 0;
+      if (value && typeof value === "object") return Object.keys(value).length > 0;
+      return Boolean(value);
+    });
+    return Boolean(
+      patientSessions(patient.id).length ||
+      patientExternalVisits(patient.id).length ||
+      clinicalGoals.some((item) => item.patient_id === patient.id) ||
+      exerciseAssignments.some((item) => item.patient_id === patient.id) ||
+      clinicalReports.some((item) => item.patient_id === patient.id) ||
+      clinicalDocuments.some((item) => item.patient_id === patient.id) ||
+      scaleMeasurements.some((item) => item.patient_id === patient.id) ||
+      String(patient.clinical_summary || "").trim() ||
+      String(patient.next_session_focus || "").trim() ||
+      String(patient.medication_notes || "").trim() ||
+      profileHasContent
+    );
+  }
+
+  function updatePatientRecordActions(patient) {
+    if (els.archivePatient) {
+      const archived = patient?.status === "archived";
+      els.archivePatient.textContent = archived ? "Restaurar ficha" : "Archivar ficha";
+      els.archivePatient.title = archived
+        ? "Volver a mostrar esta ficha entre los pacientes activos."
+        : "Ocultar la ficha de la lista activa conservando su historial.";
+    }
+    if (els.deletePatient) {
+      const canDelete = Boolean(patient) && !patientHasClinicalActivity(patient);
+      els.deletePatient.disabled = !canDelete;
+      els.deletePatient.title = canDelete
+        ? "Eliminar definitivamente una ficha creada por error y sin contenido clínico."
+        : "Las fichas con contenido clínico no se eliminan desde aquí. Utiliza Archivar ficha.";
+    }
+  }
+
   function prescriptionSuggestions(patientId) {
     const latest = patientSessions(patientId)[0];
     const patient = patientById(patientId);
@@ -1259,6 +1302,7 @@
     fillClinicalProfile(patient);
     els.patientMessage.textContent = "";
     els.patientName.textContent = `${patient.public_code} · ${patient.full_name}`;
+    updatePatientRecordActions(patient);
     renderPreparation(patient);
     renderTimeline(patient);
     renderDocuments(patient);
@@ -1304,7 +1348,9 @@
 
   function renderPatients(query = "") {
     const term = query.trim().toLowerCase();
+    const includeArchived = Boolean(els.showArchived?.checked);
     const filtered = patients.filter((patient) => {
+      if (patient.status === "archived" && !includeArchived) return false;
       const externalText = patientExternalVisits(patient.id)
         .map((item) => `${item.insurance_provider} ${item.external_provider} ${externalCenterLabel(item.center)} ${item.visit_date || ""} ${item.visit_time || ""}`)
         .join(" ");
@@ -1319,9 +1365,10 @@
     filtered.forEach((patient) => {
       const bookings = patientAppointments(patient.id);
       const visits = patientExternalVisits(patient.id);
-      const card = create("article", "clinic-patient-card");
+      const card = create("article", "clinic-patient-card" + (patient.status === "archived" ? " is-archived" : ""));
       const body = create("div");
       body.append(create("h3", "", patient.public_code), create("p", "", "Identidad oculta en el listado general"));
+      if (patient.status === "archived") body.append(create("span", "clinic-archived-badge", "Archivado"));
       if (visits[0]) {
         body.append(create("p", "", `${visits[0].external_provider} · ${externalCenterLabel(visits[0].center)} · ${visits[0].insurance_provider} · ${externalVisitWhen(visits[0])}`));
       }
@@ -1489,6 +1536,61 @@
     els.patientMessage.textContent = "Ficha completa guardada.";
   }
 
+  async function togglePatientArchive() {
+    if (!currentPatient) return;
+    const archived = currentPatient.status === "archived";
+    const nextStatus = archived ? "active" : "archived";
+    if (!archived && !window.confirm("¿Archivar esta ficha? El historial se conservará y dejará de aparecer en la lista activa.")) return;
+    els.patientMessage.textContent = archived ? "Restaurando ficha…" : "Archivando ficha…";
+    const rows = await rest(`clinical_patients?id=eq.${encodeURIComponent(currentPatient.id)}&select=*`, {
+      method: "PATCH",
+      headers: { Prefer: "return=representation" },
+      body: JSON.stringify({ status: nextStatus, updated_at: new Date().toISOString() })
+    });
+    const updated = rows?.[0];
+    if (!updated) throw new Error("No se ha podido actualizar el estado de la ficha.");
+    patients = patients.map((patient) => patient.id === updated.id ? updated : patient);
+    currentPatient = updated;
+    updatePatientRecordActions(updated);
+    renderPatients(els.patientSearch.value);
+    els.patientMessage.textContent = archived ? "Ficha restaurada." : "Ficha archivada.";
+    if (!archived && !els.showArchived?.checked) window.setTimeout(() => els.patientDialog.close(), 350);
+  }
+
+  async function deletePatientCreatedByError() {
+    if (!currentPatient) return;
+    if (patientHasClinicalActivity(currentPatient)) {
+      throw new Error("Esta ficha ya contiene información clínica y no puede eliminarse. Puedes archivarla.");
+    }
+    els.patientMessage.textContent = "Comprobando que la ficha esté vacía…";
+    const patientId = encodeURIComponent(currentPatient.id);
+    const [consents, tasks, mergeArchive] = await Promise.all([
+      rest(`clinical_patient_consents?patient_id=eq.${patientId}&select=id&limit=1`),
+      rest(`clinical_admin_tasks?patient_id=eq.${patientId}&select=id&limit=1`),
+      rest(`clinical_patient_merge_archive?kept_patient_id=eq.${patientId}&select=id&limit=1`)
+    ]);
+    if (consents?.length || tasks?.length || mergeArchive?.length) {
+      throw new Error("Esta ficha tiene información relacionada y no puede eliminarse. Puedes archivarla.");
+    }
+    const confirmation = window.prompt("Esta acción elimina definitivamente la ficha. Escribe ELIMINAR para confirmar.");
+    if (confirmation !== "ELIMINAR") {
+      els.patientMessage.textContent = "Eliminación cancelada.";
+      return;
+    }
+    els.patientMessage.textContent = "Eliminando ficha…";
+    try {
+      await rest(`clinical_patients?id=eq.${encodeURIComponent(currentPatient.id)}`, { method: "DELETE" });
+    } catch (error) {
+      throw new Error("No se ha podido eliminar la ficha. Si tiene actividad clínica relacionada, archívala en su lugar.");
+    }
+    const deletedId = currentPatient.id;
+    patients = patients.filter((patient) => patient.id !== deletedId);
+    currentPatient = null;
+    els.patientDialog.close();
+    renderPatients(els.patientSearch.value);
+    setMessage("Ficha creada por error eliminada.");
+  }
+
   function generateStructuredDraft() {
     const notes = els.workNotes.value.trim();
     const processes = markerValues(els.processMarkers);
@@ -1621,6 +1723,9 @@
     renderPatients(els.patientSearch.value);
   });
 
+  els.showArchived?.addEventListener("change", () => renderPatients(els.patientSearch.value));
+  els.archivePatient?.addEventListener("click", () => togglePatientArchive().catch((error) => { els.patientMessage.textContent = error.message; }));
+  els.deletePatient?.addEventListener("click", () => deletePatientCreatedByError().catch((error) => { els.patientMessage.textContent = error.message; }));
   els.patientClose.addEventListener("click", () => els.patientDialog.close());
   els.personalBirthDate?.addEventListener("change", () => { els.personalAge.value = patientAge(els.personalBirthDate.value); });
   els.patientForm.addEventListener("submit", (event) => savePatient(event).catch((error) => { els.patientMessage.textContent = error.message; }));

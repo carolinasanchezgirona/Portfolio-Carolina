@@ -72,6 +72,7 @@ export default function AdminClinicaPage() {
                 <span className="clinic-search-icon" aria-hidden="true">⌕</span>
                 <input id="clinic-patient-search" type="search" placeholder="Buscar paciente, correo, teléfono o mutua" autoComplete="off" />
               </div>
+              <label className="clinic-archived-toggle"><input id="clinic-show-archived" type="checkbox" /> Mostrar archivados</label>
               <button id="clinic-new-patient" className="clinic-primary" type="button">+ Nuevo paciente</button>
               <PatientBulkImport />
             </div>
@@ -131,6 +132,8 @@ export default function AdminClinicaPage() {
           <div className="clinic-record-actions">
             <button id="clinic-print-history" className="clinic-secondary" type="button">Imprimir historial clínico</button>
             <button id="clinic-new-report" className="clinic-primary" type="button">Generar informe</button>
+            <button id="clinic-archive-patient" className="clinic-text" type="button">Archivar ficha</button>
+            <button id="clinic-delete-patient" className="clinic-danger" type="button">Eliminar ficha creada por error</button>
           </div>
 
           <details className="clinic-record-section clinic-personal-admin-section" open>
@@ -513,7 +516,7 @@ export default function AdminClinicaPage() {
         </form>
       </dialog>
 
-      <Script src="/admin-clinica.js?v=20261006-material-quality-2" strategy="afterInteractive" />
+      <Script src="/admin-clinica.js?v=20261006-patient-delete-intake-3" strategy="afterInteractive" />
       <Script src="/clinical-smart-intake.js?v=20261005-smart-state-5" strategy="afterInteractive" />
       <Script src="/admin-clinica-audit-fixes.js?v=20260915-1" strategy="afterInteractive" />
     </main>
