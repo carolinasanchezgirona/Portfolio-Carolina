@@ -1562,6 +1562,16 @@
     if (patientHasClinicalActivity(currentPatient)) {
       throw new Error("Esta ficha ya contiene información clínica y no puede eliminarse. Puedes archivarla.");
     }
+    els.patientMessage.textContent = "Comprobando que la ficha esté vacía…";
+    const patientId = encodeURIComponent(currentPatient.id);
+    const [consents, tasks, mergeArchive] = await Promise.all([
+      rest(`clinical_patient_consents?patient_id=eq.${patientId}&select=id&limit=1`),
+      rest(`clinical_admin_tasks?patient_id=eq.${patientId}&select=id&limit=1`),
+      rest(`clinical_patient_merge_archive?kept_patient_id=eq.${patientId}&select=id&limit=1`)
+    ]);
+    if (consents?.length || tasks?.length || mergeArchive?.length) {
+      throw new Error("Esta ficha tiene información relacionada y no puede eliminarse. Puedes archivarla.");
+    }
     const confirmation = window.prompt("Esta acción elimina definitivamente la ficha. Escribe ELIMINAR para confirmar.");
     if (confirmation !== "ELIMINAR") {
       els.patientMessage.textContent = "Eliminación cancelada.";
