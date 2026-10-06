@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Script from "next/script";
+import JsonLd, { breadcrumbSchema } from "../components/json-ld";
 import "./booking.css";
 
 export const metadata: Metadata = {
@@ -23,6 +24,13 @@ export const metadata: Metadata = {
 export default function BookingPage() {
   return (
     <main className="editorial-site booking-page">
+      <JsonLd
+        id="booking-breadcrumb-structured-data"
+        data={breadcrumbSchema([
+          { name: "Inicio", url: "https://carolinasanchezgirona.com/" },
+          { name: "Pedir cita", url: "https://carolinasanchezgirona.com/cita/" },
+        ])}
+      />
       <header className="site-header booking-header">
         <a className="brand" href="/" aria-label="Carolina Sánchez, inicio">
           <span className="brand-name">Carolina Sánchez</span>
@@ -58,8 +66,8 @@ export default function BookingPage() {
             </div>
           </fieldset>
 
-          <div className="service-fixed"><div><strong id="selected-service-name">Psicología General Sanitaria</strong><small>60 minutos</small></div><b id="selected-service-price">60 €</b></div>
-          <p className="form-help">Psicología General Sanitaria: 60 € por 60 minutos. Neuropsicología: 75 € por 60 minutos. Las evaluaciones neuropsicológicas completas que requieran varias sesiones, pruebas específicas o informe se valoran aparte.</p>
+          <div className="service-fixed"><div><strong id="selected-service-name">Psicología General Sanitaria</strong><small>60 minutos</small></div><b id="selected-service-price">75 €</b></div>
+          <p className="form-help">Psicología General Sanitaria y Neuropsicología: 75 € por 60 minutos. Las evaluaciones neuropsicológicas completas que requieran varias sesiones, pruebas específicas o informe se valoran aparte.</p>
 
           <fieldset className="patient-type-fieldset">
             <legend>¿Es tu primera visita?</legend>

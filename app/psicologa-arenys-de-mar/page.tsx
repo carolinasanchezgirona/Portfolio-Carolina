@@ -25,6 +25,13 @@ const serviceSchema = {
   areaServed: ["Arenys de Mar", "Maresme", "Barcelona"],
   serviceType: ["Psicología General Sanitaria", "Neuropsicología"],
   url: "https://carolinasanchezgirona.com/psicologa-arenys-de-mar/",
+  offers: {
+    "@type": "Offer",
+    price: 75,
+    priceCurrency: "EUR",
+    url: "https://carolinasanchezgirona.com/cita/",
+    availability: "https://schema.org/InStock",
+  },
 };
 
 export default function LocalPsychologistPage() {
@@ -144,12 +151,12 @@ export default function LocalPsychologistPage() {
             <h2>Información práctica</h2>
             <ul className="seo-facts">
               <li><span>Duración</span><strong>60 minutos</strong></li>
-              <li><span>Psicología</span><strong>60 €</strong></li>
+              <li><span>Psicología</span><strong>75 €</strong></li>
               <li><span>Neuropsicología</span><strong>75 €</strong></li>
               <li><span>Modalidad</span><strong>Presencial y online</strong></li>
               <li><span>Ubicación</span><strong>Arenys de Mar</strong></li>
             </ul>
-            <p className="seo-card-note">La sesión de Psicología General Sanitaria tiene una tarifa de 60 € y la sesión de Neuropsicología de 75 €, ambas de 60 minutos. Las evaluaciones neuropsicológicas que requieran varias sesiones, pruebas específicas o informe se valoran aparte.</p>
+            <p className="seo-card-note">Las sesiones de Psicología General Sanitaria y Neuropsicología tienen una tarifa de 75 € y duran 60 minutos. Las evaluaciones neuropsicológicas que requieran varias sesiones, pruebas específicas o informe se valoran aparte.</p>
             <a className="editorial-btn editorial-btn-primary" href="/cita/">Consultar disponibilidad</a>
           </div>
 

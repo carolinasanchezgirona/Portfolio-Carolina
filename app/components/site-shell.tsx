@@ -2,8 +2,60 @@
 
 import type { ReactNode } from "react";
 import { usePathname } from "next/navigation";
+import JsonLd, { breadcrumbSchema } from "./json-ld";
 import SocialLinks from "./social-links";
 import "./conversion.css";
+
+const BASE_URL = "https://carolinasanchezgirona.com";
+
+const breadcrumbRoutes: Record<string, { name: string; parent?: { name: string; path: string } }> = {
+  "/psicologa-arenys-de-mar": { name: "Psicóloga en Arenys de Mar" },
+  "/psicologia": { name: "Psicología" },
+  "/ansiedad": { name: "Ansiedad", parent: { name: "Psicología", path: "/psicologia/" } },
+  "/ataques-de-panico": { name: "Ataques de pánico", parent: { name: "Psicología", path: "/psicologia/" } },
+  "/depresion": { name: "Depresión", parent: { name: "Psicología", path: "/psicologia/" } },
+  "/duelo": { name: "Duelo", parent: { name: "Psicología", path: "/psicologia/" } },
+  "/rupturas-de-pareja": { name: "Rupturas de pareja", parent: { name: "Psicología", path: "/psicologia/" } },
+  "/limites-y-relaciones-dificiles": { name: "Límites y relaciones", parent: { name: "Psicología", path: "/psicologia/" } },
+  "/autoestima-y-autocritica": { name: "Autoestima y autocrítica", parent: { name: "Psicología", path: "/psicologia/" } },
+  "/perfeccionismo-y-autoexigencia": { name: "Perfeccionismo", parent: { name: "Psicología", path: "/psicologia/" } },
+  "/rumiacion-y-pensamientos-repetitivos": { name: "Rumiación", parent: { name: "Psicología", path: "/psicologia/" } },
+  "/estres-y-sobrecarga": { name: "Estrés y sobrecarga", parent: { name: "Psicología", path: "/psicologia/" } },
+  "/insomnio-y-dificultades-para-dormir": { name: "Insomnio", parent: { name: "Psicología", path: "/psicologia/" } },
+  "/cambios-vitales-y-adaptacion": { name: "Cambios vitales", parent: { name: "Psicología", path: "/psicologia/" } },
+  "/ansiedad-social-y-miedo-al-ridiculo": { name: "Ansiedad social", parent: { name: "Psicología", path: "/psicologia/" } },
+  "/toc-obsesiones-y-compulsiones": { name: "TOC", parent: { name: "Psicología", path: "/psicologia/" } },
+  "/trauma-psicologico-y-estres-postraumatico": { name: "Trauma psicológico", parent: { name: "Psicología", path: "/psicologia/" } },
+  "/neuropsicologia": { name: "Neuropsicología" },
+  "/evaluacion-neuropsicologica": { name: "Evaluación neuropsicológica", parent: { name: "Neuropsicología", path: "/neuropsicologia/" } },
+  "/problemas-de-memoria": { name: "Problemas de memoria", parent: { name: "Neuropsicología", path: "/neuropsicologia/" } },
+  "/deterioro-cognitivo": { name: "Deterioro cognitivo", parent: { name: "Neuropsicología", path: "/neuropsicologia/" } },
+  "/ictus-y-dano-cerebral-adquirido": { name: "Ictus y daño cerebral", parent: { name: "Neuropsicología", path: "/neuropsicologia/" } },
+  "/parkinson-y-cambios-cognitivos": { name: "Parkinson y cognición", parent: { name: "Neuropsicología", path: "/neuropsicologia/" } },
+  "/rehabilitacion-neuropsicologica": { name: "Rehabilitación neuropsicológica", parent: { name: "Neuropsicología", path: "/neuropsicologia/" } },
+  "/alzheimer-primeros-sintomas-y-evaluacion": { name: "Alzheimer", parent: { name: "Neuropsicología", path: "/neuropsicologia/" } },
+  "/demencias": { name: "Demencias", parent: { name: "Neuropsicología", path: "/neuropsicologia/" } },
+  "/estimulacion-cognitiva": { name: "Estimulación cognitiva", parent: { name: "Neuropsicología", path: "/neuropsicologia/" } },
+  "/familiares-y-cuidadores-de-personas-con-demencia": { name: "Familiares y cuidadores", parent: { name: "Neuropsicología", path: "/neuropsicologia/" } },
+  "/sobre-mi": { name: "Sobre mí" },
+  "/articulos": { name: "Artículos" },
+  "/pregunta-a-carolina": { name: "Tu Consulta" },
+  "/recursos": { name: "Recursos" },
+};
+
+function BreadcrumbStructuredData({ pathname }: { pathname: string }) {
+  const normalizedPath = pathname !== "/" ? pathname.replace(/\/$/, "") : pathname;
+  const route = breadcrumbRoutes[normalizedPath];
+  if (!route) return null;
+
+  const items = [{ name: "Inicio", url: `${BASE_URL}/` }];
+  if (route.parent) {
+    items.push({ name: route.parent.name, url: `${BASE_URL}${route.parent.path}` });
+  }
+  items.push({ name: route.name, url: `${BASE_URL}${normalizedPath}/` });
+
+  return <JsonLd id="breadcrumb-structured-data" data={breadcrumbSchema(items)} />;
+}
 
 const administrativeRoutes = [
   "/cita",
@@ -138,6 +190,7 @@ export default function SiteShell({ children }: { children: ReactNode }) {
   if (!usesGlobalChrome(pathname)) {
     return (
       <div className="editorial-site public-page-shell">
+        <BreadcrumbStructuredData pathname={pathname} />
         <a className="skip-link" href="#contenido-principal">Saltar al contenido principal</a>
         <div id="contenido-principal" tabIndex={-1}>{children}</div>
         <a className="mobile-booking-shortcut" href="/cita/">Pedir cita</a>
@@ -148,6 +201,7 @@ export default function SiteShell({ children }: { children: ReactNode }) {
 
   return (
     <div className="editorial-site global-shell">
+      <BreadcrumbStructuredData pathname={pathname} />
       <a className="skip-link" href="#contenido-principal">Saltar al contenido principal</a>
       <SiteHeader />
       <div id="contenido-principal" className="site-public-content" tabIndex={-1}>{children}</div>

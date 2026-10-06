@@ -24,6 +24,13 @@ const serviceSchema = {
   areaServed: ["Arenys de Mar", "Maresme", "Barcelona"],
   serviceType: "Evaluación e intervención neuropsicológica",
   url: "https://carolinasanchezgirona.com/neuropsicologia/",
+  offers: {
+    "@type": "Offer",
+    price: 75,
+    priceCurrency: "EUR",
+    url: "https://carolinasanchezgirona.com/cita/",
+    availability: "https://schema.org/InStock",
+  },
 };
 
 export default function NeuropsychologyPage() {

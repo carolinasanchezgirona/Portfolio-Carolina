@@ -149,7 +149,7 @@ export default function AnxietyPage() {
             <h2>Sesión de psicología</h2>
             <ul className="seo-facts">
               <li><span>Duración</span><strong>60 minutos</strong></li>
-              <li><span>Tarifa</span><strong>60 €</strong></li>
+              <li><span>Tarifa</span><strong>75 €</strong></li>
               <li><span>Modalidad</span><strong>Presencial y online</strong></li>
               <li><span>Ubicación</span><strong>Arenys de Mar · Maresme</strong></li>
             </ul>
@@ -171,6 +171,13 @@ export default function AnxietyPage() {
               <a href="/depresion/">Depresión y bajo estado de ánimo</a>
               <a href="/duelo/">Duelo y pérdidas</a>
               <a href="/psicologa-arenys-de-mar/">Consulta en Arenys de Mar</a>
+            </div>
+          </div>
+          <div className="seo-card">
+            <h3>Artículos relacionados</h3>
+            <div className="seo-related">
+              <a href="/articulos/ansiedad-sintomas-fisicos/">Síntomas físicos de ansiedad: por qué aparecen</a>
+              <a href="/articulos/por-que-no-puedo-dejar-de-darle-vueltas-a-las-cosas/">Rumiación: por qué no puedes dejar de darle vueltas</a>
             </div>
           </div>
         </aside>

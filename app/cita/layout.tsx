@@ -18,7 +18,7 @@ export const metadata: Metadata = {
     images: ["/carolina-sanchez-retrato.jpg"],
   },
   twitter: {
-    card: "summary",
+    card: "summary_large_image",
     title: "Pedir cita | Carolina Sánchez Girona",
     description: "Reserva una sesión de psicología o neuropsicología en Arenys de Mar.",
     images: ["/carolina-sanchez-retrato.jpg"],

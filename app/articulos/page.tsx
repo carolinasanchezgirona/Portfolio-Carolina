@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Script from "next/script";
+import JsonLd from "../components/json-ld";
 import { getPublishedArticles, isArticleVisible } from "./articles-data";
 import "./articles.css";
 
@@ -39,9 +41,34 @@ function readingMinutes(html: string) {
 
 export default async function ArticlesPage() {
   const articles = (await getPublishedArticles()).filter((article) => isArticleVisible(article));
+  const collectionSchema = {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "CollectionPage",
+        "@id": "https://carolinasanchezgirona.com/articulos/#collection",
+        name: "Artículos de Psicología y Neuropsicología",
+        url: "https://carolinasanchezgirona.com/articulos/",
+        inLanguage: "es-ES",
+        isPartOf: { "@id": "https://carolinasanchezgirona.com/#website" },
+        mainEntity: { "@id": "https://carolinasanchezgirona.com/articulos/#list" },
+      },
+      {
+        "@type": "ItemList",
+        "@id": "https://carolinasanchezgirona.com/articulos/#list",
+        itemListElement: articles.map((article, index) => ({
+          "@type": "ListItem",
+          position: index + 1,
+          name: article.title,
+          url: `https://carolinasanchezgirona.com/articulos/${encodeURIComponent(article.slug)}/`,
+        })),
+      },
+    ],
+  };
 
   return (
     <main className="articles-page" data-articles-view="list">
+      <JsonLd id="articles-collection-structured-data" data={collectionSchema} />
       <section className="articles-hero">
         <div className="articles-wrap">
           <p className="articles-kicker">Recursos</p>
@@ -70,7 +97,14 @@ export default async function ArticlesPage() {
               <article key={article.id} data-article-category={article.category} className={`articles-card${article.featured ? " featured" : ""}`}>
                 {article.image_url ? (
                   <a className="articles-card-image" href={href} aria-label={`Leer ${article.title}`}>
-                    <img src={article.image_url} alt={article.image_alt || ""} loading="lazy" decoding="async" />
+                    <Image
+                      src={article.image_url}
+                      alt={article.image_alt || `Imagen del artículo: ${article.title}`}
+                      width={1200}
+                      height={600}
+                      sizes={article.featured ? "(max-width: 720px) calc(100vw - 36px), 1120px" : "(max-width: 720px) calc(100vw - 36px), 550px"}
+                      unoptimized
+                    />
                   </a>
                 ) : null}
                 <div className="articles-card-body">

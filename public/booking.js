@@ -15,7 +15,7 @@
   const SERVICES = {
     psicologia_general_sanitaria: {
       label: "Psicología General Sanitaria",
-      price: 60,
+      price: 75,
       consentHref: "/consentimiento-psicologico/",
       consentText: "consentimiento informado para intervención psicológica",
     },
