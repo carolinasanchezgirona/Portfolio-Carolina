@@ -611,33 +611,54 @@ async function clinicalStructureRequest(request: Request, env: Env): Promise<Res
   ].join("\n");
 
   try {
-    const response = await fetch("https://api.openai.com/v1/responses", {
-      method: "POST",
-      headers: {
-        Authorization: "Bearer " + env.OPENAI_API_KEY,
-        "Content-Type": "application/json",
-        "X-Client-Request-Id": crypto.randomUUID()
-      },
-      body: JSON.stringify({
-        model: env.OPENAI_CLINICAL_MODEL || "gpt-5.6-sol",
-        store: false,
-        instructions: system,
-        input: JSON.stringify({ notas: notes, historial_existente: existingProfile }),
-        text: { format: { type: "json_object" } }
-      })
-    });
+    const preferredModel = env.OPENAI_CLINICAL_MODEL || "gpt-6-sol";
+    const models = [...new Set([preferredModel, "gpt-6-sol", "gpt-4.1-mini"])];
+    let outputText = "";
+    let lastStatus = 502;
+    let lastErrorCode = "";
 
-    const result = await response.json() as Record<string, unknown>;
-    const outputText = openAIResponseText(result);
-    if (!response.ok || !outputText) {
+    for (const model of models) {
+      const response = await fetch("https://api.openai.com/v1/responses", {
+        method: "POST",
+        headers: {
+          Authorization: "Bearer " + env.OPENAI_API_KEY,
+          "Content-Type": "application/json",
+          "X-Client-Request-Id": crypto.randomUUID()
+        },
+        body: JSON.stringify({
+          model,
+          store: false,
+          instructions: system,
+          input: JSON.stringify({ notas: notes, historial_existente: existingProfile }),
+          text: { format: { type: "json_object" } }
+        })
+      });
+
+      const result = await response.json() as Record<string, unknown>;
+      const candidate = openAIResponseText(result);
+      if (response.ok && candidate) {
+        outputText = candidate;
+        break;
+      }
+
       const apiError = result.error && typeof result.error === "object" && !Array.isArray(result.error)
         ? result.error as Record<string, unknown>
         : {};
-      console.error("Clinical structure generation failure", response.status, editorialText(apiError.code, 120));
-      if (response.status === 401) return editorialJson({ error: "La clave de OpenAI configurada no es válida o ha sido revocada." }, 502);
-      if (response.status === 403) return editorialJson({ error: "La clave está configurada, pero este proyecto no tiene permiso para usar el modelo clínico." }, 502);
-      if (response.status === 404) return editorialJson({ error: "El modelo clínico configurado no está disponible para este proyecto." }, 502);
-      if (response.status === 429) return editorialJson({ error: "Se ha alcanzado el límite de análisis o de crédito de la API. Revisa la facturación y prueba de nuevo." }, 429);
+      lastStatus = response.status;
+      lastErrorCode = editorialText(apiError.code, 120);
+      console.error("Clinical structure generation failure", model, response.status, lastErrorCode);
+
+      // Invalid/revoked credentials or exhausted billing will not improve by changing model.
+      if (response.status === 401 || response.status === 429) break;
+      // Model access / unsupported-model errors can fall back safely to a broadly available model.
+      if (![400, 403, 404].includes(response.status)) break;
+    }
+
+    if (!outputText) {
+      if (lastStatus === 401) return editorialJson({ error: "La clave de OpenAI configurada no es válida o ha sido revocada." }, 502);
+      if (lastStatus === 429) return editorialJson({ error: "Se ha alcanzado el límite de análisis o de crédito de la API. Revisa la facturación y prueba de nuevo." }, 429);
+      if (lastStatus === 403 || lastStatus === 404) return editorialJson({ error: "La clave está configurada, pero el proyecto no tiene acceso a ninguno de los modelos clínicos de respaldo." }, 502);
+      if (lastStatus === 400) return editorialJson({ error: "La API ha rechazado el formato del análisis. Se ha probado también el modelo de respaldo sin éxito." }, 502);
       return editorialJson({ error: "OpenAI ha rechazado el análisis clínico. Vuelve a intentarlo y, si continúa, revisaremos la configuración de la API." }, 502);
     }
 
