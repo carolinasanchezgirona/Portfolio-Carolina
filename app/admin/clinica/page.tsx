@@ -405,19 +405,29 @@ export default function AdminClinicaPage() {
           </div>
           <label>Título<input id="clinic-exercise-title" required /></label>
           <section className="clinic-patient-document">
-            <div>
-              <p className="clinic-eyebrow">Documento para el paciente</p>
-              <p className="clinic-material-helper">Esta información aparecerá en la lectura online y en el PDF descargable.</p>
+            <div className="clinic-patient-document-heading">
+              <div>
+                <p className="clinic-eyebrow">Documento para el paciente</p>
+                <p className="clinic-material-helper">Esta información aparecerá en la lectura online y en el PDF descargable.</p>
+              </div>
+              <button id="clinic-material-ai-enrich" className="clinic-secondary" type="button">Completar ficha con IA</button>
+            </div>
+            <div className="clinic-material-meta-grid">
+              <label>Tiempo aproximado
+                <div className="clinic-inline-field"><input id="clinic-exercise-duration" type="number" min={1} max={180} inputMode="numeric" /><span>min</span></div>
+              </label>
+              <label>Frecuencia sugerida<input id="clinic-exercise-frequency" placeholder="Ej. 3 veces esta semana" /></label>
             </div>
             <label>Introducción breve<textarea id="clinic-exercise-introduction" rows={2} required /></label>
             <label>Por qué hacemos este ejercicio<textarea id="clinic-exercise-why" rows={4} required /></label>
             <label>Cómo hacerlo / contenido<textarea id="clinic-exercise-content" rows={10} required /></label>
             <details className="clinic-material-details">
-              <summary>Completar objetivo, ejemplo, registro y cierre</summary>
+              <summary>Completar objetivo, ejemplo, registro, seguridad y cierre</summary>
               <div className="clinic-material-details-grid">
                 <label>Objetivo<input id="clinic-exercise-objective" /></label>
-                <label>Ejemplo opcional<textarea id="clinic-exercise-example" rows={3} /></label>
+                <label>Ejemplo para el paciente<textarea id="clinic-exercise-example" rows={4} /></label>
                 <label>Qué observar o registrar<textarea id="clinic-exercise-record" rows={3} /></label>
+                <label>Si resulta demasiado intenso <span>(opcional)</span><textarea id="clinic-exercise-safety" rows={3} /></label>
                 <label>Qué conviene recordar<textarea id="clinic-exercise-remember" rows={3} /></label>
                 <label>Para comentar en sesión <span>(una pregunta por línea)</span><textarea id="clinic-exercise-session-questions" rows={3} /></label>
               </div>
@@ -427,7 +437,9 @@ export default function AdminClinicaPage() {
           <label>Correo destinatario<input id="clinic-exercise-email" type="email" required /></label>
           <p className="clinic-note">El correo será neutro. El paciente podrá leer el material online y descargar un PDF profesional. El enlace personal caduca en 7 días.</p>
           <p id="clinic-exercise-message" className="clinic-message" role="status" />
-          <div className="clinic-dialog-actions">
+          <div className="clinic-dialog-actions clinic-material-actions">
+            <button id="clinic-preview-material" className="clinic-text" type="button">Vista del paciente</button>
+            <button id="clinic-preview-pdf" className="clinic-text" type="button">PDF de prueba</button>
             <button id="clinic-save-exercise" className="clinic-secondary" type="button">Guardar sin enviar</button>
             <button className="clinic-primary" type="submit">Guardar y enviar enlace</button>
           </div>
@@ -497,7 +509,7 @@ export default function AdminClinicaPage() {
         </form>
       </dialog>
 
-      <Script src="/admin-clinica.js?v=20261005-patient-pdf-6" strategy="afterInteractive" />
+      <Script src="/admin-clinica.js?v=20261006-entre-sesiones-1" strategy="afterInteractive" />
       <Script src="/clinical-smart-intake.js?v=20261005-smart-state-5" strategy="afterInteractive" />
       <Script src="/admin-clinica-audit-fixes.js?v=20260915-1" strategy="afterInteractive" />
     </main>
