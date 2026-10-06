@@ -587,6 +587,14 @@
   function patientStateLabel(value) {
     return ({ pending: "Pendiente", reviewed: "Lo ha revisado", discuss: "Quiere comentarlo en sesión" })[value] || "Pendiente";
   }
+  function sharedPatientResponse(item) {
+    if (item?.patient_response_status !== "shared") return null;
+    const source = item.patient_response && typeof item.patient_response === "object" ? item.patient_response : {};
+    const record = String(source.record || "").trim();
+    const answers = Array.isArray(source.answers) ? source.answers.map((value) => String(value || "").trim()) : [];
+    if (!record && !answers.some(Boolean)) return null;
+    return { record, answers };
+  }
 
   function previewFileName(title) {
     const slug = String(title || "material")
@@ -712,8 +720,33 @@
         const patientStateClass = item.patient_state === "discuss" ? "clinic-material-state discuss" : "clinic-material-state";
         states.append(create("span", patientStateClass, patientStateLabel(item.patient_state)));
       }
+      const patientResponse = sharedPatientResponse(item);
+      if (patientResponse) states.append(create("span", "clinic-material-state shared", "Respuestas compartidas"));
       if (item.revoked_at) states.append(create("span", "clinic-material-state revoked", "Revocado"));
       if (states.childNodes.length) info.append(states);
+
+      if (patientResponse) {
+        const details = create("details", "clinic-material-response");
+        const summary = create("summary", "", "Ver respuestas compartidas");
+        const body = create("div", "clinic-material-response-body");
+        if (patientResponse.record) {
+          const block = create("article");
+          block.append(create("strong", "", "Tu registro"), create("p", "", patientResponse.record));
+          body.append(block);
+        }
+        const questions = Array.isArray(item.patient_document?.session_questions) ? item.patient_document.session_questions : [];
+        patientResponse.answers.forEach((answer, index) => {
+          if (!answer) return;
+          const block = create("article");
+          block.append(create("strong", "", questions[index] || `Respuesta ${index + 1}`), create("p", "", answer));
+          body.append(block);
+        });
+        if (item.patient_response_shared_at) {
+          body.append(create("small", "", `Compartido ${dateShort.format(new Date(item.patient_response_shared_at))}`));
+        }
+        details.append(summary, body);
+        info.append(details);
+      }
 
       const actions = create("div", "clinic-material-row-actions");
 
@@ -1064,7 +1097,7 @@
       text: `${x.external_provider} · ${externalCenterLabel(x.center)} · ${x.insurance_provider}`,
     }));
     patientSessions(patient.id).forEach((x) => items.push({ date: x.session_date, type: "Sesión", text: `${x.status === "approved" ? "Aprobada" : "Borrador"} · sesión ${x.session_number || ""}` }));
-    patientExercises(patient.id).forEach((x) => items.push({ date: x.sent_at || x.created_at, type: "Ejercicio", text: `${x.title} · ${x.email_status === "sent" ? "enviado" : "preparado"}` }));
+    patientExercises(patient.id).forEach((x) => items.push({ date: x.sent_at || x.created_at, type: "Ejercicio", text: `${x.title} · ${x.email_status === "sent" ? "enviado" : "preparado"}${x.patient_response_status === "shared" ? " · respuestas compartidas" : ""}` }));
     clinicalReports.filter((x) => x.patient_id === patient.id).forEach((x) => items.push({ date: x.approved_at || x.created_at, type: "Informe", text: `${x.title} · ${x.status === "approved" ? "aprobado" : "borrador"}` }));
     clinicalDocuments.filter((x) => x.patient_id === patient.id).forEach((x) => items.push({ date: x.document_date || x.created_at, type: "Documento", text: x.title }));
     scaleMeasurements.filter((x) => x.patient_id === patient.id).forEach((x) => items.push({ date: x.measured_at, type: "Escala", text: `${x.instrument}${x.total_score !== null && x.total_score !== undefined ? `: ${x.total_score}` : ""}` }));

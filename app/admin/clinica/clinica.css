@@ -1116,3 +1116,52 @@
   font-size:.76rem;
   line-height:1.45;
 }
+
+
+.clinic-material-state.shared{
+  border-color:#9fd7d3;
+  background:#eaf9f8;
+  color:#145d5a;
+}
+.clinic-material-response{
+  margin-top:10px;
+  border:1px solid #cfe2e9;
+  border-radius:12px;
+  background:#fbfdfe;
+  overflow:hidden;
+}
+.clinic-material-response summary{
+  cursor:pointer;
+  padding:10px 12px;
+  color:#173a5e;
+  font-size:.78rem;
+  font-weight:800;
+}
+.clinic-material-response-body{
+  display:grid;
+  gap:10px;
+  padding:0 12px 12px;
+}
+.clinic-material-response-body article{
+  padding:10px 11px;
+  border-radius:10px;
+  background:#fff;
+  border:1px solid #e1ebf0;
+}
+.clinic-material-response-body strong{
+  display:block;
+  margin-bottom:4px;
+  color:#173a5e;
+  font-size:.76rem;
+}
+.clinic-material-response-body p{
+  margin:0;
+  white-space:pre-wrap;
+  color:#405564;
+  font-size:.78rem;
+  line-height:1.5;
+}
+.clinic-material-response-body small{
+  color:#6a7e8b;
+  font-size:.7rem;
+}
