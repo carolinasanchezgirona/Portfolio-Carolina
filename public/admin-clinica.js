@@ -29,7 +29,7 @@
     patientDialog: $("#clinic-patient-dialog"), patientForm: $("#clinic-patient-form"),
     patientClose: $("#clinic-patient-close"), patientId: $("#clinic-patient-id"),
     patientName: $("#clinic-patient-name"), patientContact: $("#clinic-patient-contact"),
-    archivePatient: $("#clinic-archive-patient"), deletePatient: $("#clinic-delete-patient"),
+    archivePatient: $("#clinic-archive-patient"), deletePatient: $("#clinic-delete-patient"), deletePatientNote: $("#clinic-delete-patient-note"),
     personalFullName: $("#clinic-personal-full-name"), personalBirthDate: $("#clinic-personal-birth-date"),
     personalAge: $("#clinic-personal-age"), personalNationalId: $("#clinic-personal-national-id"),
     personalPhone: $("#clinic-personal-phone"), personalEmail: $("#clinic-personal-email"),
@@ -275,10 +275,16 @@
     }
     if (els.deletePatient) {
       const canDelete = Boolean(patient) && !patientHasClinicalActivity(patient);
-      els.deletePatient.disabled = !canDelete;
+      els.deletePatient.disabled = false;
+      els.deletePatient.textContent = "Eliminar paciente";
       els.deletePatient.title = canDelete
         ? "Eliminar definitivamente una ficha creada por error y sin contenido clínico."
-        : "Las fichas con contenido clínico no se eliminan desde aquí. Utiliza Archivar ficha.";
+        : "Esta ficha contiene actividad clínica. Al pulsar se explicará por qué debe archivarse en lugar de eliminarse.";
+      if (els.deletePatientNote) {
+        els.deletePatientNote.textContent = canDelete
+          ? "Esta ficha no contiene actividad clínica registrada y puede eliminarse si fue creada por error."
+          : "Esta ficha contiene actividad clínica. Por seguridad, no se elimina desde aquí: puedes archivarla y conservar el historial.";
+      }
     }
   }
 
