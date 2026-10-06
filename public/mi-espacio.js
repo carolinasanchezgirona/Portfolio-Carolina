@@ -365,8 +365,12 @@
   }
 
   function saveState() {
-    localStorage.setItem(FAVORITES_KEY, JSON.stringify(state.favorites));
-    localStorage.setItem(COMPLETED_KEY, JSON.stringify(state.completed.slice(-100)));
+    try {
+      localStorage.setItem(FAVORITES_KEY, JSON.stringify(state.favorites));
+      localStorage.setItem(COMPLETED_KEY, JSON.stringify(state.completed.slice(-100)));
+    } catch {
+      // La experiencia sigue funcionando aunque el navegador bloquee almacenamiento local.
+    }
   }
 
   function showView(name) {
@@ -452,6 +456,8 @@
 
   function openActivity(activity) {
     state.currentActivity = activity;
+    favoriteButton.hidden = false;
+    completeButton.hidden = false;
     dialogType.textContent = typeLabel(activity.type);
     dialogTitle.textContent = activity.title;
     dialogIntro.textContent = activity.intro;
