@@ -22,7 +22,37 @@ export default function MiEspacioPage() {
         </div>
       </header>
 
-      <div className="space-shell">
+      <section id="space-access" className="space-access">
+        <div className="space-access-card">
+          <div>
+            <p className="space-eyebrow">Acceso privado</p>
+            <h1>Entra en Mi espacio</h1>
+            <p>Introduce el correo que utilizas en consulta. Te enviaremos un código de seis cifras. No necesitas contraseña.</p>
+          </div>
+
+          <form id="space-email-form" className="space-access-form">
+            <label>Correo electrónico
+              <input id="space-access-email" type="email" autoComplete="email" inputMode="email" required placeholder="tu@email.com" />
+            </label>
+            <button className="space-primary" type="submit">Recibir código</button>
+          </form>
+
+          <form id="space-code-form" className="space-access-form" hidden>
+            <label>Código de acceso
+              <input id="space-access-code" className="space-code-input" type="text" inputMode="numeric" autoComplete="one-time-code" pattern="[0-9]{6}" maxLength={6} required placeholder="000000" />
+            </label>
+            <button className="space-primary" type="submit">Entrar</button>
+            <button id="space-change-email" className="space-secondary" type="button">Usar otro correo</button>
+          </form>
+
+          <p id="space-access-message" className="space-access-message" role="status" />
+          <div className="space-access-divider"><span>o</span></div>
+          <button id="space-wellness-guest" className="space-wellness-guest" type="button">Entrar en Wellness sin iniciar sesión</button>
+          <p className="space-access-foot">El código caduca en 10 minutos y solo puede utilizarse una vez. Si el correo no está vinculado a una ficha con acceso, no se enviará información clínica.</p>
+        </div>
+      </section>
+
+      <div id="space-shell" className="space-shell" hidden>
         <aside className="space-sidebar" aria-label="Navegación de Mi espacio">
           <div>
             <p className="space-eyebrow">Tu espacio personal</p>
@@ -48,7 +78,7 @@ export default function MiEspacioPage() {
           <section className="space-view" data-space-panel="today">
             <div className="space-hero">
               <p className="space-eyebrow">Hoy</p>
-              <h2>¿Qué necesitas ahora?</h2>
+              <h2 id="space-today-title">¿Qué necesitas ahora?</h2>
               <p>No hace falta saber el nombre de una técnica. Empieza por cómo estás y te llevamos a una herramienta breve.</p>
             </div>
 
@@ -70,7 +100,7 @@ export default function MiEspacioPage() {
                   <h3>Trabajo entre sesiones</h3>
                   <p id="space-therapy-status">Si Carolina te ha enviado material, puedes acceder desde aquí.</p>
                 </div>
-                <a id="space-between-link" className="space-primary" href="/entre-sesiones/">Abrir Entre Sesiones</a>
+                <button id="space-between-link" className="space-primary" type="button" data-go-therapy>Ver mi terapia</button>
               </article>
 
               <article className="space-card">
@@ -102,18 +132,17 @@ export default function MiEspacioPage() {
             </div>
 
             <div className="space-grid space-feature-grid">
-              <article className="space-card space-card-active">
-                <p className="space-kicker">Disponible</p>
-                <h3>Entre Sesiones</h3>
-                <p>Ejercicios y materiales terapéuticos acordados en consulta, mediante acceso protegido.</p>
-                <a className="space-primary" href="/entre-sesiones/">Abrir materiales</a>
+              <article id="space-appointment-card" className="space-card space-card-active">
+                <p className="space-kicker">Próxima cita</p>
+                <h3 id="space-appointment-title">Accede para ver tu próxima cita</h3>
+                <p id="space-appointment-copy">La información de agenda solo se muestra después de identificarte.</p>
               </article>
 
-              <article className="space-card space-card-planned">
-                <p className="space-kicker">Siguiente fase</p>
-                <h3>Mis citas</h3>
-                <p>Próxima cita, modalidad y opciones administrativas cuando conectemos el portal con la agenda.</p>
-                <span className="space-pill">Preparado para conectar</span>
+              <article className="space-card">
+                <p className="space-kicker">Entre sesiones</p>
+                <h3>Materiales y ejercicios</h3>
+                <p>Consulta los materiales que Carolina te ha enviado y, cuando el ejercicio lo permita, rellénalo aquí mismo.</p>
+                <span id="space-material-count" className="space-pill">Acceso privado</span>
               </article>
 
               <article className="space-card space-card-planned">
@@ -130,6 +159,15 @@ export default function MiEspacioPage() {
                 <span className="space-pill">Preparado para conectar</span>
               </article>
             </div>
+
+            <section className="space-section">
+              <div className="space-section-heading">
+                <div><p className="space-eyebrow">Entre sesiones</p><h3>Mis materiales</h3></div>
+              </div>
+              <div id="space-patient-materials" className="space-patient-materials">
+                <div className="space-empty">Inicia sesión para ver tus materiales.</div>
+              </div>
+            </section>
 
             <aside className="space-info-note">
               <strong>Privacidad por diseño</strong>
@@ -193,7 +231,7 @@ export default function MiEspacioPage() {
               <article className="space-card">
                 <p className="space-kicker">Mi terapia</p>
                 <h3>Acceso protegido</h3>
-                <p>Los materiales clínicos siguen utilizando el sistema de acceso protegido de Entre Sesiones.</p>
+                <p>El acceso se realiza con un código de un solo uso enviado a tu correo. La sesión queda protegida mediante una cookie segura que no puede leer el JavaScript de la página.</p>
               </article>
               <article className="space-card">
                 <p className="space-kicker">Futuras conexiones</p>
@@ -202,7 +240,10 @@ export default function MiEspacioPage() {
               </article>
             </div>
 
-            <button id="space-clear-local" className="space-danger-link" type="button">Borrar mis favoritos y progreso de este dispositivo</button>
+            <div className="space-account-actions">
+              <button id="space-clear-local" className="space-danger-link" type="button">Borrar mis favoritos y progreso de este dispositivo</button>
+              <button id="space-logout" className="space-danger-link" type="button">Cerrar sesión de Mi espacio</button>
+            </div>
             <p id="space-clear-message" className="space-small" role="status" />
           </section>
         </section>
@@ -228,7 +269,7 @@ export default function MiEspacioPage() {
         <span>Si existe una emergencia, llama al 112. Si hay riesgo o ideación suicida, puedes contactar con el 024.</span>
       </aside>
 
-      <Script src="/mi-espacio.js?v=20261006-1" strategy="afterInteractive" />
+      <Script src="/mi-espacio.js?v=20261006-2" strategy="afterInteractive" />
     </main>
   );
 }
