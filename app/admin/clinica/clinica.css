@@ -1037,3 +1037,37 @@
   .clinic-material-meta-grid{grid-template-columns:1fr}
   .clinic-material-row-actions{justify-content:flex-start}
 }
+
+.clinic-material-quality{
+  display:flex;
+  align-items:center;
+  gap:9px;
+  flex-wrap:wrap;
+  margin:-2px 0 4px;
+  padding:10px 12px;
+  border:1px solid #ead9b9;
+  border-radius:11px;
+  background:#fff8ec;
+  color:#70511c;
+  font-size:.78rem;
+}
+.clinic-material-quality strong{
+  display:inline-flex;
+  align-items:center;
+  min-height:25px;
+  padding:3px 8px;
+  border-radius:999px;
+  background:#f2e3bf;
+  color:#6e5018;
+  font-size:.72rem;
+}
+.clinic-material-quality.is-complete{
+  border-color:#cfe4dc;
+  background:#f2faf7;
+  color:#3d6658;
+}
+.clinic-material-quality.is-complete strong{
+  background:#dcefe8;
+  color:#295d4d;
+}
+.clinic-material-quality span{line-height:1.4}
