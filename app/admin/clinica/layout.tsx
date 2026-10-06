@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./mobile-fixes.css";
 import "./brand-fixes.css";
+import "./admin-enhancements.css";
 
 export const metadata: Metadata = {
   title: "Gestión clínica | Carolina Sánchez",
@@ -24,6 +25,7 @@ export default function ClinicaLayout({ children }: Readonly<{ children: React.R
       <script src="/clinic-scale-trends.js?v=20260915-2" defer />
       <script src="/clinic-template-library.js?v=20260915-3" defer />
       <script src="/clinic-admin-tasks.js?v=20260915-2" defer />
+      <script src="/clinic-patient-admin-enhancements.js?v=20261006-1" defer />
       <script src="/clinic-pwa.js?v=20260917-2" defer />
     </>
   );

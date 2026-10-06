@@ -16,6 +16,8 @@ export default function AgendaLayout({ children }: Readonly<{ children: React.Re
       <script src="/admin-month-view.js?v=20260920-holidays-1" defer />
       <script src="/admin-quick-reschedule.js?v=20260915-2" defer />
       <script src="/admin-waitlist.js?v=20260915-2" defer />
+      <script src="/admin-recurrence-v2.js?v=20261006-1" defer />
+      <script src="/admin-communications.js?v=20261006-1" defer />
     </>
   );
 }

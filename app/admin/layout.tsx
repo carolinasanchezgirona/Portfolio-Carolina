@@ -15,6 +15,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   return (
     <>
       {children}
+      <Script src="/admin-shell.js?v=20261006-1" strategy="afterInteractive" />
       <Script src="/admin-articles-media.js?v=20260914-media-1" strategy="afterInteractive" />
     </>
   );
