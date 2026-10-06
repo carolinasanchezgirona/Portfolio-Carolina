@@ -11,6 +11,7 @@ const administrativeRoutes = [
   "/privacidad",
   "/consentimiento-psicologico",
   "/consentimiento-neuropsicologico",
+  "/mi-espacio",
 ];
 
 function isAdministrativeRoute(pathname: string) {
