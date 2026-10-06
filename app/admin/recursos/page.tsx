@@ -29,7 +29,7 @@ export default function AdminRecursosPage() {
           <div>
             <p className="resources-eyebrow">Administración comercial</p>
             <h1>Recursos digitales</h1>
-            <p>Crea y prepara materiales descargables sin publicarlos hasta que el circuito de compra esté activo.</p>
+            <p>Gestiona materiales, ventas y descargas seguras desde un único panel.</p>
           </div>
           <div className="resources-top-actions">
             <a className="resources-secondary" href="/admin/clinica/?panel=1">Historiales</a>
