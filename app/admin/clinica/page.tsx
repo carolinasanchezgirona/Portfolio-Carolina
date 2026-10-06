@@ -412,6 +412,10 @@ export default function AdminClinicaPage() {
               </div>
               <button id="clinic-material-ai-enrich" className="clinic-secondary" type="button">Completar ficha con IA</button>
             </div>
+            <div id="clinic-material-quality" className="clinic-material-quality" role="status">
+              <strong id="clinic-material-quality-label">Ficha básica</strong>
+              <span id="clinic-material-quality-note">Recomendable completar antes de enviar.</span>
+            </div>
             <div className="clinic-material-meta-grid">
               <label>Tiempo aproximado
                 <div className="clinic-inline-field"><input id="clinic-exercise-duration" type="number" min={1} max={180} inputMode="numeric" /><span>min</span></div>
@@ -509,7 +513,7 @@ export default function AdminClinicaPage() {
         </form>
       </dialog>
 
-      <Script src="/admin-clinica.js?v=20261006-entre-sesiones-1" strategy="afterInteractive" />
+      <Script src="/admin-clinica.js?v=20261006-material-quality-2" strategy="afterInteractive" />
       <Script src="/clinical-smart-intake.js?v=20261005-smart-state-5" strategy="afterInteractive" />
       <Script src="/admin-clinica-audit-fixes.js?v=20260915-1" strategy="afterInteractive" />
     </main>
