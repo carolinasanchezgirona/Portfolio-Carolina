@@ -611,8 +611,8 @@ async function clinicalStructureRequest(request: Request, env: Env): Promise<Res
   ].join("\n");
 
   try {
-    const preferredModel = env.OPENAI_CLINICAL_MODEL || "gpt-6-sol";
-    const models = [...new Set([preferredModel, "gpt-6-sol", "gpt-4.1-mini"])];
+    const preferredModel = env.OPENAI_CLINICAL_MODEL || "gpt-6.1-sol";
+    const models = [...new Set([preferredModel, "gpt-6.1-sol", "gpt-6-luna", "gpt-4.1-mini"])];
     let outputText = "";
     let lastStatus = 502;
     let lastErrorCode = "";
