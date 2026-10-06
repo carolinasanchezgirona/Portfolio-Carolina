@@ -12,6 +12,8 @@
 }
 .between-wrap{width:min(920px,calc(100% - 36px));margin:0 auto}
 .between-hero{padding:70px 0 34px;border-bottom:1px solid var(--between-line)}
+.between-back{display:inline-block;margin:0 0 18px;color:var(--between-ink);font-size:.82rem;font-weight:800;text-decoration:none}
+.between-back:hover{text-decoration:underline}
 .between-eyebrow,.between-kicker{margin:0 0 10px;color:var(--between-accent);font-size:.78rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase}
 .between-hero h1{margin:0;color:var(--between-ink);font-size:clamp(2.4rem,7vw,4.4rem);line-height:.98;letter-spacing:-.04em}
 .between-lead{max-width:720px;margin:22px 0 0;font-size:clamp(1.02rem,2.5vw,1.18rem);line-height:1.7;color:var(--between-muted)}
