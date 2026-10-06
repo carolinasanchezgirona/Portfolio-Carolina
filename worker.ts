@@ -449,12 +449,13 @@ async function clinicalMaterialDraftRequest(request: Request, env: Env): Promise
     "En TEA usa un enfoque neuroafirmativo y evita normalización forzada o entrenamiento de enmascaramiento.",
     "Devuelve SOLO JSON válido.",
     "Si existe: {status:'existing',existing_id:string,reason:string}.",
-    "Si falta: {status:'new',reason:string,material:{title:string,summary:string,instructions:string,process_tags:string[],material_type:'exercise'|'psychoeducation',phase:string,duration_minutes:number|null,burden:'low'|'medium'|'high',objectives:string[],cautions:string[],sequence_rank:number,patient_document:{introduction:string,why:string,objective:string,instructions:string,example:string,record_prompt:string,remember:string,session_questions:string[]}}}.",
+    "Si falta: {status:'new',reason:string,material:{title:string,summary:string,instructions:string,process_tags:string[],material_type:'exercise'|'psychoeducation',phase:string,duration_minutes:number|null,burden:'low'|'medium'|'high',objectives:string[],cautions:string[],sequence_rank:number,patient_document:{duration_minutes:number|null,frequency:string,introduction:string,why:string,objective:string,instructions:string,example:string,record_prompt:string,safety_note:string,remember:string,session_questions:string[]}}}.",
     "Las instrucciones deben estar dirigidas al paciente cuando sea material enviable.",
     "patient_document es obligatorio en materiales nuevos y debe poder entregarse directamente al paciente.",
     "introduction debe ser una introducción breve. why debe explicar en lenguaje claro por qué hacemos el ejercicio o para qué sirve el material, sin revelar formulación clínica interna ni diagnósticos no comunicados.",
     "why debe explicar el proceso psicológico relevante, qué se entrena o comprende y dejar claro que no se busca hacerlo perfecto ni eliminar el malestar de inmediato cuando eso sea clínicamente pertinente.",
-    "record_prompt debe ser útil para ejercicios y puede quedar vacío en psicoeducación. session_questions debe contener de 1 a 4 preguntas breves para comentar en sesión.",
+    "frequency debe proponer una frecuencia prudente y flexible, nunca punitiva. record_prompt debe ser útil para ejercicios y puede quedar vacío en psicoeducación.",
+    "safety_note debe ser breve y solo aparecer si el material puede generar malestar relevante o requiere recordar que no hay que forzarse. session_questions debe contener de 1 a 4 preguntas breves para comentar en sesión.",
     "La ficha nueva debe complementar la biblioteca, no repetirla con un título distinto."
   ].join("\n");
 
@@ -509,15 +510,21 @@ async function clinicalMaterialDraftRequest(request: Request, env: Env): Promise
       ? materialRaw.patient_document as Record<string, unknown>
       : {};
     const patientInstructions = editorialText(patientDocumentRaw.instructions, 7000) || editorialText(materialRaw.instructions, 7000);
+    const patientDurationValue = Number(patientDocumentRaw.duration_minutes);
     const patientDocument = {
       version: 1,
       material_type: materialType,
+      duration_minutes: Number.isFinite(patientDurationValue) && patientDurationValue > 0 && patientDurationValue <= 180
+        ? Math.round(patientDurationValue)
+        : Number.isFinite(durationValue) && durationValue > 0 && durationValue <= 180 ? Math.round(durationValue) : null,
+      frequency: editorialText(patientDocumentRaw.frequency, 500),
       introduction: editorialText(patientDocumentRaw.introduction, 1200),
       why: editorialText(patientDocumentRaw.why, 2200),
       objective: editorialText(patientDocumentRaw.objective, 900),
       instructions: patientInstructions,
       example: editorialText(patientDocumentRaw.example, 1800),
       record_prompt: editorialText(patientDocumentRaw.record_prompt, 1800),
+      safety_note: editorialText(patientDocumentRaw.safety_note, 1200),
       remember: editorialText(patientDocumentRaw.remember, 1400),
       session_questions: Array.isArray(patientDocumentRaw.session_questions)
         ? patientDocumentRaw.session_questions.slice(0, 4).map((item) => editorialText(item, 350)).filter(Boolean)
@@ -553,6 +560,120 @@ async function clinicalMaterialDraftRequest(request: Request, env: Env): Promise
   }
 }
 
+
+async function clinicalMaterialEnrichRequest(request: Request, env: Env): Promise<Response> {
+  if (request.method !== "POST") return editorialJson({ error: "Método no permitido." }, 405);
+  if (!await verifyEditorialOwner(request)) return editorialJson({ error: "Sesión no autorizada." }, 401);
+  if (!env.OPENAI_API_KEY) return editorialJson({ error: "La generación clínica asistida no está configurada." }, 503);
+  if (Number(request.headers.get("content-length") || "0") > 40000) return editorialJson({ error: "El material enviado es demasiado grande." }, 413);
+
+  let data: Record<string, unknown>;
+  try { data = await request.json() as Record<string, unknown>; }
+  catch { return editorialJson({ error: "Solicitud no válida." }, 400); }
+
+  const title = editorialText(data.title, 220);
+  const materialType = data.material_type === "psychoeducation" ? "psychoeducation" : "exercise";
+  const summary = editorialText(data.summary, 900);
+  const processTags = Array.isArray(data.process_tags)
+    ? data.process_tags.slice(0, 6).map((item) => editorialText(item, 100)).filter(Boolean)
+    : [];
+  const currentRaw = data.patient_document && typeof data.patient_document === "object" && !Array.isArray(data.patient_document)
+    ? data.patient_document as Record<string, unknown>
+    : {};
+  if (!title) return editorialJson({ error: "Falta el título del material." }, 400);
+
+  const currentDocument = {
+    material_type: materialType,
+    duration_minutes: Number(currentRaw.duration_minutes) || null,
+    frequency: editorialText(currentRaw.frequency, 500),
+    introduction: editorialText(currentRaw.introduction, 1200),
+    why: editorialText(currentRaw.why, 2200),
+    objective: editorialText(currentRaw.objective, 900),
+    instructions: editorialText(currentRaw.instructions, 7000),
+    example: editorialText(currentRaw.example, 1800),
+    record_prompt: editorialText(currentRaw.record_prompt, 1800),
+    safety_note: editorialText(currentRaw.safety_note, 1200),
+    remember: editorialText(currentRaw.remember, 1400),
+    session_questions: Array.isArray(currentRaw.session_questions)
+      ? currentRaw.session_questions.slice(0, 6).map((item) => editorialText(item, 350)).filter(Boolean)
+      : []
+  };
+
+  const system = [
+    "Eres un asistente de edición de material clínico para una psicóloga sanitaria y neuropsicóloga en España.",
+    "Tu tarea es completar y mejorar una ficha destinada al paciente SIN cambiar el objetivo clínico ni inventar diagnósticos.",
+    "Preserva el sentido de las instrucciones existentes. Puedes hacerlas más claras, pero no introducir una intervención distinta.",
+    "Escribe en español claro, cálido y profesional, sin infantilizar.",
+    "Completa especialmente un ejemplo cotidiano, concreto y breve cuando falte.",
+    "La explicación de por qué se hace debe explicar el proceso psicológico relevante y qué se entrena o comprende, sin revelar formulaciones internas ni diagnósticos no comunicados.",
+    "La frecuencia debe ser prudente, flexible y fácil de seguir.",
+    "La nota de seguridad solo debe incluirse cuando resulte clínicamente útil. Si se incluye, debe recordar que no es necesario forzarse y que el material puede revisarse en sesión.",
+    "En trauma prioriza estabilización. En TOC evita reaseguro. En adicciones no aconsejes retirada brusca. En alimentación evita restricciones o conteos. En TEA usa enfoque neuroafirmativo.",
+    "No añadas datos identificativos del paciente.",
+    "Devuelve SOLO JSON válido con esta forma: {patient_document:{duration_minutes:number|null,frequency:string,introduction:string,why:string,objective:string,instructions:string,example:string,record_prompt:string,safety_note:string,remember:string,session_questions:string[]}}."
+  ].join("\n");
+
+  try {
+    const response = await fetch("https://api.openai.com/v1/chat/completions", {
+      method: "POST",
+      headers: { Authorization: "Bearer " + env.OPENAI_API_KEY, "Content-Type": "application/json" },
+      body: JSON.stringify({
+        model: env.OPENAI_TEXT_MODEL || "gpt-4.1-mini",
+        temperature: 0.2,
+        response_format: { type: "json_object" },
+        messages: [
+          { role: "system", content: system },
+          { role: "user", content: JSON.stringify({
+            titulo: title,
+            tipo: materialType,
+            resumen_interno: summary || null,
+            procesos: processTags,
+            ficha_actual: currentDocument
+          }) }
+        ]
+      })
+    });
+
+    const result = await response.json() as { choices?: Array<{ message?: { content?: string } }> };
+    if (!response.ok || !result.choices?.[0]?.message?.content) {
+      console.error("Clinical material enrichment failure", response.status);
+      return editorialJson({ error: response.status === 429 ? "Se ha alcanzado el límite de generación. Prueba de nuevo más tarde." : "No se ha podido completar la ficha." }, response.status === 429 ? 429 : 502);
+    }
+
+    const raw = JSON.parse(result.choices[0].message.content) as Record<string, unknown>;
+    const docRaw = raw.patient_document && typeof raw.patient_document === "object" && !Array.isArray(raw.patient_document)
+      ? raw.patient_document as Record<string, unknown>
+      : {};
+    const durationValue = Number(docRaw.duration_minutes);
+    const patientDocument = {
+      version: 1,
+      material_type: materialType,
+      duration_minutes: Number.isFinite(durationValue) && durationValue > 0 && durationValue <= 180
+        ? Math.round(durationValue)
+        : currentDocument.duration_minutes,
+      frequency: editorialText(docRaw.frequency, 500) || currentDocument.frequency,
+      introduction: editorialText(docRaw.introduction, 1200) || currentDocument.introduction,
+      why: editorialText(docRaw.why, 2200) || currentDocument.why,
+      objective: editorialText(docRaw.objective, 900) || currentDocument.objective,
+      instructions: editorialText(docRaw.instructions, 7000) || currentDocument.instructions,
+      example: editorialText(docRaw.example, 1800) || currentDocument.example,
+      record_prompt: editorialText(docRaw.record_prompt, 1800) || currentDocument.record_prompt,
+      safety_note: editorialText(docRaw.safety_note, 1200),
+      remember: editorialText(docRaw.remember, 1400) || currentDocument.remember,
+      session_questions: Array.isArray(docRaw.session_questions)
+        ? docRaw.session_questions.slice(0, 4).map((item) => editorialText(item, 350)).filter(Boolean)
+        : currentDocument.session_questions
+    };
+    if (!patientDocument.introduction || !patientDocument.why || !patientDocument.instructions) {
+      return editorialJson({ error: "La IA no ha generado una ficha suficientemente completa para revisar." }, 502);
+    }
+    return editorialJson({ patient_document: patientDocument });
+  } catch (error) {
+    console.error("Clinical material enrichment request failed", error instanceof Error ? error.name : "Unknown");
+    return editorialJson({ error: "No se ha podido completar la ficha con IA." }, 502);
+  }
+}
+
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
     const url = new URL(request.url);
@@ -573,6 +694,7 @@ export default {
     if (url.pathname === "/api/editorial/image" || url.pathname === "/api/editorial/image/") return editorialRequest(request, env, "image");
     if (url.pathname === "/api/clinical/structure" || url.pathname === "/api/clinical/structure/") return clinicalStructureRequest(request, env);
     if (url.pathname === "/api/clinical/material-draft" || url.pathname === "/api/clinical/material-draft/") return clinicalMaterialDraftRequest(request, env);
+    if (url.pathname === "/api/clinical/material-enrich" || url.pathname === "/api/clinical/material-enrich/") return clinicalMaterialEnrichRequest(request, env);
     return env.ASSETS.fetch(request);
   },
 };
