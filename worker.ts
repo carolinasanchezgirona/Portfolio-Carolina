@@ -3,6 +3,7 @@ interface Env {
   STRIPE_WEBHOOK_SECRET_TEST?: string;
   OPENAI_API_KEY?: string;
   OPENAI_TEXT_MODEL?: string;
+  OPENAI_CLINICAL_MODEL?: string;
   OPENAI_IMAGE_MODEL?: string;
   ASSETS: {
     fetch(request: Request): Promise<Response>;
@@ -333,13 +334,16 @@ async function clinicalStructureRequest(request: Request, env: Env): Promise<Res
 
   const system = [
     "Eres un asistente de documentación clínica para una psicóloga sanitaria y neuropsicóloga en España.",
-    "Tu tarea es convertir notas clínicas libres en una propuesta estructurada, conservadora y trazable.",
+    "Tu tarea es convertir notas clínicas libres en una propuesta estructurada, conservadora, clínicamente útil y trazable.",
+    "Haz una revisión de consistencia antes de generar la salida: diferencia hechos explícitos, inferencias, contradicciones y huecos de información.",
+    "Prioriza precisión y conservación del significado original por encima de completar apartados.",
     "No inventes hechos, diagnósticos, medicación, fechas, antecedentes, resultados de pruebas ni riesgo.",
     "Distingue estrictamente entre información explícita, inferencias clínicas y aspectos pendientes de explorar.",
     "Las inferencias deben ser útiles pero prudentes. Nunca las redactes como hechos confirmados.",
     "Un síntoma o patrón aislado no equivale a un diagnóstico. No diagnostiques salvo que las notas indiquen de forma explícita un diagnóstico ya registrado por un profesional.",
     "Si detectas una posible hipótesis diagnóstica, colócala únicamente en inferences o diagnostic_hypotheses y deja claro que requiere exploración/validación.",
     "Si una información relevante no aparece, no escribas 'niega' ni 'ausente'. Añádela a missing_to_explore cuando sea clínicamente pertinente.",
+    "Si hay versiones incompatibles o datos que parecen contradecirse, no elijas una versión como verdadera: conserva el conflicto en clinical_observations y propón aclararlo en missing_to_explore.",
     "No dupliques innecesariamente información en muchos apartados. Distribuye cada dato donde resulte más útil.",
     "Redacta en español clínico claro, profesional y conciso.",
     "Devuelve SOLO JSON válido con esta forma exacta:",
@@ -355,8 +359,8 @@ async function clinicalStructureRequest(request: Request, env: Env): Promise<Res
       method: "POST",
       headers: { Authorization: "Bearer " + env.OPENAI_API_KEY, "Content-Type": "application/json" },
       body: JSON.stringify({
-        model: env.OPENAI_TEXT_MODEL || "gpt-4.1-mini",
-        temperature: 0.15,
+        model: env.OPENAI_CLINICAL_MODEL || "gpt-6-astra",
+        temperature: 0.1,
         response_format: { type: "json_object" },
         messages: [
           { role: "system", content: system },
