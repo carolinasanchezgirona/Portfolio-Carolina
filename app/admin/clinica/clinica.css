@@ -1109,3 +1109,10 @@
   font-size:.68rem;
   font-weight:700;
 }
+
+.clinic-record-action-note{
+  margin:-12px 0 18px;
+  color:#6f7f89;
+  font-size:.76rem;
+  line-height:1.45;
+}
