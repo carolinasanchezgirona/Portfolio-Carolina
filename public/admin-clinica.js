@@ -529,7 +529,7 @@
       const response = await fetch(`${SUPABASE_URL}/functions/v1/view-clinical-exercise`, {
         method: "POST",
         headers: authHeaders(),
-        body: JSON.stringify({ mode: "preview", title, patient_document: patientDocument, format })
+        body: JSON.stringify({ mode: "preview", title, patient_document: patientDocument, format, patient_id: currentPatient?.id || null })
       });
       if (!response.ok) {
         const body = await response.json().catch(() => ({}));
