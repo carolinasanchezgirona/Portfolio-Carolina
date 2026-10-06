@@ -11,6 +11,7 @@ const administrativeRoutes = [
   "/privacidad",
   "/consentimiento-psicologico",
   "/consentimiento-neuropsicologico",
+  "/mi-espacio",
 ];
 
 function isAdministrativeRoute(pathname: string) {
@@ -41,6 +42,7 @@ function SiteHeader() {
         <a href="/articulos/">Artículos</a>
         <a href="/pregunta-a-carolina/">Tu Consulta</a>
         <a href="/recursos/">Recursos</a>
+        <a href="/mi-espacio/">Mi espacio</a>
         <a className="nav-cta" href="/cita/">Pedir cita</a>
       </nav>
 
@@ -58,6 +60,7 @@ function SiteHeader() {
           <a href="/articulos/">Artículos</a>
           <a href="/pregunta-a-carolina/">Tu Consulta</a>
           <a href="/recursos/">Recursos</a>
+          <a href="/mi-espacio/">Mi espacio</a>
           <a href="/psicologa-arenys-de-mar/">Consulta en Arenys de Mar</a>
           <a href="/cita/">Pedir cita</a>
         </div>
@@ -112,6 +115,7 @@ function SiteFooter() {
           <a href="/articulos/">Artículos</a>
           <a href="/pregunta-a-carolina/">Tu Consulta</a>
           <a href="/recursos/">Recursos</a>
+          <a href="/mi-espacio/">Mi espacio</a>
           <a href="/psicologa-arenys-de-mar/">Psicóloga en Arenys de Mar</a>
           <a href="/cita/">Pedir cita</a>
         </nav>
