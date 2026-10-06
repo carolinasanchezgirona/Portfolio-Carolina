@@ -658,7 +658,7 @@ async function clinicalMaterialEnrichRequest(request: Request, env: Env): Promis
       instructions: editorialText(docRaw.instructions, 7000) || currentDocument.instructions,
       example: editorialText(docRaw.example, 1800) || currentDocument.example,
       record_prompt: editorialText(docRaw.record_prompt, 1800) || currentDocument.record_prompt,
-      safety_note: editorialText(docRaw.safety_note, 1200),
+      safety_note: editorialText(docRaw.safety_note, 1200) || currentDocument.safety_note,
       remember: editorialText(docRaw.remember, 1400) || currentDocument.remember,
       session_questions: Array.isArray(docRaw.session_questions)
         ? docRaw.session_questions.slice(0, 4).map((item) => editorialText(item, 350)).filter(Boolean)
