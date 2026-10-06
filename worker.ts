@@ -197,6 +197,228 @@ async function handleResourceDownload(request: Request, env: Env): Promise<Respo
   return new Response(fileResponse.body, { status: 200, headers });
 }
 
+
+const PATIENT_PORTAL_COOKIE = "__Host-mi_espacio_session";
+const PATIENT_PORTAL_AUTH_FUNCTION = RESOURCE_SUPABASE + "/functions/v1/patient-portal-auth";
+
+function patientPortalJson(payload: unknown, status = 200, extraHeaders: Record<string,string> = {}): Response {
+  return Response.json(payload, {
+    status,
+    headers: {
+      "Cache-Control": "private, no-store",
+      "X-Content-Type-Options": "nosniff",
+      "Referrer-Policy": "no-referrer",
+      ...extraHeaders,
+    },
+  });
+}
+
+function cookieValue(request: Request, name: string): string {
+  const raw = request.headers.get("cookie") || "";
+  for (const part of raw.split(";")) {
+    const [key, ...rest] = part.trim().split("=");
+    if (key === name) return decodeURIComponent(rest.join("="));
+  }
+  return "";
+}
+
+function patientPortalCookie(token: string, maxAge: number): string {
+  return `${PATIENT_PORTAL_COOKIE}=${encodeURIComponent(token)}; Path=/; Max-Age=${maxAge}; HttpOnly; Secure; SameSite=Lax`;
+}
+
+async function handlePatientPortalAuth(request: Request, env: Env, action: "request" | "verify"): Promise<Response> {
+  if (request.method !== "POST") return patientPortalJson({ error: "Método no permitido." }, 405);
+  let body: Record<string, unknown>;
+  try { body = await request.json() as Record<string, unknown>; }
+  catch { return patientPortalJson({ error: "Solicitud no válida." }, 400); }
+
+  const email = typeof body.email === "string" ? body.email.trim().toLowerCase().slice(0, 254) : "";
+  const code = typeof body.code === "string" ? body.code.trim().slice(0, 12) : "";
+  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    return patientPortalJson({ error: "Introduce un correo válido." }, 400);
+  }
+
+  const response = await fetch(PATIENT_PORTAL_AUTH_FUNCTION, {
+    method: "POST",
+    headers: {
+      apikey: RESOURCE_PUBLISHABLE,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ action, email, ...(action === "verify" ? { code } : {}) }),
+  });
+  const result = await response.json().catch(() => ({})) as Record<string, unknown>;
+
+  if (!response.ok) {
+    const message = typeof result.error === "string" ? result.error : "No se ha podido completar el acceso.";
+    return patientPortalJson({ error: message }, response.status);
+  }
+
+  if (action === "verify") {
+    const token = typeof result.session_token === "string" ? result.session_token : "";
+    if (!/^[A-Za-z0-9_-]{40,}$/.test(token)) return patientPortalJson({ error: "No se ha podido iniciar la sesión." }, 502);
+    return patientPortalJson(
+      { ok: true, expires_at: result.expires_at || null },
+      200,
+      { "Set-Cookie": patientPortalCookie(token, 30 * 24 * 60 * 60) },
+    );
+  }
+
+  return patientPortalJson({
+    ok: true,
+    message: typeof result.message === "string"
+      ? result.message
+      : "Si el correo corresponde a una cuenta con acceso, recibirás un código en unos minutos.",
+  });
+}
+
+type PatientPortalSession = {
+  id: string;
+  patient_id: string;
+  expires_at: string;
+};
+
+async function patientPortalSession(request: Request, env: Env): Promise<PatientPortalSession | null> {
+  if (!env.SUPABASE_SERVICE_ROLE_KEY) return null;
+  const token = cookieValue(request, PATIENT_PORTAL_COOKIE);
+  if (!/^[A-Za-z0-9_-]{40,}$/.test(token)) return null;
+  const hash = await sha256Hex(token);
+  const response = await fetch(
+    RESOURCE_SUPABASE + "/rest/v1/patient_portal_sessions?select=id,patient_id,expires_at&token_hash=eq." +
+      encodeURIComponent(hash) + "&revoked_at=is.null&expires_at=gt." + encodeURIComponent(new Date().toISOString()) + "&limit=1",
+    { headers: serviceHeaders(env), cache: "no-store" },
+  );
+  const rows = await response.json().catch(() => []) as Record<string, unknown>[];
+  const row = Array.isArray(rows) ? rows[0] : null;
+  if (!response.ok || !row?.id || !row?.patient_id || !row?.expires_at) return null;
+
+  fetch(RESOURCE_SUPABASE + "/rest/v1/patient_portal_sessions?id=eq." + encodeURIComponent(String(row.id)), {
+    method: "PATCH",
+    headers: serviceHeaders(env, { Prefer: "return=minimal" }),
+    body: JSON.stringify({ last_seen_at: new Date().toISOString() }),
+  }).catch(() => null);
+
+  return { id: String(row.id), patient_id: String(row.patient_id), expires_at: String(row.expires_at) };
+}
+
+function firstName(value: unknown): string {
+  const clean = typeof value === "string" ? value.trim().replace(/\s+/g, " ") : "";
+  return clean.split(" ")[0]?.slice(0, 60) || "";
+}
+
+async function handlePatientPortalSession(request: Request, env: Env): Promise<Response> {
+  if (request.method !== "GET") return patientPortalJson({ error: "Método no permitido." }, 405);
+  const session = await patientPortalSession(request, env);
+  if (!session) {
+    return patientPortalJson(
+      { authenticated: false },
+      401,
+      { "Set-Cookie": patientPortalCookie("", 0) },
+    );
+  }
+
+  const patientResponse = await fetch(
+    RESOURCE_SUPABASE + "/rest/v1/clinical_patients?select=id,full_name,status&id=eq." + encodeURIComponent(session.patient_id) + "&status=neq.archived&limit=1",
+    { headers: serviceHeaders(env), cache: "no-store" },
+  );
+  const patientRows = await patientResponse.json().catch(() => []) as Record<string, unknown>[];
+  const patient = Array.isArray(patientRows) ? patientRows[0] : null;
+  if (!patient) return patientPortalJson({ authenticated: false }, 401, { "Set-Cookie": patientPortalCookie("", 0) });
+
+  const now = new Date().toISOString();
+  const [appointmentResponse, materialsResponse] = await Promise.all([
+    fetch(
+      RESOURCE_SUPABASE + "/rest/v1/appointment_bookings?select=id,starts_at,ends_at,status,service_code&clinical_patient_id=eq." +
+        encodeURIComponent(session.patient_id) + "&starts_at=gte." + encodeURIComponent(now) +
+        "&status=in.(confirmed,pending)&order=starts_at.asc&limit=1",
+      { headers: serviceHeaders(env), cache: "no-store" },
+    ),
+    fetch(
+      RESOURCE_SUPABASE + "/rest/v1/clinical_exercise_assignments?select=id,title,status,patient_document,review_due_at,patient_state,patient_response,patient_response_status,patient_response_updated_at,patient_response_shared_at,sent_at,created_at&patient_id=eq." +
+        encodeURIComponent(session.patient_id) + "&revoked_at=is.null&status=in.(sent,assigned,reviewed)&order=sent_at.desc.nullslast,created_at.desc&limit=100",
+      { headers: serviceHeaders(env), cache: "no-store" },
+    ),
+  ]);
+
+  const appointments = appointmentResponse.ok ? await appointmentResponse.json().catch(() => []) : [];
+  const materials = materialsResponse.ok ? await materialsResponse.json().catch(() => []) : [];
+
+  return patientPortalJson({
+    authenticated: true,
+    patient: { first_name: firstName(patient.full_name) },
+    session_expires_at: session.expires_at,
+    next_appointment: Array.isArray(appointments) ? appointments[0] || null : null,
+    materials: Array.isArray(materials) ? materials : [],
+  });
+}
+
+async function handlePatientPortalResponse(request: Request, env: Env): Promise<Response> {
+  if (request.method !== "POST") return patientPortalJson({ error: "Método no permitido." }, 405);
+  const session = await patientPortalSession(request, env);
+  if (!session) return patientPortalJson({ error: "Tu sesión ha caducado. Vuelve a entrar." }, 401, { "Set-Cookie": patientPortalCookie("", 0) });
+
+  let body: Record<string, unknown>;
+  try { body = await request.json() as Record<string, unknown>; }
+  catch { return patientPortalJson({ error: "Solicitud no válida." }, 400); }
+
+  const materialId = typeof body.material_id === "string" ? body.material_id : "";
+  const action = body.action === "share" ? "share" : body.action === "draft" ? "draft" : "";
+  if (!/^[0-9a-f-]{36}$/i.test(materialId) || !action) return patientPortalJson({ error: "Solicitud no válida." }, 400);
+
+  const materialResponse = await fetch(
+    RESOURCE_SUPABASE + "/rest/v1/clinical_exercise_assignments?select=id,content,patient_document&patient_id=eq." +
+      encodeURIComponent(session.patient_id) + "&id=eq." + encodeURIComponent(materialId) + "&revoked_at=is.null&limit=1",
+    { headers: serviceHeaders(env), cache: "no-store" },
+  );
+  const materialRows = await materialResponse.json().catch(() => []) as Record<string, unknown>[];
+  const material = Array.isArray(materialRows) ? materialRows[0] : null;
+  if (!material) return patientPortalJson({ error: "El material no está disponible." }, 404);
+
+  const document = material.patient_document && typeof material.patient_document === "object" && !Array.isArray(material.patient_document)
+    ? material.patient_document as Record<string, unknown>
+    : {};
+  if (document.material_type === "psychoeducation") return patientPortalJson({ error: "Este material no requiere respuestas." }, 400);
+
+  const record = typeof body.record === "string" ? body.record.slice(0, 12000) : "";
+  const answersInput = Array.isArray(body.answers) ? body.answers : [];
+  const questions = Array.isArray(document.session_questions) ? document.session_questions.slice(0, 6) : [];
+  const answers = Array.from({ length: questions.length }, (_, index) =>
+    typeof answersInput[index] === "string" ? String(answersInput[index]).slice(0, 6000) : ""
+  );
+  const savedAt = new Date().toISOString();
+
+  const update = await fetch(
+    RESOURCE_SUPABASE + "/rest/v1/clinical_exercise_assignments?id=eq." + encodeURIComponent(materialId) +
+      "&patient_id=eq." + encodeURIComponent(session.patient_id),
+    {
+      method: "PATCH",
+      headers: serviceHeaders(env, { Prefer: "return=minimal" }),
+      body: JSON.stringify({
+        patient_response: { version: 1, record, answers },
+        patient_response_status: action === "share" ? "shared" : "draft",
+        patient_response_updated_at: savedAt,
+        patient_response_shared_at: action === "share" ? savedAt : null,
+        updated_at: savedAt,
+      }),
+    },
+  );
+  if (!update.ok) return patientPortalJson({ error: "No se ha podido guardar el ejercicio." }, 502);
+  return patientPortalJson({ ok: true, status: action === "share" ? "shared" : "draft", saved_at: savedAt });
+}
+
+async function handlePatientPortalLogout(request: Request, env: Env): Promise<Response> {
+  if (request.method !== "POST") return patientPortalJson({ error: "Método no permitido." }, 405);
+  const raw = cookieValue(request, PATIENT_PORTAL_COOKIE);
+  if (env.SUPABASE_SERVICE_ROLE_KEY && /^[A-Za-z0-9_-]{40,}$/.test(raw)) {
+    const hash = await sha256Hex(raw);
+    await fetch(RESOURCE_SUPABASE + "/rest/v1/patient_portal_sessions?token_hash=eq." + encodeURIComponent(hash), {
+      method: "PATCH",
+      headers: serviceHeaders(env, { Prefer: "return=minimal" }),
+      body: JSON.stringify({ revoked_at: new Date().toISOString() }),
+    }).catch(() => null);
+  }
+  return patientPortalJson({ ok: true }, 200, { "Set-Cookie": patientPortalCookie("", 0) });
+}
+
 async function handleQuestionDraft(request: Request, env: Env): Promise<Response> {
   if (request.method !== "POST") return editorialJson({ error: "Método no permitido." }, 405);
   if (!await verifyEditorialOwner(request)) return editorialJson({ error: "Sesión no autorizada." }, 401);
@@ -980,6 +1202,11 @@ export default {
     if (url.pathname === "/api/resources/access" || url.pathname === "/api/resources/access/") return handleResourceAccess(request, env);
     if (url.pathname === "/api/resources/download" || url.pathname === "/api/resources/download/") return handleResourceDownload(request, env);
     if (url.pathname === "/api/questions/draft" || url.pathname === "/api/questions/draft/") return handleQuestionDraft(request, env);
+    if (url.pathname === "/api/patient-portal/request-code" || url.pathname === "/api/patient-portal/request-code/") return handlePatientPortalAuth(request, env, "request");
+    if (url.pathname === "/api/patient-portal/verify-code" || url.pathname === "/api/patient-portal/verify-code/") return handlePatientPortalAuth(request, env, "verify");
+    if (url.pathname === "/api/patient-portal/session" || url.pathname === "/api/patient-portal/session/") return handlePatientPortalSession(request, env);
+    if (url.pathname === "/api/patient-portal/response" || url.pathname === "/api/patient-portal/response/") return handlePatientPortalResponse(request, env);
+    if (url.pathname === "/api/patient-portal/logout" || url.pathname === "/api/patient-portal/logout/") return handlePatientPortalLogout(request, env);
 
     if (url.pathname === "/api/editorial/status" || url.pathname === "/api/editorial/status/") {
       if (request.method !== "GET") return editorialJson({ error: "Método no permitido." }, 405);

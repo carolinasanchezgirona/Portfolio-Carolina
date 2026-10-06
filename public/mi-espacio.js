@@ -339,7 +339,11 @@
     filter: "all",
     need: null,
     favorites: loadJson(FAVORITES_KEY, []),
-    completed: loadJson(COMPLETED_KEY, [])
+    completed: loadJson(COMPLETED_KEY, []),
+    portalAuthenticated: false,
+    portalData: null,
+    guestMode: false,
+    accessEmail: ""
   };
 
   const panels = [...document.querySelectorAll("[data-space-panel]")];
@@ -354,6 +358,14 @@
   const dialogNote = document.getElementById("wellness-dialog-note");
   const favoriteButton = document.getElementById("wellness-favorite");
   const completeButton = document.getElementById("wellness-complete");
+  const accessGate = document.getElementById("space-access");
+  const shell = document.getElementById("space-shell");
+  const emailForm = document.getElementById("space-email-form");
+  const codeForm = document.getElementById("space-code-form");
+  const accessEmail = document.getElementById("space-access-email");
+  const accessCode = document.getElementById("space-access-code");
+  const accessMessage = document.getElementById("space-access-message");
+  const patientMaterials = document.getElementById("space-patient-materials");
 
   function loadJson(key, fallback) {
     try {
@@ -377,7 +389,344 @@
     panels.forEach(panel => {
       panel.hidden = panel.dataset.spacePanel !== name;
     });
-    navButtons.forEach(button => {
+  
+  function setAccessMessage(message, isError = false) {
+    if (!accessMessage) return;
+    accessMessage.textContent = message || "";
+    accessMessage.classList.toggle("is-error", Boolean(isError));
+  }
+
+  function showAccessGate() {
+    if (accessGate) accessGate.hidden = false;
+    if (shell) shell.hidden = true;
+    accessEmail?.focus();
+  }
+
+  function openPortal(view = "today") {
+    if (accessGate) accessGate.hidden = true;
+    if (shell) shell.hidden = false;
+    showView(view);
+  }
+
+  function appointmentText(appointment) {
+    if (!appointment?.starts_at) return null;
+    try {
+      const date = new Date(appointment.starts_at);
+      const formatted = new Intl.DateTimeFormat("es-ES", {
+        weekday: "long",
+        day: "numeric",
+        month: "long",
+        hour: "2-digit",
+        minute: "2-digit"
+      }).format(date);
+      return formatted.charAt(0).toUpperCase() + formatted.slice(1);
+    } catch {
+      return null;
+    }
+  }
+
+  function materialTypeLabel(document) {
+    return document?.material_type === "psychoeducation" ? "Psicoeducación" : "Ejercicio";
+  }
+
+  function appendPatientSection(target, title, value) {
+    const text = String(value || "").trim();
+    if (!text) return;
+    const section = document.createElement("section");
+    section.className = "space-patient-section";
+    const heading = document.createElement("h4");
+    heading.textContent = title;
+    const copy = document.createElement("p");
+    copy.textContent = text;
+    section.append(heading, copy);
+    target.append(section);
+  }
+
+  function patientResponseData(item, questionCount) {
+    const source = item?.patient_response && typeof item.patient_response === "object" ? item.patient_response : {};
+    const answers = Array.isArray(source.answers) ? source.answers : [];
+    return {
+      record: String(source.record || ""),
+      answers: Array.from({ length: questionCount }, (_, index) => String(answers[index] || ""))
+    };
+  }
+
+  async function savePatientMaterialResponse(item, form, action, status) {
+    const button = form.querySelector(`button[value="${action}"]`);
+    const buttons = [...form.querySelectorAll("button")];
+    buttons.forEach((node) => { node.disabled = true; });
+    if (status) status.textContent = action === "share" ? "Compartiendo…" : "Guardando…";
+    try {
+      const record = form.querySelector("[data-response-record]")?.value || "";
+      const answers = [...form.querySelectorAll("[data-response-answer]")].map((field) => field.value || "");
+      const response = await fetch("/api/patient-portal/response", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ material_id: item.id, action, record, answers })
+      });
+      const body = await response.json().catch(() => ({}));
+      if (response.status === 401) {
+        state.portalAuthenticated = false;
+        state.portalData = null;
+        showAccessGate();
+        setAccessMessage("Tu sesión ha caducado. Solicita un nuevo código.", true);
+        return;
+      }
+      if (!response.ok) throw new Error(body.error || "No se ha podido guardar.");
+      item.patient_response = { version: 1, record, answers };
+      item.patient_response_status = body.status;
+      item.patient_response_updated_at = body.saved_at;
+      item.patient_response_shared_at = body.status === "shared" ? body.saved_at : null;
+      if (status) {
+        status.classList.toggle("shared", body.status === "shared");
+        status.textContent = body.status === "shared"
+          ? "Respuestas compartidas con Carolina."
+          : "Borrador guardado. Carolina todavía no ve estas respuestas.";
+      }
+    } catch (error) {
+      if (status) status.textContent = error?.message || "No se ha podido guardar.";
+    } finally {
+      buttons.forEach((node) => { node.disabled = false; });
+      if (button) button.blur();
+    }
+  }
+
+  function createPatientMaterial(item, index) {
+    const documentData = item?.patient_document && typeof item.patient_document === "object" ? item.patient_document : {};
+    const details = document.createElement("details");
+    details.className = "space-patient-material";
+    if (index === 0) details.open = true;
+
+    const summary = document.createElement("summary");
+    const titleWrap = document.createElement("div");
+    titleWrap.className = "space-patient-material-title";
+    const title = document.createElement("strong");
+    title.textContent = item.title || "Material";
+    const meta = document.createElement("span");
+    meta.textContent = materialTypeLabel(documentData) + (item.status === "reviewed" ? " · revisado" : "");
+    titleWrap.append(title, meta);
+    const chevron = document.createElement("span");
+    chevron.className = "space-patient-material-chevron";
+    chevron.textContent = "⌄";
+    summary.append(titleWrap, chevron);
+
+    const body = document.createElement("div");
+    body.className = "space-patient-material-body";
+    appendPatientSection(body, "Para qué sirve", documentData.introduction || documentData.why);
+    appendPatientSection(body, documentData.material_type === "psychoeducation" ? "Contenido" : "Cómo hacerlo", documentData.instructions);
+    appendPatientSection(body, "Ejemplo", documentData.example);
+    appendPatientSection(body, "Qué conviene recordar", documentData.remember);
+
+    if (documentData.material_type !== "psychoeducation") {
+      const questions = Array.isArray(documentData.session_questions) && documentData.session_questions.length
+        ? documentData.session_questions.slice(0, 6)
+        : ["¿Qué te resultó más fácil o más difícil?", "¿Qué observaste al probarlo?", "¿Qué ajustarías para que te resulte más útil?"];
+      const saved = patientResponseData(item, questions.length);
+      const responseBox = document.createElement("div");
+      responseBox.className = "space-patient-response";
+      const heading = document.createElement("h4");
+      heading.textContent = "Rellena el ejercicio aquí";
+      const explainer = document.createElement("p");
+      explainer.textContent = "Guardar borrador mantiene tus respuestas privadas. Solo Carolina las verá cuando pulses Compartir respuestas.";
+      const form = document.createElement("form");
+
+      const recordLabel = document.createElement("label");
+      recordLabel.textContent = documentData.record_prompt || "Tu registro";
+      const record = document.createElement("textarea");
+      record.dataset.responseRecord = "true";
+      record.maxLength = 12000;
+      record.value = saved.record;
+      record.placeholder = "Escribe aquí…";
+      recordLabel.append(record);
+      form.append(recordLabel);
+
+      questions.forEach((question, questionIndex) => {
+        const label = document.createElement("label");
+        label.textContent = String(question);
+        const field = document.createElement("textarea");
+        field.dataset.responseAnswer = String(questionIndex);
+        field.maxLength = 6000;
+        field.value = saved.answers[questionIndex] || "";
+        field.placeholder = "Tu respuesta…";
+        label.append(field);
+        form.append(label);
+      });
+
+      const actions = document.createElement("div");
+      actions.className = "space-patient-response-actions";
+      const draft = document.createElement("button");
+      draft.className = "space-secondary";
+      draft.type = "button";
+      draft.value = "draft";
+      draft.textContent = "Guardar borrador";
+      const share = document.createElement("button");
+      share.className = "space-primary";
+      share.type = "button";
+      share.value = "share";
+      share.textContent = "Compartir respuestas con Carolina";
+      actions.append(draft, share);
+
+      const responseStatus = document.createElement("div");
+      responseStatus.className = "space-patient-response-status";
+      if (item.patient_response_status === "shared") {
+        responseStatus.classList.add("shared");
+        responseStatus.textContent = "Respuestas compartidas con Carolina.";
+      } else if (item.patient_response_status === "draft") {
+        responseStatus.textContent = "Borrador guardado. Carolina todavía no ve estas respuestas.";
+      } else {
+        responseStatus.textContent = "Todavía no has guardado respuestas.";
+      }
+
+      draft.addEventListener("click", () => savePatientMaterialResponse(item, form, "draft", responseStatus));
+      share.addEventListener("click", () => savePatientMaterialResponse(item, form, "share", responseStatus));
+      form.append(actions, responseStatus);
+      responseBox.append(heading, explainer, form);
+      body.append(responseBox);
+    }
+
+    details.append(summary, body);
+    return details;
+  }
+
+  function renderPatientPortal(data) {
+    state.portalData = data;
+    state.portalAuthenticated = true;
+    state.guestMode = false;
+
+    const name = String(data?.patient?.first_name || "").trim();
+    const title = document.getElementById("space-today-title");
+    if (title) title.textContent = name ? `Hola, ${name}. ¿Qué necesitas ahora?` : "¿Qué necesitas ahora?";
+
+    const appointment = data?.next_appointment || null;
+    const appointmentTitle = document.getElementById("space-appointment-title");
+    const appointmentCopy = document.getElementById("space-appointment-copy");
+    const formatted = appointmentText(appointment);
+    if (appointmentTitle) appointmentTitle.textContent = formatted || "No tienes una próxima cita registrada";
+    if (appointmentCopy) appointmentCopy.textContent = formatted
+      ? "Esta es la próxima cita que consta en tu agenda."
+      : "Cuando haya una nueva cita vinculada a tu ficha aparecerá aquí.";
+
+    const materials = Array.isArray(data?.materials) ? data.materials : [];
+    const count = document.getElementById("space-material-count");
+    if (count) count.textContent = materials.length === 1 ? "1 material disponible" : `${materials.length} materiales disponibles`;
+    const therapyStatus = document.getElementById("space-therapy-status");
+    if (therapyStatus) therapyStatus.textContent = materials.length
+      ? "Tienes material disponible para trabajar entre sesiones."
+      : "No tienes material pendiente en este momento.";
+
+    if (patientMaterials) {
+      patientMaterials.replaceChildren();
+      if (!materials.length) {
+        const empty = document.createElement("div");
+        empty.className = "space-empty";
+        empty.textContent = "No tienes materiales disponibles en este momento.";
+        patientMaterials.append(empty);
+      } else {
+        materials.forEach((item, index) => patientMaterials.append(createPatientMaterial(item, index)));
+      }
+    }
+
+    openPortal("today");
+  }
+
+  async function loadPatientSession() {
+    try {
+      const response = await fetch("/api/patient-portal/session", { cache: "no-store" });
+      if (!response.ok) {
+        state.portalAuthenticated = false;
+        showAccessGate();
+        return false;
+      }
+      const data = await response.json();
+      if (!data?.authenticated) {
+        showAccessGate();
+        return false;
+      }
+      renderPatientPortal(data);
+      return true;
+    } catch {
+      showAccessGate();
+      setAccessMessage("No se ha podido comprobar el acceso. Puedes volver a intentarlo.", true);
+      return false;
+    }
+  }
+
+  async function requestPatientCode(event) {
+    event.preventDefault();
+    const email = String(accessEmail?.value || "").trim().toLowerCase();
+    if (!email) return;
+    setAccessMessage("Enviando código…");
+    const submit = emailForm?.querySelector('button[type="submit"]');
+    if (submit) submit.disabled = true;
+    try {
+      const response = await fetch("/api/patient-portal/request-code", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email })
+      });
+      const body = await response.json().catch(() => ({}));
+      if (!response.ok) throw new Error(body.error || "No se ha podido solicitar el código.");
+      state.accessEmail = email;
+      if (emailForm) emailForm.hidden = true;
+      if (codeForm) codeForm.hidden = false;
+      setAccessMessage(body.message || "Si el correo tiene acceso, recibirás un código en unos minutos.");
+      accessCode?.focus();
+    } catch (error) {
+      setAccessMessage(error?.message || "No se ha podido solicitar el código.", true);
+    } finally {
+      if (submit) submit.disabled = false;
+    }
+  }
+
+  async function verifyPatientCode(event) {
+    event.preventDefault();
+    const code = String(accessCode?.value || "").replace(/\D/g, "").slice(0, 6);
+    if (!/^\d{6}$/.test(code) || !state.accessEmail) {
+      setAccessMessage("Introduce el código de seis cifras.", true);
+      return;
+    }
+    setAccessMessage("Comprobando código…");
+    const submit = codeForm?.querySelector('button[type="submit"]');
+    if (submit) submit.disabled = true;
+    try {
+      const response = await fetch("/api/patient-portal/verify-code", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: state.accessEmail, code })
+      });
+      const body = await response.json().catch(() => ({}));
+      if (!response.ok) throw new Error(body.error || "El código no es válido o ha caducado.");
+      setAccessMessage("");
+      if (accessCode) accessCode.value = "";
+      await loadPatientSession();
+    } catch (error) {
+      setAccessMessage(error?.message || "El código no es válido o ha caducado.", true);
+    } finally {
+      if (submit) submit.disabled = false;
+    }
+  }
+
+  function resetPatientAccess() {
+    state.accessEmail = "";
+    if (accessCode) accessCode.value = "";
+    if (codeForm) codeForm.hidden = true;
+    if (emailForm) emailForm.hidden = false;
+    setAccessMessage("");
+    accessEmail?.focus();
+  }
+
+  async function logoutPatientPortal() {
+    try {
+      await fetch("/api/patient-portal/logout", { method: "POST" });
+    } catch {}
+    state.portalAuthenticated = false;
+    state.portalData = null;
+    state.guestMode = false;
+    resetPatientAccess();
+    showAccessGate();
+  }
+
+  navButtons.forEach(button => {
       button.classList.toggle("is-active", button.dataset.spaceView === name);
     });
     if (name === "wellness") renderWellness();
@@ -565,8 +914,15 @@
 
   navButtons.forEach(button => {
     button.addEventListener("click", () => {
+      const view = button.dataset.spaceView;
+      if (view === "therapy" && !state.portalAuthenticated) {
+        state.guestMode = false;
+        showAccessGate();
+        setAccessMessage("Para ver tu terapia, solicita un código de acceso.");
+        return;
+      }
       state.need = null;
-      showView(button.dataset.spaceView);
+      showView(view);
     });
   });
 
@@ -643,7 +999,27 @@
     if (message) message.textContent = "Datos locales borrados.";
   });
 
+  emailForm?.addEventListener("submit", requestPatientCode);
+  codeForm?.addEventListener("submit", verifyPatientCode);
+  document.getElementById("space-change-email")?.addEventListener("click", resetPatientAccess);
+  document.getElementById("space-wellness-guest")?.addEventListener("click", () => {
+    state.guestMode = true;
+    state.portalAuthenticated = false;
+    openPortal("wellness");
+  });
+  document.querySelectorAll("[data-go-therapy]").forEach((button) => {
+    button.addEventListener("click", () => {
+      if (state.portalAuthenticated) showView("therapy");
+      else {
+        showAccessGate();
+        setAccessMessage("Para ver tu terapia, solicita un código de acceso.");
+      }
+    });
+  });
+  document.getElementById("space-logout")?.addEventListener("click", logoutPatientPortal);
+
   importBetweenSessionsToken();
   renderWellness();
   renderProgress();
+  loadPatientSession();
 })();
