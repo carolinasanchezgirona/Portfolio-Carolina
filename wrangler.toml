@@ -4,7 +4,7 @@ compatibility_date = "2026-09-21"
 keep_vars = true
 
 [vars]
-OPENAI_CLINICAL_MODEL = "gpt-5.6-sol"
+OPENAI_CLINICAL_MODEL = "gpt-6-sol"
 
 [build]
 command = "npm run build"
@@ -19,7 +19,7 @@ required = [ "STRIPE_WEBHOOK_SECRET" ]
 
 # Stripe checkout/webhook/download, question AI and private editorial/clinical AI routes run in the Worker; all other requests are static assets.
 # Set OPENAI_API_KEY as a Cloudflare secret to enable automatic generation.
-# The clinical history structurer uses GPT-5.6 Sol through OPENAI_CLINICAL_MODEL.
+# The clinical history structurer uses GPT-6 Sol through OPENAI_CLINICAL_MODEL, with a server-side fallback for model-access errors.
 # keep_vars preserves dashboard-managed variables and secrets across Wrangler deploys.
 # secrets.required makes deploy fail clearly if the runtime secret is missing.
 
