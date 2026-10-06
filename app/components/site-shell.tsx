@@ -41,7 +41,8 @@ function SiteHeader() {
         <a href="/articulos/">Artículos</a>
         <a href="/pregunta-a-carolina/">Tu Consulta</a>
         <a href="/recursos/">Recursos</a>
-        <a href="/mi-espacio/">Mi espacio</a>\n        <a className="nav-cta" href="/cita/">Pedir cita</a>
+        <a href="/mi-espacio/">Mi espacio</a>
+        <a className="nav-cta" href="/cita/">Pedir cita</a>
       </nav>
 
       <details className="site-mobile-nav">
@@ -58,7 +59,8 @@ function SiteHeader() {
           <a href="/articulos/">Artículos</a>
           <a href="/pregunta-a-carolina/">Tu Consulta</a>
           <a href="/recursos/">Recursos</a>
-          <a href="/mi-espacio/">Mi espacio</a>\n          <a href="/psicologa-arenys-de-mar/">Consulta en Arenys de Mar</a>
+          <a href="/mi-espacio/">Mi espacio</a>
+          <a href="/psicologa-arenys-de-mar/">Consulta en Arenys de Mar</a>
           <a href="/cita/">Pedir cita</a>
         </div>
       </details>
@@ -112,7 +114,8 @@ function SiteFooter() {
           <a href="/articulos/">Artículos</a>
           <a href="/pregunta-a-carolina/">Tu Consulta</a>
           <a href="/recursos/">Recursos</a>
-          <a href="/mi-espacio/">Mi espacio</a>\n          <a href="/psicologa-arenys-de-mar/">Psicóloga en Arenys de Mar</a>
+          <a href="/mi-espacio/">Mi espacio</a>
+          <a href="/psicologa-arenys-de-mar/">Psicóloga en Arenys de Mar</a>
           <a href="/cita/">Pedir cita</a>
         </nav>
       </div>
