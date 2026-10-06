@@ -330,6 +330,24 @@
 .appointment-dialog form{padding:18px!important}
 .dialog-heading h2{font-size:1.35rem!important}
 
+/* Shared admin home navigation */
+.admin-home-link{
+  display:inline-flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  min-height:32px!important;
+  padding:6px 10px!important;
+  border:1px solid var(--admin-line-strong)!important;
+  border-radius:7px!important;
+  background:#fff!important;
+  color:var(--admin-navy)!important;
+  text-decoration:none!important;
+  font-size:.74rem!important;
+  font-weight:700!important;
+  line-height:1.1!important;
+  box-shadow:none!important;
+}
+
 /* Remove oversized pill language */
 .admin-top-actions a,.articles-top-actions a,.questions-admin-topbar nav a,.resources-top-actions a{
   text-decoration:none!important;
