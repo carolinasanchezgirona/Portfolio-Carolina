@@ -904,8 +904,8 @@ async function clinicalStructureRequest(request: Request, env: Env): Promise<Res
   };
 
   try {
-    const preferredModel = env.OPENAI_CLINICAL_MODEL || "gpt-6.1-sol";
-    const models = [...new Set([preferredModel, "gpt-6.1-sol", "gpt-6-luna", "gpt-4.1-mini"])];
+    const preferredModel = env.OPENAI_CLINICAL_MODEL || "gpt-6-sol";
+    const models = [...new Set([preferredModel, "gpt-6-sol", "gpt-6-luna", "gpt-4.1-mini"])];
     let outputText = "";
     let lastStatus = 502;
     let lastErrorCode = "";
@@ -1015,6 +1015,226 @@ async function clinicalStructureRequest(request: Request, env: Env): Promise<Res
   }
 }
 
+
+
+/** Private diagnostic support. Suggestions are provisional and require professional review before saving. */
+async function clinicalDiagnosticSuggestionRequest(request: Request, env: Env): Promise<Response> {
+  if (request.method !== "POST") return editorialJson({ error: "Método no permitido." }, 405);
+  if (!await verifyEditorialOwner(request)) return editorialJson({ error: "Sesión no autorizada." }, 401);
+  if (!env.OPENAI_API_KEY) return editorialJson({ error: "El análisis diagnóstico asistido no está configurado." }, 503);
+  if (Number(request.headers.get("content-length") || "0") > 65000) return editorialJson({ error: "El historial enviado es demasiado extenso para este análisis." }, 413);
+
+  let data: Record<string, unknown>;
+  try { data = await request.json() as Record<string, unknown>; }
+  catch { return editorialJson({ error: "Solicitud no válida." }, 400); }
+
+  const rawProfile = data.profile && typeof data.profile === "object" && !Array.isArray(data.profile)
+    ? data.profile as Record<string, unknown>
+    : {};
+
+  const allowedInputFields = [
+    "age","clinical_summary","medication_notes","reason_for_consultation","current_problem_history",
+    "psychological_psychiatric_history","medical_history","family_history","personal_family_context",
+    "social_context","academic_work_context","significant_life_events","clinical_examination",
+    "psychometric_assessment","neuropsychological_assessment","diagnoses","diagnostic_hypotheses",
+    "differential_diagnosis","current_clinical_problems","predisposing_factors","precipitating_factors",
+    "perpetuating_factors","protective_factors","integrative_formulation","clinical_evolution_summary",
+    "risk_safety","clinical_observations"
+  ];
+
+  const profile: Record<string, string> = {};
+  for (const key of allowedInputFields) {
+    const value = editorialText(rawProfile[key], key === "age" ? 16 : 7000);
+    if (value) profile[key] = value;
+  }
+
+  const usableText = Object.values(profile).join("\n").trim();
+  if (usableText.length < 80) {
+    return editorialJson({ error: "La ficha todavía contiene poca información para sugerir un diagnóstico diferencial con prudencia." }, 400);
+  }
+
+  const system = [
+    "Eres un asistente de apoyo al razonamiento diagnóstico para una psicóloga sanitaria y neuropsicóloga en España.",
+    "Tu salida es una PROPUESTA CLÍNICA PARA REVISIÓN PROFESIONAL, nunca un diagnóstico automático ni una decisión definitiva.",
+    "Razona de forma conservadora usando criterios compatibles con DSM-5-TR y CIE-11, pero NO inventes códigos diagnósticos ni criterios que no estén documentados.",
+    "No fuerces una categoría diagnóstica. Si faltan duración, frecuencia, deterioro funcional, criterios nucleares, exclusiones médicas, consumo de sustancias, efectos de medicación o información evolutiva relevante, indícalo.",
+    "Distingue síntomas, procesos transdiagnósticos, reacciones esperables a contexto y trastornos clínicos.",
+    "No conviertas duelo, estrés, dolor, trauma referido, rasgos de personalidad, neurodivergencia o dificultades relacionales en diagnósticos por defecto.",
+    "Valora siempre explicaciones médicas, farmacológicas, de sustancias, del sueño y neuropsicológicas cuando sean plausibles según la información disponible.",
+    "Si ya existe un diagnóstico en la ficha, trátalo como antecedente registrado, no como verdad que debas confirmar automáticamente.",
+    "La hipótesis principal solo debe proponerse cuando haya un patrón suficientemente coherente. En caso contrario usa assessment_status='insufficient_information'.",
+    "Para cada alternativa diferencial explica por qué considerarla, qué datos la debilitan o faltan y qué preguntas/pruebas permitirían discriminarla.",
+    "No propongas tratamiento. No añadas nombres, correos, teléfonos ni identificadores.",
+    "Si hay información de riesgo, no la minimices, pero tampoco infieras riesgo ausente por falta de mención.",
+    "Redacta en español clínico claro y conciso.",
+    "Devuelve SOLO JSON válido conforme al esquema solicitado."
+  ].join("\n");
+
+  const diagnosticSchema = {
+    type: "object",
+    additionalProperties: false,
+    properties: {
+      assessment_status: {
+        type: "string",
+        enum: ["provisional_diagnosis_possible","insufficient_information","no_specific_diagnosis_supported"]
+      },
+      primary: {
+        type: "object",
+        additionalProperties: false,
+        properties: {
+          diagnosis: { type: "string" },
+          status: { type: "string", enum: ["provisional","rule_out","insufficient_information"] },
+          rationale: { type: "string" },
+          supporting_evidence: { type: "array", maxItems: 10, items: { type: "string" } },
+          conflicting_or_missing_evidence: { type: "array", maxItems: 10, items: { type: "string" } }
+        },
+        required: ["diagnosis","status","rationale","supporting_evidence","conflicting_or_missing_evidence"]
+      },
+      differential: {
+        type: "array",
+        maxItems: 6,
+        items: {
+          type: "object",
+          additionalProperties: false,
+          properties: {
+            diagnosis: { type: "string" },
+            why_consider: { type: "string" },
+            against_or_missing: { type: "string" },
+            discriminators: { type: "array", maxItems: 5, items: { type: "string" } }
+          },
+          required: ["diagnosis","why_consider","against_or_missing","discriminators"]
+        }
+      },
+      medical_or_substance_considerations: {
+        type: "array",
+        maxItems: 8,
+        items: { type: "string" }
+      },
+      priority_missing_information: {
+        type: "array",
+        maxItems: 10,
+        items: { type: "string" }
+      },
+      record_hypothesis: { type: "string" },
+      record_differential: { type: "string" },
+      caution: { type: "string" }
+    },
+    required: [
+      "assessment_status","primary","differential","medical_or_substance_considerations",
+      "priority_missing_information","record_hypothesis","record_differential","caution"
+    ]
+  };
+
+  try {
+    const preferredModel = env.OPENAI_CLINICAL_MODEL || "gpt-6-sol";
+    const models = [...new Set([preferredModel, "gpt-6-sol", "gpt-6-luna", "gpt-4.1-mini"])];
+    let outputText = "";
+    let lastStatus = 502;
+
+    for (const model of models) {
+      const requestBody = {
+        model,
+        store: false,
+        instructions: system,
+        input: JSON.stringify({ historial_clinico_anonimizado: profile })
+      };
+
+      const attempts = [
+        {
+          ...requestBody,
+          text: {
+            format: {
+              type: "json_schema",
+              name: "clinical_diagnostic_support",
+              strict: true,
+              schema: diagnosticSchema
+            }
+          }
+        },
+        requestBody
+      ];
+
+      for (let attemptIndex = 0; attemptIndex < attempts.length; attemptIndex += 1) {
+        const response = await fetch("https://api.openai.com/v1/responses", {
+          method: "POST",
+          headers: {
+            Authorization: "Bearer " + env.OPENAI_API_KEY,
+            "Content-Type": "application/json",
+            "X-Client-Request-Id": crypto.randomUUID()
+          },
+          body: JSON.stringify(attempts[attemptIndex])
+        });
+        const result = await response.json() as Record<string, unknown>;
+        const candidate = openAIResponseText(result);
+        if (response.ok && candidate) {
+          outputText = candidate;
+          break;
+        }
+        lastStatus = response.status;
+        if (response.status === 401 || response.status === 429) break;
+        if (attemptIndex === 0 && response.status === 400) continue;
+        break;
+      }
+
+      if (outputText || lastStatus === 401 || lastStatus === 429) break;
+      if (![400,403,404].includes(lastStatus)) break;
+    }
+
+    if (!outputText) {
+      if (lastStatus === 401) return editorialJson({ error: "La clave de OpenAI configurada no es válida o ha sido revocada." }, 502);
+      if (lastStatus === 429) return editorialJson({ error: "Se ha alcanzado el límite de análisis o de crédito de la API." }, 429);
+      return editorialJson({ error: "No se ha podido generar la sugerencia diagnóstica con los modelos disponibles." }, 502);
+    }
+
+    const raw = parseJsonObjectText(outputText);
+    const primaryRaw = raw.primary && typeof raw.primary === "object" && !Array.isArray(raw.primary)
+      ? raw.primary as Record<string, unknown>
+      : {};
+
+    const normalizeList = (value: unknown, maxItems: number, maxLength: number) =>
+      Array.isArray(value)
+        ? value.slice(0, maxItems).map((item) => editorialText(item, maxLength)).filter(Boolean)
+        : [];
+
+    const differential = Array.isArray(raw.differential)
+      ? raw.differential.slice(0, 6).map((item) => {
+          const row = item && typeof item === "object" && !Array.isArray(item) ? item as Record<string, unknown> : {};
+          return {
+            diagnosis: editorialText(row.diagnosis, 220),
+            why_consider: editorialText(row.why_consider, 900),
+            against_or_missing: editorialText(row.against_or_missing, 900),
+            discriminators: normalizeList(row.discriminators, 5, 500)
+          };
+        }).filter((item) => item.diagnosis)
+      : [];
+
+    const status = ["provisional_diagnosis_possible","insufficient_information","no_specific_diagnosis_supported"].includes(String(raw.assessment_status))
+      ? String(raw.assessment_status)
+      : "insufficient_information";
+
+    return editorialJson({
+      assessment_status: status,
+      primary: {
+        diagnosis: editorialText(primaryRaw.diagnosis, 220),
+        status: ["provisional","rule_out","insufficient_information"].includes(String(primaryRaw.status))
+          ? String(primaryRaw.status)
+          : "insufficient_information",
+        rationale: editorialText(primaryRaw.rationale, 1600),
+        supporting_evidence: normalizeList(primaryRaw.supporting_evidence, 10, 650),
+        conflicting_or_missing_evidence: normalizeList(primaryRaw.conflicting_or_missing_evidence, 10, 650)
+      },
+      differential,
+      medical_or_substance_considerations: normalizeList(raw.medical_or_substance_considerations, 8, 650),
+      priority_missing_information: normalizeList(raw.priority_missing_information, 10, 650),
+      record_hypothesis: editorialText(raw.record_hypothesis, 3000),
+      record_differential: editorialText(raw.record_differential, 4000),
+      caution: editorialText(raw.caution, 900) || "Sugerencia generada con IA para revisión profesional. No equivale a un diagnóstico confirmado."
+    });
+  } catch (error) {
+    console.error("Clinical diagnostic suggestion failed", error instanceof Error ? error.name : "Unknown");
+    return editorialJson({ error: "No se ha podido completar el análisis diagnóstico asistido." }, 502);
+  }
+}
 
 async function clinicalMaterialDraftRequest(request: Request, env: Env): Promise<Response> {
   if (request.method !== "POST") return editorialJson({ error: "Método no permitido." }, 405);
@@ -1316,6 +1536,7 @@ export default {
     if (url.pathname === "/api/editorial/generate" || url.pathname === "/api/editorial/generate/") return editorialRequest(request, env, "content");
     if (url.pathname === "/api/editorial/image" || url.pathname === "/api/editorial/image/") return editorialRequest(request, env, "image");
     if (url.pathname === "/api/clinical/structure" || url.pathname === "/api/clinical/structure/") return clinicalStructureRequest(request, env);
+    if (url.pathname === "/api/clinical/diagnostic-suggestion" || url.pathname === "/api/clinical/diagnostic-suggestion/") return clinicalDiagnosticSuggestionRequest(request, env);
     if (url.pathname === "/api/clinical/material-draft" || url.pathname === "/api/clinical/material-draft/") return clinicalMaterialDraftRequest(request, env);
     if (url.pathname === "/api/clinical/material-enrich" || url.pathname === "/api/clinical/material-enrich/") return clinicalMaterialEnrichRequest(request, env);
     return env.ASSETS.fetch(request);
