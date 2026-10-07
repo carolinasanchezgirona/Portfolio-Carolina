@@ -781,6 +781,30 @@ function openAIResponseText(payload: Record<string, unknown>): string {
   return "";
 }
 
+function parseJsonObjectText(text: string): Record<string, unknown> {
+  const trimmed = text.trim();
+  const unfenced = trimmed
+    .replace(/^\`\`\`(?:json)?\s*/i, "")
+    .replace(/\s*\`\`\`$/i, "")
+    .trim();
+
+  try {
+    const parsed = JSON.parse(unfenced) as unknown;
+    if (parsed && typeof parsed === "object" && !Array.isArray(parsed)) return parsed as Record<string, unknown>;
+  } catch {
+    // Fall through to a conservative object extraction for models that add a short wrapper.
+  }
+
+  const firstBrace = unfenced.indexOf("{");
+  const lastBrace = unfenced.lastIndexOf("}");
+  if (firstBrace >= 0 && lastBrace > firstBrace) {
+    const parsed = JSON.parse(unfenced.slice(firstBrace, lastBrace + 1)) as unknown;
+    if (parsed && typeof parsed === "object" && !Array.isArray(parsed)) return parsed as Record<string, unknown>;
+  }
+
+  throw new Error("Clinical model did not return a JSON object.");
+}
+
 /** Private clinical structuring. The professional reviews every proposal before it is saved. */
 async function clinicalStructureRequest(request: Request, env: Env): Promise<Response> {
   if (request.method !== "POST") return editorialJson({ error: "Método no permitido." }, 405);
@@ -832,6 +856,53 @@ async function clinicalStructureRequest(request: Request, env: Env): Promise<Res
     "No incluyas nombres, correos, teléfonos ni otros identificadores personales en la salida si aparecen accidentalmente."
   ].join("\n");
 
+  const clinicalResponseSchema = {
+    type: "object",
+    additionalProperties: false,
+    properties: {
+      fields: {
+        type: "object",
+        additionalProperties: false,
+        properties: Object.fromEntries(allowedFields.map((key) => [key, { type: "string" }])),
+        required: allowedFields
+      },
+      inferences: {
+        type: "array",
+        maxItems: 16,
+        items: {
+          type: "object",
+          additionalProperties: false,
+          properties: {
+            statement: { type: "string" },
+            basis: { type: "string" },
+            confidence: { type: "string", enum: ["high", "plausible"] },
+            target_field: { type: "string", enum: allowedFields }
+          },
+          required: ["statement", "basis", "confidence", "target_field"]
+        }
+      },
+      missing_to_explore: {
+        type: "array",
+        maxItems: 18,
+        items: { type: "string" }
+      },
+      processes: {
+        type: "array",
+        maxItems: 12,
+        items: {
+          type: "object",
+          additionalProperties: false,
+          properties: {
+            process: { type: "string" },
+            reason: { type: "string" }
+          },
+          required: ["process", "reason"]
+        }
+      }
+    },
+    required: ["fields", "inferences", "missing_to_explore", "processes"]
+  };
+
   try {
     const preferredModel = env.OPENAI_CLINICAL_MODEL || "gpt-6.1-sol";
     const models = [...new Set([preferredModel, "gpt-6.1-sol", "gpt-6-luna", "gpt-4.1-mini"])];
@@ -840,40 +911,69 @@ async function clinicalStructureRequest(request: Request, env: Env): Promise<Res
     let lastErrorCode = "";
 
     for (const model of models) {
-      const response = await fetch("https://api.openai.com/v1/responses", {
-        method: "POST",
-        headers: {
-          Authorization: "Bearer " + env.OPENAI_API_KEY,
-          "Content-Type": "application/json",
-          "X-Client-Request-Id": crypto.randomUUID()
-        },
-        body: JSON.stringify({
-          model,
-          store: false,
-          instructions: system,
-          input: JSON.stringify({ notas: notes, historial_existente: existingProfile }),
-          text: { format: { type: "json_object" } }
-        })
-      });
+      const requestBody = {
+        model,
+        store: false,
+        instructions: system,
+        input: JSON.stringify({ notas: notes, historial_existente: existingProfile })
+      };
 
-      const result = await response.json() as Record<string, unknown>;
-      const candidate = openAIResponseText(result);
-      if (response.ok && candidate) {
-        outputText = candidate;
+      const attempts = [
+        {
+          ...requestBody,
+          text: {
+            format: {
+              type: "json_schema",
+              name: "clinical_structure",
+              strict: true,
+              schema: clinicalResponseSchema
+            }
+          }
+        },
+        requestBody
+      ];
+
+      for (let attemptIndex = 0; attemptIndex < attempts.length; attemptIndex += 1) {
+        const response = await fetch("https://api.openai.com/v1/responses", {
+          method: "POST",
+          headers: {
+            Authorization: "Bearer " + env.OPENAI_API_KEY,
+            "Content-Type": "application/json",
+            "X-Client-Request-Id": crypto.randomUUID()
+          },
+          body: JSON.stringify(attempts[attemptIndex])
+        });
+
+        const result = await response.json() as Record<string, unknown>;
+        const candidate = openAIResponseText(result);
+        if (response.ok && candidate) {
+          outputText = candidate;
+          break;
+        }
+
+        const apiError = result.error && typeof result.error === "object" && !Array.isArray(result.error)
+          ? result.error as Record<string, unknown>
+          : {};
+        lastStatus = response.status;
+        lastErrorCode = editorialText(apiError.code, 120);
+        console.error(
+          "Clinical structure generation failure",
+          model,
+          attemptIndex === 0 ? "structured" : "plain-json",
+          response.status,
+          lastErrorCode
+        );
+
+        // Invalid/revoked credentials or exhausted billing will not improve by retrying.
+        if (response.status === 401 || response.status === 429) break;
+        // Retry without a forced response format only when the structured-output request is rejected.
+        if (attemptIndex === 0 && response.status === 400) continue;
         break;
       }
 
-      const apiError = result.error && typeof result.error === "object" && !Array.isArray(result.error)
-        ? result.error as Record<string, unknown>
-        : {};
-      lastStatus = response.status;
-      lastErrorCode = editorialText(apiError.code, 120);
-      console.error("Clinical structure generation failure", model, response.status, lastErrorCode);
-
-      // Invalid/revoked credentials or exhausted billing will not improve by changing model.
-      if (response.status === 401 || response.status === 429) break;
+      if (outputText || lastStatus === 401 || lastStatus === 429) break;
       // Model access / unsupported-model errors can fall back safely to a broadly available model.
-      if (![400, 403, 404].includes(response.status)) break;
+      if (![400, 403, 404].includes(lastStatus)) break;
     }
 
     if (!outputText) {
@@ -884,7 +984,7 @@ async function clinicalStructureRequest(request: Request, env: Env): Promise<Res
       return editorialJson({ error: "OpenAI ha rechazado el análisis clínico. Vuelve a intentarlo y, si continúa, revisaremos la configuración de la API." }, 502);
     }
 
-    const raw = JSON.parse(outputText) as Record<string, unknown>;
+    const raw = parseJsonObjectText(outputText);
     const rawFields = raw.fields && typeof raw.fields === "object" && !Array.isArray(raw.fields) ? raw.fields as Record<string, unknown> : {};
     const fields: Record<string, string> = {};
     for (const key of allowedFields) {
