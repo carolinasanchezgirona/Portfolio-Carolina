@@ -142,6 +142,8 @@
   let isDictating = false;
   let currentPatient = null;
   let currentAppointment = null;
+  let patientPageReturnScroll = 0;
+  let patientFormBaseline = "";
 
   const dateLong = new Intl.DateTimeFormat("es-ES", { weekday: "long", day: "numeric", month: "long", year: "numeric", timeZone: ZONE });
   const dateShort = new Intl.DateTimeFormat("es-ES", { day: "numeric", month: "short", year: "numeric", timeZone: ZONE });
@@ -176,6 +178,41 @@
   }
   function showLogin() { window.location.replace("/admin/clinica/acceso/"); }
   function showApp() { if (els.app) els.app.hidden = false; }
+
+  function patientFormSnapshot() {
+    if (!els.patientForm) return "";
+    return JSON.stringify([...els.patientForm.querySelectorAll("input, textarea, select")]
+      .filter((node) => !["button","submit","reset","file"].includes(String(node.type || "").toLowerCase()))
+      .map((node) => ({
+        id: node.id || "",
+        value: node.type === "checkbox" || node.type === "radio" ? Boolean(node.checked) : String(node.value || "")
+      })));
+  }
+
+  function showPatientPage() {
+    patientPageReturnScroll = window.scrollY || 0;
+    if (els.app) els.app.hidden = true;
+    if (els.patientDialog) els.patientDialog.hidden = false;
+    document.body.classList.add("clinic-patient-page-open");
+    window.scrollTo({ top: 0, behavior: "auto" });
+    window.setTimeout(() => { patientFormBaseline = patientFormSnapshot(); }, 0);
+  }
+
+  function closePatientPage({ force = false } = {}) {
+    if (!els.patientDialog || els.patientDialog.hidden) return true;
+    const changed = patientFormBaseline && patientFormSnapshot() !== patientFormBaseline;
+    if (!force && changed) {
+      const leave = window.confirm("Hay cambios sin guardar en esta ficha. ¿Quieres volver a pacientes y descartarlos?");
+      if (!leave) return false;
+    }
+    els.patientDialog.hidden = true;
+    if (els.app) els.app.hidden = false;
+    document.body.classList.remove("clinic-patient-page-open");
+    patientFormBaseline = "";
+    window.setTimeout(() => window.scrollTo({ top: patientPageReturnScroll, behavior: "auto" }), 0);
+    return true;
+  }
+
   function setMessage(text) { els.status.textContent = text || ""; }
   function create(tag, className, text) {
     const node = document.createElement(tag);
@@ -1349,8 +1386,9 @@
     renderExercises(patient);
     renderReports(patient);
     renderHistory(patient);
-    els.patientDialog.showModal();
+    showPatientPage();
     window.dispatchEvent(new CustomEvent("clinical:patient-opened", { detail: { patientId: patient.id } }));
+    window.setTimeout(() => { patientFormBaseline = patientFormSnapshot(); }, 0);
   }
 
   function appointmentCard(appointment) {
@@ -1573,6 +1611,7 @@
       renderPatients(els.patientSearch.value);
     }
     els.patientMessage.textContent = "Ficha completa guardada.";
+    patientFormBaseline = patientFormSnapshot();
   }
 
   async function togglePatientArchive() {
@@ -1593,7 +1632,7 @@
     updatePatientRecordActions(updated);
     renderPatients(els.patientSearch.value);
     els.patientMessage.textContent = archived ? "Ficha restaurada." : "Ficha archivada.";
-    if (!archived && !els.showArchived?.checked) window.setTimeout(() => els.patientDialog.close(), 350);
+    if (!archived && !els.showArchived?.checked) window.setTimeout(() => closePatientPage({ force: true }), 350);
   }
 
   async function deletePatientCreatedByError() {
@@ -1625,7 +1664,7 @@
     const deletedId = currentPatient.id;
     patients = patients.filter((patient) => patient.id !== deletedId);
     currentPatient = null;
-    els.patientDialog.close();
+    closePatientPage({ force: true });
     renderPatients(els.patientSearch.value);
     setMessage("Ficha creada por error eliminada.");
   }
@@ -1758,14 +1797,17 @@
     const updated = event?.detail?.patient;
     if (!updated?.id) return;
     patients = patients.map((patient) => patient.id === updated.id ? updated : patient);
-    if (currentPatient?.id === updated.id) currentPatient = updated;
+    if (currentPatient?.id === updated.id) {
+      currentPatient = updated;
+      window.setTimeout(() => { patientFormBaseline = patientFormSnapshot(); }, 0);
+    }
     renderPatients(els.patientSearch.value);
   });
 
   els.showArchived?.addEventListener("change", () => renderPatients(els.patientSearch.value));
   els.archivePatient?.addEventListener("click", () => togglePatientArchive().catch((error) => { els.patientMessage.textContent = error.message; }));
   els.deletePatient?.addEventListener("click", () => deletePatientCreatedByError().catch((error) => { els.patientMessage.textContent = error.message; }));
-  els.patientClose.addEventListener("click", () => els.patientDialog.close());
+  els.patientClose.addEventListener("click", () => closePatientPage());
   els.personalBirthDate?.addEventListener("change", () => { els.personalAge.value = patientAge(els.personalBirthDate.value); });
   els.patientForm.addEventListener("submit", (event) => savePatient(event).catch((error) => { els.patientMessage.textContent = error.message; }));
   els.sessionClose.addEventListener("click", () => { if (isDictating) speechRecognition?.stop(); els.sessionDialog.close(); });
