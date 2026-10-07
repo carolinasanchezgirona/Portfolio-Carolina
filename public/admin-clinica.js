@@ -1797,7 +1797,10 @@
     const updated = event?.detail?.patient;
     if (!updated?.id) return;
     patients = patients.map((patient) => patient.id === updated.id ? updated : patient);
-    if (currentPatient?.id === updated.id) currentPatient = updated;
+    if (currentPatient?.id === updated.id) {
+      currentPatient = updated;
+      window.setTimeout(() => { patientFormBaseline = patientFormSnapshot(); }, 0);
+    }
     renderPatients(els.patientSearch.value);
   });
 
