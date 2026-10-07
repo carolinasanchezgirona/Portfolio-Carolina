@@ -121,13 +121,16 @@ export default function AdminClinicaPage() {
         </form>
       </dialog>
 
-      <dialog id="clinic-patient-dialog" className="clinic-dialog clinic-patient-dialog">
-        <form id="clinic-patient-form" className="clinic-dialog-content">
+      <section id="clinic-patient-dialog" className="clinic-patient-page" hidden>
+        <form id="clinic-patient-form" className="clinic-patient-page-content">
           <input id="clinic-patient-id" type="hidden" />
-          <div className="clinic-dialog-heading">
-            <div><p className="clinic-eyebrow">Ficha clínica</p><h2 id="clinic-patient-name">Paciente</h2></div>
-            <button id="clinic-patient-close" className="clinic-close" type="button" aria-label="Cerrar">×</button>
-          </div>
+          <header className="clinic-patient-page-header">
+            <button id="clinic-patient-close" className="clinic-patient-back" type="button">← Volver a pacientes</button>
+            <div>
+              <p className="clinic-eyebrow">Ficha clínica</p>
+              <h2 id="clinic-patient-name">Paciente</h2>
+            </div>
+          </header>
           <div id="clinic-patient-contact" className="clinic-contact" />
           <div className="clinic-record-actions">
             <button id="clinic-print-history" className="clinic-secondary" type="button">Imprimir historial clínico</button>
@@ -303,7 +306,7 @@ export default function AdminClinicaPage() {
           <h3>Sesiones y citas</h3>
           <div id="clinic-patient-history" className="clinic-history" />
         </form>
-      </dialog>
+      </section>
 
       <dialog id="clinic-document-dialog" className="clinic-dialog clinic-small-dialog">
         <form id="clinic-document-form" className="clinic-dialog-content">
