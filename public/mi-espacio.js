@@ -468,6 +468,7 @@
       const answers = [...form.querySelectorAll("[data-response-answer]")].map((field) => field.value || "");
       const response = await fetch("/api/patient-portal/response", {
         method: "POST",
+        credentials: "include",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ material_id: item.id, action, record, answers })
       });
@@ -638,7 +639,10 @@
 
   async function loadPatientSession() {
     try {
-      const response = await fetch("/api/patient-portal/session", { cache: "no-store" });
+      const response = await fetch("/api/patient-portal/session", {
+        cache: "no-store",
+        credentials: "include"
+      });
       if (!response.ok) {
         state.portalAuthenticated = false;
         showAccessGate();
@@ -668,6 +672,7 @@
     try {
       const response = await fetch("/api/patient-portal/request-code", {
         method: "POST",
+        credentials: "include",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email })
       });
@@ -698,6 +703,7 @@
     try {
       const response = await fetch("/api/patient-portal/verify-code", {
         method: "POST",
+        credentials: "include",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email: state.accessEmail, code })
       });
@@ -705,7 +711,10 @@
       if (!response.ok) throw new Error(body.error || "El código no es válido o ha caducado.");
       setAccessMessage("");
       if (accessCode) accessCode.value = "";
-      await loadPatientSession();
+      const opened = await loadPatientSession();
+      if (!opened) {
+        setAccessMessage("El código es correcto, pero no se ha podido abrir la sesión. Recarga la página una vez y vuelve a intentarlo.", true);
+      }
     } catch (error) {
       setAccessMessage(error?.message || "El código no es válido o ha caducado.", true);
     } finally {
@@ -724,7 +733,7 @@
 
   async function logoutPatientPortal() {
     try {
-      await fetch("/api/patient-portal/logout", { method: "POST" });
+      await fetch("/api/patient-portal/logout", { method: "POST", credentials: "include" });
     } catch {}
     state.portalAuthenticated = false;
     state.portalData = null;
