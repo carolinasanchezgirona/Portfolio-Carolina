@@ -389,7 +389,14 @@
     panels.forEach(panel => {
       panel.hidden = panel.dataset.spacePanel !== name;
     });
-  
+    navButtons.forEach(button => {
+      button.classList.toggle("is-active", button.dataset.spaceView === name);
+    });
+    if (name === "wellness") renderWellness();
+    if (name === "progress") renderProgress();
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+
   function setAccessMessage(message, isError = false) {
     if (!accessMessage) return;
     accessMessage.textContent = message || "";
@@ -724,14 +731,6 @@
     state.guestMode = false;
     resetPatientAccess();
     showAccessGate();
-  }
-
-  navButtons.forEach(button => {
-      button.classList.toggle("is-active", button.dataset.spaceView === name);
-    });
-    if (name === "wellness") renderWellness();
-    if (name === "progress") renderProgress();
-    window.scrollTo({ top: 0, behavior: "smooth" });
   }
 
   function typeLabel(type) {
