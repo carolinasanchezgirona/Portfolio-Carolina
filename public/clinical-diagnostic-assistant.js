@@ -60,13 +60,27 @@
       .clinic-dx-ai-signal{display:inline-flex;margin-bottom:8px;border-radius:999px;padding:5px 8px;font-size:.68rem;font-weight:800;background:#edf4f8;color:#526977}
       .clinic-dx-ai-signal.provisional{background:#eaf9f8;color:#145d5a}
       .clinic-dx-ai-signal.insufficient{background:#fff4df;color:#835e17}
+      .clinic-dx-ai-meta{display:flex;flex-wrap:wrap;gap:7px;margin:9px 0 10px}
+      .clinic-dx-ai-meta span{display:inline-flex;padding:5px 8px;border-radius:999px;background:#edf4f8;color:#526977;font-size:.68rem;font-weight:800}
+      .clinic-dx-ai-meta .high{background:#e7f5ec;color:#23613a}
+      .clinic-dx-ai-meta .moderate{background:#fff4df;color:#7a5b18}
+      .clinic-dx-ai-meta .low{background:#f7eeee;color:#8a4949}
+      .clinic-dx-ai-code{margin-top:9px!important;padding:9px 10px;border-radius:9px;background:#f4f8fa;color:#4a6473!important;font-size:.74rem!important}
       .clinic-dx-ai-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
       .clinic-dx-ai-card{padding:13px;border:1px solid #dbe7ee;border-radius:12px;background:#fff}
       .clinic-dx-ai-list{margin:8px 0 0;padding-left:18px;color:#405766;font-size:.78rem;line-height:1.5}
       .clinic-dx-ai-differential{display:grid;gap:8px}
       .clinic-dx-ai-diff{padding:12px;border:1px solid #dbe7ee;border-radius:11px;background:#fff}
       .clinic-dx-ai-diff strong{display:block;color:#173A5E;margin-bottom:5px;font-size:.82rem}
+      .clinic-dx-ai-diff-badges{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 7px}
+      .clinic-dx-ai-diff-badges span{padding:4px 7px;border-radius:999px;background:#edf4f8;color:#526977;font-size:.65rem;font-weight:800}
+      .clinic-dx-ai-diff-badges .less-likely{background:#f7eeee;color:#8a4949}
+      .clinic-dx-ai-diff-badges .plausible{background:#eaf9f8;color:#145d5a}
       .clinic-dx-ai-diff p{margin:3px 0;color:#4b6170;font-size:.76rem;line-height:1.45}
+      .clinic-dx-ai-tool{padding:9px 0;border-top:1px solid #e5edf2}
+      .clinic-dx-ai-tool:first-of-type{border-top:0;padding-top:0}
+      .clinic-dx-ai-tool strong{display:block;color:#173A5E;font-size:.78rem}
+      .clinic-dx-ai-tool p{margin:4px 0 0;color:#4b6170;font-size:.74rem;line-height:1.45}
       .clinic-dx-ai-caution{padding:10px 12px;border-left:3px solid #F2766B;border-radius:9px;background:#fff8f6;color:#6f4b47;font-size:.74rem;line-height:1.5}
       @media(max-width:760px){.clinic-dx-ai-head,.clinic-dx-ai-grid{display:grid}.clinic-dx-ai-badge{justify-self:start}}
     `;
@@ -89,6 +103,44 @@
       if (value) profile[key] = value;
     });
     return profile;
+  }
+
+  function confidenceLabel(value) {
+    return ({ low: "Certeza baja", moderate: "Certeza moderada", high: "Certeza alta" })[value] || "Certeza baja";
+  }
+
+  function likelihoodLabel(value) {
+    return ({ plausible: "Plausible", unclear: "Por aclarar", less_likely: "Poco probable" })[value] || "Por aclarar";
+  }
+
+  function priorityLabel(value) {
+    return ({ high: "Prioridad alta", medium: "Prioridad media", low: "Prioridad baja" })[value] || "Prioridad media";
+  }
+
+  function assessmentToolsBlock(values) {
+    const card = document.createElement("article");
+    card.className = "clinic-dx-ai-card";
+    const heading = document.createElement("h5");
+    heading.textContent = "Pruebas o escalas que podrían ayudar";
+    card.append(heading);
+    (values || []).forEach((item) => {
+      const block = document.createElement("div");
+      block.className = "clinic-dx-ai-tool";
+      const name = document.createElement("strong");
+      name.textContent = item.name || "Instrumento";
+      const purpose = document.createElement("p");
+      purpose.textContent = "Para qué puede ayudar: " + (item.purpose || "—");
+      const limitations = document.createElement("p");
+      limitations.textContent = "Limitación: " + (item.limitations || "No sustituye la valoración clínica.");
+      block.append(name, purpose, limitations);
+      card.append(block);
+    });
+    if (!(values || []).length) {
+      const p = document.createElement("p");
+      p.textContent = "No se propone ninguna prueba adicional con la información disponible.";
+      card.append(p);
+    }
+    return card;
   }
 
   function listBlock(title, values) {
@@ -136,7 +188,34 @@
     title.textContent = primary.diagnosis || "No se propone una etiqueta diagnóstica principal";
     const rationale = document.createElement("p");
     rationale.textContent = primary.rationale || "La información disponible no permite una formulación diagnóstica prudente.";
-    primaryCard.append(signal, title, rationale);
+
+    const meta = document.createElement("div");
+    meta.className = "clinic-dx-ai-meta";
+    const confidence = document.createElement("span");
+    confidence.className = primary.confidence || "low";
+    confidence.textContent = confidenceLabel(primary.confidence);
+    meta.append(confidence);
+
+    const code = primary.code_suggestion || {};
+    if (code.classification && code.classification !== "none" && code.code) {
+      const codeBadge = document.createElement("span");
+      codeBadge.textContent = `${code.classification} · ${code.code}`;
+      meta.append(codeBadge);
+    }
+
+    primaryCard.append(signal, title, meta, rationale);
+    if (suggestion.summary_statement) {
+      const summary = document.createElement("p");
+      summary.className = "clinic-dx-ai-code";
+      summary.textContent = suggestion.summary_statement;
+      primaryCard.append(summary);
+    }
+    if (code.classification && code.classification !== "none" && code.code) {
+      const codeNote = document.createElement("p");
+      codeNote.className = "clinic-dx-ai-code";
+      codeNote.textContent = `Código orientativo: ${code.classification} ${code.code}${code.label ? " · " + code.label : ""}. ${code.verification_note || "Verificar manualmente antes de registrar."}`;
+      primaryCard.append(codeNote);
+    }
     target.append(primaryCard);
 
     const evidenceGrid = document.createElement("div");
@@ -159,11 +238,19 @@
       row.className = "clinic-dx-ai-diff";
       const name = document.createElement("strong");
       name.textContent = item.diagnosis;
+      const badges = document.createElement("div");
+      badges.className = "clinic-dx-ai-diff-badges";
+      const likelihood = document.createElement("span");
+      likelihood.className = item.likelihood === "less_likely" ? "less-likely" : item.likelihood === "plausible" ? "plausible" : "";
+      likelihood.textContent = likelihoodLabel(item.likelihood);
+      const priority = document.createElement("span");
+      priority.textContent = priorityLabel(item.priority);
+      badges.append(likelihood, priority);
       const why = document.createElement("p");
       why.textContent = "A considerar: " + (item.why_consider || "—");
       const against = document.createElement("p");
       against.textContent = "En contra / pendiente: " + (item.against_or_missing || "—");
-      row.append(name, why, against);
+      row.append(name, badges, why, against);
       if (item.discriminators?.length) {
         const disc = document.createElement("ul");
         disc.className = "clinic-dx-ai-list";
@@ -188,7 +275,9 @@
     extraGrid.className = "clinic-dx-ai-grid";
     extraGrid.append(
       listBlock("Descartar / considerar causas médicas, medicación o sustancias", suggestion.medical_or_substance_considerations),
-      listBlock("Información prioritaria por explorar", suggestion.priority_missing_information)
+      listBlock("Información prioritaria por explorar", suggestion.priority_missing_information),
+      listBlock("Preguntas para la próxima sesión", suggestion.next_session_questions),
+      assessmentToolsBlock(suggestion.suggested_assessment_tools)
     );
     target.append(extraGrid);
 
@@ -224,6 +313,19 @@
       field.dispatchEvent(new Event("input", { bubbles: true }));
     });
 
+    const questions = document.createElement("button");
+    questions.type = "button";
+    questions.className = "clinic-secondary";
+    questions.textContent = "Añadir preguntas a Para hoy";
+    questions.disabled = !(suggestion.next_session_questions || []).length;
+    questions.addEventListener("click", () => {
+      const field = el("clinic-next-focus");
+      if (!field) return;
+      const text = (suggestion.next_session_questions || []).map((value) => "• " + value).join("\n");
+      field.value = mergeText(field.value, "Explorar para afinar diagnóstico:\n" + text);
+      field.dispatchEvent(new Event("input", { bubbles: true }));
+    });
+
     const diagnosis = document.createElement("button");
     diagnosis.type = "button";
     diagnosis.className = "clinic-primary";
@@ -231,16 +333,20 @@
     diagnosis.disabled = suggestion.assessment_status !== "provisional_diagnosis_possible" || !primary.diagnosis;
     diagnosis.addEventListener("click", () => {
       const confirmed = window.confirm(
-        "La IA solo ha propuesto una hipótesis. Confirma que has revisado personalmente los criterios clínicos, el diagnóstico diferencial y las posibles exclusiones antes de copiarlo a Diagnósticos registrados."
+        "La IA solo ha propuesto una hipótesis. Confirma que has revisado personalmente los criterios clínicos, el diagnóstico diferencial, las exclusiones médicas y la adecuación de cualquier código antes de copiarlo a Diagnósticos registrados."
       );
       if (!confirmed) return;
       const field = el("clinic-diagnoses");
       if (!field) return;
-      field.value = mergeText(field.value, primary.diagnosis);
+      const code = primary.code_suggestion || {};
+      const formatted = code.classification && code.classification !== "none" && code.code
+        ? `${primary.diagnosis} · ${code.classification} ${code.code}`
+        : primary.diagnosis;
+      field.value = mergeText(field.value, formatted);
       field.dispatchEvent(new Event("input", { bubbles: true }));
     });
 
-    actions.append(hypothesis, differential, diagnosis);
+    actions.append(hypothesis, differential, questions, diagnosis);
     target.append(actions);
     target.hidden = false;
   }
@@ -278,7 +384,7 @@
       if (!response.ok) throw new Error(body.error || "No se ha podido generar la sugerencia diagnóstica.");
       suggestion = body;
       renderSuggestion();
-      status.textContent = "Propuesta preparada. Revisa criterios y diferencial antes de incorporarla.";
+      status.textContent = "Propuesta preparada. Revisa criterios, certeza, diferencial, pruebas y cualquier código antes de incorporarla.";
     } catch (error) {
       status.textContent = error?.message || "No se ha podido generar la sugerencia diagnóstica.";
     } finally {
@@ -300,7 +406,7 @@
         <div>
           <p class="clinic-eyebrow">Apoyo al razonamiento diagnóstico</p>
           <h4>Sugerencia diagnóstica asistida por IA</h4>
-          <p>Analiza la información ya registrada en la ficha y propone una hipótesis principal, datos a favor y en contra y un diagnóstico diferencial. No guarda nada automáticamente.</p>
+          <p>Analiza la información ya registrada y propone hipótesis, diferencial, nivel de certeza, datos pendientes, preguntas de evaluación y pruebas que podrían ayudar. No guarda nada automáticamente.</p>
         </div>
         <span class="clinic-dx-ai-badge">Requiere revisión profesional</span>
       </div>

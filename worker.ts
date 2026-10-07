@@ -904,8 +904,8 @@ async function clinicalStructureRequest(request: Request, env: Env): Promise<Res
   };
 
   try {
-    const preferredModel = env.OPENAI_CLINICAL_MODEL || "gpt-6-sol";
-    const models = [...new Set([preferredModel, "gpt-6-sol", "gpt-6-luna", "gpt-4.1-mini"])];
+    const preferredModel = env.OPENAI_CLINICAL_MODEL || "gpt-6.1-sol";
+    const models = [...new Set([preferredModel, "gpt-6.1-sol", "gpt-6-sol", "gpt-6-luna", "gpt-4.1-mini"])];
     let outputText = "";
     let lastStatus = 502;
     let lastErrorCode = "";
@@ -1063,7 +1063,13 @@ async function clinicalDiagnosticSuggestionRequest(request: Request, env: Env): 
     "Valora siempre explicaciones médicas, farmacológicas, de sustancias, del sueño y neuropsicológicas cuando sean plausibles según la información disponible.",
     "Si ya existe un diagnóstico en la ficha, trátalo como antecedente registrado, no como verdad que debas confirmar automáticamente.",
     "La hipótesis principal solo debe proponerse cuando haya un patrón suficientemente coherente. En caso contrario usa assessment_status='insufficient_information'.",
+    "Expresa el nivel de certeza clínica únicamente como low, moderate o high. No uses porcentajes ni falsa precisión.",
     "Para cada alternativa diferencial explica por qué considerarla, qué datos la debilitan o faltan y qué preguntas/pruebas permitirían discriminarla.",
+    "Cuando los datos hagan una alternativa poco probable, márcala como less_likely y explica por qué. No llenes el diferencial con posibilidades remotas.",
+    "Propón entre 0 y 6 preguntas concretas para la siguiente sesión que realmente ayuden a confirmar, descartar o diferenciar hipótesis.",
+    "Puedes sugerir escalas o instrumentos validados solo cuando aporten información útil. Indica para qué servirían y sus limitaciones; ninguna escala confirma por sí sola un diagnóstico.",
+    "En neuropsicología diferencia siempre que sea pertinente entre queja cognitiva, rendimiento observado, perfil cognitivo, hipótesis etiológica y diagnóstico neurocognitivo. No deduzcas un trastorno neurocognitivo solo por quejas o un cribado aislado.",
+    "Si sugieres un código DSM-5-TR o CIE-11, hazlo solo cuando el diagnóstico esté suficientemente especificado y el código te resulte fiable. Si no, usa classification='none' y deja code vacío. Todo código es orientativo y debe verificarse manualmente antes de registrarlo.",
     "No propongas tratamiento. No añadas nombres, correos, teléfonos ni identificadores.",
     "Si hay información de riesgo, no la minimices, pero tampoco infieras riesgo ausente por falta de mención.",
     "Redacta en español clínico claro y conciso.",
@@ -1084,11 +1090,23 @@ async function clinicalDiagnosticSuggestionRequest(request: Request, env: Env): 
         properties: {
           diagnosis: { type: "string" },
           status: { type: "string", enum: ["provisional","rule_out","insufficient_information"] },
+          confidence: { type: "string", enum: ["low","moderate","high"] },
           rationale: { type: "string" },
           supporting_evidence: { type: "array", maxItems: 10, items: { type: "string" } },
-          conflicting_or_missing_evidence: { type: "array", maxItems: 10, items: { type: "string" } }
+          conflicting_or_missing_evidence: { type: "array", maxItems: 10, items: { type: "string" } },
+          code_suggestion: {
+            type: "object",
+            additionalProperties: false,
+            properties: {
+              classification: { type: "string", enum: ["none","DSM-5-TR","CIE-11"] },
+              code: { type: "string" },
+              label: { type: "string" },
+              verification_note: { type: "string" }
+            },
+            required: ["classification","code","label","verification_note"]
+          }
         },
-        required: ["diagnosis","status","rationale","supporting_evidence","conflicting_or_missing_evidence"]
+        required: ["diagnosis","status","confidence","rationale","supporting_evidence","conflicting_or_missing_evidence","code_suggestion"]
       },
       differential: {
         type: "array",
@@ -1098,11 +1116,13 @@ async function clinicalDiagnosticSuggestionRequest(request: Request, env: Env): 
           additionalProperties: false,
           properties: {
             diagnosis: { type: "string" },
+            likelihood: { type: "string", enum: ["plausible","unclear","less_likely"] },
+            priority: { type: "string", enum: ["high","medium","low"] },
             why_consider: { type: "string" },
             against_or_missing: { type: "string" },
             discriminators: { type: "array", maxItems: 5, items: { type: "string" } }
           },
-          required: ["diagnosis","why_consider","against_or_missing","discriminators"]
+          required: ["diagnosis","likelihood","priority","why_consider","against_or_missing","discriminators"]
         }
       },
       medical_or_substance_considerations: {
@@ -1115,13 +1135,34 @@ async function clinicalDiagnosticSuggestionRequest(request: Request, env: Env): 
         maxItems: 10,
         items: { type: "string" }
       },
+      next_session_questions: {
+        type: "array",
+        maxItems: 6,
+        items: { type: "string" }
+      },
+      suggested_assessment_tools: {
+        type: "array",
+        maxItems: 6,
+        items: {
+          type: "object",
+          additionalProperties: false,
+          properties: {
+            name: { type: "string" },
+            purpose: { type: "string" },
+            limitations: { type: "string" }
+          },
+          required: ["name","purpose","limitations"]
+        }
+      },
+      summary_statement: { type: "string" },
       record_hypothesis: { type: "string" },
       record_differential: { type: "string" },
       caution: { type: "string" }
     },
     required: [
       "assessment_status","primary","differential","medical_or_substance_considerations",
-      "priority_missing_information","record_hypothesis","record_differential","caution"
+      "priority_missing_information","next_session_questions","suggested_assessment_tools","summary_statement",
+      "record_hypothesis","record_differential","caution"
     ]
   };
 
@@ -1201,6 +1242,8 @@ async function clinicalDiagnosticSuggestionRequest(request: Request, env: Env): 
           const row = item && typeof item === "object" && !Array.isArray(item) ? item as Record<string, unknown> : {};
           return {
             diagnosis: editorialText(row.diagnosis, 220),
+            likelihood: ["plausible","unclear","less_likely"].includes(String(row.likelihood)) ? String(row.likelihood) : "unclear",
+            priority: ["high","medium","low"].includes(String(row.priority)) ? String(row.priority) : "medium",
             why_consider: editorialText(row.why_consider, 900),
             against_or_missing: editorialText(row.against_or_missing, 900),
             discriminators: normalizeList(row.discriminators, 5, 500)
@@ -1219,13 +1262,38 @@ async function clinicalDiagnosticSuggestionRequest(request: Request, env: Env): 
         status: ["provisional","rule_out","insufficient_information"].includes(String(primaryRaw.status))
           ? String(primaryRaw.status)
           : "insufficient_information",
+        confidence: ["low","moderate","high"].includes(String(primaryRaw.confidence)) ? String(primaryRaw.confidence) : "low",
         rationale: editorialText(primaryRaw.rationale, 1600),
         supporting_evidence: normalizeList(primaryRaw.supporting_evidence, 10, 650),
-        conflicting_or_missing_evidence: normalizeList(primaryRaw.conflicting_or_missing_evidence, 10, 650)
+        conflicting_or_missing_evidence: normalizeList(primaryRaw.conflicting_or_missing_evidence, 10, 650),
+        code_suggestion: (() => {
+          const codeRaw = primaryRaw.code_suggestion && typeof primaryRaw.code_suggestion === "object" && !Array.isArray(primaryRaw.code_suggestion)
+            ? primaryRaw.code_suggestion as Record<string, unknown>
+            : {};
+          const classification = ["none","DSM-5-TR","CIE-11"].includes(String(codeRaw.classification)) ? String(codeRaw.classification) : "none";
+          return {
+            classification,
+            code: classification === "none" ? "" : editorialText(codeRaw.code, 40),
+            label: classification === "none" ? "" : editorialText(codeRaw.label, 220),
+            verification_note: editorialText(codeRaw.verification_note, 500) || "Verificar manualmente antes de registrar."
+          };
+        })()
       },
       differential,
       medical_or_substance_considerations: normalizeList(raw.medical_or_substance_considerations, 8, 650),
       priority_missing_information: normalizeList(raw.priority_missing_information, 10, 650),
+      next_session_questions: normalizeList(raw.next_session_questions, 6, 650),
+      suggested_assessment_tools: Array.isArray(raw.suggested_assessment_tools)
+        ? raw.suggested_assessment_tools.slice(0, 6).map((item) => {
+            const row = item && typeof item === "object" && !Array.isArray(item) ? item as Record<string, unknown> : {};
+            return {
+              name: editorialText(row.name, 180),
+              purpose: editorialText(row.purpose, 700),
+              limitations: editorialText(row.limitations, 700)
+            };
+          }).filter((item) => item.name)
+        : [],
+      summary_statement: editorialText(raw.summary_statement, 1200),
       record_hypothesis: editorialText(raw.record_hypothesis, 3000),
       record_differential: editorialText(raw.record_differential, 4000),
       caution: editorialText(raw.caution, 900) || "Sugerencia generada con IA para revisión profesional. No equivale a un diagnóstico confirmado."
