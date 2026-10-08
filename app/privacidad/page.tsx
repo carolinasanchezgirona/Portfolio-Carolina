@@ -138,9 +138,20 @@ export default function PrivacyPage() {
 
         <section id="cookies">
           <h2>10. Información sobre cookies y tecnologías similares</h2>
-          <p>Para recordar durante un máximo de 180 días si has aceptado o rechazado la analítica, el navegador almacena una preferencia local. También se pueden utilizar mecanismos técnicos necesarios para acceder a funciones privadas, mantener la sesión y garantizar la seguridad; no se emplean para publicidad comportamental.</p>
-          <p>Google Analytics 4 se carga en esta web tras la aceptación de cookies analíticas. Su finalidad es conocer las visitas y el uso general de los contenidos. Puede emplear cookies como <strong>_ga</strong> y <strong>_ga_&lt;identificador&gt;</strong>; su duración y características dependen de la configuración del servicio. El proveedor es Google Ireland Limited y su <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer">información de privacidad</a> puede consultarse en su web.</p>
-          <p>Puedes aceptar o rechazar la analítica y cambiar tu elección utilizando el control «Cookies» de la web. Rechazar las cookies analíticas no impide la navegación normal. Los detalles técnicos y las cookies efectivamente instaladas deben coincidir con la configuración real del sitio.</p>
+          <p>Esta web emplea mecanismos de almacenamiento necesarios para funciones técnicas y de seguridad y, únicamente cuando se aceptan, cookies opcionales de Google Analytics 4 para medir de forma general el uso de la web. Rechazar la analítica no impide la navegación normal.</p>
+          <div className="legal-table-scroll">
+            <table className="legal-cookie-table">
+              <thead><tr><th scope="col">Nombre o identificador</th><th scope="col">Proveedor y finalidad</th><th scope="col">Duración</th></tr></thead>
+              <tbody>
+                <tr><td><code>carolina_analytics_consent_v1</code></td><td>La propia web. Preferencia técnica en el almacenamiento local del navegador para recordar la aceptación o el rechazo.</td><td>Hasta 180 días desde la elección; se puede modificar antes.</td></tr>
+                <tr><td><code>_ga</code></td><td>Google Analytics 4 (Google Ireland Limited). Distinguir usuarios para elaborar estadísticas de uso. Solo tras consentimiento.</td><td>Duración predeterminada de Google: 2 años; puede variar por configuración o restricciones del navegador.</td></tr>
+                <tr><td><code>_ga_&lt;identificador&gt;</code></td><td>Google Analytics 4. Mantener el estado de la sesión para medición estadística. Solo tras consentimiento.</td><td>Duración predeterminada de Google: 2 años; puede variar por configuración o restricciones del navegador.</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p>Las herramientas que requieren identificación pueden usar almacenamiento de sesión o cookies técnicas para mantener el acceso autorizado, cuyo uso no depende de la aceptación de analítica. Los plazos de conservación de los datos dentro de Google Analytics no son necesariamente iguales a la duración de las cookies y requieren comprobar la configuración de la propiedad.</p>
+          <p><strong>Consentimiento y retirada:</strong> antes de aceptar no se carga el componente de Google Analytics desde esta aplicación. Puedes elegir «Rechazar analíticas» o «Aceptar analíticas» en la primera visita. Si cambias de opinión, utiliza el control permanente «Cookies» de la página, que vuelve a abrir las opciones. Al rechazar se bloquean nuevos envíos desde la integración de GA4 y se eliminan, en la medida técnicamente posible, sus cookies accesibles desde la web. Esto no elimina retroactivamente datos ya recopilados.</p>
+          <p>La política de <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer">privacidad de Google</a> ofrece información adicional. {/* Antes de la publicación, verificar con una inspección de red/cookies que estos datos coincidan con la configuración efectiva de Google Analytics y con otros scripts inyectados por la infraestructura. */}</p>
         </section>
 
         <section>
