@@ -2,6 +2,24 @@ const SUPABASE_URL = Deno.env.get("SUPABASE_URL") ?? "";
 const SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "";
 const BREVO_API_KEY = Deno.env.get("BREVO_API_KEY") ?? "";
 
+// Accept both legacy service_role and current sb_secret_* keys belonging to this
+// Supabase project. These are privileged server credentials, never browser keys.
+const PROJECT_SECRET_KEYS: string[] = (() => {
+  try {
+    const values = JSON.parse(Deno.env.get("SUPABASE_SECRET_KEYS") ?? "{}") as Record<string, unknown>;
+    if (!values || typeof values !== "object" || Array.isArray(values)) return [];
+    return Object.values(values).filter((v): v is string => typeof v === "string" && v.startsWith("sb_secret_"));
+  } catch { return []; }
+})();
+
+function isAuthorizedBackend(request: Request): boolean {
+  const authorization = request.headers.get("Authorization");
+  if (!authorization?.startsWith("Bearer ")) return false;
+  const candidate = authorization.slice(7);
+  if (!candidate || candidate.length > 1024) return false;
+  return (Boolean(SERVICE_ROLE_KEY) && candidate === SERVICE_ROLE_KEY) || PROJECT_SECRET_KEYS.includes(candidate);
+}
+
 const serviceHeaders = {
   apikey: SERVICE_ROLE_KEY,
   Authorization: "Bearer " + SERVICE_ROLE_KEY,
@@ -351,7 +369,7 @@ Deno.serve(async (req) => {
 
   // The public browser only talks to the same-origin Cloudflare Worker.
   // Supabase Edge Function accepts only the Worker's server-side credential.
-  if (!SERVICE_ROLE_KEY || req.headers.get("Authorization") !== "Bearer " + SERVICE_ROLE_KEY) {
+  if (!SERVICE_ROLE_KEY || !isAuthorizedBackend(req)) {
     return json({ error: "Acceso no autorizado." }, 401);
   }
   if (Number(req.headers.get("content-length") || "0") > 4096) {
