@@ -244,6 +244,7 @@ function patientPortalSameOrigin(request: Request): boolean {
 async function handlePatientPortalAuth(request: Request, env: Env, action: "request" | "verify"): Promise<Response> {
   if (request.method !== "POST") return patientPortalJson({ error: "Método no permitido." }, 405);
   if (!patientPortalSameOrigin(request)) return patientPortalJson({ error: "Origen no permitido." }, 403);
+  if (!env.SUPABASE_SERVICE_ROLE_KEY) return patientPortalJson({ error: "Acceso temporalmente no disponible." }, 503);
   if (Number(request.headers.get("content-length") || "0") > 4096) return patientPortalJson({ error: "Solicitud demasiado extensa." }, 413);
   let body: Record<string, unknown>;
   try { body = await request.json() as Record<string, unknown>; }
@@ -259,6 +260,7 @@ async function handlePatientPortalAuth(request: Request, env: Env, action: "requ
     method: "POST",
     headers: {
       apikey: RESOURCE_PUBLISHABLE,
+      Authorization: "Bearer " + env.SUPABASE_SERVICE_ROLE_KEY,
       "Content-Type": "application/json",
     },
     body: JSON.stringify({ action, email, ...(action === "verify" ? { code } : {}) }),
