@@ -84,7 +84,7 @@ export default function MiEspacioPage() {
             <button type="button" data-space-view="therapy">Mi terapia</button>
             <button type="button" data-space-view="wellness">Wellness</button>
             <button type="button" data-space-view="progress">Mi progreso</button>
-            <button type="button" data-space-view="account">Cuenta y privacidad</button>
+            <button type="button" data-space-view="account">Configuración</button>
           </nav>
 
           <div className="space-sidebar-note">
