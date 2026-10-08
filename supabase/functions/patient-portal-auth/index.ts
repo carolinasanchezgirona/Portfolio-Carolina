@@ -370,7 +370,7 @@ async function loginWithPassword(email: string, password: string) {
   if (String(user?.email ?? "").toLowerCase() !== patientAuthEmail(patient.id) ||
       !user?.email_confirmed_at) return json({ error: "Correo o contraseña incorrectos." }, 401);
   const now = new Date();
-  const token = randomToken();
+  const token = "pwd2_" + randomToken();
   const expiry = new Date(now.getTime() + 8 * 60 * 60 * 1000).toISOString();
   const saved = await fetch(SUPABASE_URL + "/rest/v1/patient_portal_sessions", {
     method: "POST", headers: { ...serviceHeaders, Prefer: "return=minimal" },
@@ -398,9 +398,5 @@ Deno.serve(async (req) => {
   if (action === "password-link") return await sendPasswordLink(email, String(body.purpose ?? "setup") === "reset" ? "reset" : "setup");
   if (action === "password-set") return await setPatientPassword(email, String(body.token_hash ?? ""), String(body.flow ?? ""), String(body.password ?? ""));
   if (action === "password-login") return await loginWithPassword(email, String(body.password ?? ""));
-  if (action === "request") return await requestCode(email);
-  if (action === "request-link") return await requestCode(email, true);
-  if (action === "verify-link") return await verifyCode(email, String(body.token ?? "").trim(), true);
-  if (action === "verify") return await verifyCode(email, String(body.code ?? "").trim());
   return json({ error: "Acción no válida." }, 400);
 });
