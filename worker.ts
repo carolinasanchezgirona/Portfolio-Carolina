@@ -1,4 +1,5 @@
 import { containsDirectPatientIdentifiers, CLINICAL_IDENTIFIERS_ERROR } from "./clinical-privacy";
+import { evaluatePortalEntitlement, type PortalAccess } from "./patient-portal-access";
 
 interface Env {
   STRIPE_WEBHOOK_SECRET: string;
@@ -379,30 +380,13 @@ function firstName(value: unknown): string {
   return clean.split(" ")[0]?.slice(0, 60) || "";
 }
 
-type PortalEntitlement = {
-  mode: "therapy_included" | "subscription" | "ended" | "pending" | "temporarily_unavailable";
-  can_access: boolean;
-  enforcement_enabled: boolean;
-  subscription_status: string | null;
-  current_period_end: string | null;
-};
-
 /**
- * Account-based access is determined on the server. Stripe secrets, subscription
- * data and clinical material contents never enter the browser.
- * This phase is read-only and unenforced until paid checkout + signed webhooks
- * have been audited. An unavailable database cannot silently revoke access.
+ * Consults only subscription metadata with a service-role account. No payment
+ * details or clinical text is returned to the browser.
  */
-async function patientPortalEntitlement(
-  env: Env,
-  patientId: string,
-  patientStatus: string,
-): Promise<PortalEntitlement> {
+async function patientPortalEntitlement(env: Env, patientId: string, patientStatus: string): Promise<PortalAccess> {
   const enforcement = env.PORTAL_ACCESS_ENFORCEMENT === "true";
-  if (patientStatus === "active") {
-    return { mode: "therapy_included", can_access: true, enforcement_enabled: enforcement,
-      subscription_status: null, current_period_end: null };
-  }
+  if (patientStatus === "active") return evaluatePortalEntitlement(patientStatus, null, enforcement, Date.now());
   try {
     const response = await fetch(
       RESOURCE_SUPABASE + "/rest/v1/patient_portal_subscriptions?select=status,current_period_end&patient_id=eq." +
@@ -411,24 +395,10 @@ async function patientPortalEntitlement(
     );
     if (!response.ok) throw new Error("subscription-query-failed");
     const rows = await response.json().catch(() => []) as Array<{status?: string; current_period_end?: string | null}>;
-    const record = Array.isArray(rows) ? rows[0] : null;
-    const subscribed = Boolean(
-      (record?.status === "active" || record?.status === "trialing") &&
-      typeof record?.current_period_end === "string" &&
-      Date.parse(record.current_period_end) > Date.now()
-    );
-    return {
-      mode: subscribed ? "subscription" : patientStatus === "discharged" ? "ended" : "pending",
-      can_access: subscribed || !enforcement,
-      enforcement_enabled: enforcement,
-      subscription_status: typeof record?.status === "string" ? record.status : null,
-      current_period_end: typeof record?.current_period_end === "string" ? record.current_period_end : null,
-    };
+    return evaluatePortalEntitlement(patientStatus, Array.isArray(rows) ? rows[0] ?? null : null,
+      enforcement, Date.now());
   } catch {
-    return {
-      mode: "temporarily_unavailable", can_access: !enforcement,
-      enforcement_enabled: enforcement, subscription_status: null, current_period_end: null,
-    };
+    return evaluatePortalEntitlement(patientStatus, null, enforcement, Date.now(), true);
   }
 }
 
