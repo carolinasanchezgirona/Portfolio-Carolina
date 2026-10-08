@@ -3,14 +3,11 @@ import "../legal.css";
 
 export const metadata: Metadata = {
   title: "Política de privacidad | Carolina Sánchez Girona",
-  description: "Política de privacidad y protección de datos de Dememoria.",
+  description: "Información sobre el tratamiento de datos personales y de salud en la consulta de Carolina Sánchez Girona.",
   robots: {
     index: false,
     follow: true,
-    googleBot: {
-      index: false,
-      follow: true,
-    },
+    googleBot: { index: false, follow: true },
   },
 };
 
@@ -22,190 +19,143 @@ export default function PrivacyPage() {
           <strong>Carolina Sánchez</strong>
           <span>Psicóloga · Neuropsicóloga</span>
         </a>
-        <a className="legal-back" href="/cita/">Volver a la cita</a>
+        <a className="legal-back" href="/">Volver a la web</a>
       </header>
 
       <section className="legal-hero">
         <div className="legal-wrap">
-          <p className="legal-eyebrow">Dememoria · Información legal</p>
+          <p className="legal-eyebrow">Dememòria · Información legal</p>
           <h1>Política de privacidad y protección de datos</h1>
         </div>
       </section>
 
       <article className="legal-wrap legal-document">
         <section>
-          <h2>1. Identificación del responsable del tratamiento</h2>
+          <h2>1. Responsable del tratamiento</h2>
           <div className="legal-data">
-            <p><strong>Responsable del tratamiento:</strong> Carolina Sánchez Girona (Dememòria, nombre comercial)</p>
-            <p><strong>CIF/NIF:</strong> 53067189W</p>
-            <p><strong>Dirección:</strong> Carrer Barcelona 8, escalera 1, local 4B, 08350 Arenys de Mar (Barcelona)</p>
-            <p><strong>Correo electrónico:</strong> contact@carolinasanchezgirona.com</p>
-            <p><strong>Teléfono:</strong> 604974857</p>
-            <p><strong>Delegado de Protección de Datos (si aplica):</strong> Carolina Sánchez</p>
+            <p><strong>Responsable:</strong> Carolina Sánchez Girona, profesional sanitaria que ejerce a título individual.</p>
+            <p><strong>Nombre comercial:</strong> Dememòria</p>
+            <p><strong>NIF:</strong> 53067189W</p>
+            <p><strong>Consulta:</strong> Carrer Barcelona 8, escalera 1, local 4B, 08350 Arenys de Mar (Barcelona), España.</p>
+            <p><strong>Correo de privacidad:</strong> <a href="mailto:contact@carolinasanchezgirona.com">contact@carolinasanchezgirona.com</a></p>
+            <p><strong>Teléfono:</strong> <a href="tel:+34604974857">604 974 857</a></p>
+            <p><strong>Registro sanitario:</strong> E08768201</p>
           </div>
+          <p>Este correo es el canal para consultas sobre privacidad y para ejercer derechos de protección de datos. La responsabilidad del tratamiento corresponde a la titular, no al nombre comercial de la consulta.</p>
         </section>
 
         <section>
-          <h2>2. Finalidad del tratamiento de datos</h2>
-          <p>En Dememoria recogemos y tratamos datos personales con las siguientes finalidades específicas:</p>
-          <h3>2.1. Prestación de servicios neuropsicológicos y psicológicos</h3>
-          <ul>
-            <li>Gestión de citas y agenda: Nombre, apellidos, DNI/NIE, teléfono, correo electrónico.</li>
-            <li>Historia clínica y evaluación neuropsicológica: Antecedentes médicos, datos de salud, resultados de pruebas y evaluaciones.</li>
-            <li>Planes de tratamiento y seguimiento: Notas clínicas, evolución terapéutica, registros de intervenciones.</li>
-          </ul>
-          <p><strong>Minimización en la reserva web:</strong> el formulario público de cita no solicita el motivo de consulta ni otros datos de salud. La información clínica se recoge únicamente cuando es necesaria para la atención profesional y por los canales habilitados para ello.</p>
-          <h3>2.2. Facturación y gestión administrativa</h3>
-          <ul>
-            <li>Emisión de facturas y justificantes de pago.</li>
-            <li>Cumplimiento de obligaciones fiscales y contables.</li>
-            <li>Cumplimiento con mínimos para facturación de Campaña Social.</li>
-          </ul>
-          <h3>2.3. Comunicación con el paciente</h3>
-          <ul>
-            <li>Envío de recordatorios de citas.</li>
-            <li>Información sobre cambios en los servicios o recomendaciones profesionales.</li>
-          </ul>
-          <h3>2.4. Cumplimiento de obligaciones legales</h3>
-          <ul>
-            <li>Cumplimiento de normativas sanitarias y de protección de datos.</li>
-            <li>Atención a requerimientos judiciales o administrativos.</li>
-          </ul>
-          <h3>2.5. Investigación y mejora de la práctica clínica (solo con consentimiento expreso)</h3>
-          <p>Uso de datos anonimizados para estudios científicos o publicaciones.</p>
-          <h3>2.6. Buzón «Pregunta a Carolina»</h3>
-          <p>El buzón permite enviar preguntas generales para su posible respuesta divulgativa. Para gestionarlo se tratan la pregunta original, el tema elegido, las confirmaciones de consentimiento y, solo si el usuario decide facilitarlo, su correo electrónico.</p>
-          <ul>
-            <li>La pregunta original y el correo se mantienen en el área privada y no se publican.</li>
-            <li>Antes de publicar se prepara una versión revisada y anonimizada, separada del texto original.</li>
-            <li>La publicación solo se realiza cuando existe una autorización expresa para ello.</li>
-            <li>El correo, cuando se facilita, se utiliza exclusivamente para confirmar la recepción y avisar de la publicación de la respuesta.</li>
-          </ul>
-          <p>Se recomienda no incluir nombres, diagnósticos, medicación ni otros datos identificativos. Este buzón no constituye una consulta clínica, no permite realizar diagnósticos y no atiende urgencias.</p>
+          <h2>2. Qué datos se recogen y con qué finalidad</h2>
+          <h3>2.1. Reserva y gestión de citas</h3>
+          <p>En la reserva web se solicitan nombre y apellidos, correo electrónico y teléfono, así como el tipo de servicio, la fecha y el horario seleccionados. Es posible conservar la información necesaria para gestionar confirmaciones, cambios, cancelaciones y comunicaciones vinculadas a la cita. El formulario público no solicita el motivo clínico de consulta ni documentos sanitarios.</p>
+
+          <h3>2.2. Atención psicológica y neuropsicológica</h3>
+          <p>Cuando existe una relación asistencial, pueden tratarse datos identificativos y de contacto, antecedentes personales y clínicos, información de salud, resultados de pruebas psicológicas y neuropsicológicas, informes, consentimientos informados, notas de seguimiento, planes de intervención y otros datos necesarios para la historia clínica y la continuidad asistencial. La información puede proceder de la persona atendida o de documentación que facilite legítimamente, y, cuando corresponda, de familiares, representantes o profesionales sanitarios.</p>
+          <p>Los datos de salud son categorías especiales de datos y están sujetos al deber de secreto profesional y a garantías reforzadas. No se utilizan para publicidad dirigida.</p>
+
+          <h3>2.3. Mi espacio, ejercicios y Wellness</h3>
+          <p>El área «Mi espacio» permite, según las funciones habilitadas, acceder a materiales, actividades, ejercicios y herramientas de seguimiento. Para autenticar a la persona usuaria pueden tratarse su correo electrónico, códigos de acceso de un solo uso y datos técnicos de sesión. Las respuestas a ejercicios o herramientas que se guarden y estén asociadas a una persona deben gestionarse conforme a su finalidad, ya sea asistencial o de bienestar.</p>
+          <p>La utilización libre de Wellness no implica por sí sola que cada registro pase a formar parte de la historia clínica. Si se solicita un ejercicio como parte de la intervención, se informará de qué información se incorpora al seguimiento clínico. Las funcionalidades específicas, los permisos y la conservación técnica de los registros deben corresponderse con la configuración real del servicio.</p>
+
+          <h3>2.4. Buzón «Tu Consulta»</h3>
+          <p>Para gestionar preguntas divulgativas se trata el texto original, la categoría temática, la constancia de las autorizaciones y, cuando se facilita voluntariamente, el correo electrónico para comunicaciones sobre la pregunta. No deben incluirse datos identificativos ni información clínica propia o de terceras personas.</p>
+          <p>Si una pregunta contiene información sobre salud, el tratamiento de esa información se basa en el consentimiento explícito específico mostrado en el formulario. La publicación de una versión revisada y anonimizada requiere otra autorización diferenciada. La pregunta original y el correo no están destinados a publicarse. El buzón no presta asistencia sanitaria ni atención de urgencias.</p>
+
+          <h3>2.5. Facturación, documentación administrativa y recursos</h3>
+          <p>Se tratan los datos necesarios para elaborar facturas, registrar pagos, cumplir obligaciones contables y fiscales y, si se adquieren recursos digitales, gestionar la transacción y entregar el contenido. No se incluyen datos de salud en una factura salvo que resulten indispensables y exista fundamento legal.</p>
+
+          <h3>2.6. Navegación y analítica</h3>
+          <p>Al navegar se pueden tratar datos técnicos necesarios para prestar la web, mantener su seguridad y atender incidencias (por ejemplo, dirección IP y registros técnicos de acceso). Las herramientas analíticas no esenciales se encuentran sujetas a consentimiento previo. Se facilita más información en el <a href="#cookies">apartado de cookies</a>.</p>
         </section>
 
         <section>
-          <h2>3. Legitimación del tratamiento</h2>
-          <p>El tratamiento de datos en Dememoria se basa en:</p>
+          <h2>3. Bases jurídicas del tratamiento</h2>
+          <p>La legitimación depende de la finalidad. El consentimiento informado para una actuación psicológica o neuropsicológica no debe confundirse con la base jurídica para tratar los datos necesarios para prestarla.</p>
           <ul>
-            <li>Ejecución de un contrato de prestación de servicios (art. 6.1.b RGPD).</li>
-            <li>Cumplimiento de obligaciones legales en materia sanitaria y fiscal (art. 6.1.c RGPD).</li>
-            <li>Consentimiento expreso del paciente para el tratamiento de datos de salud (art. 9.2.a RGPD).</li>
+            <li><strong>Reservas, relación profesional y servicios contratados:</strong> ejecución de un contrato o actuaciones precontractuales solicitadas por la persona interesada (art. 6.1.b del RGPD).</li>
+            <li><strong>Atención sanitaria, evaluación y seguimiento clínico:</strong> ejecución de la relación asistencial y, en lo que corresponda, cumplimiento de obligaciones legales (arts. 6.1.b y 6.1.c del RGPD). Para los datos de salud, concurre la excepción del art. 9.2.h del RGPD, con las garantías de su art. 9.3, en el marco de la asistencia sanitaria y el secreto profesional.</li>
+            <li><strong>Historia clínica, custodia, facturación y requerimientos legalmente procedentes:</strong> cumplimiento de obligaciones legales (art. 6.1.c del RGPD), sin perjuicio de otras bases aplicables a situaciones concretas.</li>
+            <li><strong>Preguntas divulgativas:</strong> consentimiento de la persona que participa (art. 6.1.a del RGPD); si decide incorporar datos de salud propios, consentimiento explícito adicional (art. 9.2.a del RGPD). La autorización para publicar una versión revisada se recoge por separado.</li>
+            <li><strong>Analítica no necesaria:</strong> consentimiento (art. 6.1.a del RGPD), de acuerdo con las normas sobre cookies y tecnologías similares.</li>
+            <li><strong>Seguridad de la web:</strong> interés legítimo en proteger sistemas y prevenir abusos, cuando sea aplicable (art. 6.1.f del RGPD), sin perjuicio de obligaciones legales de seguridad (art. 6.1.c).</li>
           </ul>
-          <p>Para cualquier uso adicional, se solicitará un consentimiento específico, informado y revocable.</p>
+          <p>Para tratamientos nuevos ajenos a estas finalidades se facilitará información específica y se recabará consentimiento cuando resulte legalmente necesario. La atención sanitaria necesaria no se hace depender de un consentimiento de protección de datos que el RGPD no exige para ese fin.</p>
         </section>
 
         <section>
-          <h2>4. Plazos de conservación de los datos</h2>
-          <p>Los datos se conservarán durante los períodos exigidos por la normativa aplicable y, en su caso, durante el tiempo necesario para atender posibles responsabilidades derivadas de la relación profesional.</p>
-          <ul>
-            <li>Datos administrativos y de contacto: mientras dure la relación profesional y durante los plazos legales posteriores aplicables.</li>
-            <li>Historia clínica y datos de salud: durante el período mínimo exigido por la normativa sanitaria aplicable y, cuando proceda, por los plazos adicionales legalmente exigibles.</li>
-            <li>Facturación y datos fiscales: durante los plazos establecidos por la normativa fiscal y mercantil.</li>
-            <li>Datos utilizados con fines de investigación: únicamente cuando exista base jurídica suficiente y, cuando sea posible, de forma anonimizada.</li>
-            <li>Preguntas enviadas al buzón: mientras sean necesarias para su revisión y respuesta o hasta que se solicite su supresión. Las preguntas descartadas y sus datos de contacto se eliminarán cuando dejen de ser necesarios. Las versiones efectivamente anonimizadas y publicadas podrán conservarse como contenido divulgativo.</li>
-          </ul>
+          <h2>4. Qué datos son necesarios</h2>
+          <p>Los campos identificados como obligatorios en un formulario se necesitan para tramitar la solicitud correspondiente. No facilitarlos puede impedir completar una reserva o acceder a determinadas funciones. El correo del buzón «Tu Consulta» es opcional; el motivo clínico no se solicita en la reserva pública. Los datos clínicos se solicitan solo cuando resultan pertinentes para la atención y se recogen por los canales asistenciales previstos.</p>
         </section>
 
         <section>
-          <h2>5. Destinatarios, proveedores tecnológicos y transferencias</h2>
-          <p>Los datos personales no se comunican a terceros salvo cuando resulte necesario para prestar el servicio, exista obligación legal o se cuente con una base jurídica válida.</p>
+          <h2>5. Conservación</h2>
+          <p>Los datos no se conservarán más tiempo del necesario para su finalidad, salvo que exista una obligación de conservación o sea preciso atender responsabilidades legalmente exigibles.</p>
           <ul>
-            <li>Autoridades sanitarias, tributarias, judiciales o administrativas cuando exista obligación legal.</li>
-            <li>Otros profesionales sanitarios cuando sea necesario y exista la correspondiente base jurídica o consentimiento.</li>
-            <li>Asesoría contable y fiscal para la gestión económica de la consulta.</li>
-            <li>Proveedores tecnológicos que prestan servicios de alojamiento, infraestructura web, base de datos, gestión de reservas o comunicaciones, actuando bajo las condiciones contractuales y de protección de datos que correspondan.</li>
+            <li><strong>Historia clínica:</strong> se aplica la Ley catalana 21/2000, de 29 de diciembre, en su redacción vigente. El artículo 12 prevé la conservación mínima durante 15 años desde el alta de cada proceso asistencial para determinados documentos clínicos, incluidos los consentimientos informados y los informes de exploraciones complementarias. El resto de documentación clínica puede destruirse transcurridos cinco años desde el alta del proceso asistencial, cuando proceda, sin perjuicio de la información que deba preservarse durante más tiempo por relevancia clínica, obligaciones legales, motivos judiciales o de otro tipo previstos normativamente.</li>
+            <li><strong>Facturación y documentación fiscal:</strong> durante los plazos de conservación y prescripción que exija la normativa aplicable.</li>
+            <li><strong>Reservas y comunicaciones administrativas:</strong> durante el tiempo necesario para gestionar las citas, atender incidencias y cumplir las obligaciones y responsabilidades vinculadas a la relación profesional.</li>
+            <li><strong>Preguntas divulgativas:</strong> mientras sean necesarias para revisarlas y responder, gestionar las autorizaciones y atender posibles incidencias; después deberán eliminarse o anonimizarse cuando ya no exista una finalidad legítima para conservar datos personales. Los textos efectivamente anonimizados no contienen datos personales en el sentido del RGPD.</li>
+            <li><strong>Preferencias de analítica:</strong> la decisión de aceptar o rechazar se guarda en el navegador por un máximo de 180 días, salvo que se cambie antes.</li>
           </ul>
-          <p>
-            La web utiliza servicios tecnológicos de terceros, entre ellos Cloudflare para infraestructura web, Supabase para funciones de base de datos y reservas, y Brevo para el envío de comunicaciones transaccionales. Cuando un proveedor pueda implicar tratamiento de datos fuera del Espacio Económico Europeo, se aplicarán los mecanismos y garantías previstos en el RGPD que resulten exigibles.
-          </p>
-          <p>
-            Google Analytics solo se activa con consentimiento. Su uso puede implicar tratamientos internacionales de datos conforme a los mecanismos y garantías descritos por Google en su documentación de privacidad.
-          </p>
+          <p>La solicitud de supresión de una historia clínica no implica su eliminación cuando deba conservarse por una obligación legal.</p>
         </section>
 
         <section>
-          <h2>6. Derechos del paciente</h2>
-          <p>Los pacientes pueden ejercer los siguientes derechos mediante solicitud escrita a contact@carolinasanchezgirona.com:</p>
+          <h2>6. Destinatarios y proveedores tecnológicos</h2>
+          <p>Los datos pueden comunicarse a organismos públicos, órganos judiciales y autoridades competentes cuando corresponda legalmente; a profesionales sanitarios cuando la asistencia, la normativa o una autorización válida lo permitan; y a asesores administrativos o fiscales dentro de su cometido.</p>
+          <p>Para prestar determinados servicios pueden intervenir proveedores tecnológicos que tratan información por cuenta de la responsable, dentro de su respectivo servicio:</p>
           <ul>
-            <li>Acceso: Saber qué datos tratamos.</li>
-            <li>Rectificación: Corregir datos inexactos.</li>
-            <li>Supresión: Solicitar la eliminación cuando proceda legalmente.</li>
-            <li>Limitación del tratamiento: Restringir el uso de datos en ciertos casos.</li>
-            <li>Portabilidad: Solicitar la entrega de datos cuando este derecho resulte aplicable.</li>
-            <li>Oposición: Oponerse al tratamiento en los supuestos legalmente previstos.</li>
-            <li>Retirada del consentimiento: En cualquier momento, sin afectar la licitud del tratamiento previo.</li>
+            <li><strong>Cloudflare:</strong> infraestructura y protección de la web.</li>
+            <li><strong>Supabase:</strong> servicios tecnológicos y bases de datos utilizados por las funciones web, de reservas y otras áreas habilitadas.</li>
+            <li><strong>Brevo:</strong> envío de correos asociados a comunicaciones transaccionales, como las vinculadas a la cita.</li>
+            <li><strong>Google Analytics:</strong> medición de uso de la web solo después de aceptar las cookies analíticas.</li>
           </ul>
-          <p>Si el usuario considera que sus derechos no han sido respetados, puede presentar una reclamación ante la Agencia Española de Protección de Datos (AEPD) (www.aepd.es).</p>
+          <p>Los proveedores de medios de pago y entrega de recursos digitales, cuando se utilicen, pueden tratar los datos imprescindibles para tramitar la operación conforme a sus condiciones y al papel que legalmente les corresponda. El acceso de un prestador a información clínica debe limitarse a lo necesario y requiere garantías contractuales y de seguridad adecuadas.</p>
+
+          <h3>Transferencias internacionales</h3>
+          <p>Algunos proveedores tecnológicos pueden implicar accesos o transferencias de datos personales fuera del Espacio Económico Europeo. Cuando exista una transferencia internacional, debe basarse en una decisión de adecuación de la Comisión Europea u otra garantía válida de los artículos 44 y siguientes del RGPD, como las cláusulas contractuales tipo cuando resulten aplicables. Puede solicitar información sobre las garantías relativas al tratamiento de sus datos en el correo de privacidad indicado al inicio.</p>
+          {/* ANTES DE PUBLICAR: verificar regiones reales de alojamiento, contratos de encargo del tratamiento (DPA), subencargados y transferencias de Cloudflare, Supabase, Brevo, Google y cualquier proveedor de pagos o portal. Ajustar esta información conforme a ese inventario. */}
         </section>
 
         <section>
-          <h2>7. Medidas de seguridad</h2>
-          <p>Dememoria aplica medidas técnicas y organizativas orientadas a proteger la confidencialidad, integridad y disponibilidad de la información, ajustadas al tipo de datos tratados y al riesgo asociado.</p>
-          <h3>7.1. Seguridad de los datos digitales</h3>
-          <ul>
-            <li>Acceso restringido a los sistemas y a la información profesional.</li>
-            <li>Uso de conexiones cifradas en tránsito mediante HTTPS/TLS en la web y los servicios asociados.</li>
-            <li>Contraseñas seguras y mecanismos adicionales de autenticación cuando están disponibles.</li>
-            <li>Copias de seguridad y controles de acceso en los sistemas que alojan información profesional.</li>
-          </ul>
-          <h3>7.2. Seguridad de los datos en papel</h3>
-          <ul>
-            <li>Almacenamiento en espacios de acceso restringido.</li>
-            <li>Destrucción segura de documentación cuando procede.</li>
-          </ul>
-          <h3>7.3. Comunicación y formularios</h3>
-          <ul>
-            <li>Los formularios públicos recogen únicamente la información necesaria para la finalidad indicada.</li>
-            <li>No se solicita información clínica o de salud en el formulario público de reserva.</li>
-            <li>El buzón «Pregunta a Carolina» puede recibir información relacionada con la salud únicamente con consentimiento expreso, acceso restringido y revisión previa a cualquier publicación.</li>
-            <li>La información clínica necesaria para prestar atención profesional se gestiona por los canales habilitados para ello.</li>
-          </ul>
+          <h2>7. Derechos de las personas interesadas</h2>
+          <p>Puedes solicitar, cuando corresponda, el acceso, la rectificación, la supresión, la oposición, la limitación del tratamiento y la portabilidad de tus datos personales, así como retirar el consentimiento otorgado sin afectar a la licitud de los tratamientos previos. Para ello, escribe a <a href="mailto:contact@carolinasanchezgirona.com">contact@carolinasanchezgirona.com</a> e indica qué derecho deseas ejercer. Solo se solicitará información adicional de identidad cuando sea necesaria para verificar la solicitud.</p>
+          <p>El ejercicio de estos derechos está sujeto a los requisitos y límites legales aplicables, especialmente en materia de documentación clínica, deber de secreto, derechos de terceras personas y conservación obligatoria. También puedes solicitar acceso a tu documentación clínica de acuerdo con la normativa sanitaria.</p>
+          <p>Si consideras que se ha vulnerado la normativa de protección de datos, puedes presentar una reclamación ante la <a href="https://www.aepd.es/" target="_blank" rel="noopener noreferrer">Agencia Española de Protección de Datos (AEPD)</a>.</p>
+        </section>
+
+        <section>
+          <h2>8. Confidencialidad y medidas de seguridad</h2>
+          <p>La responsable debe aplicar medidas técnicas y organizativas apropiadas al riesgo para garantizar la confidencialidad, integridad y disponibilidad de los datos personales, prestando especial atención a la información sanitaria. Esto incluye la restricción de accesos por funciones, la protección de las comunicaciones y la custodia de la documentación clínica, sin perjuicio de las medidas que correspondan a cada sistema y proveedor.</p>
+          <p>Las personas con acceso legítimo a información sanitaria están sujetas a deberes de confidencialidad. Por seguridad, no deben enviarse diagnósticos, informes ni otros datos clínicos mediante los formularios públicos de cita o de preguntas divulgativas.</p>
+        </section>
+
+        <section>
+          <h2>9. Decisiones automatizadas</h2>
+          <p>La reserva electrónica puede mostrar horarios disponibles y enviar confirmaciones automáticas. Estas funciones administrativas no equivalen a un diagnóstico ni a una decisión clínica automatizada. Las valoraciones psicológicas y neuropsicológicas deben realizarse bajo responsabilidad profesional. Si en el futuro se implantasen decisiones exclusivamente automatizadas con efectos jurídicos o significativamente similares, se facilitaría la información exigida por la normativa antes de su utilización.</p>
         </section>
 
         <section id="cookies">
-          <h2>8. Uso de tecnologías y cookies</h2>
-          <p>
-            La web utiliza almacenamiento local estrictamente necesario para recordar durante seis meses
-            si el usuario acepta o rechaza las cookies analíticas. Esta preferencia puede modificarse en
-            cualquier momento mediante el botón «Cookies» disponible en la web.
-          </p>
-          <p>
-            Google Analytics solo se carga después de una aceptación expresa. Su finalidad es obtener
-            estadísticas agregadas sobre el uso de la web y sus canales de acceso para mejorar sus contenidos
-            y funcionamiento. Google puede establecer cookies como <strong>_ga</strong> y
-            <strong> _ga_&lt;identificador&gt;</strong> para distinguir sesiones y usuarios.
-          </p>
-          <ul>
-            <li><strong>Proveedor:</strong> Google Ireland Limited.</li>
-            <li><strong>Base jurídica:</strong> consentimiento del usuario (art. 6.1.a RGPD).</li>
-            <li><strong>Conservación:</strong> según la configuración y los plazos definidos por Google Analytics.</li>
-            <li><strong>Revocación:</strong> mediante el botón «Cookies», con la misma facilidad que la aceptación.</li>
-          </ul>
-          <p>
-            Puede consultar información adicional en la
-            {" "}<a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer">política de privacidad de Google</a>.
-          </p>
+          <h2>10. Información sobre cookies y tecnologías similares</h2>
+          <p>Para recordar durante un máximo de 180 días si has aceptado o rechazado la analítica, el navegador almacena una preferencia local. También se pueden utilizar mecanismos técnicos necesarios para acceder a funciones privadas, mantener la sesión y garantizar la seguridad; no se emplean para publicidad comportamental.</p>
+          <p>Google Analytics 4 se carga en esta web tras la aceptación de cookies analíticas. Su finalidad es conocer las visitas y el uso general de los contenidos. Puede emplear cookies como <strong>_ga</strong> y <strong>_ga_&lt;identificador&gt;</strong>; su duración y características dependen de la configuración del servicio. El proveedor es Google Ireland Limited y su <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer">información de privacidad</a> puede consultarse en su web.</p>
+          <p>Puedes aceptar o rechazar la analítica y cambiar tu elección utilizando el control «Cookies» de la web. Rechazar las cookies analíticas no impide la navegación normal. Los detalles técnicos y las cookies efectivamente instaladas deben coincidir con la configuración real del sitio.</p>
         </section>
 
         <section>
-          <h2>9. Modificaciones de esta política</h2>
-          <p>Esta política puede actualizarse según cambios normativos, tecnológicos o mejoras en la gestión de protección de datos. La última versión estará siempre disponible en la consulta y, en su caso, en la web de Dememoria.</p>
-        </section>
-
-        <section>
-          <h2>Anexo: formulario de consentimiento para el tratamiento de datos de salud</h2>
-          <p>Yo, [__________________________], con DNI/NIE [______________], declaro haber sido informado/a sobre la política de protección de datos de Dememoria y otorgo mi consentimiento expreso para el tratamiento de mis datos de salud con la finalidad de recibir atención psicológica/neuropsicológica.</p>
-          <p>Entiendo que mis datos serán tratados con estricta confidencialidad.</p>
-          <p>Soy consciente de mis derechos sobre mis datos personales.</p>
-          <p>Doy o no doy mi consentimiento para recibir comunicaciones sobre mi tratamiento y recordatorios de citas por [correo electrónico/SMS].</p>
-          <p>Fecha: _____________</p>
-          <p>Firma del paciente: ____________________________</p>
+          <h2>11. Cambios en esta política</h2>
+          <p>Esta política puede actualizarse para reflejar cambios legales, funcionales o de proveedores. Se publicará en esta página la versión aplicable y la información necesaria sobre cambios relevantes.</p>
+          <p><strong>Revisión del texto:</strong> octubre de 2026.</p>
         </section>
       </article>
 
       <footer className="legal-footer">
-        <div className="legal-wrap"><a href="/aviso-legal/">Aviso legal</a> · <a href="/privacidad/#cookies">Información sobre cookies</a><p>© 2026 Carolina Sánchez Girona · Dememòria</p></div>
+        <div className="legal-wrap">
+          <a href="/aviso-legal/">Aviso legal</a>
+          {" · "}
+          <a href="#cookies">Información sobre cookies</a>
+          <p>© 2026 Carolina Sánchez Girona · Dememòria</p>
+        </div>
       </footer>
     </main>
   );
