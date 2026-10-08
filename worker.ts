@@ -241,7 +241,7 @@ function patientPortalSameOrigin(request: Request): boolean {
   catch { return false; }
 }
 
-async function handlePatientPortalAuth(request: Request, env: Env, action: "request" | "verify"): Promise<Response> {
+async function handlePatientPortalAuth(request: Request, env: Env, action: "request" | "verify" | "request-link" | "verify-link"): Promise<Response> {
   if (request.method !== "POST") return patientPortalJson({ error: "Método no permitido." }, 405);
   if (!patientPortalSameOrigin(request)) return patientPortalJson({ error: "Origen no permitido." }, 403);
   if (Number(request.headers.get("content-length") || "0") > 4096) return patientPortalJson({ error: "Solicitud demasiado extensa." }, 413);
@@ -251,6 +251,7 @@ async function handlePatientPortalAuth(request: Request, env: Env, action: "requ
 
   const email = typeof body.email === "string" ? body.email.trim().toLowerCase().slice(0, 254) : "";
   const code = typeof body.code === "string" ? body.code.trim().slice(0, 12) : "";
+  const linkToken = typeof body.token === "string" ? body.token.trim().slice(0, 128) : "";
   if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
     return patientPortalJson({ error: "Introduce un correo válido." }, 400);
   }
@@ -261,7 +262,7 @@ async function handlePatientPortalAuth(request: Request, env: Env, action: "requ
       apikey: RESOURCE_PUBLISHABLE,
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({ action, email, ...(action === "verify" ? { code } : {}) }),
+    body: JSON.stringify({ action, email, ...(action === "verify" ? { code } : {}), ...(action === "verify-link" ? { token: linkToken } : {}) }),
   });
   const result = await response.json().catch(() => ({})) as Record<string, unknown>;
 
@@ -270,7 +271,7 @@ async function handlePatientPortalAuth(request: Request, env: Env, action: "requ
     return patientPortalJson({ error: message }, response.status);
   }
 
-  if (action === "verify") {
+  if (action === "verify" || action === "verify-link") {
     const token = typeof result.session_token === "string" ? result.session_token : "";
     if (!/^[A-Za-z0-9_-]{40,}$/.test(token)) return patientPortalJson({ error: "No se ha podido iniciar la sesión." }, 502);
     return patientPortalJson(
@@ -284,7 +285,7 @@ async function handlePatientPortalAuth(request: Request, env: Env, action: "requ
     ok: true,
     message: typeof result.message === "string"
       ? result.message
-      : "Si el correo corresponde a una cuenta con acceso, recibirás un código en unos minutos.",
+      : "Si el correo corresponde a una cuenta con acceso, recibirás un enlace seguro en unos minutos.",
   });
 }
 
@@ -1610,6 +1611,8 @@ export default {
     if (url.pathname === "/api/resources/access" || url.pathname === "/api/resources/access/") return handleResourceAccess(request, env);
     if (url.pathname === "/api/resources/download" || url.pathname === "/api/resources/download/") return handleResourceDownload(request, env);
     if (url.pathname === "/api/questions/draft" || url.pathname === "/api/questions/draft/") return handleQuestionDraft(request, env);
+    if (url.pathname === "/api/patient-portal/request-link" || url.pathname === "/api/patient-portal/request-link/") return handlePatientPortalAuth(request, env, "request-link");
+    if (url.pathname === "/api/patient-portal/verify-link" || url.pathname === "/api/patient-portal/verify-link/") return handlePatientPortalAuth(request, env, "verify-link");
     if (url.pathname === "/api/patient-portal/request-code" || url.pathname === "/api/patient-portal/request-code/") return handlePatientPortalAuth(request, env, "request");
     if (url.pathname === "/api/patient-portal/verify-code" || url.pathname === "/api/patient-portal/verify-code/") return handlePatientPortalAuth(request, env, "verify");
     if (url.pathname === "/api/patient-portal/session" || url.pathname === "/api/patient-portal/session/") return handlePatientPortalSession(request, env);
