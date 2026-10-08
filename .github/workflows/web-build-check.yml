@@ -36,6 +36,9 @@ jobs:
       - name: Probar bloqueo de identificadores en la IA clínica
         run: node --experimental-strip-types --test tests/clinical-privacy.test.mjs
 
+      - name: Validar pantalla de prueba de Mi espacio
+        run: node --check public/mi-espacio-prueba.js
+
       - name: Compilar y exportar web
         run: npm run build
 
