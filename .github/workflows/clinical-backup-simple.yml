@@ -63,6 +63,9 @@ jobs:
           mkdir -p backup/database
           mkdir -p backup/storage/article-images
           mkdir -p backup/storage/clinical-documents
+          mkdir -p backup/storage/resource-files
+          mkdir -p backup/storage/resource-covers
+          mkdir -p backup/storage/instagram-assets
 
           echo "Estructura temporal preparada."
 
@@ -105,7 +108,33 @@ jobs:
             "supabasesource:clinical-documents" \
             "backup/storage/clinical-documents"
 
+          for BUCKET in resource-files resource-covers instagram-assets; do
+            echo "Descargando bucket ${BUCKET}..."
+            rclone copy "supabasesource:${BUCKET}" "backup/storage/${BUCKET}"
+          done
+
           echo "Supabase Storage descargado correctamente."
+
+      - name: Contrastar los cinco buckets con Storage de origen
+        if: steps.horario.outputs.should_run == 'true'
+        env:
+          RCLONE_CONFIG_SUPABASESOURCE_TYPE: s3
+          RCLONE_CONFIG_SUPABASESOURCE_PROVIDER: Other
+          RCLONE_CONFIG_SUPABASESOURCE_ACCESS_KEY_ID: ${{ secrets.CLINICAL_BACKUP_SUPABASE_S3_ACCESS_KEY_ID }}
+          RCLONE_CONFIG_SUPABASESOURCE_SECRET_ACCESS_KEY: ${{ secrets.CLINICAL_BACKUP_SUPABASE_S3_SECRET_ACCESS_KEY }}
+          RCLONE_CONFIG_SUPABASESOURCE_ENDPOINT: https://grgyvdxkjdstdyumdfyg.storage.supabase.co/storage/v1/s3
+          RCLONE_CONFIG_SUPABASESOURCE_REGION: ${{ vars.CLINICAL_BACKUP_SUPABASE_S3_REGION }}
+          RCLONE_CONFIG_SUPABASESOURCE_FORCE_PATH_STYLE: "true"
+        run: |
+          for BUCKET in article-images clinical-documents resource-files resource-covers instagram-assets; do
+            # Never emit clinical filenames to workflow logs.
+            if rclone check "supabasesource:${BUCKET}" "backup/storage/${BUCKET}" --one-way --size-only > /dev/null 2>&1; then
+              echo "Verificación correcta del bucket ${BUCKET}."
+            else
+              echo "::error::El bucket ${BUCKET} no coincide con la copia."
+              exit 1
+            fi
+          done
 
       - name: Comprobar contenido del backup
         if: steps.horario.outputs.should_run == 'true'
@@ -113,6 +142,9 @@ jobs:
           test -s backup/database/supabase-db.dump
           test -d backup/storage/article-images
           test -d backup/storage/clinical-documents
+          test -d backup/storage/resource-files
+          test -d backup/storage/resource-covers
+          test -d backup/storage/instagram-assets
 
           # Clinical filenames may contain personally identifying information.
           # Never print document names or relative paths into public CI logs.
@@ -198,7 +230,13 @@ jobs:
 
           rclone lsf "gdrive:${GOOGLE_DRIVE_BACKUP_PATH}" | grep -Fx "$NAME"
 
-          echo "Copia confirmada en Google Drive: $NAME"
+          LOCAL_SHA="$(sha256sum "$FILE" | awk '{print $1}')"
+          REMOTE_SHA="$(rclone cat "gdrive:${GOOGLE_DRIVE_BACKUP_PATH}/${NAME}" | sha256sum | awk '{print $1}')"
+          if [[ "$LOCAL_SHA" != "$REMOTE_SHA" ]]; then
+            echo "::error::El archivo cifrado de Google Drive no coincide con la copia local."
+            exit 1
+          fi
+          echo "Copia confirmada mediante SHA-256 en Google Drive: $NAME"
 
       - name: Eliminar copias de Google Drive de más de 30 días
         if: steps.horario.outputs.should_run == 'true'
