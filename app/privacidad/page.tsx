@@ -105,7 +105,8 @@ export default function PrivacyPage() {
           <p>Los datos pueden comunicarse a organismos públicos, órganos judiciales y autoridades competentes cuando corresponda legalmente; a profesionales sanitarios cuando la asistencia, la normativa o una autorización válida lo permitan; y a asesores administrativos o fiscales dentro de su cometido.</p>
           <p>Para prestar determinados servicios pueden intervenir proveedores tecnológicos que tratan información por cuenta de la responsable, dentro de su respectivo servicio:</p>
           <ul>
-            <li><strong>Cloudflare:</strong> infraestructura y protección de la web.</li>
+            <li><strong>Cloudflare:</strong> infraestructura y protección de la web, además de almacenamiento de copias cifradas en R2.</li>
+            <li><strong>Google Drive:</strong> almacenamiento de documentación de consulta y conservación de copias de seguridad cifradas.</li>
             <li><strong>Supabase:</strong> servicios tecnológicos y bases de datos utilizados por las funciones web, de reservas y otras áreas habilitadas.</li>
             <li><strong>Brevo:</strong> envío de correos asociados a comunicaciones transaccionales, como las vinculadas a la cita y las notificaciones del buzón de preguntas.</li>
             <li><strong>Stripe:</strong> plataforma de pago para las compras de recursos digitales, con la información imprescindible para tramitar y acreditar la operación.</li>
@@ -115,7 +116,7 @@ export default function PrivacyPage() {
 
           <h3>Transferencias internacionales</h3>
           <p>El proyecto de Supabase utilizado para la web está configurado en una región europea de alojamiento de base de datos (eu-west-1). Ello no excluye por sí solo posibles accesos internacionales de proveedores o subencargados. Algunos proveedores tecnológicos pueden implicar accesos o transferencias de datos personales fuera del Espacio Económico Europeo. Cuando exista una transferencia internacional, debe basarse en una decisión de adecuación de la Comisión Europea u otra garantía válida de los artículos 44 y siguientes del RGPD, como las cláusulas contractuales tipo cuando resulten aplicables. Puede solicitar información sobre las garantías relativas al tratamiento de sus datos en el correo de privacidad indicado al inicio.</p>
-          {/* ANTES DE PUBLICAR: verificar contratos de encargo del tratamiento (DPA), subencargados y accesos o transferencias internacionales de Cloudflare, Supabase, Brevo, Google, Stripe y cualquier otro proveedor del portal o de agenda; confirmar la región configurada y sus posibles tratamientos fuera de ella. Ajustar esta información conforme a ese inventario. */}
+          {/* ANTES DE PUBLICAR: verificar contratos de encargo del tratamiento (DPA), subencargados y accesos o transferencias internacionales de Cloudflare (incluido R2), Supabase, Brevo, Google Drive (incluida la modalidad de cuenta y la existencia de acuerdos aplicables), Stripe y cualquier otro proveedor del portal o de agenda; confirmar la región configurada y sus posibles tratamientos fuera de ella. Ajustar esta información conforme a ese inventario. */}
         </section>
 
         <section>
