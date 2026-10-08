@@ -88,11 +88,11 @@ function createHarness() {
     TextEncoder, Uint8Array, Uint32Array, btoa,
     console: { error() {}, warn() {} }
   }, { timeout: 8000 });
-  async function call(action, other = {}) {
+  async function call(action, other = {}, authorized = true) {
     const request = new Request("https://example.supabase.co/functions/v1/patient-portal-auth", {
       method: "POST", headers: {
         "content-type": "application/json",
-        Authorization: "Bearer service-role-test"
+        ...(authorized ? { Authorization: "Bearer service-role-test" } : {})
       },
       body: JSON.stringify({ action, email: realEmail, ...other })
     });
@@ -150,11 +150,12 @@ test("only correct password generates a tagged clinical session", async () => {
   assert.equal(other.issued(), 0);
 });
 
-test("old code/link actions cannot bypass password sign-in", async () => {
+test("direct Edge calls cannot bypass the server-only authentication", async () => {
   const h = createHarness();
-  for (const action of ["verify", "verify-link", "request", "request-link"]) {
-    const result = await h.call(action, { token: "fake", code: "123456" });
-    assert.equal(result.status, 400);
+  for (const action of ["password-link", "password-set", "password-login", "request", "verify"]) {
+    const result = await h.call(action, { token: "fake", code: "123456", password: acceptedPassword }, false);
+    assert.equal(result.status, 401);
   }
   assert.equal(h.issued(), 0);
+  assert.equal(h.mail.length, 0);
 });
