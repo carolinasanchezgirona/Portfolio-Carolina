@@ -1626,6 +1626,14 @@ export default {
   async fetch(request: Request, env: Env): Promise<Response> {
     const url = new URL(request.url);
 
+    // Preview Workers must never use production clinical portal endpoints.
+    // Preview pages can be reviewed visually, but clinical data and password
+    // operations are allowed only on the canonical production hostname.
+    if (url.pathname.startsWith("/api/patient-portal/") &&
+        url.hostname !== "carolinasanchezgirona.com") {
+      return patientPortalJson({ error: "El acceso de pacientes solo está disponible en la web de la consulta." }, 403);
+    }
+
     if (
       url.pathname === "/api/stripe/webhook" ||
       url.pathname === "/api/stripe/webhook/"
