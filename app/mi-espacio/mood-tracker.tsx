@@ -280,15 +280,29 @@ export default function MoodTracker() {
           <div><strong>Tu semana, a tu manera</strong><p>Un recuerdo de tus registros, no una nota sobre tu progreso.</p></div>
           {entries.length > 0 && <button type="button" onClick={clear}>Borrar historial</button>}
         </div>
-        <div className="mood-history-days" role="img" aria-label={pastDays.map(day => `${day.label}: ${day.entry ? MOODS[day.entry.rating - 1].name : "sin registro"}`).join("; ")}>
-          {pastDays.map(day => (
-            <div className="mood-history-day" key={day.key}>
-              <span className={day.entry ? "mood-history-mark has-entry" : "mood-history-mark"} style={{ backgroundColor: day.entry ? MOODS[day.entry.rating - 1].color : undefined }}>
-                {day.entry ? ["◡", "·", "–", "⌣", "☺"][day.entry.rating - 1] : "·"}
-              </span>
-              <small>{day.label}</small>
-            </div>
-          ))}
+        <div className="mood-week-chart">
+          {pastDays.some(day => day.entry) ? (
+            <svg viewBox="0 0 740 212" role="img" aria-label={pastDays.map(day => `${day.label}: ${day.entry ? MOODS[day.entry.rating - 1].name : "sin registro"}`).join("; ")} preserveAspectRatio="xMidYMid meet">
+              {[1,2,3,4,5].map(rating => {
+                const y = 167 - (rating - 1) * 33;
+                return <line key={rating} x1="45" y1={y} x2="695" y2={y} stroke="#dce9ee" strokeDasharray={rating === 3 ? "0" : "4 6"} strokeWidth="1" />;
+              })}
+              {pastDays.slice(1).map((day, i) => {
+                const previous = pastDays[i];
+                if (!previous.entry || !day.entry) return null;
+                return <line key={day.key} x1={52 + i * 105} y1={167 - (previous.entry.rating - 1) * 33} x2={52 + (i + 1) * 105} y2={167 - (day.entry.rating - 1) * 33} stroke="#0ba49c" strokeWidth="3.5" strokeLinecap="round" />;
+              })}
+              {pastDays.map((day, i) => (
+                <g key={day.key}>
+                  {day.entry
+                    ? <circle cx={52 + i * 105} cy={167 - (day.entry.rating - 1) * 33} r="8.5" fill={MOODS[day.entry.rating - 1].color} stroke="#187d83" strokeWidth="2" />
+                    : <circle cx={52 + i * 105} cy="167" r="5" fill="#e4edf0" />}
+                  <text x={52 + i * 105} y="203" textAnchor="middle" fill="#597384" fontSize="18">{day.label}</text>
+                </g>
+              ))}
+            </svg>
+          ) : <div className="mood-week-empty">Tu gráfica aparecerá aquí cuando guardes el primer registro. No necesitas registrar todos los días.</div>}
+          <p className="mood-chart-caption">Solo aparecen los datos que tú has registrado. Los días sin respuesta quedan sin conectar.</p>
         </div>
         <p className="mood-privacy-note">Este registro es opcional, permanece en el navegador y no se envía a Carolina ni se incorpora a tu historia clínica. Si borras los datos del navegador, también desaparecerá. No escribas aquí información clínica sensible.</p>
       </div>
