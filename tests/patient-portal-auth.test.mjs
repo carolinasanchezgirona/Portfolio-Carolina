@@ -23,6 +23,7 @@ function createHarness() {
   const requests = [];
   const mail = [];
   let authorized = true;
+  let blocked = false;
   let used = false;
   let passwordWasUpdated = false;
   let issued = 0;
@@ -35,6 +36,7 @@ function createHarness() {
       return response(authorized ? [{ id, email: realEmail, status: "active" }] : []);
     }
     if (url.endsWith("/rest/v1/rpc/issue_patient_portal_login_code")) {
+      if (blocked) return response(null);
       assert.equal(payload.p_patient_id, id);
       assert.equal(payload.p_email_normalized, realEmail);
       assert.match(payload.p_code_hash, /^[a-f0-9]{64}$/);
@@ -95,7 +97,17 @@ function createHarness() {
     const res = await handler(request);
     return { status: res.status, data: await res.json() };
   }
-  return { call, requests, mail, revokePatient: () => { authorized = false; },
+  async function directUnauthenticatedRequest() {
+    const req = new Request("https://example.supabase.co/functions/v1/patient-portal-auth", {
+      method: "POST", headers: { "content-type": "application/json" },
+      body: JSON.stringify({ action: "password-login", email: realEmail, password: acceptedPassword })
+    });
+    const res = await handler(req);
+    return res.status;
+  }
+  return { call, directUnauthenticatedRequest, requests, mail,
+    revokePatient: () => { authorized = false; },
+    blockIssuance: () => { blocked = true; },
     passwordWasUpdated: () => passwordWasUpdated, issued: () => issued };
 }
 
@@ -152,5 +164,20 @@ test("old code/link actions cannot bypass password sign-in", async () => {
     const result = await h.call(action, { token: "fake", code: "123456" });
     assert.equal(result.status, 400);
   }
+  assert.equal(h.issued(), 0);
+});
+
+test("direct anonymous requests cannot invoke privileged Edge authentication", async () => {
+  const h = createHarness();
+  assert.equal(await h.directUnauthenticatedRequest(), 401);
+  assert.equal(h.issued(), 0);
+});
+
+test("atomic cooldown prevents a second link from being emailed", async () => {
+  const h = createHarness();
+  h.blockIssuance();
+  const result = await h.call("password-link", { purpose: "setup" });
+  assert.equal(result.status, 200);
+  assert.equal(h.mail.length, 0);
   assert.equal(h.issued(), 0);
 });
