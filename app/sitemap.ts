@@ -4,6 +4,7 @@ import { getPublishedExpertQuestions } from "./pregunta-a-carolina/questions-dat
 
 const base = "https://carolinasanchezgirona.com";
 const staticLastModified = new Date("2026-10-02T09:45:00+02:00");
+const refreshedLastModified = new Date("2026-10-08T00:00:00+02:00");
 
 export const dynamic = "force-static";
 
@@ -14,10 +15,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     staticLastModified.getTime(),
   );
   const staticPages: MetadataRoute.Sitemap = [
-    { url: `${base}/`, lastModified: staticLastModified, changeFrequency: "weekly", priority: 1 },
-    { url: `${base}/psicologa-arenys-de-mar/`, lastModified: staticLastModified, changeFrequency: "monthly", priority: 0.95 },
-    { url: `${base}/psicologia/`, lastModified: staticLastModified, changeFrequency: "monthly", priority: 0.9 },
-    { url: `${base}/neuropsicologia/`, lastModified: staticLastModified, changeFrequency: "monthly", priority: 0.9 },
+    { url: `${base}/`, lastModified: refreshedLastModified, changeFrequency: "weekly", priority: 1 },
+    { url: `${base}/psicologa-arenys-de-mar/`, lastModified: refreshedLastModified, changeFrequency: "monthly", priority: 0.95 },
+    { url: `${base}/psicologia/`, lastModified: refreshedLastModified, changeFrequency: "monthly", priority: 0.9 },
+    { url: `${base}/neuropsicologia/`, lastModified: refreshedLastModified, changeFrequency: "monthly", priority: 0.9 },
     { url: `${base}/sobre-mi/`, lastModified: staticLastModified, changeFrequency: "monthly", priority: 0.85 },
     { url: `${base}/ansiedad/`, lastModified: staticLastModified, changeFrequency: "monthly", priority: 0.82 },
     { url: `${base}/ataques-de-panico/`, lastModified: staticLastModified, changeFrequency: "monthly", priority: 0.82 },

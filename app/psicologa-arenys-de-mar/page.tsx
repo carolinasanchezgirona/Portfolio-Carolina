@@ -5,7 +5,7 @@ import Image from "next/image";
 export const metadata: Metadata = {
   title: "Psicóloga en Arenys de Mar",
   description:
-    "Psicóloga sanitaria y neuropsicóloga en Arenys de Mar. Terapia para adultos y evaluación neuropsicológica, presencial y online.",
+    "Psicóloga en Arenys de Mar, Maresme: ansiedad, duelo y terapia para adultos. Neuropsicología, memoria y deterioro cognitivo. Consulta presencial y online.",
   alternates: { canonical: "/psicologa-arenys-de-mar/" },
   openGraph: {
     title: "Psicóloga en Arenys de Mar | Carolina Sánchez Girona",
@@ -134,7 +134,12 @@ export default function LocalPsychologistPage() {
           <section>
             <h2>Atención desde Arenys de Mar para el Maresme</h2>
             <p>
-              La consulta está situada en Arenys de Mar y atiende a personas del entorno del Maresme, además de ofrecer atención online. La web está pensada para que puedas conocer previamente el tipo de trabajo clínico, consultar disponibilidad y reservar sin tener que compartir el motivo de consulta por correo o formularios abiertos.
+              La consulta está situada en Carrer Barcelona 8, en Arenys de Mar, y también es una opción para quienes
+              buscan atención desde Arenys de Munt, Canet de Mar, Caldes d&apos;Estrac, Sant Pol de Mar y otras
+              localidades del Maresme. La atención online está disponible cuando resulta adecuada clínicamente.
+              Puedes conocer el espacio, <a href="/psicologia/">consultar los motivos de atención psicológica</a>
+              o <a href="/neuropsicologia/">ver cuándo conviene una valoración neuropsicológica</a> antes de pedir cita.
+              No es necesario compartir información clínica en el formulario de reserva.
             </p>
           </section>
         </article>

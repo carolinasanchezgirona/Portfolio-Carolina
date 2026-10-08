@@ -4,7 +4,7 @@ import "../seo-pages.css";
 export const metadata: Metadata = {
   title: "Psicología para adultos en Arenys de Mar y online",
   description:
-    "Psicología General Sanitaria para adultos en Arenys de Mar y online. Ansiedad, estado de ánimo, duelo, relaciones, sobrecarga y cambios vitales.",
+    "Psicóloga para adultos en Arenys de Mar (Maresme) y online. Atención a la ansiedad, bajo estado de ánimo, duelo, relaciones y estrés. Consulta y reserva de cita.",
   alternates: { canonical: "/psicologia/" },
   openGraph: {
     title: "Psicología General Sanitaria | Carolina Sánchez Girona",

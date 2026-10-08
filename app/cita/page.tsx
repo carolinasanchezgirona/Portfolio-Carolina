@@ -73,6 +73,12 @@ export default function BookingPage() {
         <section className="booking-panel availability-panel">
           <div className="booking-panel-heading"><span className="booking-step" aria-hidden="true">02</span><div><p className="booking-kicker">Disponibilidad</p><h2>Elige fecha y hora</h2></div></div>
           <div id="slots-status" className="booking-status" role="status" aria-live="polite">Consultando disponibilidad…</div>
+          <button id="retry-availability" className="text-button" type="button" hidden>Reintentar consulta de horarios</button>
+          <p className="form-help">
+            ¿No aparecen horarios o necesitas ayuda con la reserva? Puedes escribir a{" "}
+            <a href="mailto:contact@carolinasanchezgirona.com?subject=Consulta%20sobre%20disponibilidad">contact@carolinasanchezgirona.com</a>.
+            Indica solo que deseas consultar disponibilidad, sin incluir datos de salud. El correo no confirma ninguna cita.
+          </p>
           <div id="first-available" className="first-available" hidden />
           <button id="toggle-calendar" className="text-button" type="button" hidden>Elegir otra fecha</button>
           <div id="calendar-section" className="calendar-section" hidden>
