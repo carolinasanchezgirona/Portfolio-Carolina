@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Script from "next/script";
 import "./mi-espacio.css";
 import MoodTracker, { MoodAvatarSettings } from "./mood-tracker";
+import PortalAccessNotice from "./portal-access-notice";
 
 export const metadata: Metadata = {
   title: "Mi espacio",
@@ -111,10 +112,7 @@ export default function MiEspacioPage() {
               <button type="button" className="space-primary" data-go-therapy>Ir a mis ejercicios →</button>
             </div>
 
-            <aside className="space-membership-note">
-              <strong>Acceso incluido durante la terapia</strong>
-              <p>Mientras estés en tratamiento, Wellness y tus materiales están incluidos. Al finalizar, podrás continuar con las herramientas digitales mediante una suscripción voluntaria cuando esté disponible.</p>
-            </aside>
+            <PortalAccessNotice />
 
             <div className="space-needs-heading">
               <div><p className="space-eyebrow">A tu ritmo</p><h3>¿Qué necesitas ahora?</h3></div>
