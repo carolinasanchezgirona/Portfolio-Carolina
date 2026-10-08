@@ -40,4 +40,6 @@ jobs:
         run: |
           test -d out
           test -f out/index.html
-          echo "Compilación correcta: ./out generado"
+          test -f out/_headers
+          grep -q 'run_worker_first = \[ "/api/\*" \]' wrangler.toml
+          echo "Compilación y configuración de seguridad correctas: ./out generado"
