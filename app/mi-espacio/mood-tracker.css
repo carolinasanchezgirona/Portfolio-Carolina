@@ -74,3 +74,18 @@
 .mood-week-empty{min-height:116px;padding:28px 15px;display:grid;place-items:center;text-align:center;color:#5b7484;font-size:.85rem;line-height:1.55}
 .mood-chart-caption{margin:6px 0 5px!important;color:#647f8d!important;font-size:.72rem!important;line-height:1.5}
 @media(min-width:1081px){.mood-tracker{border-color:#cfebec;box-shadow:0 14px 40px rgba(26,64,78,.045)}.mood-tracker-heading{margin-bottom:24px}}
+
+/* Real mood history: concise entries, neutral language, no wellbeing scoring. */
+.mood-recent-entries{margin-top:16px;padding:19px 0 3px;border-top:1px solid #e5eff2}
+.mood-recent-title{display:flex;align-items:baseline;justify-content:space-between;flex-wrap:wrap;gap:7px}
+.mood-recent-title strong{font-size:.92rem;color:#173a5e}
+.mood-recent-title>span{font-size:.72rem;color:#64808f}
+.mood-recent-list{display:grid;gap:0;list-style:none;margin:12px 0 0;padding:0}
+.mood-recent-list li{display:flex;align-items:center;gap:11px;min-height:61px;border-bottom:1px solid #edf3f5;padding:8px 0}
+.mood-recent-list li:last-child{border-bottom:0}
+.mood-recent-icon{flex:none;width:38px;height:38px;display:grid;place-items:center;border-radius:13px;font-size:1.12rem;color:#426779;box-shadow:inset 2px 2px 8px rgba(255,255,255,.64)}
+.mood-recent-description{display:grid;flex:1;min-width:0;gap:2px}
+.mood-recent-description strong{font-weight:770;color:#173a5e;font-size:.79rem}
+.mood-recent-description small{font-size:.7rem;color:#667f8e}
+.mood-recent-list time{flex:none;color:#66808d;font-size:.74rem;text-transform:capitalize}
+.mood-recent-empty{margin:14px 0;color:#6a8190;font-size:.79rem;line-height:1.5}
