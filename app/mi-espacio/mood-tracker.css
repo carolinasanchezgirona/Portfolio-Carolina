@@ -66,3 +66,11 @@
 .mood-avatar-cancel{color:#536a78;background:none;border:0;text-decoration:underline;cursor:pointer;font:inherit;font-size:.79rem;padding:9px 0}
 @media(max-width:760px){.mood-avatar-grid,.mood-settings .mood-avatar-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.mood-settings{padding:18px}.mood-settings-heading{flex-direction:column}}
 @media(prefers-reduced-motion:reduce){.mood-avatar-choice{transition:none}}
+
+/* Seven-day chart only uses actual mood entries. Missing days remain disconnected. */
+.mood-week-chart{margin:12px 0 6px;padding:13px 14px 6px;background:linear-gradient(180deg,#f8fcfd,#fff);border:1px solid #e4eef1;border-radius:16px}
+.mood-week-chart svg{display:block;width:100%;height:auto;max-height:232px;overflow:visible}
+.mood-week-chart text{text-transform:capitalize}
+.mood-week-empty{min-height:116px;padding:28px 15px;display:grid;place-items:center;text-align:center;color:#5b7484;font-size:.85rem;line-height:1.55}
+.mood-chart-caption{margin:6px 0 5px!important;color:#647f8d!important;font-size:.72rem!important;line-height:1.5}
+@media(min-width:1081px){.mood-tracker{border-color:#cfebec;box-shadow:0 14px 40px rgba(26,64,78,.045)}.mood-tracker-heading{margin-bottom:24px}}
