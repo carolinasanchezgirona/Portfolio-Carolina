@@ -9,6 +9,7 @@ const administrativeRoutes = [
   "/cita",
   "/admin",
   "/privacidad",
+  "/aviso-legal",
   "/consentimiento-psicologico",
   "/consentimiento-neuropsicologico",
   "/mi-espacio",
@@ -83,6 +84,16 @@ function CrisisNotice() {
   );
 }
 
+function LegalLinks() {
+  return (
+    <nav className="site-legal-navigation" aria-label="Información legal">
+      <a href="/aviso-legal/">Aviso legal</a>
+      <a href="/privacidad/">Política de privacidad</a>
+      <a href="/privacidad/#cookies">Información sobre cookies</a>
+    </nav>
+  );
+}
+
 function SiteFooter() {
   return (
     <footer className="editorial-footer site-global-footer">
@@ -91,6 +102,7 @@ function SiteFooter() {
           <p className="editorial-footer-brand">Carolina Sánchez | Psicóloga</p>
           <p>Psicóloga General Sanitaria · Neuropsicóloga</p>
           <p>Col·legiada COPC núm. 24892</p>
+          <p>Consulta sanitaria autorizada · Registro E08768201</p>
           <p>Dememoria · Consulta de Psicología y Neuropsicología</p>
           <p>Arenys de Mar · Atención presencial y online</p>
         </div>
@@ -123,6 +135,7 @@ function SiteFooter() {
 
       <div className="editorial-wrap site-footer-bottom">
         <span>© 2026 Carolina Sánchez Girona</span>
+        <LegalLinks />
         <div className="site-footer-contact">
           <a href="mailto:contact@carolinasanchezgirona.com">contact@carolinasanchezgirona.com</a>
           <SocialLinks compact />
@@ -145,6 +158,7 @@ export default function SiteShell({ children }: { children: ReactNode }) {
         <a className="skip-link" href="#contenido-principal">Saltar al contenido principal</a>
         <div id="contenido-principal" tabIndex={-1}>{children}</div>
         <a className="mobile-booking-shortcut" href="/cita/">Pedir cita</a>
+        <footer className="site-legal-standalone"><p>Consulta sanitaria autorizada · Registro E08768201</p><LegalLinks /></footer>
         <CrisisNotice />
       </div>
     );

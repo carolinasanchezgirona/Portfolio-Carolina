@@ -148,7 +148,7 @@ export default function NeuropsychologicalConsentPage() {
       </article>
 
       <footer className="legal-footer">
-        <div className="legal-wrap">© 2026 Carolina Sánchez Girona · Dememoria</div>
+        <div className="legal-wrap"><a href="/aviso-legal/">Aviso legal</a> · <a href="/privacidad/">Política de privacidad</a><p>© 2026 Carolina Sánchez Girona · Dememòria</p></div>
       </footer>
     </main>
   );

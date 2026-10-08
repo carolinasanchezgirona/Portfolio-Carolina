@@ -700,8 +700,18 @@ main {
   background: #fff;
   border: 1px solid rgba(36, 33, 31, 0.25);
   border-radius: 999px;
-  font: 600 0.84rem/1 var(--font-inter), sans-serif;
+  font: 600 0.84rem/1.25 var(--font-inter), sans-serif;
   cursor: pointer;
+}
+
+/* Aceptar y rechazar: jerarquía, contraste y tamaño equivalentes. */
+.analytics-consent-actions button {
+  min-width: 172px;
+  min-height: 48px;
+  padding: 10px 16px;
+  border: 2px solid #24211f;
+  background: #fff;
+  color: #24211f;
 }
 
 .analytics-consent-actions button:focus-visible,
@@ -711,8 +721,8 @@ main {
 }
 
 .analytics-consent-actions .analytics-consent-accept {
-  color: #fff;
-  background: #24211f;
+  color: #24211f;
+  background: #fff;
   border-color: #24211f;
 }
 
@@ -743,5 +753,9 @@ main {
   .analytics-consent-actions {
     display: grid;
     grid-template-columns: 1fr 1fr;
+  }
+
+  .analytics-consent-actions button {
+    min-width: 0;
   }
 }

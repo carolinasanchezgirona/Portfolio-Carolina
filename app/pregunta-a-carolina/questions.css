@@ -3,3 +3,24 @@
 /* Tu Consulta: descriptive, optimized portrait with reserved layout space. */
 .question-portrait{width:min(100%,360px);aspect-ratio:1;margin:0 0 26px;overflow:hidden;border-radius:18px;background:#eaf2f7}
 .question-portrait img{display:block;width:100%;height:100%;object-fit:cover}
+
+/* Información de privacidad por capas en el formulario público de preguntas. */
+.question-data-protection{
+  margin:18px 0 0;
+  padding:14px 16px;
+  border:1px solid #dbe7e5;
+  border-radius:10px;
+  background:#f6faf9;
+  color:#44564e;
+  font-size:.78rem;
+  line-height:1.65;
+}
+.question-data-protection a{
+  color:var(--e-teal);
+  text-decoration:underline;
+  text-underline-offset:2px;
+}
+.question-data-protection a:focus-visible{
+  outline:2px solid currentColor;
+  outline-offset:2px;
+}

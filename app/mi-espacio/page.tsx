@@ -49,6 +49,7 @@ export default function MiEspacioPage() {
           <div className="space-access-divider"><span>o</span></div>
           <button id="space-wellness-guest" className="space-wellness-guest" type="button">Entrar en Wellness sin iniciar sesión</button>
           <p className="space-access-foot">El código caduca en 10 minutos y solo puede utilizarse una vez. Si el correo no está vinculado a una ficha con acceso, no se enviará información clínica.</p>
+          <p className="space-access-foot">Protección de datos: Carolina Sánchez Girona trata el correo y los datos técnicos de acceso para autenticar al usuario y prestar las funciones habilitadas en «Mi espacio». Consulta las bases jurídicas, los destinatarios, la conservación y tus derechos en la <a href="/privacidad/">política de privacidad</a>.</p>
         </div>
       </section>
 

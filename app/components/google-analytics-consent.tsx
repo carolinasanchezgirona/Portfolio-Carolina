@@ -4,6 +4,7 @@ import { GoogleAnalytics } from "@next/third-parties/google";
 import { useEffect, useState } from "react";
 
 const GA_ID = "G-DMEDMEHMCJ";
+const GA_DISABLE_KEY = `ga-disable-${GA_ID}`;
 const STORAGE_KEY = "carolina_analytics_consent_v1";
 const BOOKING_SOURCE_KEY = "carolina_booking_source_v1";
 const CONSENT_MAX_AGE = 1000 * 60 * 60 * 24 * 180;
@@ -42,14 +43,18 @@ function readStoredConsent(): ConsentChoice | null {
 
     return storedConsent.choice;
   } catch {
-    window.localStorage.removeItem(STORAGE_KEY);
+    try { window.localStorage.removeItem(STORAGE_KEY); } catch { /* Almacenamiento bloqueado. */ }
     return null;
   }
 }
 
 function storeConsent(choice: ConsentChoice) {
   const storedConsent: StoredConsent = { choice, updatedAt: Date.now() };
-  window.localStorage.setItem(STORAGE_KEY, JSON.stringify(storedConsent));
+  try {
+    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(storedConsent));
+  } catch {
+    // El usuario puede decidir en la sesión incluso si el navegador bloquea el almacenamiento.
+  }
 }
 
 function removeAnalyticsCookies() {
@@ -58,7 +63,12 @@ function removeAnalyticsCookies() {
     .map((cookie) => cookie.split("=")[0]?.trim())
     .filter((name): name is string => Boolean(name) && /^(_ga|_gid|_gat)/.test(name));
 
-  const domains = [window.location.hostname, `.${window.location.hostname}`];
+  const domains = Array.from(new Set([
+    window.location.hostname,
+    `.${window.location.hostname}`,
+    "carolinasanchezgirona.com",
+    ".carolinasanchezgirona.com",
+  ]));
 
   for (const name of cookieNames) {
     document.cookie = `${name}=; Max-Age=0; path=/; SameSite=Lax`;
@@ -68,7 +78,13 @@ function removeAnalyticsCookies() {
   }
 }
 
+function setAnalyticsDisabled(disabled: boolean) {
+  // Google permite bloquear nuevos envíos de GA4 aunque su script ya se haya cargado.
+  (window as unknown as Record<string, boolean>)[GA_DISABLE_KEY] = disabled;
+}
+
 function denyAnalyticsConsent() {
+  setAnalyticsDisabled(true);
   window.gtag?.("consent", "update", {
     analytics_storage: "denied",
     ad_storage: "denied",
@@ -76,6 +92,16 @@ function denyAnalyticsConsent() {
     ad_personalization: "denied",
   });
   removeAnalyticsCookies();
+}
+
+function enableAnalyticsConsent() {
+  setAnalyticsDisabled(false);
+  window.gtag?.("consent", "update", {
+    analytics_storage: "granted",
+    ad_storage: "denied",
+    ad_user_data: "denied",
+    ad_personalization: "denied",
+  });
 }
 
 function sendEvent(name: string, parameters: Record<string, string | number> = {}) {
@@ -106,6 +132,8 @@ export default function GoogleAnalyticsConsent() {
 
   useEffect(() => {
     const storedConsent = readStoredConsent();
+    if (storedConsent === "accepted") enableAnalyticsConsent();
+    else denyAnalyticsConsent();
     setConsent(storedConsent);
     setIsPanelOpen(storedConsent === null);
     setIsReady(true);
@@ -172,6 +200,7 @@ export default function GoogleAnalyticsConsent() {
 
   function chooseConsent(choice: ConsentChoice) {
     if (choice === "rejected") denyAnalyticsConsent();
+    else enableAnalyticsConsent();
     storeConsent(choice);
     setConsent(choice);
     setIsPanelOpen(false);
@@ -194,14 +223,14 @@ export default function GoogleAnalyticsConsent() {
             <a href="/privacidad/#cookies">Más información sobre las cookies</a>
           </div>
           <div className="analytics-consent-actions">
-            <button type="button" onClick={() => chooseConsent("rejected")}>Rechazar</button>
+            <button type="button" onClick={() => chooseConsent("rejected")}>Rechazar analíticas</button>
             <button className="analytics-consent-accept" type="button" onClick={() => chooseConsent("accepted")}>
               Aceptar analíticas
             </button>
           </div>
         </section>
       ) : (
-        <button className="analytics-consent-settings" type="button" onClick={() => setIsPanelOpen(true)} aria-label="Configurar cookies">
+        <button className="analytics-consent-settings" type="button" onClick={() => setIsPanelOpen(true)} aria-label="Cambiar preferencias de cookies">
           Cookies
         </button>
       )}
