@@ -34,6 +34,41 @@
     el.dataset.danger = danger ? "true" : "false";
   }
 
+  const inviteButton = document.createElement("button");
+  inviteButton.type = "button";
+  inviteButton.id = "clinic-invite-patient";
+  inviteButton.className = "clinic-secondary";
+  inviteButton.textContent = "Enviar invitación a Mi espacio";
+  recordActions.append(inviteButton);
+
+  inviteButton.addEventListener("click", async () => {
+    const id = patientId();
+    if (!id || !session()?.access_token) {
+      setMessage("Guarda la ficha e inicia sesión antes de enviar la invitación.", true);
+      return;
+    }
+    inviteButton.disabled = true;
+    setMessage("Preparando la invitación…");
+    try {
+      const response = await fetch(REST_URL + "/clinical_patients?select=email&id=eq." + encodeURIComponent(id) + "&limit=1", {
+        headers: headers(), cache: "no-store",
+      });
+      const rows = await response.json().catch(() => []);
+      if (!response.ok || !Array.isArray(rows) || rows.length !== 1 || !rows[0].email) {
+        throw new Error("La ficha necesita un correo guardado para recibir la invitación.");
+      }
+      const sent = await fetch(SUPABASE_URL + "/functions/v1/patient-portal-auth", {
+        method: "POST", headers: headers(), cache: "no-store",
+        body: JSON.stringify({ action: "patient-invite", email: rows[0].email }),
+      });
+      const result = await sent.json().catch(() => ({}));
+      if (!sent.ok) throw new Error(result.error || "No se ha podido enviar la invitación.");
+      setMessage("Invitación solicitada. Si el correo está habilitado y no se ha superado el límite de envíos, recibirá el enlace para configurar su contraseña.");
+    } catch (error) {
+      setMessage(error?.message || "No se ha podido enviar la invitación.", true);
+    } finally { inviteButton.disabled = false; }
+  });
+
   const deleteButton = document.createElement("button");
   deleteButton.type = "button";
   deleteButton.id = "clinic-delete-patient";
