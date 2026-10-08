@@ -1,4 +1,5 @@
 import { containsDirectPatientIdentifiers, CLINICAL_IDENTIFIERS_ERROR } from "./clinical-privacy";
+import { RESOURCE_TERMS_VERSION, RESOURCE_TERMS_FULL_TEXT } from "./resource-legal";
 
 interface Env {
   STRIPE_WEBHOOK_SECRET: string;
@@ -18,6 +19,58 @@ const encoder = new TextEncoder();
 
 const RESOURCE_SUPABASE = "https://grgyvdxkjdstdyumdfyg.supabase.co";
 const RESOURCE_PUBLISHABLE = "sb_publishable_b2MRfP0bPti87V2FXCzHGw_Y9vvcbii";
+const RESOURCE_CONSENT_TABLE = RESOURCE_SUPABASE + "/rest/v1/digital_resource_checkout_acceptances";
+const RESOURCE_CONFIRMATION_FUNCTION = RESOURCE_SUPABASE + "/functions/v1/send-resource-confirmation";
+
+type CheckoutConsent = {
+  stripe_session_id: string;
+  resource_id: string;
+  terms_snapshot: string;
+  terms_version: string;
+  amount_cents: number;
+  currency: string;
+  confirmation_email_sent_at: string | null;
+  confirmation_message_id: string | null;
+};
+async function fetchCheckoutConsent(env: Env, sessionId: string): Promise<CheckoutConsent | null> {
+  const select = "stripe_session_id,resource_id,terms_snapshot,terms_version,amount_cents,currency,confirmation_email_sent_at,confirmation_message_id";
+  const response = await fetch(RESOURCE_CONSENT_TABLE +
+    "?select=" + encodeURIComponent(select) + "&stripe_session_id=eq." + encodeURIComponent(sessionId) + "&limit=1",
+    { headers: serviceHeaders(env), cache: "no-store" });
+  if (!response.ok) throw new Error("Consent lookup unavailable");
+  const rows = await response.json().catch(() => []);
+  return Array.isArray(rows) && rows.length === 1 ? rows[0] as CheckoutConsent : null;
+}
+
+async function confirmResourceContract(env: Env, session: Record<string, unknown>, record: CheckoutConsent, title: string): Promise<boolean> {
+  if (record.confirmation_email_sent_at && record.confirmation_message_id) return true;
+  const details = (session.customer_details && typeof session.customer_details === "object")
+    ? session.customer_details as Record<string, unknown> : {};
+  const email = String(details.email ?? session.customer_email ?? "").trim();
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return false;
+  const formatted = new Intl.NumberFormat("es-ES", { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(record.amount_cents / 100) + " €";
+  const response = await fetch(RESOURCE_CONFIRMATION_FUNCTION, {
+    method: "POST", headers: serviceHeaders(env),
+    body: JSON.stringify({ email, terms: record.terms_snapshot, version: record.terms_version,
+      resource_title: title, amount: formatted })
+  });
+  if (!response.ok) return false;
+  const body = await response.json().catch(() => ({})) as Record<string, unknown>;
+  const messageId = String(body.message_id ?? "");
+  if (!messageId || messageId.length > 200) return false;
+  const saved = await fetch(RESOURCE_CONSENT_TABLE + "?stripe_session_id=eq." +
+    encodeURIComponent(record.stripe_session_id) + "&confirmation_email_sent_at=is.null&select=id", {
+    method: "PATCH", headers: serviceHeaders(env, { Prefer: "return=representation" }),
+    body: JSON.stringify({ confirmation_email_sent_at: new Date().toISOString(), confirmation_message_id: messageId })
+  });
+  if (!saved.ok) return false;
+  const modified = await saved.json().catch(() => []);
+  // A concurrent request might have already recorded the confirmation.
+  if (Array.isArray(modified) && modified.length === 1) return true;
+  const later = await fetchCheckoutConsent(env, record.stripe_session_id);
+  return Boolean(later?.confirmation_email_sent_at && later.confirmation_message_id);
+}
+
 
 function resourceJson(payload: unknown, status = 200): Response {
   return Response.json(payload, { status, headers: { "Cache-Control": "no-store", "X-Content-Type-Options": "nosniff" } });
@@ -97,10 +150,17 @@ async function fetchStripeSession(env: Env, sessionId: string): Promise<Record<s
 
 async function handleResourceCheckout(request: Request, env: Env): Promise<Response> {
   if (request.method !== "POST") return resourceJson({ error: "Método no permitido." }, 405);
-  if (!env.STRIPE_SECRET_KEY) return resourceJson({ error: "Stripe todavía no está configurado en el servidor." }, 503);
+  if (!env.STRIPE_SECRET_KEY || !env.SUPABASE_SERVICE_ROLE_KEY) return resourceJson({ error: "El sistema de compra no está configurado." }, 503);
   let data: Record<string, unknown>;
   try { data = await request.json() as Record<string, unknown>; }
   catch { return resourceJson({ error: "Solicitud no válida." }, 400); }
+  const acceptedTerms = data.acceptedTerms === true;
+  const immediateSupply = data.immediateSupply === true;
+  const withdrawalLossAware = data.withdrawalLossAware === true;
+  if (!acceptedTerms || !immediateSupply || !withdrawalLossAware ||
+      data.termsVersion !== RESOURCE_TERMS_VERSION) {
+    return resourceJson({ error: "Para recibir la descarga inmediata debes aceptar las condiciones y confirmar que conoces las consecuencias para el desistimiento." }, 400);
+  }
   const resourceId = typeof data.resourceId === "string" ? data.resourceId : "";
   const resource = resourceId ? await fetchPublishedResource(resourceId) : null;
   if (!resource || !resource.file_path) return resourceJson({ error: "El recurso no está disponible para compra." }, 404);
@@ -126,8 +186,33 @@ async function handleResourceCheckout(request: Request, env: Env): Promise<Respo
     body: params.toString(),
   });
   const body = await response.json().catch(() => ({})) as Record<string, unknown>;
-  if (!response.ok || typeof body.url !== "string") return resourceJson({ error: "No se ha podido iniciar el pago." }, 502);
-  return resourceJson({ url: body.url });
+  const sessionId = String(body.id ?? "");
+  const checkoutUrl = String(body.url ?? "");
+  let checkoutHost = "";
+  try { checkoutHost = new URL(checkoutUrl).hostname; } catch {}
+  if (!response.ok || !/^cs_(test|live)_[A-Za-z0-9_]+$/.test(sessionId) ||
+      checkoutHost !== "checkout.stripe.com") {
+    return resourceJson({ error: "No se ha podido iniciar el pago." }, 502);
+  }
+  const now = new Date().toISOString();
+  const saved = await fetch(RESOURCE_CONSENT_TABLE, {
+    method: "POST", headers: serviceHeaders(env, { Prefer: "return=minimal" }),
+    body: JSON.stringify({
+      resource_id: resourceId, stripe_session_id: sessionId,
+      terms_version: RESOURCE_TERMS_VERSION, terms_snapshot: RESOURCE_TERMS_FULL_TEXT,
+      terms_sha256: await sha256Hex(RESOURCE_TERMS_FULL_TEXT),
+      amount_cents: amount, currency: "eur",
+      terms_accepted_at: now, immediate_supply_requested_at: now,
+      withdrawal_loss_acknowledged_at: now
+    })
+  }).catch(() => null);
+  if (!saved?.ok) {
+    // A checkout URL must never be returned without first persisting proof.
+    await stripeRequest(env, "/checkout/sessions/" + encodeURIComponent(sessionId) + "/expire",
+      { method: "POST" }).catch(() => null);
+    return resourceJson({ error: "No se ha podido registrar la aceptación. No se ha iniciado el pago. Vuelve a intentarlo." }, 503);
+  }
+  return resourceJson({ url: checkoutUrl });
 }
 
 async function handleResourceAccess(request: Request, env: Env): Promise<Response> {
@@ -142,6 +227,20 @@ async function handleResourceAccess(request: Request, env: Env): Promise<Respons
   if (!["paid", "no_payment_required"].includes(String(stripeSession.payment_status || ""))) {
     return resourceJson({ error: "El pago todavía no figura como completado." }, 409);
   }
+  // The contract must be confirmed on a durable medium before digital supply.
+  const consent = await fetchCheckoutConsent(env, sessionId).catch(() => null);
+  const metadata = stripeSession.metadata && typeof stripeSession.metadata === "object"
+    ? stripeSession.metadata as Record<string, unknown> : {};
+  const resourceId = String(metadata.resource_id ?? "");
+  if (!consent || consent.resource_id !== resourceId ||
+      consent.amount_cents !== Number(stripeSession.amount_total) ||
+      consent.currency !== String(stripeSession.currency ?? "")) {
+    return resourceJson({ error: "No se ha podido verificar la aceptación contractual de esta compra. Contacta con la consulta." }, 409);
+  }
+  const resource = await fetchPublishedResource(resourceId);
+  if (!resource) return resourceJson({ error: "El recurso adquirido no está disponible. Contacta con la consulta." }, 404);
+  const confirmed = await confirmResourceContract(env, stripeSession, consent, String(resource.title ?? "Recurso digital")).catch(() => false);
+  if (!confirmed) return resourceJson({ error: "El pago está confirmado, pero no se ha podido enviar el justificante contractual. Inténtalo más tarde o contacta con la consulta." }, 503);
   await upsertResourceOrder(env, stripeSession);
   const rawToken = randomToken();
   const tokenHash = await sha256Hex(rawToken);
