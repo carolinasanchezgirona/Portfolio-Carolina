@@ -1616,8 +1616,6 @@ export default {
     if (url.pathname === "/api/patient-portal/password-link" || url.pathname === "/api/patient-portal/password-link/") return handlePatientPortalAuth(request, env, "password-link");
     if (url.pathname === "/api/patient-portal/password-set" || url.pathname === "/api/patient-portal/password-set/") return handlePatientPortalAuth(request, env, "password-set");
     if (url.pathname === "/api/patient-portal/password-login" || url.pathname === "/api/patient-portal/password-login/") return handlePatientPortalAuth(request, env, "password-login");
-    if (url.pathname === "/api/patient-portal/verify-link" || url.pathname === "/api/patient-portal/verify-link/") return handlePatientPortalAuth(request, env, "verify-link");
-    if (url.pathname === "/api/patient-portal/verify-code" || url.pathname === "/api/patient-portal/verify-code/") return handlePatientPortalAuth(request, env, "verify");
     if (url.pathname === "/api/patient-portal/session" || url.pathname === "/api/patient-portal/session/") return handlePatientPortalSession(request, env);
     if (url.pathname === "/api/patient-portal/response" || url.pathname === "/api/patient-portal/response/") return handlePatientPortalResponse(request, env);
     if (url.pathname === "/api/patient-portal/logout" || url.pathname === "/api/patient-portal/logout/") return handlePatientPortalLogout(request, env);
