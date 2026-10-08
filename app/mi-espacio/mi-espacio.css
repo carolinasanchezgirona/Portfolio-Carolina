@@ -385,3 +385,22 @@
   .space-patient-material summary{padding:15px}
   .space-patient-material-body{padding:0 15px 15px}
 }
+
+/* El atributo hidden debe prevalecer sobre los componentes display:grid/flex. */
+.space-access-form[hidden],
+.space-primary[hidden],
+.space-access[hidden],
+.space-shell[hidden] { display:none !important; }
+
+.space-access-form h2 { margin:0 0 4px; color:var(--space-ink); font-size:1.3rem; }
+.space-access-form input { width:100%; }
+.space-access-form input[type="password"] { letter-spacing:.05em; }
+.space-access-form input[type="password"]::placeholder { letter-spacing:normal; }
+.space-text-action {
+  padding:6px 0; border:0; background:transparent;
+  color:#096e83; text-decoration:underline; text-underline-offset:3px;
+  font:inherit; font-size:.84rem; font-weight:650; cursor:pointer;
+  text-align:left;
+}
+.space-text-action:hover { color:#173a5e; }
+.space-text-action:focus-visible { outline:3px solid #08a6a0; outline-offset:3px; border-radius:4px; }
