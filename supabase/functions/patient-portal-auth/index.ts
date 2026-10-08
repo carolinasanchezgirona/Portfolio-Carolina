@@ -52,15 +52,15 @@ async function hashCode(email: string, code: string) {
   return await sha256(code + "|" + email + "|" + SERVICE_ROLE_KEY);
 }
 
-async function requestCode(email: string, useLink = false) {
-  const generic = { ok: true, message: useLink ? "Si el correo tiene acceso, recibirás un enlace en unos minutos." : "Si el correo tiene acceso, recibirás un código en unos minutos." };
+async function requestCode(email: string) {
+  const generic = { ok: true, message: "Si el correo corresponde a una cuenta con acceso, recibirás un código en unos minutos." };
   if (!SERVICE_ROLE_KEY || !BREVO_API_KEY) return json({ error: "El acceso por correo no está configurado." }, 503);
 
   const patientsResponse = await fetch(
     SUPABASE_URL + "/rest/v1/clinical_patients?select=id,email,status&status=neq.archived&limit=500",
     { headers: serviceHeaders, cache: "no-store" },
   );
-  if (!patientsResponse.ok) { console.error("[patient-auth] No se pudo consultar el registro de pacientes:", patientsResponse.status); return json({ error: "Servicio temporalmente no disponible." }, 503); }
+  if (!patientsResponse.ok) return json(generic);
   const patientRows = await patientsResponse.json().catch(() => []);
   const patients = Array.isArray(patientRows)
     ? patientRows.filter((row) => String(row?.email ?? "").trim().toLowerCase() === email)
@@ -70,43 +70,30 @@ async function requestCode(email: string, useLink = false) {
   const patient = patients[0] as { id?: string };
   if (!patient.id) return json(generic);
 
-  const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000).toISOString();
-  const recentResponse = await fetch(
-    SUPABASE_URL + "/rest/v1/patient_portal_login_codes?select=id,created_at&patient_id=eq." + encodeURIComponent(patient.id) +
-      "&email_normalized=eq." + encodeURIComponent(email) + "&created_at=gte." + encodeURIComponent(oneHourAgo) +
-      "&order=created_at.desc&limit=10",
-    { headers: serviceHeaders, cache: "no-store" },
-  );
-  if (!recentResponse.ok) { console.error("[patient-auth] No se pudo validar el límite de solicitudes:", recentResponse.status); return json({ error: "Servicio temporalmente no disponible." }, 503); }
-  const recent = await recentResponse.json().catch(() => []);
-  if (Array.isArray(recent) && recent.length) {
-    const lastCreated = Date.parse(String(recent[0]?.created_at || ""));
-    if (Number.isFinite(lastCreated) && Date.now() - lastCreated < 60 * 1000) return json(generic);
-    if (recent.length >= 5) return json(generic);
-  }
-
-  const code = useLink ? randomToken() : randomCode();
+  const code = randomCode();
   const now = new Date();
   const expires = new Date(now.getTime() + 10 * 60 * 1000);
   const codeHash = await hashCode(email, code);
 
-  const insert = await fetch(SUPABASE_URL + "/rest/v1/patient_portal_login_codes?select=id", {
+  // Atomic issuance enforces one code per minute and at most five per hour,
+  // including concurrent requests. The RPC is callable only by service_role.
+  const insert = await fetch(SUPABASE_URL + "/rest/v1/rpc/issue_patient_portal_login_code", {
     method: "POST",
-    headers: { ...serviceHeaders, Prefer: "return=representation" },
+    headers: serviceHeaders,
     body: JSON.stringify({
-      patient_id: patient.id,
-      email_normalized: email,
-      code_hash: codeHash,
-      expires_at: expires.toISOString(),
+      p_patient_id: patient.id,
+      p_email_normalized: email,
+      p_code_hash: codeHash,
+      p_expires_at: expires.toISOString(),
     }),
   });
-  const inserted = await insert.json().catch(() => []);
-  const loginId = Array.isArray(inserted) ? inserted[0]?.id : null;
-  if (!insert.ok || !loginId) return json({ error: "No se ha podido preparar el acceso." }, 502);
+  if (!insert.ok) return json({ error: "No se ha podido preparar el acceso." }, 502);
+  const inserted = await insert.json().catch(() => null);
+  const loginId = typeof inserted === "string" && /^[0-9a-f-]{36}$/i.test(inserted) ? inserted : null;
+  if (!loginId) return json(generic);
 
-  const linkUrl = "https://carolinasanchezgirona.com/mi-espacio/#acceso=" + encodeURIComponent(code) + "&email=" + encodeURIComponent(email);
-  const html = useLink ? `<!doctype html><html lang="es"><body style="font-family:Arial,sans-serif;color:#173A5E"><h1>Entra en Mi espacio</h1><p>Pulsa este enlace para acceder de forma segura:</p><p><a href="${linkUrl}">Entrar en mi espacio</a></p><p>El enlace caduca en 10 minutos y solo puede utilizarse una vez.</p><p>Si no lo solicitaste, ignora el mensaje.</p></body></html>` : `<!doctype html><html lang="es"><body style="margin:0;background:#f5f8fb;font-family:Arial,sans-serif;color:#233746"><div style="max-width:620px;margin:0 auto;padding:32px 18px"><div style="background:#fff;border:1px solid #d5e3ee;border-radius:18px;padding:32px"><p style="color:#08A6A0;font-size:13px;font-weight:700;letter-spacing:.04em">MI ESPACIO</p><h1 style="font-size:25px;color:#173A5E">Tu código de acceso</h1><p>Introduce este código en Mi espacio:</p><p style="font-size:34px;letter-spacing:8px;font-weight:800;color:#173A5E;text-align:center;margin:28px 0">${code}</p><p>El código caduca en 10 minutos y solo puede utilizarse una vez.</p><p style="margin-top:28px">Carolina Sánchez Girona</p></div><p style="color:#667983;font-size:12px">Si no has solicitado este acceso, puedes ignorar este correo. No respondas incluyendo información clínica.</p></div></body></html>`;
-  const textContent = useLink ? `Entra en Mi espacio: ${linkUrl}\n\nEl enlace caduca en 10 minutos y solo sirve una vez.` : `Tu código para Mi espacio es: ${code}\n\nCaduca en 10 minutos y solo puede utilizarse una vez.\n\nSi no has solicitado este acceso, ignora este correo.\n\nCarolina Sánchez Girona`;
+  const html = `<!doctype html><html lang="es"><body style="margin:0;background:#f5f8fb;font-family:Arial,sans-serif;color:#233746"><div style="max-width:620px;margin:0 auto;padding:32px 18px"><div style="background:#fff;border:1px solid #d5e3ee;border-radius:18px;padding:32px"><p style="color:#08A6A0;font-size:13px;font-weight:700;letter-spacing:.04em">MI ESPACIO</p><h1 style="font-size:25px;color:#173A5E">Tu código de acceso</h1><p>Introduce este código en Mi espacio:</p><p style="font-size:34px;letter-spacing:8px;font-weight:800;color:#173A5E;text-align:center;margin:28px 0">${code}</p><p>El código caduca en 10 minutos y solo puede utilizarse una vez.</p><p style="margin-top:28px">Carolina Sánchez Girona</p></div><p style="color:#667983;font-size:12px">Si no has solicitado este acceso, puedes ignorar este correo. No respondas incluyendo información clínica.</p></div></body></html>`;
+  const textContent = `Tu código para Mi espacio es: ${code}\n\nCaduca en 10 minutos y solo puede utilizarse una vez.\n\nSi no has solicitado este acceso, ignora este correo.\n\nCarolina Sánchez Girona`;
 
   const sent = await fetch("https://api.brevo.com/v3/smtp/email", {
     method: "POST",
@@ -115,7 +102,7 @@ async function requestCode(email: string, useLink = false) {
       sender: { name: "Carolina Sánchez Girona", email: "contact@carolinasanchezgirona.com" },
       to: [{ email }],
       replyTo: { email: "contact@carolinasanchezgirona.com", name: "Carolina Sánchez Girona" },
-      subject: useLink ? "Tu enlace seguro para Mi espacio" : "Tu código para Mi espacio",
+      subject: "Tu código para Mi espacio",
       htmlContent: html,
       textContent,
       tags: ["patient-portal-login"],
@@ -124,7 +111,6 @@ async function requestCode(email: string, useLink = false) {
   });
 
   if (!sent.ok) {
-    console.error("[patient-auth] El proveedor de correo rechazó el envío:", sent.status);
     await fetch(SUPABASE_URL + "/rest/v1/patient_portal_login_codes?id=eq." + encodeURIComponent(String(loginId)), {
       method: "DELETE",
       headers: serviceHeaders,
@@ -140,47 +126,31 @@ async function requestCode(email: string, useLink = false) {
   return json(generic);
 }
 
-async function verifyCode(email: string, code: string, useLink = false) {
+async function verifyCode(email: string, code: string) {
   if (!SERVICE_ROLE_KEY) return json({ error: "El acceso por correo no está configurado." }, 503);
-  if (!(useLink ? /^[A-Za-z0-9_-]{43}$/.test(code) : /^\d{6}$/.test(code))) return json({ error: "Código no válido o caducado." }, 401);
+  if (!/^\d{6}$/.test(code)) return json({ error: "Código no válido o caducado." }, 401);
 
-  const response = await fetch(
-    SUPABASE_URL + "/rest/v1/patient_portal_login_codes?select=id,patient_id,code_hash,expires_at,attempts&email_normalized=eq." +
-      encodeURIComponent(email) + "&consumed_at=is.null&order=created_at.desc&limit=1",
-    { headers: serviceHeaders, cache: "no-store" },
-  );
-  const rows = response.ok ? await response.json().catch(() => []) : [];
-  const item = Array.isArray(rows) ? rows[0] : null;
-  if (!item) return json({ error: "Código no válido o caducado." }, 401);
-
-  const attempts = Number(item.attempts || 0);
-  const expires = Date.parse(String(item.expires_at || ""));
-  if (!Number.isFinite(expires) || expires < Date.now() || attempts >= 5) {
-    return json({ error: "Código no válido o caducado." }, 401);
-  }
-
+  // A single locked database transaction checks attempts and consumes the
+  // code. This prevents racing five attempts or using a code twice.
   const candidate = await hashCode(email, code);
-  if (candidate !== String(item.code_hash || "")) {
-    await fetch(SUPABASE_URL + "/rest/v1/patient_portal_login_codes?id=eq." + encodeURIComponent(String(item.id)), {
-      method: "PATCH",
-      headers: { ...serviceHeaders, Prefer: "return=minimal" },
-      body: JSON.stringify({ attempts: Math.min(attempts + 1, 10) }),
-    }).catch(() => null);
+  const response = await fetch(
+    SUPABASE_URL + "/rest/v1/rpc/consume_patient_portal_login_code",
+    {
+      method: "POST",
+      headers: serviceHeaders,
+      body: JSON.stringify({
+        p_email_normalized: email,
+        p_candidate_hash: candidate,
+      }),
+    },
+  );
+  if (!response.ok) return json({ error: "No se ha podido comprobar el código." }, 502);
+  const patientId = await response.json().catch(() => null);
+  if (typeof patientId !== "string" || !/^[0-9a-f-]{36}$/i.test(patientId)) {
     return json({ error: "Código no válido o caducado." }, 401);
   }
 
   const now = new Date();
-  const consumed = await fetch(SUPABASE_URL + "/rest/v1/patient_portal_login_codes?id=eq." + encodeURIComponent(String(item.id)) +
-    "&consumed_at=is.null&expires_at=gt." + encodeURIComponent(now.toISOString()) + "&select=id", {
-    method: "PATCH",
-    headers: { ...serviceHeaders, Prefer: "return=representation" },
-    body: JSON.stringify({ consumed_at: now.toISOString() }),
-  });
-  const usedRows = await consumed.json().catch(() => []);
-  if (!consumed.ok || !Array.isArray(usedRows) || usedRows.length !== 1) {
-    return json({ error: "Enlace no válido o ya utilizado." }, 401);
-  }
-
   const rawSession = randomToken();
   const tokenHash = await sha256(rawSession);
   const sessionExpires = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000);
@@ -189,7 +159,7 @@ async function verifyCode(email: string, code: string, useLink = false) {
     method: "POST",
     headers: { ...serviceHeaders, Prefer: "return=minimal" },
     body: JSON.stringify({
-      patient_id: item.patient_id,
+      patient_id: patientId,
       token_hash: tokenHash,
       expires_at: sessionExpires.toISOString(),
       last_seen_at: now.toISOString(),
@@ -204,7 +174,6 @@ async function verifyCode(email: string, code: string, useLink = false) {
 
   return json({ ok: true, session_token: rawSession, expires_at: sessionExpires.toISOString() });
 }
-
 
 /* Supabase Auth owns password hashing, credential policy and email verification.
    Never store patient passwords or Supabase Auth access tokens in clinical tables. */
@@ -397,6 +366,8 @@ Deno.serve(async (req) => {
   const email = normalizeEmail(body.email);
   if (!email) return json({ error: "Introduce un correo válido." }, 400);
 
+  if (action === "request") return await requestCode(email);
+  if (action === "verify") return await verifyCode(email, String(body.code ?? "").trim());
   if (action === "password-link") return await sendPasswordLink(email, String(body.purpose ?? "setup") === "reset" ? "reset" : "setup");
   if (action === "password-set") return await setPatientPassword(email, String(body.token_hash ?? ""), String(body.flow ?? ""), String(body.password ?? ""));
   if (action === "password-login") return await loginWithPassword(email, String(body.password ?? ""));
