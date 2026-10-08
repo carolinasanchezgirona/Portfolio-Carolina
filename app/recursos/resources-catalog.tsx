@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Image from "next/image";
+import { RESOURCE_TERMS_VERSION } from "../../resource-legal";
 
 const SUPABASE_URL = "https://grgyvdxkjdstdyumdfyg.supabase.co";
 const KEY = "sb_publishable_b2MRfP0bPti87V2FXCzHGw_Y9vvcbii";
@@ -58,6 +59,18 @@ export default function ResourcesCatalog() {
   const [resources, setResources] = useState<Resource[] | null>(null);
   const [buyingId, setBuyingId] = useState<string | null>(null);
   const [message, setMessage] = useState("");
+  type Acceptance = { terms: boolean; supply: boolean; withdrawal: boolean };
+  const [acceptances, setAcceptances] = useState<Record<string, Acceptance>>({});
+  function setAcceptance(resourceId: string, key: keyof Acceptance, value: boolean) {
+    setAcceptances(previous => ({
+      ...previous,
+      [resourceId]: { terms: false, supply: false, withdrawal: false, ...previous[resourceId], [key]: value }
+    }));
+  }
+  function hasAllAcceptances(resourceId: string) {
+    const value = acceptances[resourceId];
+    return Boolean(value?.terms && value.supply && value.withdrawal);
+  }
 
   useEffect(() => {
     const select = "id,title,slug,subtitle,description,category,audience,format_label,price_cents,featured,cover_url,cover_alt";
@@ -77,13 +90,23 @@ export default function ResourcesCatalog() {
   }, []);
 
   async function startCheckout(resource: Resource) {
+    if (!hasAllAcceptances(resource.id)) {
+      setMessage("Para continuar, confirma las tres declaraciones de compra y suministro inmediato.");
+      return;
+    }
     setBuyingId(resource.id);
     setMessage("");
     try {
       const response = await fetch("/api/resources/checkout", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ resourceId: resource.id }),
+        body: JSON.stringify({
+          resourceId: resource.id,
+          acceptedTerms: acceptances[resource.id]?.terms === true,
+          immediateSupply: acceptances[resource.id]?.supply === true,
+          withdrawalLossAware: acceptances[resource.id]?.withdrawal === true,
+          termsVersion: RESOURCE_TERMS_VERSION
+        }),
       });
       const body = await response.json().catch(() => ({}));
       if (!response.ok || !body?.url) throw new Error(body?.error || "No se ha podido iniciar el pago.");
@@ -155,11 +178,33 @@ export default function ResourcesCatalog() {
               <span>{resource.format_label}</span>
               <strong>{euro(resource.price_cents)}</strong>
             </div>
+            <fieldset className="resource-legal-consents">
+              <legend>Antes de comprar</legend>
+              <p>Material descargable. Precio total: {euro(resource.price_cents)}. Sin envío físico ni suscripción. Tras pagar recibirás un justificante por correo.</p>
+              <label>
+                <input type="checkbox"
+                  checked={Boolean(acceptances[resource.id]?.terms)}
+                  onChange={event => setAcceptance(resource.id, "terms", event.target.checked)} />
+                <span>He leído y acepto las <a href="/condiciones-recursos/" target="_blank" rel="noopener noreferrer">condiciones de compra</a> y la <a href="/privacidad/" target="_blank" rel="noopener noreferrer">información de privacidad</a>.</span>
+              </label>
+              <label>
+                <input type="checkbox"
+                  checked={Boolean(acceptances[resource.id]?.supply)}
+                  onChange={event => setAcceptance(resource.id, "supply", event.target.checked)} />
+                <span>Solicito que el suministro del contenido digital comience inmediatamente después del pago, antes de que termine el plazo de desistimiento.</span>
+              </label>
+              <label>
+                <input type="checkbox"
+                  checked={Boolean(acceptances[resource.id]?.withdrawal)}
+                  onChange={event => setAcceptance(resource.id, "withdrawal", event.target.checked)} />
+                <span>Entiendo que, al comenzar la descarga con mi consentimiento y recibir la confirmación contractual, perderé el derecho de desistimiento previsto para estas compras, sin perder mis garantías legales.</span>
+              </label>
+            </fieldset>
             <button
               className="editorial-btn editorial-btn-primary resource-buy-button"
               type="button"
               onClick={() => startCheckout(resource)}
-              disabled={buyingId === resource.id}
+              disabled={buyingId === resource.id || !hasAllAcceptances(resource.id)}
             >
               {buyingId === resource.id ? "Preparando pago…" : "Comprar y descargar"}
             </button>
