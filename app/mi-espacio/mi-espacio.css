@@ -460,3 +460,8 @@
 @media(max-width:1080px){.space-needs{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:760px){.space-quick-start{align-items:stretch;flex-direction:column;gap:14px;padding:18px}.space-quick-start .space-primary{align-self:flex-start}.space-learning-flow{grid-template-columns:1fr}.space-learning-flow span{text-align:left}.space-materials-section .space-section-heading{flex-wrap:wrap}}
 @media(max-width:520px){.space-needs{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.space-needs button{min-height:145px;padding:13px}.space-needs strong{font-size:.86rem}.space-needs-heading{align-items:flex-start;flex-direction:column;gap:5px}.space-needs-heading>span{font-size:.74rem}.space-quick-start .space-primary{width:100%}.space-learning-card>summary{padding:15px}.space-learning-body{padding:0 15px 18px}}
+
+/* Subscription access notice; no checkout is shown until entitlements are deployed. */
+.space-membership-note{display:flex;flex-direction:column;gap:6px;margin:0 0 25px;padding:15px 20px;border:1px solid #f3dfbc;border-radius:16px;background:linear-gradient(110deg,#fff6e5,#fffaf1);color:#173a5e}
+.space-membership-note strong{font-size:.88rem}
+.space-membership-note p{margin:0;color:#647584;font-size:.77rem;line-height:1.55}
