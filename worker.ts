@@ -763,9 +763,32 @@ async function handleStripeWebhook(request: Request, env: Env): Promise<Response
         sessionId: session.id,
         paymentStatus: session.payment_status,
       });
-      if (env.SUPABASE_SERVICE_ROLE_KEY) {
-        try { await upsertResourceOrder(env, session); }
-        catch (error) { console.error("Could not persist resource order", error instanceof Error ? error.message : "Unknown"); }
+      if (!env.SUPABASE_SERVICE_ROLE_KEY) return new Response("Order persistence unavailable", { status: 503 });
+      const metadata = session.metadata && typeof session.metadata === "object"
+        ? session.metadata as Record<string, unknown> : {};
+      const resourceId = String(metadata.resource_id ?? "");
+      const sessionId = String(session.id ?? "");
+      if (!resourceId || !sessionId) break; // Ignore unrelated Checkout purchases.
+      try {
+        await upsertResourceOrder(env, session);
+        const paid = ["paid", "no_payment_required"].includes(String(session.payment_status ?? ""));
+        if (paid && event.type !== "checkout.session.async_payment_failed") {
+          const consent = await fetchCheckoutConsent(env, sessionId);
+          if (!consent || consent.resource_id !== resourceId ||
+              consent.amount_cents !== Number(session.amount_total) ||
+              consent.currency !== String(session.currency ?? "")) {
+            throw new Error("Missing or mismatched contractual acceptance");
+          }
+          const resource = await fetchPublishedResource(resourceId);
+          if (!resource) throw new Error("Purchased resource not available");
+          const confirmed = await confirmResourceContract(env, session, consent, String(resource.title ?? "Recurso digital"));
+          if (!confirmed) throw new Error("Contract confirmation email not recorded");
+        }
+      } catch (error) {
+        // Stripe will retry the signed webhook, even if the buyer closes the tab.
+        console.error("Resource checkout finalization failed",
+          error instanceof Error ? error.message : "Unknown");
+        return new Response("Please retry checkout confirmation", { status: 500 });
       }
       break;
     }
