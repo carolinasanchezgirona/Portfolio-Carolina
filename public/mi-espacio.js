@@ -1,7 +1,7 @@
 (() => {
   "use strict";
 
-  const BETWEEN_KEY = "between_sessions_access_token";
+  const LEGACY_BETWEEN_KEY = "between_sessions_access_token";
   const FAVORITES_KEY = "wellness_favorites_v1";
   const COMPLETED_KEY = "wellness_completed_v1";
 
@@ -980,19 +980,14 @@
     });
   }
 
-  function importBetweenSessionsToken() {
+  function clearLegacyAccessToken() {
+    // Old URL tokens never grant clinical access. Remove them from browser URL and storage.
     const url = new URL(window.location.href);
-    const token = url.searchParams.get("token") || "";
-    if (/^[A-Za-z0-9_-]{40,}$/.test(token)) {
-      sessionStorage.setItem(BETWEEN_KEY, token);
+    if (url.searchParams.has("token")) {
       url.searchParams.delete("token");
       history.replaceState({}, "", url.pathname + url.search + url.hash);
     }
-    const hasAccess = /^[A-Za-z0-9_-]{40,}$/.test(sessionStorage.getItem(BETWEEN_KEY) || "");
-    const status = document.getElementById("space-therapy-status");
-    if (hasAccess && status) {
-      status.textContent = "Tienes un acceso protegido activo para consultar el material que Carolina te ha enviado.";
-    }
+    try { sessionStorage.removeItem(LEGACY_BETWEEN_KEY); } catch (_) {}
   }
 
   navButtons.forEach(button => {
@@ -1001,7 +996,7 @@
       if (view === "therapy" && !state.portalAuthenticated) {
         state.guestMode = false;
         showAccessGate();
-        setAccessMessage("Para ver tu terapia, solicita un enlace de acceso.");
+        setAccessMessage("Para ver tu terapia, inicia sesión con tu correo y contraseña.");
         return;
       }
       state.need = null;
@@ -1127,7 +1122,7 @@
   });
   document.getElementById("space-logout")?.addEventListener("click", logoutPatientPortal);
 
-  importBetweenSessionsToken();
+  clearLegacyAccessToken();
   renderWellness();
   renderProgress();
   const configuringPassword = verifySetupLinkFromUrl();
