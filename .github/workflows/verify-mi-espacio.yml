@@ -1,0 +1,26 @@
+name: Validar Mi espacio
+on:
+  push:
+    branches: [feature/mi-espacio-enlace-seguro]
+  pull_request:
+    paths:
+      - 'app/mi-espacio/**'
+      - 'public/mi-espacio.js'
+      - 'worker.ts'
+      - 'supabase/functions/patient-portal-auth/**'
+      - 'package*.json'
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - run: node --check public/mi-espacio.js
+      - run: npx tsc --noEmit
+      - run: npm run build
