@@ -36,6 +36,35 @@ const AVATARS: AvatarOption[] = [
   { id: "senior-man", label: "Hombre mayor", stage: "Edad avanzada", hair: "#d2d8e0", skin: "#e1b28e" },
   { id: "senior-woman", label: "Mujer mayor", stage: "Edad avanzada", hair: "#d4cfd4", skin: "#bd8d70" },
 ];
+const AVATAR_IMAGES: Record<AvatarId, string> = {
+  boy: "nino",
+  girl: "nina",
+  "teen-boy": "adolescente_chico",
+  "teen-girl": "adolescente_chica",
+  "adult-man": "hombre_adulto",
+  "adult-woman": "mujer_adulta",
+  "senior-man": "hombre_mayor",
+  "senior-woman": "mujer_mayor",
+};
+const MOOD_ART_NAMES = ["muy_dificil", "dificil", "intermedio", "agradable", "muy_agradable"];
+const MOOD_SYMBOLS = ["◡", "·", "–", "⌣", "☺"];
+
+function CharacterPortrait({ avatarId, mood = 4, className = "" }: { avatarId: AvatarId; mood?: number; className?: string }) {
+  const avatar = AVATARS.find(option => option.id === avatarId) ?? DEFAULT_AVATAR;
+  const portrait = `/mi-espacio/characters/${AVATAR_IMAGES[avatarId]}.webp`;
+  const face = avatarId === "senior-man" && mood >= 1 && mood <= 5
+    ? `/mi-espacio/characters/moods/senior-man/${mood}_${MOOD_ART_NAMES[mood - 1]}.webp`
+    : portrait;
+  return (
+    <div className={`mood-character-art ${className}`}>
+      <img src={face} alt={`Personaje 3D: ${avatar.label}`} loading="lazy" decoding="async" />
+      {className.includes("main") && (
+        <span className={`mood-character-emotion mood-character-emotion-${mood}`} aria-hidden="true">{MOOD_SYMBOLS[mood - 1]}</span>
+      )}
+    </div>
+  );
+}
+
 const AVATAR_CHANGE_EVENT = "wellness-companion-avatar-changed";
 const SESSION_READY_EVENT = "patient-portal-session-ready";
 const DEFAULT_AVATAR = AVATARS[0];
@@ -164,7 +193,7 @@ function AvatarChoices({ selected, onSelect }: { selected: AvatarId | null; onSe
       {AVATARS.map(avatar => (
         <button key={avatar.id} type="button" className={selected === avatar.id ? "mood-avatar-choice is-selected" : "mood-avatar-choice"}
           onClick={() => onSelect(avatar.id)} aria-pressed={selected === avatar.id}>
-          <span className="mood-avatar-portrait"><MoodFriend mood={4} avatarId={avatar.id} /></span>
+          <span className="mood-avatar-portrait"><CharacterPortrait avatarId={avatar.id} /></span>
           <strong>{avatar.label}</strong><small>{avatar.stage}</small>
         </button>
       ))}
@@ -286,7 +315,7 @@ export default function MoodTracker() {
       <div className="mood-tracker-body">
         <div className="mood-friend-panel" style={{ background: `radial-gradient(circle at 50% 30%, #ffffff 0%, ${displayed.color} 100%)` }}>
           <div className="mood-friend-halo" aria-hidden="true"/>
-          <MoodFriend mood={selected || 3} avatarId={avatar} />
+          <CharacterPortrait avatarId={avatar} mood={selected || 3} className="main" />
           <div className="mood-friend-caption" aria-live="polite">
             <strong>{selected ? displayed.name : "Aquí estoy contigo"}</strong>
             <span>{selected ? displayed.note : "Cada emoción tiene su lugar."}</span>
