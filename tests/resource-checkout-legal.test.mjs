@@ -117,3 +117,14 @@ test("email HTML escapes injected text", async () => {
   assert.equal(result.status, 200);
   assert.ok(h.emails[0].htmlContent.includes("&lt;script&gt;TEST&lt;/script&gt;"));
 });
+
+test("signed Stripe webhook sends contract confirmation independently of return-page visit", () => {
+  const begin = worker.indexOf("async function handleStripeWebhook(");
+  const end = worker.indexOf("/** Private, authenticated editorial generation.", begin);
+  assert.ok(begin >= 0 && end > begin);
+  const webhook = worker.slice(begin, end);
+  assert.ok(webhook.includes('case "checkout.session.completed"'));
+  assert.ok(webhook.includes('case "checkout.session.async_payment_succeeded"'));
+  assert.ok(webhook.includes("confirmResourceContract(env, session, consent"));
+  assert.ok(webhook.includes('new Response("Please retry checkout confirmation", { status: 500 })'));
+});
