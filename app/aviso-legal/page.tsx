@@ -44,7 +44,7 @@ export default function LegalNoticePage() {
         <section>
           <h2>2. Información profesional y sanitaria</h2>
           <p>La atención profesional está a cargo de Carolina Sánchez Girona, psicóloga general sanitaria y neuropsicóloga, colegiada número 24892 en el Col·legi Oficial de Psicologia de Catalunya (COPC).</p>
-          <p><strong>Formación habilitante para el ejercicio de la Psicología General Sanitaria:</strong> Máster Universitario en Psicología General Sanitaria.</p>
+          <p><strong>Formación habilitante para el ejercicio de la Psicología General Sanitaria:</strong> Máster Universitario en Psicología General Sanitaria, cursado en España.</p>
           <p>Las normas profesionales y deontológicas aplicables pueden consultarse a través del <a href="https://www.copc.cat/" target="_blank" rel="noopener noreferrer">Col·legi Oficial de Psicologia de Catalunya</a>, sin perjuicio de la legislación sanitaria y de protección de datos vigente.</p>
           <p>La consulta dispone de autorización administrativa de funcionamiento otorgada por el Departament de Salut de la Generalitat de Catalunya, mediante resolución de 23 de mayo de 2025 de la Direcció General d’Ordenació i Regulació Sanitària.</p>
           <div className="legal-data">
@@ -53,7 +53,7 @@ export default function LegalNoticePage() {
             <p><strong>Cartera de servicios autorizada:</strong> Consulta de otros profesionales sanitarios · Psicología General Sanitaria</p>
             <p><strong>Autoridad sanitaria:</strong> Generalitat de Catalunya · Departament de Salut</p>
           </div>
-          {/* PENDIENTE ANTES DE PUBLICAR: corroborar con el título la denominación de la titulación de acceso a Psicología, el país de expedición del Máster Universitario en Psicología General Sanitaria y, en su caso, la universidad expedidora; no atribuir una autorización independiente de neuropsicología a esta resolución. */}
+          {/* PENDIENTE ANTES DE PUBLICAR: verificar documentalmente la denominación oficial del título de acceso a Psicología y el Estado de expedición de los títulos, que no se deduce necesariamente del lugar donde fueron cursados. No atribuir una autorización independiente de Neuropsicología a la resolución sanitaria. */}
         </section>
 
         <section>
