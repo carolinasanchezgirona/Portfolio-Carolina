@@ -31,9 +31,10 @@ export default function LegalNoticePage() {
           <p>En cumplimiento del artículo 10 de la Ley 34/2002, de servicios de la sociedad de la información y de comercio electrónico, se facilita la siguiente información sobre la titular de esta web:</p>
           <div className="legal-data">
             <p><strong>Titular:</strong> Carolina Sánchez Girona</p>
-            <p><strong>Nombre comercial de la consulta:</strong> Dememòria</p>
+            <p><strong>Nombre comercial utilizado en esta web:</strong> Dememòria</p>
+            <p><strong>Denominación de la consulta autorizada:</strong> Consulta de psicologia general sanitària Carolina Sánchez Girona</p>
             <p><strong>NIF:</strong> 53067189W</p>
-            <p><strong>Consulta:</strong> Carrer Barcelona 8, local, 08350 Arenys de Mar (Barcelona), España</p>
+            <p><strong>Consulta:</strong> Carrer Barcelona 8, escalera 1, local 4B, 08350 Arenys de Mar (Barcelona), España</p>
             <p><strong>Correo electrónico:</strong> <a href="mailto:contact@carolinasanchezgirona.com">contact@carolinasanchezgirona.com</a></p>
             <p><strong>Teléfono:</strong> <a href="tel:+34604974857">604 974 857</a></p>
             <p><strong>Dominio:</strong> carolinasanchezgirona.com</p>
@@ -44,7 +45,14 @@ export default function LegalNoticePage() {
           <h2>2. Información profesional y sanitaria</h2>
           <p>La atención profesional está a cargo de Carolina Sánchez Girona, psicóloga general sanitaria y neuropsicóloga, colegiada número 24892 en el Col·legi Oficial de Psicologia de Catalunya (COPC).</p>
           <p>Las normas profesionales y deontológicas aplicables pueden consultarse a través del <a href="https://www.copc.cat/" target="_blank" rel="noopener noreferrer">Col·legi Oficial de Psicologia de Catalunya</a>, sin perjuicio de la legislación sanitaria y de protección de datos vigente.</p>
-          {/* ANTES DE PUBLICAR: verificar denominación exacta de la titulación oficial, país de expedición y resolución/número de autorización sanitaria del centro. Incorporar el órgano sanitario supervisor (Generalitat de Catalunya, Departament de Salut) y el número de registro correspondiente. */}
+          <p>La consulta dispone de autorización administrativa de funcionamiento otorgada por el Departament de Salut de la Generalitat de Catalunya, mediante resolución de 23 de mayo de 2025 de la Direcció General d’Ordenació i Regulació Sanitària.</p>
+          <div className="legal-data">
+            <p><strong>Registro de Centros, Servicios y Establecimientos Sanitarios:</strong> E08768201</p>
+            <p><strong>Expediente de autorización:</strong> 147500</p>
+            <p><strong>Cartera de servicios autorizada:</strong> Consulta de otros profesionales sanitarios · Psicología General Sanitaria</p>
+            <p><strong>Autoridad sanitaria:</strong> Generalitat de Catalunya · Departament de Salut</p>
+          </div>
+          {/* PENDIENTE DE REVISIÓN ANTES DE PUBLICAR: verificar la denominación exacta de la titulación oficial de Psicología, el país de expedición y la habilitación académica/profesional; no atribuir una autorización independiente de neuropsicología a esta resolución. */}
         </section>
 
         <section>
