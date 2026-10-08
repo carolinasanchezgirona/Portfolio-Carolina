@@ -292,6 +292,58 @@ async function handlePatientPortalAuth(request: Request, env: Env, action: "requ
   });
 }
 
+async function handlePatientPortalPasswordAuth(request: Request, env: Env, action: "password-link" | "password-set" | "password-login"): Promise<Response> {
+  if (request.method !== "POST") return patientPortalJson({ error: "Método no permitido." }, 405);
+  if (!patientPortalSameOrigin(request)) return patientPortalJson({ error: "Origen no permitido." }, 403);
+  if (!env.SUPABASE_SERVICE_ROLE_KEY) return patientPortalJson({ error: "Acceso temporalmente no disponible." }, 503);
+  if (Number(request.headers.get("content-length") || "0") > 4096) return patientPortalJson({ error: "Solicitud demasiado extensa." }, 413);
+  let body: Record<string, unknown>;
+  try { body = await request.json() as Record<string, unknown>; }
+  catch { return patientPortalJson({ error: "Solicitud no válida." }, 400); }
+
+  const email = typeof body.email === "string" ? body.email.trim().toLowerCase().slice(0, 254) : "";
+  const password = typeof body.password === "string" && body.password.length <= 128 ? body.password : "";
+  const tokenHash = typeof body.token_hash === "string" ? body.token_hash.trim().slice(0, 256) : "";
+  const flow = body.flow === "invite" || body.flow === "recovery" ? body.flow : "";
+  const purpose = body.purpose === "reset" ? "reset" : "setup";
+  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    return patientPortalJson({ error: "Introduce un correo válido." }, 400);
+  }
+
+  const response = await fetch(PATIENT_PORTAL_AUTH_FUNCTION, {
+    method: "POST",
+    headers: {
+      apikey: RESOURCE_PUBLISHABLE,
+      Authorization: "Bearer " + env.SUPABASE_SERVICE_ROLE_KEY,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ action, email, ...(action === "password-link" ? { purpose } : {}), ...(action === "password-set" ? { token_hash: tokenHash, flow, password } : {}), ...(action === "password-login" ? { password } : {}) }),
+  });
+  const result = await response.json().catch(() => ({})) as Record<string, unknown>;
+
+  if (!response.ok) {
+    const message = typeof result.error === "string" ? result.error : "No se ha podido completar el acceso.";
+    return patientPortalJson({ error: message }, response.status);
+  }
+
+  if (action === "password-login") {
+    const token = typeof result.session_token === "string" ? result.session_token : "";
+    if (!/^pwd2_[A-Za-z0-9_-]{40,}$/.test(token)) return patientPortalJson({ error: "No se ha podido iniciar la sesión." }, 502);
+    return patientPortalJson(
+      { ok: true, expires_at: result.expires_at || null },
+      200,
+      { "Set-Cookie": patientPortalCookie(token, 8 * 60 * 60) },
+    );
+  }
+
+  return patientPortalJson({
+    ok: true,
+    message: typeof result.message === "string"
+      ? result.message
+      : "Si el correo corresponde a una cuenta con acceso, recibirás un enlace seguro en unos minutos.",
+  });
+}
+
 type PatientPortalSession = {
   id: string;
   patient_id: string;
@@ -1640,6 +1692,10 @@ export default {
     if (url.pathname === "/api/questions/draft" || url.pathname === "/api/questions/draft/") return handleQuestionDraft(request, env);
     if (url.pathname === "/api/patient-portal/request-code" || url.pathname === "/api/patient-portal/request-code/") return handlePatientPortalAuth(request, env, "request");
     if (url.pathname === "/api/patient-portal/verify-code" || url.pathname === "/api/patient-portal/verify-code/") return handlePatientPortalAuth(request, env, "verify");
+    // New password flow is staged at /mi-espacio/prueba/ while OTP remains available.
+    if (url.pathname === "/api/patient-portal/password-link" || url.pathname === "/api/patient-portal/password-link/") return handlePatientPortalPasswordAuth(request, env, "password-link");
+    if (url.pathname === "/api/patient-portal/password-set" || url.pathname === "/api/patient-portal/password-set/") return handlePatientPortalPasswordAuth(request, env, "password-set");
+    if (url.pathname === "/api/patient-portal/password-login" || url.pathname === "/api/patient-portal/password-login/") return handlePatientPortalPasswordAuth(request, env, "password-login");
     if (url.pathname === "/api/patient-portal/session" || url.pathname === "/api/patient-portal/session/") return handlePatientPortalSession(request, env);
     if (url.pathname === "/api/patient-portal/response" || url.pathname === "/api/patient-portal/response/") return handlePatientPortalResponse(request, env);
     if (url.pathname === "/api/patient-portal/logout" || url.pathname === "/api/patient-portal/logout/") return handlePatientPortalLogout(request, env);
