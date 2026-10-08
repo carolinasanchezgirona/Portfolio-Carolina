@@ -1,0 +1,19 @@
+/** Condiciones contractuales versionadas para compras de recursos descargables.
+ * No alterar una versión publicada: crear una nueva versión para cambios materiales.
+ * El servidor conserva una instantánea exacta del texto aceptado en cada compra.
+ */
+export const RESOURCE_TERMS_VERSION = "2026-10-08-v1";
+export const RESOURCE_TERMS = [
+  "1. Identificación. La parte vendedora es Carolina Sánchez Girona (Dememòria), NIF 53067189W, con domicilio profesional en Carrer Barcelona 8, escalera 1, local 4B, 08350 Arenys de Mar (Barcelona). Contacto: contact@carolinasanchezgirona.com.",
+  "2. Producto y ámbito. Se vende el material digital descargable descrito en la ficha del recurso, con su formato, contenido y precio indicados antes de pagar. Es un contenido psicoeducativo y no sustituye una consulta ni constituye un diagnóstico o tratamiento individualizado. El archivo puede leerse con una aplicación compatible con el formato indicado en la ficha (por ejemplo, lector PDF si se ofrece un PDF).",
+  "3. Precio y pago. El precio total de cada compra se muestra en euros antes de pasar al pago. No hay envío físico ni gastos de transporte. Los impuestos aplicables deberán estar incluidos o desglosados en el importe final informado antes de confirmar el pago. El pago se procesa a través de Stripe. No se activa ninguna suscripción periódica mediante esta compra.",
+  "4. Suministro. El enlace para descargar el material se habilita después de la confirmación del pago y de enviar la confirmación del contrato al correo facilitado. El enlace de descarga es personal, temporal y inicialmente válido durante siete días. Si falla la entrega, puede solicitarse ayuda para obtener el recurso adquirido escribiendo al contacto indicado.",
+  "5. Desistimiento. En las compras a distancia de contenidos digitales sin soporte físico existe, con carácter general, un plazo legal de desistimiento de catorce días naturales, salvo que resulte aplicable una excepción legal. Cuando la persona compradora elige expresamente recibir la descarga inmediatamente durante ese plazo, declara conocer que perderá el derecho de desistimiento una vez iniciado el suministro y recibe la correspondiente confirmación contractual, se aplica la excepción del artículo 103.m del Real Decreto Legislativo 1/2007. Si esas condiciones no se cumplen, no se considerará perdida la protección legal.",
+  "6. Garantías y problemas. La excepción al desistimiento no elimina los derechos legales por falta de conformidad, defectos en el archivo, errores de cobro o incumplimiento de la entrega. Las incidencias y las solicitudes legalmente procedentes de reembolso se atienden en contact@carolinasanchezgirona.com. Se facilitará una solución conforme a las garantías legales aplicables.",
+  "7. Uso autorizado. La compra otorga una licencia no exclusiva para uso personal o profesional propio, según el público al que se dirija el recurso. Salvo autorización expresa o límite legal aplicable, no permite revender, redistribuir ni publicar íntegramente el material.",
+  "8. Datos personales. Se utilizan los datos necesarios para cobrar, acreditar la operación, entregar el recurso y atender incidencias, conforme a la política de privacidad de la web. Los proveedores técnicos pueden intervenir en el pago y el correo transaccional. No se solicita información de salud para comprar este recurso.",
+  "9. Contacto y reclamaciones. Para consultas sobre una compra o formular una reclamación, escribir a contact@carolinasanchezgirona.com. Se aplican las normas imperativas de protección de personas consumidoras y los mecanismos de reclamación legalmente disponibles."
+] as const;
+export const RESOURCE_TERMS_FULL_TEXT =
+  "CONDICIONES DE COMPRA DE RECURSOS DIGITALES\nVersión " +
+  RESOURCE_TERMS_VERSION + "\n\n" + RESOURCE_TERMS.join("\n\n");
