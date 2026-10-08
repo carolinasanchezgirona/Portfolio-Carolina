@@ -519,6 +519,64 @@
     }
   }
 
+
+  // Guide is attached to an existing exercise response; no clinical data in localStorage.
+  function createGuidedRecord(recordField) {
+    const panel = document.createElement("details");
+    panel.className = "space-guided-record";
+    const summary = document.createElement("summary");
+    summary.textContent = "Hacer un autorregistro paso a paso";
+    const description = document.createElement("p");
+    description.textContent = "Contesta solo lo que quieras. Después añade el texto al ejercicio y guárdalo.";
+    const prompts = [
+      ["Situación", "¿Qué ocurrió?"],
+      ["Pensamientos", "¿Qué pasó por tu mente?"],
+      ["Emociones", "¿Qué sentiste?"],
+      ["Sensaciones", "¿Qué notaste en tu cuerpo?"],
+      ["Respuesta", "¿Qué hiciste o evitaste hacer?"],
+      ["Reflexión", "¿Qué te gustaría recordar o probar?"]
+    ];
+    const fields = document.createElement("div");
+    fields.className = "space-guided-fields";
+    const inputs = prompts.map(([title, hint]) => {
+      const label = document.createElement("label");
+      label.className = "space-guided-field";
+      const name = document.createElement("strong");
+      name.textContent = title;
+      const help = document.createElement("span");
+      help.textContent = hint;
+      const input = document.createElement("textarea");
+      input.maxLength = 1800;
+      input.rows = 2;
+      label.append(name, help, input);
+      fields.append(label);
+      return { title, input };
+    });
+    const actions = document.createElement("div");
+    actions.className = "space-guided-actions";
+    const add = document.createElement("button");
+    add.type = "button";
+    add.className = "space-secondary";
+    add.textContent = "Añadir a mi ejercicio";
+    const status = document.createElement("span");
+    status.className = "space-small";
+    status.setAttribute("role", "status");
+    add.addEventListener("click", () => {
+      const answered = inputs.filter(({ input }) => input.value.trim());
+      if (!answered.length) { status.textContent = "Escribe al menos una respuesta."; return; }
+      const text = ["AUTORREGISTRO", ...answered.map(({ title, input }) => title + ":\n" + input.value.trim())].join("\n\n");
+      const next = [recordField.value.trim(), text].filter(Boolean).join("\n\n────────\n\n");
+      if (next.length > 12000) { status.textContent = "El ejercicio ha alcanzado su longitud máxima."; return; }
+      recordField.value = next;
+      inputs.forEach(({ input }) => { input.value = ""; });
+      status.textContent = "Añadido al ejercicio. Pulsa Guardar borrador para conservarlo.";
+      recordField.focus();
+    });
+    actions.append(add, status);
+    panel.append(summary, description, fields, actions);
+    return panel;
+  }
+
   function createPatientMaterial(item, index) {
     const documentData = item?.patient_document && typeof item.patient_document === "object" ? item.patient_document : {};
     const details = document.createElement("details");
@@ -555,18 +613,18 @@
       const heading = document.createElement("h4");
       heading.textContent = "Rellena el ejercicio aquí";
       const explainer = document.createElement("p");
-      explainer.textContent = "Guardar borrador mantiene tus respuestas privadas. Solo Carolina las verá cuando pulses Compartir respuestas.";
+      explainer.textContent = "Puedes escribir o utilizar el autorregistro guiado. Solo se comparte con Carolina si pulsas «Compartir respuestas».";
       const form = document.createElement("form");
 
       const recordLabel = document.createElement("label");
-      recordLabel.textContent = documentData.record_prompt || "Tu registro";
+      recordLabel.textContent = documentData.record_prompt || "Mis notas y autorregistros";
       const record = document.createElement("textarea");
       record.dataset.responseRecord = "true";
       record.maxLength = 12000;
       record.value = saved.record;
       record.placeholder = "Escribe aquí…";
       recordLabel.append(record);
-      form.append(recordLabel);
+      form.append(createGuidedRecord(record), recordLabel);
 
       questions.forEach((question, questionIndex) => {
         const label = document.createElement("label");
@@ -623,7 +681,7 @@
 
     const name = String(data?.patient?.first_name || "").trim();
     const title = document.getElementById("space-today-title");
-    if (title) title.textContent = name ? `Hola, ${name}. ¿Qué necesitas ahora?` : "¿Qué necesitas ahora?";
+    if (title) title.textContent = name ? `Hola, ${name}` : "Un espacio para ti";
 
     const appointment = data?.next_appointment || null;
     const appointmentTitle = document.getElementById("space-appointment-title");
@@ -637,6 +695,10 @@
     const materials = Array.isArray(data?.materials) ? data.materials : [];
     const count = document.getElementById("space-material-count");
     if (count) count.textContent = materials.length === 1 ? "1 material disponible" : `${materials.length} materiales disponibles`;
+    const quickCount = document.getElementById("space-quick-material-count");
+    if (quickCount) quickCount.textContent = materials.length
+      ? `Tienes ${materials.length} ${materials.length === 1 ? "material disponible" : "materiales disponibles"} para trabajar.`
+      : "Aquí encontrarás los ejercicios que Carolina comparta contigo.";
     const therapyStatus = document.getElementById("space-therapy-status");
     if (therapyStatus) therapyStatus.textContent = materials.length
       ? "Tienes material disponible para trabajar entre sesiones."
@@ -654,6 +716,7 @@
       }
     }
 
+    window.dispatchEvent(new Event("patient-portal-session-ready"));
     openPortal("today");
   }
 
@@ -993,7 +1056,7 @@
   navButtons.forEach(button => {
     button.addEventListener("click", () => {
       const view = button.dataset.spaceView;
-      if (view === "therapy" && !state.portalAuthenticated) {
+      if (view !== "wellness" && !state.portalAuthenticated) {
         state.guestMode = false;
         showAccessGate();
         setAccessMessage("Para ver tu terapia, inicia sesión con tu correo y contraseña.");
@@ -1109,6 +1172,7 @@
   document.getElementById("space-wellness-guest")?.addEventListener("click", () => {
     state.guestMode = true;
     state.portalAuthenticated = false;
+    window.dispatchEvent(new Event("patient-portal-session-ready"));
     openPortal("wellness");
   });
   document.querySelectorAll("[data-go-therapy]").forEach((button) => {

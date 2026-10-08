@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Script from "next/script";
 import "./mi-espacio.css";
+import MoodTracker, { MoodAvatarSettings } from "./mood-tracker";
 
 export const metadata: Metadata = {
   title: "Mi espacio",
@@ -83,7 +84,7 @@ export default function MiEspacioPage() {
             <button type="button" data-space-view="therapy">Mi terapia</button>
             <button type="button" data-space-view="wellness">Wellness</button>
             <button type="button" data-space-view="progress">Mi progreso</button>
-            <button type="button" data-space-view="account">Cuenta y privacidad</button>
+            <button type="button" data-space-view="account">Configuración</button>
           </nav>
 
           <div className="space-sidebar-note">
@@ -96,10 +97,30 @@ export default function MiEspacioPage() {
           <section className="space-view" data-space-panel="today">
             <div className="space-hero">
               <p className="space-eyebrow">Hoy</p>
-              <h2 id="space-today-title">¿Qué necesitas ahora?</h2>
-              <p>No hace falta saber el nombre de una técnica. Empieza por cómo estás y te llevamos a una herramienta breve.</p>
+              <h2 id="space-today-title">Un espacio para ti</h2>
+              <p>Herramientas para tu bienestar y recursos para continuar lo trabajado en consulta, a tu ritmo.</p>
             </div>
 
+            <MoodTracker />
+
+            <div className="space-quick-start">
+              <div>
+                <p className="space-eyebrow">Mi terapia</p>
+                <h3>Tus ejercicios, a mano</h3>
+                <p id="space-quick-material-count">Aquí encontrarás los materiales compartidos contigo para trabajar entre sesiones.</p>
+              </div>
+              <button type="button" className="space-primary" data-go-therapy>Ir a mis ejercicios →</button>
+            </div>
+
+            <aside className="space-membership-note">
+              <strong>Acceso incluido durante la terapia</strong>
+              <p>Mientras estés en tratamiento, Wellness y tus materiales están incluidos. Al finalizar, podrás continuar con las herramientas digitales mediante una suscripción voluntaria cuando esté disponible.</p>
+            </aside>
+
+            <div className="space-needs-heading">
+              <div><p className="space-eyebrow">A tu ritmo</p><h3>¿Qué necesitas ahora?</h3></div>
+              <span>Elige según lo que te apetezca trabajar.</span>
+            </div>
             <div className="space-needs" aria-label="Necesidades de hoy">
               <button type="button" data-need="calmarme"><span aria-hidden="true">◌</span><strong>Calmarme</strong><small>Bajar activación</small></button>
               <button type="button" data-need="rumiacion"><span aria-hidden="true">↻</span><strong>Dejar de darle vueltas</strong><small>Salir del bucle</small></button>
@@ -145,9 +166,19 @@ export default function MiEspacioPage() {
           <section className="space-view" data-space-panel="therapy" hidden>
             <div className="space-hero">
               <p className="space-eyebrow">Mi terapia</p>
-              <h2>Lo que sí compartimos para trabajar entre sesiones</h2>
-              <p>Esta zona no muestra tu historia clínica ni notas internas. Solo aparecerá aquello que se haya preparado expresamente para ti.</p>
+              <h2>Tu trabajo entre sesiones</h2>
+              <p>Consulta tus ejercicios, rellena tus respuestas aquí mismo y decide cuándo compartirlas con Carolina. Las notas clínicas internas permanecen fuera de esta zona.</p>
             </div>
+
+            <section className="space-section space-materials-section">
+              <div className="space-section-heading">
+                <div><p className="space-eyebrow">Entre sesiones</p><h3>Mis ejercicios y materiales</h3></div>
+                <span id="space-material-count" className="space-pill">Acceso privado</span>
+              </div>
+              <div id="space-patient-materials" className="space-patient-materials">
+                <div className="space-empty">Inicia sesión para ver tus materiales.</div>
+              </div>
+            </section>
 
             <div className="space-grid space-feature-grid">
               <article id="space-appointment-card" className="space-card space-card-active">
@@ -156,36 +187,15 @@ export default function MiEspacioPage() {
                 <p id="space-appointment-copy">La información de agenda solo se muestra después de identificarte.</p>
               </article>
 
-              <article className="space-card">
-                <p className="space-kicker">Entre sesiones</p>
-                <h3>Materiales y ejercicios</h3>
-                <p>Consulta los materiales que Carolina te ha enviado y, cuando el ejercicio lo permita, rellénalo aquí mismo.</p>
-                <span id="space-material-count" className="space-pill">Acceso privado</span>
-              </article>
-
-              <article className="space-card space-card-planned">
-                <p className="space-kicker">Siguiente fase</p>
-                <h3>Para hablar en sesión</h3>
-                <p>Guardar un tema para la próxima consulta sin abrir un canal de mensajería clínica permanente.</p>
-                <span className="space-pill">Preparado para conectar</span>
-              </article>
-
-              <article className="space-card space-card-planned">
-                <p className="space-kicker">Siguiente fase</p>
-                <h3>Documentos compartidos</h3>
-                <p>Solo documentos que Carolina decida compartir contigo. La historia clínica seguirá fuera de esta zona.</p>
-                <span className="space-pill">Preparado para conectar</span>
+              <article className="space-card space-card-guide">
+                <p className="space-kicker">Cómo funciona</p>
+                <h3>Avanza a tu ritmo</h3>
+                <p>Completa tus ejercicios paso a paso. Puedes guardar un borrador y elegir cuándo compartir tus respuestas.</p>
+                <span className="space-pill">Sin prisas</span>
               </article>
             </div>
 
-            <section className="space-section">
-              <div className="space-section-heading">
-                <div><p className="space-eyebrow">Entre sesiones</p><h3>Mis materiales</h3></div>
-              </div>
-              <div id="space-patient-materials" className="space-patient-materials">
-                <div className="space-empty">Inicia sesión para ver tus materiales.</div>
-              </div>
-            </section>
+
 
             <aside className="space-info-note">
               <strong>Privacidad por diseño</strong>
@@ -196,9 +206,20 @@ export default function MiEspacioPage() {
           <section className="space-view" data-space-panel="wellness" hidden>
             <div className="space-hero">
               <p className="space-eyebrow">Wellness</p>
-              <h2>Bienestar emocional, cognitivo y de autocuidado</h2>
-              <p>Herramientas breves para necesidades cotidianas. No pretende diagnosticarte ni sustituir una evaluación o un tratamiento psicológico.</p>
+              <h2>Herramientas para tu bienestar</h2>
+              <p>Propuestas prácticas para explorar emociones, entrenar habilidades cognitivas y cuidar tu día a día. No sustituyen la evaluación ni la intervención clínica.</p>
             </div>
+
+            <details className="space-learning-card">
+              <summary><span className="space-learning-icon" aria-hidden="true">◎</span><span><strong>Comprender lo que nos pasa</strong><small>Una explicación visual, sencilla y sin etiquetas</small></span><span aria-hidden="true">+</span></summary>
+              <div className="space-learning-body">
+                <p>Podemos observar una situación desde distintas perspectivas, sin que ninguna sea necesariamente «la verdad» de lo que sentimos.</p>
+                <div className="space-learning-flow" role="img" aria-label="Tres elementos que pueden influirse mutuamente: situación, pensamientos y emociones, respuesta.">
+                  <span><strong>01</strong> Situación</span><span><strong>02</strong> Pienso y siento</span><span><strong>03</strong> Respondo</span>
+                </div>
+                <p className="space-learning-caption">Una orientación para observar tu experiencia, no un diagnóstico ni una explicación causal universal.</p>
+              </div>
+            </details>
 
             <div className="space-filter-row" role="group" aria-label="Filtrar herramientas Wellness">
               <button className="is-active" type="button" data-wellness-filter="all">Todo</button>
@@ -236,9 +257,11 @@ export default function MiEspacioPage() {
           <section className="space-view" data-space-panel="account" hidden>
             <div className="space-hero">
               <p className="space-eyebrow">Cuenta y privacidad</p>
-              <h2>Qué se guarda y qué no</h2>
-              <p>La separación entre Wellness y terapia es intencionada. Una herramienta de bienestar no debe convertirse automáticamente en información clínica.</p>
+              <h2>Mi configuración y privacidad</h2>
+              <p>La separación entre Wellness y terapia es intencionada. La elección del personaje se guarda en tu cuenta y tus registros libres de bienestar permanecen en este dispositivo, separados por paciente.</p>
             </div>
+
+            <MoodAvatarSettings />
 
             <div className="space-grid space-feature-grid">
               <article className="space-card">
@@ -287,7 +310,7 @@ export default function MiEspacioPage() {
         <span>Si existe una emergencia, llama al 112. Si hay riesgo o ideación suicida, puedes contactar con el 024.</span>
       </aside>
 
-      <Script src="/mi-espacio.js?v=20261008-1" strategy="afterInteractive" />
+      <Script src="/mi-espacio.js?v=20261008-visual1" strategy="afterInteractive" />
     </main>
   );
 }
