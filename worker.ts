@@ -4,6 +4,7 @@ interface Env {
   STRIPE_WEBHOOK_SECRET: string;
   STRIPE_WEBHOOK_SECRET_TEST?: string;
   STRIPE_SECRET_KEY?: string;
+  PORTAL_ACCESS_ENFORCEMENT?: string;
   SUPABASE_SERVICE_ROLE_KEY?: string;
   OPENAI_API_KEY?: string;
   OPENAI_TEXT_MODEL?: string;
@@ -376,6 +377,75 @@ async function patientPortalSession(request: Request, env: Env): Promise<Patient
 function firstName(value: unknown): string {
   const clean = typeof value === "string" ? value.trim().replace(/\s+/g, " ") : "";
   return clean.split(" ")[0]?.slice(0, 60) || "";
+}
+
+type PortalEntitlement = {
+  mode: "therapy_included" | "subscription" | "ended" | "pending" | "temporarily_unavailable";
+  can_access: boolean;
+  enforcement_enabled: boolean;
+  subscription_status: string | null;
+  current_period_end: string | null;
+};
+
+/**
+ * Account-based access is determined on the server. Stripe secrets, subscription
+ * data and clinical material contents never enter the browser.
+ * This phase is read-only and unenforced until paid checkout + signed webhooks
+ * have been audited. An unavailable database cannot silently revoke access.
+ */
+async function patientPortalEntitlement(
+  env: Env,
+  patientId: string,
+  patientStatus: string,
+): Promise<PortalEntitlement> {
+  const enforcement = env.PORTAL_ACCESS_ENFORCEMENT === "true";
+  if (patientStatus === "active") {
+    return { mode: "therapy_included", can_access: true, enforcement_enabled: enforcement,
+      subscription_status: null, current_period_end: null };
+  }
+  try {
+    const response = await fetch(
+      RESOURCE_SUPABASE + "/rest/v1/patient_portal_subscriptions?select=status,current_period_end&patient_id=eq." +
+        encodeURIComponent(patientId) + "&limit=1",
+      { headers: serviceHeaders(env), cache: "no-store" },
+    );
+    if (!response.ok) throw new Error("subscription-query-failed");
+    const rows = await response.json().catch(() => []) as Array<{status?: string; current_period_end?: string | null}>;
+    const record = Array.isArray(rows) ? rows[0] : null;
+    const subscribed = Boolean(
+      (record?.status === "active" || record?.status === "trialing") &&
+      typeof record?.current_period_end === "string" &&
+      Date.parse(record.current_period_end) > Date.now()
+    );
+    return {
+      mode: subscribed ? "subscription" : patientStatus === "discharged" ? "ended" : "pending",
+      can_access: subscribed || !enforcement,
+      enforcement_enabled: enforcement,
+      subscription_status: typeof record?.status === "string" ? record.status : null,
+      current_period_end: typeof record?.current_period_end === "string" ? record.current_period_end : null,
+    };
+  } catch {
+    return {
+      mode: "temporarily_unavailable", can_access: !enforcement,
+      enforcement_enabled: enforcement, subscription_status: null, current_period_end: null,
+    };
+  }
+}
+
+async function handlePatientPortalAccess(request: Request, env: Env): Promise<Response> {
+  if (request.method !== "GET") return patientPortalJson({ error: "Método no permitido." }, 405);
+  const session = await patientPortalSession(request, env);
+  if (!session) return patientPortalJson({ error: "Acceso no autorizado." }, 401);
+  const response = await fetch(
+    RESOURCE_SUPABASE + "/rest/v1/clinical_patients?select=id,status&id=eq." +
+      encodeURIComponent(session.patient_id) + "&status=neq.archived&limit=1",
+    { headers: serviceHeaders(env), cache: "no-store" },
+  );
+  if (!response.ok) return patientPortalJson({ error: "No disponible." }, 503);
+  const rows = await response.json().catch(() => []) as Array<{ status?: string }>;
+  if (!rows[0]) return patientPortalJson({ error: "No autorizado." }, 401);
+  const entitlement = await patientPortalEntitlement(env, session.patient_id, String(rows[0].status || ""));
+  return patientPortalJson({ entitlement });
 }
 
 async function handlePatientPortalSession(request: Request, env: Env): Promise<Response> {
@@ -1732,6 +1802,7 @@ export default {
     if (url.pathname === "/api/patient-portal/password-set" || url.pathname === "/api/patient-portal/password-set/") return handlePatientPortalPasswordAuth(request, env, "password-set");
     if (url.pathname === "/api/patient-portal/password-login" || url.pathname === "/api/patient-portal/password-login/") return handlePatientPortalPasswordAuth(request, env, "password-login");
     if (url.pathname === "/api/patient-portal/session" || url.pathname === "/api/patient-portal/session/") return handlePatientPortalSession(request, env);
+    if (url.pathname === "/api/patient-portal/access" || url.pathname === "/api/patient-portal/access/") return handlePatientPortalAccess(request, env);
     if (url.pathname === "/api/patient-portal/preferences" || url.pathname === "/api/patient-portal/preferences/") return handlePatientPortalPreferences(request, env);
     if (url.pathname === "/api/patient-portal/response" || url.pathname === "/api/patient-portal/response/") return handlePatientPortalResponse(request, env);
     if (url.pathname === "/api/patient-portal/logout" || url.pathname === "/api/patient-portal/logout/") return handlePatientPortalLogout(request, env);
