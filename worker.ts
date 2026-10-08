@@ -289,6 +289,59 @@ async function handlePatientPortalAuth(request: Request, env: Env, action: "requ
   });
 }
 
+async function handlePatientPasswordAuth(request: Request, env: Env, action: "login" | "reset"): Promise<Response> {
+  if (request.method !== "POST") return patientPortalJson({ error: "Método no permitido." }, 405);
+  if (!patientPortalSameOrigin(request)) return patientPortalJson({ error: "Origen no permitido." }, 403);
+  if (!env.SUPABASE_SERVICE_ROLE_KEY) return patientPortalJson({ error: "Acceso no configurado." }, 503);
+  if (Number(request.headers.get("content-length") || "0") > 4096) return patientPortalJson({ error: "Solicitud demasiado extensa." }, 413);
+  const body = await request.json().catch(() => null) as Record<string, unknown> | null;
+  const email = typeof body?.email === "string" ? body.email.trim().toLowerCase() : "";
+  if (email.length > 254 || !/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(email)) return patientPortalJson({ error: "Correo no válido." }, 400);
+  if (action === "reset") {
+    const reset = await fetch(RESOURCE_SUPABASE + "/auth/v1/recover", {
+      method: "POST",
+      headers: { apikey: RESOURCE_PUBLISHABLE, "Content-Type": "application/json" },
+      body: JSON.stringify({ email }),
+    });
+    if (!reset.ok) console.error("Recuperación de contraseña no disponible:", reset.status);
+    return patientPortalJson({ ok: true, message: "Si existe una cuenta verificada, recibirás instrucciones para recuperar tu contraseña." });
+  }
+  const password = typeof body?.password === "string" ? body.password : "";
+  if (!password || password.length > 1024) return patientPortalJson({ error: "Correo o contraseña incorrectos." }, 401);
+  const auth = await fetch(RESOURCE_SUPABASE + "/auth/v1/token?grant_type=password", {
+    method: "POST",
+    headers: { apikey: RESOURCE_PUBLISHABLE, "Content-Type": "application/json" },
+    body: JSON.stringify({ email, password }),
+  });
+  if (!auth.ok) return patientPortalJson({ error: "Correo o contraseña incorrectos." }, 401);
+  const authData = await auth.json().catch(() => ({})) as Record<string, unknown>;
+  const user = authData.user as Record<string, unknown> | undefined;
+  const userId = typeof user?.id === "string" ? user.id : "";
+  const confirmed = typeof user?.email_confirmed_at === "string" || typeof user?.confirmed_at === "string";
+  if (!/^[0-9a-f-]{36}$/i.test(userId) || !confirmed) return patientPortalJson({ error: "La cuenta no está verificada." }, 403);
+  const identities = await fetch(RESOURCE_SUPABASE + "/rest/v1/patient_portal_identities?select=patient_id&auth_user_id=eq." +
+    encodeURIComponent(userId) + "&limit=1", { headers: serviceHeaders(env), cache: "no-store" });
+  if (!identities.ok) return patientPortalJson({ error: "Servicio no disponible." }, 503);
+  const rows = await identities.json().catch(() => []) as {patient_id?: string}[];
+  const patientId = Array.isArray(rows) ? rows[0]?.patient_id : undefined;
+  if (!patientId) return patientPortalJson({ error: "No tienes acceso activo a Mi espacio." }, 403);
+  const active = await fetch(RESOURCE_SUPABASE + "/rest/v1/clinical_patients?select=id&id=eq." +
+    encodeURIComponent(patientId) + "&status=neq.archived&limit=1", { headers: serviceHeaders(env), cache: "no-store" });
+  if (!active.ok) return patientPortalJson({ error: "Servicio no disponible." }, 503);
+  const activeRows = await active.json().catch(() => []);
+  if (!Array.isArray(activeRows) || activeRows.length !== 1) return patientPortalJson({ error: "No tienes acceso activo a Mi espacio." }, 403);
+  const rawToken = crypto.randomUUID().replaceAll("-", "") + crypto.randomUUID().replaceAll("-", "");
+  const tokenHash = await sha256Hex(rawToken);
+  const expires = new Date(Date.now() + 8 * 60 * 60 * 1000);
+  const save = await fetch(RESOURCE_SUPABASE + "/rest/v1/patient_portal_sessions", {
+    method: "POST",
+    headers: serviceHeaders(env, { Prefer: "return=minimal" }),
+    body: JSON.stringify({ patient_id: patientId, token_hash: tokenHash, expires_at: expires.toISOString() }),
+  });
+  if (!save.ok) return patientPortalJson({ error: "No se ha podido abrir la sesión." }, 502);
+  return patientPortalJson({ ok: true }, 200, { "Set-Cookie": patientPortalCookie(rawToken, 8 * 60 * 60) });
+}
+
 type PatientPortalSession = {
   id: string;
   patient_id: string;
@@ -1611,6 +1664,8 @@ export default {
     if (url.pathname === "/api/resources/access" || url.pathname === "/api/resources/access/") return handleResourceAccess(request, env);
     if (url.pathname === "/api/resources/download" || url.pathname === "/api/resources/download/") return handleResourceDownload(request, env);
     if (url.pathname === "/api/questions/draft" || url.pathname === "/api/questions/draft/") return handleQuestionDraft(request, env);
+    if (url.pathname === "/api/patient-portal/password-login" || url.pathname === "/api/patient-portal/password-login/") return handlePatientPasswordAuth(request, env, "login");
+    if (url.pathname === "/api/patient-portal/password-reset" || url.pathname === "/api/patient-portal/password-reset/") return handlePatientPasswordAuth(request, env, "reset");
     if (url.pathname === "/api/patient-portal/request-link" || url.pathname === "/api/patient-portal/request-link/") return handlePatientPortalAuth(request, env, "request-link");
     if (url.pathname === "/api/patient-portal/verify-link" || url.pathname === "/api/patient-portal/verify-link/") return handlePatientPortalAuth(request, env, "verify-link");
     if (url.pathname === "/api/patient-portal/request-code" || url.pathname === "/api/patient-portal/request-code/") return handlePatientPortalAuth(request, env, "request");
