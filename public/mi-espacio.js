@@ -564,8 +564,8 @@
     add.addEventListener("click", () => {
       const answered = inputs.filter(({ input }) => input.value.trim());
       if (!answered.length) { status.textContent = "Escribe al menos una respuesta."; return; }
-      const text = ["AUTORREGISTRO", ...answered.map(({ title, input }) => title + ":\\n" + input.value.trim())].join("\\n\\n");
-      const next = [recordField.value.trim(), text].filter(Boolean).join("\\n\\n────────\\n\\n");
+      const text = ["AUTORREGISTRO", ...answered.map(({ title, input }) => title + ":\n" + input.value.trim())].join("\n\n");
+      const next = [recordField.value.trim(), text].filter(Boolean).join("\n\n────────\n\n");
       if (next.length > 12000) { status.textContent = "El ejercicio ha alcanzado su longitud máxima."; return; }
       recordField.value = next;
       inputs.forEach(({ input }) => { input.value = ""; });
