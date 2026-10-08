@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import "./mood-tracker.css";
 
-type MoodEntry = { date: string; rating: number; energy: number };
+type MoodEntry = { date: string; rating: number; energy: number; energy_scale?: 5 };
 const STORAGE_KEY = "wellness_mood_checkins_v1";
 const MOODS = [
   { rating: 1, name: "Muy difícil", note: "Hoy pesa un poquito más", color: "#c8dcf4" },
@@ -12,7 +12,7 @@ const MOODS = [
   { rating: 4, name: "Agradable", note: "Hay espacio para respirar", color: "#caebde" },
   { rating: 5, name: "Muy agradable", note: "Hoy te sientes bien", color: "#b5e3db" },
 ];
-const ENERGY = ["Baja", "Media", "Alta"];
+const ENERGY = ["Muy baja", "Baja", "Media", "Alta", "Muy alta"];
 
 function keyForDate(day: Date) {
   return `${day.getFullYear()}-${String(day.getMonth() + 1).padStart(2, "0")}-${String(day.getDate()).padStart(2, "0")}`;
@@ -164,7 +164,7 @@ export default function MoodTracker() {
   const { avatar, scope, ready: avatarReady } = useAvatar();
   const [entries, setEntries] = useState<MoodEntry[]>([]);
   const [selected, setSelected] = useState<number | null>(null);
-  const [energy, setEnergy] = useState(1);
+  const [energy, setEnergy] = useState(2);
   const [loaded, setLoaded] = useState(false);
   const [message, setMessage] = useState("");
   const today = keyForDate(new Date());
@@ -174,15 +174,21 @@ export default function MoodTracker() {
     setLoaded(false);
     setEntries([]);
     setSelected(null);
-    setEnergy(1);
+    setEnergy(2);
     if (!scopedMoodKey) return;
     try {
       const raw = JSON.parse(localStorage.getItem(scopedMoodKey) || "[]");
-      const valid = Array.isArray(raw) ? raw.filter((entry): entry is MoodEntry =>
+      // Previously stored energy 0,1,2 maps to 0,2,4 on the new scale.
+      const valid: MoodEntry[] = Array.isArray(raw) ? raw.filter((entry): entry is MoodEntry =>
         typeof entry?.date === "string" && /^\d{4}-\d{2}-\d{2}$/.test(entry.date) &&
         Number.isInteger(entry.rating) && entry.rating >= 1 && entry.rating <= 5 &&
-        Number.isInteger(entry.energy) && entry.energy >= 0 && entry.energy <= 2
-      ).slice(-90) : [];
+        Number.isInteger(entry.energy) && entry.energy >= 0 &&
+        (entry.energy_scale === 5 ? entry.energy <= 4 : entry.energy <= 2)
+      ).slice(-90).map(entry => ({
+        ...entry,
+        energy: entry.energy_scale === 5 ? entry.energy : entry.energy * 2,
+        energy_scale: 5 as const,
+      })) : [];
       setEntries(valid);
       const current = valid.find(entry => entry.date === keyForDate(new Date()));
       if (current) { setSelected(current.rating); setEnergy(current.energy); }
@@ -204,9 +210,11 @@ export default function MoodTracker() {
     return { key, label: new Intl.DateTimeFormat("es-ES", { weekday: "short" }).format(date), entry: entries.find(e => e.date === key) };
   }), [entries]);
 
+  const recent = useMemo(() => [...entries].sort((a, b) => b.date.localeCompare(a.date)).slice(0, 5), [entries]);
+
   function save() {
     if (selected === null || !loaded || !scopedMoodKey) return;
-    const newEntries = [...entries.filter(entry => entry.date !== today), { date: today, rating: selected, energy }]
+    const newEntries = [...entries.filter(entry => entry.date !== today), { date: today, rating: selected, energy, energy_scale: 5 as const }]
       .sort((a, b) => a.date.localeCompare(b.date)).slice(-90);
     try {
       localStorage.setItem(scopedMoodKey, JSON.stringify(newEntries));
@@ -221,7 +229,7 @@ export default function MoodTracker() {
     if (scopedMoodKey) try { localStorage.removeItem(scopedMoodKey); } catch { /* almacenamiento bloqueado */ }
     setEntries([]);
     setSelected(null);
-    setEnergy(1);
+    setEnergy(2);
     setMessage("Has borrado el historial de este dispositivo.");
   }
 
@@ -332,6 +340,21 @@ export default function MoodTracker() {
             <p className="mood-recent-empty">Todavía no has registrado ningún momento. Puedes empezar cuando te apetezca.</p>
           )}
         </div>
+        <section className="mood-recent" aria-label="Mis últimos registros">
+          <h4>Mis últimos registros</h4>
+          {recent.length ? (
+            <ul className="mood-recent-list">
+              {recent.map(entry => (
+                <li key={entry.date}>
+                  <span className="mood-recent-indicator" style={{ backgroundColor: MOODS[entry.rating - 1].color }} aria-hidden="true" />
+                  <span className="mood-recent-day">{new Intl.DateTimeFormat("es-ES", { day: "numeric", month: "short" }).format(new Date(entry.date + "T12:00:00"))}</span>
+                  <strong>{MOODS[entry.rating - 1].name}</strong>
+                  <small>Energía {ENERGY[entry.energy].toLowerCase()}</small>
+                </li>
+              ))}
+            </ul>
+          ) : <p className="mood-recent-empty">Todavía no tienes registros. Aparecerán aquí cuando quieras comenzar.</p>}
+        </section>
         <p className="mood-privacy-note">Este registro es opcional, permanece en el navegador y no se envía a Carolina ni se incorpora a tu historia clínica. Si borras los datos del navegador, también desaparecerá. No escribas aquí información clínica sensible.</p>
       </div>
     </section>
