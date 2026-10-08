@@ -44,3 +44,25 @@
 @media(max-width:780px){.mood-tracker{padding:18px;border-radius:20px}.mood-tracker-heading{flex-direction:column;gap:10px}.mood-tracker-body{grid-template-columns:1fr;gap:18px}.mood-friend-panel{min-height:244px}.mood-friend-svg{max-width:190px}.mood-options{grid-template-columns:repeat(5,minmax(0,1fr))}}
 @media(max-width:460px){.mood-tracker{margin:12px -2px 28px;padding:16px}.mood-friend-panel{min-height:230px}.mood-options{gap:5px}.mood-option{min-height:79px;padding:9px 2px 7px;font-size:.6rem;border-radius:10px}.mood-option-dot{width:25px;height:25px}.mood-history-days{gap:5px}.mood-history-mark{border-radius:12px;font-size:1.2rem}.mood-tracker-private{font-size:.67rem}}
 @media(prefers-reduced-motion:reduce){.mood-friend-svg{animation:none}.mood-option{transition:none}}
+
+/* Character selection: first visit only; later changes live in account settings. */
+.mood-avatar-onboarding{padding:clamp(19px,4vw,32px)}
+.mood-avatar-onboarding h3,.mood-settings-heading h3{margin:0 0 9px;color:#173a5e;font-family:var(--font-newsreader),Georgia,serif;font-weight:600;font-size:clamp(1.55rem,3vw,2.15rem)}
+.mood-avatar-onboarding>p:not(.space-eyebrow),.mood-settings-heading p{max-width:680px;line-height:1.6;font-size:.87rem;color:#637b88;margin:0 0 18px}
+.mood-avatar-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin:18px 0 12px}
+.mood-avatar-choice{display:flex;min-width:0;flex-direction:column;align-items:center;gap:3px;padding:10px 9px 12px;background:#f7fbfc;border:1px solid #dce8ed;border-radius:17px;color:#173a5e;font:inherit;cursor:pointer;transition:transform .15s ease,box-shadow .15s ease,border-color .15s ease}
+.mood-avatar-choice:hover{transform:translateY(-2px);border-color:#86bebd;box-shadow:0 7px 15px rgba(23,58,94,.09)}
+.mood-avatar-choice.is-selected{background:#edfafa;border-color:#08a6a0;box-shadow:0 0 0 2px rgba(8,166,160,.16)}
+.mood-avatar-choice:focus-visible,.mood-avatar-cancel:focus-visible{outline:3px solid #08a6a0;outline-offset:3px}
+.mood-avatar-portrait{width:100%;max-width:146px;aspect-ratio:1.1;border-radius:12px;background:radial-gradient(circle at 52% 25%,#fff,#e2f2f2);overflow:hidden;display:flex;align-items:flex-end;justify-content:center}
+.mood-avatar-portrait .mood-friend-svg{width:112%;max-width:none;filter:none;animation:none;transform:translateY(11%)}
+.mood-avatar-choice strong{font-size:.88rem;line-height:1.3;text-align:center}
+.mood-avatar-choice small{font-size:.69rem;line-height:1.35;color:#6a7d89;text-align:center}
+.mood-settings{margin:0 0 24px;padding:24px;border:1px solid #dce8ed;background:white;border-radius:22px}
+.mood-settings-heading{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+.mood-settings-heading p{margin:0}
+.mood-settings-heading .space-secondary{flex:none}
+.mood-settings .mood-avatar-grid{grid-template-columns:repeat(4,minmax(0,1fr))}
+.mood-avatar-cancel{color:#536a78;background:none;border:0;text-decoration:underline;cursor:pointer;font:inherit;font-size:.79rem;padding:9px 0}
+@media(max-width:760px){.mood-avatar-grid,.mood-settings .mood-avatar-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.mood-settings{padding:18px}.mood-settings-heading{flex-direction:column}}
+@media(prefers-reduced-motion:reduce){.mood-avatar-choice{transition:none}}
