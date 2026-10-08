@@ -424,3 +424,34 @@
     right: 22px;
   }
 }
+
+/* Acceso discreto y legible a la información legal desde todas las páginas públicas. */
+.site-legal-navigation {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 10px 22px;
+  padding: 14px 18px;
+  font-size: .82rem;
+  line-height: 1.55;
+}
+.site-legal-navigation a {
+  color: inherit;
+  text-underline-offset: 3px;
+}
+.site-legal-navigation a:focus-visible {
+  outline: 2px solid #0e6b54;
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+.site-legal-standalone {
+  padding: 18px 12px;
+  background: #fbf9f5;
+  color: #52605a;
+  border-top: 1px solid #e4e0d8;
+}
+.booking-footer .site-legal-navigation { padding-bottom: 24px; color: #52605a; }
+@media (max-width: 680px) {
+  .site-legal-navigation { gap: 8px 16px; }
+}
