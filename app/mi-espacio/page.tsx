@@ -65,8 +65,7 @@ export default function MiEspacioPage() {
 
           <p id="space-access-message" className="space-access-message" role="status" aria-live="polite" />
           <button id="space-open-panel" className="space-primary" type="button" hidden>Abrir Mi espacio en otra pestaña</button>
-          <div className="space-access-divider"><span>o</span></div>
-          <button id="space-wellness-guest" className="space-wellness-guest" type="button">Entrar en Wellness sin iniciar sesión</button>
+
           <p className="space-access-foot">Los enlaces de configuración solo sirven una vez. Nadie puede ver tus materiales clínicos hasta que te identifiques correctamente.</p>
         </div>
       </section>
@@ -265,9 +264,9 @@ export default function MiEspacioPage() {
 
             <div className="space-grid space-feature-grid">
               <article className="space-card">
-                <p className="space-kicker">Wellness libre</p>
+                <p className="space-kicker">Wellness personal</p>
                 <h3>Privado en este dispositivo</h3>
-                <p>Esta versión solo recuerda actividades completadas y favoritos. No guarda textos, emociones escritas ni respuestas personales.</p>
+                <p>Tus favoritos, actividades realizadas y registros de ánimo están separados por cuenta dentro de este dispositivo. No se comparten automáticamente con Carolina.</p>
               </article>
               <article className="space-card">
                 <p className="space-kicker">Mi terapia</p>
