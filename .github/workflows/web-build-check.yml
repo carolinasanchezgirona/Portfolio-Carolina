@@ -63,17 +63,23 @@ jobs:
       - name: Verificar que backend rechaza credenciales sin revelar datos
         shell: bash
         run: |
-          status=$(curl --silent --show-error --max-time 20 \
-            --output /dev/null --write-out '%{http_code}' \
+          result=$(curl --silent --show-error --max-time 20 \
+            --write-out '\n%{http_code}' \
             -X POST 'https://carolinasanchezgirona.com/api/patient-portal/password-login' \
             -H 'Origin: https://carolinasanchezgirona.com' \
             -H 'Content-Type: application/json' \
-            --data '{"email":"sonda-sin-paciente-20261008@example.org","password":"invalid-test-password"}') || status=000
-          echo "Estado de rechazo de credenciales inválidas: ${status}"
-          if [ "$status" = "401" ]; then
-            echo "Backend accesible y credenciales rechazadas correctamente."
-          elif [ "$status" = "503" ]; then
-            echo "::warning::Backend no configurado; verificar SUPABASE_SERVICE_ROLE_KEY en Cloudflare Workers (producción)."
+            --data '{"email":"sonda-sin-paciente-20261008@example.org","password":"invalid-test-password"}') || result='{}\n000'
+          status="${result##*
+\n'}"
+          body="${result%
+\n'*}"
+          echo "Estado HTTP de autenticación: ${status}"
+          if [ "$status" = "401" ] && [[ "$body" == *"Correo o contraseña incorrectos."* ]]; then
+            echo "Prueba superada: contraseña incorrecta rechazada por Supabase Auth."
+          elif [[ "$body" == *"Acceso no autorizado."* ]]; then
+            echo "::error::Secreto de Cloudflare no coincide con la credencial de Supabase del proyecto portal-pacientes."
+            exit 1
           else
-            echo "::warning::Código inesperado ${status}; revisar en Cloudflare Workers Logs."
+            echo "::error::Fallo de configuración o de respuesta: estado ${status}."
+            exit 1
           fi
