@@ -198,6 +198,9 @@ export default function QuestionsExperience({ initialQuestions }: { initialQuest
               <input name="website" type="text" tabIndex={-1} autoComplete="off" />
             </label>
 
+            <p className="question-data-protection">
+              <strong>Protección de datos:</strong> responsable, Carolina Sánchez Girona (Dememòria). Trataremos tu pregunta y, si lo facilitas, tu correo para revisar y gestionar una posible respuesta. La base jurídica es tu consentimiento, separado del consentimiento explícito para datos de salud y de la autorización de publicación. Puedes retirar el consentimiento y ejercer tus derechos en <a href="mailto:contact@carolinasanchezgirona.com">contact@carolinasanchezgirona.com</a>. Consulta conservación, proveedores y otros detalles en la <a href="/privacidad/" target="_blank" rel="noopener noreferrer">política de privacidad</a>.
+            </p>
             <div className="question-consents">
               <label><input name="privacy" type="checkbox" required /><span>He leído la <a href="/privacidad/" target="_blank">política de privacidad</a>.</span></label>
               <label><input name="health-consent" type="checkbox" required /><span>Consiento expresamente el tratamiento de la información de salud que decida incluir para gestionar esta pregunta.</span></label>
