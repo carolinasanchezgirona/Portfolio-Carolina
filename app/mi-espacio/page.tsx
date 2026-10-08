@@ -65,8 +65,7 @@ export default function MiEspacioPage() {
 
           <p id="space-access-message" className="space-access-message" role="status" aria-live="polite" />
           <button id="space-open-panel" className="space-primary" type="button" hidden>Abrir Mi espacio en otra pestaña</button>
-          <div className="space-access-divider"><span>o</span></div>
-          <button id="space-wellness-guest" className="space-wellness-guest" type="button">Entrar en Wellness sin iniciar sesión</button>
+
           <p className="space-access-foot">Los enlaces de configuración solo sirven una vez. Nadie puede ver tus materiales clínicos hasta que te identifiques correctamente.</p>
         </div>
       </section>
@@ -237,7 +236,7 @@ export default function MiEspacioPage() {
             <div className="space-hero">
               <p className="space-eyebrow">Mi progreso</p>
               <h2>Una mirada útil, no una nota sobre cómo “deberías” estar</h2>
-              <p>En esta primera versión solo se muestran actividades completadas y favoritos en este dispositivo. No se calculan diagnósticos ni porcentajes de bienestar.</p>
+              <p>Puedes revisar las herramientas utilizadas y tus favoritos en este dispositivo. Se guardan por separado para cada cuenta. No se calculan diagnósticos ni porcentajes de bienestar.</p>
             </div>
 
             <div className="space-summary">
@@ -265,9 +264,9 @@ export default function MiEspacioPage() {
 
             <div className="space-grid space-feature-grid">
               <article className="space-card">
-                <p className="space-kicker">Wellness libre</p>
+                <p className="space-kicker">Wellness personal</p>
                 <h3>Privado en este dispositivo</h3>
-                <p>Esta versión solo recuerda actividades completadas y favoritos. No guarda textos, emociones escritas ni respuestas personales.</p>
+                <p>Tus favoritos, actividades realizadas y registros de ánimo están separados por cuenta dentro de este dispositivo. No se comparten automáticamente con Carolina.</p>
               </article>
               <article className="space-card">
                 <p className="space-kicker">Mi terapia</p>
@@ -310,7 +309,7 @@ export default function MiEspacioPage() {
         <span>Si existe una emergencia, llama al 112. Si hay riesgo o ideación suicida, puedes contactar con el 024.</span>
       </aside>
 
-      <Script src="/mi-espacio.js?v=20261008-visual1" strategy="afterInteractive" />
+      <Script src="/mi-espacio.js?v=20261008-privacidad2" strategy="afterInteractive" />
     </main>
   );
 }
