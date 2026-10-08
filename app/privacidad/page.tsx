@@ -36,7 +36,7 @@ export default function PrivacyPage() {
         <section>
           <h2>1. Identificación del responsable del tratamiento</h2>
           <div className="legal-data">
-            <p><strong>Responsable del tratamiento:</strong> Dememoria (Consulta de Neuropsicología y Psicología)</p>
+            <p><strong>Responsable del tratamiento:</strong> Carolina Sánchez Girona (Dememòria, nombre comercial)</p>
             <p><strong>CIF/NIF:</strong> 53067189W</p>
             <p><strong>Dirección:</strong> Carrer Barcelona 8 Local Arenys de Mar</p>
             <p><strong>Correo electrónico:</strong> contact@carolinasanchezgirona.com</p>
@@ -205,7 +205,7 @@ export default function PrivacyPage() {
       </article>
 
       <footer className="legal-footer">
-        <div className="legal-wrap">© 2026 Carolina Sánchez Girona · Dememoria</div>
+        <div className="legal-wrap"><a href="/aviso-legal/">Aviso legal</a> · <a href="/privacidad/#cookies">Información sobre cookies</a><p>© 2026 Carolina Sánchez Girona · Dememòria</p></div>
       </footer>
     </main>
   );
