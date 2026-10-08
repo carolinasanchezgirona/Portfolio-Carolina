@@ -260,12 +260,10 @@ async function handlePatientPortalAuth(request: Request, env: Env, action: "pass
     return patientPortalJson({ error: "Introduce un correo válido." }, 400);
   }
 
+  if (!env.SUPABASE_SERVICE_ROLE_KEY) return patientPortalJson({ error: "Servicio temporalmente no disponible." }, 503);
   const response = await fetch(PATIENT_PORTAL_AUTH_FUNCTION, {
     method: "POST",
-    headers: {
-      apikey: RESOURCE_PUBLISHABLE,
-      "Content-Type": "application/json",
-    },
+    headers: serviceHeaders(env),
     body: JSON.stringify({ action, email, ...(action === "password-link" ? { purpose } : {}), ...(action === "password-set" ? { token_hash: tokenHash, flow, password } : {}), ...(action === "password-login" ? { password } : {}) }),
   });
   const result = await response.json().catch(() => ({})) as Record<string, unknown>;
