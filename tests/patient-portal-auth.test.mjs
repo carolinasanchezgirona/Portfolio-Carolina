@@ -158,9 +158,14 @@ test("only correct password generates a tagged clinical session", async () => {
   assert.equal(other.issued(), 0);
 });
 
-test("old code/link actions cannot bypass password sign-in", async () => {
+test("password portal Worker exposes no legacy code or link routes", async () => {
+  const worker = readFileSync(new URL("../worker.ts", import.meta.url), "utf8");
+  for (const route of ["request-code", "verify-code", "request-link", "verify-link"]) {
+    assert.equal(worker.includes('"/api/patient-portal/' + route + '"'), false);
+  }
+  assert.match(worker, /url\.hostname !== "carolinasanchezgirona.com"/);
   const h = createHarness();
-  for (const action of ["verify", "verify-link", "request", "request-link"]) {
+  for (const action of ["verify-link", "request-link"]) {
     const result = await h.call(action, { token: "fake", code: "123456" });
     assert.equal(result.status, 400);
   }
