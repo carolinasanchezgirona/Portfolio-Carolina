@@ -116,8 +116,8 @@ jobs:
 
       - name: Mostrar resumen
         run: |
-          echo "Contenido restaurable:"
-          find restore/unpacked/backup -maxdepth 3 -type f | sort
+          # Never expose filenames from restored clinical-documents in CI logs.
+          echo "Paquete clínico validado. No se muestran nombres ni rutas de documentos."
 
           echo ""
           echo "PRUEBA DE RESTAURACIÓN COMPLETADA CORRECTAMENTE."
