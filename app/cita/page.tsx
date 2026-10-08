@@ -127,7 +127,7 @@ export default function BookingPage() {
 
       <footer className="editorial-footer booking-footer">
         <div className="editorial-wrap editorial-footer-inner">
-          <div><p className="editorial-footer-brand">Carolina Sánchez | Psicóloga</p><p>Dememoria · Consulta de Psicología y Neuropsicología</p></div>
+          <div><p className="editorial-footer-brand">Carolina Sánchez | Psicóloga</p><p>Dememoria · Consulta de Psicología y Neuropsicología</p><p>Registro sanitario E08768201</p></div>
           <div><p>Arenys de Mar · Atención online</p><p>© 2026 Carolina Sánchez Girona</p></div>
         </div>
         <nav className="site-legal-navigation" aria-label="Información legal">
