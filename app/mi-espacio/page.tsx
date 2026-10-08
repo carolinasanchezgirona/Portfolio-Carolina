@@ -27,20 +27,38 @@ export default function MiEspacioPage() {
           <div>
             <p className="space-eyebrow">Acceso privado</p>
             <h1>Entra en Mi espacio</h1>
-            <p>Introduce el correo que utilizas en consulta. Te enviaremos un enlace seguro. No necesitas contraseña ni copiar códigos.</p>
+            <p>Identifícate con tu correo y contraseña. Si es tu primer acceso, utiliza la invitación que te hemos enviado por correo.</p>
           </div>
 
-          <form id="space-email-form" className="space-access-form">
+          <form id="space-login-form" className="space-access-form" autoComplete="on">
             <label>Correo electrónico
-              <input id="space-access-email" type="email" autoComplete="email" inputMode="email" required placeholder="tu@email.com" />
+              <input id="space-login-email" type="email" autoComplete="username" required placeholder="tu@email.com" />
             </label>
-            <button className="space-primary" type="submit">Recibir enlace de acceso</button>
+            <label>Contraseña
+              <input id="space-login-password" type="password" autoComplete="current-password" required minLength={8} />
+            </label>
+            <button className="space-primary" type="submit">Identificarme y abrir Mi espacio</button>
+            <button id="space-forgot-password" className="space-secondary" type="button">¿Has olvidado tu contraseña?</button>
           </form>
-
+          <form id="space-reset-form" className="space-access-form" hidden>
+            <p>Te enviaremos un enlace de recuperación si tu dirección está registrada.</p>
+            <label>Correo electrónico
+              <input id="space-reset-email" type="email" autoComplete="email" required />
+            </label>
+            <button className="space-primary" type="submit">Recuperar contraseña</button>
+            <button id="space-back-login" className="space-secondary" type="button">Volver a identificarme</button>
+          </form>
+          <form id="space-new-password-form" className="space-access-form" hidden>
+            <p>Establece una contraseña para tu acceso verificado.</p>
+            <label>Nueva contraseña
+              <input id="space-new-password" type="password" autoComplete="new-password" required minLength={12} />
+            </label>
+            <button className="space-primary" type="submit">Guardar contraseña</button>
+          </form>
           <p id="space-access-message" className="space-access-message" role="status" />
           <div className="space-access-divider"><span>o</span></div>
           <button id="space-wellness-guest" className="space-wellness-guest" type="button">Entrar en Wellness sin iniciar sesión</button>
-          <p className="space-access-foot">El enlace caduca en 10 minutos y solo puede utilizarse una vez. Si el correo no está vinculado a una ficha con acceso, no se enviará información clínica.</p>
+          <p className="space-access-foot">El acceso a contenidos de terapia requiere identidad verificada. Si necesitas una invitación, solicítala a consulta.</p>
         </div>
       </section>
 
