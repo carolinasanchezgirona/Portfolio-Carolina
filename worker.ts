@@ -424,6 +424,41 @@ async function handlePatientPortalSession(request: Request, env: Env): Promise<R
   });
 }
 
+const PATIENT_PORTAL_ALLOWED_AVATARS = new Set([
+  "boy", "girl", "teen-boy", "teen-girl", "adult-man", "adult-woman", "senior-man", "senior-woman",
+]);
+
+async function handlePatientPortalPreferences(request: Request, env: Env): Promise<Response> {
+  if (request.method !== "GET" && request.method !== "PUT") return patientPortalJson({ error: "Método no permitido." }, 405);
+  if (request.method === "PUT" && !patientPortalSameOrigin(request)) return patientPortalJson({ error: "Origen no permitido." }, 403);
+  const session = await patientPortalSession(request, env);
+  if (!session) return patientPortalJson({ error: "Inicia sesión para guardar tu personaje." }, 401);
+  const table = RESOURCE_SUPABASE + "/rest/v1/patient_portal_preferences";
+  if (request.method === "GET") {
+    const response = await fetch(
+      table + "?select=avatar_id&patient_id=eq." + encodeURIComponent(session.patient_id) + "&limit=1",
+      { headers: serviceHeaders(env), cache: "no-store" },
+    );
+    if (!response.ok) return patientPortalJson({ error: "No se ha podido consultar la configuración." }, 502);
+    const rows = await response.json().catch(() => []) as Array<{ avatar_id?: string }>;
+    const avatarId = Array.isArray(rows) ? rows[0]?.avatar_id || null : null;
+    return patientPortalJson({ avatar_id: avatarId && PATIENT_PORTAL_ALLOWED_AVATARS.has(avatarId) ? avatarId : null });
+  }
+  if (Number(request.headers.get("content-length") || "0") > 1024) return patientPortalJson({ error: "Solicitud demasiado extensa." }, 413);
+  let input: Record<string, unknown>;
+  try { input = await request.json() as Record<string, unknown>; }
+  catch { return patientPortalJson({ error: "Solicitud no válida." }, 400); }
+  const avatarId = typeof input.avatar_id === "string" ? input.avatar_id : "";
+  if (!PATIENT_PORTAL_ALLOWED_AVATARS.has(avatarId)) return patientPortalJson({ error: "Personaje no válido." }, 400);
+  const response = await fetch(table + "?on_conflict=patient_id", {
+    method: "POST",
+    headers: serviceHeaders(env, { Prefer: "resolution=merge-duplicates,return=minimal" }),
+    body: JSON.stringify({ patient_id: session.patient_id, avatar_id: avatarId }),
+  });
+  if (!response.ok) return patientPortalJson({ error: "No se ha podido guardar el personaje." }, 502);
+  return patientPortalJson({ ok: true, avatar_id: avatarId });
+}
+
 async function handlePatientPortalResponse(request: Request, env: Env): Promise<Response> {
   if (request.method !== "POST") return patientPortalJson({ error: "Método no permitido." }, 405);
   if (!patientPortalSameOrigin(request)) return patientPortalJson({ error: "Origen no permitido." }, 403);
@@ -1697,6 +1732,7 @@ export default {
     if (url.pathname === "/api/patient-portal/password-set" || url.pathname === "/api/patient-portal/password-set/") return handlePatientPortalPasswordAuth(request, env, "password-set");
     if (url.pathname === "/api/patient-portal/password-login" || url.pathname === "/api/patient-portal/password-login/") return handlePatientPortalPasswordAuth(request, env, "password-login");
     if (url.pathname === "/api/patient-portal/session" || url.pathname === "/api/patient-portal/session/") return handlePatientPortalSession(request, env);
+    if (url.pathname === "/api/patient-portal/preferences" || url.pathname === "/api/patient-portal/preferences/") return handlePatientPortalPreferences(request, env);
     if (url.pathname === "/api/patient-portal/response" || url.pathname === "/api/patient-portal/response/") return handlePatientPortalResponse(request, env);
     if (url.pathname === "/api/patient-portal/logout" || url.pathname === "/api/patient-portal/logout/") return handlePatientPortalLogout(request, env);
 
