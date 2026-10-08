@@ -38,7 +38,7 @@ export default function PrivacyPage() {
           <div className="legal-data">
             <p><strong>Responsable del tratamiento:</strong> Carolina Sánchez Girona (Dememòria, nombre comercial)</p>
             <p><strong>CIF/NIF:</strong> 53067189W</p>
-            <p><strong>Dirección:</strong> Carrer Barcelona 8 Local Arenys de Mar</p>
+            <p><strong>Dirección:</strong> Carrer Barcelona 8, escalera 1, local 4B, 08350 Arenys de Mar (Barcelona)</p>
             <p><strong>Correo electrónico:</strong> contact@carolinasanchezgirona.com</p>
             <p><strong>Teléfono:</strong> 604974857</p>
             <p><strong>Delegado de Protección de Datos (si aplica):</strong> Carolina Sánchez</p>
