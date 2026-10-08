@@ -85,6 +85,21 @@ export default function AboutPage() {
       <div className="editorial-wrap seo-layout">
         <article className="seo-copy">
           <section>
+            <h2>Formación y habilitación profesional</h2>
+            <p>
+              Soy licenciada en Psicología por la Universitat Oberta de Catalunya (UOC) y he cursado en España el Máster Universitario en Psicología General Sanitaria. Estoy colegiada en el Col·legi Oficial de Psicologia de Catalunya (COPC 24892). Mi consulta dispone de autorización sanitaria de funcionamiento, con número de registro E08768201.
+            </p>
+            <h3>Formación continuada seleccionada</h3>
+            <ul>
+              <li>Capacitación para administrar y puntuar el Montreal Cognitive Assessment (MoCA), completada en marzo de 2025.</li>
+              <li>Productos de apoyo para la memoria, CEADAC–Imserso (20 horas, 2023).</li>
+              <li>Prevención, detección temprana y reducción del riesgo en demencias, CRE Alzheimer–Imserso (15 horas, 2022).</li>
+              <li>Programa Integral para la Promoción de la Autonomía Personal en personas con demencia (PIPAP), CRE Alzheimer–Imserso (15 horas, 2022).</li>
+              <li>Modelo de Atención Centrada en la Persona, Fundació Pere Tarrés (8 horas, 2022).</li>
+            </ul>
+          </section>
+
+          <section>
             <h2>Trayectoria clínica</h2>
             <p>
               Soy Psicóloga General Sanitaria y Neuropsicóloga. Mi trayectoria profesional se ha desarrollado entre la consulta clínica, el trabajo con personas mayores, residencias y centros de día, con especial vinculación al deterioro cognitivo, las demencias y el funcionamiento cognitivo en la vida cotidiana.
@@ -163,7 +178,8 @@ export default function AboutPage() {
             <h2>Datos profesionales</h2>
             <ul className="seo-facts">
               <li><span>Profesión</span><strong>Psicóloga General Sanitaria</strong></li>
-              <li><span>Especialidad</span><strong>Neuropsicología</strong></li>
+              <li><span>Área de práctica</span><strong>Neuropsicología</strong></li>
+              <li><span>Registro sanitario</span><strong>E08768201</strong></li>
               <li><span>Colegiada</span><strong>COPC 24892</strong></li>
               <li><span>Consulta</span><strong>Arenys de Mar</strong></li>
               <li><span>Modalidad</span><strong>Presencial y online</strong></li>
