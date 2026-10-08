@@ -251,21 +251,23 @@ async function sendPasswordLink(email: string, purpose: string) {
   catch { return json({ error: "Servicio temporalmente no disponible." }, 503); }
   if (!patient) return json(generic);
 
-  // Existing login code table doubles as per-patient issue history; no email content is retained.
-  const since = new Date(Date.now() - 60 * 60 * 1000).toISOString();
-  const limited = await fetch(
-    SUPABASE_URL + "/rest/v1/patient_portal_login_codes?select=created_at&patient_id=eq." +
-    encodeURIComponent(patient.id) + "&created_at=gte." + encodeURIComponent(since) +
-    "&order=created_at.desc&limit=5",
-    { headers: serviceHeaders, cache: "no-store" },
-  );
-  if (!limited.ok) return json({ error: "Servicio temporalmente no disponible." }, 503);
-  const attempts = await limited.json().catch(() => []);
-  if (Array.isArray(attempts) && attempts.length) {
-    if (attempts.length >= 5) return json(generic);
-    const last = Date.parse(String(attempts[0].created_at || ""));
-    if (Number.isFinite(last) && Date.now() - last < 60_000) return json(generic);
+  // Reuse the existing atomic, service-role-only issuance RPC. This prevents
+  // concurrent requests from bypassing the five/hour and one/minute limits.
+  const issued = await fetch(SUPABASE_URL + "/rest/v1/rpc/issue_patient_portal_login_code", {
+    method: "POST", headers: serviceHeaders, cache: "no-store",
+    body: JSON.stringify({
+      p_patient_id: patient.id,
+      p_email_normalized: email,
+      p_code_hash: await hashCode(email, randomToken()),
+      p_expires_at: new Date(Date.now() + 60_000).toISOString()
+    })
+  });
+  if (!issued.ok) {
+    console.error("[portal-password] Unable to limit invitation requests:", issued.status);
+    return json({ error: "Servicio temporalmente no disponible." }, 503);
   }
+  const issuedId = await issued.json().catch(() => null);
+  if (typeof issuedId !== "string") return json(generic);
 
   // Invite only provisioned patients. Existing Auth users receive a recovery link.
   const internalEmail = patientAuthEmail(patient.id);
@@ -287,17 +289,6 @@ async function sendPasswordLink(email: string, purpose: string) {
     console.error("[portal-password] Auth link missing token hash");
     return json({ error: "Servicio temporalmente no disponible." }, 503);
   }
-
-  const tracking = await fetch(SUPABASE_URL + "/rest/v1/patient_portal_login_codes", {
-    method: "POST",
-    headers: { ...serviceHeaders, Prefer: "return=minimal" },
-    body: JSON.stringify({
-      patient_id: patient.id, email_normalized: email,
-      code_hash: await hashCode(email, randomToken()),
-      expires_at: new Date(Date.now() + 60_000).toISOString(),
-    }),
-  });
-  if (!tracking.ok) return json({ error: "Servicio temporalmente no disponible." }, 503);
 
   const linkUrl = "https://carolinasanchezgirona.com/mi-espacio/#configurar=" +
     encodeURIComponent(hash) + "&tipo=" + type;
@@ -390,6 +381,13 @@ async function loginWithPassword(email: string, password: string) {
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { status: 204, headers: cors });
   if (req.method !== "POST") return json({ error: "Método no permitido." }, 405);
+  // Only the trusted same-origin Worker may invoke this privileged Edge Function.
+  if (!SERVICE_ROLE_KEY || req.headers.get("Authorization") !== "Bearer " + SERVICE_ROLE_KEY) {
+    return json({ error: "Acceso no autorizado." }, 401);
+  }
+  if (Number(req.headers.get("content-length") || "0") > 4096) {
+    return json({ error: "Solicitud demasiado extensa." }, 413);
+  }
 
   let body: Record<string, unknown>;
   try { body = await req.json(); }
