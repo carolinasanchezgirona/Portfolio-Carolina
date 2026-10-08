@@ -1,0 +1,33 @@
+name: Verificar venta digital y condiciones legales
+on:
+  push:
+    branches: [legal/recursos-digitales-consentimiento-20261008]
+  pull_request:
+    paths:
+      - 'resource-legal.ts'
+      - 'app/recursos/**'
+      - 'app/condiciones-recursos/**'
+      - 'app/editorial.css'
+      - 'worker.ts'
+      - 'supabase/functions/send-resource-confirmation/**'
+      - 'supabase/migrations/**digital_checkout**'
+      - 'tests/resource-checkout-legal.test.mjs'
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - run: node --experimental-strip-types --test tests/resource-checkout-legal.test.mjs
+      - uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.x
+      - run: deno check supabase/functions/send-resource-confirmation/index.ts
+      - run: npx tsc --noEmit
+      - run: npm run build
