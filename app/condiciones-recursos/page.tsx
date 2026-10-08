@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { RESOURCE_TERMS, RESOURCE_TERMS_VERSION } from "../../resource-legal";
-import "../../app/legal.css";
+import "../legal.css";
 
 export const metadata: Metadata = {
   title: "Condiciones de compra de recursos digitales | Carolina Sánchez",
