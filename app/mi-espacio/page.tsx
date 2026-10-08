@@ -25,22 +25,48 @@ export default function MiEspacioPage() {
       <section id="space-access" className="space-access">
         <div className="space-access-card">
           <div>
-            <p className="space-eyebrow">Acceso privado</p>
+            <p className="space-eyebrow">Acceso seguro</p>
             <h1>Entra en Mi espacio</h1>
-            <p>Introduce el correo que utilizas en consulta. Te enviaremos un enlace seguro. No necesitas contraseña ni copiar códigos.</p>
+            <p>Identifícate con el correo de tu ficha de paciente y tu contraseña.</p>
           </div>
 
-          <form id="space-email-form" className="space-access-form">
-            <label>Correo electrónico
-              <input id="space-access-email" type="email" autoComplete="email" inputMode="email" required placeholder="tu@email.com" />
-            </label>
-            <button className="space-primary" type="submit">Recibir enlace de acceso</button>
+          <form id="space-login-form" className="space-access-form">
+            <label htmlFor="space-login-email">Correo electrónico</label>
+            <input id="space-login-email" name="email" type="email" autoComplete="username" inputMode="email" required maxLength={254} placeholder="tu@email.com" />
+            <label htmlFor="space-login-password">Contraseña</label>
+            <input id="space-login-password" name="password" type="password" autoComplete="current-password" required minLength={1} maxLength={128} />
+            <button className="space-primary" type="submit">Entrar en Mi espacio</button>
+            <button className="space-text-action" id="space-forgot-password" type="button">He olvidado mi contraseña</button>
+            <button className="space-text-action" id="space-first-access" type="button">Es mi primera vez. Recibir enlace por correo</button>
           </form>
 
-          <p id="space-access-message" className="space-access-message" role="status" />
+          <form id="space-email-form" className="space-access-form" hidden>
+            <h2 id="space-email-title">Solicitar acceso</h2>
+            <p id="space-email-description" className="space-small">Te enviaremos un enlace para configurar tu contraseña.</p>
+            <label htmlFor="space-access-email">Correo electrónico</label>
+            <input id="space-access-email" type="email" autoComplete="email" inputMode="email" required maxLength={254} placeholder="tu@email.com" />
+            <button className="space-primary" type="submit">Enviar enlace seguro</button>
+            <button className="space-text-action" type="button" data-back-to-login>Volver al inicio de sesión</button>
+          </form>
+
+          <form id="space-set-password-form" className="space-access-form" hidden>
+            <h2>Configura tu contraseña</h2>
+            <p className="space-small">Tu correo ya se ha verificado mediante el enlace recibido. Elige una contraseña de al menos 12 caracteres.</p>
+            <label htmlFor="space-setup-email">Correo electrónico</label>
+            <input id="space-setup-email" type="email" autoComplete="username" required maxLength={254} />
+            <label htmlFor="space-new-password">Nueva contraseña</label>
+            <input id="space-new-password" type="password" autoComplete="new-password" minLength={12} maxLength={128} required />
+            <label htmlFor="space-confirm-password">Repite la contraseña</label>
+            <input id="space-confirm-password" type="password" autoComplete="new-password" minLength={12} maxLength={128} required />
+            <button className="space-primary" type="submit">Guardar contraseña</button>
+            <button className="space-text-action" type="button" data-back-to-login>Volver al inicio de sesión</button>
+          </form>
+
+          <p id="space-access-message" className="space-access-message" role="status" aria-live="polite" />
+          <button id="space-open-panel" className="space-primary" type="button" hidden>Abrir Mi espacio en otra pestaña</button>
           <div className="space-access-divider"><span>o</span></div>
           <button id="space-wellness-guest" className="space-wellness-guest" type="button">Entrar en Wellness sin iniciar sesión</button>
-          <p className="space-access-foot">El enlace caduca en 10 minutos y solo puede utilizarse una vez. Si el correo no está vinculado a una ficha con acceso, no se enviará información clínica.</p>
+          <p className="space-access-foot">Los enlaces de configuración solo sirven una vez. Nadie puede ver tus materiales clínicos hasta que te identifiques correctamente.</p>
         </div>
       </section>
 
@@ -223,7 +249,7 @@ export default function MiEspacioPage() {
               <article className="space-card">
                 <p className="space-kicker">Mi terapia</p>
                 <h3>Acceso protegido</h3>
-                <p>El acceso se realiza con un código de un solo uso enviado a tu correo. La sesión queda protegida mediante una cookie segura que no puede leer el JavaScript de la página.</p>
+                <p>El primer acceso y la recuperación requieren verificar el correo. Después se entra con contraseña; la sesión se conserva en una cookie segura que no puede leer el JavaScript de la página.</p>
               </article>
               <article className="space-card">
                 <p className="space-kicker">Futuras conexiones</p>
@@ -261,7 +287,7 @@ export default function MiEspacioPage() {
         <span>Si existe una emergencia, llama al 112. Si hay riesgo o ideación suicida, puedes contactar con el 024.</span>
       </aside>
 
-      <Script src="/mi-espacio.js?v=20261006-2" strategy="afterInteractive" />
+      <Script src="/mi-espacio.js?v=20261008-4" strategy="afterInteractive" />
     </main>
   );
 }
