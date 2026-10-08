@@ -89,3 +89,20 @@
 .mood-recent-description small{font-size:.7rem;color:#667f8e}
 .mood-recent-list time{flex:none;color:#66808d;font-size:.74rem;text-transform:capitalize}
 .mood-recent-empty{margin:14px 0;color:#6a8190;font-size:.79rem;line-height:1.5}
+
+/* First approved 3D artwork replaces the provisional vector drawings.
+ * Two small sprite sheets ship locally with the website and never expire. */
+.mood-friend-image{
+ display:block; flex:none; background-repeat:no-repeat; background-color:#edf4f7;
+ border-radius:18px; overflow:hidden;
+ box-shadow:0 10px 26px rgba(30,61,77,.12);
+ animation:mood-arrive .3s ease;
+}
+.mood-friend-portrait{width:min(175px,100%);aspect-ratio:1}
+.mood-friend-expressive{width:min(260px,100%);aspect-ratio:100 / 74}
+.mood-avatar-portrait .mood-friend-image{width:100%;height:100%;box-shadow:none;border-radius:10px;animation:none}
+.mood-avatar-portrait .mood-friend-expressive{width:100%;height:100%;aspect-ratio:1; background-size:500% 100%;background-position:75% center}
+.mood-friend-panel .mood-friend-image{border:3px solid rgba(255,255,255,.62); z-index:1}
+.mood-friend-panel .mood-friend-caption{margin-top:10px}
+@media(max-width:780px){.mood-friend-portrait{width:min(180px,100%)}.mood-friend-expressive{width:min(230px,100%)}}
+@media(prefers-reduced-motion:reduce){.mood-friend-image{animation:none}}
