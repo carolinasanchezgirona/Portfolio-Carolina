@@ -47,7 +47,7 @@ export default function PrivacyPage() {
         <section>
           <h2>2. Qué datos se recogen y con qué finalidad</h2>
           <h3>2.1. Reserva y gestión de citas</h3>
-          <p>En la reserva web se solicitan nombre y apellidos, correo electrónico y teléfono, así como el tipo de servicio, la fecha y el horario seleccionados. Es posible conservar la información necesaria para gestionar confirmaciones, cambios, cancelaciones y comunicaciones vinculadas a la cita. El formulario público no solicita el motivo clínico de consulta ni documentos sanitarios.</p>
+          <p>En la reserva web se solicitan nombre y apellidos, correo electrónico y teléfono, así como el tipo de servicio, la fecha y el horario seleccionados. En primeras visitas se puede registrar la constancia de lectura de documentos, la aceptación de condiciones y la firma electrónica introducida en el formulario. Es posible conservar la información necesaria para gestionar confirmaciones, cambios, cancelaciones y comunicaciones vinculadas a la cita. El formulario público no solicita el motivo clínico de consulta ni documentos sanitarios.</p>
 
           <h3>2.2. Atención psicológica y neuropsicológica</h3>
           <p>Cuando existe una relación asistencial, pueden tratarse datos identificativos y de contacto, antecedentes personales y clínicos, información de salud, resultados de pruebas psicológicas y neuropsicológicas, informes, consentimientos informados, notas de seguimiento, planes de intervención y otros datos necesarios para la historia clínica y la continuidad asistencial. La información puede proceder de la persona atendida o de documentación que facilite legítimamente, y, cuando corresponda, de familiares, representantes o profesionales sanitarios.</p>
