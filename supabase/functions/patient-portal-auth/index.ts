@@ -12,12 +12,32 @@ const PROJECT_SECRET_KEYS: string[] = (() => {
   } catch { return []; }
 })();
 
-function isAuthorizedBackend(request: Request): boolean {
+async function isAuthorizedBackend(request: Request): Promise<boolean> {
   const authorization = request.headers.get("Authorization");
   if (!authorization?.startsWith("Bearer ")) return false;
   const candidate = authorization.slice(7);
   if (!candidate || candidate.length > 1024) return false;
-  return (Boolean(SERVICE_ROLE_KEY) && candidate === SERVICE_ROLE_KEY) || PROJECT_SECRET_KEYS.includes(candidate);
+  if ((Boolean(SERVICE_ROLE_KEY) && candidate === SERVICE_ROLE_KEY) || PROJECT_SECRET_KEYS.includes(candidate)) {
+    return true;
+  }
+
+  // Key rotation can make Cloudflare's privileged key differ from this
+  // function's environment key. Validate against this project's own Auth
+  // ADMIN API instead of weakening security with a static public API key.
+  // The admin route cannot be called with publishable/anon/user credentials.
+  if (!candidate.startsWith("sb_secret_") && candidate.split(".").length !== 3) return false;
+  try {
+    const res = await fetch(SUPABASE_URL + "/auth/v1/admin/users?page=1&per_page=1", {
+      method: "GET",
+      headers: { apikey: candidate, Authorization: "Bearer " + candidate },
+      cache: "no-store",
+    });
+    if (!res.ok) console.error("[portal-auth] Supabase admin validation rejected credential", res.status);
+    return res.ok;
+  } catch {
+    console.error("[portal-auth] Supabase admin validation unavailable");
+    return false;
+  }
 }
 
 const serviceHeaders = {
@@ -369,7 +389,7 @@ Deno.serve(async (req) => {
 
   // The public browser only talks to the same-origin Cloudflare Worker.
   // Supabase Edge Function accepts only the Worker's server-side credential.
-  if (!SERVICE_ROLE_KEY || !isAuthorizedBackend(req)) {
+  if (!SERVICE_ROLE_KEY || !await isAuthorizedBackend(req)) {
     return json({ error: "Acceso no autorizado." }, 401);
   }
   if (Number(req.headers.get("content-length") || "0") > 4096) {
