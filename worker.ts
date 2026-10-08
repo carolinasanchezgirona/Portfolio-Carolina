@@ -442,7 +442,7 @@ async function handlePatientPortalPreferences(request: Request, env: Env): Promi
     if (!response.ok) return patientPortalJson({ error: "No se ha podido consultar la configuración." }, 502);
     const rows = await response.json().catch(() => []) as Array<{ avatar_id?: string }>;
     const avatarId = Array.isArray(rows) ? rows[0]?.avatar_id || null : null;
-    return patientPortalJson({ avatar_id: avatarId && PATIENT_PORTAL_ALLOWED_AVATARS.has(avatarId) ? avatarId : null });
+    return patientPortalJson({ avatar_id: avatarId && PATIENT_PORTAL_ALLOWED_AVATARS.has(avatarId) ? avatarId : null, storage_scope: (await sha256Hex(session.patient_id + "|wellness-v1")).slice(0, 24) });
   }
   if (Number(request.headers.get("content-length") || "0") > 1024) return patientPortalJson({ error: "Solicitud demasiado extensa." }, 413);
   let input: Record<string, unknown>;
