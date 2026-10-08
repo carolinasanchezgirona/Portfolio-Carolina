@@ -177,7 +177,7 @@ async function verifyCode(email: string, code: string) {
 
 /* Supabase Auth owns password hashing, credential policy and email verification.
    Never store patient passwords or Supabase Auth access tokens in clinical tables. */
-const AUTH_PUBLIC_KEY = Deno.env.get("SUPABASE_ANON_KEY") ?? "";
+const AUTH_PUBLIC_KEY = Deno.env.get("SUPABASE_ANON_KEY") ?? Deno.env.get("SUPABASE_PUBLISHABLE_KEY") ?? "";
 const AUTH_API = SUPABASE_URL + "/auth/v1";
 const genericPasswordMessage = "Si el correo está habilitado, recibirás instrucciones en unos minutos.";
 
@@ -220,23 +220,21 @@ async function sendPasswordLink(email: string, purpose: string) {
   catch { return json({ error: "Servicio temporalmente no disponible." }, 503); }
   if (!patient) return json(generic);
 
-  // Reuse the existing atomic, service-role-only issuance RPC. This prevents
-  // concurrent requests from bypassing the five/hour and one/minute limits.
-  const issued = await fetch(SUPABASE_URL + "/rest/v1/rpc/issue_patient_portal_login_code", {
-    method: "POST", headers: serviceHeaders, cache: "no-store",
+  // Reuse the production transaction-safe cooldown: one link per minute
+  // and five per hour, even for concurrent attempts.
+  const limitResponse = await fetch(SUPABASE_URL + "/rest/v1/rpc/issue_patient_portal_login_code", {
+    method: "POST",
+    headers: serviceHeaders,
     body: JSON.stringify({
       p_patient_id: patient.id,
       p_email_normalized: email,
       p_code_hash: await hashCode(email, randomToken()),
-      p_expires_at: new Date(Date.now() + 60_000).toISOString()
-    })
+      p_expires_at: new Date(Date.now() + 10 * 60_000).toISOString(),
+    }),
   });
-  if (!issued.ok) {
-    console.error("[portal-password] Unable to limit invitation requests:", issued.status);
-    return json({ error: "Servicio temporalmente no disponible." }, 503);
-  }
-  const issuedId = await issued.json().catch(() => null);
-  if (typeof issuedId !== "string") return json(generic);
+  if (!limitResponse.ok) return json({ error: "Servicio temporalmente no disponible." }, 503);
+  const trackingId = await limitResponse.json().catch(() => null);
+  if (typeof trackingId !== "string" || !/^[0-9a-f-]{36}$/i.test(trackingId)) return json(generic);
 
   // Invite only provisioned patients. Existing Auth users receive a recovery link.
   const internalEmail = patientAuthEmail(patient.id);
@@ -350,7 +348,9 @@ async function loginWithPassword(email: string, password: string) {
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { status: 204, headers: cors });
   if (req.method !== "POST") return json({ error: "Método no permitido." }, 405);
-  // Only the trusted same-origin Worker may invoke this privileged Edge Function.
+
+  // The public browser only talks to the same-origin Cloudflare Worker.
+  // Supabase Edge Function accepts only the Worker's server-side credential.
   if (!SERVICE_ROLE_KEY || req.headers.get("Authorization") !== "Bearer " + SERVICE_ROLE_KEY) {
     return json({ error: "Acceso no autorizado." }, 401);
   }
