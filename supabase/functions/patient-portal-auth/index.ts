@@ -346,13 +346,17 @@ async function setPatientPassword(email: string, tokenHash: string, flow: string
   });
   if (!updated.ok) return json({ error: "No se ha podido guardar la contraseña. Solicita otro enlace." }, 400);
 
-  // Reset all existing portal cookies/sessions for this patient on password change.
-  await fetch(
+  // Invalidate existing clinical sessions before confirming the password change.
+  const revoked = await fetch(
     SUPABASE_URL + "/rest/v1/patient_portal_sessions?patient_id=eq." + encodeURIComponent(patient.id) +
       "&revoked_at=is.null",
     { method: "PATCH", headers: { ...serviceHeaders, Prefer: "return=minimal" },
       body: JSON.stringify({ revoked_at: new Date().toISOString() }) },
-  );
+  ).catch(() => null);
+  if (!revoked?.ok) {
+    console.error("[portal-password] Could not revoke existing clinical sessions");
+    return json({ error: "La contraseña se ha actualizado, pero no se han podido cerrar todas las sesiones. Contacta con la consulta antes de continuar." }, 503);
+  }
   return json({ ok: true, message: "Contraseña guardada. Ya puedes iniciar sesión." });
 }
 
