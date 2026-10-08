@@ -103,6 +103,9 @@ export default function BookingPage() {
             <div className="form-field"><label htmlFor="patient-phone">Teléfono</label><input id="patient-phone" name="patient_phone" type="tel" autoComplete="tel" maxLength={30} required /></div>
           </div>
           <p className="form-help">Todos los campos mostrados son obligatorios. No incluyas información clínica ni el motivo de consulta en este formulario.</p>
+          <p className="form-help" id="booking-data-protection-notice">
+            <strong>Protección de datos:</strong> responsable, Carolina Sánchez Girona (Dememòria). Utilizamos los datos para gestionar la reserva, la confirmación, las comunicaciones y los documentos aceptados; base jurídica, art. 6.1.b del RGPD y obligaciones legales aplicables. Intervienen proveedores técnicos de reservas y correo. Puedes ejercer tus derechos escribiendo a <a href="mailto:contact@carolinasanchezgirona.com">contact@carolinasanchezgirona.com</a>. Consulta los destinatarios, transferencias y plazos en la <a href="/privacidad/" target="_blank" rel="noopener noreferrer">política de privacidad</a>.
+          </p>
 
           <div id="new-patient-documents" className="acceptances">
             <div className="first-visit-note" role="note"><strong>Para la primera visita</strong><p>Si dispones de informes o documentación previa que pueda ser relevante para la atención, puedes traerla a la sesión: informes de psicología o psiquiatría, valoraciones médicas, pruebas, informes hospitalarios o información sobre tratamientos actuales. No es necesario aportar documentación que no consideres relacionada con el motivo de consulta ni enviarla a través de este formulario.</p></div>
