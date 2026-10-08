@@ -87,7 +87,7 @@ export default function AboutPage() {
           <section>
             <h2>Formación y habilitación profesional</h2>
             <p>
-              Soy licenciada en Psicología por la Universitat Oberta de Catalunya (UOC) y he cursado en España el Máster Universitario en Psicología General Sanitaria. Estoy colegiada en el Col·legi Oficial de Psicologia de Catalunya (COPC 24892). Mi consulta dispone de autorización sanitaria de funcionamiento, con número de registro E08768201.
+              Soy licenciada en Psicología por la Universitat Oberta de Catalunya (UOC), titulada con el Máster Universitario en Neuropsicología por la UOC y con el Máster Universitario en Psicología General Sanitaria por la Universidad de Girona y la Universitat Oberta de Catalunya (UdG–UOC). Estoy colegiada en el Col·legi Oficial de Psicologia de Catalunya (COPC 24892). Mi consulta dispone de autorización sanitaria de funcionamiento para Psicología General Sanitaria, con número de registro E08768201.
             </p>
             <h3>Formación continuada seleccionada</h3>
             <ul>
