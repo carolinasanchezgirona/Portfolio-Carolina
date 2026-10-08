@@ -106,3 +106,17 @@
 .mood-friend-panel .mood-friend-caption{margin-top:10px}
 @media(max-width:780px){.mood-friend-portrait{width:min(180px,100%)}.mood-friend-expressive{width:min(230px,100%)}}
 @media(prefers-reduced-motion:reduce){.mood-friend-image{animation:none}}
+
+/* The approved five-step energy scale and a simple review of real entries. */
+.mood-energy-options{grid-template-columns:repeat(5,minmax(0,1fr));gap:6px}
+.mood-energy-options button{padding:8px 3px;font-size:.72rem;min-width:0}
+.mood-recent{padding-top:17px;margin-top:19px;border-top:1px solid #e4eef0}
+.mood-recent h4{margin:0 0 12px;color:#173a5e;font-size:.93rem;font-weight:800}
+.mood-recent-list{list-style:none;display:grid;gap:7px;padding:0;margin:0}
+.mood-recent-list li{display:grid;grid-template-columns:15px 55px 1fr auto;align-items:center;column-gap:10px;min-height:44px;padding:8px 12px;border:1px solid #e6eef2;border-radius:12px;background:#fbfdfd}
+.mood-recent-indicator{width:13px;height:13px;display:block;border-radius:50%;border:1px solid rgba(23,58,94,.08)}
+.mood-recent-day{font-size:.77rem;color:#536f82;text-transform:capitalize}
+.mood-recent-list strong{font-size:.78rem;color:#173a5e}
+.mood-recent-list small{font-size:.7rem;color:#657d8c}
+.mood-recent-empty{font-size:.8rem;line-height:1.55;color:#68808e;margin:0}
+@media(max-width:520px){.mood-energy-options{gap:4px}.mood-energy-options button{font-size:.64rem;padding:7px 2px}.mood-recent-list li{grid-template-columns:12px 45px 1fr;column-gap:8px}.mood-recent-list small{grid-column:3;justify-self:start;margin-top:3px}}
