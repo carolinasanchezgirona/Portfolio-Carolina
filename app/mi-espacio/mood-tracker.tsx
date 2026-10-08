@@ -36,36 +36,62 @@ const AVATARS: AvatarOption[] = [
   { id: "senior-man", label: "Hombre mayor", stage: "Edad avanzada", hair: "#d2d8e0", skin: "#e1b28e" },
   { id: "senior-woman", label: "Mujer mayor", stage: "Edad avanzada", hair: "#d4cfd4", skin: "#bd8d70" },
 ];
-const AVATAR_KEY = "wellness_companion_avatar_v1";
 const AVATAR_CHANGE_EVENT = "wellness-companion-avatar-changed";
+const SESSION_READY_EVENT = "patient-portal-session-ready";
 const DEFAULT_AVATAR = AVATARS[0];
 
-function readAvatar(): AvatarId | null {
-  try {
-    const value = localStorage.getItem(AVATAR_KEY);
-    return AVATARS.find(avatar => avatar.id === value)?.id ?? null;
-  } catch { return null; }
+type AvatarProfile = { avatar: AvatarId | null; scope: string | null };
+
+async function readAvatar(): Promise<AvatarProfile> {
+  const response = await fetch("/api/patient-portal/preferences", { credentials: "include", cache: "no-store" });
+  if (!response.ok) throw new Error("Necesitas identificarte para consultar tu personaje.");
+  const data = await response.json() as { avatar_id?: string | null; storage_scope?: string };
+  const selected = AVATARS.find(option => option.id === data.avatar_id)?.id ?? null;
+  const scope = typeof data.storage_scope === "string" && /^[a-f0-9]{24}$/.test(data.storage_scope) ? data.storage_scope : null;
+  return { avatar: selected, scope };
 }
 
-function saveAvatar(id: AvatarId): boolean {
+async function saveAvatar(id: AvatarId): Promise<boolean> {
   try {
-    localStorage.setItem(AVATAR_KEY, id);
+    const response = await fetch("/api/patient-portal/preferences", {
+      method: "PUT", credentials: "include",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ avatar_id: id }),
+    });
+    if (!response.ok) return false;
     window.dispatchEvent(new CustomEvent(AVATAR_CHANGE_EVENT, { detail: id }));
     return true;
   } catch { return false; }
 }
 
 function useAvatar() {
-  const [avatar, setAvatar] = useState<AvatarId | null>(null);
+  const [profile, setProfile] = useState<AvatarProfile>({ avatar: null, scope: null });
   const [ready, setReady] = useState(false);
   useEffect(() => {
-    setAvatar(readAvatar());
-    setReady(true);
-    const handler = () => setAvatar(readAvatar());
-    window.addEventListener(AVATAR_CHANGE_EVENT, handler);
-    return () => window.removeEventListener(AVATAR_CHANGE_EVENT, handler);
+    let mounted = true;
+    let revision = 0;
+    const refresh = async () => {
+      const currentRevision = ++revision;
+      setReady(false);
+      try {
+        const loaded = await readAvatar();
+        if (mounted && currentRevision === revision) setProfile(loaded);
+      } catch {
+        if (mounted && currentRevision === revision) setProfile({ avatar: null, scope: null });
+      } finally {
+        if (mounted && currentRevision === revision) setReady(true);
+      }
+    };
+    void refresh();
+    window.addEventListener(AVATAR_CHANGE_EVENT, refresh);
+    window.addEventListener(SESSION_READY_EVENT, refresh);
+    return () => {
+      mounted = false;
+      window.removeEventListener(AVATAR_CHANGE_EVENT, refresh);
+      window.removeEventListener(SESSION_READY_EVENT, refresh);
+    };
   }, []);
-  return { avatar, ready };
+  return { ...profile, ready };
 }
 
 function MoodFriend({ mood, avatarId }: { mood: number; avatarId: AvatarId }) {
@@ -159,17 +185,19 @@ export function MoodAvatarSettings() {
         {!editing && <button type="button" className="space-secondary" onClick={() => setEditing(true)}>{current ? "Cambiar personaje" : "Elegir personaje"}</button>}
       </div>
       {editing && <><AvatarChoices selected={avatar} onSelect={value => {
-        if (saveAvatar(value)) { setEditing(false); setFeedback("Personaje actualizado en este dispositivo."); }
-        else setFeedback("No se ha podido guardar en este navegador.");
+        void saveAvatar(value).then(saved => {
+          if (saved) { setEditing(false); setFeedback("Personaje actualizado en tu cuenta."); }
+          else setFeedback("No se ha podido guardar el personaje. Comprueba tu sesión.");
+        });
       }}/><button type="button" className="mood-avatar-cancel" onClick={() => setEditing(false)}>Cancelar</button></>}
-      <p className="mood-privacy-note">La preferencia se guarda en este dispositivo. No contiene información clínica.</p>
+      <p className="mood-privacy-note">La preferencia se guarda en tu cuenta. No contiene información clínica.</p>
       <span role="status" className="mood-status">{feedback}</span>
     </section>
   );
 }
 
 export default function MoodTracker() {
-  const { avatar, ready: avatarReady } = useAvatar();
+  const { avatar, scope, ready: avatarReady } = useAvatar();
   const [entries, setEntries] = useState<MoodEntry[]>([]);
   const [selected, setSelected] = useState<number | null>(null);
   const [energy, setEnergy] = useState(1);
@@ -177,11 +205,17 @@ export default function MoodTracker() {
   const [message, setMessage] = useState("");
   const today = keyForDate(new Date());
 
+  const scopedMoodKey = scope ? STORAGE_KEY + ":" + scope : null;
   useEffect(() => {
+    setLoaded(false);
+    setEntries([]);
+    setSelected(null);
+    setEnergy(1);
+    if (!scopedMoodKey) return;
     try {
-      const raw = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
+      const raw = JSON.parse(localStorage.getItem(scopedMoodKey) || "[]");
       const valid = Array.isArray(raw) ? raw.filter((entry): entry is MoodEntry =>
-        typeof entry?.date === "string" && /^\d{4}-\d{2}-\d{2}$/.test(entry.date) &&
+        typeof entry?.date === "string" && /^\\d{4}-\\d{2}-\\d{2}$/.test(entry.date) &&
         Number.isInteger(entry.rating) && entry.rating >= 1 && entry.rating <= 5 &&
         Number.isInteger(entry.energy) && entry.energy >= 0 && entry.energy <= 2
       ).slice(-90) : [];
@@ -190,7 +224,7 @@ export default function MoodTracker() {
       if (current) { setSelected(current.rating); setEnergy(current.energy); }
     } catch { setEntries([]); }
     setLoaded(true);
-  }, []);
+  }, [scopedMoodKey]);
 
   const displayed = MOODS[(selected || 3) - 1];
   const pastDays = useMemo(() => Array.from({ length: 7 }, (_, i) => {
@@ -200,11 +234,11 @@ export default function MoodTracker() {
   }), [entries]);
 
   function save() {
-    if (selected === null || !loaded) return;
+    if (selected === null || !loaded || !scopedMoodKey) return;
     const newEntries = [...entries.filter(entry => entry.date !== today), { date: today, rating: selected, energy }]
       .sort((a, b) => a.date.localeCompare(b.date)).slice(-90);
     try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(newEntries));
+      localStorage.setItem(scopedMoodKey, JSON.stringify(newEntries));
       setEntries(newEntries);
       setMessage("Registro guardado en este dispositivo. Puedes actualizarlo hoy si cambia cómo te sientes.");
     } catch {
@@ -213,20 +247,21 @@ export default function MoodTracker() {
   }
   function clear() {
     if (!window.confirm("¿Borrar todos tus registros de ánimo guardados en este dispositivo?")) return;
-    try { localStorage.removeItem(STORAGE_KEY); } catch { /* almacenamiento bloqueado */ }
+    if (scopedMoodKey) try { localStorage.removeItem(scopedMoodKey); } catch { /* almacenamiento bloqueado */ }
     setEntries([]);
     setSelected(null);
     setEnergy(1);
     setMessage("Has borrado el historial de este dispositivo.");
   }
 
-  if (!avatarReady) return null;
+  if (!avatarReady || !scope) return null;
   if (!avatar) return (
     <section className="mood-tracker mood-avatar-onboarding" aria-labelledby="mood-avatar-onboarding-title">
       <p className="space-eyebrow">Bienvenido a tu espacio</p>
       <h3 id="mood-avatar-onboarding-title">Elige a tu compañero</h3>
-      <p>Lo elegirás una sola vez en este dispositivo. Después te acompañará en tus registros de ánimo. Si quieres cambiarlo, estará en «Cuenta y privacidad → Mi personaje».</p>
-      <AvatarChoices selected={avatar} onSelect={saveAvatar}/>
+      <p>Lo elegirás una sola vez. Se guardará en tu cuenta y te acompañará en tus registros. Podrás cambiarlo desde «Configuración → Mi personaje».</p>
+      <AvatarChoices selected={avatar} onSelect={value => { void saveAvatar(value).then(saved => { if (!saved) setMessage("No se ha podido guardar el personaje. Inténtalo de nuevo."); }); }}/>
+      <span role="status" className="mood-status">{message}</span>
       <p className="mood-privacy-note">Puedes elegir cualquier personaje. No influye en tus ejercicios ni en cómo se interpretan tus registros.</p>
     </section>
   );
