@@ -12,12 +12,12 @@ command = "npm run build"
 [assets]
 directory = "./out"
 binding = "ASSETS"
-run_worker_first = [ "/api/stripe/webhook", "/api/stripe/webhook/", "/api/resources/checkout", "/api/resources/checkout/", "/api/resources/access", "/api/resources/access/", "/api/resources/download", "/api/resources/download/", "/api/questions/draft", "/api/questions/draft/", "/api/editorial/status", "/api/editorial/status/", "/api/editorial/generate", "/api/editorial/generate/", "/api/editorial/image", "/api/editorial/image/", "/api/clinical/structure", "/api/clinical/structure/", "/api/clinical/material-draft", "/api/clinical/material-draft/", "/api/clinical/material-enrich", "/api/clinical/material-enrich/" ]
+run_worker_first = [ "/api/*" ]
 
 [secrets]
 required = [ "STRIPE_WEBHOOK_SECRET" ]
 
-# Stripe checkout/webhook/download, question AI and private editorial/clinical AI routes run in the Worker; all other requests are static assets.
+# All /api/* routes are handled by the Worker, including patient-portal and diagnostic-suggestion. Other routes remain static assets.
 # Set OPENAI_API_KEY as a Cloudflare secret to enable automatic generation.
 # The clinical history structurer uses GPT-6.1 Sol through OPENAI_CLINICAL_MODEL, with server-side fallbacks for model-access errors.
 # keep_vars preserves dashboard-managed variables and secrets across Wrangler deploys.

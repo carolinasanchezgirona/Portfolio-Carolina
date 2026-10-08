@@ -208,6 +208,9 @@ function patientPortalJson(payload: unknown, status = 200, extraHeaders: Record<
       "Cache-Control": "private, no-store",
       "X-Content-Type-Options": "nosniff",
       "Referrer-Policy": "no-referrer",
+      "X-Frame-Options": "DENY",
+      "Content-Security-Policy": "base-uri 'self'; object-src 'none'; frame-ancestors 'none'",
+      "Strict-Transport-Security": "max-age=31536000",
       ...extraHeaders,
     },
   });
@@ -226,8 +229,22 @@ function patientPortalCookie(token: string, maxAge: number): string {
   return `${PATIENT_PORTAL_COOKIE}=${encodeURIComponent(token)}; Path=/; Max-Age=${maxAge}; HttpOnly; Secure; SameSite=Lax`;
 }
 
+/** Require a same-origin browser request for cookie-based state changes (CSRF defense). */
+function patientPortalSameOrigin(request: Request): boolean {
+  const expectedOrigin = new URL(request.url).origin;
+  const origin = request.headers.get("Origin");
+  if (origin) return origin === expectedOrigin;
+  if (request.headers.get("Sec-Fetch-Site") === "same-origin") return true;
+  const referer = request.headers.get("Referer");
+  if (!referer) return false;
+  try { return new URL(referer).origin === expectedOrigin; }
+  catch { return false; }
+}
+
 async function handlePatientPortalAuth(request: Request, env: Env, action: "request" | "verify"): Promise<Response> {
   if (request.method !== "POST") return patientPortalJson({ error: "Método no permitido." }, 405);
+  if (!patientPortalSameOrigin(request)) return patientPortalJson({ error: "Origen no permitido." }, 403);
+  if (Number(request.headers.get("content-length") || "0") > 4096) return patientPortalJson({ error: "Solicitud demasiado extensa." }, 413);
   let body: Record<string, unknown>;
   try { body = await request.json() as Record<string, unknown>; }
   catch { return patientPortalJson({ error: "Solicitud no válida." }, 400); }
@@ -353,6 +370,8 @@ async function handlePatientPortalSession(request: Request, env: Env): Promise<R
 
 async function handlePatientPortalResponse(request: Request, env: Env): Promise<Response> {
   if (request.method !== "POST") return patientPortalJson({ error: "Método no permitido." }, 405);
+  if (!patientPortalSameOrigin(request)) return patientPortalJson({ error: "Origen no permitido." }, 403);
+  if (Number(request.headers.get("content-length") || "0") > 65536) return patientPortalJson({ error: "Solicitud demasiado extensa." }, 413);
   const session = await patientPortalSession(request, env);
   if (!session) return patientPortalJson({ error: "Tu sesión ha caducado. Vuelve a entrar." }, 401, { "Set-Cookie": patientPortalCookie("", 0) });
 
@@ -407,6 +426,7 @@ async function handlePatientPortalResponse(request: Request, env: Env): Promise<
 
 async function handlePatientPortalLogout(request: Request, env: Env): Promise<Response> {
   if (request.method !== "POST") return patientPortalJson({ error: "Método no permitido." }, 405);
+  if (!patientPortalSameOrigin(request)) return patientPortalJson({ error: "Origen no permitido." }, 403);
   const raw = cookieValue(request, PATIENT_PORTAL_COOKIE);
   if (env.SUPABASE_SERVICE_ROLE_KEY && /^[A-Za-z0-9_-]{40,}$/.test(raw)) {
     const hash = await sha256Hex(raw);
