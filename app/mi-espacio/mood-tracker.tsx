@@ -215,7 +215,7 @@ export default function MoodTracker() {
     try {
       const raw = JSON.parse(localStorage.getItem(scopedMoodKey) || "[]");
       const valid = Array.isArray(raw) ? raw.filter((entry): entry is MoodEntry =>
-        typeof entry?.date === "string" && /^\\d{4}-\\d{2}-\\d{2}$/.test(entry.date) &&
+        typeof entry?.date === "string" && /^\d{4}-\d{2}-\d{2}$/.test(entry.date) &&
         Number.isInteger(entry.rating) && entry.rating >= 1 && entry.rating <= 5 &&
         Number.isInteger(entry.energy) && entry.energy >= 0 && entry.energy <= 2
       ).slice(-90) : [];
