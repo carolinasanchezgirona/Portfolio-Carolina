@@ -41,7 +41,7 @@ export default function PrivacyPage() {
             <p><strong>Dirección:</strong> Carrer Barcelona 8 Local Arenys de Mar</p>
             <p><strong>Correo electrónico:</strong> contact@carolinasanchezgirona.com</p>
             <p><strong>Teléfono:</strong> 604974857</p>
-            <p><strong>Delegado de Protección de Datos (si aplica):</strong> Carolina Sánchez</p>
+            <p><strong>Contacto para consultas sobre protección de datos:</strong> contact@carolinasanchezgirona.com</p>
           </div>
         </section>
 
