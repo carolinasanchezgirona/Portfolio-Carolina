@@ -34,7 +34,9 @@ jobs:
         run: npm ci
 
       - name: Probar bloqueo de identificadores en la IA clínica
-        run: node --experimental-strip-types --test tests/clinical-privacy.test.mjs
+        run: |
+          node --check public/mi-espacio.js
+          node --experimental-strip-types --test tests/clinical-privacy.test.mjs tests/patient-portal-auth.test.mjs
 
       - name: Compilar y exportar web
         run: npm run build
