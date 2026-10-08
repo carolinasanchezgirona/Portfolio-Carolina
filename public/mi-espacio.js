@@ -716,6 +716,7 @@
       }
     }
 
+    window.dispatchEvent(new Event("patient-portal-session-ready"));
     openPortal("today");
   }
 
@@ -1055,7 +1056,7 @@
   navButtons.forEach(button => {
     button.addEventListener("click", () => {
       const view = button.dataset.spaceView;
-      if (view === "therapy" && !state.portalAuthenticated) {
+      if (view !== "wellness" && !state.portalAuthenticated) {
         state.guestMode = false;
         showAccessGate();
         setAccessMessage("Para ver tu terapia, inicia sesión con tu correo y contraseña.");
@@ -1171,6 +1172,7 @@
   document.getElementById("space-wellness-guest")?.addEventListener("click", () => {
     state.guestMode = true;
     state.portalAuthenticated = false;
+    window.dispatchEvent(new Event("patient-portal-session-ready"));
     openPortal("wellness");
   });
   document.querySelectorAll("[data-go-therapy]").forEach((button) => {
