@@ -237,7 +237,7 @@ export default function MiEspacioPage() {
             <div className="space-hero">
               <p className="space-eyebrow">Mi progreso</p>
               <h2>Una mirada útil, no una nota sobre cómo “deberías” estar</h2>
-              <p>En esta primera versión solo se muestran actividades completadas y favoritos en este dispositivo. No se calculan diagnósticos ni porcentajes de bienestar.</p>
+              <p>Puedes revisar las herramientas utilizadas y tus favoritos en este dispositivo. Se guardan por separado para cada cuenta. No se calculan diagnósticos ni porcentajes de bienestar.</p>
             </div>
 
             <div className="space-summary">
@@ -310,7 +310,7 @@ export default function MiEspacioPage() {
         <span>Si existe una emergencia, llama al 112. Si hay riesgo o ideación suicida, puedes contactar con el 024.</span>
       </aside>
 
-      <Script src="/mi-espacio.js?v=20261008-visual1" strategy="afterInteractive" />
+      <Script src="/mi-espacio.js?v=20261008-privacidad2" strategy="afterInteractive" />
     </main>
   );
 }
