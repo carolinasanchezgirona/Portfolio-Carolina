@@ -91,7 +91,8 @@ jobs:
 
           test -s "monthly/verificacion-${NAME}"
 
-          echo "Copia mensual de R2 verificada correctamente."
+          test "$(sha256sum "$FILE" | awk '{print $1}')" = "$(sha256sum "monthly/verificacion-${NAME}" | awk '{print $1}')"
+          echo "Copia mensual de R2 contrastada byte a byte mediante SHA-256."
 
       - name: Eliminar copias mensuales de más de 400 días
         env:
