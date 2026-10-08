@@ -361,9 +361,9 @@
   const accessGate = document.getElementById("space-access");
   const shell = document.getElementById("space-shell");
   const emailForm = document.getElementById("space-email-form");
-  const codeForm = document.getElementById("space-code-form");
+  
   const accessEmail = document.getElementById("space-access-email");
-  const accessCode = document.getElementById("space-access-code");
+  
   const accessMessage = document.getElementById("space-access-message");
   const patientMaterials = document.getElementById("space-patient-materials");
 
@@ -477,7 +477,7 @@
         state.portalAuthenticated = false;
         state.portalData = null;
         showAccessGate();
-        setAccessMessage("Tu sesión ha caducado. Solicita un nuevo código.", true);
+        setAccessMessage("Tu sesión ha caducado. Solicita un nuevo enlace.", true);
         return;
       }
       if (!response.ok) throw new Error(body.error || "No se ha podido guardar.");
@@ -662,71 +662,61 @@
     }
   }
 
-  async function requestPatientCode(event) {
+  async function requestPatientLink(event) {
     event.preventDefault();
     const email = String(accessEmail?.value || "").trim().toLowerCase();
     if (!email) return;
-    setAccessMessage("Enviando código…");
+    setAccessMessage("Solicitando enlace…");
     const submit = emailForm?.querySelector('button[type="submit"]');
     if (submit) submit.disabled = true;
     try {
-      const response = await fetch("/api/patient-portal/request-code", {
-        method: "POST",
-        credentials: "include",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email })
+      const response = await fetch("/api/patient-portal/request-link", {
+        method: "POST", credentials: "include",
+        headers: { "Content-Type": "application/json" }, body: JSON.stringify({ email })
       });
       const body = await response.json().catch(() => ({}));
-      if (!response.ok) throw new Error(body.error || "No se ha podido solicitar el código.");
-      state.accessEmail = email;
-      if (emailForm) emailForm.hidden = true;
-      if (codeForm) codeForm.hidden = false;
-      setAccessMessage(body.message || "Si el correo tiene acceso, recibirás un código en unos minutos.");
-      accessCode?.focus();
+      if (!response.ok) throw new Error(body.error || "No se ha podido solicitar el enlace.");
+      setAccessMessage("Si la dirección tiene acceso, recibirás un enlace seguro. Comprueba también el correo no deseado.");
     } catch (error) {
-      setAccessMessage(error?.message || "No se ha podido solicitar el código.", true);
+      setAccessMessage(error?.message || "No se ha podido solicitar el enlace.", true);
     } finally {
       if (submit) submit.disabled = false;
     }
   }
 
-  async function verifyPatientCode(event) {
-    event.preventDefault();
-    const code = String(accessCode?.value || "").replace(/\D/g, "").slice(0, 6);
-    if (!/^\d{6}$/.test(code) || !state.accessEmail) {
-      setAccessMessage("Introduce el código de seis cifras.", true);
-      return;
+  async function verifyPatientLinkFromUrl() {
+    const fragment = new URLSearchParams(window.location.hash.slice(1));
+    const token = fragment.get("acceso");
+    const email = fragment.get("email");
+    if (!token) return false;
+    history.replaceState(null, "", window.location.pathname + window.location.search);
+    if (!email || !/^[A-Za-z0-9_-]{43}$/.test(token)) {
+      setAccessMessage("Este enlace no es válido. Solicita otro.", true);
+      return true;
     }
-    setAccessMessage("Comprobando código…");
-    const submit = codeForm?.querySelector('button[type="submit"]');
-    if (submit) submit.disabled = true;
+    setAccessMessage("Comprobando tu enlace…");
     try {
-      const response = await fetch("/api/patient-portal/verify-code", {
-        method: "POST",
-        credentials: "include",
+      const response = await fetch("/api/patient-portal/verify-link", {
+        method: "POST", credentials: "include",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: state.accessEmail, code })
+        body: JSON.stringify({ email, token })
       });
       const body = await response.json().catch(() => ({}));
-      if (!response.ok) throw new Error(body.error || "El código no es válido o ha caducado.");
+      if (!response.ok) throw new Error(body.error || "El enlace no es válido o ha caducado.");
       setAccessMessage("");
-      if (accessCode) accessCode.value = "";
       const opened = await loadPatientSession();
-      if (!opened) {
-        setAccessMessage("El código es correcto, pero no se ha podido abrir la sesión. Recarga la página una vez y vuelve a intentarlo.", true);
-      }
+      if (!opened) setAccessMessage("No se ha podido abrir la sesión. Inténtalo otra vez.", true);
     } catch (error) {
-      setAccessMessage(error?.message || "El código no es válido o ha caducado.", true);
-    } finally {
-      if (submit) submit.disabled = false;
+      setAccessMessage(error?.message || "El enlace no es válido o ha caducado.", true);
     }
+    return true;
   }
 
   function resetPatientAccess() {
     state.accessEmail = "";
-    if (accessCode) accessCode.value = "";
-    if (codeForm) codeForm.hidden = true;
-    if (emailForm) emailForm.hidden = false;
+
+
+
     setAccessMessage("");
     accessEmail?.focus();
   }
@@ -926,7 +916,7 @@
       if (view === "therapy" && !state.portalAuthenticated) {
         state.guestMode = false;
         showAccessGate();
-        setAccessMessage("Para ver tu terapia, solicita un código de acceso.");
+        setAccessMessage("Para ver tu terapia, solicita un enlace de acceso.");
         return;
       }
       state.need = null;
@@ -1007,9 +997,9 @@
     if (message) message.textContent = "Datos locales borrados.";
   });
 
-  emailForm?.addEventListener("submit", requestPatientCode);
-  codeForm?.addEventListener("submit", verifyPatientCode);
-  document.getElementById("space-change-email")?.addEventListener("click", resetPatientAccess);
+  emailForm?.addEventListener("submit", requestPatientLink);
+
+
   document.getElementById("space-wellness-guest")?.addEventListener("click", () => {
     state.guestMode = true;
     state.portalAuthenticated = false;
@@ -1029,5 +1019,5 @@
   importBetweenSessionsToken();
   renderWellness();
   renderProgress();
-  loadPatientSession();
+  verifyPatientLinkFromUrl().then((processed) => { if (!processed) loadPatientSession(); });
 })();
