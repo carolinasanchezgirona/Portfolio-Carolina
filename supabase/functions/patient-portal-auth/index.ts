@@ -205,6 +205,175 @@ async function verifyCode(email: string, code: string, useLink = false) {
   return json({ ok: true, session_token: rawSession, expires_at: sessionExpires.toISOString() });
 }
 
+
+/* Supabase Auth owns password hashing, credential policy and email verification.
+   Never store patient passwords or Supabase Auth access tokens in clinical tables. */
+const AUTH_PUBLIC_KEY = Deno.env.get("SUPABASE_ANON_KEY") ?? "";
+const AUTH_API = SUPABASE_URL + "/auth/v1";
+const genericPasswordMessage = "Si el correo está habilitado, recibirás instrucciones en unos minutos.";
+
+async function eligiblePatient(email: string): Promise<{id: string} | null> {
+  const response = await fetch(
+    SUPABASE_URL + "/rest/v1/clinical_patients?select=id,email,status&email=ilike." +
+      encodeURIComponent(email) + "&status=neq.archived&limit=2",
+    { headers: serviceHeaders, cache: "no-store" },
+  );
+  if (!response.ok) throw new Error("Patient lookup unavailable");
+  const rows = await response.json().catch(() => []);
+  if (!Array.isArray(rows) || rows.length !== 1 ||
+      String(rows[0].email || "").trim().toLowerCase() !== email) return null;
+  return { id: String(rows[0].id) };
+}
+
+async function makeAuthRequest(path: string, data: Record<string, unknown>,
+    key: string, method = "POST"): Promise<Response> {
+  return fetch(AUTH_API + path, {
+    method, cache: "no-store",
+    headers: { apikey: key, Authorization: "Bearer " + key, "Content-Type": "application/json" },
+    body: JSON.stringify(data),
+  });
+}
+
+async function sendPasswordLink(email: string, purpose: string) {
+  // Never reveal to unauthenticated callers whether the address belongs to a patient.
+  const generic = { ok: true, message: genericPasswordMessage };
+  if (!SERVICE_ROLE_KEY || !AUTH_PUBLIC_KEY || !BREVO_API_KEY) return json({ error: "Servicio temporalmente no disponible." }, 503);
+  let patient: {id:string} | null;
+  try { patient = await eligiblePatient(email); }
+  catch { return json({ error: "Servicio temporalmente no disponible." }, 503); }
+  if (!patient) return json(generic);
+
+  // Existing login code table doubles as per-patient issue history; no email content is retained.
+  const since = new Date(Date.now() - 60 * 60 * 1000).toISOString();
+  const limited = await fetch(
+    SUPABASE_URL + "/rest/v1/patient_portal_login_codes?select=created_at&patient_id=eq." +
+    encodeURIComponent(patient.id) + "&created_at=gte." + encodeURIComponent(since) +
+    "&order=created_at.desc&limit=5",
+    { headers: serviceHeaders, cache: "no-store" },
+  );
+  if (!limited.ok) return json({ error: "Servicio temporalmente no disponible." }, 503);
+  const attempts = await limited.json().catch(() => []);
+  if (Array.isArray(attempts) && attempts.length) {
+    if (attempts.length >= 5) return json(generic);
+    const last = Date.parse(String(attempts[0].created_at || ""));
+    if (Number.isFinite(last) && Date.now() - last < 60_000) return json(generic);
+  }
+
+  // Invite only provisioned patients. Existing Auth users receive a recovery link.
+  let type: "invite" | "recovery" = purpose === "reset" ? "recovery" : "invite";
+  let generated = await makeAuthRequest("/admin/generate_link", { type, email }, SERVICE_ROLE_KEY);
+  if (!generated.ok && type === "invite" && generated.status === 422) {
+    type = "recovery";
+    generated = await makeAuthRequest("/admin/generate_link", { type, email }, SERVICE_ROLE_KEY);
+  }
+  if (!generated.ok) {
+    console.error("[portal-password] Link generation failed", generated.status);
+    return json(generic);
+  }
+  const info = await generated.json().catch(() => ({})) as Record<string, unknown>;
+  const properties = (info.properties && typeof info.properties === "object")
+    ? info.properties as Record<string, unknown> : {};
+  const hash = String(properties.hashed_token ?? info.hashed_token ?? "");
+  if (!/^[A-Za-z0-9_-]{32,256}$/.test(hash)) {
+    console.error("[portal-password] Auth link missing token hash");
+    return json({ error: "Servicio temporalmente no disponible." }, 503);
+  }
+
+  const tracking = await fetch(SUPABASE_URL + "/rest/v1/patient_portal_login_codes", {
+    method: "POST",
+    headers: { ...serviceHeaders, Prefer: "return=minimal" },
+    body: JSON.stringify({
+      patient_id: patient.id, email_normalized: email,
+      code_hash: await hashCode(email, randomToken()),
+      expires_at: new Date(Date.now() + 60_000).toISOString(),
+    }),
+  });
+  if (!tracking.ok) return json({ error: "Servicio temporalmente no disponible." }, 503);
+
+  const linkUrl = "https://carolinasanchezgirona.com/mi-espacio/#configurar=" +
+    encodeURIComponent(hash) + "&tipo=" + type;
+  const intro = purpose === "reset" ? "Recuperar la contraseña de Mi espacio" : "Preparar el acceso a Mi espacio";
+  const brevo = await fetch("https://api.brevo.com/v3/smtp/email", {
+    method: "POST",
+    headers: { "api-key": BREVO_API_KEY, "Content-Type": "application/json", Accept: "application/json" },
+    body: JSON.stringify({
+      sender: { email: "contact@carolinasanchezgirona.com", name: "Carolina Sánchez Girona" },
+      to: [{ email }],
+      subject: intro,
+      htmlContent: '<p>' + intro + '</p><p><a href="' + linkUrl +
+        '">Configurar mi contraseña</a></p><p>El enlace es personal y de un solo uso. ' +
+        'Si no lo has solicitado, ignora este mensaje.</p>',
+      textContent: intro + "\n\n" + linkUrl + "\n\nSi no lo has solicitado, ignora el mensaje.",
+      tags: ["patient-portal-password"],
+      headers: { "X-Mailin-Track-Opens": "0", "X-Mailin-Track-Clicks": "0" },
+    }),
+  });
+  if (!brevo.ok) {
+    console.error("[portal-password] Email provider failed", brevo.status);
+    return json({ error: "Servicio temporalmente no disponible." }, 503);
+  }
+  return json(generic);
+}
+
+async function setPatientPassword(email: string, tokenHash: string, flow: string, password: string) {
+  if (!AUTH_PUBLIC_KEY || !SERVICE_ROLE_KEY) return json({ error: "Servicio temporalmente no disponible." }, 503);
+  if (!/^[A-Za-z0-9_-]{32,256}$/.test(tokenHash) || !["invite", "recovery"].includes(flow) ||
+      password.length < 12 || password.length > 128) return json({ error: "Enlace o contraseña no válidos." }, 400);
+  // Verify the emailed one-use secret at the Auth provider, not in browser code.
+  const verified = await makeAuthRequest("/verify", { token_hash: tokenHash, type: flow }, AUTH_PUBLIC_KEY);
+  if (!verified.ok) return json({ error: "El enlace ha caducado o ya se ha utilizado." }, 401);
+  const auth = await verified.json().catch(() => ({})) as Record<string, unknown>;
+  const jwt = String(auth.access_token ?? "");
+  const user = auth.user as Record<string, unknown> | undefined;
+  if (!jwt || String(user?.email ?? "").toLowerCase() !== email) return json({ error: "No se ha podido verificar el enlace." }, 401);
+  let patient: {id:string} | null;
+  try { patient = await eligiblePatient(email); }
+  catch { return json({ error: "Servicio temporalmente no disponible." }, 503); }
+  if (!patient) return json({ error: "No se ha podido validar el acceso." }, 403);
+  const updated = await fetch(AUTH_API + "/user", {
+    method: "PUT", cache: "no-store",
+    headers: { apikey: AUTH_PUBLIC_KEY, Authorization: "Bearer " + jwt, "Content-Type": "application/json" },
+    body: JSON.stringify({ password }),
+  });
+  if (!updated.ok) return json({ error: "No se ha podido guardar la contraseña. Solicita otro enlace." }, 400);
+
+  // Reset all existing portal cookies/sessions for this patient on password change.
+  await fetch(
+    SUPABASE_URL + "/rest/v1/patient_portal_sessions?patient_id=eq." + encodeURIComponent(patient.id) +
+      "&revoked_at=is.null",
+    { method: "PATCH", headers: { ...serviceHeaders, Prefer: "return=minimal" },
+      body: JSON.stringify({ revoked_at: new Date().toISOString() }) },
+  );
+  return json({ ok: true, message: "Contraseña guardada. Ya puedes iniciar sesión." });
+}
+
+async function loginWithPassword(email: string, password: string) {
+  if (!AUTH_PUBLIC_KEY || !SERVICE_ROLE_KEY) return json({ error: "Servicio temporalmente no disponible." }, 503);
+  if (password.length < 1 || password.length > 128) return json({ error: "Correo o contraseña incorrectos." }, 401);
+  const signed = await makeAuthRequest("/token?grant_type=password", { email, password }, AUTH_PUBLIC_KEY);
+  if (!signed.ok) return json({ error: "Correo o contraseña incorrectos." }, 401);
+  const auth = await signed.json().catch(() => ({})) as Record<string, unknown>;
+  const user = auth.user as Record<string, unknown> | undefined;
+  if (String(user?.email ?? "").toLowerCase() !== email ||
+      !user?.email_confirmed_at) return json({ error: "Correo o contraseña incorrectos." }, 401);
+  let patient: {id:string} | null;
+  try { patient = await eligiblePatient(email); }
+  catch { return json({ error: "Servicio temporalmente no disponible." }, 503); }
+  if (!patient) return json({ error: "Correo o contraseña incorrectos." }, 401);
+  const now = new Date();
+  const token = randomToken();
+  const expiry = new Date(now.getTime() + 8 * 60 * 60 * 1000).toISOString();
+  const saved = await fetch(SUPABASE_URL + "/rest/v1/patient_portal_sessions", {
+    method: "POST", headers: { ...serviceHeaders, Prefer: "return=minimal" },
+    body: JSON.stringify({
+      patient_id: patient.id, token_hash: await sha256(token),
+      expires_at: expiry, last_seen_at: now.toISOString(),
+    }),
+  });
+  if (!saved.ok) return json({ error: "No se ha podido iniciar la sesión." }, 502);
+  return json({ ok: true, session_token: token, expires_at: expiry });
+}
+
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { status: 204, headers: cors });
   if (req.method !== "POST") return json({ error: "Método no permitido." }, 405);
@@ -217,6 +386,9 @@ Deno.serve(async (req) => {
   const email = normalizeEmail(body.email);
   if (!email) return json({ error: "Introduce un correo válido." }, 400);
 
+  if (action === "password-link") return await sendPasswordLink(email, String(body.purpose ?? "setup") === "reset" ? "reset" : "setup");
+  if (action === "password-set") return await setPatientPassword(email, String(body.token_hash ?? ""), String(body.flow ?? ""), String(body.password ?? ""));
+  if (action === "password-login") return await loginWithPassword(email, String(body.password ?? ""));
   if (action === "request") return await requestCode(email);
   if (action === "request-link") return await requestCode(email, true);
   if (action === "verify-link") return await verifyCode(email, String(body.token ?? "").trim(), true);
