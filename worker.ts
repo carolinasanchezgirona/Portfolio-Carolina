@@ -243,7 +243,7 @@ function patientPortalSameOrigin(request: Request): boolean {
   catch { return false; }
 }
 
-async function handlePatientPortalAuth(request: Request, env: Env, action: "request" | "verify"): Promise<Response> {
+async function handlePatientPortalAuth(request: Request, env: Env, action: "password-link" | "password-set" | "password-login"): Promise<Response> {
   if (request.method !== "POST") return patientPortalJson({ error: "Método no permitido." }, 405);
   if (!patientPortalSameOrigin(request)) return patientPortalJson({ error: "Origen no permitido." }, 403);
   if (!env.SUPABASE_SERVICE_ROLE_KEY) return patientPortalJson({ error: "Acceso temporalmente no disponible." }, 503);
@@ -253,7 +253,10 @@ async function handlePatientPortalAuth(request: Request, env: Env, action: "requ
   catch { return patientPortalJson({ error: "Solicitud no válida." }, 400); }
 
   const email = typeof body.email === "string" ? body.email.trim().toLowerCase().slice(0, 254) : "";
-  const code = typeof body.code === "string" ? body.code.trim().slice(0, 12) : "";
+  const password = typeof body.password === "string" && body.password.length <= 128 ? body.password : "";
+  const tokenHash = typeof body.token_hash === "string" ? body.token_hash.trim().slice(0, 256) : "";
+  const flow = body.flow === "invite" || body.flow === "recovery" ? body.flow : "";
+  const purpose = body.purpose === "reset" ? "reset" : "setup";
   if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
     return patientPortalJson({ error: "Introduce un correo válido." }, 400);
   }
@@ -265,7 +268,7 @@ async function handlePatientPortalAuth(request: Request, env: Env, action: "requ
       Authorization: "Bearer " + env.SUPABASE_SERVICE_ROLE_KEY,
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({ action, email, ...(action === "verify" ? { code } : {}) }),
+    body: JSON.stringify({ action, email, ...(action === "password-link" ? { purpose } : {}), ...(action === "password-set" ? { token_hash: tokenHash, flow, password } : {}), ...(action === "password-login" ? { password } : {}) }),
   });
   const result = await response.json().catch(() => ({})) as Record<string, unknown>;
 
@@ -274,13 +277,13 @@ async function handlePatientPortalAuth(request: Request, env: Env, action: "requ
     return patientPortalJson({ error: message }, response.status);
   }
 
-  if (action === "verify") {
+  if (action === "password-login") {
     const token = typeof result.session_token === "string" ? result.session_token : "";
-    if (!/^[A-Za-z0-9_-]{40,}$/.test(token)) return patientPortalJson({ error: "No se ha podido iniciar la sesión." }, 502);
+    if (!/^pwd2_[A-Za-z0-9_-]{40,}$/.test(token)) return patientPortalJson({ error: "No se ha podido iniciar la sesión." }, 502);
     return patientPortalJson(
       { ok: true, expires_at: result.expires_at || null },
       200,
-      { "Set-Cookie": patientPortalCookie(token, 30 * 24 * 60 * 60) },
+      { "Set-Cookie": patientPortalCookie(token, 8 * 60 * 60) },
     );
   }
 
@@ -288,7 +291,7 @@ async function handlePatientPortalAuth(request: Request, env: Env, action: "requ
     ok: true,
     message: typeof result.message === "string"
       ? result.message
-      : "Si el correo corresponde a una cuenta con acceso, recibirás un código en unos minutos.",
+      : "Si el correo corresponde a una cuenta con acceso, recibirás un enlace seguro en unos minutos.",
   });
 }
 
@@ -301,7 +304,7 @@ type PatientPortalSession = {
 async function patientPortalSession(request: Request, env: Env): Promise<PatientPortalSession | null> {
   if (!env.SUPABASE_SERVICE_ROLE_KEY) return null;
   const token = cookieValue(request, PATIENT_PORTAL_COOKIE);
-  if (!/^[A-Za-z0-9_-]{40,}$/.test(token)) return null;
+  if (!/^pwd2_[A-Za-z0-9_-]{40,}$/.test(token)) return null;
   const hash = await sha256Hex(token);
   const response = await fetch(
     RESOURCE_SUPABASE + "/rest/v1/patient_portal_sessions?select=id,patient_id,expires_at&token_hash=eq." +
@@ -1638,8 +1641,13 @@ export default {
     if (url.pathname === "/api/resources/access" || url.pathname === "/api/resources/access/") return handleResourceAccess(request, env);
     if (url.pathname === "/api/resources/download" || url.pathname === "/api/resources/download/") return handleResourceDownload(request, env);
     if (url.pathname === "/api/questions/draft" || url.pathname === "/api/questions/draft/") return handleQuestionDraft(request, env);
-    if (url.pathname === "/api/patient-portal/request-code" || url.pathname === "/api/patient-portal/request-code/") return handlePatientPortalAuth(request, env, "request");
-    if (url.pathname === "/api/patient-portal/verify-code" || url.pathname === "/api/patient-portal/verify-code/") return handlePatientPortalAuth(request, env, "verify");
+    if (url.pathname === "/api/patient-portal/request-code" || url.pathname === "/api/patient-portal/request-code/" ||
+        url.pathname === "/api/patient-portal/verify-code" || url.pathname === "/api/patient-portal/verify-code/") {
+      return patientPortalJson({ error: "Acceso por código desactivado. Utiliza correo y contraseña." }, 410);
+    }
+    if (url.pathname === "/api/patient-portal/password-link" || url.pathname === "/api/patient-portal/password-link/") return handlePatientPortalAuth(request, env, "password-link");
+    if (url.pathname === "/api/patient-portal/password-set" || url.pathname === "/api/patient-portal/password-set/") return handlePatientPortalAuth(request, env, "password-set");
+    if (url.pathname === "/api/patient-portal/password-login" || url.pathname === "/api/patient-portal/password-login/") return handlePatientPortalAuth(request, env, "password-login");
     if (url.pathname === "/api/patient-portal/session" || url.pathname === "/api/patient-portal/session/") return handlePatientPortalSession(request, env);
     if (url.pathname === "/api/patient-portal/response" || url.pathname === "/api/patient-portal/response/") return handlePatientPortalResponse(request, env);
     if (url.pathname === "/api/patient-portal/logout" || url.pathname === "/api/patient-portal/logout/") return handlePatientPortalLogout(request, env);
