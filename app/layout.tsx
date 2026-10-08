@@ -120,7 +120,7 @@ const structuredData = {
       telephone: "+34604974857",
       address: {
         "@type": "PostalAddress",
-        streetAddress: "Carrer Barcelona 8, Local",
+        streetAddress: "Carrer Barcelona 8, Esc. 1, local 4B",
         postalCode: "08350",
         addressLocality: "Arenys de Mar",
         addressRegion: "Cataluña",
