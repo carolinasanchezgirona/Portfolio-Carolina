@@ -336,7 +336,7 @@ async function handlePatientPasswordAuth(request: Request, env: Env, action: "lo
   const save = await fetch(RESOURCE_SUPABASE + "/rest/v1/patient_portal_sessions", {
     method: "POST",
     headers: serviceHeaders(env, { Prefer: "return=minimal" }),
-    body: JSON.stringify({ patient_id: patientId, token_hash: tokenHash, expires_at: expires.toISOString() }),
+    body: JSON.stringify({ patient_id: patientId, token_hash: tokenHash, expires_at: expires.toISOString(), auth_method: "password" }),
   });
   if (!save.ok) return patientPortalJson({ error: "No se ha podido abrir la sesión." }, 502);
   return patientPortalJson({ ok: true }, 200, { "Set-Cookie": patientPortalCookie(rawToken, 8 * 60 * 60) });
@@ -355,7 +355,7 @@ async function patientPortalSession(request: Request, env: Env): Promise<Patient
   const hash = await sha256Hex(token);
   const response = await fetch(
     RESOURCE_SUPABASE + "/rest/v1/patient_portal_sessions?select=id,patient_id,expires_at&token_hash=eq." +
-      encodeURIComponent(hash) + "&revoked_at=is.null&expires_at=gt." + encodeURIComponent(new Date().toISOString()) + "&limit=1",
+      encodeURIComponent(hash) + "&auth_method=eq.password&revoked_at=is.null&expires_at=gt." + encodeURIComponent(new Date().toISOString()) + "&limit=1",
     { headers: serviceHeaders(env), cache: "no-store" },
   );
   const rows = await response.json().catch(() => []) as Record<string, unknown>[];
@@ -1666,10 +1666,10 @@ export default {
     if (url.pathname === "/api/questions/draft" || url.pathname === "/api/questions/draft/") return handleQuestionDraft(request, env);
     if (url.pathname === "/api/patient-portal/password-login" || url.pathname === "/api/patient-portal/password-login/") return handlePatientPasswordAuth(request, env, "login");
     if (url.pathname === "/api/patient-portal/password-reset" || url.pathname === "/api/patient-portal/password-reset/") return handlePatientPasswordAuth(request, env, "reset");
-    if (url.pathname === "/api/patient-portal/request-link" || url.pathname === "/api/patient-portal/request-link/") return handlePatientPortalAuth(request, env, "request-link");
-    if (url.pathname === "/api/patient-portal/verify-link" || url.pathname === "/api/patient-portal/verify-link/") return handlePatientPortalAuth(request, env, "verify-link");
-    if (url.pathname === "/api/patient-portal/request-code" || url.pathname === "/api/patient-portal/request-code/") return handlePatientPortalAuth(request, env, "request");
-    if (url.pathname === "/api/patient-portal/verify-code" || url.pathname === "/api/patient-portal/verify-code/") return handlePatientPortalAuth(request, env, "verify");
+    if (url.pathname === "/api/patient-portal/request-link" || url.pathname === "/api/patient-portal/request-link/") return patientPortalJson({ error: "Usa el acceso con contraseña." }, 410);
+    if (url.pathname === "/api/patient-portal/verify-link" || url.pathname === "/api/patient-portal/verify-link/") return patientPortalJson({ error: "Usa el acceso con contraseña." }, 410);
+    if (url.pathname === "/api/patient-portal/request-code" || url.pathname === "/api/patient-portal/request-code/") return patientPortalJson({ error: "Usa el acceso con contraseña." }, 410);
+    if (url.pathname === "/api/patient-portal/verify-code" || url.pathname === "/api/patient-portal/verify-code/") return patientPortalJson({ error: "Usa el acceso con contraseña." }, 410);
     if (url.pathname === "/api/patient-portal/session" || url.pathname === "/api/patient-portal/session/") return handlePatientPortalSession(request, env);
     if (url.pathname === "/api/patient-portal/response" || url.pathname === "/api/patient-portal/response/") return handlePatientPortalResponse(request, env);
     if (url.pathname === "/api/patient-portal/logout" || url.pathname === "/api/patient-portal/logout/") return handlePatientPortalLogout(request, env);
