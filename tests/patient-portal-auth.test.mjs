@@ -34,11 +34,11 @@ function createHarness() {
     if (url.includes("/rest/v1/clinical_patients?")) {
       return response(authorized ? [{ id, email: realEmail, status: "active" }] : []);
     }
-    if (url.includes("/rest/v1/patient_portal_login_codes?select=created_at")) {
-      return response([]);
-    }
-    if (url.includes("/rest/v1/patient_portal_login_codes")) {
-      return response({}, 201);
+    if (url.endsWith("/rest/v1/rpc/issue_patient_portal_login_code")) {
+      assert.equal(payload.p_patient_id, id);
+      assert.equal(payload.p_email_normalized, realEmail);
+      assert.match(payload.p_code_hash, /^[a-f0-9]{64}$/);
+      return response("22222222-2222-4222-8222-222222222222");
     }
     if (url.endsWith("/auth/v1/admin/generate_link")) {
       assert.equal(payload.email, internalEmail);
@@ -89,7 +89,7 @@ function createHarness() {
   }, { timeout: 8000 });
   async function call(action, other = {}) {
     const request = new Request("https://example.supabase.co/functions/v1/patient-portal-auth", {
-      method: "POST", headers: { "content-type": "application/json" },
+      method: "POST", headers: { "content-type": "application/json", authorization: "Bearer service-role-test" },
       body: JSON.stringify({ action, email: realEmail, ...other })
     });
     const res = await handler(request);
