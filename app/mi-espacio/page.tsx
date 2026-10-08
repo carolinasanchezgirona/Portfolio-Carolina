@@ -27,28 +27,20 @@ export default function MiEspacioPage() {
           <div>
             <p className="space-eyebrow">Acceso privado</p>
             <h1>Entra en Mi espacio</h1>
-            <p>Introduce el correo que utilizas en consulta. Te enviaremos un código de seis cifras. No necesitas contraseña.</p>
+            <p>Introduce el correo que utilizas en consulta. Te enviaremos un enlace seguro. No necesitas contraseña ni copiar códigos.</p>
           </div>
 
           <form id="space-email-form" className="space-access-form">
             <label>Correo electrónico
               <input id="space-access-email" type="email" autoComplete="email" inputMode="email" required placeholder="tu@email.com" />
             </label>
-            <button className="space-primary" type="submit">Recibir código</button>
-          </form>
-
-          <form id="space-code-form" className="space-access-form" hidden>
-            <label>Código de acceso
-              <input id="space-access-code" className="space-code-input" type="text" inputMode="numeric" autoComplete="one-time-code" pattern="[0-9]{6}" maxLength={6} required placeholder="000000" />
-            </label>
-            <button className="space-primary" type="submit">Entrar</button>
-            <button id="space-change-email" className="space-secondary" type="button">Usar otro correo</button>
+            <button className="space-primary" type="submit">Recibir enlace de acceso</button>
           </form>
 
           <p id="space-access-message" className="space-access-message" role="status" />
           <div className="space-access-divider"><span>o</span></div>
           <button id="space-wellness-guest" className="space-wellness-guest" type="button">Entrar en Wellness sin iniciar sesión</button>
-          <p className="space-access-foot">El código caduca en 10 minutos y solo puede utilizarse una vez. Si el correo no está vinculado a una ficha con acceso, no se enviará información clínica.</p>
+          <p className="space-access-foot">El enlace caduca en 10 minutos y solo puede utilizarse una vez. Si el correo no está vinculado a una ficha con acceso, no se enviará información clínica.</p>
         </div>
       </section>
 
