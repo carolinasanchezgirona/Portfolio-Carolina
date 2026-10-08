@@ -48,7 +48,7 @@ async function confirmResourceContract(env: Env, session: Record<string, unknown
     ? session.customer_details as Record<string, unknown> : {};
   const email = String(details.email ?? session.customer_email ?? "").trim();
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return false;
-  const formatted = new Intl.NumberFormat("es-ES", { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(record.amount_cents / 100) + " €";
+  const formatted = (record.amount_cents / 100).toFixed(2).replace(".", ",") + " €";
   const response = await fetch(RESOURCE_CONFIRMATION_FUNCTION, {
     method: "POST", headers: serviceHeaders(env),
     body: JSON.stringify({ email, terms: record.terms_snapshot, version: record.terms_version,
