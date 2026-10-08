@@ -101,6 +101,8 @@ export default function MiEspacioPage() {
               <p>Herramientas para tu bienestar y recursos para continuar lo trabajado en consulta, a tu ritmo.</p>
             </div>
 
+            <MoodTracker />
+
             <div className="space-quick-start">
               <div>
                 <p className="space-eyebrow">Mi terapia</p>
@@ -110,7 +112,10 @@ export default function MiEspacioPage() {
               <button type="button" className="space-primary" data-go-therapy>Ir a mis ejercicios →</button>
             </div>
 
-            <MoodTracker />
+            <aside className="space-membership-note">
+              <strong>Acceso incluido durante la terapia</strong>
+              <p>Mientras estés en tratamiento, Wellness y tus materiales están incluidos. Al finalizar, podrás continuar con las herramientas digitales mediante una suscripción voluntaria cuando esté disponible.</p>
+            </aside>
 
             <div className="space-needs-heading">
               <div><p className="space-eyebrow">A tu ritmo</p><h3>¿Qué necesitas ahora?</h3></div>
@@ -253,7 +258,7 @@ export default function MiEspacioPage() {
             <div className="space-hero">
               <p className="space-eyebrow">Cuenta y privacidad</p>
               <h2>Mi configuración y privacidad</h2>
-              <p>La separación entre Wellness y terapia es intencionada. Una herramienta de bienestar no debe convertirse automáticamente en información clínica.</p>
+              <p>La separación entre Wellness y terapia es intencionada. La elección del personaje se guarda en tu cuenta y tus registros libres de bienestar permanecen en este dispositivo, separados por paciente.</p>
             </div>
 
             <MoodAvatarSettings />
