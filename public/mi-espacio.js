@@ -396,6 +396,16 @@
     const legacyGuest = scope === "guest";
     state.favorites = scope ? loadJson(scopedWellnessKey(FAVORITES_KEY), legacyGuest ? loadJson(FAVORITES_KEY, []) : []) : [];
     state.completed = scope ? loadJson(scopedWellnessKey(COMPLETED_KEY), legacyGuest ? loadJson(COMPLETED_KEY, []) : []) : [];
+    if (legacyGuest) {
+      try {
+        const favoritesKey = scopedWellnessKey(FAVORITES_KEY);
+        const completedKey = scopedWellnessKey(COMPLETED_KEY);
+        if (favoritesKey && !localStorage.getItem(favoritesKey)) localStorage.setItem(favoritesKey, JSON.stringify(state.favorites));
+        if (completedKey && !localStorage.getItem(completedKey)) localStorage.setItem(completedKey, JSON.stringify(state.completed));
+        localStorage.removeItem(FAVORITES_KEY);
+        localStorage.removeItem(COMPLETED_KEY);
+      } catch {}
+    }
     renderWellness();
     renderProgress();
   }
