@@ -53,14 +53,14 @@ async function hashCode(email: string, code: string) {
 }
 
 async function requestCode(email: string, useLink = false) {
-  const generic = { ok: true, message: "Si el correo corresponde a una cuenta con acceso, recibirás un código en unos minutos." };
+  const generic = { ok: true, message: useLink ? "Si el correo tiene acceso, recibirás un enlace en unos minutos." : "Si el correo tiene acceso, recibirás un código en unos minutos." };
   if (!SERVICE_ROLE_KEY || !BREVO_API_KEY) return json({ error: "El acceso por correo no está configurado." }, 503);
 
   const patientsResponse = await fetch(
     SUPABASE_URL + "/rest/v1/clinical_patients?select=id,email,status&status=neq.archived&limit=500",
     { headers: serviceHeaders, cache: "no-store" },
   );
-  if (!patientsResponse.ok) return json(generic);
+  if (!patientsResponse.ok) { console.error("[patient-auth] No se pudo consultar el registro de pacientes:", patientsResponse.status); return json({ error: "Servicio temporalmente no disponible." }, 503); }
   const patientRows = await patientsResponse.json().catch(() => []);
   const patients = Array.isArray(patientRows)
     ? patientRows.filter((row) => String(row?.email ?? "").trim().toLowerCase() === email)
@@ -77,7 +77,8 @@ async function requestCode(email: string, useLink = false) {
       "&order=created_at.desc&limit=10",
     { headers: serviceHeaders, cache: "no-store" },
   );
-  const recent = recentResponse.ok ? await recentResponse.json().catch(() => []) : [];
+  if (!recentResponse.ok) { console.error("[patient-auth] No se pudo validar el límite de solicitudes:", recentResponse.status); return json({ error: "Servicio temporalmente no disponible." }, 503); }
+  const recent = await recentResponse.json().catch(() => []);
   if (Array.isArray(recent) && recent.length) {
     const lastCreated = Date.parse(String(recent[0]?.created_at || ""));
     if (Number.isFinite(lastCreated) && Date.now() - lastCreated < 60 * 1000) return json(generic);
@@ -123,6 +124,7 @@ async function requestCode(email: string, useLink = false) {
   });
 
   if (!sent.ok) {
+    console.error("[patient-auth] El proveedor de correo rechazó el envío:", sent.status);
     await fetch(SUPABASE_URL + "/rest/v1/patient_portal_login_codes?id=eq." + encodeURIComponent(String(loginId)), {
       method: "DELETE",
       headers: serviceHeaders,
