@@ -52,7 +52,7 @@ async function hashCode(email: string, code: string) {
   return await sha256(code + "|" + email + "|" + SERVICE_ROLE_KEY);
 }
 
-async function requestCode(email: string) {
+async function requestCode(email: string, useLink = false) {
   const generic = { ok: true, message: "Si el correo corresponde a una cuenta con acceso, recibirás un código en unos minutos." };
   if (!SERVICE_ROLE_KEY || !BREVO_API_KEY) return json({ error: "El acceso por correo no está configurado." }, 503);
 
@@ -84,7 +84,7 @@ async function requestCode(email: string) {
     if (recent.length >= 5) return json(generic);
   }
 
-  const code = randomCode();
+  const code = useLink ? randomToken() : randomCode();
   const now = new Date();
   const expires = new Date(now.getTime() + 10 * 60 * 1000);
   const codeHash = await hashCode(email, code);
@@ -103,8 +103,9 @@ async function requestCode(email: string) {
   const loginId = Array.isArray(inserted) ? inserted[0]?.id : null;
   if (!insert.ok || !loginId) return json({ error: "No se ha podido preparar el acceso." }, 502);
 
-  const html = `<!doctype html><html lang="es"><body style="margin:0;background:#f5f8fb;font-family:Arial,sans-serif;color:#233746"><div style="max-width:620px;margin:0 auto;padding:32px 18px"><div style="background:#fff;border:1px solid #d5e3ee;border-radius:18px;padding:32px"><p style="color:#08A6A0;font-size:13px;font-weight:700;letter-spacing:.04em">MI ESPACIO</p><h1 style="font-size:25px;color:#173A5E">Tu código de acceso</h1><p>Introduce este código en Mi espacio:</p><p style="font-size:34px;letter-spacing:8px;font-weight:800;color:#173A5E;text-align:center;margin:28px 0">${code}</p><p>El código caduca en 10 minutos y solo puede utilizarse una vez.</p><p style="margin-top:28px">Carolina Sánchez Girona</p></div><p style="color:#667983;font-size:12px">Si no has solicitado este acceso, puedes ignorar este correo. No respondas incluyendo información clínica.</p></div></body></html>`;
-  const textContent = `Tu código para Mi espacio es: ${code}\n\nCaduca en 10 minutos y solo puede utilizarse una vez.\n\nSi no has solicitado este acceso, ignora este correo.\n\nCarolina Sánchez Girona`;
+  const linkUrl = "https://carolinasanchezgirona.com/mi-espacio/#acceso=" + encodeURIComponent(code) + "&email=" + encodeURIComponent(email);
+  const html = useLink ? `<!doctype html><html lang="es"><body style="font-family:Arial,sans-serif;color:#173A5E"><h1>Entra en Mi espacio</h1><p>Pulsa este enlace para acceder de forma segura:</p><p><a href="${linkUrl}">Entrar en mi espacio</a></p><p>El enlace caduca en 10 minutos y solo puede utilizarse una vez.</p><p>Si no lo solicitaste, ignora el mensaje.</p></body></html>` : `<!doctype html><html lang="es"><body style="margin:0;background:#f5f8fb;font-family:Arial,sans-serif;color:#233746"><div style="max-width:620px;margin:0 auto;padding:32px 18px"><div style="background:#fff;border:1px solid #d5e3ee;border-radius:18px;padding:32px"><p style="color:#08A6A0;font-size:13px;font-weight:700;letter-spacing:.04em">MI ESPACIO</p><h1 style="font-size:25px;color:#173A5E">Tu código de acceso</h1><p>Introduce este código en Mi espacio:</p><p style="font-size:34px;letter-spacing:8px;font-weight:800;color:#173A5E;text-align:center;margin:28px 0">${code}</p><p>El código caduca en 10 minutos y solo puede utilizarse una vez.</p><p style="margin-top:28px">Carolina Sánchez Girona</p></div><p style="color:#667983;font-size:12px">Si no has solicitado este acceso, puedes ignorar este correo. No respondas incluyendo información clínica.</p></div></body></html>`;
+  const textContent = useLink ? `Entra en Mi espacio: ${linkUrl}\n\nEl enlace caduca en 10 minutos y solo sirve una vez.` : `Tu código para Mi espacio es: ${code}\n\nCaduca en 10 minutos y solo puede utilizarse una vez.\n\nSi no has solicitado este acceso, ignora este correo.\n\nCarolina Sánchez Girona`;
 
   const sent = await fetch("https://api.brevo.com/v3/smtp/email", {
     method: "POST",
@@ -113,7 +114,7 @@ async function requestCode(email: string) {
       sender: { name: "Carolina Sánchez Girona", email: "contact@carolinasanchezgirona.com" },
       to: [{ email }],
       replyTo: { email: "contact@carolinasanchezgirona.com", name: "Carolina Sánchez Girona" },
-      subject: "Tu código para Mi espacio",
+      subject: useLink ? "Tu enlace seguro para Mi espacio" : "Tu código para Mi espacio",
       htmlContent: html,
       textContent,
       tags: ["patient-portal-login"],
@@ -137,9 +138,9 @@ async function requestCode(email: string) {
   return json(generic);
 }
 
-async function verifyCode(email: string, code: string) {
+async function verifyCode(email: string, code: string, useLink = false) {
   if (!SERVICE_ROLE_KEY) return json({ error: "El acceso por correo no está configurado." }, 503);
-  if (!/^\d{6}$/.test(code)) return json({ error: "Código no válido o caducado." }, 401);
+  if (!(useLink ? /^[A-Za-z0-9_-]{43}$/.test(code) : /^\d{6}$/.test(code))) return json({ error: "Código no válido o caducado." }, 401);
 
   const response = await fetch(
     SUPABASE_URL + "/rest/v1/patient_portal_login_codes?select=id,patient_id,code_hash,expires_at,attempts&email_normalized=eq." +
@@ -167,11 +168,16 @@ async function verifyCode(email: string, code: string) {
   }
 
   const now = new Date();
-  await fetch(SUPABASE_URL + "/rest/v1/patient_portal_login_codes?id=eq." + encodeURIComponent(String(item.id)), {
+  const consumed = await fetch(SUPABASE_URL + "/rest/v1/patient_portal_login_codes?id=eq." + encodeURIComponent(String(item.id)) +
+    "&consumed_at=is.null&expires_at=gt." + encodeURIComponent(now.toISOString()) + "&select=id", {
     method: "PATCH",
-    headers: { ...serviceHeaders, Prefer: "return=minimal" },
+    headers: { ...serviceHeaders, Prefer: "return=representation" },
     body: JSON.stringify({ consumed_at: now.toISOString() }),
   });
+  const usedRows = await consumed.json().catch(() => []);
+  if (!consumed.ok || !Array.isArray(usedRows) || usedRows.length !== 1) {
+    return json({ error: "Enlace no válido o ya utilizado." }, 401);
+  }
 
   const rawSession = randomToken();
   const tokenHash = await sha256(rawSession);
@@ -210,6 +216,8 @@ Deno.serve(async (req) => {
   if (!email) return json({ error: "Introduce un correo válido." }, 400);
 
   if (action === "request") return await requestCode(email);
+  if (action === "request-link") return await requestCode(email, true);
+  if (action === "verify-link") return await verifyCode(email, String(body.token ?? "").trim(), true);
   if (action === "verify") return await verifyCode(email, String(body.code ?? "").trim());
   return json({ error: "Acción no válida." }, 400);
 });
