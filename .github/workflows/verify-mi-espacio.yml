@@ -23,5 +23,9 @@ jobs:
       - run: npm ci
       - run: node --check public/mi-espacio.js
       - run: node --experimental-strip-types --test tests/clinical-privacy.test.mjs tests/patient-portal-auth.test.mjs
+      - uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.x
+      - run: deno check supabase/functions/patient-portal-auth/index.ts
       - run: npx tsc --noEmit
       - run: npm run build
