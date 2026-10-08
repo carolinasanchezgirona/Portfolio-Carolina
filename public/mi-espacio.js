@@ -1106,7 +1106,7 @@
   navButtons.forEach(button => {
     button.addEventListener("click", () => {
       const view = button.dataset.spaceView;
-      if (view !== "wellness" && !state.portalAuthenticated) {
+      if (!state.portalAuthenticated) {
         state.guestMode = false;
         showAccessGate();
         setAccessMessage("Para ver tu terapia, inicia sesión con tu correo y contraseña.");
@@ -1221,14 +1221,6 @@
     window.open("/mi-espacio/?vista=panel", "_blank", "noopener,noreferrer");
   });
 
-  document.getElementById("space-wellness-guest")?.addEventListener("click", () => {
-    state.guestMode = true;
-    state.portalAuthenticated = false;
-    state.storageScopeVersion++;
-    useWellnessStorage("guest");
-    window.dispatchEvent(new Event("patient-portal-session-ready"));
-    openPortal("wellness");
-  });
   document.querySelectorAll("[data-go-therapy]").forEach((button) => {
     button.addEventListener("click", () => {
       if (state.portalAuthenticated) showView("therapy");
