@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Script from "next/script";
 import "./mi-espacio.css";
-import MoodTracker from "./mood-tracker";
+import MoodTracker, { MoodAvatarSettings } from "./mood-tracker";
 
 export const metadata: Metadata = {
   title: "Mi espacio",
@@ -252,9 +252,11 @@ export default function MiEspacioPage() {
           <section className="space-view" data-space-panel="account" hidden>
             <div className="space-hero">
               <p className="space-eyebrow">Cuenta y privacidad</p>
-              <h2>Qué se guarda y qué no</h2>
+              <h2>Mi configuración y privacidad</h2>
               <p>La separación entre Wellness y terapia es intencionada. Una herramienta de bienestar no debe convertirse automáticamente en información clínica.</p>
             </div>
+
+            <MoodAvatarSettings />
 
             <div className="space-grid space-feature-grid">
               <article className="space-card">
