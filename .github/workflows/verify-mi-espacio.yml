@@ -1,7 +1,7 @@
 name: Validar Mi espacio
 on:
   push:
-    branches: [feature/mi-espacio-enlace-seguro]
+    branches: [feature/mi-espacio-enlace-seguro, feature/mi-espacio-invitacion-contrasena]
   pull_request:
     paths:
       - 'app/mi-espacio/**'
