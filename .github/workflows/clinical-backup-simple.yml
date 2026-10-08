@@ -114,8 +114,9 @@ jobs:
           test -d backup/storage/article-images
           test -d backup/storage/clinical-documents
 
-          echo "Estructura del backup:"
-          find backup -maxdepth 4 -print | sort
+          # Clinical filenames may contain personally identifying information.
+          # Never print document names or relative paths into public CI logs.
+          echo "Estructura del backup clínico validada sin enumerar archivos."
 
       - name: Crear paquete único
         if: steps.horario.outputs.should_run == 'true'
