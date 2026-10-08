@@ -338,8 +338,10 @@
     currentActivity: null,
     filter: "all",
     need: null,
-    favorites: loadJson(FAVORITES_KEY, []),
-    completed: loadJson(COMPLETED_KEY, []),
+    favorites: [],
+    completed: [],
+    storageScope: null,
+    storageScopeVersion: 0,
     portalAuthenticated: false,
     portalData: null,
     guestMode: false,
@@ -385,10 +387,45 @@
     }
   }
 
-  function saveState() {
+  function scopedWellnessKey(base) {
+    return state.storageScope ? base + ":" + state.storageScope : null;
+  }
+
+  function useWellnessStorage(scope) {
+    state.storageScope = scope || null;
+    const legacyGuest = scope === "guest";
+    state.favorites = scope ? loadJson(scopedWellnessKey(FAVORITES_KEY), legacyGuest ? loadJson(FAVORITES_KEY, []) : []) : [];
+    state.completed = scope ? loadJson(scopedWellnessKey(COMPLETED_KEY), legacyGuest ? loadJson(COMPLETED_KEY, []) : []) : [];
+    renderWellness();
+    renderProgress();
+  }
+
+  async function loadPatientWellnessStorage() {
+    const revision = ++state.storageScopeVersion;
+    useWellnessStorage(null);
     try {
-      localStorage.setItem(FAVORITES_KEY, JSON.stringify(state.favorites));
-      localStorage.setItem(COMPLETED_KEY, JSON.stringify(state.completed.slice(-100)));
+      const response = await fetch("/api/patient-portal/preferences", {
+        credentials: "include", cache: "no-store"
+      });
+      if (!response.ok) return;
+      const body = await response.json();
+      const scope = typeof body.storage_scope === "string" && /^[a-f0-9]{24}$/.test(body.storage_scope)
+        ? body.storage_scope : null;
+      if (revision === state.storageScopeVersion && state.portalAuthenticated && scope) {
+        useWellnessStorage(scope);
+      }
+    } catch {
+      // Nunca reutilizamos los favoritos de otra cuenta si falla la identificación.
+    }
+  }
+
+  function saveState() {
+    const favoritesKey = scopedWellnessKey(FAVORITES_KEY);
+    const completedKey = scopedWellnessKey(COMPLETED_KEY);
+    if (!favoritesKey || !completedKey) return;
+    try {
+      localStorage.setItem(favoritesKey, JSON.stringify(state.favorites));
+      localStorage.setItem(completedKey, JSON.stringify(state.completed.slice(-100)));
     } catch {
       // La experiencia sigue funcionando aunque el navegador bloquee almacenamiento local.
     }
@@ -717,6 +754,7 @@
     }
 
     window.dispatchEvent(new Event("patient-portal-session-ready"));
+    void loadPatientWellnessStorage();
     openPortal("today");
   }
 
@@ -876,6 +914,8 @@
     state.portalAuthenticated = false;
     state.portalData = null;
     state.guestMode = false;
+    state.storageScopeVersion++;
+    useWellnessStorage(null);
     resetPatientAccess();
     showAccessGate();
   }
@@ -1132,8 +1172,10 @@
     if (!ok) return;
     state.favorites = [];
     state.completed = [];
-    localStorage.removeItem(FAVORITES_KEY);
-    localStorage.removeItem(COMPLETED_KEY);
+    const favoritesKey = scopedWellnessKey(FAVORITES_KEY);
+    const completedKey = scopedWellnessKey(COMPLETED_KEY);
+    if (favoritesKey) localStorage.removeItem(favoritesKey);
+    if (completedKey) localStorage.removeItem(completedKey);
     renderProgress();
     renderWellness();
     const message = document.getElementById("space-clear-message");
@@ -1172,6 +1214,8 @@
   document.getElementById("space-wellness-guest")?.addEventListener("click", () => {
     state.guestMode = true;
     state.portalAuthenticated = false;
+    state.storageScopeVersion++;
+    useWellnessStorage("guest");
     window.dispatchEvent(new Event("patient-portal-session-ready"));
     openPortal("wellness");
   });
