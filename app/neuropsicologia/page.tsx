@@ -2,9 +2,9 @@ import type { Metadata } from "next";
 import "../seo-pages.css";
 
 export const metadata: Metadata = {
-  title: "Neuropsicóloga en Arenys de Mar",
+  title: "Neuropsicóloga en Arenys de Mar y Maresme",
   description:
-    "Neuropsicología en Arenys de Mar: evaluación e intervención en memoria, atención, lenguaje, funciones ejecutivas, deterioro cognitivo y demencias.",
+    "Neuropsicóloga en Arenys de Mar (Maresme). Evaluación de memoria, atención y deterioro cognitivo, seguimiento de demencias y orientación a familiares.",
   alternates: { canonical: "/neuropsicologia/" },
   openGraph: {
     title: "Neuropsicología en Arenys de Mar | Carolina Sánchez Girona",
@@ -119,7 +119,7 @@ export default function NeuropsychologyPage() {
               En personas mayores, la valoración neuropsicológica puede ayudar a distinguir entre cambios esperables asociados a la edad, dificultades relacionadas con factores emocionales o médicos y patrones que requieren una exploración más profunda.
             </p>
             <p>
-              En situaciones de deterioro cognitivo o demencia, el trabajo no termina en el diagnóstico. También puede incluir seguimiento, estimulación o rehabilitación cognitiva, adaptación de estrategias para la vida diaria, orientación a familiares y coordinación con el resto del equipo sanitario. <a href="/deterioro-cognitivo/">Más información sobre deterioro cognitivo y problemas de memoria.</a>
+              En situaciones de deterioro cognitivo o demencia, el trabajo no termina en el diagnóstico. También puede incluir seguimiento, estimulación o rehabilitación cognitiva, adaptación de estrategias para la vida diaria, orientación a familiares y coordinación con el resto del equipo sanitario. <a href="/deterioro-cognitivo/">Más información sobre deterioro cognitivo y problemas de memoria.</a> Para el entorno cercano, puedes consultar también la <a href="/familiares-y-cuidadores-de-personas-con-demencia/">atención a familiares y cuidadores de personas con demencia</a>.
             </p>
           </section>
 

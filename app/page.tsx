@@ -5,7 +5,7 @@ import SocialLinks from "./components/social-links";
 export const metadata: Metadata = {
   title: "Carolina Sánchez Girona | Psicóloga y Neuropsicóloga",
   description:
-    "Psicóloga sanitaria y neuropsicóloga en Arenys de Mar y online. Terapia para adultos, evaluación neuropsicológica y seguimiento cognitivo.",
+    "Psicóloga sanitaria y neuropsicóloga en Arenys de Mar (Maresme). Terapia para adultos, ansiedad, duelo, evaluación de memoria y deterioro cognitivo. Presencial y online.",
   alternates: { canonical: "/" },
   openGraph: {
     title: "Carolina Sánchez Girona | Psicóloga y Neuropsicóloga",
@@ -33,8 +33,9 @@ export default function HomePage() {
             <p className="editorial-eyebrow">Carolina Sánchez · Psicología sanitaria y neuropsicología</p>
             <h1>Psicóloga sanitaria y neuropsicóloga en Arenys de Mar.</h1>
             <p className="editorial-lead">
-              Atención psicológica para adultos y evaluación e intervención neuropsicológica. Un trabajo clínico
-              individualizado, cercano y basado en evidencia, adaptado a la persona, su contexto y sus objetivos.
+              Psicología para adultos que consultan por ansiedad, duelo, estado de ánimo o dificultades en las
+              relaciones. Evaluación neuropsicológica de problemas de memoria y deterioro cognitivo, con orientación
+              a familiares. Atención presencial en Arenys de Mar (Maresme) y online cuando resulta adecuada.
             </p>
             <div className="editorial-actions">
               <a className="editorial-btn editorial-btn-primary" href="/cita/">Pedir cita <Arrow /></a>
@@ -86,8 +87,8 @@ export default function HomePage() {
               <p className="editorial-card-kicker">Psicología sanitaria</p>
               <h3>Psicología</h3>
               <p className="editorial-card-copy">
-                Ansiedad, estado de ánimo, duelo, relaciones, sobrecarga y cambios vitales que empiezan a ocupar
-                demasiado espacio en el día a día.
+                Atención a la <a href="/ansiedad/">ansiedad</a>, el estado de ánimo, el <a href="/duelo/">duelo</a>,
+                las relaciones y la sobrecarga, con una formulación clínica individualizada.
               </p>
               <a className="editorial-card-link" href="/psicologia/">Ver Psicología General Sanitaria →</a>
             </article>
@@ -97,8 +98,9 @@ export default function HomePage() {
               <p className="editorial-card-kicker">Evaluación e intervención</p>
               <h3>Neuropsicología</h3>
               <p className="editorial-card-copy">
-                Memoria, atención, lenguaje, funciones ejecutivas, deterioro cognitivo y seguimiento cuando es
-                necesario comprender mejor el perfil cognitivo.
+                Evaluación de <a href="/problemas-de-memoria/">problemas de memoria</a>, atención y funciones
+                ejecutivas, seguimiento del <a href="/deterioro-cognitivo/">deterioro cognitivo</a> y orientación
+                a familiares y cuidadores.
               </p>
               <a className="editorial-card-link" href="/neuropsicologia/">Ver Neuropsicología →</a>
             </article>

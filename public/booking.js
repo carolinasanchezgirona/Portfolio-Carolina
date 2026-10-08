@@ -29,6 +29,7 @@
 
   const els = {
     status: statusEl,
+    retry: $("#retry-availability"),
     first: $("#first-available"),
     toggle: $("#toggle-calendar"),
     calendar: $("#calendar-section"),
@@ -149,6 +150,7 @@
     updateSelectionSummary();
     if (els.submit) els.submit.disabled = false;
     showMessage("");
+    window.gtag?.("event", "booking_slot_selected", { service: serviceCodeValue() });
     document.querySelectorAll(".time-option, .first-slot-button").forEach((button) => {
       const selected = button.dataset.startsAt === slot.starts_at;
       button.classList.toggle("is-selected", selected);
@@ -179,7 +181,9 @@
   function renderFirst() {
     els.first?.replaceChildren();
     if (!state.slots.length) {
-      els.status.textContent = "No hay citas disponibles en los próximos 30 días.";
+      els.status.textContent = "No hay citas disponibles en los próximos 30 días. Puedes consultar otras opciones por correo.";
+      if (els.retry) els.retry.hidden = false;
+      window.gtag?.("event", "booking_no_slots");
       if (els.first) els.first.hidden = true;
       if (els.toggle) els.toggle.hidden = true;
       if (els.calendar) els.calendar.hidden = true;
@@ -250,6 +254,7 @@
     if (els.submit) els.submit.disabled = true;
     if (els.summary) els.summary.textContent = "Todavía no has elegido un horario.";
     els.status.textContent = "Consultando disponibilidad…";
+    if (els.retry) els.retry.hidden = true;
     if (els.first) els.first.hidden = true;
     if (els.toggle) {
       els.toggle.hidden = true;
@@ -274,9 +279,13 @@
       renderFirst();
     } catch (error) {
       console.error("[booking] Error al cargar disponibilidad", error);
-      els.status.textContent = "No hemos podido cargar los horarios. Recarga la página o inténtalo de nuevo dentro de unos minutos.";
+      els.status.textContent = "No hemos podido cargar los horarios. Prueba a consultar de nuevo o utiliza el correo de contacto sin enviar información de salud.";
+      if (els.retry) els.retry.hidden = false;
+      window.gtag?.("event", "booking_availability_error");
     }
   }
+
+  els.retry?.addEventListener("click", () => loadSlots());
 
   els.toggle?.addEventListener("click", () => {
     if (!els.calendar) return;
