@@ -225,6 +225,14 @@ async function eligiblePatient(email: string): Promise<{id: string} | null> {
   return { id: String(rows[0].id) };
 }
 
+// Keep patient identities separate from the clinical professional's Supabase Auth account.
+function patientAuthEmail(patientId: string): string {
+  if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(patientId)) {
+    throw new Error("Invalid patient identifier");
+  }
+  return "patient-" + patientId.toLowerCase() + "@auth.carolinasanchezgirona.com";
+}
+
 async function makeAuthRequest(path: string, data: Record<string, unknown>,
     key: string, method = "POST"): Promise<Response> {
   return fetch(AUTH_API + path, {
@@ -260,11 +268,12 @@ async function sendPasswordLink(email: string, purpose: string) {
   }
 
   // Invite only provisioned patients. Existing Auth users receive a recovery link.
+  const internalEmail = patientAuthEmail(patient.id);
   let type: "invite" | "recovery" = purpose === "reset" ? "recovery" : "invite";
-  let generated = await makeAuthRequest("/admin/generate_link", { type, email }, SERVICE_ROLE_KEY);
+  let generated = await makeAuthRequest("/admin/generate_link", { type, email: internalEmail }, SERVICE_ROLE_KEY);
   if (!generated.ok && type === "invite" && generated.status === 422) {
     type = "recovery";
-    generated = await makeAuthRequest("/admin/generate_link", { type, email }, SERVICE_ROLE_KEY);
+    generated = await makeAuthRequest("/admin/generate_link", { type, email: internalEmail }, SERVICE_ROLE_KEY);
   }
   if (!generated.ok) {
     console.error("[portal-password] Link generation failed", generated.status);
@@ -325,11 +334,11 @@ async function setPatientPassword(email: string, tokenHash: string, flow: string
   const auth = await verified.json().catch(() => ({})) as Record<string, unknown>;
   const jwt = String(auth.access_token ?? "");
   const user = auth.user as Record<string, unknown> | undefined;
-  if (!jwt || String(user?.email ?? "").toLowerCase() !== email) return json({ error: "No se ha podido verificar el enlace." }, 401);
+  if (!jwt) return json({ error: "No se ha podido verificar el enlace." }, 401);
   let patient: {id:string} | null;
   try { patient = await eligiblePatient(email); }
   catch { return json({ error: "Servicio temporalmente no disponible." }, 503); }
-  if (!patient) return json({ error: "No se ha podido validar el acceso." }, 403);
+  if (!patient || String(user?.email ?? "").toLowerCase() !== patientAuthEmail(patient.id)) return json({ error: "No se ha podido validar el acceso." }, 403);
   const updated = await fetch(AUTH_API + "/user", {
     method: "PUT", cache: "no-store",
     headers: { apikey: AUTH_PUBLIC_KEY, Authorization: "Bearer " + jwt, "Content-Type": "application/json" },
@@ -350,16 +359,16 @@ async function setPatientPassword(email: string, tokenHash: string, flow: string
 async function loginWithPassword(email: string, password: string) {
   if (!AUTH_PUBLIC_KEY || !SERVICE_ROLE_KEY) return json({ error: "Servicio temporalmente no disponible." }, 503);
   if (password.length < 1 || password.length > 128) return json({ error: "Correo o contraseña incorrectos." }, 401);
-  const signed = await makeAuthRequest("/token?grant_type=password", { email, password }, AUTH_PUBLIC_KEY);
-  if (!signed.ok) return json({ error: "Correo o contraseña incorrectos." }, 401);
-  const auth = await signed.json().catch(() => ({})) as Record<string, unknown>;
-  const user = auth.user as Record<string, unknown> | undefined;
-  if (String(user?.email ?? "").toLowerCase() !== email ||
-      !user?.email_confirmed_at) return json({ error: "Correo o contraseña incorrectos." }, 401);
   let patient: {id:string} | null;
   try { patient = await eligiblePatient(email); }
   catch { return json({ error: "Servicio temporalmente no disponible." }, 503); }
   if (!patient) return json({ error: "Correo o contraseña incorrectos." }, 401);
+  const signed = await makeAuthRequest("/token?grant_type=password", { email: patientAuthEmail(patient.id), password }, AUTH_PUBLIC_KEY);
+  if (!signed.ok) return json({ error: "Correo o contraseña incorrectos." }, 401);
+  const auth = await signed.json().catch(() => ({})) as Record<string, unknown>;
+  const user = auth.user as Record<string, unknown> | undefined;
+  if (String(user?.email ?? "").toLowerCase() !== patientAuthEmail(patient.id) ||
+      !user?.email_confirmed_at) return json({ error: "Correo o contraseña incorrectos." }, 401);
   const now = new Date();
   const token = randomToken();
   const expiry = new Date(now.getTime() + 8 * 60 * 60 * 1000).toISOString();
