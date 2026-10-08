@@ -395,7 +395,7 @@
 .resource-card-cover img{display:block;width:100%;height:auto;aspect-ratio:4/5;object-fit:cover}
 .resource-card-subtitle{margin:10px 0 0;color:var(--e-ink);font-size:.92rem;font-weight:600;line-height:1.5}
 .resource-buy-button{width:100%;margin-top:18px;border:0;cursor:pointer}
-.resource-buy-button:disabled{cursor:wait;opacity:.7}
+.resource-buy-button:disabled{cursor:not-allowed;opacity:.6}
 .resources-loading{padding:36px;border:1px solid var(--e-line);border-radius:14px;background:#fff;color:var(--e-ink-soft);text-align:center}
 .resources-catalog-message{margin:0 0 18px;padding:12px 14px;border:1px solid #ead1c8;border-radius:10px;background:#fff7f4;color:#7b3f2a;font-size:.85rem}
 .resources-success-page{display:grid;min-height:70vh;place-items:center;padding:56px 24px;background:var(--e-bg)}
@@ -426,3 +426,15 @@
 
 .editorial-local-photo{display:block;width:min(100%,480px);margin:0 0 24px;border-radius:16px;overflow:hidden;border:1px solid var(--e-line)}
 .editorial-local-photo img{display:block;width:100%;height:auto;aspect-ratio:4/3;object-fit:cover}
+
+/* Aceptación explícita antes de pagar: nunca se premarcan casillas. */
+.resource-legal-consents{
+  min-width:0;margin:18px 0 0;padding:16px;
+  border:1px solid var(--e-line);border-radius:12px;background:#f8fbfc;
+}
+.resource-legal-consents legend{padding:0 6px;color:var(--e-ink);font-size:.93rem;font-weight:750}
+.resource-legal-consents p{margin:2px 0 12px;color:var(--e-ink-soft);font-size:.85rem;line-height:1.6}
+.resource-legal-consents label{display:flex;align-items:flex-start;gap:9px;margin:11px 0;font-size:.88rem;line-height:1.5;color:var(--e-ink);cursor:pointer}
+.resource-legal-consents label input[type="checkbox"]{flex:0 0 18px;width:18px;height:18px;margin:3px 0 0;accent-color:#088b83}
+.resource-legal-consents a{color:#087a78;text-decoration:underline;text-underline-offset:3px}
+.resource-legal-consents :focus-visible{outline:3px solid #08a6a0;outline-offset:3px}
