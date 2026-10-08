@@ -36,6 +36,35 @@ const AVATARS: AvatarOption[] = [
   { id: "senior-man", label: "Hombre mayor", stage: "Edad avanzada", hair: "#d2d8e0", skin: "#e1b28e" },
   { id: "senior-woman", label: "Mujer mayor", stage: "Edad avanzada", hair: "#d4cfd4", skin: "#bd8d70" },
 ];
+const AVATAR_IMAGES: Record<AvatarId, string> = {
+  boy: "nino",
+  girl: "nina",
+  "teen-boy": "adolescente_chico",
+  "teen-girl": "adolescente_chica",
+  "adult-man": "hombre_adulto",
+  "adult-woman": "mujer_adulta",
+  "senior-man": "hombre_mayor",
+  "senior-woman": "mujer_mayor",
+};
+const MOOD_ART_NAMES = ["muy_dificil", "dificil", "intermedio", "agradable", "muy_agradable"];
+const MOOD_SYMBOLS = ["◡", "·", "–", "⌣", "☺"];
+
+function CharacterPortrait({ avatarId, mood = 4, className = "" }: { avatarId: AvatarId; mood?: number; className?: string }) {
+  const avatar = AVATARS.find(option => option.id === avatarId) ?? DEFAULT_AVATAR;
+  const portrait = `/mi-espacio/characters/${AVATAR_IMAGES[avatarId]}.webp`;
+  const face = avatarId === "senior-man" && mood >= 1 && mood <= 5
+    ? `/mi-espacio/characters/moods/senior-man/${mood}_${MOOD_ART_NAMES[mood - 1]}.webp`
+    : portrait;
+  return (
+    <div className={`mood-character-art ${className}`}>
+      <img src={face} alt={`Personaje 3D: ${avatar.label}`} loading="lazy" decoding="async" />
+      {className.includes("main") && (
+        <span className={`mood-character-emotion mood-character-emotion-${mood}`} aria-hidden="true">{MOOD_SYMBOLS[mood - 1]}</span>
+      )}
+    </div>
+  );
+}
+
 const AVATAR_CHANGE_EVENT = "wellness-companion-avatar-changed";
 const SESSION_READY_EVENT = "patient-portal-session-ready";
 const DEFAULT_AVATAR = AVATARS[0];
@@ -94,77 +123,13 @@ function useAvatar() {
   return { ...profile, ready };
 }
 
-function MoodFriend({ mood, avatarId }: { mood: number; avatarId: AvatarId }) {
-  const character = AVATARS.find(avatar => avatar.id === avatarId) ?? DEFAULT_AVATAR;
-  const isOlder = avatarId.startsWith("senior");
-  const isChild = avatarId === "boy" || avatarId === "girl";
-  const hasLongHair = ["girl", "teen-girl", "adult-woman", "senior-woman"].includes(avatarId);
-  const beard = ["adult-man", "senior-man"].includes(avatarId);
-  const low = mood <= 2;
-  const delighted = mood === 5;
-  const smiling = mood >= 4;
-  const hairColor = character.hair;
-  const skinColor = character.skin;
-  return (
-    <svg className="mood-friend-svg" viewBox="0 0 260 270" aria-hidden="true" focusable="false">
-      <defs>
-        <linearGradient id="mood-shirt" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stopColor="#83bec1" /><stop offset="1" stopColor="#367a88" /></linearGradient>
-        <radialGradient id="mood-cheeks"><stop offset="0" stopColor="#e58c95" stopOpacity=".42"/><stop offset="1" stopColor="#e58c95" stopOpacity="0"/></radialGradient>
-      </defs>
-      <ellipse cx="130" cy="255" rx="72" ry="8" fill="#163d5d" opacity=".11" />
-      {hasLongHair && <path d="M62 104 Q58 25 130 24 Q205 25 201 109 L206 219 Q185 238 169 220 L88 220 Q64 239 54 220Z" fill={hairColor} />}
-      <path d="M48 245 Q50 202 91 191 L169 191 Q210 201 214 245Z" fill="url(#mood-shirt)" stroke="#397f8b" strokeWidth="2"/>
-      <rect x="109" y="187" width="42" height="29" rx="14" fill={skinColor}/>
-      <ellipse cx="61" cy="145" rx="14" ry="22" fill={skinColor}/>
-      <ellipse cx="199" cy="145" rx="14" ry="22" fill={skinColor}/>
-      <path d="M65 106 Q67 45 130 43 Q195 45 196 108 L192 165 Q185 212 130 216 Q75 210 68 167Z" fill={skinColor} stroke="#b77a68" strokeWidth="1.2"/>
-      <ellipse cx="92" cy="163" rx="26" ry="20" fill="url(#mood-cheeks)"/>
-      <ellipse cx="167" cy="163" rx="26" ry="20" fill="url(#mood-cheeks)"/>
-      {hasLongHair ? (
-        <path d="M65 108 Q48 70 69 46 Q94 13 143 24 Q194 25 200 94 Q188 83 172 72 Q145 88 108 77 Q94 103 65 108Z" fill={hairColor} stroke="#ffffff" strokeOpacity=".12" strokeWidth="2"/>
-      ) : (
-        <path d={isOlder ? "M65 105 Q57 48 94 39 Q130 21 168 41 Q199 56 195 102 Q168 70 138 78 Q100 72 65 105Z" : isChild ? "M65 107 Q48 50 92 38 Q144 14 185 55 Q194 71 194 107 Q171 92 164 72 Q126 92 101 77 Q78 95 65 107Z" : "M65 108 Q51 50 89 37 Q125 13 168 37 Q199 54 195 108 Q171 88 161 70 Q127 83 105 76 Q85 95 65 108Z"} fill={hairColor}/>
-      )}
-      {isOlder && (
-        <>
-          <path d="M80 120 Q87 117 93 120 M167 120 Q173 117 181 120" fill="none" stroke="#956f61" strokeWidth="1.4" opacity=".6" />
-          <path d="M73 162 Q79 166 85 164 M174 164 Q180 166 187 162" fill="none" stroke="#a8786b" strokeWidth="1.5" opacity=".45"/>
-          <g stroke="#456b77" strokeWidth="3" fill="none"><circle cx="103" cy="143" r="23"/><circle cx="158" cy="143" r="23"/><path d="M126 140 Q130 137 135 140 M80 139 L65 136 M181 139 L196 136"/></g>
-        </>
-      )}
-      {delighted ? (
-        <>
-          <path d="M89 145 Q101 128 114 144 M146 144 Q158 128 171 145" stroke="#3e3541" strokeWidth="5" fill="none" strokeLinecap="round"/>
-        </>
-      ) : (
-        <>
-          <ellipse cx="102" cy="146" rx={isChild ? "10" : "9"} ry="13" fill="#3d3540"/>
-          <ellipse cx="158" cy="146" rx={isChild ? "10" : "9"} ry="13" fill="#3d3540"/>
-          <circle cx="99" cy="142" r="3.6" fill="#fff"/>
-          <circle cx="155" cy="142" r="3.6" fill="#fff"/>
-        </>
-      )}
-      <path d={low ? "M89 125 Q102 121 115 126 M145 126 Q158 121 171 125" : "M90 127 Q102 121 114 127 M146 127 Q158 121 170 127"} stroke={hairColor} strokeWidth="3.7" fill="none" strokeLinecap="round"/>
-      <path d="M125 167 Q130 172 135 167" stroke="#995f58" strokeWidth="2" fill="none" strokeLinecap="round"/>
-      {beard && <path d="M98 180 Q103 212 130 211 Q157 212 162 180 Q156 201 130 202 Q103 201 98 180Z" fill={hairColor} opacity={isOlder ? ".77" : ".88"}/>}
-      {mood === 1 && <path d="M113 192 Q130 176 147 192" fill="none" stroke="#8b4e61" strokeWidth="4" strokeLinecap="round" />}
-      {mood === 2 && <path d="M116 187 Q130 182 144 187" fill="none" stroke="#8b4e61" strokeWidth="4" strokeLinecap="round" />}
-      {mood === 3 && <path d="M117 186 L143 186" fill="none" stroke="#8b4e61" strokeWidth="4" strokeLinecap="round" />}
-      {smiling && <path d={delighted ? "M105 180 Q130 214 155 180" : "M110 181 Q130 201 150 181"} stroke="#8b4e61" fill={delighted ? "#b76579" : "none"} strokeWidth="4" strokeLinecap="round"/>}
-      {mood === 1 && <path d="M184 163 Q196 181 185 187 Q178 178 184 163" fill="#9ed2df" stroke="#73afc5" strokeWidth="1.3"/>}
-      {hasLongHair && <path d="M68 107 Q56 146 68 200 M193 107 Q206 147 193 200" fill="none" stroke={hairColor} strokeWidth="15" strokeLinecap="round"/>}
-      <path d="M93 226 Q88 237 78 238 M167 226 Q172 237 182 238" stroke={skinColor} strokeWidth="11" fill="none" strokeLinecap="round"/>
-    </svg>
-  );
-}
-
 function AvatarChoices({ selected, onSelect }: { selected: AvatarId | null; onSelect: (id: AvatarId) => void }) {
   return (
     <div className="mood-avatar-grid" role="group" aria-label="Elige tu personaje">
       {AVATARS.map(avatar => (
         <button key={avatar.id} type="button" className={selected === avatar.id ? "mood-avatar-choice is-selected" : "mood-avatar-choice"}
           onClick={() => onSelect(avatar.id)} aria-pressed={selected === avatar.id}>
-          <span className="mood-avatar-portrait"><MoodFriend mood={4} avatarId={avatar.id} /></span>
+          <span className="mood-avatar-portrait"><CharacterPortrait avatarId={avatar.id} /></span>
           <strong>{avatar.label}</strong><small>{avatar.stage}</small>
         </button>
       ))}
@@ -286,7 +251,7 @@ export default function MoodTracker() {
       <div className="mood-tracker-body">
         <div className="mood-friend-panel" style={{ background: `radial-gradient(circle at 50% 30%, #ffffff 0%, ${displayed.color} 100%)` }}>
           <div className="mood-friend-halo" aria-hidden="true"/>
-          <MoodFriend mood={selected || 3} avatarId={avatar} />
+          <CharacterPortrait avatarId={avatar} mood={selected || 3} className="main" />
           <div className="mood-friend-caption" aria-live="polite">
             <strong>{selected ? displayed.name : "Aquí estoy contigo"}</strong>
             <span>{selected ? displayed.note : "Cada emoción tiene su lugar."}</span>
