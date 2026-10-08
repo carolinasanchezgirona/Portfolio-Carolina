@@ -70,38 +70,27 @@ async function requestCode(email: string) {
   const patient = patients[0] as { id?: string };
   if (!patient.id) return json(generic);
 
-  const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000).toISOString();
-  const recentResponse = await fetch(
-    SUPABASE_URL + "/rest/v1/patient_portal_login_codes?select=id,created_at&patient_id=eq." + encodeURIComponent(patient.id) +
-      "&email_normalized=eq." + encodeURIComponent(email) + "&created_at=gte." + encodeURIComponent(oneHourAgo) +
-      "&order=created_at.desc&limit=10",
-    { headers: serviceHeaders, cache: "no-store" },
-  );
-  const recent = recentResponse.ok ? await recentResponse.json().catch(() => []) : [];
-  if (Array.isArray(recent) && recent.length) {
-    const lastCreated = Date.parse(String(recent[0]?.created_at || ""));
-    if (Number.isFinite(lastCreated) && Date.now() - lastCreated < 60 * 1000) return json(generic);
-    if (recent.length >= 5) return json(generic);
-  }
-
   const code = randomCode();
   const now = new Date();
   const expires = new Date(now.getTime() + 10 * 60 * 1000);
   const codeHash = await hashCode(email, code);
 
-  const insert = await fetch(SUPABASE_URL + "/rest/v1/patient_portal_login_codes?select=id", {
+  // Atomic issuance enforces one code per minute and at most five per hour,
+  // including concurrent requests. The RPC is callable only by service_role.
+  const insert = await fetch(SUPABASE_URL + "/rest/v1/rpc/issue_patient_portal_login_code", {
     method: "POST",
-    headers: { ...serviceHeaders, Prefer: "return=representation" },
+    headers: serviceHeaders,
     body: JSON.stringify({
-      patient_id: patient.id,
-      email_normalized: email,
-      code_hash: codeHash,
-      expires_at: expires.toISOString(),
+      p_patient_id: patient.id,
+      p_email_normalized: email,
+      p_code_hash: codeHash,
+      p_expires_at: expires.toISOString(),
     }),
   });
-  const inserted = await insert.json().catch(() => []);
-  const loginId = Array.isArray(inserted) ? inserted[0]?.id : null;
-  if (!insert.ok || !loginId) return json({ error: "No se ha podido preparar el acceso." }, 502);
+  if (!insert.ok) return json({ error: "No se ha podido preparar el acceso." }, 502);
+  const inserted = await insert.json().catch(() => null);
+  const loginId = typeof inserted === "string" && /^[0-9a-f-]{36}$/i.test(inserted) ? inserted : null;
+  if (!loginId) return json(generic);
 
   const html = `<!doctype html><html lang="es"><body style="margin:0;background:#f5f8fb;font-family:Arial,sans-serif;color:#233746"><div style="max-width:620px;margin:0 auto;padding:32px 18px"><div style="background:#fff;border:1px solid #d5e3ee;border-radius:18px;padding:32px"><p style="color:#08A6A0;font-size:13px;font-weight:700;letter-spacing:.04em">MI ESPACIO</p><h1 style="font-size:25px;color:#173A5E">Tu código de acceso</h1><p>Introduce este código en Mi espacio:</p><p style="font-size:34px;letter-spacing:8px;font-weight:800;color:#173A5E;text-align:center;margin:28px 0">${code}</p><p>El código caduca en 10 minutos y solo puede utilizarse una vez.</p><p style="margin-top:28px">Carolina Sánchez Girona</p></div><p style="color:#667983;font-size:12px">Si no has solicitado este acceso, puedes ignorar este correo. No respondas incluyendo información clínica.</p></div></body></html>`;
   const textContent = `Tu código para Mi espacio es: ${code}\n\nCaduca en 10 minutos y solo puede utilizarse una vez.\n\nSi no has solicitado este acceso, ignora este correo.\n\nCarolina Sánchez Girona`;
@@ -141,38 +130,27 @@ async function verifyCode(email: string, code: string) {
   if (!SERVICE_ROLE_KEY) return json({ error: "El acceso por correo no está configurado." }, 503);
   if (!/^\d{6}$/.test(code)) return json({ error: "Código no válido o caducado." }, 401);
 
-  const response = await fetch(
-    SUPABASE_URL + "/rest/v1/patient_portal_login_codes?select=id,patient_id,code_hash,expires_at,attempts&email_normalized=eq." +
-      encodeURIComponent(email) + "&consumed_at=is.null&order=created_at.desc&limit=1",
-    { headers: serviceHeaders, cache: "no-store" },
-  );
-  const rows = response.ok ? await response.json().catch(() => []) : [];
-  const item = Array.isArray(rows) ? rows[0] : null;
-  if (!item) return json({ error: "Código no válido o caducado." }, 401);
-
-  const attempts = Number(item.attempts || 0);
-  const expires = Date.parse(String(item.expires_at || ""));
-  if (!Number.isFinite(expires) || expires < Date.now() || attempts >= 5) {
-    return json({ error: "Código no válido o caducado." }, 401);
-  }
-
+  // A single locked database transaction checks attempts and consumes the
+  // code. This prevents racing five attempts or using a code twice.
   const candidate = await hashCode(email, code);
-  if (candidate !== String(item.code_hash || "")) {
-    await fetch(SUPABASE_URL + "/rest/v1/patient_portal_login_codes?id=eq." + encodeURIComponent(String(item.id)), {
-      method: "PATCH",
-      headers: { ...serviceHeaders, Prefer: "return=minimal" },
-      body: JSON.stringify({ attempts: Math.min(attempts + 1, 10) }),
-    }).catch(() => null);
+  const response = await fetch(
+    SUPABASE_URL + "/rest/v1/rpc/consume_patient_portal_login_code",
+    {
+      method: "POST",
+      headers: serviceHeaders,
+      body: JSON.stringify({
+        p_email_normalized: email,
+        p_candidate_hash: candidate,
+      }),
+    },
+  );
+  if (!response.ok) return json({ error: "No se ha podido comprobar el código." }, 502);
+  const patientId = await response.json().catch(() => null);
+  if (typeof patientId !== "string" || !/^[0-9a-f-]{36}$/i.test(patientId)) {
     return json({ error: "Código no válido o caducado." }, 401);
   }
 
   const now = new Date();
-  await fetch(SUPABASE_URL + "/rest/v1/patient_portal_login_codes?id=eq." + encodeURIComponent(String(item.id)), {
-    method: "PATCH",
-    headers: { ...serviceHeaders, Prefer: "return=minimal" },
-    body: JSON.stringify({ consumed_at: now.toISOString() }),
-  });
-
   const rawSession = randomToken();
   const tokenHash = await sha256(rawSession);
   const sessionExpires = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000);
@@ -181,7 +159,7 @@ async function verifyCode(email: string, code: string) {
     method: "POST",
     headers: { ...serviceHeaders, Prefer: "return=minimal" },
     body: JSON.stringify({
-      patient_id: item.patient_id,
+      patient_id: patientId,
       token_hash: tokenHash,
       expires_at: sessionExpires.toISOString(),
       last_seen_at: now.toISOString(),
@@ -200,6 +178,15 @@ async function verifyCode(email: string, code: string) {
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { status: 204, headers: cors });
   if (req.method !== "POST") return json({ error: "Método no permitido." }, 405);
+
+  // The public browser only talks to the same-origin Cloudflare Worker.
+  // Supabase Edge Function accepts only the Worker's server-side credential.
+  if (!SERVICE_ROLE_KEY || req.headers.get("Authorization") !== "Bearer " + SERVICE_ROLE_KEY) {
+    return json({ error: "Acceso no autorizado." }, 401);
+  }
+  if (Number(req.headers.get("content-length") || "0") > 4096) {
+    return json({ error: "Solicitud demasiado extensa." }, 413);
+  }
 
   let body: Record<string, unknown>;
   try { body = await req.json(); }
