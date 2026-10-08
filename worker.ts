@@ -1,9 +1,11 @@
 import { containsDirectPatientIdentifiers, CLINICAL_IDENTIFIERS_ERROR } from "./clinical-privacy";
+import { evaluatePortalEntitlement, type PortalAccess } from "./patient-portal-access";
 
 interface Env {
   STRIPE_WEBHOOK_SECRET: string;
   STRIPE_WEBHOOK_SECRET_TEST?: string;
   STRIPE_SECRET_KEY?: string;
+  PORTAL_ACCESS_ENFORCEMENT?: string;
   SUPABASE_SERVICE_ROLE_KEY?: string;
   OPENAI_API_KEY?: string;
   OPENAI_TEXT_MODEL?: string;
@@ -376,6 +378,44 @@ async function patientPortalSession(request: Request, env: Env): Promise<Patient
 function firstName(value: unknown): string {
   const clean = typeof value === "string" ? value.trim().replace(/\s+/g, " ") : "";
   return clean.split(" ")[0]?.slice(0, 60) || "";
+}
+
+/**
+ * Consults only subscription metadata with a service-role account. No payment
+ * details or clinical text is returned to the browser.
+ */
+async function patientPortalEntitlement(env: Env, patientId: string, patientStatus: string): Promise<PortalAccess> {
+  const enforcement = env.PORTAL_ACCESS_ENFORCEMENT === "true";
+  if (patientStatus === "active") return evaluatePortalEntitlement(patientStatus, null, enforcement, Date.now());
+  try {
+    const response = await fetch(
+      RESOURCE_SUPABASE + "/rest/v1/patient_portal_subscriptions?select=status,current_period_end&patient_id=eq." +
+        encodeURIComponent(patientId) + "&limit=1",
+      { headers: serviceHeaders(env), cache: "no-store" },
+    );
+    if (!response.ok) throw new Error("subscription-query-failed");
+    const rows = await response.json().catch(() => []) as Array<{status?: string; current_period_end?: string | null}>;
+    return evaluatePortalEntitlement(patientStatus, Array.isArray(rows) ? rows[0] ?? null : null,
+      enforcement, Date.now());
+  } catch {
+    return evaluatePortalEntitlement(patientStatus, null, enforcement, Date.now(), true);
+  }
+}
+
+async function handlePatientPortalAccess(request: Request, env: Env): Promise<Response> {
+  if (request.method !== "GET") return patientPortalJson({ error: "Método no permitido." }, 405);
+  const session = await patientPortalSession(request, env);
+  if (!session) return patientPortalJson({ error: "Acceso no autorizado." }, 401);
+  const response = await fetch(
+    RESOURCE_SUPABASE + "/rest/v1/clinical_patients?select=id,status&id=eq." +
+      encodeURIComponent(session.patient_id) + "&status=neq.archived&limit=1",
+    { headers: serviceHeaders(env), cache: "no-store" },
+  );
+  if (!response.ok) return patientPortalJson({ error: "No disponible." }, 503);
+  const rows = await response.json().catch(() => []) as Array<{ status?: string }>;
+  if (!rows[0]) return patientPortalJson({ error: "No autorizado." }, 401);
+  const entitlement = await patientPortalEntitlement(env, session.patient_id, String(rows[0].status || ""));
+  return patientPortalJson({ entitlement });
 }
 
 async function handlePatientPortalSession(request: Request, env: Env): Promise<Response> {
@@ -1732,6 +1772,7 @@ export default {
     if (url.pathname === "/api/patient-portal/password-set" || url.pathname === "/api/patient-portal/password-set/") return handlePatientPortalPasswordAuth(request, env, "password-set");
     if (url.pathname === "/api/patient-portal/password-login" || url.pathname === "/api/patient-portal/password-login/") return handlePatientPortalPasswordAuth(request, env, "password-login");
     if (url.pathname === "/api/patient-portal/session" || url.pathname === "/api/patient-portal/session/") return handlePatientPortalSession(request, env);
+    if (url.pathname === "/api/patient-portal/access" || url.pathname === "/api/patient-portal/access/") return handlePatientPortalAccess(request, env);
     if (url.pathname === "/api/patient-portal/preferences" || url.pathname === "/api/patient-portal/preferences/") return handlePatientPortalPreferences(request, env);
     if (url.pathname === "/api/patient-portal/response" || url.pathname === "/api/patient-portal/response/") return handlePatientPortalResponse(request, env);
     if (url.pathname === "/api/patient-portal/logout" || url.pathname === "/api/patient-portal/logout/") return handlePatientPortalLogout(request, env);
