@@ -1,3 +1,5 @@
+import { containsDirectPatientIdentifiers, CLINICAL_IDENTIFIERS_ERROR } from "./clinical-privacy";
+
 interface Env {
   STRIPE_WEBHOOK_SECRET: string;
   STRIPE_WEBHOOK_SECRET_TEST?: string;
@@ -387,7 +389,7 @@ async function handlePatientPortalResponse(request: Request, env: Env): Promise<
 
   const materialResponse = await fetch(
     RESOURCE_SUPABASE + "/rest/v1/clinical_exercise_assignments?select=id,content,patient_document&patient_id=eq." +
-      encodeURIComponent(session.patient_id) + "&id=eq." + encodeURIComponent(materialId) + "&revoked_at=is.null&limit=1",
+      encodeURIComponent(session.patient_id) + "&id=eq." + encodeURIComponent(materialId) + "&revoked_at=is.null&status=in.(sent,assigned,reviewed)&limit=1",
     { headers: serviceHeaders(env), cache: "no-store" },
   );
   const materialRows = await materialResponse.json().catch(() => []) as Record<string, unknown>[];
@@ -409,10 +411,11 @@ async function handlePatientPortalResponse(request: Request, env: Env): Promise<
 
   const update = await fetch(
     RESOURCE_SUPABASE + "/rest/v1/clinical_exercise_assignments?id=eq." + encodeURIComponent(materialId) +
-      "&patient_id=eq." + encodeURIComponent(session.patient_id),
+      "&patient_id=eq." + encodeURIComponent(session.patient_id) +
+      "&revoked_at=is.null&status=in.(sent,assigned,reviewed)&select=id",
     {
       method: "PATCH",
-      headers: serviceHeaders(env, { Prefer: "return=minimal" }),
+      headers: serviceHeaders(env, { Prefer: "return=representation" }),
       body: JSON.stringify({
         patient_response: { version: 1, record, answers },
         patient_response_status: action === "share" ? "shared" : "draft",
@@ -423,6 +426,10 @@ async function handlePatientPortalResponse(request: Request, env: Env): Promise<
     },
   );
   if (!update.ok) return patientPortalJson({ error: "No se ha podido guardar el ejercicio." }, 502);
+  const updated = await update.json().catch(() => []) as unknown;
+  if (!Array.isArray(updated) || updated.length !== 1) {
+    return patientPortalJson({ error: "El material ya no está disponible." }, 404);
+  }
   return patientPortalJson({ ok: true, status: action === "share" ? "shared" : "draft", saved_at: savedAt });
 }
 
@@ -839,7 +846,7 @@ async function clinicalStructureRequest(request: Request, env: Env): Promise<Res
   catch { return editorialJson({ error: "Solicitud no válida." }, 400); }
 
   const notes = editorialText(data.notes, 24000);
-  const existingProfile = data.existing_profile && typeof data.existing_profile === "object" && !Array.isArray(data.existing_profile)
+  const rawExistingProfile = data.existing_profile && typeof data.existing_profile === "object" && !Array.isArray(data.existing_profile)
     ? data.existing_profile as Record<string, unknown>
     : {};
 
@@ -855,6 +862,16 @@ async function clinicalStructureRequest(request: Request, env: Env): Promise<Res
     "integrative_formulation","therapeutic_goals","treatment_plan","interventions_summary",
     "clinical_evolution_summary","risk_safety","professional_coordination","clinical_observations"
   ];
+
+  // Never forward arbitrary patient record properties to an external model.
+  const existingProfile: Record<string, string> = {};
+  for (const key of allowedFields) {
+    const value = editorialText(rawExistingProfile[key], 7000);
+    if (value) existingProfile[key] = value;
+  }
+  if (containsDirectPatientIdentifiers(notes) || containsDirectPatientIdentifiers(JSON.stringify(existingProfile))) {
+    return editorialJson({ error: CLINICAL_IDENTIFIERS_ERROR }, 422);
+  }
 
   const system = [
     "Eres un asistente de documentación clínica para una psicóloga sanitaria y neuropsicóloga en España.",
@@ -1068,6 +1085,10 @@ async function clinicalDiagnosticSuggestionRequest(request: Request, env: Env): 
   for (const key of allowedInputFields) {
     const value = editorialText(rawProfile[key], key === "age" ? 16 : 7000);
     if (value) profile[key] = value;
+  }
+
+  if (containsDirectPatientIdentifiers(JSON.stringify(profile))) {
+    return editorialJson({ error: CLINICAL_IDENTIFIERS_ERROR }, 422);
   }
 
   const usableText = Object.values(profile).join("\n").trim();
@@ -1341,6 +1362,7 @@ async function clinicalMaterialDraftRequest(request: Request, env: Env): Promise
   const preferredProcess = editorialText(data.preferred_process, 120);
   const rawCatalog = Array.isArray(data.catalog) ? data.catalog.slice(0, 500) : [];
   if (query.length < 3) return editorialJson({ error: "Escribe qué material necesitas." }, 400);
+  if (containsDirectPatientIdentifiers(query)) return editorialJson({ error: CLINICAL_IDENTIFIERS_ERROR }, 422);
 
   const catalog = rawCatalog.map((item) => {
     const record = item && typeof item === "object" ? item as Record<string, unknown> : {};
@@ -1521,6 +1543,10 @@ async function clinicalMaterialEnrichRequest(request: Request, env: Env): Promis
       ? currentRaw.session_questions.slice(0, 6).map((item) => editorialText(item, 350)).filter(Boolean)
       : []
   };
+
+  if (containsDirectPatientIdentifiers(JSON.stringify({ title, summary, processTags, currentDocument }))) {
+    return editorialJson({ error: CLINICAL_IDENTIFIERS_ERROR }, 422);
+  }
 
   const system = [
     "Eres un asistente de edición de material clínico para una psicóloga sanitaria y neuropsicóloga en España.",
