@@ -22,5 +22,6 @@ jobs:
           cache: npm
       - run: npm ci
       - run: node --check public/mi-espacio.js
+      - run: node --experimental-strip-types --test tests/clinical-privacy.test.mjs tests/patient-portal-auth.test.mjs
       - run: npx tsc --noEmit
       - run: npm run build
