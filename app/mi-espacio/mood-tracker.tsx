@@ -227,6 +227,13 @@ export default function MoodTracker() {
   }, [scopedMoodKey]);
 
   const displayed = MOODS[(selected || 3) - 1];
+  const recentEntries = useMemo(() => [...entries].sort((a, b) => b.date.localeCompare(a.date)).slice(0, 5), [entries]);
+  const weekCount = useMemo(() => entries.filter(entry => pastWeekKeys().has(entry.date)).length, [entries]);
+
+  function pastWeekKeys() {
+    return new Set(Array.from({ length: 7 }, (_, offset) => keyForDate(dayOffset(-offset))));
+  }
+
   const pastDays = useMemo(() => Array.from({ length: 7 }, (_, i) => {
     const date = dayOffset(i - 6);
     const key = keyForDate(date);
@@ -338,6 +345,28 @@ export default function MoodTracker() {
             </svg>
           ) : <div className="mood-week-empty">Tu gráfica aparecerá aquí cuando guardes el primer registro. No necesitas registrar todos los días.</div>}
           <p className="mood-chart-caption">Solo aparecen los datos que tú has registrado. Los días sin respuesta quedan sin conectar.</p>
+        </div>
+        <div className="mood-recent-entries" aria-live="polite">
+          <div className="mood-recent-title">
+            <strong>Mis últimos registros</strong>
+            <span>{weekCount === 1 ? "1 registro esta semana" : `${weekCount} registros esta semana`}</span>
+          </div>
+          {recentEntries.length ? (
+            <ul className="mood-recent-list">
+              {recentEntries.map(entry => (
+                <li key={entry.date}>
+                  <span className="mood-recent-icon" style={{ backgroundColor: MOODS[entry.rating - 1].color }} aria-hidden="true">{["◡", "•", "–", "⌣", "☺"][entry.rating - 1]}</span>
+                  <span className="mood-recent-description">
+                    <strong>{MOODS[entry.rating - 1].name}</strong>
+                    <small>Energía {ENERGY[entry.energy].toLowerCase()}</small>
+                  </span>
+                  <time dateTime={entry.date}>{new Intl.DateTimeFormat("es-ES", { day: "numeric", month: "short" }).format(new Date(entry.date + "T12:00:00"))}</time>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p className="mood-recent-empty">Todavía no has registrado ningún momento. Puedes empezar cuando te apetezca.</p>
+          )}
         </div>
         <p className="mood-privacy-note">Este registro es opcional, permanece en el navegador y no se envía a Carolina ni se incorpora a tu historia clínica. Si borras los datos del navegador, también desaparecerá. No escribas aquí información clínica sensible.</p>
       </div>
