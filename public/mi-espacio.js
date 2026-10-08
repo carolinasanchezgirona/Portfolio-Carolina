@@ -360,9 +360,11 @@
   const completeButton = document.getElementById("wellness-complete");
   const accessGate = document.getElementById("space-access");
   const shell = document.getElementById("space-shell");
-  const emailForm = document.getElementById("space-email-form");
+  const loginForm = document.getElementById("space-login-form");
+  const resetForm = document.getElementById("space-reset-form");
+  const newPasswordForm = document.getElementById("space-new-password-form");
   
-  const accessEmail = document.getElementById("space-access-email");
+  const accessEmail = document.getElementById("space-login-email");
   
   const accessMessage = document.getElementById("space-access-message");
   const patientMaterials = document.getElementById("space-patient-materials");
@@ -662,61 +664,62 @@
     }
   }
 
-  async function requestPatientLink(event) {
+  function setAccessForm(view) {
+    if (loginForm) loginForm.hidden = view !== "login";
+    if (resetForm) resetForm.hidden = view !== "reset";
+    if (newPasswordForm) newPasswordForm.hidden = view !== "new-password";
+  }
+
+  async function loginPatient(event) {
     event.preventDefault();
     const email = String(accessEmail?.value || "").trim().toLowerCase();
-    if (!email) return;
-    setAccessMessage("Solicitando enlace…");
-    const submit = emailForm?.querySelector('button[type="submit"]');
+    const password = document.getElementById("space-login-password")?.value || "";
+    const popup = window.open("about:blank", "_blank");
+    if (popup) {
+      popup.document.title = "Verificando acceso · Mi espacio";
+      popup.document.body.textContent = "Verificando tu identidad…";
+      popup.opener = null;
+    }
+    const submit = loginForm?.querySelector('button[type="submit"]');
     if (submit) submit.disabled = true;
+    setAccessMessage("Comprobando identificación…");
     try {
-      const response = await fetch("/api/patient-portal/request-link", {
+      const response = await fetch("/api/patient-portal/password-login", {
         method: "POST", credentials: "include",
-        headers: { "Content-Type": "application/json" }, body: JSON.stringify({ email })
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password })
       });
       const body = await response.json().catch(() => ({}));
-      if (!response.ok) throw new Error(body.error || "No se ha podido solicitar el enlace.");
-      setAccessMessage("Si la dirección tiene acceso, recibirás un enlace seguro. Comprueba también el correo no deseado.");
+      if (!response.ok) throw new Error(body.error || "No se ha podido identificar.");
+      if (popup) popup.location.replace("/mi-espacio/area/");
+      else setAccessMessage("Acceso verificado. Permite las ventanas emergentes para abrir tu espacio.");
     } catch (error) {
-      setAccessMessage(error?.message || "No se ha podido solicitar el enlace.", true);
+      if (popup && !popup.closed) popup.close();
+      setAccessMessage(error?.message || "Identificación incorrecta.", true);
     } finally {
       if (submit) submit.disabled = false;
+      const field = document.getElementById("space-login-password");
+      if (field) field.value = "";
     }
   }
 
-  async function verifyPatientLinkFromUrl() {
-    const fragment = new URLSearchParams(window.location.hash.slice(1));
-    const token = fragment.get("acceso");
-    const email = fragment.get("email");
-    if (!token) return false;
-    history.replaceState(null, "", window.location.pathname + window.location.search);
-    if (!email || !/^[A-Za-z0-9_-]{43}$/.test(token)) {
-      setAccessMessage("Este enlace no es válido. Solicita otro.", true);
-      return true;
-    }
-    setAccessMessage("Comprobando tu enlace…");
+  async function resetPatientPassword(event) {
+    event.preventDefault();
+    const email = document.getElementById("space-reset-email")?.value || "";
     try {
-      const response = await fetch("/api/patient-portal/verify-link", {
+      await fetch("/api/patient-portal/password-reset", {
         method: "POST", credentials: "include",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, token })
+        body: JSON.stringify({ email })
       });
-      const body = await response.json().catch(() => ({}));
-      if (!response.ok) throw new Error(body.error || "El enlace no es válido o ha caducado.");
-      setAccessMessage("");
-      const opened = await loadPatientSession();
-      if (!opened) setAccessMessage("No se ha podido abrir la sesión. Inténtalo otra vez.", true);
-    } catch (error) {
-      setAccessMessage(error?.message || "El enlace no es válido o ha caducado.", true);
+      setAccessMessage("Si el correo tiene una cuenta activa, recibirás instrucciones para recuperar tu contraseña.");
+    } catch {
+      setAccessMessage("No se ha podido solicitar la recuperación. Inténtalo más tarde.", true);
     }
-    return true;
   }
 
   function resetPatientAccess() {
-    state.accessEmail = "";
-
-
-
+    setAccessForm("login");
     setAccessMessage("");
     accessEmail?.focus();
   }
@@ -997,7 +1000,10 @@
     if (message) message.textContent = "Datos locales borrados.";
   });
 
-  emailForm?.addEventListener("submit", requestPatientLink);
+  loginForm?.addEventListener("submit", loginPatient);
+  resetForm?.addEventListener("submit", resetPatientPassword);
+  document.getElementById("space-forgot-password")?.addEventListener("click", () => { setAccessForm("reset"); setAccessMessage(""); });
+  document.getElementById("space-back-login")?.addEventListener("click", resetPatientAccess);
 
 
   document.getElementById("space-wellness-guest")?.addEventListener("click", () => {
@@ -1019,5 +1025,5 @@
   importBetweenSessionsToken();
   renderWellness();
   renderProgress();
-  verifyPatientLinkFromUrl().then((processed) => { if (!processed) loadPatientSession(); });
+  loadPatientSession();
 })();
