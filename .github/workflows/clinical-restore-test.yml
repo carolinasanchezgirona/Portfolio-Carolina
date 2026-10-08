@@ -111,6 +111,9 @@ jobs:
         run: |
           test -d restore/unpacked/backup/storage/article-images
           test -d restore/unpacked/backup/storage/clinical-documents
+          test -d restore/unpacked/backup/storage/resource-files
+          test -d restore/unpacked/backup/storage/resource-covers
+          test -d restore/unpacked/backup/storage/instagram-assets
 
           echo "Buckets de Storage presentes."
 
