@@ -2,6 +2,7 @@
 
 import { GoogleAnalytics } from "@next/third-parties/google";
 import { useEffect, useState } from "react";
+import { usePathname } from "next/navigation";
 
 const GA_ID = "G-DMEDMEHMCJ";
 const STORAGE_KEY = "carolina_analytics_consent_v1";
@@ -100,6 +101,8 @@ function readBookingSource(): BookingSource | null {
 }
 
 export default function GoogleAnalyticsConsent() {
+  const pathname = usePathname();
+  const isPrivateArea = pathname === "/mi-espacio" || pathname?.startsWith("/mi-espacio/");
   const [consent, setConsent] = useState<ConsentChoice | null>(null);
   const [isReady, setIsReady] = useState(false);
   const [isPanelOpen, setIsPanelOpen] = useState(false);
@@ -112,7 +115,17 @@ export default function GoogleAnalyticsConsent() {
   }, []);
 
   useEffect(() => {
-    if (consent !== "accepted") return;
+    // Clinical pages and token-bearing invitation links must never be tracked.
+    if (isPrivateArea) {
+      Object.assign(window, { ["ga-disable-" + GA_ID]: true });
+      denyAnalyticsConsent();
+    } else {
+      Object.assign(window, { ["ga-disable-" + GA_ID]: false });
+    }
+  }, [isPrivateArea]);
+
+  useEffect(() => {
+    if (consent !== "accepted" || isPrivateArea) return;
 
     const onClick = (event: MouseEvent) => {
       const target = event.target instanceof Element ? event.target.closest("a,button") : null;
@@ -168,7 +181,7 @@ export default function GoogleAnalyticsConsent() {
       document.removeEventListener("click", onClick, true);
       observer.disconnect();
     };
-  }, [consent]);
+  }, [consent, isPrivateArea]);
 
   function chooseConsent(choice: ConsentChoice) {
     if (choice === "rejected") denyAnalyticsConsent();
@@ -177,7 +190,7 @@ export default function GoogleAnalyticsConsent() {
     setIsPanelOpen(false);
   }
 
-  if (!isReady) return null;
+  if (!isReady || isPrivateArea) return null;
 
   return (
     <>
