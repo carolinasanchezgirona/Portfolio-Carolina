@@ -65,7 +65,7 @@ function createHarness() {
       return response({}, 201);
     }
     if (url.includes("/rest/v1/patient_portal_sessions?") && init.method === "PATCH") {
-      return response({}, 204);
+      return new Response(null, { status: 204 });
     }
     if (url.includes("api.brevo.com/v3/smtp/email")) {
       mail.push(payload);
