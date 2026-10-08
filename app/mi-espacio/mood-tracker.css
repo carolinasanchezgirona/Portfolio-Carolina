@@ -89,3 +89,17 @@
 .mood-recent-description small{font-size:.7rem;color:#667f8e}
 .mood-recent-list time{flex:none;color:#66808d;font-size:.74rem;text-transform:capitalize}
 .mood-recent-empty{margin:14px 0;color:#6a8190;font-size:.79rem;line-height:1.5}
+
+/* Approved 3D illustrations: no external asset host and no patient data in URLs. */
+.mood-character-art{position:relative;width:100%;height:100%;aspect-ratio:1;overflow:hidden;border-radius:16px;background:#eef6f7}
+.mood-character-art img{display:block;width:100%;height:100%;object-fit:cover;object-position:center center;user-select:none}
+.mood-friend-panel .mood-character-art.main{flex:none;width:min(100%,248px);height:auto;aspect-ratio:1;border-radius:32px;box-shadow:0 12px 28px rgba(68,102,113,.10);background:#fff}
+.mood-avatar-portrait .mood-character-art{border-radius:12px}
+.mood-avatar-portrait .mood-character-art img{transform:none;object-fit:cover}
+.mood-character-emotion{position:absolute;right:10px;bottom:9px;width:44px;height:44px;border-radius:50%;display:grid;place-items:center;font-size:1.5rem;font-weight:900;color:#173a5e;border:3px solid white;box-shadow:0 4px 9px rgba(23,58,94,.15);background:#fff0c8}
+.mood-character-emotion-1{background:#f8b8bc}
+.mood-character-emotion-2{background:#f4d3cf}
+.mood-character-emotion-3{background:#fce7b8}
+.mood-character-emotion-4{background:#d4eeda}
+.mood-character-emotion-5{background:#b8ece8}
+@media(max-width:780px){.mood-friend-panel .mood-character-art.main{width:min(100%,196px);border-radius:24px}}
