@@ -62,10 +62,10 @@ export default function ResourcesCatalog() {
   type Acceptance = { terms: boolean; supply: boolean; withdrawal: boolean };
   const [acceptances, setAcceptances] = useState<Record<string, Acceptance>>({});
   function setAcceptance(resourceId: string, key: keyof Acceptance, value: boolean) {
-    setAcceptances(previous => ({
-      ...previous,
-      [resourceId]: { terms: false, supply: false, withdrawal: false, ...previous[resourceId], [key]: value }
-    }));
+    setAcceptances(previous => {
+      const current = previous[resourceId] ?? { terms: false, supply: false, withdrawal: false };
+      return { ...previous, [resourceId]: { ...current, [key]: value } };
+    });
   }
   function hasAllAcceptances(resourceId: string) {
     const value = acceptances[resourceId];
