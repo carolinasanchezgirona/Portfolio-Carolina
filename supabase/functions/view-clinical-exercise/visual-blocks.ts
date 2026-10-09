@@ -29,7 +29,7 @@ export function normalizeVisualBlocks(value: unknown): VisualBlock[] {
 }
 
 export function matrix(block: VisualBlock): string[][] {
-  return (block.content || "").split(/\r?\n/).slice(0, 13)
+  return (block.content || "").split(/\r?\n/).map(line => line.trim()).filter(Boolean).slice(0, 13)
     .map(line => line.split("|").map(x => x.trim().slice(0, 100)));
 }
 
