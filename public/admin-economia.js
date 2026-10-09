@@ -15,6 +15,7 @@
   let session;
   let issuer = null, patients = [], bookings = [], invoices = [], receipts = [], expenses = [];
   let editingInvoice = null;
+  let movementFilter = "all";
 
   function setStatus(message) { statusEl.textContent = message || ""; }
   function el(tag, className, text) {
@@ -82,8 +83,15 @@
     setStatus("");
   }
   function showTab(tab) {
-    document.querySelectorAll("[data-econ-tab]").forEach((b) => b.classList.toggle("active", b.dataset.econTab === tab));
-    document.querySelectorAll("[data-econ-panel]").forEach((section) => { section.hidden = section.dataset.econPanel !== tab; });
+    // Enlaces anteriores a ?tab=expenses siguen llevando al filtro de Gastos.
+    const resolved = tab === "expenses" ? "movements" : tab;
+    document.querySelectorAll("[data-econ-tab]").forEach((b) => {
+      const active = b.dataset.econTab === resolved;
+      b.classList.toggle("active", active);
+      b.setAttribute("aria-current", active ? "page" : "false");
+    });
+    document.querySelectorAll("[data-econ-panel]").forEach((section) => { section.hidden = section.dataset.econPanel !== resolved; });
+    if (tab === "expenses") setMovementFilter("expense");
   }
   function fillPatients() {
     const select = $("#econ-invoice-patient"), previous = select.value;
@@ -228,7 +236,67 @@
       card.append(head); list.append(card);
     });
   }
-  function renderAll() { fillPatients(); renderIssuer(); renderOverview(); renderInvoiceList(); renderExpenses(); }
+
+  function movementRows() {
+    const month = $("#econ-movement-month").value;
+    const invById = new Map(invoices.map(invoice => [invoice.id, invoice]));
+    const income = receipts.filter(row => row.paid_date?.startsWith(month)).map(row => {
+      const invoice = invById.get(row.invoice_id);
+      return {
+        kind: "income", date: row.paid_date, amount: Number(row.amount_cents),
+        concept: invoice?.invoice_number ? "Cobro · " + invoice.invoice_number : "Cobro registrado",
+        details: [invoice?.recipient_name || "Sin factura vinculada", ({bizum:"Bizum",bank_transfer:"Transferencia",card:"Tarjeta",cash:"Efectivo",other:"Otro"}[row.method] || "Medio no indicado")].join(" · ")
+      };
+    });
+    const outgoing = expenses.filter(row => row.expense_date?.startsWith(month)).map(row => ({
+      kind: "expense", date: row.expense_date, amount: Number(row.amount_cents),
+      concept: row.concept || "Gasto registrado",
+      details: [row.supplier, ({rent:"Alquiler",utilities:"Suministros",software:"Programas y suscripciones",materials:"Materiales",marketing:"Publicidad",training:"Formación",professional:"Servicios profesionales",other:"Otros"}[row.category] || "Otros")].filter(Boolean).join(" · ")
+    }));
+    return [...income, ...outgoing].sort((a, b) => b.date.localeCompare(a.date) || a.kind.localeCompare(b.kind));
+  }
+  function filteredMovementRows() {
+    return movementRows().filter(row => movementFilter === "all" || row.kind === movementFilter);
+  }
+  function renderMovements() {
+    const all = movementRows();
+    const received = all.filter(row => row.kind === "income").reduce((total, row) => total + row.amount, 0);
+    const spent = all.filter(row => row.kind === "expense").reduce((total, row) => total + row.amount, 0);
+    $("#econ-movement-in").textContent = money(received);
+    $("#econ-movement-out").textContent = money(spent);
+    $("#econ-movement-net").textContent = money(received - spent);
+    const list = $("#econ-movement-list");
+    list.replaceChildren();
+    const rows = filteredMovementRows();
+    if (!rows.length) {
+      list.append(el("p", "econ-empty", "No hay movimientos de este tipo en el mes seleccionado."));
+      return;
+    }
+    rows.forEach(row => {
+      const card = el("article", "econ-movement-entry " + row.kind);
+      const main = el("div", "econ-movement-info");
+      main.append(el("span", "econ-movement-date", fmtDate(row.date)), el("strong", "", row.concept), el("small", "", row.details));
+      const amount = el("strong", "econ-movement-amount", (row.kind === "income" ? "+ " : "− ") + money(row.amount));
+      card.append(main, amount);
+      list.append(card);
+    });
+  }
+  function setMovementFilter(next) {
+    movementFilter = ["all", "income", "expense"].includes(next) ? next : "all";
+    document.querySelectorAll("[data-econ-filter]").forEach(button => {
+      const active = button.dataset.econFilter === movementFilter;
+      button.classList.toggle("active", active);
+      button.setAttribute("aria-pressed", String(active));
+    });
+    renderMovements();
+  }
+  function exportMovements() {
+    downloadCSV("dememoria-movimientos-" + $("#econ-movement-month").value + ".csv",
+      ["Fecha", "Tipo", "Concepto", "Detalle", "Importe EUR"],
+      filteredMovementRows().map(row => [row.date, row.kind === "income" ? "Ingreso cobrado" : "Gasto",
+        row.concept, row.details, (row.kind === "income" ? "" : "-") + fmtInputEuros(row.amount)]));
+  }
+  function renderAll() { fillPatients(); renderIssuer(); renderOverview(); renderInvoiceList(); renderExpenses(); renderMovements(); }
   function choosePatient() {
     const patient = patients.find(p => p.id === $("#econ-invoice-patient").value);
     fillBookings(patient?.id);
@@ -340,7 +408,12 @@
     $("#econ-custom-service-wrap").hidden = $("#econ-invoice-service").value !== "custom";
   });
   $("#econ-month").value = today().slice(0,7);
+  $("#econ-movement-month").value = today().slice(0,7);
   $("#econ-month").addEventListener("change", renderOverview);
+  $("#econ-movement-month").addEventListener("change", renderMovements);
+  document.querySelectorAll("[data-econ-filter]").forEach(button =>
+    button.addEventListener("click", () => setMovementFilter(button.dataset.econFilter)));
+  $("#econ-export-movements").addEventListener("click", exportMovements);
   document.querySelectorAll("[data-econ-tab]").forEach(b => b.addEventListener("click", () => showTab(b.dataset.econTab)));
   document.querySelectorAll("[data-econ-goto]").forEach(b => b.addEventListener("click", () => { showTab(b.dataset.econGoto); clearInvoiceForm(); }));
   $("#econ-refresh").addEventListener("click", () => load().catch(e => setStatus(e.message)));
@@ -421,6 +494,7 @@
   function stageImportedExpense(raw) {
     const row = validateImportedExpense(raw);
     showTab("expenses");
+    $("#econ-expense-register").open = true;
     $("#econ-expense-date").value = row.expense_date;
     $("#econ-expense-category").value = row.category;
     $("#econ-expense-supplier").value = row.supplier;
@@ -494,8 +568,9 @@
       exposeImportBridge();
       const requested = new URL(window.location.href).searchParams;
       const tab = requested.get("tab");
-      if (["overview", "invoices", "expenses", "settings"].includes(tab)) {
+      if (["overview", "movements", "invoices", "expenses", "settings"].includes(tab)) {
         showTab(tab);
+        if (tab === "movements" && ["all", "income", "expense"].includes(requested.get("filter"))) setMovementFilter(requested.get("filter"));
         if (tab === "invoices" && requested.get("nuevo") === "1") clearInvoiceForm();
       }
     } catch (err) {
