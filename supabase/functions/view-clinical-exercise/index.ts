@@ -158,6 +158,41 @@ function sectionHtml(title: string, value: string, className = "") {
   return "<section class=\"section " + className + "\"><h2>" + escapeHtml(title) + "</h2><div class=\"copy\">" + escapeHtml(value) + "</div></section>";
 }
 
+function weeklyInstructionsHtml(value: string) {
+  const matches = String(value || "").split(/(?:^|\n)\s*(Ejercicio\s+\d+\s*:[^\n]*)\n/gi);
+  if (matches.length < 3) return "<div class=\"copy\">" + escapeHtml(value) + "</div>";
+  const heading = /(?:^|\n)\s*Semana\s+\d+\b/i.exec(value)?.[0]?.trim() || "Programa semanal";
+  const fields = /^(Objetivo|Materiales|Preparación|Pasos|Ejemplo|Ayudas|Adaptación|Duración y frecuencia|Qué observar):\s*/i;
+  const activities: string[] = [];
+  for (let index = 1; index + 1 < matches.length; index += 2) {
+    const title = matches[index].trim();
+    let label = "";
+    let buffer: string[] = [];
+    const sections: string[] = [];
+    const flush = () => {
+      const text = buffer.join(" ").trim();
+      if (!text) { buffer = []; label = ""; return; }
+      let content = "<p>" + escapeHtml(text) + "</p>";
+      if (label.toLowerCase() === "pasos") {
+        const items = text.split(/(?=\b[1-9]\)\s)/).map(x => x.replace(/^\s*[1-9]\)\s*/, "").trim()).filter(Boolean);
+        if (items.length > 1) content = "<ol class=\"exercise-steps\">" + items.map(x => "<li>" + escapeHtml(x) + "</li>").join("") + "</ol>";
+      }
+      sections.push("<div class=\"exercise-field\">" + (label ? "<h4>" + escapeHtml(label) + "</h4>" : "") + content + "</div>");
+      label = ""; buffer = [];
+    };
+    for (const part of matches[index + 1].split(/\r?\n/)) {
+      const text = part.trim();
+      if (!text) { flush(); continue; }
+      const m = fields.exec(text);
+      if (m) { flush(); label = m[1]; buffer.push(text.slice(m[0].length)); }
+      else buffer.push(text);
+    }
+    flush();
+    activities.push("<article class=\"exercise-card\"><h3>" + escapeHtml(title) + "</h3>" + sections.join("") + "</article>");
+  }
+  return "<div class=\"weekly-program\"><p class=\"weekly-heading\">" + escapeHtml(heading) + "</p><div class=\"exercise-stack\">" + activities.join("") + "</div></div>";
+}
+
 function patientStateLabel(value: string | undefined) {
   if (value === "reviewed") return "Lo he revisado";
   if (value === "discuss") return "Quiero comentarlo en sesión";
@@ -257,7 +292,7 @@ function materialContentHtml(item: MaterialRow, token: string | null, preview = 
     (metaParts.length ? "<div class=\"meta\">" + metaParts.join("") + "</div>" : "") +
     sectionHtml(whyHeading, doc.why || "", "why") +
     sectionHtml("Qué vamos a observar o entrenar", doc.objective || "") +
-    sectionHtml(doc.material_type === "psychoeducation" ? "Contenido" : "Cómo hacerlo", doc.instructions || "") +
+    (doc.clinical_area === "neuropsychology" ? "<section class=\"section weekly-work\"><h2>Actividades de esta semana</h2>" + weeklyInstructionsHtml(doc.instructions || "") + "</section>" : sectionHtml(doc.material_type === "psychoeducation" ? "Contenido" : "Cómo hacerlo", doc.instructions || "")) +
     sectionHtml("Ejemplo", doc.example || "") +
     visualHtml(doc.visual_blocks, escapeHtml) +
     sectionHtml("Tu registro / espacio para trabajar", doc.record_prompt || "") +
