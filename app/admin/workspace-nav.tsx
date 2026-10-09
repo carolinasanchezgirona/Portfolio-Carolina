@@ -31,9 +31,6 @@ export default function AdminWorkspaceNav({ active }: { active: Area }) {
       <details className="admin-workspace-more">
         <summary className={!["agenda", "otra"].includes(active) ? "is-active" : undefined}><NavIcon name="more" /><span>Más</span></summary>
         <div className="admin-workspace-more-panel">
-          <p className="admin-workspace-more-label">Atención clínica</p>
-          <a href="/admin/clinica/?panel=1">Gestión clínica</a>
-          <a href="/admin/agenda/">Agenda de pacientes</a>
           <p className="admin-workspace-more-label">Administración</p>
           <a href="/admin/economia/" aria-current={active === "economia" ? "page" : undefined}>Contabilidad</a>
           <a href="/admin/articulos/" aria-current={active === "articulos" ? "page" : undefined}>Artículos</a>
