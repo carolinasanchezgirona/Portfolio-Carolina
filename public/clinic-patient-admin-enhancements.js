@@ -117,7 +117,7 @@
     try {
       const result = await rpc("merge_clinical_patients", { p_keep_id:keepId, p_merge_id:mergeId });
       if (!result?.merged) throw new Error("La fusión no se ha completado.");
-      dialog.close();
+      dialog.hidden = true;
       window.location.reload();
     } catch (error) { setMessage(error?.message || "No se han podido fusionar las fichas.", true); }
   }
