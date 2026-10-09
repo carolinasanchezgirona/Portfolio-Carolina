@@ -492,6 +492,12 @@
       contents.hidden = false;
       await load();
       exposeImportBridge();
+      const requested = new URL(window.location.href).searchParams;
+      const tab = requested.get("tab");
+      if (["overview", "invoices", "expenses", "settings"].includes(tab)) {
+        showTab(tab);
+        if (tab === "invoices" && requested.get("nuevo") === "1") clearInvoiceForm();
+      }
     } catch (err) {
       contents.hidden = true;
       $("#econ-access").hidden = false;
