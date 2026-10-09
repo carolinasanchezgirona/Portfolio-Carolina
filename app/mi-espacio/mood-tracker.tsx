@@ -154,6 +154,58 @@ function useAvatar() {
  * For the remaining portraits, the color and the emotion label communicate the
  * chosen state until their full 3D expression series is created.
  */
+/**
+ * The chosen companion must react visibly as the patient changes their mood,
+ * including for portraits without a complete 3D expression sheet.
+ * Facial landmarks are avatar-specific to preserve the original portrait.
+ */
+const FACE_LANDMARKS: Record<AvatarId, { mouthX:number; mouthY:number; browY:number; leftEyeX:number; rightEyeX:number; eyesY:number; patch:string }> = {
+  "boy":          { mouthX:50,mouthY:64,browY:35,leftEyeX:38,rightEyeX:64,eyesY:44,patch:"#f5b999" },
+  "girl":         { mouthX:51,mouthY:66,browY:37,leftEyeX:38,rightEyeX:66,eyesY:45,patch:"#eca58d" },
+  "teen-boy":     { mouthX:54,mouthY:65,browY:34,leftEyeX:43,rightEyeX:65,eyesY:43,patch:"#e8ad8b" },
+  "teen-girl":    { mouthX:62,mouthY:65,browY:34,leftEyeX:49,rightEyeX:72,eyesY:43,patch:"#f3b49e" },
+  "adult-man":    { mouthX:50,mouthY:63,browY:34,leftEyeX:39,rightEyeX:61,eyesY:44,patch:"#c99070" },
+  "adult-woman":  { mouthX:59,mouthY:65,browY:36,leftEyeX:49,rightEyeX:69,eyesY:46,patch:"#eab092" },
+  "senior-man":   { mouthX:60,mouthY:65,browY:36,leftEyeX:47,rightEyeX:68,eyesY:44,patch:"#ddb092" },
+  "senior-woman": { mouthX:58,mouthY:65,browY:34,leftEyeX:45,rightEyeX:68,eyesY:44,patch:"#e9b399" },
+};
+
+function CompanionExpression({ mood, avatarId }: { mood:number; avatarId:AvatarId }) {
+  const p = FACE_LANDMARKS[avatarId];
+  const down = mood <= 2;
+  const open = mood === 5;
+  const mouthPath = mood === 1 ? "M -10 5 Q 0 -9 10 5"
+    : mood === 2 ? "M -9 2 Q 0 -3 9 2"
+    : mood === 3 ? "M -8 0 Q 0 1 8 0"
+    : mood === 4 ? "M -11 -3 Q 0 9 11 -3"
+    : "M -13 -5 Q 0 15 13 -5";
+  return (
+    <svg className="mood-expression-layer" viewBox="0 0 100 100" aria-hidden="true" focusable="false">
+      {down && (
+        <g stroke="#6b453d" strokeWidth="1.7" fill="none" strokeLinecap="round">
+          <path d={`M ${p.leftEyeX-7} ${p.browY-2} Q ${p.leftEyeX} ${p.browY-5} ${p.leftEyeX+6} ${p.browY+2}`} />
+          <path d={`M ${p.rightEyeX-6} ${p.browY+2} Q ${p.rightEyeX} ${p.browY-5} ${p.rightEyeX+7} ${p.browY-2}`} />
+        </g>
+      )}
+      {mood === 1 && (
+        <path d={`M ${p.rightEyeX+5} ${p.eyesY+8} Q ${p.rightEyeX+11} ${p.eyesY+15} ${p.rightEyeX+5} ${p.eyesY+20} Q ${p.rightEyeX} ${p.eyesY+16} ${p.rightEyeX+5} ${p.eyesY+8}`}
+          fill="#b8e4f5" stroke="#72bace" strokeWidth=".8"/>
+      )}
+      <ellipse cx={p.mouthX} cy={p.mouthY+1} rx="16" ry="8.6" fill={p.patch} opacity=".96" />
+      <g transform={`translate(${p.mouthX} ${p.mouthY})`}>
+        {open && <path d={mouthPath} stroke="#744144" strokeWidth="2.3" fill="#8b4254" strokeLinecap="round"/>}
+        {!open && <path d={mouthPath} stroke={down?"#854748":"#884b4c"} strokeWidth="2.5" fill="none" strokeLinecap="round" />}
+      </g>
+      {mood === 5 && (
+        <g fill="#fff8ed" opacity=".82">
+          <circle cx={p.mouthX-17} cy={p.mouthY-1} r="1.5"/>
+          <circle cx={p.mouthX+16} cy={p.mouthY-3} r="1.5"/>
+        </g>
+      )}
+    </svg>
+  );
+}
+
 function MoodFriend({ mood, avatarId, portraitOnly = false }: { mood: number; avatarId: AvatarId; portraitOnly?: boolean }) {
   const index = AVATARS.findIndex(option => option.id === avatarId);
   const avatar = AVATARS[index] ?? DEFAULT_AVATAR;
@@ -172,7 +224,9 @@ function MoodFriend({ mood, avatarId, portraitOnly = false }: { mood: number; av
   return (
     <span role="img" aria-label={`${avatar.label}: ${MOODS[mood - 1].name}`}
       className={`mood-friend-image ${isOlderMan ? "mood-friend-expressive" : "mood-friend-portrait"}`}
-      style={imageStyle} />
+      style={imageStyle}>
+      {!portraitOnly && !isOlderMan && <CompanionExpression mood={mood} avatarId={avatarId} />}
+    </span>
   );
 }
 
