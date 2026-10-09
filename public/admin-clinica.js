@@ -997,11 +997,44 @@
     }
     return Object.fromEntries(healthReportFields.map(([key]) => [key, panel.querySelector("#clinic-health-" + key)]));
   }
+  let reportFormBaseline = "";
+  let reportDirty = false;
+  let reportSaveTimer = null;
+  let reportSaveActive = false;
+  let reportSaveRequested = false;
+  let reportIsOpening = false;
+  function reportInputs() {
+    return [els.reportType,els.reportRecipient,els.reportPurpose,els.reportStart,els.reportEnd,els.reportContext,els.reportEvolution,els.reportInterventions,els.reportCurrent,...Object.values(healthReportInputs())];
+  }
+  function reportSnapshot() { return JSON.stringify(reportInputs().map(input => [input.id,input.value])); }
+  function markReportClean() {
+    reportFormBaseline = reportSnapshot(); reportDirty = false;
+    const state = document.querySelector("#clinic-report-save-state");
+    if (state) state.textContent = "Guardado · borrador recuperable";
+  }
+  function reportSaveState(message) {
+    const state = document.querySelector("#clinic-report-save-state");
+    if (state) state.textContent = message;
+  }
+  function reportHasContent() {
+    return [els.reportContext, els.reportEvolution, els.reportInterventions, els.reportCurrent, ...Object.values(healthReportInputs())].some(input => input.value.trim());
+  }
+  function scheduleReportAutoSave() {
+    if (reportIsOpening || !els.reportDialog.open || els.saveReport.disabled || els.reportSaveActive && !reportDirty) return;
+    reportDirty = reportSnapshot() !== reportFormBaseline;
+    if (!reportDirty) { reportSaveState("Guardado · sin cambios"); return; }
+    reportSaveState("Cambios sin guardar · guardado automático pendiente");
+    window.clearTimeout(reportSaveTimer);
+    if (!els.reportPurpose.value.trim() || !reportHasContent() || (healthReportSelected() && (!els.reportStart.value || !els.reportEnd.value))) {
+      reportSaveState("Cambios pendientes · indica finalidad y periodo para guardar"); return;
+    }
+    reportSaveTimer = window.setTimeout(() => persistReport("draft", { auto: true }).catch(error => reportSaveState("No se ha guardado: " + error.message)), 3500);
+  }
   function healthReportSelected() {
     const active = els.reportType.value === "evolution_health";
     const panel = document.querySelector("#clinic-health-report-sections");
-    if (panel) { panel.hidden = true; panel.style.display = "none"; }
-    if (els.reportContext?.closest("#clinic-report-sheet")) { const sheet = els.reportContext.closest("#clinic-report-sheet"); sheet.hidden = true; sheet.style.display = "none"; }
+    if (panel) { panel.hidden = !active; panel.style.display = active ? "grid" : "none"; }
+    if (els.reportContext?.closest("#clinic-report-sheet")) { const sheet = els.reportContext.closest("#clinic-report-sheet"); sheet.hidden = false; sheet.style.display = ""; }
     if (els.generateReport) els.generateReport.textContent = "Descargar Word editable";
     if (els.printReport) { els.printReport.hidden = false; els.printReport.style.display = ""; els.printReport.textContent = "Imprimir borrador"; }
     if (els.saveReport) { els.saveReport.hidden = false; els.saveReport.style.display = ""; els.saveReport.textContent = "Guardar en Gestión Clínica"; }
@@ -1025,6 +1058,7 @@
     els.reportCurrent.value = content.current || "";
     const healthInputs = healthReportInputs();
     healthReportFields.forEach(([key]) => { healthInputs[key].value = content[key] || ""; });
+    reportIsOpening = true;
     const health = healthReportSelected();
     Object.values(healthInputs).forEach((field) => { field.disabled = report?.status === "approved"; });
     if (health && !els.reportRecipient.value) els.reportRecipient.value = "Profesional sanitario";
@@ -1036,7 +1070,28 @@
     const locked = report?.status === "approved";
     [els.reportType, els.reportRecipient, els.reportPurpose, els.reportStart, els.reportEnd, els.reportContext, els.reportEvolution, els.reportInterventions, els.reportCurrent].forEach((field) => { field.disabled = locked; });
     els.generateReport.disabled = locked; els.saveReport.disabled = locked; els.approveReport.disabled = locked;
-    if (!els.reportDialog.open) els.reportDialog.showModal();
+    window.clearTimeout(reportSaveTimer);
+    if (!els.reportDialog.parentElement?.matches("#clinic-patient-dialog")) els.patientDialog.append(els.reportDialog);
+    if (!els.reportDialog.open) els.reportDialog.show();
+    els.patientForm.hidden = true;
+    document.body.classList.add("clinic-report-page-open");
+    window.scrollTo({ top: 0, behavior: "auto" });
+    markReportClean();
+    reportIsOpening = false;
+  }
+  function closeReportEditor({ force = false } = {}) {
+    if (!els.reportDialog.open) return true;
+    window.clearTimeout(reportSaveTimer);
+    if (!force && (reportDirty || reportSaveActive || reportSaveRequested)) {
+      if (!window.confirm("Hay cambios de informe pendientes de guardar. ¿Quieres salir y descartarlos?")) return false;
+    }
+    els.reportDialog.close();
+    els.patientForm.hidden = false;
+    document.body.classList.remove("clinic-report-page-open");
+    reportDirty = false;
+    reportSaveRequested = false;
+    window.scrollTo({ top: 0, behavior: "auto" });
+    return true;
   }
   function generateReportDraft() {
     if (!currentPatient) return;
@@ -1114,7 +1169,13 @@
       approved_at: status === "approved" ? new Date().toISOString() : null, updated_at: new Date().toISOString(),
     };
   }
-  async function persistReport(status) {
+  async function persistReport(status, { auto = false } = {}) {
+    if (reportSaveActive) { reportSaveRequested = true; return; }
+    if (auto && (!els.reportPurpose.value.trim() || !reportHasContent())) return;
+    if (status === "draft" && els.reportId.value && clinicalReports.some(item => item.id === els.reportId.value && item.status === "approved")) throw new Error("El informe aprobado no se puede sobrescribir.");
+    if (auto && !reportDirty) return;
+    const savingSnapshot = reportSnapshot();
+    reportSaveActive = true;
     if (!currentPatient) return;
     if (status === "approved" && healthReportSelected()) {
       const h = healthReportInputs();
@@ -1126,14 +1187,25 @@
     if (status === "approved" && !els.reportEvolution.value.trim() && !els.reportContext.value.trim()) throw new Error("El informe no contiene información suficiente para aprobarlo.");
     els.reportMessage.textContent = status === "approved" ? "Aprobando informe…" : "Guardando borrador…";
     const payload = reportPayload(status);
-    const rows = els.reportId.value
-      ? await rest(`clinical_reports?id=eq.${encodeURIComponent(els.reportId.value)}&select=*`, { method: "PATCH", headers: { Prefer: "return=representation" }, body: JSON.stringify(payload) })
-      : await rest("clinical_reports?select=*", { method: "POST", headers: { Prefer: "return=representation" }, body: JSON.stringify(payload) });
-    const saved = rows?.[0]; if (!saved) throw new Error("No se ha podido guardar el informe.");
-    clinicalReports = [saved, ...clinicalReports.filter((item) => item.id !== saved.id)];
-    els.reportId.value = saved.id;
-    renderReports(currentPatient);
-    openReport(saved);
+    try {
+      if (auto) reportSaveState("Guardando borrador…");
+      const rows = els.reportId.value
+        ? await rest(`clinical_reports?id=eq.${encodeURIComponent(els.reportId.value)}&select=*`, { method: "PATCH", headers: { Prefer: "return=representation" }, body: JSON.stringify(payload) })
+        : await rest("clinical_reports?select=*", { method: "POST", headers: { Prefer: "return=representation" }, body: JSON.stringify(payload) });
+      const saved = rows?.[0]; if (!saved) throw new Error("No se ha podido guardar el informe.");
+      clinicalReports = [saved, ...clinicalReports.filter((item) => item.id !== saved.id)];
+      els.reportId.value = saved.id;
+      renderReports(currentPatient);
+      if (reportSnapshot() === savingSnapshot) markReportClean();
+      else { reportDirty = true; reportSaveState("Hay cambios posteriores pendientes de guardar"); }
+      if (!auto) els.reportMessage.textContent = "Borrador guardado en la historia clínica.";
+    } finally {
+      reportSaveActive = false;
+      if (reportSaveRequested || (auto && reportDirty)) {
+        reportSaveRequested = false;
+        if (reportDirty) scheduleReportAutoSave();
+      }
+    }
   }
   function printCurrentReport() {
     if (!currentPatient) return;
@@ -1914,9 +1986,11 @@
   els.dictate.addEventListener("click", toggleDictation);
   els.printHistory.addEventListener("click", () => { try { printClinicalHistory(); } catch (error) { els.patientMessage.textContent = error.message; } });
   els.newReport.addEventListener("click", () => openReport());
-  els.reportClose.addEventListener("click", () => els.reportDialog.close());
-  els.reportType.addEventListener("change", () => { els.reportTitlePreview.textContent = reportTypeLabel(els.reportType.value); healthReportInputs(); healthReportSelected(); });
-  els.generateReport.addEventListener("click", () => { try { if (!els.reportId.value && !els.reportContext.value.trim()) generateReportDraft(); downloadHealthReportWord(); } catch (error) { els.reportMessage.textContent = error.message; } });
+  els.reportClose.addEventListener("click", () => closeReportEditor());
+  els.reportForm.addEventListener("input", (event) => { if (event.target.matches("input,textarea,select")) scheduleReportAutoSave(); });
+  els.reportForm.addEventListener("change", (event) => { if (event.target.matches("input,textarea,select")) scheduleReportAutoSave(); });
+  els.reportType.addEventListener("change", () => { els.reportTitlePreview.textContent = reportTypeLabel(els.reportType.value); healthReportInputs(); healthReportSelected(); scheduleReportAutoSave(); });
+  els.generateReport.addEventListener("click", () => { try { if (!els.reportId.value && !els.reportContext.value.trim()) { generateReportDraft(); scheduleReportAutoSave(); } downloadHealthReportWord(); } catch (error) { els.reportMessage.textContent = error.message; } });
   els.saveReport.addEventListener("click", () => { if (healthReportSelected() && !els.reportContext.value.trim()) generateReportDraft(); if (healthReportSelected() && !els.reportPurpose.value.trim()) { els.reportMessage.textContent = "Indica la finalidad del informe antes de guardarlo."; return; } persistReport("draft").then(() => { if (healthReportSelected()) els.reportMessage.textContent = "Borrador guardado en la historia clínica. La edición posterior del Word descargado no se sincroniza automáticamente."; }).catch((error) => { els.reportMessage.textContent = error.message; }); });
   els.approveReport.addEventListener("click", () => persistReport("approved").catch((error) => { els.reportMessage.textContent = error.message; }));
   $("#clinic-upload-revised-word")?.addEventListener("click", () => {
@@ -2208,7 +2282,7 @@
     event.preventDefault();
     persistClinicalSession("approved").catch((error) => { els.sessionMessage.textContent = error.message; });
   });
-  [els.newPatientDialog, els.patientDialog, els.sessionDialog, els.exerciseDialog, els.reportDialog, els.documentDialog, els.scaleDialog].filter(Boolean).forEach((dialog) => dialog.addEventListener("click", (event) => {
+  [els.newPatientDialog, els.sessionDialog, els.exerciseDialog, els.documentDialog, els.scaleDialog].filter(Boolean).forEach((dialog) => dialog.addEventListener("click", (event) => {
     if (event.target === dialog) dialog.close();
   }));
 
