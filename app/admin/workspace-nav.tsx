@@ -1,4 +1,4 @@
-type Area = "agenda" | "economia" | "otra";
+type Area = "agenda" | "economia" | "articulos" | "recursos" | "preguntas" | "otra";
 
 type Icon = "today" | "agenda" | "patients" | "pending" | "more";
 
@@ -29,17 +29,14 @@ export default function AdminWorkspaceNav({ active }: { active: Area }) {
         <NavIcon name={item.icon} /><span>{item.label}</span>
       </a>)}
       <details className="admin-workspace-more">
-        <summary className={active === "economia" ? "is-active" : undefined}><NavIcon name="more" /><span>Más</span></summary>
+        <summary className={!["agenda", "otra"].includes(active) ? "is-active" : undefined}><NavIcon name="more" /><span>Más</span></summary>
         <div className="admin-workspace-more-panel">
-          <p className="admin-workspace-more-label">Atención clínica</p>
-          <a href="/admin/clinica/?panel=1">Gestión clínica</a>
-          <a href="/admin/agenda/">Agenda de pacientes</a>
           <p className="admin-workspace-more-label">Administración</p>
           <a href="/admin/economia/" aria-current={active === "economia" ? "page" : undefined}>Gestión económica</a>
           <a href="/admin/notificaciones/">Centro de avisos</a>
           <a href="/admin/articulos/">Artículos</a>
-          <a href="/admin/recursos/">Recursos</a>
-          <a href="/admin/preguntas/">Preguntas</a>
+          <a href="/admin/recursos/" aria-current={active === "recursos" ? "page" : undefined}>Recursos</a>
+          <a href="/admin/preguntas/" aria-current={active === "preguntas" ? "page" : undefined}>Preguntas</a>
           <a href="/admin/">Panel general</a>
         </div>
       </details>

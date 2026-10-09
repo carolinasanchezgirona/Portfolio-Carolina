@@ -39,8 +39,8 @@
     if(body.user?.id!==ALLOWED_USER_ID)throw new Error("Esta cuenta no tiene acceso.");
     saveSession(body);
   }
-  function showApp(){els.login.hidden=true;els.app.hidden=false;}
-  function showLogin(){els.app.hidden=true;els.login.hidden=false;}
+  function showApp(){document.querySelector("#resources-auth-loading")?.setAttribute("hidden","");els.login.hidden=true;els.app.hidden=false;}
+  function showLogin(){document.querySelector("#resources-auth-loading")?.setAttribute("hidden","");els.app.hidden=true;els.login.hidden=false;}
   function euro(cents){return new Intl.NumberFormat("es-ES",{style:"currency",currency:"EUR"}).format((Number(cents)||0)/100);}
   function statusText(status){return status==="published"?"Publicado":status==="archived"?"Archivado":"Borrador";}
   async function loadData(selectId=null){
@@ -64,7 +64,7 @@
       panel.id="resources-sales-summary";
       panel.className="resources-sales-summary";
       const topbar=document.querySelector(".resources-topbar");
-      topbar?.after(panel);
+      (document.querySelector("#resources-app > .admin-workspace-nav") || topbar)?.after(panel);
     }
     const paid=orders.filter(o=>["paid","no_payment_required"].includes(o.payment_status));
     const total=paid.reduce((sum,o)=>sum+(Number(o.amount_total)||0),0);
@@ -106,10 +106,11 @@
     if(els.coverUrl.value){const img=document.createElement("img");img.src=els.coverUrl.value;img.alt=els.coverAlt.value||"";els.coverPreview.append(img);}
     else{const s=document.createElement("span");s.textContent="Sin portada";els.coverPreview.append(s);}
   }
+  function showMobileEditor(){ document.querySelector(".resources-workspace")?.classList.add("workspace-show-editor"); }
   function newResource(){
     els.form.reset(); els.id.value=""; els.filePath.value=""; els.category.value="psicologia";els.audience.value="general";els.format.value="PDF";
     els.editorTitle.textContent="Nuevo recurso";els.statusLabel.textContent="Borrador nuevo";els.archive.hidden=true;els.deleteButton.hidden=true;els.fileState.textContent="Todavía no hay archivo subido.";
-    els.empty.hidden=true;els.form.hidden=false;setMessage("");resetCover();renderList();els.title.focus();
+    els.empty.hidden=true;els.form.hidden=false;showMobileEditor();setMessage("");resetCover();renderList();els.title.focus();
   }
   function openResource(r){
     els.id.value=r.id;els.title.value=r.title||"";els.subtitle.value=r.subtitle||"";els.slug.value=r.slug||"";els.price.value=((r.price_cents||0)/100).toFixed(2);
@@ -117,7 +118,7 @@
     els.coverUrl.value=r.cover_url||"";els.coverAlt.value=r.cover_alt||"";els.filePath.value=r.file_path||"";els.relatedPage.value=r.related_page||"";els.relatedArticle.value=r.related_article_id||"";
     els.seoTitle.value=r.seo_title||"";els.seoDescription.value=r.seo_description||"";els.statusLabel.textContent=statusText(r.status);els.editorTitle.textContent="Editar recurso";
     els.archive.hidden=false;els.deleteButton.hidden=false;els.empty.hidden=true;els.form.hidden=false;els.fileState.textContent=r.file_path?`Archivo privado: ${r.file_path}`:"Todavía no hay archivo subido.";
-    setMessage("");resetCover();renderList();
+    showMobileEditor();setMessage("");resetCover();renderList();
   }
   function payload(status){
     const title=els.title.value.trim(); if(!title)throw new Error("Escribe el título.");
@@ -148,7 +149,7 @@
   async function deleteResource(){
     const id=els.id.value;if(!id)return;if(!window.confirm(`¿Eliminar definitivamente “${els.title.value.trim()}”?`))return;
     const r=await fetch(`${REST_URL}/digital_resources?id=eq.${encodeURIComponent(id)}`,{method:"DELETE",headers:authHeaders()});if(!r.ok)throw new Error("No se ha podido eliminar.");
-    els.form.hidden=true;els.empty.hidden=false;els.id.value="";await loadData();
+    els.form.hidden=true;els.empty.hidden=false;els.id.value="";document.querySelector(".resources-workspace")?.classList.remove("workspace-show-editor");await loadData();
   }
   async function upload(bucket,file,isPublic){
     if(!file)throw new Error("Selecciona un archivo.");
@@ -169,6 +170,7 @@
   els.loginForm?.addEventListener("submit",async e=>{e.preventDefault();setLoginMessage("Entrando…");try{await signIn(els.email.value.trim(),els.password.value);els.password.value="";showApp();await loadData();setLoginMessage("");}catch(err){setLoginMessage(err.message);}});
   els.logout?.addEventListener("click",()=>{saveSession(null);window.location.assign("/admin/clinica/acceso/");});
   els.newButton?.addEventListener("click",newResource);
+  document.querySelector("#resources-back-to-list")?.addEventListener("click",()=>document.querySelector(".resources-workspace")?.classList.remove("workspace-show-editor"));
   els.title?.addEventListener("input",()=>{if(!els.id.value)els.slug.value=slugify(els.title.value);});
   els.coverFile?.addEventListener("change",()=>{const f=els.coverFile.files?.[0];els.coverFile.value="";if(f)uploadCover(f).catch(e=>setMessage(e.message));});
   els.downloadFile?.addEventListener("change",()=>{const f=els.downloadFile.files?.[0];els.downloadFile.value="";if(f)uploadDownload(f).catch(e=>setMessage(e.message));});

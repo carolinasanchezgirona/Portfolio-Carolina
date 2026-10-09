@@ -2,6 +2,7 @@ import Script from "next/script";
 import type { Metadata } from "next";
 import "./admin-articles.css";
 import "./instagram-factory.css";
+import AdminWorkspaceNav from "../workspace-nav";
 
 export const metadata: Metadata = {
   title: "Centro editorial | Carolina Sánchez",
@@ -12,7 +13,8 @@ export const metadata: Metadata = {
 export default function AdminArticlesPage() {
   return (
     <main className="articles-admin-page">
-      <section id="articles-login" className="articles-login-shell">
+      <div id="articles-auth-loading" className="workspace-auth-loading" role="status">Comprobando acceso profesional…</div>
+      <section id="articles-login" className="articles-login-shell" hidden>
         <form id="articles-login-form" className="articles-login-card">
           <p className="articles-eyebrow">Área privada</p>
           <h1>Artículos</h1>
@@ -33,15 +35,17 @@ export default function AdminArticlesPage() {
             <p>Artículos de la web y publicaciones de Instagram desde un mismo lugar.</p>
           </div>
           <div className="articles-top-actions">
-            <a className="articles-secondary" href="/admin/clinica/?panel=1">Historiales</a>
-            <a className="articles-secondary" href="/admin/agenda/">Agenda</a>
-            <a className="articles-secondary" href="/admin/recursos/">Recursos</a>
-            <a className="articles-secondary" href="/admin/preguntas/">Preguntas</a>
-            <a className="articles-secondary" href="/articulos/" target="_blank" rel="noopener noreferrer">Ver artículos</a>
             <button id="article-new" className="articles-primary" type="button">Nuevo artículo</button>
-            <button id="articles-logout" className="articles-text" type="button">Cerrar sesión</button>
+            <details className="workspace-context-menu">
+              <summary>Opciones</summary>
+              <div className="workspace-context-items">
+                <a href="/articulos/" target="_blank" rel="noopener noreferrer">Ver artículos publicados</a>
+                <button id="articles-logout" type="button">Cerrar sesión</button>
+              </div>
+            </details>
           </div>
         </header>
+        <AdminWorkspaceNav active="articulos" />
 
         <nav className="editorial-tabs" aria-label="Secciones del centro editorial">
           <button id="editorial-tab-articles" type="button" aria-selected="true" aria-controls="article-workspace">Artículos del blog</button>
@@ -60,6 +64,7 @@ export default function AdminArticlesPage() {
           </aside>
 
           <section className="articles-editor-panel">
+            <button id="articles-back-to-list" className="workspace-back-to-list" type="button">← Volver a la biblioteca</button>
             <div id="articles-empty" className="articles-empty">
               <strong>Selecciona un artículo o crea uno nuevo</strong>
               <span>El editor editorial aparecerá aquí.</span>
@@ -225,7 +230,7 @@ export default function AdminArticlesPage() {
         </div>
       </dialog>
 
-      <Script src="/admin-articles.js?v=20261005-single-auth-2" strategy="afterInteractive" />
+      <Script src="/admin-articles.js?v=20261009-unified-mobile-1" strategy="afterInteractive" />
       <Script src="/editorial-instagram.js?v=20260925-oneclick-4" strategy="afterInteractive" />
     </main>
   );

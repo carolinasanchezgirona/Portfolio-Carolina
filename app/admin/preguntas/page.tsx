@@ -3,6 +3,7 @@
 import { FormEvent, useCallback, useEffect, useMemo, useState } from "react";
 import { SUPABASE_PUBLISHABLE_KEY, SUPABASE_URL } from "../../lib/supabase-public";
 import "./questions-admin.css";
+import AdminWorkspaceNav from "../workspace-nav";
 
 const ADMIN_USER_ID = "9d2cfdb1-fed6-4f76-b47a-d58507eb14f2";
 const SESSION_KEY = "dememoria_admin_session";
@@ -58,6 +59,7 @@ export default function AdminQuestionsPage() {
   const [checking, setChecking] = useState(true);
   const [questions, setQuestions] = useState<AdminQuestion[]>([]);
   const [selected, setSelected] = useState<AdminQuestion | null>(null);
+  const [mobileEditorOpen, setMobileEditorOpen] = useState(false);
   const [filter, setFilter] = useState<"all" | Status>("pending");
   const [message, setMessage] = useState("");
   const [loginMessage, setLoginMessage] = useState("");
@@ -244,6 +246,7 @@ export default function AdminQuestionsPage() {
     });
     if (response.ok) {
       setSelected(null);
+      setMobileEditorOpen(false);
       await loadQuestions(session);
       setMessage("Pregunta eliminada definitivamente.");
     } else setMessage("No se ha podido eliminar.");
@@ -270,16 +273,17 @@ export default function AdminQuestionsPage() {
           <h1>Pregunta a Carolina</h1>
           <p>El texto original y el correo son privados. Solo se publica la versión revisada.</p>
         </div>
-        <nav>
-          <a href="/admin/clinica/?panel=1">Historiales</a>
-          <a href="/admin/agenda/">Agenda</a>
-          <a href="/admin/articulos/">Artículos</a>
-          <a href="/pregunta-a-carolina/" target="_blank" rel="noopener noreferrer">Ver página</a>
-          <button type="button" onClick={logOut}>Cerrar sesión</button>
-        </nav>
+        <details className="workspace-context-menu">
+          <summary>Opciones</summary>
+          <div className="workspace-context-items">
+            <a href="/pregunta-a-carolina/" target="_blank" rel="noopener noreferrer">Ver página pública</a>
+            <button type="button" onClick={logOut}>Cerrar sesión</button>
+          </div>
+        </details>
       </header>
+      <AdminWorkspaceNav active="preguntas" />
 
-      <div className="questions-admin-workspace">
+      <div className={`questions-admin-workspace${mobileEditorOpen ? " mobile-show-editor" : ""}`}>
         <aside className="questions-admin-sidebar">
           <div className="questions-admin-count"><strong>Buzón</strong><span>{questions.length}</span></div>
           <div className="questions-admin-filters">
@@ -291,7 +295,7 @@ export default function AdminQuestionsPage() {
           </div>
           <div className="questions-admin-list">
             {visible.map((item) => (
-              <button type="button" key={item.id} className={selected?.id === item.id ? "active" : ""} onClick={() => { setSelected(item); setMessage(""); setAiReview(""); }}>
+              <button type="button" key={item.id} className={selected?.id === item.id ? "active" : ""} onClick={() => { setSelected(item); setMobileEditorOpen(true); setMessage(""); setAiReview(""); }}>
                 <small><i className={item.status} />{statusLabels[item.status]} · {new Date(item.created_at).toLocaleDateString("es-ES")}</small>
                 <strong>{item.question_text}</strong>
               </button>
@@ -301,6 +305,7 @@ export default function AdminQuestionsPage() {
         </aside>
 
         <section className="questions-admin-editor">
+          <button type="button" className="workspace-back-to-list" onClick={() => setMobileEditorOpen(false)}>← Volver al buzón</button>
           {!selected ? (
             <div className="questions-admin-empty"><strong>Selecciona una pregunta</strong><span>Aquí podrás revisarla y preparar la respuesta pública.</span></div>
           ) : (
