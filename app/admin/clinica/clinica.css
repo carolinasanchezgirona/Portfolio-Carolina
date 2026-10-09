@@ -1305,3 +1305,10 @@ body.clinic-report-page-open{overflow:auto!important}
 .clinic-preparation-footnote{color:#566a78;font-size:.76rem;line-height:1.4;margin:12px 0 0}
 .clinic-preparation-unified .clinic-preparation-alert{border-left:3px solid #a56b35!important;background:#fffaf6!important}
 @media(max-width:700px){.clinic-preparation-unified{grid-template-columns:minmax(0,1fr)}.clinic-preparation-unified article{grid-column:1/-1}}
+
+/* Brief shown before starting a clinical session, without automatic assessment. */
+.clinic-session-brief{margin:14px 0 20px;padding:16px 18px;background:#f6f9fa;border:1px solid #d6e1e5;border-radius:8px}
+.clinic-session-brief h3{margin:0 0 12px;font:700 1.03rem Arial,Helvetica,sans-serif;color:#173A5E}
+.clinic-session-brief-row{margin:7px 0;line-height:1.5;font-size:.84rem;color:#354858;white-space:pre-wrap;overflow-wrap:anywhere}
+.clinic-session-brief-row strong{color:#26394a}
+.clinic-session-brief-note{margin:12px 0 0;font-size:.76rem;color:#60727c}
