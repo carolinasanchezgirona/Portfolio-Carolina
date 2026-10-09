@@ -54,10 +54,21 @@
     const meta = document.querySelector("#clinic-report-meta")?.textContent || "";
     const recipient = document.querySelector("#clinic-report-recipient")?.value || "No especificado";
     const purpose = document.querySelector("#clinic-report-purpose")?.value || "Asistencial";
+    const health = document.querySelector("#clinic-report-type")?.value === "evolution_health";
+    const healthFields = [
+      ["sources","Fuentes y procedimiento"],["background","Antecedentes relevantes"],
+      ["observation","Estado clínico y observación"],["results","Resultados y cambios documentados"],
+      ["integration","Integración e impresión clínica"],["conclusions","Conclusiones"],
+      ["plan","Plan de seguimiento"],["limitations","Limitaciones y alcance"]
+    ];
+    const healthSections = health ? healthFields.map(([key,label]) => {
+      const value = document.querySelector("#clinic-health-" + key)?.value?.trim();
+      return value ? `<h2>${escapeHtml(label)}</h2><div class="text">${escapeHtml(value)}</div>` : "";
+    }).join("") : "";
     const watermark = approved ? "" : `<div class="watermark">BORRADOR · NO APROBADO</div>`;
 
     popup.opener = null;
-    popup.document.write(`<!doctype html><html lang="es"><head><meta charset="utf-8"><title>${escapeHtml(title)}</title><style>@page{size:A4;margin:18mm}body{font-family:Arial,sans-serif;color:#1f2933;font-size:11pt;line-height:1.5}.watermark{border:2px solid #b64a2b;color:#9b3516;font-weight:800;text-align:center;padding:10px;margin-bottom:18px;letter-spacing:.05em}header{border-bottom:2px solid #1f5f99;margin-bottom:24px;padding-bottom:14px}h1{font-size:20pt;color:#1f5f99;margin:4px 0}h2{font-size:13pt;margin:24px 0 8px}.meta{color:#526b7a;font-size:9.5pt}.text{white-space:pre-wrap}.signature{margin-top:48px}.privacy{margin-top:30px;color:#607786;font-size:8.5pt}@media print{button{display:none}}</style></head><body>${watermark}<header><p>Carolina Sánchez Girona · Psicóloga General Sanitaria y Neuropsicóloga</p><h1>${escapeHtml(title)}</h1><p class="meta">${escapeHtml(meta)}<br>Destinatario: ${escapeHtml(recipient)} · Finalidad: ${escapeHtml(purpose)}</p></header>${section("Motivo y contexto", "#clinic-report-context", "context")}${section("Evolución clínica", "#clinic-report-evolution", "evolution")}${section("Intervenciones realizadas", "#clinic-report-interventions", "interventions")}${section("Situación actual y recomendaciones", "#clinic-report-current", "current")}<div class="signature"><p>Carolina Sánchez Girona</p></div><p class="privacy">Documento confidencial que contiene datos de salud.</p><script>window.onload=()=>window.print()<\/script></body></html>`);
+    popup.document.write(`<!doctype html><html lang="es"><head><meta charset="utf-8"><title>${escapeHtml(title)}</title><style>@page{size:A4;margin:18mm}body{font-family:Arial,sans-serif;color:#1f2933;font-size:11pt;line-height:1.5}.watermark{border:2px solid #b64a2b;color:#9b3516;font-weight:800;text-align:center;padding:10px;margin-bottom:18px;letter-spacing:.05em}header{border-bottom:2px solid #1f5f99;margin-bottom:24px;padding-bottom:14px}h1{font-size:20pt;color:#1f5f99;margin:4px 0}h2{font-size:13pt;margin:24px 0 8px}.meta{color:#526b7a;font-size:9.5pt}.text{white-space:pre-wrap}.signature{margin-top:48px}.privacy{margin-top:30px;color:#607786;font-size:8.5pt}@media print{button{display:none}}</style></head><body>${watermark}<header><p>Carolina Sánchez Girona · Psicóloga General Sanitaria y Neuropsicóloga</p><h1>${escapeHtml(title)}</h1><p class="meta">${escapeHtml(meta)}<br>Destinatario: ${escapeHtml(recipient)} · Finalidad: ${escapeHtml(purpose)}</p></header>${section("Motivo y contexto", "#clinic-report-context", "context")}${section("Evolución clínica", "#clinic-report-evolution", "evolution")}${section("Intervenciones realizadas", "#clinic-report-interventions", "interventions")}${section(health ? "Estado actual y objetivos pendientes" : "Situación actual y recomendaciones", "#clinic-report-current", "current")}${healthSections}<div class="signature"><p>Carolina Sánchez Girona</p></div><p class="privacy">Documento confidencial que contiene datos de salud.</p><script>window.onload=()=>window.print()<\/script></body></html>`);
     popup.document.close();
   }, true);
 })();
