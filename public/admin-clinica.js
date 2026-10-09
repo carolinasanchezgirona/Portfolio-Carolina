@@ -144,6 +144,7 @@
   let currentAppointment = null;
   let patientPageReturnScroll = 0;
   let patientFormBaseline = "";
+  let sessionFormBaseline = "";
 
   const dateLong = new Intl.DateTimeFormat("es-ES", { weekday: "long", day: "numeric", month: "long", year: "numeric", timeZone: ZONE });
   const dateShort = new Intl.DateTimeFormat("es-ES", { day: "numeric", month: "short", year: "numeric", timeZone: ZONE });
@@ -179,6 +180,19 @@
   function showLogin() { window.location.replace("/admin/clinica/acceso/"); }
   function showApp() { if (els.app) els.app.hidden = false; }
 
+  function sessionFormSnapshot() {
+    if (!els.sessionForm) return "";
+    return JSON.stringify([...els.sessionForm.querySelectorAll("input,textarea,select")]
+      .filter(input => !["button","submit","reset"].includes(input.type || ""))
+      .map(input => [input.id || input.name || "",input.type === "checkbox" || input.type === "radio" ? input.checked : input.value]));
+  }
+  function closeSessionEditor() {
+    if (!els.sessionDialog.open) return true;
+    if (sessionFormBaseline && sessionFormSnapshot() !== sessionFormBaseline && !window.confirm("Hay notas de esta sesión sin guardar. ¿Quieres cerrarla y descartarlas?")) return false;
+    if (isDictating) speechRecognition?.stop();
+    els.sessionDialog.close();
+    return true;
+  }
   function patientFormSnapshot() {
     if (!els.patientForm) return "";
     return JSON.stringify([...els.patientForm.querySelectorAll("input, textarea, select")]
@@ -1456,6 +1470,7 @@
     els.approveSession.disabled = approved;
     els.dictate.disabled = approved;
     els.sessionDialog.showModal();
+    sessionFormBaseline = sessionFormSnapshot();
   }
 
   function renderHistory(patient) {
@@ -1915,6 +1930,7 @@
     clinicalSessions = [...clinicalSessions.filter((item) => item.id !== saved.id), saved];
     els.sessionId.value = saved.id;
     els.sessionMessage.textContent = status === "approved" ? "Registro aprobado y cerrado." : "Borrador guardado.";
+    sessionFormBaseline = sessionFormSnapshot();
     if (status === "approved") {
       if (currentPatient && els.nextSessionNote.value.trim()) {
         const updatedPatients = await rest(`clinical_patients?id=eq.${encodeURIComponent(currentPatient.id)}&select=*`, {
@@ -1988,9 +2004,11 @@
   window.addEventListener("beforeunload", event => {
     const patientUnsaved = !els.patientDialog.hidden && patientFormBaseline && patientFormSnapshot() !== patientFormBaseline;
     const reportUnsaved = els.reportDialog.open && (reportDirty || reportSaveActive);
-    if (patientUnsaved || reportUnsaved) { event.preventDefault(); event.returnValue = ""; }
+    const sessionUnsaved = els.sessionDialog.open && sessionFormBaseline && sessionFormSnapshot() !== sessionFormBaseline;
+    if (patientUnsaved || reportUnsaved || sessionUnsaved) { event.preventDefault(); event.returnValue = ""; }
   });
-  els.sessionClose.addEventListener("click", () => { if (isDictating) speechRecognition?.stop(); els.sessionDialog.close(); });
+  els.sessionClose.addEventListener("click", () => closeSessionEditor());
+  els.sessionDialog.addEventListener("cancel", event => { event.preventDefault(); closeSessionEditor(); });
   els.refreshTimeline.addEventListener("click", () => currentPatient && renderTimeline(currentPatient));
   els.addDocument.addEventListener("click", () => { if (!currentPatient) return; els.documentForm.reset(); els.documentDate.value = todayKey(); els.documentMessage.textContent = ""; els.documentDialog.showModal(); });
   els.documentClose.addEventListener("click", () => els.documentDialog.close());
@@ -2298,7 +2316,7 @@
     event.preventDefault();
     persistClinicalSession("approved").catch((error) => { els.sessionMessage.textContent = error.message; });
   });
-  [els.newPatientDialog, els.sessionDialog, els.exerciseDialog, els.documentDialog, els.scaleDialog].filter(Boolean).forEach((dialog) => dialog.addEventListener("click", (event) => {
+  [els.newPatientDialog, els.exerciseDialog, els.documentDialog, els.scaleDialog].filter(Boolean).forEach((dialog) => dialog.addEventListener("click", (event) => {
     if (event.target === dialog) dialog.close();
   }));
 
