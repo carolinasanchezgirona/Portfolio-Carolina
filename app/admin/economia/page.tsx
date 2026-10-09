@@ -23,6 +23,7 @@ export default function EconomiaPage() {
             </div>
           </div>
           <nav aria-label="Administración" className="econ-top-links">
+            <a href="/admin/">Panel general</a>
             <a href="/admin/clinica/?panel=1">Gestión clínica</a>
             <a href="/admin/agenda/">Agenda</a>
           </nav>
@@ -31,7 +32,7 @@ export default function EconomiaPage() {
         <section id="econ-access" className="econ-card" hidden>
           <h2>Acceso profesional</h2>
           <p>Necesitas una sesión de administración válida para ver datos económicos.</p>
-          <a className="econ-button" href="/admin/clinica/acceso/">Iniciar sesión</a>
+          <a className="econ-button" href="/admin/clinica/acceso/?next=%2Fadmin%2Feconomia%2F">Iniciar sesión</a>
         </section>
         <p id="econ-status" role="status" aria-live="polite" className="econ-status">Comprobando acceso…</p>
 
