@@ -473,6 +473,7 @@ export default function AdminClinicaPage() {
             <button id="clinic-session-close" className="clinic-close" type="button" aria-label="Cerrar">×</button>
           </div>
           <p id="clinic-session-state" className="clinic-note" />
+          <section id="clinic-session-brief" className="clinic-session-brief" aria-label="Preparación de la sesión"></section>
           <section className="clinic-consultation-tools">
             <div>
               <p className="clinic-eyebrow">Procesos observados o referidos</p>
