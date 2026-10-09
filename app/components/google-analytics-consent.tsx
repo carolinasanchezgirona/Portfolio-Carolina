@@ -2,6 +2,7 @@
 
 import { GoogleAnalytics } from "@next/third-parties/google";
 import { useEffect, useState } from "react";
+import { usePathname } from "next/navigation";
 
 const GA_ID = "G-DMEDMEHMCJ";
 const STORAGE_KEY = "carolina_analytics_consent_v1";
@@ -100,6 +101,15 @@ function readBookingSource(): BookingSource | null {
 }
 
 export default function GoogleAnalyticsConsent() {
+  const pathname = usePathname() || "";
+  const privateArea = ["/admin", "/mi-espacio", "/entre-sesiones"].some(
+    (prefix) => pathname === prefix || pathname.startsWith(prefix + "/"),
+  );
+  // These areas must never mount Analytics, even if marketing consent exists.
+  return privateArea ? null : <PublicAnalyticsConsent />;
+}
+
+function PublicAnalyticsConsent() {
   const [consent, setConsent] = useState<ConsentChoice | null>(null);
   const [isReady, setIsReady] = useState(false);
   const [isPanelOpen, setIsPanelOpen] = useState(false);
