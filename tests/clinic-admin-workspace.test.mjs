@@ -22,7 +22,7 @@ test("report inputs are visible and include clinician-reviewed integration and c
   assert.match(js, /\["integration", "Integración e impresión clínica/);
   assert.match(js, /\["conclusions", "Conclusiones/);
   assert.match(page, /clinic-report-save-state/);
-  assert.match(page, /Descargar Word/);
+  assert.match(js, /Descargar Word editable/);
 });
 
 test("report drafts are automatically saved only to authorized server records", () => {
