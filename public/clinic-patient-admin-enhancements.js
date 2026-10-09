@@ -39,7 +39,7 @@
   deleteButton.id = "clinic-delete-patient";
   deleteButton.className = "clinic-text clinic-patient-danger-action";
   deleteButton.textContent = "Eliminar ficha vacía";
-  recordActions.append(deleteButton);
+  if (!recordActions.querySelector("#clinic-delete-patient")) recordActions.append(deleteButton);
 
   async function rpc(name, body) {
     const res = await fetch(`${REST_URL}/rpc/${name}`, { method:"POST", headers:headers(), body:JSON.stringify(body), cache:"no-store" });
