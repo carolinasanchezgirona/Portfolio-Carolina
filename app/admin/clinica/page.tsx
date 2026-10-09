@@ -518,6 +518,7 @@ export default function AdminClinicaPage() {
             <label>Tarea o ejercicio<textarea id="clinic-homework-note" rows={3} /></label>
             <label>Próxima sesión<textarea id="clinic-next-session-note" rows={3} /></label>
           </div>
+          <p id="clinic-session-autosave-state" className="clinic-save-indicator" role="status" aria-live="polite">Sesión nueva · sin guardar</p>
           <p id="clinic-session-message" className="clinic-message" role="status" />
           <div className="clinic-dialog-actions">
             <button id="clinic-save-draft" className="clinic-secondary" type="button">Guardar borrador</button>
