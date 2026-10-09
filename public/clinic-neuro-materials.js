@@ -132,8 +132,7 @@
         intervention: $("clinic-neuro-intervention")?.value || "",
         level: $("clinic-neuro-level")?.value || "",
         theme: $("clinic-neuro-theme")?.value?.trim() || "",
-        functional_goal: $("clinic-neuro-functional-goal")?.value?.trim() || "",
-        clinician_notes: $("clinic-neuro-notes")?.value?.trim() || ""
+        functional_goal: $("clinic-neuro-functional-goal")?.value?.trim() || ""
       } : null,
       visual_blocks: blocks.map(b => ({ ...b }))
     };
@@ -146,7 +145,7 @@
     for (const [name, id] of Object.entries({
       domain: "clinic-neuro-domain", intervention: "clinic-neuro-intervention",
       level: "clinic-neuro-level", theme: "clinic-neuro-theme",
-      functional_goal: "clinic-neuro-functional-goal", clinician_notes: "clinic-neuro-notes"
+      functional_goal: "clinic-neuro-functional-goal"
     })) {
       if ($(id)) $(id).value = neuro[name] || "";
     }
