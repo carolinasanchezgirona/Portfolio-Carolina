@@ -1001,10 +1001,10 @@
     const active = els.reportType.value === "evolution_health";
     const panel = document.querySelector("#clinic-health-report-sections");
     if (panel) { panel.hidden = true; panel.style.display = "none"; }
-    if (els.reportContext?.closest("#clinic-report-sheet")) { const sheet = els.reportContext.closest("#clinic-report-sheet"); sheet.hidden = active; sheet.style.display = active ? "none" : ""; }
-    if (els.generateReport) els.generateReport.textContent = active ? "Descargar Word editable" : "Autogenerar borrador";
-    if (els.printReport) { els.printReport.hidden = false; els.printReport.style.display = ""; els.printReport.textContent = active ? "Imprimir borrador" : "Imprimir / guardar PDF"; }
-    if (els.saveReport) { els.saveReport.hidden = false; els.saveReport.style.display = ""; els.saveReport.textContent = active ? "Guardar en Gestión Clínica" : "Guardar borrador"; }
+    if (els.reportContext?.closest("#clinic-report-sheet")) { const sheet = els.reportContext.closest("#clinic-report-sheet"); sheet.hidden = true; sheet.style.display = "none"; }
+    if (els.generateReport) els.generateReport.textContent = "Descargar Word editable";
+    if (els.printReport) { els.printReport.hidden = false; els.printReport.style.display = ""; els.printReport.textContent = "Imprimir borrador"; }
+    if (els.saveReport) { els.saveReport.hidden = false; els.saveReport.style.display = ""; els.saveReport.textContent = "Guardar en Gestión Clínica"; }
     if (els.approveReport) { els.approveReport.hidden = active; els.approveReport.style.display = active ? "none" : ""; }
     const label = document.querySelector("#clinic-report-current")?.closest("label");
     if (label) label.firstChild.textContent = active ? "Estado actual y objetivos pendientes" : "Situación actual y recomendaciones";
@@ -1078,16 +1078,21 @@
     if (!currentPatient || !window.ClinicWordExport?.download) throw new Error("No se ha cargado el generador de Word. Actualiza la página y vuelve a intentarlo.");
     const h = healthReportInputs();
     if (!els.reportPurpose.value.trim()) throw new Error("Indica la finalidad clínica del informe antes de descargarlo.");
-    if (!els.reportStart.value || !els.reportEnd.value || els.reportStart.value > els.reportEnd.value) throw new Error("Selecciona un periodo de seguimiento válido.");
+    if (els.reportStart.value && els.reportEnd.value && els.reportStart.value > els.reportEnd.value) throw new Error("El periodo seleccionado no es válido.");
+    if (healthReportSelected() && (!els.reportStart.value || !els.reportEnd.value)) throw new Error("Selecciona un periodo de seguimiento para este tipo de informe.");
     const sections = {
       context: els.reportContext.value, interventions: els.reportInterventions.value,
+      observation: els.reportCurrent.value, plan: els.reportCurrent.value,
       ...Object.fromEntries(healthReportFields.map(([key]) => [key, h[key].value])),
     };
     const fullEvolution = els.reportEvolution.value.trim();
-    if (fullEvolution) sections.interventions = [sections.interventions, "Evolución cronológica documentada:\\n" + fullEvolution].filter(Boolean).join("\\n\\n");
+    if (fullEvolution) sections.interventions = [sections.interventions, "Evolución cronológica documentada:\n" + fullEvolution].filter(Boolean).join("\n\n");
+    if (els.reportEvolution.value.trim()) sections.interventions = [sections.interventions, "Evolución clínica registrada:\n" + els.reportEvolution.value].filter(Boolean).join("\n\n");
+    if (healthReportSelected() && els.reportCurrent.value.trim()) sections.plan = [sections.plan, els.reportCurrent.value].filter(Boolean).join("\n\n");
     window.ClinicWordExport.download({
+      type: els.reportType.value, title: reportTypeLabel(els.reportType.value),
       identity: { name: currentPatient.full_name, code: currentPatient.public_code, birth: currentPatient.birth_date || "" },
-      period: els.reportStart.value + " a " + els.reportEnd.value,
+      period: [els.reportStart.value, els.reportEnd.value].filter(Boolean).join(" a ") || "No especificado",
       purpose: els.reportPurpose.value.trim(), recipient: els.reportRecipient.value.trim() || "Profesional sanitario",
       professional: "Carolina Sánchez Girona · Psicóloga General Sanitaria y Neuropsicóloga",
       license: "", sections
@@ -1908,10 +1913,10 @@
   els.newReport.addEventListener("click", () => openReport());
   els.reportClose.addEventListener("click", () => els.reportDialog.close());
   els.reportType.addEventListener("change", () => { els.reportTitlePreview.textContent = reportTypeLabel(els.reportType.value); healthReportInputs(); healthReportSelected(); });
-  els.generateReport.addEventListener("click", () => { try { if (!els.reportId.value || !els.reportContext.value.trim()) generateReportDraft(); if (healthReportSelected()) downloadHealthReportWord(); else generateReportDraft(); } catch (error) { els.reportMessage.textContent = error.message; } });
+  els.generateReport.addEventListener("click", () => { try { if (!els.reportId.value && !els.reportContext.value.trim()) generateReportDraft(); downloadHealthReportWord(); } catch (error) { els.reportMessage.textContent = error.message; } });
   els.saveReport.addEventListener("click", () => { if (healthReportSelected() && !els.reportContext.value.trim()) generateReportDraft(); if (healthReportSelected() && !els.reportPurpose.value.trim()) { els.reportMessage.textContent = "Indica la finalidad del informe antes de guardarlo."; return; } persistReport("draft").then(() => { if (healthReportSelected()) els.reportMessage.textContent = "Borrador guardado en la historia clínica. La edición posterior del Word descargado no se sincroniza automáticamente."; }).catch((error) => { els.reportMessage.textContent = error.message; }); });
   els.approveReport.addEventListener("click", () => persistReport("approved").catch((error) => { els.reportMessage.textContent = error.message; }));
-  window.ClinicReportPreparePrint = () => { if (healthReportSelected() && !els.reportContext.value.trim()) generateReportDraft(); };
+  window.ClinicReportPreparePrint = () => { if (!els.reportId.value && !els.reportContext.value.trim()) generateReportDraft(); };
   els.printReport.addEventListener("click", () => { try { window.ClinicReportPreparePrint(); printCurrentReport(); } catch (error) { els.reportMessage.textContent = error.message; } });
   els.newExercise.addEventListener("click", () => openExercise());
   els.exerciseLibrary?.addEventListener("change", () => {
