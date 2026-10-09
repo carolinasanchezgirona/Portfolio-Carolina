@@ -466,6 +466,82 @@ async function buildPdf(titleValue: string, patientDocument: PatientDocument, ma
   current.drawText("Carolina Sánchez Girona", { x: A4[0] - marginX - 115, y, size: 7.8, font: bodyFont, color: muted });
   y -= 38;
 
+  async function drawVisualResources(raw: VisualBlock[] | undefined) {
+    const blocks = normalizeVisualBlocks(raw);
+    if (!blocks.length) return;
+    drawSection("Recursos visuales", "Observa los estímulos y sigue las consignas acordadas en sesión.");
+    function rowCells(values: string[], count: number, header = false, height = 33) {
+      ensureSpace(height + 8);
+      const width = maxWidth / count;
+      values.forEach((value, i) => {
+        const x = marginX + i * width;
+        current.drawRectangle({ x, y: y - height + 7, width, height, borderColor: lineColor, borderWidth: .7, ...(header ? { color: sky } : {}) });
+        wrap(header ? boldFont : bodyFont, value, 8.2, width - 10).slice(0, 2).forEach((line, j) => {
+          current.drawText(line, { x: x + 5, y: y - 8 - j * 11, size: 8.2, font: header ? boldFont : bodyFont, color: ink });
+        });
+      });
+      y -= height;
+    }
+    for (const block of blocks) {
+      ensureSpace(65);
+      drawParagraph(block.title.toUpperCase(), { size: 10, leading: 15, font: boldFont, color: navy });
+      y -= 8;
+      if (block.type === "image" && block.data) {
+        try {
+          const bytes = Uint8Array.from(atob(block.data.split(",")[1]), char => char.charCodeAt(0));
+          const picture = block.data.startsWith("data:image/png") ? await pdf.embedPng(bytes) : await pdf.embedJpg(bytes);
+          const factor = Math.min(maxWidth / picture.width, 200 / picture.height, 1);
+          const width = picture.width * factor, height = picture.height * factor;
+          ensureSpace(height + 22);
+          current.drawImage(picture, { x: marginX, y: y - height, width, height });
+          y -= height + 12;
+          drawParagraph(block.alt || "", { size: 8.5, leading: 12, color: muted });
+        } catch { drawParagraph("Imagen no disponible en PDF. Verifica el original antes de prescribir."); }
+      } else if (block.type === "table") {
+        const rows = matrix(block);
+        const count = rows[0]?.length || 0;
+        if (count >= 2 && count <= 6 && rows.length >= 2 && rows.every(row => row.length === count)) {
+          rows.forEach((row, i) => rowCells(row, count, i === 0));
+        }
+      } else if (block.type === "chart") {
+        const pairs = matrix(block).filter(row => row.length === 2 && row[0] && Number.isFinite(Number(row[1])) && Number(row[1]) >= 0 && Number(row[1]) <= 10000).slice(0, 8);
+        const maximum = Math.max(1, ...pairs.map(row => Number(row[1])));
+        for (const row of pairs) {
+          ensureSpace(44);
+          drawParagraph(row[0] + ": " + row[1], { size: 9.2, leading: 13 });
+          current.drawRectangle({ x: marginX, y: y - 11, width: maxWidth, height: 10, color: sky });
+          const barWidth = Number(row[1]) / maximum * maxWidth;
+          if (barWidth > 0) current.drawRectangle({ x: marginX, y: y - 11, width: barWidth, height: 10, color: turquoise });
+          y -= 22;
+        }
+      } else if (block.type === "diagram") {
+        const steps = (block.content || "").split(/\r?\n/).map(step => step.trim()).filter(Boolean).slice(0, 8);
+        for (const [i, step] of steps.entries()) {
+          const lines = wrap(bodyFont, step, 9, maxWidth - 38).slice(0, 5);
+          const height = 18 + lines.length * 13;
+          ensureSpace(height + 8);
+          current.drawRectangle({ x: marginX, y: y - height + 7, width: maxWidth, height, color: sky });
+          current.drawText((i + 1) + ".", { x: marginX + 10, y: y - 11, font: boldFont, size: 9.5, color: navy });
+          lines.forEach((line, j) => current.drawText(line, { x: marginX + 34, y: y - 11 - j * 13, font: bodyFont, size: 9, color: ink }));
+          y -= height + 5;
+        }
+      } else if (block.type === "calendar") {
+        const cal = getCalendar(block.content || "");
+        if (cal) {
+          drawParagraph(String(cal.month).padStart(2, "0") + "/" + cal.year, { font: boldFont });
+          rowCells(["L", "M", "X", "J", "V", "S", "D"], 7, true, 27);
+          const count = Math.ceil((cal.days + cal.offset) / 7) * 7;
+          for (let i = 0; i < count; i += 7) rowCells(Array.from({ length: 7 }, (_, j) => {
+            const day = i + j + 1 - cal.offset;
+            return day > 0 && day <= cal.days ? String(day) : "";
+          }), 7, false, 29);
+          for (const [day, label] of cal.events.entries()) drawParagraph(day + ": " + label, { size: 9, leading: 12 });
+        }
+      }
+      y -= 14;
+    }
+  }
+
   if (materialDateValue) {
     let issuedLabel = "";
     try {
@@ -501,6 +577,7 @@ async function buildPdf(titleValue: string, patientDocument: PatientDocument, ma
   drawSection("Qué vamos a observar o entrenar", patientDocument.objective || "");
   drawSection(patientDocument.material_type === "psychoeducation" ? "Contenido" : "Cómo hacerlo", patientDocument.instructions || "");
   drawSection("Ejemplo", patientDocument.example || "");
+  await drawVisualResources(patientDocument.visual_blocks);
   drawSection("Tu registro / espacio para trabajar", patientDocument.record_prompt || "");
   if (patientDocument.record_prompt && patientDocument.material_type !== "psychoeducation") drawWorkArea(7);
   drawSection("Si resulta demasiado intenso", patientDocument.safety_note || "", true, true);
