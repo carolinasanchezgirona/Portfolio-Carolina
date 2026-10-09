@@ -186,7 +186,7 @@
   function sessionFormSnapshot() {
     if (!els.sessionForm) return "";
     return JSON.stringify([...els.sessionForm.querySelectorAll("input,textarea,select")]
-      .filter(input => !["button","submit","reset"].includes(input.type || ""))
+      .filter(input => !["button","submit","reset","hidden"].includes(input.type || ""))
       .map(input => [input.id || input.name || "",input.type === "checkbox" || input.type === "radio" ? input.checked : input.value]));
   }
   function markSessionSaved() {
