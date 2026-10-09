@@ -42,6 +42,9 @@ jobs:
       - name: Prevenir duplicados de registros y solapamiento móvil
         run: node --test tests/mi-espacio-mood-mobile.test.mjs
 
+      - name: Validar escala emocional intuitiva
+        run: node --test tests/mi-espacio-mood-scale.test.mjs
+
       - name: Validar pantallas de Mi espacio
         run: |
           node --check public/mi-espacio.js
