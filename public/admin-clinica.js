@@ -1231,24 +1231,25 @@
     els.reportMessage.textContent = status === "approved" ? "Aprobando informe…" : "Guardando borrador…";
     const payload = reportPayload(status);
     reportSaveActive = true;
+    let savedSuccessfully = false;
     try {
       if (auto) reportSaveState("Guardando borrador…");
       const rows = els.reportId.value
         ? await rest(`clinical_reports?id=eq.${encodeURIComponent(els.reportId.value)}&select=*`, { method: "PATCH", headers: { Prefer: "return=representation" }, body: JSON.stringify(payload) })
         : await rest("clinical_reports?select=*", { method: "POST", headers: { Prefer: "return=representation" }, body: JSON.stringify(payload) });
       const saved = rows?.[0]; if (!saved) throw new Error("No se ha podido guardar el informe.");
+      savedSuccessfully = true;
       clinicalReports = [saved, ...clinicalReports.filter((item) => item.id !== saved.id)];
       els.reportId.value = saved.id;
       renderReports(currentPatient);
       if (reportSnapshot() === savingSnapshot) markReportClean();
       else { reportDirty = true; reportSaveState("Hay cambios posteriores pendientes de guardar"); }
-      if (!auto) els.reportMessage.textContent = "Borrador guardado en la historia clínica.";
+      els.reportMessage.textContent = auto ? "" : "Borrador guardado en la historia clínica.";
     } finally {
       reportSaveActive = false;
-      if (reportSaveRequested || (auto && reportDirty)) {
-        reportSaveRequested = false;
-        if (reportDirty) scheduleReportAutoSave();
-      }
+      const needsAnotherSave = savedSuccessfully && (reportSaveRequested || (auto && reportDirty));
+      reportSaveRequested = false;
+      if (needsAnotherSave && reportDirty) scheduleReportAutoSave();
     }
   }
   function printCurrentReport() {
@@ -1937,6 +1938,7 @@
     if (auto && (!els.sessionDialog.open || els.saveDraft.disabled || sessionFormSnapshot() === sessionFormBaseline)) return;
     const savingSnapshot = sessionFormSnapshot();
     sessionSaveActive = true;
+    let savedSuccessfully = false;
     try {
     if (status === "approved" && !els.evolutionNote.value.trim() && !els.interventionNote.value.trim()) {
       throw new Error("Añade al menos la evolución o la intervención antes de aprobar.");
@@ -1955,6 +1957,7 @@
     }
     const saved = rows?.[0];
     if (!saved) throw new Error("No se ha podido recuperar el registro guardado.");
+    savedSuccessfully = true;
     clinicalSessions = [...clinicalSessions.filter((item) => item.id !== saved.id), saved];
     els.sessionId.value = saved.id;
     els.sessionMessage.textContent = status === "approved" ? "Registro aprobado y cerrado." : (auto ? "" : "Borrador guardado.");
@@ -1984,7 +1987,7 @@
     renderPatients(els.patientSearch.value);
     } finally {
       sessionSaveActive = false;
-      const needsSaving = sessionSavePending || (auto && els.sessionDialog.open && sessionFormSnapshot() !== sessionFormBaseline);
+      const needsSaving = savedSuccessfully && (sessionSavePending || (auto && els.sessionDialog.open && sessionFormSnapshot() !== sessionFormBaseline));
       sessionSavePending = false;
       if (needsSaving && els.sessionDialog.open && !els.saveDraft.disabled) scheduleSessionAutoSave();
     }
