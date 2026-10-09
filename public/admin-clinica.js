@@ -611,6 +611,7 @@
     els.exerciseSafety.value = doc.safety_note || "";
     els.exerciseRemember.value = doc.remember || "";
     els.exerciseSessionQuestions.value = Array.isArray(doc.session_questions) ? doc.session_questions.join("\n") : "";
+    window.ClinicNeuroMaterials?.hydrate(doc);
     renderPatientDocumentQuality(doc);
   }
 
@@ -630,7 +631,8 @@
       record_prompt: els.exerciseRecord.value.trim(),
       safety_note: els.exerciseSafety.value.trim(),
       remember: els.exerciseRemember.value.trim(),
-      session_questions: els.exerciseSessionQuestions.value.split(/\r?\n/).map((item) => item.trim()).filter(Boolean).slice(0, 6)
+      session_questions: els.exerciseSessionQuestions.value.split(/\r?\n/).map((item) => item.trim()).filter(Boolean).slice(0, 6),
+      ...(window.ClinicNeuroMaterials?.read?.() || { clinical_area: "psychology", visual_blocks: [] })
     };
   }
 
@@ -889,7 +891,10 @@
     if (!currentPatient) return;
     if (sendAfterSave) {
       const materialTypeForQuality = els.materialType?.value || "exercise";
-      const quality = patientDocumentQuality(patientDocumentFromForm(materialTypeForQuality));
+      const docForQuality = patientDocumentFromForm(materialTypeForQuality);
+      const validation = window.ClinicNeuroMaterials?.validate?.(docForQuality);
+      if (validation && !validation.ok) throw new Error("Antes de prescribir: " + validation.issues.join("; ") + ".");
+      const quality = patientDocumentQuality(docForQuality);
       if (!quality.complete) {
         const proceed = window.confirm(`Esta ficha todavía está marcada como básica. Falta: ${quality.missing.join(", ")}.\n\nPuedes enviarla igualmente o cancelar para completarla con IA.`);
         if (!proceed) {
@@ -2260,6 +2265,8 @@
           case_context: els.exerciseRationale.value.trim(),
           preferred_type: els.materialType?.value || "",
           preferred_process: els.materialProcess?.value || "",
+          clinical_area: window.ClinicNeuroMaterials?.read?.().clinical_area || "psychology",
+          neuro_profile: window.ClinicNeuroMaterials?.read?.().neuro_profile || null,
           catalog
         })
       });
@@ -2366,6 +2373,8 @@
     const process = els.materialProcess?.value || "";
     const materialType = els.materialType?.value || "exercise";
     const existing = exerciseTemplates.find((item) => item.id === els.exerciseTemplateId.value) || null;
+    const neuroCheck = window.ClinicNeuroMaterials?.validate?.(patientDocumentFromForm(materialType));
+    if (neuroCheck && !neuroCheck.ok) { els.exerciseMessage.textContent = "Revisa la ficha: " + neuroCheck.issues.join("; "); return; }
     if (!title || !content || !process) {
       els.exerciseMessage.textContent = "Para guardar el material indica título, contenido y categoría.";
       return;
