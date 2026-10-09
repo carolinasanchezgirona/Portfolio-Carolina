@@ -146,8 +146,10 @@ export default function EconomiaPage() {
                 <label>NIF <input id="econ-issuer-nif" required maxLength={30} /></label>
                 <label className="econ-span-full">Domicilio fiscal completo <input id="econ-issuer-address" required maxLength={350} /></label>
                 <label>Correo de contacto <input id="econ-issuer-email" type="email" required maxLength={180} /></label>
+                <label>Año de inicio de la serie CSG <input id="econ-issuer-first-year" type="number" min="2020" max="2100" required /></label>
+                <label>Primer número disponible de la serie <input id="econ-issuer-first-number" type="number" min="1" max="999999" required placeholder="Comprueba los números ya utilizados" /></label>
               </div>
-              <p className="econ-help">Introduce los datos fiscales reales y revísalos con tu gestoría. Al emitir, se guarda una copia inalterable de estos datos en cada factura.</p>
+              <p className="econ-help">Introduce los datos fiscales reales y revísalos con tu gestoría. Al emitir, se guarda una copia inalterable de estos datos en cada factura. Antes de la primera emisión, confirma con tu gestoría qué número debe seguir en la serie CSG del año elegido. Los años posteriores comienzan por el número 1; cambiar esta configuración no renumera facturas emitidas.</p>
               <button className="econ-button" type="submit">Guardar datos fiscales</button>
             </form>
             <div className="econ-card">
