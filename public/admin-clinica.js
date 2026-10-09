@@ -76,7 +76,7 @@
     addDocument: $("#clinic-add-document"), patientDocuments: $("#clinic-patient-documents"),
     documentDialog: $("#clinic-document-dialog"), documentForm: $("#clinic-document-form"), documentClose: $("#clinic-document-close"),
     documentTitle: $("#clinic-document-title"), documentCategory: $("#clinic-document-category"), documentDate: $("#clinic-document-date"),
-    documentFile: $("#clinic-document-file"), documentNotes: $("#clinic-document-notes"), documentMessage: $("#clinic-document-message"),
+    documentFile: $("#clinic-document-file"), documentNotes: $("#clinic-document-notes"), documentPatientNote: $("#clinic-document-patient-note"), documentShare: $("#clinic-document-share"), documentMessage: $("#clinic-document-message"),
     addScale: $("#clinic-add-scale"), patientScales: $("#clinic-patient-scales"), scaleDialog: $("#clinic-scale-dialog"),
     scaleForm: $("#clinic-scale-form"), scaleClose: $("#clinic-scale-close"), scaleInstrument: $("#clinic-scale-instrument"),
     scaleDate: $("#clinic-scale-date"), scaleScore: $("#clinic-scale-score"), scaleInterpretation: $("#clinic-scale-interpretation"),
@@ -1372,43 +1372,137 @@
       els.patientTimeline.append(row);
     });
   }
+  function documentCategoryLabel(category) {
+    return ({
+      intervention_plan: "Plan de intervención",
+      information_notice: "Circular informativa",
+      relaxation_audio: "Audio de relajación",
+      external_report: "Informe externo",
+      referral: "Derivación",
+      consent: "Consentimiento",
+      test_result: "Resultado de prueba",
+      attendance: "Justificante",
+      other: "Otro"
+    })[category] || "Documento";
+  }
+
+  async function setPatientDocumentSharing(doc, share) {
+    if (!currentPatient || currentPatient.id !== doc.patient_id) throw new Error("Paciente no válido.");
+    if (share && !window.confirm(`¿Publicar «${doc.title}» para este paciente en Mi espacio? Comprueba que el documento y su destinatario son correctos.`)) return;
+    if (!share && !window.confirm(`¿Retirar el acceso de este paciente a «${doc.title}»? Las copias ya descargadas no se pueden retirar.`)) return;
+    const now = new Date().toISOString();
+    const rows = await rest("clinical_documents?id=eq." + encodeURIComponent(doc.id) + "&patient_id=eq." + encodeURIComponent(doc.patient_id) + "&select=*", {
+      method: "PATCH",
+      headers: { Prefer: "return=representation" },
+      body: JSON.stringify(share
+        ? { shared_at: now, share_revoked_at: null }
+        : { share_revoked_at: now })
+    });
+    if (!Array.isArray(rows) || rows.length !== 1) throw new Error("No se ha podido actualizar el acceso.");
+    const index = clinicalDocuments.findIndex(item => item.id === doc.id);
+    if (index >= 0) clinicalDocuments[index] = rows[0];
+    renderDocuments(currentPatient);
+    els.patientMessage.textContent = share ? "Archivo disponible en Mi espacio del paciente." : "Acceso retirado de Mi espacio.";
+  }
+
   function renderDocuments(patient) {
     els.patientDocuments.replaceChildren();
     const docs = clinicalDocuments.filter((item) => item.patient_id === patient.id);
-    if (!docs.length) { els.patientDocuments.append(create("p", "clinic-empty-inline", "No hay documentos.")); return; }
+    if (!docs.length) { els.patientDocuments.append(create("p", "clinic-empty-inline", "Todavía no hay archivos.")); return; }
     docs.forEach((doc) => {
-      const row = create("article"); const info = create("div");
-      info.append(create("strong", "", doc.title), create("span", "", `${doc.file_name} · ${dateShort.format(new Date(doc.document_date || doc.created_at))}`));
-      const button = create("button", "clinic-secondary", "Abrir"); button.type = "button";
-      button.addEventListener("click", async () => {
+      const isShared = Boolean(doc.shared_at && !doc.share_revoked_at);
+      const row = create("article");
+      const info = create("div");
+      info.append(
+        create("strong", "", doc.title),
+        create("span", "", `${documentCategoryLabel(doc.category)} · ${doc.file_name} · ${dateShort.format(new Date(doc.document_date || doc.created_at))}`),
+        create("span", "clinic-material-state" + (isShared ? " opened" : ""), isShared ? "Compartido en Mi espacio" : "Solo archivo clínico")
+      );
+      const actions = create("div", "clinic-material-row-actions");
+      const openButton = create("button", "clinic-secondary", "Abrir");
+      openButton.type = "button";
+      openButton.addEventListener("click", async () => {
         try {
           const response = await fetch(`${SUPABASE_URL}/storage/v1/object/authenticated/clinical-documents/${doc.file_path}`, { headers: authHeaders() });
           if (!response.ok) throw new Error("No se ha podido descargar el documento.");
-          const url = URL.createObjectURL(await response.blob()); const popup = window.open(url, "_blank"); if (popup) popup.opener = null;
+          const url = URL.createObjectURL(await response.blob());
+          const popup = window.open(url, "_blank");
+          if (popup) popup.opener = null;
           setTimeout(() => URL.revokeObjectURL(url), 60000);
         } catch (error) { els.patientMessage.textContent = error.message; }
       });
-      row.append(info, button); els.patientDocuments.append(row);
+      const shareButton = create("button", "clinic-secondary", isShared ? "Retirar acceso" : "Compartir con paciente");
+      shareButton.type = "button";
+      shareButton.addEventListener("click", async () => {
+        shareButton.disabled = true;
+        try { await setPatientDocumentSharing(doc, !isShared); }
+        catch (error) { els.patientMessage.textContent = error.message || "No se ha podido actualizar el acceso."; }
+        finally { shareButton.disabled = false; }
+      });
+      actions.append(openButton, shareButton);
+      row.append(info, actions);
+      els.patientDocuments.append(row);
     });
   }
+
+  const PATIENT_FILE_MAX_BYTES = 25 * 1024 * 1024;
+  const PATIENT_FILE_MIME = {
+    pdf: "application/pdf",
+    jpg: "image/jpeg", jpeg: "image/jpeg", png: "image/png",
+    docx: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+    mp3: "audio/mpeg", m4a: "audio/mp4", wav: "audio/wav",
+    ogg: "audio/ogg", webm: "audio/webm"
+  };
+
   async function uploadDocument(event) {
-    event.preventDefault(); if (!currentPatient) return;
-    const file = els.documentFile.files?.[0]; if (!file) throw new Error("Selecciona un archivo.");
-    if (file.size > 10485760) throw new Error("El archivo supera los 10 MB.");
-    els.documentMessage.textContent = "Subiendo documento…";
-    const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, "_");
+    event.preventDefault();
+    if (!currentPatient) return;
+    const file = els.documentFile.files?.[0];
+    if (!file) throw new Error("Selecciona un archivo.");
+    if (file.size <= 0 || file.size > PATIENT_FILE_MAX_BYTES) throw new Error("El archivo debe ocupar entre 1 byte y 25 MB.");
+    const extension = file.name.split(".").pop()?.toLowerCase() || "";
+    const mime = PATIENT_FILE_MIME[extension];
+    if (!mime) throw new Error("Formato no admitido. Usa PDF, DOCX, imagen o audio MP3/M4A/WAV/OGG/WEBM.");
+    const share = Boolean(els.documentShare?.checked);
+    if (share && !window.confirm(`¿Compartir «${els.documentTitle.value.trim()}» con este paciente en Mi espacio? Revisa que el archivo no contiene información destinada a otra persona.`)) return;
+    els.documentMessage.textContent = "Subiendo archivo privado…";
+    const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, "_").slice(-140);
     const path = `${currentPatient.id}/${crypto.randomUUID()}-${safeName}`;
-    const upload = await fetch(`${SUPABASE_URL}/storage/v1/object/clinical-documents/${path}`, { method: "POST", headers: { apikey: KEY, Authorization: `Bearer ${session.access_token}`, "Content-Type": file.type || "application/octet-stream", "x-upsert": "false" }, body: file });
+    const upload = await fetch(`${SUPABASE_URL}/storage/v1/object/clinical-documents/${path}`, {
+      method: "POST",
+      headers: { apikey: KEY, Authorization: `Bearer ${session.access_token}`, "Content-Type": mime, "x-upsert": "false" },
+      body: file
+    });
     if (!upload.ok) throw new Error((await upload.json().catch(() => ({}))).message || "No se ha podido subir el archivo.");
     try {
-      const rows = await rest("clinical_documents?select=*", { method: "POST", headers: { Prefer: "return=representation" }, body: JSON.stringify({ patient_id: currentPatient.id, category: els.documentCategory.value, title: els.documentTitle.value.trim(), file_path: path, file_name: file.name, mime_type: file.type || null, file_size: file.size, document_date: els.documentDate.value || null, notes: els.documentNotes.value.trim() || null }) });
-      if (!rows?.[0]) throw new Error("No se pudo registrar el documento.");
+      const rows = await rest("clinical_documents?select=*", {
+        method: "POST",
+        headers: { Prefer: "return=representation" },
+        body: JSON.stringify({
+          patient_id: currentPatient.id,
+          category: els.documentCategory.value,
+          title: els.documentTitle.value.trim(),
+          file_path: path,
+          file_name: file.name,
+          mime_type: mime,
+          file_size: file.size,
+          document_date: els.documentDate.value || null,
+          notes: els.documentNotes.value.trim() || null,
+          patient_note: els.documentPatientNote.value.trim() || null,
+          shared_at: share ? new Date().toISOString() : null
+        })
+      });
+      if (!rows?.[0]) throw new Error("No se pudo registrar el archivo.");
       clinicalDocuments.unshift(rows[0]);
     } catch (error) {
       await fetch(`${SUPABASE_URL}/storage/v1/object/clinical-documents/${path}`, { method: "DELETE", headers: authHeaders() });
       throw error;
     }
-    renderDocuments(currentPatient); renderTimeline(currentPatient); els.documentDialog.close(); renderPending();
+    renderDocuments(currentPatient);
+    renderTimeline(currentPatient);
+    els.documentDialog.close();
+    els.patientMessage.textContent = share ? "Archivo compartido en Mi espacio." : "Archivo guardado solo en la historia clínica.";
+    renderPending();
   }
   function renderScales(patient) {
     els.patientScales.replaceChildren();

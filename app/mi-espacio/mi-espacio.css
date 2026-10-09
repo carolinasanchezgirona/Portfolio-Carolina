@@ -490,3 +490,20 @@
 #wellness-journey form{padding:20px 0 6px;max-width:720px}#wellness-journey form label{font-size:.95rem;font-weight:650;color:#173a5e}#wellness-journey textarea{background:#f8fbfd;border-color:#c5d8e4;min-height:110px}#wellness-journey textarea:focus,#wellness-journey select:focus{outline:3px solid #bde7e4;border-color:#078e88}
 #wellness-journey details{padding:15px 18px;background:#f5f9fc;border:1px solid #dbe7ee;border-radius:12px}#wellness-journey button{font-size:.95rem;min-height:44px}#wellness-journey>button:first-of-type{background:#e5f5f3;border-color:#99d4cc;color:#126962;padding:12px 20px}
 @media(max-width:640px){#wellness-journey{padding:20px 16px}.journey-map{gap:8px}.journey-map li{font-size:.85rem;padding:12px}.space-hero h2{font-size:clamp(1.6rem,7vw,2.2rem)}}
+
+/* Securely shared documents and audio (patient portal). */
+.space-patient-shared-file {
+  padding: 1.25rem;
+  background: #fff;
+  border: 1px solid #dceaf0;
+  border-radius: 1rem;
+  display: grid;
+  gap: .65rem;
+  min-width: 0;
+}
+.space-patient-shared-file h4 { margin: 0; color: #173a5e; font-size: 1.1rem; }
+.space-patient-shared-file p { margin: 0; line-height: 1.5; }
+.space-patient-shared-file-kind { font-size: .8rem; color: #237d87; font-weight: 700; }
+.space-patient-shared-file audio { display: block; width: 100%; max-width: 100%; }
+.space-patient-shared-actions { display: flex; flex-wrap: wrap; gap: .65rem; }
+.space-patient-shared-actions a { text-decoration: none; display: inline-flex; align-items: center; justify-content: center; }

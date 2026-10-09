@@ -292,7 +292,7 @@ export default function AdminClinicaPage() {
               <div id="clinic-patient-timeline" className="clinic-timeline" />
             </article>
             <article>
-              <div className="clinic-goals-heading"><h3>Documentos</h3><button id="clinic-add-document" className="clinic-secondary" type="button">Subir documento</button></div>
+              <div className="clinic-goals-heading"><h3>Documentos y archivos compartidos</h3><button id="clinic-add-document" className="clinic-secondary" type="button">Subir archivo</button></div>
               <div id="clinic-patient-documents" className="clinic-history" />
             </article>
             <article>
@@ -313,11 +313,13 @@ export default function AdminClinicaPage() {
         <form id="clinic-document-form" className="clinic-dialog-content">
           <div className="clinic-dialog-heading"><div><p className="clinic-eyebrow">Archivo privado</p><h2>Subir documento</h2></div><button id="clinic-document-close" className="clinic-close" type="button">×</button></div>
           <label>Título<input id="clinic-document-title" required /></label>
-          <label>Categoría<select id="clinic-document-category"><option value="external_report">Informe externo</option><option value="referral">Derivación</option><option value="consent">Consentimiento</option><option value="test_result">Resultado de prueba</option><option value="attendance">Justificante</option><option value="other">Otro</option></select></label>
+          <label>Categoría<select id="clinic-document-category"><option value="intervention_plan">Plan de intervención</option><option value="information_notice">Circular informativa</option><option value="relaxation_audio">Audio de relajación</option><option value="external_report">Informe externo</option><option value="referral">Derivación</option><option value="consent">Consentimiento</option><option value="test_result">Resultado de prueba</option><option value="attendance">Justificante</option><option value="other">Otro</option></select></label>
           <label>Fecha del documento<input id="clinic-document-date" type="date" /></label>
-          <label>Archivo<input id="clinic-document-file" type="file" accept=".pdf,.jpg,.jpeg,.png,.docx" required /></label>
-          <label>Notas<textarea id="clinic-document-notes" rows={3} /></label>
-          <p className="clinic-note">Máximo 10 MB. El archivo se guardará en almacenamiento privado.</p>
+          <label>Archivo<input id="clinic-document-file" type="file" accept=".pdf,.jpg,.jpeg,.png,.docx,.mp3,.m4a,.wav,.ogg,.webm" required /></label>
+          <label>Notas internas (no visibles para el paciente)<textarea id="clinic-document-notes" rows={3} /></label>
+          <label>Mensaje para el paciente (opcional)<textarea id="clinic-document-patient-note" rows={2} maxLength={500} placeholder="Por ejemplo: escucha el audio cuando necesites practicar la relajación." /></label>
+          <label className="clinic-document-share-option"><input id="clinic-document-share" type="checkbox" /> Publicar también en «Mi espacio» de este paciente</label>
+          <p className="clinic-note">Por defecto, solo tú puedes ver el documento. Compartirlo exige marcar la casilla o publicarlo posteriormente. PDF, Word, imágenes y audio. Máximo 25 MB. No se envían archivos clínicos como adjuntos por correo.</p>
           <p id="clinic-document-message" className="clinic-message" />
           <div className="clinic-dialog-actions"><button className="clinic-primary" type="submit">Subir documento</button></div>
         </form>
@@ -612,7 +614,7 @@ export default function AdminClinicaPage() {
       </dialog>
 
       <Script src="/clinic-neuro-materials.js?v=20261009-1" strategy="afterInteractive" />
-      <Script src="/admin-clinica.js?v=20261009-patient-workspace-3" strategy="afterInteractive" />
+      <Script src="/admin-clinica.js?v=20261009-files-neuro-1" strategy="afterInteractive" />
       <Script src="/clinical-smart-intake.js?v=20261005-smart-state-5" strategy="afterInteractive" />
       <Script src="/clinical-diagnostic-assistant.js?v=20261007-dx-2" strategy="afterInteractive" />
       <Script src="/admin-clinica-audit-fixes.js?v=20260915-1" strategy="afterInteractive" />

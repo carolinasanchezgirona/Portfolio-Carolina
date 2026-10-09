@@ -65,6 +65,12 @@ jobs:
           node --check public/clinic-scale-trends.js
           node --test tests/clinic-unified-patient.test.mjs
 
+      - name: Validar documentos, audios y control de acceso de pacientes
+        run: |
+          node --check public/admin-clinica.js
+          node --check public/mi-espacio.js
+          node --test tests/patient-shared-files.test.mjs
+
       - name: Validar Word clínico, protección y controles
         run: node --test tests/clinic-word-export.test.mjs
 
