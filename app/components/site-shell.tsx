@@ -21,49 +21,52 @@ function isAdministrativeRoute(pathname: string) {
 }
 
 function usesGlobalChrome(pathname: string) {
-  return pathname === "/"
-    || pathname === "/articulos" || pathname === "/articulos/" || pathname.startsWith("/articulos/")
-    || pathname === "/recursos" || pathname === "/recursos/" || pathname.startsWith("/recursos/")
-    || pathname === "/pregunta-a-carolina" || pathname === "/pregunta-a-carolina/";
+  // La navegación compartida se usa en todas las páginas públicas, salvo el área de ejercicios.
+  return pathname !== "/entre-sesiones" && pathname !== "/entre-sesiones/";
 }
 
-function SiteHeader() {
+const mainNavigation = [
+  { href: "/psicologia/", label: "Psicología" },
+  { href: "/neuropsicologia/", label: "Neuropsicología" },
+  { href: "/sobre-mi/", label: "Sobre mí" },
+  { href: "/articulos/", label: "Artículos" },
+  { href: "/pregunta-a-carolina/", label: "Tu Consulta" },
+  { href: "/recursos/", label: "Recursos" },
+  { href: "/mi-espacio/", label: "Mi espacio" },
+] as const;
+
+function SiteHeader({ pathname }: { pathname: string }) {
+  const currentPath = pathname === "/" || pathname.endsWith("/") ? pathname : pathname + "/";
+  const currentPage = (href: string) => currentPath === href ? "page" as const : undefined;
+
   return (
     <header className="site-header site-global-header">
-      <a className="brand" href="/" aria-label="Carolina Sánchez, inicio">
+      <a className="brand" href="/" aria-label="Carolina Sánchez, volver al inicio">
         <span className="brand-name">Carolina Sánchez</span>
         <span className="brand-sub">Psicóloga · Neuropsicóloga</span>
       </a>
 
       <nav className="nav site-global-nav" aria-label="Navegación principal">
-        <a href="/psicologia/">Psicología</a>
-        <a href="/neuropsicologia/">Neuropsicología</a>
-        <a href="/sobre-mi/">Sobre mí</a>
-        <a href="/articulos/">Artículos</a>
-        <a href="/pregunta-a-carolina/">Tu Consulta</a>
-        <a href="/recursos/">Recursos</a>
-        <a href="/mi-espacio/">Mi espacio</a>
+        {mainNavigation.map(({ href, label }) => (
+          <a key={href} href={href} aria-current={currentPage(href)}>{label}</a>
+        ))}
         <a className="nav-cta" href="/cita/">Pedir cita</a>
       </nav>
 
       <details className="site-mobile-nav">
         <summary>Menú</summary>
-        <div className="site-mobile-nav-panel">
-          <a href="/">Inicio</a>
-          <a href="/psicologia/">Psicología</a>
+        <nav className="site-mobile-nav-panel" aria-label="Navegación móvil">
+          <a href="/" aria-current={currentPage("/")}>Inicio</a>
+          {mainNavigation.map(({ href, label }) => (
+            <a key={href} href={href} aria-current={currentPage(href)}>{label}</a>
+          ))}
+          <a href="/psicologa-arenys-de-mar/" aria-current={currentPage("/psicologa-arenys-de-mar/")}>Consulta en Arenys de Mar</a>
           <a href="/ansiedad/">Ansiedad</a>
           <a href="/duelo/">Duelo</a>
-          <a href="/neuropsicologia/">Neuropsicología</a>
           <a href="/evaluacion-neuropsicologica/">Evaluación neuropsicológica</a>
           <a href="/deterioro-cognitivo/">Deterioro cognitivo</a>
-          <a href="/sobre-mi/">Sobre mí</a>
-          <a href="/articulos/">Artículos</a>
-          <a href="/pregunta-a-carolina/">Tu Consulta</a>
-          <a href="/recursos/">Recursos</a>
-          <a href="/mi-espacio/">Mi espacio</a>
-          <a href="/psicologa-arenys-de-mar/">Consulta en Arenys de Mar</a>
           <a href="/cita/">Pedir cita</a>
-        </div>
+        </nav>
       </details>
     </header>
   );
@@ -153,7 +156,7 @@ export default function SiteShell({ children }: { children: ReactNode }) {
   return (
     <div className="editorial-site global-shell">
       <a className="skip-link" href="#contenido-principal">Saltar al contenido principal</a>
-      <SiteHeader />
+      <SiteHeader pathname={pathname} />
       <div id="contenido-principal" className="site-public-content" tabIndex={-1}>{children}</div>
       <SiteFooter />
       <a className="mobile-booking-shortcut" href="/cita/">Pedir cita</a>
