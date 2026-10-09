@@ -6,6 +6,8 @@ export async function dailyTest(request: Request, env: DailyEnv, authorize: (req
   if (request.method !== 'POST') return json({ error: 'Método no permitido.' }, 405);
   if (request.headers.get('Origin') !== new URL(request.url).origin) return json({ error: 'Origen no permitido.' }, 403);
   if (!await authorize(request)) return json({ error: 'Inicia sesión con tu cuenta profesional.' }, 401);
+  const selection = await request.json().catch(() => null) as { provider?: string } | null;
+  if (selection?.provider === 'google') return json({ url: 'https://meet.google.com/deh-cbnf-zeo' });
   if (!env.DAILY_API_KEY) return json({ error: 'Falta configurar DAILY_API_KEY en producción.' }, 503);
   const now = Math.floor(Date.now() / 1000);
   // Reuse one room per 30-minute window; requests cannot create arbitrary rooms.
