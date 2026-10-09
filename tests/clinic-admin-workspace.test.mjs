@@ -50,3 +50,14 @@ test("all Word, Save, Print and revised-Word actions remain available", () => {
   assert.match(js, /window\.ClinicWordExport\.download/);
   assert.match(js, /persistReport\("draft"\)/);
 });
+
+test("session autosave only stores draft notes and preserves manual approval", () => {
+  assert.match(js, /function scheduleSessionAutoSave/);
+  assert.match(js, /persistClinicalSession\("draft", \{ auto: true \}\)/);
+  assert.match(js, /sessionSaveActive/);
+  assert.match(js, /sessionFormSnapshot/);
+  assert.match(js, /function closeSessionEditor/);
+  assert.match(page, /clinic-session-autosave-state/);
+  assert.match(js, /persistClinicalSession\("approved"\)/);
+  assert.match(js, /window\.addEventListener\("beforeunload"/);
+});
