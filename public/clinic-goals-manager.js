@@ -91,7 +91,7 @@
 
   async function load(){
     const patientId = patientIdField.value;
-    if(!patientId || !patientDialog.open) return;
+    if(!patientId || !!patientDialog.hidden) return;
     statusText.textContent = "Cargando objetivos…";
     try{
       const res = await fetch(`${REST_URL}/clinical_goals?select=id,patient_id,title,status,priority,last_reviewed_at,created_at,updated_at&patient_id=eq.${encodeURIComponent(patientId)}&order=created_at.asc`,{headers:headers(),cache:"no-store"});
@@ -167,6 +167,6 @@
   dialog.querySelector("#clinic-goal-close").addEventListener("click",()=>dialog.close());
   dialog.querySelector("#clinic-goal-cancel").addEventListener("click",()=>dialog.close());
 
-  const observer=new MutationObserver(()=>{if(patientDialog.open&&patientIdField.value)setTimeout(load,80);});
-  observer.observe(patientDialog,{attributes:true,attributeFilter:["open"]});
+  const observer=new MutationObserver(()=>{if(!patientDialog.hidden&&patientIdField.value)setTimeout(load,80);});
+  observer.observe(patientDialog,{attributes:true,attributeFilter:["hidden"]});
 })();
