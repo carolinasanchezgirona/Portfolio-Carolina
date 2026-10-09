@@ -210,43 +210,12 @@
 @media(prefers-reduced-motion:reduce){.mood-scale-face{transition:none}}
 
 
-/* One original 3D face for each mood and each avatar.
-   The image atlas is 5 columns × 8 rows; background positioning is discrete. */
-.mood-friend-image.mood-friend-complete{
-  width:min(235px,100%);
-  aspect-ratio:1;
-  height:auto;
-  display:block;
-  flex-shrink:0;
-  background-repeat:no-repeat;
-  background-color:#f8faf9;
-  background-origin:border-box;
-  background-clip:border-box;
-  border-radius:19px;
-  image-rendering:auto;
-  animation:mood-arrive .24s ease-out both;
-}
-.mood-friend-panel .mood-friend-complete{
-  width:min(235px,100%);
-  aspect-ratio:1;
-  border:2px solid rgba(255,255,255,.7);
-}
-.mood-avatar-portrait .mood-friend-complete{
-  width:100%;
-  height:100%;
-  aspect-ratio:1;
-  box-shadow:none;
-  border:0;
-  border-radius:10px;
-  animation:none;
-}
-@media(max-width:780px){
-  .mood-friend-panel .mood-friend-complete{width:min(208px,100%)}
-  .mood-friend-panel{min-height:296px}
-}
-@media(max-width:410px){
-  .mood-friend-panel .mood-friend-complete{width:min(185px,100%)}
-}
-@media(prefers-reduced-motion:reduce){
-  .mood-friend-image.mood-friend-complete{animation:none}
-}
+.mood-friend-expressive{aspect-ratio:1!important;height:auto!important;background-repeat:no-repeat;transition:opacity .15s ease}
+.mood-evolution{margin:24px 0;background:linear-gradient(145deg,#f5fbff,#fff);border:1px solid #cbdfe9;border-radius:22px;padding:clamp(14px,3vw,26px);min-width:0}
+.mood-evolution-heading{display:flex;justify-content:space-between;align-items:start;gap:16px;flex-wrap:wrap}.mood-evolution h4{font-size:1.4rem;color:#173a5e;margin:5px 0}.mood-evolution p{font-size:1rem;line-height:1.55;color:#526d80}
+.mood-periods{display:flex;padding:4px;background:#e4eff6;border-radius:12px;gap:4px}.mood-periods button{padding:10px 14px;border:0;background:transparent;border-radius:9px;color:#173a5e;font:inherit;cursor:pointer}.mood-periods [aria-pressed=true]{background:#173a5e;color:white}
+.mood-chart-legend{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin:18px 0;font-size:.9rem}.mood-chart-legend label{display:flex;align-items:center;gap:7px;cursor:pointer}.mood-chart-legend input{accent-color:#173a5e}.mood-chart-legend>span{color:#526d80}.mood-legend-dot{width:12px;height:12px;border-radius:50%;background:#078e88}.mood-legend-dot.energy{background:#cf6b5c;border-radius:2px}
+.mood-evolution-scroll{overflow-x:auto;max-width:100%;background:#fff;border-radius:14px;border:1px solid #e0eaf0}.mood-evolution-scroll svg{display:block;max-width:none}.mood-chart-point{cursor:pointer}.mood-chart-point:focus{outline:2px solid #173a5e}
+.mood-chart-detail{display:flex;flex-wrap:wrap;gap:12px 24px;background:#173a5e;color:#fff;padding:16px 20px;border-radius:12px;margin-top:14px;font-size:1rem}.mood-chart-detail strong{color:#fff}.mood-chart-table{margin:16px 0;font-size:.95rem}.mood-chart-table summary{cursor:pointer;color:#173a5e}.mood-chart-table ul{list-style:none;padding:0;display:grid;gap:8px}.mood-chart-table button{border:1px solid #cbdfe9;border-radius:8px;background:#fff;padding:10px;text-align:left;font:inherit;color:#173a5e;cursor:pointer;width:100%}
+.mood-tracker-body>*{min-width:0}.mood-tracker-heading h3{overflow-wrap:anywhere}
+@media(max-width:520px){.mood-evolution{padding:14px}.mood-chart-detail{flex-direction:column;gap:8px}.mood-periods button{padding:9px 12px}.mood-friend-panel .mood-friend-expressive{width:min(190px,100%)}}

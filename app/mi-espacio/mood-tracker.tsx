@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useId, useMemo, useState } from "react";
 import "./mood-tracker.css";
 
 type MoodEntry = { date: string; rating: number; energy: number; energy_scale?: 5 };
@@ -148,35 +148,70 @@ function useAvatar() {
   return { ...profile, ready };
 }
 
-/**
- * A complete 3D portrait is available for every one of the eight companions,
- * in each of five different facial expressions. No expression is painted over
- * the original face. The selected companion is represented consistently in
- * onboarding, account settings and the mood check-in.
- *
- * One locally hosted WebP atlas: 5 columns (moods 1–5) × 8 rows (AVATARS).
- * Every crop is square, preventing facial stretching on mobile.
- */
+/** Each mood selects a complete 3D expression, never a facial overlay. */
 function MoodFriend({ mood, avatarId, portraitOnly = false }: { mood: number; avatarId: AvatarId; portraitOnly?: boolean }) {
-  const index = AVATARS.findIndex(option => option.id === avatarId);
+  const index = Math.max(0, AVATARS.findIndex(option => option.id === avatarId));
   const avatar = AVATARS[index] ?? DEFAULT_AVATAR;
-  const portraitRow = Math.max(index, 0);
-  const displayedMood = portraitOnly ? 3 : Math.max(1, Math.min(5, mood));
-  const positionX = (displayedMood - 1) * 25;
-  const positionY = (portraitRow / 7) * 100;
-  return (
-    <span
-      key={`${avatar.id}-${displayedMood}`}
-      role="img"
-      aria-label={`${avatar.label}: ${MOODS[displayedMood - 1].name}`}
-      className="mood-friend-image mood-friend-complete"
-      style={{
-        backgroundImage: 'url("/mi-espacio-art/40-estados-3d.webp")',
-        backgroundSize: "500% 800%",
-        backgroundPosition: `${positionX}% ${positionY}%`,
-      }}
-    />
-  );
+  const expression = portraitOnly ? 4 : Math.max(1, Math.min(5, mood));
+  return <span role="img" aria-label={`${avatar.label}: ${MOODS[expression - 1].name}`}
+    className="mood-friend-image mood-friend-expressive"
+    style={{ backgroundImage: 'url("/mi-espacio-art/avatares-expresiones-v2.webp")', backgroundSize: "500% 800%", backgroundPosition: `${(expression - 1) * 25}% ${index * 100 / 7}%` }} />;
+}
+
+function MoodEvolution({ entries }: { entries: MoodEntry[] }) {
+  const [period, setPeriod] = useState(7);
+  const [showMood, setShowMood] = useState(true);
+  const [showEnergy, setShowEnergy] = useState(true);
+  const [picked, setPicked] = useState<string | null>(null);
+  const gradient = useId().replace(/:/g, "");
+  const days = Array.from({ length: period }, (_, i) => {
+    const date = dayOffset(i - period + 1);
+    const key = keyForDate(date);
+    return { key, date, entry: entries.find(entry => entry.date === key) };
+  });
+  const recorded = days.flatMap(day => day.entry ? [day.entry] : []);
+  const active = recorded.find(entry => entry.date === picked) ?? recorded.at(-1);
+  const width = period === 7 ? 720 : period === 30 ? 960 : 1440;
+  const x = (i: number) => 112 + i * (width - 224) / (period - 1);
+  const y = (value: number) => 226 - (value - 1) * 44;
+  const dateLabel = (key: string) => new Intl.DateTimeFormat("es-ES", { day:"numeric", month:"short" }).format(new Date(key + "T12:00:00"));
+  function segments(energy: boolean) {
+    const result: string[][] = []; let current: string[] = [];
+    days.forEach((day, i) => {
+      if(day.entry) current.push(`${x(i)},${y(energy ? day.entry.energy + 1 : day.entry.rating)}`);
+      else if(current.length) { result.push(current); current = []; }
+    });
+    if(current.length) result.push(current);
+    return result;
+  }
+  return <section className="mood-evolution" aria-labelledby="mood-evolution-title">
+    <div className="mood-evolution-heading"><div><p className="space-eyebrow">Mis momentos</p><h4 id="mood-evolution-title">Así me he ido sintiendo</h4><p>Observa tus cambios de ánimo y energía, a tu ritmo.</p></div>
+      <div className="mood-periods" role="group" aria-label="Periodo del gráfico">{[7,30,90].map(value => <button type="button" key={value} aria-pressed={period === value} onClick={() => { setPeriod(value); setPicked(null); }}>{value} días</button>)}</div></div>
+    <div className="mood-chart-legend"><label><input type="checkbox" checked={showMood} onChange={e => setShowMood(e.target.checked)} /><span className="mood-legend-dot" />Ánimo · línea continua</label><label><input type="checkbox" checked={showEnergy} onChange={e => setShowEnergy(e.target.checked)} /><span className="mood-legend-dot energy" />Energía · línea discontinua</label><span>{recorded.length} de {period} días registrados</span></div>
+    {recorded.length ? <>
+      <p className="mood-chart-hint">Toca un punto para consultar ese día. Desliza el gráfico para recorrer el periodo.</p>
+      <div className="mood-evolution-scroll" tabIndex={0} role="region" aria-label="Gráfico desplazable de ánimo y energía">
+        <svg width={width} height="290" viewBox={`0 0 ${width} 290`} role="group" aria-label="Evolución de los registros personales">
+          <defs><linearGradient id={gradient} x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stopColor="#08a6a0" stopOpacity=".23"/><stop offset="100%" stopColor="#08a6a0" stopOpacity=".02"/></linearGradient></defs>
+          {[1,2,3,4,5].map(value => <g key={value}><line x1="106" y1={y(value)} x2={width-106} y2={y(value)} stroke="#d8e7ee" strokeDasharray="4 5" />{showMood && <text x="94" y={y(value)+5} textAnchor="end" fill="#173a5e" fontSize="14">{MOODS[value-1].name}</text>}{showEnergy && <text x={width-94} y={y(value)+5} fill="#9f4b42" fontSize="14">{ENERGY[value-1]}</text>}</g>)}
+          {showMood && segments(false).filter(points => points.length > 1).map((points,i) => <g key={i}><polygon points={`${points[0].split(',')[0]},242 ${points.join(' ')} ${points.at(-1)!.split(',')[0]},242`} fill={`url(#${gradient})`}/><polyline points={points.join(' ')} fill="none" stroke="#078e88" strokeWidth="3.5" strokeLinejoin="round"/></g>)}
+          {showEnergy && segments(true).filter(points => points.length > 1).map((points,i) => <polyline key={i} points={points.join(' ')} fill="none" stroke="#cf6b5c" strokeWidth="3" strokeDasharray="7 6" strokeLinejoin="round"/>)}
+          {days.map((day,i) => <g key={day.key}>
+            {day.entry && <g role="button" tabIndex={0} aria-label={`${dateLabel(day.key)}: ánimo ${MOODS[day.entry.rating-1].name}, energía ${ENERGY[day.entry.energy]}`} onClick={() => setPicked(day.key)} onKeyDown={e => { if(e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setPicked(day.key); } }} className="mood-chart-point">
+              <rect x={x(i)-10} y="32" width="20" height="215" fill="transparent"/>
+              {active?.date === day.key && <line x1={x(i)} y1="32" x2={x(i)} y2="242" stroke="#173a5e" opacity=".22"/>}
+              {showMood && <circle cx={x(i)} cy={y(day.entry.rating)} r={period===90?4:6} fill="#fff" stroke="#078e88" strokeWidth="3"/>}
+              {showEnergy && <rect x={x(i)-4} y={y(day.entry.energy+1)-4} width="8" height="8" rx="1" fill="#cf6b5c" stroke="#fff"/>}
+            </g>}
+            {(period === 7 || i % (period === 30 ? 5 : 15) === 0 || i === period-1) && <text x={x(i)} y="271" textAnchor="middle" fill="#526d80" fontSize="14">{dateLabel(day.key)}</text>}
+          </g>)}
+        </svg>
+      </div>
+      {active && <div className="mood-chart-detail" aria-live="polite"><strong>{dateLabel(active.date)}</strong><span>Ánimo: <b>{MOODS[active.rating-1].name}</b></span><span>Energía: <b>{ENERGY[active.energy]}</b></span></div>}
+      <details className="mood-chart-table"><summary>Consultar todos los registros del periodo</summary><ul>{recorded.map(entry => <li key={entry.date}><button type="button" onClick={() => setPicked(entry.date)}>{dateLabel(entry.date)} · {MOODS[entry.rating-1].name} · Energía {ENERGY[entry.energy].toLowerCase()}</button></li>)}</ul></details>
+    </> : <div className="mood-week-empty">Aún no hay registros en este periodo. Tu primer momento aparecerá aquí como un punto; la evolución se construirá con tus próximos registros.</div>}
+    <p className="mood-chart-caption">Los días sin registro quedan vacíos, sin unir ni estimar valores. Estas escalas reflejan tus respuestas; no son una medida diagnóstica ni una puntuación de mejora.</p>
+  </section>;
 }
 
 function AvatarChoices({ selected, onSelect }: { selected: AvatarId | null; onSelect: (id: AvatarId) => void }) {
@@ -259,12 +294,6 @@ export default function MoodTracker() {
   function pastWeekKeys() {
     return new Set(Array.from({ length: 7 }, (_, offset) => keyForDate(dayOffset(-offset))));
   }
-
-  const pastDays = useMemo(() => Array.from({ length: 7 }, (_, i) => {
-    const date = dayOffset(i - 6);
-    const key = keyForDate(date);
-    return { key, label: new Intl.DateTimeFormat("es-ES", { weekday: "short" }).format(date), entry: entries.find(e => e.date === key) };
-  }), [entries]);
 
   const recent = useMemo(() => [...entries].sort((a, b) => b.date.localeCompare(a.date)).slice(0, 5), [entries]);
 
@@ -354,30 +383,7 @@ export default function MoodTracker() {
           <div><strong>Tu semana, a tu manera</strong><p>Un recuerdo de tus registros, no una nota sobre tu progreso.</p></div>
           {entries.length > 0 && <button type="button" onClick={clear}>Borrar historial</button>}
         </div>
-        <div className="mood-week-chart">
-          {pastDays.some(day => day.entry) ? (
-            <svg viewBox="0 0 740 212" role="img" aria-label={pastDays.map(day => `${day.label}: ${day.entry ? MOODS[day.entry.rating - 1].name : "sin registro"}`).join("; ")} preserveAspectRatio="xMidYMid meet">
-              {[1,2,3,4,5].map(rating => {
-                const y = 167 - (rating - 1) * 33;
-                return <line key={rating} x1="45" y1={y} x2="695" y2={y} stroke="#dce9ee" strokeDasharray={rating === 3 ? "0" : "4 6"} strokeWidth="1" />;
-              })}
-              {pastDays.slice(1).map((day, i) => {
-                const previous = pastDays[i];
-                if (!previous.entry || !day.entry) return null;
-                return <line key={day.key} x1={52 + i * 105} y1={167 - (previous.entry.rating - 1) * 33} x2={52 + (i + 1) * 105} y2={167 - (day.entry.rating - 1) * 33} stroke="#0ba49c" strokeWidth="3.5" strokeLinecap="round" />;
-              })}
-              {pastDays.map((day, i) => (
-                <g key={day.key}>
-                  {day.entry
-                    ? <circle cx={52 + i * 105} cy={167 - (day.entry.rating - 1) * 33} r="8.5" fill={MOODS[day.entry.rating - 1].color} stroke="#187d83" strokeWidth="2" />
-                    : <circle cx={52 + i * 105} cy="167" r="5" fill="#e4edf0" />}
-                  <text x={52 + i * 105} y="203" textAnchor="middle" fill="#597384" fontSize="18">{day.label}</text>
-                </g>
-              ))}
-            </svg>
-          ) : <div className="mood-week-empty">Tu gráfica aparecerá aquí cuando guardes el primer registro. No necesitas registrar todos los días.</div>}
-          <p className="mood-chart-caption">Solo aparecen los datos que tú has registrado. Los días sin respuesta quedan sin conectar.</p>
-        </div>
+        <MoodEvolution entries={entries} />
         <section className="mood-recent" aria-label="Mis últimos registros">
           <div className="mood-recent-heading"><h4>Mis últimos registros</h4><span>{weekCount === 1 ? "1 registro esta semana" : `${weekCount} registros esta semana`}</span></div>
           {recent.length ? (
