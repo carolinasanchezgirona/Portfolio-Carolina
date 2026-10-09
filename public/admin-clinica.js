@@ -1015,7 +1015,7 @@
   function markReportClean() {
     reportFormBaseline = reportSnapshot(); reportDirty = false;
     const state = document.querySelector("#clinic-report-save-state");
-    if (state) state.textContent = "Guardado · borrador recuperable";
+    if (state) state.textContent = els.reportId.value ? "Guardado · borrador recuperable" : "Borrador nuevo · todavía sin guardar";
   }
   function reportSaveState(message) {
     const state = document.querySelector("#clinic-report-save-state");
@@ -1086,11 +1086,11 @@
   }
   function closeReportEditor({ force = false } = {}) {
     if (!els.reportDialog.open) return true;
-    window.clearTimeout(reportSaveTimer);
     if (reportSaveActive) { reportSaveState("Guardando borrador… espera antes de salir"); return false; }
     if (!force && (reportDirty || reportSaveRequested)) {
       if (!window.confirm("Hay cambios de informe pendientes de guardar. ¿Quieres salir y descartarlos?")) return false;
     }
+    window.clearTimeout(reportSaveTimer);
     els.reportDialog.close();
     els.patientForm.hidden = false;
     document.body.classList.remove("clinic-report-page-open");
@@ -1176,9 +1176,10 @@
     };
   }
   async function persistReport(status, { auto = false } = {}) {
-    if (reportSaveActive) { reportSaveRequested = true; return; }
+    if (reportSaveActive) { reportSaveRequested = true; if (!auto) throw new Error("Se está guardando el borrador. Espera unos segundos."); return; }
     if (auto && (!els.reportPurpose.value.trim() || !reportHasContent())) return;
     if (els.reportId.value && clinicalReports.some(item => item.id === els.reportId.value && item.status === "approved")) throw new Error("El informe aprobado no se puede sobrescribir.");
+    if (auto && healthReportSelected() && (!els.reportStart.value || !els.reportEnd.value || els.reportStart.value > els.reportEnd.value)) return;
     if (auto && !reportDirty) return;
     if (!currentPatient) return;
     const savingSnapshot = reportSnapshot();
@@ -2006,7 +2007,7 @@
   els.reportForm.addEventListener("change", (event) => { if (event.target.matches("input,textarea,select")) scheduleReportAutoSave(); });
   els.reportType.addEventListener("change", () => { els.reportTitlePreview.textContent = reportTypeLabel(els.reportType.value); healthReportInputs(); healthReportSelected(); scheduleReportAutoSave(); });
   els.generateReport.addEventListener("click", () => { try { if (!els.reportId.value && !reportHasContent()) { generateReportDraft(); scheduleReportAutoSave(); } downloadHealthReportWord(); } catch (error) { els.reportMessage.textContent = error.message; } });
-  els.saveReport.addEventListener("click", () => { if (healthReportSelected() && !reportHasContent()) generateReportDraft(); if (healthReportSelected() && !els.reportPurpose.value.trim()) { els.reportMessage.textContent = "Indica la finalidad del informe antes de guardarlo."; return; } persistReport("draft").then(() => { if (healthReportSelected()) els.reportMessage.textContent = "Borrador guardado en la historia clínica. La edición posterior del Word descargado no se sincroniza automáticamente."; }).catch((error) => { els.reportMessage.textContent = error.message; }); });
+  els.saveReport.addEventListener("click", () => { if (reportSaveActive) { els.reportMessage.textContent = "Se está guardando el informe. Espera a la confirmación."; return; } if (healthReportSelected() && !reportHasContent()) generateReportDraft(); if (healthReportSelected() && !els.reportPurpose.value.trim()) { els.reportMessage.textContent = "Indica la finalidad del informe antes de guardarlo."; return; } persistReport("draft").then(() => { if (healthReportSelected()) els.reportMessage.textContent = "Borrador guardado en la historia clínica. La edición posterior del Word descargado no se sincroniza automáticamente."; }).catch((error) => { els.reportMessage.textContent = error.message; }); });
   els.approveReport.addEventListener("click", () => persistReport("approved").catch((error) => { els.reportMessage.textContent = error.message; }));
   $("#clinic-upload-revised-word")?.addEventListener("click", () => {
     if (!currentPatient) return;
