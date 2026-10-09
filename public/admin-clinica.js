@@ -919,7 +919,7 @@
     }).join("");
   }
   function reportTypeLabel(type) {
-    return ({ evolution: "Informe de evolución", clinical_summary: "Resumen clínico", referral: "Informe de derivación" })[type] || "Informe clínico";
+    return ({ evolution_health: "Informe de evolución y seguimiento · Profesional sanitario", evolution: "Informe de evolución", clinical_summary: "Resumen clínico", referral: "Informe de derivación" })[type] || "Informe clínico";
   }
   function approvedSessionsInPeriod(patientId) {
     const start = els.reportStart.value ? new Date(els.reportStart.value + "T00:00:00") : null;
@@ -970,6 +970,41 @@
     const entries = sessions.map((item) => `<section class="entry"><h2>Sesión ${item.session_number || ""} · ${escapeHtml(dateShort.format(new Date(item.session_date)))}</h2>${item.evolution_note ? `<h3>Evolución</h3><div class="text">${escapeHtml(item.evolution_note)}</div>` : ""}${item.intervention_note ? `<h3>Intervención</h3><div class="text">${escapeHtml(item.intervention_note)}</div>` : ""}${item.response_note ? `<h3>Respuesta</h3><div class="text">${escapeHtml(item.response_note)}</div>` : ""}${item.agreements_note ? `<h3>Acuerdos</h3><div class="text">${escapeHtml(item.agreements_note)}</div>` : ""}${item.homework_note ? `<h3>Tarea</h3><div class="text">${escapeHtml(item.homework_note)}</div>` : ""}</section>`).join("");
     printableWindow("Historial clínico", `<header><p>Carolina Sánchez Girona · Psicóloga General Sanitaria y Neuropsicóloga</p><h1>Historial clínico</h1><p class="meta">Paciente: ${escapeHtml(currentPatient.full_name)} · Código: ${escapeHtml(currentPatient.public_code)} · Emitido: ${escapeHtml(dateShort.format(new Date()))}</p></header>${overview}${personalEntries}${profileEntries}<h2>Sesiones aprobadas</h2>${entries || "<p>No constan sesiones clínicas aprobadas.</p>"}<p class="privacy">Documento confidencial que contiene datos de salud.</p>`);
   }
+  const healthReportFields = [
+    ["sources", "Fuentes y procedimiento"], ["background", "Antecedentes relevantes"],
+    ["observation", "Estado clínico y observación"], ["results", "Resultados y cambios documentados"],
+    ["integration", "Integración e impresión clínica (revisión profesional obligatoria)"],
+    ["conclusions", "Conclusiones (revisión profesional obligatoria)"],
+    ["plan", "Plan de seguimiento"], ["limitations", "Limitaciones y alcance"]
+  ];
+  function healthReportInputs() {
+    let panel = document.querySelector("#clinic-health-report-sections");
+    if (!panel) {
+      panel = document.createElement("div");
+      panel.id = "clinic-health-report-sections";
+      panel.style.cssText = "display:grid;gap:16px";
+      for (const [key,label] of healthReportFields) {
+        const wrapper = document.createElement("label");
+        wrapper.textContent = label;
+        const area = document.createElement("textarea");
+        area.id = "clinic-health-" + key;
+        area.rows = key === "integration" || key === "conclusions" ? 5 : 4;
+        area.style.width = "100%";
+        wrapper.append(area);
+        panel.append(wrapper);
+      }
+      els.reportSignature.parentElement.before(panel);
+    }
+    return Object.fromEntries(healthReportFields.map(([key]) => [key, panel.querySelector("#clinic-health-" + key)]));
+  }
+  function healthReportSelected() {
+    const active = els.reportType.value === "evolution_health";
+    const panel = document.querySelector("#clinic-health-report-sections");
+    if (panel) panel.hidden = !active;
+    const label = document.querySelector("#clinic-report-current")?.closest("label");
+    if (label) label.firstChild.textContent = active ? "Estado actual y objetivos pendientes" : "Situación actual y recomendaciones";
+    return active;
+  }
   function openReport(report = null) {
     if (!currentPatient) return;
     els.reportId.value = report?.id || "";
@@ -983,6 +1018,11 @@
     els.reportEvolution.value = content.evolution || "";
     els.reportInterventions.value = content.interventions || "";
     els.reportCurrent.value = content.current || "";
+    const healthInputs = healthReportInputs();
+    healthReportFields.forEach(([key]) => { healthInputs[key].value = content[key] || ""; });
+    const health = healthReportSelected();
+    Object.values(healthInputs).forEach((field) => { field.disabled = report?.status === "approved"; });
+    if (health && !els.reportRecipient.value) els.reportRecipient.value = "Profesional sanitario";
     els.reportTitlePreview.textContent = report?.title || reportTypeLabel(els.reportType.value);
     els.reportHeading.textContent = report?.title || "Nuevo informe";
     els.reportMeta.textContent = `${currentPatient.public_code} · ${currentPatient.full_name}`;
@@ -1014,6 +1054,19 @@
       profile.therapeutic_goals ? `Objetivos terapéuticos: ${profile.therapeutic_goals}` : "",
       profile.treatment_plan ? `Plan terapéutico: ${profile.treatment_plan}` : "",
     ].filter(Boolean).join("\n\n");
+    if (healthReportSelected()) {
+      const h = healthReportInputs();
+      const dated = (note, item) => note ? dateShort.format(new Date(item.session_date)) + ": " + note : "";
+      h.sources.value = sessions.length ? sessions.length + " sesiones aprobadas entre " + dateShort.format(new Date(sessions[0].session_date)) + " y " + dateShort.format(new Date(sessions[sessions.length - 1].session_date)) + ". Fuentes: anotaciones clínicas aprobadas y ficha estructurada." : "No constan sesiones aprobadas en el periodo seleccionado.";
+      h.background.value = currentPatient.clinical_summary || "[Completar antecedentes relevantes si procede]";
+      h.observation.value = sessions.map(item => dated(item.response_note, item)).filter(Boolean).join("\\n\\n") || "[Completar observaciones relevantes del estado actual]";
+      h.results.value = "[Completar únicamente con resultados y medidas verificables; no se han importado puntuaciones psicométricas]";
+      h.integration.value = "";
+      h.conclusions.value = "";
+      h.plan.value = [profile.treatment_plan, currentPatient.next_session_focus].filter(Boolean).join("\\n\\n") || "[Completar el plan si está documentado]";
+      h.limitations.value = "Este borrador sintetiza únicamente los registros aprobados incluidos en el periodo. La ausencia de una medición estandarizada no permite cuantificar el cambio clínico.";
+      els.reportRecipient.value ||= "Profesional sanitario";
+    }
     els.reportMessage.textContent = `Borrador generado a partir de ${sessions.length} sesión(es) aprobada(s) y de la ficha clínica estructurada. Revísalo antes de aprobar.`;
   }
   function reportPayload(status) {
@@ -1023,13 +1076,20 @@
       title: reportTypeLabel(els.reportType.value), recipient: els.reportRecipient.value.trim() || null,
       purpose: els.reportPurpose.value.trim() || null, period_start: els.reportStart.value || null,
       period_end: els.reportEnd.value || null,
-      content: { context: els.reportContext.value.trim(), evolution: els.reportEvolution.value.trim(), interventions: els.reportInterventions.value.trim(), current: els.reportCurrent.value.trim() },
+      content: { context: els.reportContext.value.trim(), evolution: els.reportEvolution.value.trim(), interventions: els.reportInterventions.value.trim(), current: els.reportCurrent.value.trim(), ...(healthReportSelected() ? Object.fromEntries(healthReportFields.map(([key]) => [key, healthReportInputs()[key].value.trim()])) : {}) },
       included_session_ids: sessions.map((item) => item.id), status,
       approved_at: status === "approved" ? new Date().toISOString() : null, updated_at: new Date().toISOString(),
     };
   }
   async function persistReport(status) {
     if (!currentPatient) return;
+    if (status === "approved" && healthReportSelected()) {
+      const h = healthReportInputs();
+      if (!els.reportPurpose.value.trim() || !els.reportRecipient.value.trim() || !els.reportStart.value || !els.reportEnd.value) throw new Error("Indica finalidad, destinatario y periodo antes de aprobar.");
+      if (els.reportStart.value > els.reportEnd.value) throw new Error("El periodo de fechas no es válido.");
+      if (!h.integration.value.trim() || !h.conclusions.value.trim()) throw new Error("Revisa y redacta expresamente la integración y las conclusiones antes de aprobar.");
+      if (Object.values(h).some(x => /\\[completar/i.test(x.value))) throw new Error("Hay apartados pendientes de completar.");
+    }
     if (status === "approved" && !els.reportEvolution.value.trim() && !els.reportContext.value.trim()) throw new Error("El informe no contiene información suficiente para aprobarlo.");
     els.reportMessage.textContent = status === "approved" ? "Aprobando informe…" : "Guardando borrador…";
     const payload = reportPayload(status);
@@ -1045,7 +1105,7 @@
   function printCurrentReport() {
     if (!currentPatient) return;
     const section = (title, value) => value.trim() ? `<h2>${title}</h2><div class="text">${escapeHtml(value)}</div>` : "";
-    printableWindow(els.reportTitlePreview.textContent, `<header><p>Carolina Sánchez Girona · Psicóloga General Sanitaria y Neuropsicóloga</p><h1>${escapeHtml(els.reportTitlePreview.textContent)}</h1><p class="meta">Paciente: ${escapeHtml(currentPatient.full_name)} · Código: ${escapeHtml(currentPatient.public_code)}<br>Destinatario: ${escapeHtml(els.reportRecipient.value || "No especificado")} · Finalidad: ${escapeHtml(els.reportPurpose.value || "Asistencial")}<br>Fecha: ${escapeHtml(dateShort.format(new Date()))}</p></header>${section("Motivo y contexto", els.reportContext.value)}${section("Evolución clínica", els.reportEvolution.value)}${section("Intervenciones realizadas", els.reportInterventions.value)}${section("Situación actual y recomendaciones", els.reportCurrent.value)}<div class="signature"><p>Carolina Sánchez Girona</p></div><p class="privacy">Documento confidencial que contiene datos de salud.</p>`);
+    printableWindow(els.reportTitlePreview.textContent, `<header><p>Carolina Sánchez Girona · Psicóloga General Sanitaria y Neuropsicóloga</p><h1>${escapeHtml(els.reportTitlePreview.textContent)}</h1><p class="meta">Paciente: ${escapeHtml(currentPatient.full_name)} · Código: ${escapeHtml(currentPatient.public_code)}<br>Destinatario: ${escapeHtml(els.reportRecipient.value || "No especificado")} · Finalidad: ${escapeHtml(els.reportPurpose.value || "Asistencial")}<br>Fecha: ${escapeHtml(dateShort.format(new Date()))}</p></header>${section("Motivo y contexto", els.reportContext.value)}${section("Evolución clínica", els.reportEvolution.value)}${section("Intervenciones realizadas", els.reportInterventions.value)}${section(healthReportSelected() ? "Estado actual y objetivos pendientes" : "Situación actual y recomendaciones", els.reportCurrent.value)}${healthReportSelected() ? healthReportFields.map(([key,label]) => section(label, healthReportInputs()[key].value)).join("") : ""}<div class="signature"><p>Carolina Sánchez Girona</p></div><p class="privacy">Documento confidencial que contiene datos de salud.</p>`);
   }
   function renderReports(patient) {
     els.patientReports.replaceChildren();
@@ -1822,7 +1882,7 @@
   els.printHistory.addEventListener("click", () => { try { printClinicalHistory(); } catch (error) { els.patientMessage.textContent = error.message; } });
   els.newReport.addEventListener("click", () => openReport());
   els.reportClose.addEventListener("click", () => els.reportDialog.close());
-  els.reportType.addEventListener("change", () => { els.reportTitlePreview.textContent = reportTypeLabel(els.reportType.value); });
+  els.reportType.addEventListener("change", () => { els.reportTitlePreview.textContent = reportTypeLabel(els.reportType.value); healthReportInputs(); healthReportSelected(); });
   els.generateReport.addEventListener("click", generateReportDraft);
   els.saveReport.addEventListener("click", () => persistReport("draft").catch((error) => { els.reportMessage.textContent = error.message; }));
   els.approveReport.addEventListener("click", () => persistReport("approved").catch((error) => { els.reportMessage.textContent = error.message; }));
