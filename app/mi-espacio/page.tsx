@@ -179,6 +179,17 @@ export default function MiEspacioPage() {
               </div>
             </section>
 
+            <section className="space-section space-materials-section" aria-labelledby="space-shared-files-title">
+              <div className="space-section-heading">
+                <div><p className="space-eyebrow">Archivos de tu consulta</p><h3 id="space-shared-files-title">Documentos y audios compartidos contigo</h3></div>
+                <span id="space-shared-file-count" className="space-pill">Acceso privado</span>
+              </div>
+              <p>Consulta o descarga únicamente los archivos que Carolina haya decidido compartir contigo.</p>
+              <div id="space-shared-files" className="space-patient-materials">
+                <div className="space-empty">Inicia sesión para acceder a tus archivos.</div>
+              </div>
+            </section>
+
             <div className="space-grid space-feature-grid">
               <article id="space-appointment-card" className="space-card space-card-active">
                 <p className="space-kicker">Próxima cita</p>
@@ -293,7 +304,7 @@ export default function MiEspacioPage() {
       </aside>
 
       <Script src="/patient-video.js?v=20261009-1" strategy="afterInteractive" />
-      <Script src="/mi-espacio.js?v=20261009-recorrido1" strategy="afterInteractive" />
+      <Script src="/mi-espacio.js?v=20261009-shared-files-1" strategy="afterInteractive" />
     </main>
   );
 }
