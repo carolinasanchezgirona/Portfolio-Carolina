@@ -1,5 +1,6 @@
 
 import { PDFDocument, StandardFonts, rgb } from "npm:pdf-lib@1.17.1";
+import { normalizeVisualBlocks, visualHtml, matrix, getCalendar, type VisualBlock } from "./visual-blocks.ts";
 
 const SUPABASE_URL = Deno.env.get("SUPABASE_URL") ?? "";
 const ANON_KEY = Deno.env.get("SUPABASE_ANON_KEY") ?? "";
@@ -20,6 +21,9 @@ type PatientDocument = {
   safety_note?: string;
   remember?: string;
   session_questions?: string[];
+  clinical_area?: "psychology" | "neuropsychology";
+  neuro_profile?: Record<string, string> | null;
+  visual_blocks?: VisualBlock[];
 };
 
 type MaterialRow = {
@@ -96,6 +100,9 @@ function normalizePatientDocument(raw: unknown, content = ""): PatientDocument {
   return {
     version: 1,
     material_type: type,
+    clinical_area: source.clinical_area === "neuropsychology" ? "neuropsychology" : "psychology",
+    neuro_profile: source.neuro_profile && typeof source.neuro_profile === "object" && !Array.isArray(source.neuro_profile) ? source.neuro_profile as Record<string, string> : null,
+    visual_blocks: normalizeVisualBlocks(source.visual_blocks),
     duration_minutes: Number.isFinite(durationValue) && durationValue > 0 && durationValue <= 180 ? Math.round(durationValue) : null,
     frequency: String(source.frequency ?? "").trim() || (type === "psychoeducation"
       ? "Revísalo una vez esta semana y vuelve a él si te resulta útil."
@@ -132,7 +139,7 @@ function slug(value: string) {
 }
 
 function page(title: string, body: string, status = 200, extraHeaders: Record<string,string> = {}) {
-  const css = ":root{--navy:#173A5E;--turq:#08A6A0;--sky:#EAF6FB;--ink:#243746;--muted:#6B7C87;--line:#D7E5EE;--warm:#FFF8EE}*{box-sizing:border-box}body{margin:0;background:#F4F8FA;color:var(--ink);font-family:Arial,Helvetica,sans-serif}.shell{max-width:1080px;margin:0 auto;padding:26px 16px 44px}.portal{display:grid;grid-template-columns:260px minmax(0,1fr);gap:18px}.library{align-self:start;position:sticky;top:18px;background:#fff;border:1px solid var(--line);border-radius:18px;padding:18px;box-shadow:0 12px 34px rgba(23,58,94,.06)}.library h2{margin:3px 0 5px;color:var(--navy);font-family:Georgia,serif;font-size:21px}.library-note{margin:0 0 14px;color:var(--muted);font-size:12px;line-height:1.45}.library-list{display:grid;gap:7px}.library-item{display:block;padding:10px 11px;border:1px solid transparent;border-radius:10px;color:#435c6b;text-decoration:none;font-size:12.5px;line-height:1.35}.library-item:hover{background:#F5FAFC}.library-item.active{border-color:#BDE1E3;background:#EFFAFA;color:var(--navy);font-weight:700}.card{overflow:hidden;background:#fff;border:1px solid var(--line);border-radius:22px;box-shadow:0 18px 55px rgba(23,58,94,.09)}.topline{height:8px;background:var(--turq)}.content{padding:clamp(24px,5vw,46px)}.brand{display:flex;justify-content:space-between;gap:18px;align-items:flex-start;margin-bottom:22px}.eyebrow{margin:0;color:var(--turq);font-size:12px;font-weight:800;letter-spacing:.12em;text-transform:uppercase}.brand-name{margin:0;color:var(--muted);font-size:12px;text-align:right;line-height:1.45}h1{margin:8px 0 12px;color:var(--navy);font-family:Georgia,'Times New Roman',serif;font-size:clamp(29px,6vw,43px);line-height:1.08;font-weight:700}.intro{margin:0 0 20px;color:#405766;font-size:17px;line-height:1.65}.meta{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 24px}.meta span{display:inline-flex;align-items:center;min-height:30px;padding:5px 10px;border-radius:999px;background:#F0F6F9;color:#496577;font-size:12px;font-weight:700}.section{padding:22px 0;border-top:1px solid #E4EDF2}.section h2{margin:0 0 10px;color:var(--navy);font-size:15px;line-height:1.25}.copy{white-space:pre-wrap;font-size:15px;line-height:1.72}.section.why{margin:8px 0 4px;padding:20px;border:0;border-radius:15px;background:var(--sky);box-shadow:inset 4px 0 0 var(--turq)}.section.remember{margin-top:8px;padding:18px 20px;border:1px solid #CDE5EA;border-radius:14px;background:#F7FCFC}.section.safety{margin-top:8px;padding:18px 20px;border:1px solid #F0DEC2;border-radius:14px;background:var(--warm)}.questions{margin:8px 0 0;padding-left:20px}.questions li{margin:7px 0;line-height:1.55}.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:24px;padding-top:22px;border-top:1px solid #E4EDF2}.button{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:11px 18px;border-radius:10px;border:1px solid var(--navy);background:var(--navy);color:#fff;text-decoration:none;font-size:14px;font-weight:750}.response-box{margin-top:18px;padding:20px;border:1px solid #BFDDE3;border-radius:16px;background:#FBFEFF}.response-box h2{margin:0 0 6px;color:var(--navy);font-size:17px}.response-box>p{margin:0 0 16px;color:var(--muted);font-size:12.5px;line-height:1.55}.response-field{display:grid;gap:7px;margin-top:14px}.response-field span{color:var(--navy);font-size:13px;font-weight:750;line-height:1.45}.response-field textarea{width:100%;min-height:112px;resize:vertical;border:1px solid #BED0DB;border-radius:11px;padding:12px 13px;background:#fff;color:var(--ink);font:inherit;font-size:14px;line-height:1.55}.response-field textarea:focus{outline:2px solid rgba(8,166,160,.18);border-color:var(--turq)}.response-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}.response-actions button{min-height:40px;padding:9px 13px;border-radius:10px;font:inherit;font-size:12.5px;font-weight:800;cursor:pointer}.response-save{border:1px solid #B9CFDA;background:#fff;color:var(--navy)}.response-share{border:1px solid var(--navy);background:var(--navy);color:#fff}.response-status{margin-top:12px;padding:10px 12px;border-radius:10px;background:#F1F7F9;color:#4B6675;font-size:12px;line-height:1.45}.response-status.shared{background:#EAF9F8;color:#145D5A}.state-box{margin-top:18px;padding:18px;border-radius:14px;background:#F8FBFC;border:1px solid var(--line)}.state-box h2{margin:0 0 5px;color:var(--navy);font-size:15px}.state-box p{margin:0 0 12px;color:var(--muted);font-size:12px;line-height:1.5}.state-actions{display:flex;gap:7px;flex-wrap:wrap}.state-actions form{margin:0}.state-actions button{min-height:36px;padding:8px 11px;border:1px solid #C8D9E4;border-radius:9px;background:#fff;color:#3D5868;font:inherit;font-size:12px;font-weight:700;cursor:pointer}.state-actions button.active{border-color:var(--turq);background:#EAF9F8;color:#145D5A}.small{margin:16px 0 0;color:var(--muted);font-size:12px;line-height:1.55}.footer{padding:18px 24px;background:#F8FBFC;color:var(--muted);font-size:12px;line-height:1.5}@media(max-width:760px){.portal{grid-template-columns:1fr}.library{position:static}.library-list{display:flex;overflow:auto;padding-bottom:3px}.library-item{min-width:190px}.brand{display:block}.brand-name{text-align:left;margin-top:8px}.content{padding:24px 20px}}";
+  const css = ".visual-item{padding:16px 0;border-bottom:1px solid #D7E5EE}.visual-item h3{color:#173A5E}.visual-item figure{margin:0}.visual-item img{max-width:100%;max-height:360px;object-fit:contain}.visual-item figcaption{font-size:12px;color:#6B7C87;margin-top:6px}.visual-scroll{overflow-x:auto}.visual-item table{width:100%;border-collapse:collapse;table-layout:fixed}.visual-item th,.visual-item td{border:1px solid #D7E5EE;padding:9px;overflow-wrap:anywhere}.visual-item th{background:#EAF6FB}.visual-calendar td{height:62px;vertical-align:top}.visual-calendar small{display:block;font-size:10px}.visual-chart{display:grid;gap:10px}.visual-bar{display:grid;grid-template-columns:minmax(80px,1fr) minmax(90px,3fr) auto;gap:9px;align-items:center}.visual-bar>div{height:17px;background:#EAF6FB}.visual-bar i{display:block;height:100%;background:#08A6A0}.visual-steps{display:grid;gap:9px;padding-left:25px}.visual-steps li{background:#EAF6FB;border-radius:8px;padding:12px}:root{--navy:#173A5E;--turq:#08A6A0;--sky:#EAF6FB;--ink:#243746;--muted:#6B7C87;--line:#D7E5EE;--warm:#FFF8EE}*{box-sizing:border-box}body{margin:0;background:#F4F8FA;color:var(--ink);font-family:Arial,Helvetica,sans-serif}.shell{max-width:1080px;margin:0 auto;padding:26px 16px 44px}.portal{display:grid;grid-template-columns:260px minmax(0,1fr);gap:18px}.library{align-self:start;position:sticky;top:18px;background:#fff;border:1px solid var(--line);border-radius:18px;padding:18px;box-shadow:0 12px 34px rgba(23,58,94,.06)}.library h2{margin:3px 0 5px;color:var(--navy);font-family:Georgia,serif;font-size:21px}.library-note{margin:0 0 14px;color:var(--muted);font-size:12px;line-height:1.45}.library-list{display:grid;gap:7px}.library-item{display:block;padding:10px 11px;border:1px solid transparent;border-radius:10px;color:#435c6b;text-decoration:none;font-size:12.5px;line-height:1.35}.library-item:hover{background:#F5FAFC}.library-item.active{border-color:#BDE1E3;background:#EFFAFA;color:var(--navy);font-weight:700}.card{overflow:hidden;background:#fff;border:1px solid var(--line);border-radius:22px;box-shadow:0 18px 55px rgba(23,58,94,.09)}.topline{height:8px;background:var(--turq)}.content{padding:clamp(24px,5vw,46px)}.brand{display:flex;justify-content:space-between;gap:18px;align-items:flex-start;margin-bottom:22px}.eyebrow{margin:0;color:var(--turq);font-size:12px;font-weight:800;letter-spacing:.12em;text-transform:uppercase}.brand-name{margin:0;color:var(--muted);font-size:12px;text-align:right;line-height:1.45}h1{margin:8px 0 12px;color:var(--navy);font-family:Georgia,'Times New Roman',serif;font-size:clamp(29px,6vw,43px);line-height:1.08;font-weight:700}.intro{margin:0 0 20px;color:#405766;font-size:17px;line-height:1.65}.meta{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 24px}.meta span{display:inline-flex;align-items:center;min-height:30px;padding:5px 10px;border-radius:999px;background:#F0F6F9;color:#496577;font-size:12px;font-weight:700}.section{padding:22px 0;border-top:1px solid #E4EDF2}.section h2{margin:0 0 10px;color:var(--navy);font-size:15px;line-height:1.25}.copy{white-space:pre-wrap;font-size:15px;line-height:1.72}.section.why{margin:8px 0 4px;padding:20px;border:0;border-radius:15px;background:var(--sky);box-shadow:inset 4px 0 0 var(--turq)}.section.remember{margin-top:8px;padding:18px 20px;border:1px solid #CDE5EA;border-radius:14px;background:#F7FCFC}.section.safety{margin-top:8px;padding:18px 20px;border:1px solid #F0DEC2;border-radius:14px;background:var(--warm)}.questions{margin:8px 0 0;padding-left:20px}.questions li{margin:7px 0;line-height:1.55}.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:24px;padding-top:22px;border-top:1px solid #E4EDF2}.button{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:11px 18px;border-radius:10px;border:1px solid var(--navy);background:var(--navy);color:#fff;text-decoration:none;font-size:14px;font-weight:750}.response-box{margin-top:18px;padding:20px;border:1px solid #BFDDE3;border-radius:16px;background:#FBFEFF}.response-box h2{margin:0 0 6px;color:var(--navy);font-size:17px}.response-box>p{margin:0 0 16px;color:var(--muted);font-size:12.5px;line-height:1.55}.response-field{display:grid;gap:7px;margin-top:14px}.response-field span{color:var(--navy);font-size:13px;font-weight:750;line-height:1.45}.response-field textarea{width:100%;min-height:112px;resize:vertical;border:1px solid #BED0DB;border-radius:11px;padding:12px 13px;background:#fff;color:var(--ink);font:inherit;font-size:14px;line-height:1.55}.response-field textarea:focus{outline:2px solid rgba(8,166,160,.18);border-color:var(--turq)}.response-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}.response-actions button{min-height:40px;padding:9px 13px;border-radius:10px;font:inherit;font-size:12.5px;font-weight:800;cursor:pointer}.response-save{border:1px solid #B9CFDA;background:#fff;color:var(--navy)}.response-share{border:1px solid var(--navy);background:var(--navy);color:#fff}.response-status{margin-top:12px;padding:10px 12px;border-radius:10px;background:#F1F7F9;color:#4B6675;font-size:12px;line-height:1.45}.response-status.shared{background:#EAF9F8;color:#145D5A}.state-box{margin-top:18px;padding:18px;border-radius:14px;background:#F8FBFC;border:1px solid var(--line)}.state-box h2{margin:0 0 5px;color:var(--navy);font-size:15px}.state-box p{margin:0 0 12px;color:var(--muted);font-size:12px;line-height:1.5}.state-actions{display:flex;gap:7px;flex-wrap:wrap}.state-actions form{margin:0}.state-actions button{min-height:36px;padding:8px 11px;border:1px solid #C8D9E4;border-radius:9px;background:#fff;color:#3D5868;font:inherit;font-size:12px;font-weight:700;cursor:pointer}.state-actions button.active{border-color:var(--turq);background:#EAF9F8;color:#145D5A}.small{margin:16px 0 0;color:var(--muted);font-size:12px;line-height:1.55}.footer{padding:18px 24px;background:#F8FBFC;color:var(--muted);font-size:12px;line-height:1.5}@media(max-width:760px){.portal{grid-template-columns:1fr}.library{position:static}.library-list{display:flex;overflow:auto;padding-bottom:3px}.library-item{min-width:190px}.brand{display:block}.brand-name{text-align:left;margin-top:8px}.content{padding:24px 20px}}";
   return new Response("<!doctype html><html lang=\"es\"><head><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><meta name=\"robots\" content=\"noindex,nofollow\"><title>" + escapeHtml(title) + "</title><style>" + css + "</style></head><body>" + body + "</body></html>", {
     status,
     headers: {
@@ -140,7 +147,7 @@ function page(title: string, body: string, status = 200, extraHeaders: Record<st
       "Cache-Control": "no-store",
       "Referrer-Policy": "no-referrer",
       "X-Content-Type-Options": "nosniff",
-      "Content-Security-Policy": "default-src 'none'; style-src 'unsafe-inline'; base-uri 'none'; form-action 'self'; frame-ancestors 'none'",
+      "Content-Security-Policy": "default-src 'none'; style-src 'unsafe-inline'; img-src data:; base-uri 'none'; form-action 'self'; frame-ancestors 'none'",
       ...extraHeaders
     }
   });
@@ -252,6 +259,7 @@ function materialContentHtml(item: MaterialRow, token: string | null, preview = 
     sectionHtml("Qué vamos a observar o entrenar", doc.objective || "") +
     sectionHtml(doc.material_type === "psychoeducation" ? "Contenido" : "Cómo hacerlo", doc.instructions || "") +
     sectionHtml("Ejemplo", doc.example || "") +
+    visualHtml(doc.visual_blocks, escapeHtml) +
     sectionHtml("Tu registro / espacio para trabajar", doc.record_prompt || "") +
     responseEditorHtml(item, doc, token, preview) +
     sectionHtml("Si resulta demasiado intenso", doc.safety_note || "", "safety") +
@@ -458,6 +466,82 @@ async function buildPdf(titleValue: string, patientDocument: PatientDocument, ma
   current.drawText("Carolina Sánchez Girona", { x: A4[0] - marginX - 115, y, size: 7.8, font: bodyFont, color: muted });
   y -= 38;
 
+  async function drawVisualResources(raw: VisualBlock[] | undefined) {
+    const blocks = normalizeVisualBlocks(raw);
+    if (!blocks.length) return;
+    drawSection("Recursos visuales", "Observa los estímulos y sigue las consignas acordadas en sesión.");
+    function rowCells(values: string[], count: number, header = false, height = 33) {
+      ensureSpace(height + 8);
+      const width = maxWidth / count;
+      values.forEach((value, i) => {
+        const x = marginX + i * width;
+        current.drawRectangle({ x, y: y - height + 7, width, height, borderColor: lineColor, borderWidth: .7, ...(header ? { color: sky } : {}) });
+        wrap(header ? boldFont : bodyFont, value, 8.2, width - 10).slice(0, 2).forEach((line, j) => {
+          current.drawText(line, { x: x + 5, y: y - 8 - j * 11, size: 8.2, font: header ? boldFont : bodyFont, color: ink });
+        });
+      });
+      y -= height;
+    }
+    for (const block of blocks) {
+      ensureSpace(65);
+      drawParagraph(block.title.toUpperCase(), { size: 10, leading: 15, font: boldFont, color: navy });
+      y -= 8;
+      if (block.type === "image" && block.data) {
+        try {
+          const bytes = Uint8Array.from(atob(block.data.split(",")[1]), char => char.charCodeAt(0));
+          const picture = block.data.startsWith("data:image/png") ? await pdf.embedPng(bytes) : await pdf.embedJpg(bytes);
+          const factor = Math.min(maxWidth / picture.width, 200 / picture.height, 1);
+          const width = picture.width * factor, height = picture.height * factor;
+          ensureSpace(height + 22);
+          current.drawImage(picture, { x: marginX, y: y - height, width, height });
+          y -= height + 12;
+          drawParagraph(block.alt || "", { size: 8.5, leading: 12, color: muted });
+        } catch { drawParagraph("Imagen no disponible en PDF. Verifica el original antes de prescribir."); }
+      } else if (block.type === "table") {
+        const rows = matrix(block);
+        const count = rows[0]?.length || 0;
+        if (count >= 2 && count <= 6 && rows.length >= 2 && rows.every(row => row.length === count)) {
+          rows.forEach((row, i) => rowCells(row, count, i === 0));
+        }
+      } else if (block.type === "chart") {
+        const pairs = matrix(block).filter(row => row.length === 2 && row[0] && Number.isFinite(Number(row[1])) && Number(row[1]) >= 0 && Number(row[1]) <= 10000).slice(0, 8);
+        const maximum = Math.max(1, ...pairs.map(row => Number(row[1])));
+        for (const row of pairs) {
+          ensureSpace(44);
+          drawParagraph(row[0] + ": " + row[1], { size: 9.2, leading: 13 });
+          current.drawRectangle({ x: marginX, y: y - 11, width: maxWidth, height: 10, color: sky });
+          const barWidth = Number(row[1]) / maximum * maxWidth;
+          if (barWidth > 0) current.drawRectangle({ x: marginX, y: y - 11, width: barWidth, height: 10, color: turquoise });
+          y -= 22;
+        }
+      } else if (block.type === "diagram") {
+        const steps = (block.content || "").split(/\r?\n/).map(step => step.trim()).filter(Boolean).slice(0, 8);
+        for (const [i, step] of steps.entries()) {
+          const lines = wrap(bodyFont, step, 9, maxWidth - 38).slice(0, 5);
+          const height = 18 + lines.length * 13;
+          ensureSpace(height + 8);
+          current.drawRectangle({ x: marginX, y: y - height + 7, width: maxWidth, height, color: sky });
+          current.drawText((i + 1) + ".", { x: marginX + 10, y: y - 11, font: boldFont, size: 9.5, color: navy });
+          lines.forEach((line, j) => current.drawText(line, { x: marginX + 34, y: y - 11 - j * 13, font: bodyFont, size: 9, color: ink }));
+          y -= height + 5;
+        }
+      } else if (block.type === "calendar") {
+        const cal = getCalendar(block.content || "");
+        if (cal) {
+          drawParagraph(String(cal.month).padStart(2, "0") + "/" + cal.year, { font: boldFont });
+          rowCells(["L", "M", "X", "J", "V", "S", "D"], 7, true, 27);
+          const count = Math.ceil((cal.days + cal.offset) / 7) * 7;
+          for (let i = 0; i < count; i += 7) rowCells(Array.from({ length: 7 }, (_, j) => {
+            const day = i + j + 1 - cal.offset;
+            return day > 0 && day <= cal.days ? String(day) : "";
+          }), 7, false, 29);
+          for (const [day, label] of cal.events.entries()) drawParagraph(day + ": " + label, { size: 9, leading: 12 });
+        }
+      }
+      y -= 14;
+    }
+  }
+
   if (materialDateValue) {
     let issuedLabel = "";
     try {
@@ -493,6 +577,7 @@ async function buildPdf(titleValue: string, patientDocument: PatientDocument, ma
   drawSection("Qué vamos a observar o entrenar", patientDocument.objective || "");
   drawSection(patientDocument.material_type === "psychoeducation" ? "Contenido" : "Cómo hacerlo", patientDocument.instructions || "");
   drawSection("Ejemplo", patientDocument.example || "");
+  await drawVisualResources(patientDocument.visual_blocks);
   drawSection("Tu registro / espacio para trabajar", patientDocument.record_prompt || "");
   if (patientDocument.record_prompt && patientDocument.material_type !== "psychoeducation") drawWorkArea(7);
   drawSection("Si resulta demasiado intenso", patientDocument.safety_note || "", true, true);
@@ -517,7 +602,7 @@ async function buildPdf(titleValue: string, patientDocument: PatientDocument, ma
 
 async function pdfResponse(title: string, doc: PatientDocument, dateValue?: string, extraHeaders: Record<string,string> = {}) {
   const bytes = await buildPdf(title, doc, dateValue);
-  return new Response(bytes, {
+  return new Response(Uint8Array.from(bytes).buffer, {
     status: 200,
     headers: {
       "Content-Type": "application/pdf",

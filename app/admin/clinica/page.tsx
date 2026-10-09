@@ -381,6 +381,67 @@ export default function AdminClinicaPage() {
             <button id="clinic-exercise-close" className="clinic-close" type="button" aria-label="Cerrar">×</button>
           </div>
           <p id="clinic-exercise-patient-code" className="clinic-note" />
+          <div className="clinic-material-area">
+            <label>Área de intervención
+              <select id="clinic-clinical-area" defaultValue="psychology">
+                <option value="psychology">Psicología</option>
+                <option value="neuropsychology">Neuropsicología</option>
+              </select>
+            </label>
+            <p id="clinic-clinical-area-hint" className="clinic-material-helper">Se conserva íntegramente el generador de materiales psicológicos.</p>
+          </div>
+          <fieldset id="clinic-neuro-settings" className="clinic-neuro-settings" hidden>
+            <legend>Planificación neuropsicológica</legend>
+            <div className="clinic-neuro-library-picker">
+              <label>Biblioteca inicial de actividades (borradores pendientes de revisión clínica)
+                <select id="clinic-neuro-starter" defaultValue="">
+                  <option value="">Elegir actividad neuropsicológica...</option>
+                </select>
+              </label>
+              <button id="clinic-neuro-starter-load" className="clinic-secondary" type="button">Cargar propuesta</button>
+            </div>
+            <p className="clinic-material-helper">Son 24 propuestas de intervención con estímulos estructurados. Cargar no prescribe ni envía nada: tendrás que revisar y adaptar cada actividad.</p>
+            <div className="clinic-neuro-grid">
+              <label>Dominio cognitivo
+                <select id="clinic-neuro-domain" defaultValue="">
+                  <option value="">Seleccionar...</option>
+                  <option value="orientacion_temporal">Orientación temporal</option>
+                  <option value="orientacion_espacial">Orientación espacial</option>
+                  <option value="orientacion_personal">Orientación personal</option>
+                  <option value="atencion">Atención</option>
+                  <option value="memoria">Memoria</option>
+                  <option value="funciones_ejecutivas">Funciones ejecutivas</option>
+                  <option value="lenguaje">Lenguaje</option>
+                  <option value="praxias_gnosias">Praxias y gnosias</option>
+                  <option value="visuoespacial">Funciones visuoespaciales</option>
+                  <option value="cognicion_funcional">Cognición funcional</option>
+                </select>
+              </label>
+              <label>Tipo de intervención
+                <select id="clinic-neuro-intervention" defaultValue="estimulacion">
+                  <option value="estimulacion">Estimulación cognitiva</option>
+                  <option value="entrenamiento">Entrenamiento específico</option>
+                  <option value="rehabilitacion">Rehabilitación funcional</option>
+                  <option value="compensacion">Estrategias compensatorias</option>
+                </select>
+              </label>
+              <label>Demanda de la tarea
+                <select id="clinic-neuro-level" defaultValue="">
+                  <option value="">Seleccionar...</option>
+                  <option value="apoyo_alto">Apoyo alto</option>
+                  <option value="apoyo_moderado">Apoyo moderado</option>
+                  <option value="autonomo">Mayor autonomía</option>
+                </select>
+              </label>
+              <label>Tema estacional o autobiográfico (opcional)
+                <input id="clinic-neuro-theme" placeholder="Ej. La Castanyada, el barrio, mi calendario..." />
+              </label>
+            </div>
+            <label>Objetivo funcional
+              <textarea id="clinic-neuro-functional-goal" rows={2} placeholder="Conducta observable o aplicación cotidiana..." />
+            </label>
+            <p className="clinic-material-helper">Evita tareas infantilizantes y el uso de ítems protegidos de pruebas estandarizadas. No interpreta resultados como puntuaciones diagnósticas.</p>
+          </fieldset>
           <div className="clinic-material-picker">
             <label>Buscar en la biblioteca
               <input id="clinic-material-search" type="search" placeholder="Buscar por título, proceso o tipo…" autoComplete="off" />
@@ -449,6 +510,28 @@ export default function AdminClinicaPage() {
                 <label>Para comentar en sesión <span>(una pregunta por línea)</span><textarea id="clinic-exercise-session-questions" rows={3} /></label>
               </div>
             </details>
+          </section>
+          <section className="clinic-neuro-visual-section" aria-label="Recursos multimodales">
+            <h3>Recursos visuales del material</h3>
+            <p className="clinic-material-helper">Añade estímulos únicamente cuando aporten valor a la tarea. Se mostrarán en la vista online y en el PDF. Revisa la precisión de todos los datos y fotografías.</p>
+            <div className="clinic-visual-toolbar">
+              <label>Recurso
+                <select id="clinic-visual-type" defaultValue="table">
+                  <option value="image">Imagen educativa</option>
+                  <option value="table">Tabla</option>
+                  <option value="chart">Gráfico de barras</option>
+                  <option value="diagram">Secuencia visual</option>
+                  <option value="calendar">Calendario</option>
+                </select>
+              </label>
+              <button id="clinic-visual-add" className="clinic-secondary" type="button">Añadir recurso</button>
+            </div>
+            <div id="clinic-visual-block-list" />
+            <label className="clinic-neuro-review">
+              <input id="clinic-neuro-reviewed" type="checkbox" />
+              He comprobado consignas, estímulos, respuestas, accesibilidad y adecuación individual antes de prescribir este material.
+            </label>
+            <p className="clinic-material-helper">Máximo 8 recursos por ficha. Usa imágenes sin información identificativa. La generación con IA prepara tablas, gráficos y secuencias, pero no inventa fotografías ni datos personales.</p>
           </section>
           <label>Contexto para personalizar <span>(sin nombres ni datos identificativos; solo profesional, no se envía al paciente)</span><textarea id="clinic-exercise-rationale" rows={2} /></label>
           <label>Correo destinatario<input id="clinic-exercise-email" type="email" required /></label>
@@ -528,6 +611,7 @@ export default function AdminClinicaPage() {
         </form>
       </dialog>
 
+      <Script src="/clinic-neuro-materials.js?v=20261009-1" strategy="afterInteractive" />
       <Script src="/admin-clinica.js?v=20261009-patient-workspace-3" strategy="afterInteractive" />
       <Script src="/clinical-smart-intake.js?v=20261005-smart-state-5" strategy="afterInteractive" />
       <Script src="/clinical-diagnostic-assistant.js?v=20261007-dx-2" strategy="afterInteractive" />

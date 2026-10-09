@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./mobile-fixes.css";
 import "./brand-fixes.css";
 import "./admin-enhancements.css";
+import "./neuro-materials.css";
 
 export const metadata: Metadata = {
   title: "Gestión clínica | Carolina Sánchez",
