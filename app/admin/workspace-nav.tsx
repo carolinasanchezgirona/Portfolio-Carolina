@@ -35,7 +35,8 @@ export default function AdminWorkspaceNav({ active }: { active: Area }) {
           <a href="/admin/clinica/?panel=1">Gestión clínica</a>
           <a href="/admin/agenda/">Agenda de pacientes</a>
           <p className="admin-workspace-more-label">Administración</p>
-          <a href="/admin/economia/" aria-current={active === "economia" ? "page" : undefined}>Contabilidad</a>
+          <a href="/admin/economia/" aria-current={active === "economia" ? "page" : undefined}>Gestión económica</a>
+          <a href="/admin/notificaciones/">Centro de avisos</a>
           <a href="/admin/articulos/">Artículos</a>
           <a href="/admin/recursos/">Recursos</a>
           <a href="/admin/preguntas/">Preguntas</a>
