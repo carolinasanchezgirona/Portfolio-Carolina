@@ -64,3 +64,17 @@ test("session editor presents previously approved data without changing clinical
   assert.doesNotMatch(brief,/fetch\(|innerHTML|localStorage|persistClinicalSession/);
   assert.match(file("app/admin/clinica/page.tsx"),/clinic-session-brief/);
 });
+
+test("there is only one visible patient deletion control and page close is valid", () => {
+  const markup = file("app/admin/clinica/page.tsx");
+  const enhancements = file("public/clinic-patient-admin-enhancements.js");
+  assert.equal((markup.match(/id="clinic-delete-patient"/g) || []).length, 1);
+  assert.match(enhancements,/if \(!recordActions\.querySelector\("#clinic-delete-patient"\)\) recordActions\.append\(deleteButton\)/);
+  assert.doesNotMatch(enhancements,/dialog\.close\(\)/);
+  assert.match(enhancements,/dialog\.hidden = true/);
+});
+
+test("leaving patient record respects unfinished report and unrelated consents do not trigger false edits", () => {
+  assert.match(main,/if \(els\.reportDialog\?\.open && !closeReportEditor\(\{ force \}\)\) return false/);
+  assert.match(main,/#clinic-consent-grid,.clinic-goals-manager,.clinic-task-box,.clinic-scale-trends/);
+});
