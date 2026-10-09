@@ -6,13 +6,67 @@ import "./mood-tracker.css";
 type MoodEntry = { date: string; rating: number; energy: number; energy_scale?: 5 };
 const STORAGE_KEY = "wellness_mood_checkins_v1";
 const MOODS = [
-  { rating: 1, name: "Muy difícil", note: "Hoy pesa un poquito más", color: "#c8dcf4" },
-  { rating: 2, name: "Difícil", note: "Hay días que cuestan", color: "#e5cae8" },
-  { rating: 3, name: "Intermedio", note: "Un día con matices", color: "#f5dfb7" },
-  { rating: 4, name: "Agradable", note: "Hay espacio para respirar", color: "#caebde" },
-  { rating: 5, name: "Muy agradable", note: "Hoy te sientes bien", color: "#b5e3db" },
+  { rating: 1, name: "Muy mal", note: "Ahora mismo me encuentro muy mal", color: "#c8dcf4" },
+  { rating: 2, name: "Mal", note: "Ahora mismo no me encuentro bien", color: "#e5cae8" },
+  { rating: 3, name: "Regular", note: "Ni bien ni mal", color: "#f5dfb7" },
+  { rating: 4, name: "Bien", note: "Ahora mismo me encuentro bien", color: "#caebde" },
+  { rating: 5, name: "Muy bien", note: "Ahora mismo me encuentro muy bien", color: "#b5e3db" },
 ];
 const ENERGY = ["Muy baja", "Baja", "Media", "Alta", "Muy alta"];
+
+/**
+ * Five readable expressions instead of five almost identical colour dots.
+ * The numeric 1–5 scale and existing patient entries remain unchanged.
+ * Facial features, not colour alone, communicate the selected state.
+ */
+function MoodScaleFace({ rating }: { rating: number }) {
+  return (
+    <svg className="mood-scale-face" viewBox="0 0 64 64" aria-hidden="true" focusable="false">
+      <defs>
+        <radialGradient id={`mood-face-gradient-${rating}`} cx="30%" cy="24%" r="83%">
+          <stop offset="0%" stopColor="#fff7e5" />
+          <stop offset="59%" stopColor="#ffdbab" />
+          <stop offset="100%" stopColor="#e9b87c" />
+        </radialGradient>
+      </defs>
+      <circle cx="32" cy="31" r="27" fill={`url(#mood-face-gradient-${rating})`} stroke="#d5a56d" strokeWidth="1" />
+      <ellipse cx="25" cy="15" rx="16" ry="7" fill="#fff" opacity=".27" transform="rotate(-16 25 15)" />
+      <ellipse cx="18" cy="39" rx="8" ry="6" fill="#ed9a92" opacity=".27" />
+      <ellipse cx="46" cy="39" rx="8" ry="6" fill="#ed9a92" opacity=".27" />
+      {rating === 5 ? (
+        <>
+          <path d="M16 27 Q23 19 29 27 M35 27 Q42 19 49 27" fill="none" stroke="#58434e" strokeWidth="3.5" strokeLinecap="round" />
+          <path d="M17 37 Q32 58 47 37" fill="#ac5a6d" stroke="#804955" strokeWidth="2.5" strokeLinecap="round" />
+          <path d="M23 43 Q32 49 41 43" fill="none" stroke="#fff6e5" strokeWidth="2.1" strokeLinecap="round" />
+        </>
+      ) : (
+        <>
+          <ellipse cx="23" cy="29" rx={rating === 1 ? 3.9 : 3.5} ry={rating <= 2 ? 5.2 : 4.3} fill="#55434c" />
+          <ellipse cx="41" cy="29" rx={rating === 1 ? 3.9 : 3.5} ry={rating <= 2 ? 5.2 : 4.3} fill="#55434c" />
+          <circle cx="21.8" cy="27.6" r="1.3" fill="#fff" />
+          <circle cx="39.8" cy="27.6" r="1.3" fill="#fff" />
+        </>
+      )}
+      {rating === 1 && <>
+        <path d="M15 19 Q20 13 27 18 M37 18 Q44 13 49 19" stroke="#75535d" strokeWidth="2.5" fill="none" strokeLinecap="round" />
+        <path d="M22 49 Q32 35 42 49" stroke="#8d5365" strokeWidth="3.4" fill="none" strokeLinecap="round" />
+        <path d="M46 34 Q53 41 47 46 Q42 42 46 34" fill="#a3d5e6" stroke="#6ba9c4" strokeWidth="1" />
+      </>}
+      {rating === 2 && <>
+        <path d="M15 21 L27 19 M37 19 L49 21" stroke="#75535d" strokeWidth="2.6" fill="none" strokeLinecap="round" />
+        <path d="M23 45 Q32 38 41 45" stroke="#8d5365" strokeWidth="3.2" fill="none" strokeLinecap="round" />
+      </>}
+      {rating === 3 && <>
+        <path d="M17 21 L27 21 M37 21 L47 21" stroke="#75535d" strokeWidth="2.3" fill="none" strokeLinecap="round" />
+        <path d="M23 44 L41 44" stroke="#8d5365" strokeWidth="3.3" fill="none" strokeLinecap="round" />
+      </>}
+      {rating === 4 && <>
+        <path d="M17 20 Q23 17 28 21 M36 21 Q42 17 47 20" stroke="#75535d" strokeWidth="2.2" fill="none" strokeLinecap="round" />
+        <path d="M21 40 Q32 51 43 40" stroke="#8d5365" strokeWidth="3.2" fill="none" strokeLinecap="round" />
+      </>}
+    </svg>
+  );
+}
 
 function keyForDate(day: Date) {
   return `${day.getFullYear()}-${String(day.getMonth() + 1).padStart(2, "0")}-${String(day.getDate()).padStart(2, "0")}`;
@@ -250,7 +304,7 @@ export default function MoodTracker() {
         <div>
           <p className="space-eyebrow">Tu momento</p>
           <h3 id="mood-tracker-title">¿Cómo te sientes hoy?</h3>
-          <p>No hay una respuesta correcta. Puedes sentir varias cosas a la vez; elige la opción que mejor resuma este momento.</p>
+          <p>No hay respuestas correctas ni incorrectas. Elige la cara que más se parece a cómo te encuentras ahora mismo.</p>
         </div>
         <span className="mood-tracker-private">Personal · Solo en este dispositivo</span>
       </div>
@@ -264,13 +318,17 @@ export default function MoodTracker() {
           </div>
         </div>
         <div className="mood-tracker-inputs">
-          <p className="mood-tracker-question">Elige cómo te encuentras</p>
-          <div className="mood-options" role="group" aria-label="Estado de ánimo">
+          <p className="mood-tracker-question">¿Cómo te encuentras emocionalmente?</p>
+          <div className="mood-options" role="group" aria-label="Selecciona cómo te encuentras emocionalmente">
             {MOODS.map(mood => (
-              <button key={mood.rating} type="button" className={selected === mood.rating ? "mood-option is-selected" : "mood-option"}
-                aria-pressed={selected === mood.rating} onClick={() => { setSelected(mood.rating); setMessage(""); }}>
-                <span className="mood-option-dot" style={{ backgroundColor: mood.color }} aria-hidden="true" />
+              <button key={mood.rating} type="button"
+                className={selected === mood.rating ? "mood-option is-selected" : "mood-option"}
+                aria-label={`Me siento ${mood.name.toLowerCase()}`}
+                aria-pressed={selected === mood.rating}
+                onClick={() => { setSelected(mood.rating); setMessage(""); }}>
+                <MoodScaleFace rating={mood.rating} />
                 <span>{mood.name}</span>
+                {selected === mood.rating && <span className="mood-option-check" aria-hidden="true">✓</span>}
               </button>
             ))}
           </div>
