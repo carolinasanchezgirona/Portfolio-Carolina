@@ -1439,28 +1439,115 @@
 
   function renderPreparation(patient) {
     els.preparation.replaceChildren();
-    const recent = patientSessions(patient.id).filter((item) => item.status === "approved").slice(0, 3);
+    const approved = patientSessions(patient.id).filter(item => item.status === "approved");
+    const last = approved[0] || null;
     const profile = clinicalProfile(patient);
-    const list = create("div", "clinic-preparation-grid");
-    const summary = create("article");
-    summary.append(create("strong", "", "Síntesis actual"), create("p", "", patient.clinical_summary || "Todavía no consta una síntesis clínica."));
-    const focus = create("article");
-    focus.append(create("strong", "", "Para hoy"), create("p", "", patient.next_session_focus || "No hay focos pendientes registrados."));
-    list.append(summary, focus);
-    if (profile.risk_safety) {
-      const risk = create("article", "clinic-full clinic-preparation-alert");
-      risk.append(create("strong", "", "Seguridad / seguimiento"), create("p", "", profile.risk_safety));
-      list.append(risk);
+    const goals = patientGoals(patient.id);
+    const assignments = patientExercises(patient.id);
+    const measurements = scaleMeasurements.filter(item => item.patient_id === patient.id)
+      .sort((a,b) => new Date(b.measured_at) - new Date(a.measured_at));
+    const openReports = clinicalReports.filter(item => item.patient_id === patient.id && item.status === "draft");
+    const now = new Date();
+    const upcoming = patientAppointments(patient.id)
+      .filter(item => new Date(item.starts_at) > now && !["cancelled","canceled","no_show"].includes(item.status))
+      .sort((a,b) => new Date(a.starts_at) - new Date(b.starts_at))[0] || null;
+    const pendingExercises = assignments.filter(item =>
+      ["prepared","sent","assigned"].includes(item.status) || item.patient_response_status === "shared"
+    );
+    const safeDate = input => {
+      const date = input ? new Date(input) : null;
+      return date && !Number.isNaN(date.getTime()) ? dateShort.format(date) : "Sin fecha registrada";
+    };
+    const list = create("div","clinic-preparation-grid clinic-preparation-unified");
+    const addCard = (title,entries,wide=false) => {
+      const card = create("article",wide ? "clinic-full clinic-preparation-detail" : "clinic-preparation-detail");
+      card.append(create("strong","",title));
+      for (const [label,value] of entries) {
+        if (value === null || value === undefined || value === "") continue;
+        const line = create("p","clinic-preparation-item");
+        if (label) line.append(create("span","clinic-preparation-label",label + ": "));
+        line.append(document.createTextNode(String(value)));
+        card.append(line);
+      }
+      list.append(card);
+      return card;
+    };
+    const addAction = (card,label,tab) => {
+      const button = create("button","clinic-secondary clinic-preparation-action",label);
+      button.type = "button";
+      button.addEventListener("click",() => window.ClinicPatientWorkspace?.activate(tab));
+      card.append(button);
+    };
+
+    const next = addCard("Próxima consulta",[
+      ["Fecha",upcoming ? safeDate(upcoming.starts_at) + " · " + timeFormat.format(new Date(upcoming.starts_at)) : "No consta una próxima cita propia"],
+      ["Situación",upcoming ? statusLabel(upcoming.status) : ""]
+    ]);
+    if(upcoming) {
+      const action = create("button","clinic-primary clinic-preparation-action","Abrir sesión");
+      action.type = "button";
+      action.addEventListener("click",() => openSession(patient,upcoming));
+      next.append(action);
     }
-    if (recent.length) {
-      const previous = create("article", "clinic-full");
-      previous.append(create("strong", "", "Últimas sesiones"));
-      recent.forEach((item) => {
-        previous.append(create("p", "", `${dateShort.format(new Date(item.session_date))}: ${item.evolution_note || item.intervention_note || "Registro aprobado"}`));
-      });
-      list.append(previous);
+    const focus = patient.next_session_focus || last?.next_session_note || "";
+    addCard("Pregunta clínica y foco de seguimiento",[
+      ["Foco documentado",focus || "No consta un foco específico registrado"],
+      ["Fuente",patient.next_session_focus ? "Ficha clínica" : last?.next_session_note ? "Última sesión aprobada" : ""]
+    ]);
+
+    const previous = addCard("Última sesión aprobada",last ? [
+      ["Fecha",safeDate(last.session_date)],
+      ["Evolución registrada",last.evolution_note || "Sin nota de evolución"],
+      ["Intervención",last.intervention_note || ""],
+      ["Respuesta",last.response_note || ""],
+      ["Acuerdos",last.agreements_note || ""],
+      ["Tarea prescrita",last.homework_note || ""]
+    ] : [["Situación","No constan sesiones clínicas aprobadas"]],true);
+    addAction(previous,"Consultar sesiones","sesiones");
+
+    const goalCard = addCard("Objetivos terapéuticos activos",goals.length ?
+      goals.slice(0,5).map(item => [
+        item.status === "review" ? "Por revisar" : "Activo",
+        item.title + (item.last_reviewed_at ? " · revisado " + safeDate(item.last_reviewed_at) : "")
+      ]) : [["Registro","No constan objetivos activos"]]);
+    addAction(goalCard,"Ver tratamiento","tratamiento");
+
+    const exerciseCard = addCard("Trabajo entre sesiones",[
+      ["Pendientes de envío, respuesta o revisión",String(pendingExercises.length)],
+      ...pendingExercises.slice(0,3).map(item => [
+        item.patient_response_status === "shared" ? "Respuesta compartida" : "Asignación",
+        (item.title || "Material") + (item.review_due_at ? " · revisión prevista " + safeDate(item.review_due_at) : "")
+      ])
+    ]);
+    addAction(exerciseCard,"Revisar ejercicios","tratamiento");
+
+    const lastMeasurement = measurements[0];
+    const scaleCard = addCard("Evaluación y medidas",lastMeasurement ? [
+      ["Último instrumento",lastMeasurement.instrument || "No identificado"],
+      ["Fecha",safeDate(lastMeasurement.measured_at)],
+      ["Puntuación registrada",lastMeasurement.total_score === null || lastMeasurement.total_score === undefined ? "Sin puntuación numérica" : String(lastMeasurement.total_score)],
+      ["Interpretación","La puntuación aislada no acredita mejoría ni empeoramiento."]
+    ] : [["Registro","No constan mediciones en la ficha"]]);
+    addAction(scaleCard,"Ver evaluación","evaluacion");
+
+    const docs = addCard("Documentación en curso",[
+      ["Informes pendientes de revisión",String(openReports.length)],
+      ["Síntesis clínica",patient.clinical_summary ? patient.clinical_summary : "No consta una síntesis clínica"]
+    ],true);
+    addAction(docs,"Ver informes","documentos");
+
+    if(profile.risk_safety) {
+      const safety = addCard("Seguridad y coordinación · registro existente",[
+        ["Información documentada",profile.risk_safety],
+        ["Nota","Revisar vigencia y contexto. Este panel no realiza una valoración automática del riesgo."]
+      ],true);
+      safety.classList.add("clinic-preparation-alert");
+      addAction(safety,"Abrir historia","historia");
     }
     els.preparation.append(list);
+    const attribution = create("p","clinic-preparation-footnote",
+      "Resumen descriptivo elaborado con los registros disponibles. No sustituye la valoración profesional ni presume que un dato anterior siga vigente.");
+    els.preparation.append(attribution);
   }
 
   function openSession(patient, appointment) {
