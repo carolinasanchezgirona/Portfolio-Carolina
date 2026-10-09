@@ -377,6 +377,7 @@
   let passwordTokenHash = "";
   let linkPurpose = "setup";
   const patientMaterials = document.getElementById("space-patient-materials");
+  const patientFiles = document.getElementById("space-shared-files");
 
   function loadJson(key, fallback) {
     try {
@@ -823,6 +824,66 @@
     return details;
   }
 
+  function patientFileKind(file) {
+    if (String(file.mime_type || "").startsWith("audio/")) return "Audio";
+    return ({
+      intervention_plan: "Plan de intervención",
+      information_notice: "Circular informativa",
+      external_report: "Informe",
+      referral: "Derivación",
+      consent: "Consentimiento",
+      test_result: "Resultado de prueba",
+      attendance: "Justificante"
+    })[file.category] || "Documento";
+  }
+
+  function createPatientFile(file) {
+    const card = document.createElement("article");
+    card.className = "space-patient-shared-file";
+    const title = document.createElement("h4");
+    title.textContent = String(file.title || "Archivo compartido");
+    const label = document.createElement("p");
+    label.className = "space-patient-shared-file-kind";
+    label.textContent = patientFileKind(file);
+    card.append(label, title);
+    if (file.patient_note) {
+      const note = document.createElement("p");
+      note.textContent = String(file.patient_note);
+      card.append(note);
+    }
+
+    const id = String(file.id || "");
+    const url = "/api/patient-portal/file?id=" + encodeURIComponent(id);
+    const mime = String(file.mime_type || "");
+    if (mime.startsWith("audio/")) {
+      const audio = document.createElement("audio");
+      audio.controls = true;
+      audio.preload = "none";
+      audio.src = url;
+      audio.setAttribute("aria-label", "Escuchar " + title.textContent);
+      card.append(audio);
+    }
+
+    const actions = document.createElement("div");
+    actions.className = "space-patient-shared-actions";
+    if (mime === "application/pdf" || mime.startsWith("image/")) {
+      const view = document.createElement("a");
+      view.className = "space-secondary";
+      view.href = url;
+      view.target = "_blank";
+      view.rel = "noopener noreferrer";
+      view.textContent = "Ver archivo";
+      actions.append(view);
+    }
+    const download = document.createElement("a");
+    download.className = "space-secondary";
+    download.href = url + "&download=1";
+    download.textContent = "↓ Descargar";
+    actions.append(download);
+    card.append(actions);
+    return card;
+  }
+
   function renderPatientPortal(data) {
     state.portalData = data;
     state.portalAuthenticated = true;
@@ -842,15 +903,29 @@
       : "Cuando haya una nueva cita vinculada a tu ficha aparecerá aquí.";
 
     const materials = Array.isArray(data?.materials) ? data.materials : [];
+    const files = Array.isArray(data?.files) ? data.files : [];
+    const fileCount = document.getElementById("space-shared-file-count");
+    if (fileCount) fileCount.textContent = files.length === 1 ? "1 archivo" : files.length + " archivos";
+    if (patientFiles) {
+      patientFiles.replaceChildren();
+      if (!files.length) {
+        const empty = document.createElement("div");
+        empty.className = "space-empty";
+        empty.textContent = "Todavía no tienes documentos ni audios compartidos contigo.";
+        patientFiles.append(empty);
+      } else {
+        files.forEach(file => patientFiles.append(createPatientFile(file)));
+      }
+    }
     const count = document.getElementById("space-material-count");
     if (count) count.textContent = materials.length === 1 ? "1 material disponible" : `${materials.length} materiales disponibles`;
     const quickCount = document.getElementById("space-quick-material-count");
     if (quickCount) quickCount.textContent = materials.length
       ? `Tienes ${materials.length} ${materials.length === 1 ? "material disponible" : "materiales disponibles"} para trabajar.`
-      : "Aquí encontrarás los ejercicios que Carolina comparta contigo.";
+      : (files.length ? `También tienes ${files.length} archivo(s) compartido(s) en Mi espacio.` : "Aquí encontrarás los ejercicios que Carolina comparta contigo.");
     const therapyStatus = document.getElementById("space-therapy-status");
-    if (therapyStatus) therapyStatus.textContent = materials.length
-      ? "Tienes material disponible para trabajar entre sesiones."
+    if (therapyStatus) therapyStatus.textContent = materials.length || files.length
+      ? "Tienes ejercicios o archivos disponibles para consultar entre sesiones."
       : "No tienes material pendiente en este momento.";
 
     if (patientMaterials) {
