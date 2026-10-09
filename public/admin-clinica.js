@@ -1001,11 +1001,11 @@
     const active = els.reportType.value === "evolution_health";
     const panel = document.querySelector("#clinic-health-report-sections");
     if (panel) { panel.hidden = true; panel.style.display = "none"; }
-    if (els.reportContext?.closest("#clinic-report-sheet")) els.reportContext.closest("#clinic-report-sheet").hidden = active;
+    if (els.reportContext?.closest("#clinic-report-sheet")) { const sheet = els.reportContext.closest("#clinic-report-sheet"); sheet.hidden = active; sheet.style.display = active ? "none" : ""; }
     if (els.generateReport) els.generateReport.textContent = active ? "Generar y descargar Word" : "Autogenerar borrador";
-    if (els.printReport) els.printReport.hidden = active;
-    if (els.saveReport) els.saveReport.hidden = active;
-    if (els.approveReport) els.approveReport.hidden = active;
+    if (els.printReport) { els.printReport.hidden = active; els.printReport.style.display = active ? "none" : ""; }
+    if (els.saveReport) { els.saveReport.hidden = active; els.saveReport.style.display = active ? "none" : ""; }
+    if (els.approveReport) { els.approveReport.hidden = active; els.approveReport.style.display = active ? "none" : ""; }
     const label = document.querySelector("#clinic-report-current")?.closest("label");
     if (label) label.firstChild.textContent = active ? "Estado actual y objetivos pendientes" : "Situación actual y recomendaciones";
     return active;
