@@ -181,7 +181,7 @@
     if (body.user?.id !== ALLOWED_USER_ID) throw new Error("Esta cuenta no tiene acceso al área clínica.");
     saveSession(body);
   }
-  function showLogin() { window.location.replace("/admin/clinica/acceso/"); }
+  function showLogin() { window.location.replace("/admin/clinica/acceso/?next=%2Fadmin%2Fclinica%2F%3Fpanel%3D1"); }
   function showApp() { if (els.app) els.app.hidden = false; }
 
   function sessionFormSnapshot() {
@@ -2288,7 +2288,7 @@
     if (name === "patients") els.patientSearch.focus();
   }
 
-  els.logout.addEventListener("click", () => { saveSession(null); window.location.assign("/admin/clinica/acceso/"); });
+  els.logout.addEventListener("click", () => { saveSession(null); window.location.assign("/admin/clinica/acceso/?next=%2Fadmin%2Fclinica%2F%3Fpanel%3D1"); });
   els.refresh.addEventListener("click", () => loadData().catch((error) => setMessage(error.message)));
   els.viewToday.addEventListener("click", () => setView("today"));
   els.viewPatients.addEventListener("click", () => setView("patients"));
@@ -2697,7 +2697,7 @@
     const panelMode = new URL(window.location.href).searchParams.get("panel") === "1";
     if (!user) {
       saveSession(null);
-      window.location.replace("/admin/clinica/acceso/");
+      window.location.replace("/admin/clinica/acceso/?next=%2Fadmin%2Fclinica%2F%3Fpanel%3D1");
       return;
     }
     if (!panelMode) {
