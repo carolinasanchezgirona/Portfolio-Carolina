@@ -1,6 +1,8 @@
+import { dailyTest } from "./daily-test";
 import { containsDirectPatientIdentifiers, CLINICAL_IDENTIFIERS_ERROR } from "./clinical-privacy";
 
 interface Env {
+  DAILY_API_KEY?: string;
   STRIPE_WEBHOOK_SECRET: string;
   STRIPE_WEBHOOK_SECRET_TEST?: string;
   STRIPE_SECRET_KEY?: string;
@@ -1713,6 +1715,18 @@ async function clinicalMaterialEnrichRequest(request: Request, env: Env): Promis
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
     const url = new URL(request.url);
+
+    if (url.pathname === "/api/video/test") return dailyTest(request, env, verifyEditorialOwner);
+    if (["/admin/videoconsulta/prueba", "/admin/videoconsulta/prueba/"].includes(url.pathname)) {
+      const assetUrl = new URL("/video-test.html", request.url);
+      const asset = await env.ASSETS.fetch(new Request(assetUrl, request));
+      const headers = new Headers(asset.headers);
+      headers.set("Permissions-Policy", 'camera=(self "https://carolinasanchezgirona.daily.co"), microphone=(self "https://carolinasanchezgirona.daily.co"), geolocation=()');
+      headers.set("Cache-Control", "private, no-store");
+      headers.set("X-Robots-Tag", "noindex, nofollow, noarchive");
+      headers.set("Referrer-Policy", "no-referrer");
+      return new Response(asset.body, {status: asset.status, headers});
+    }
 
     if (
       url.pathname === "/api/stripe/webhook" ||
