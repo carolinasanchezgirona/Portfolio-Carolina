@@ -1,6 +1,7 @@
 import Script from "next/script";
 import type { Metadata } from "next";
 import "./admin.css";
+import AdminWorkspaceNav from "../workspace-nav";
 
 export const metadata: Metadata = {
   title: "Mi agenda | Carolina Sánchez",
@@ -38,22 +39,22 @@ export default function AdminAgendaPage() {
       <section id="admin-app" className="admin-app" hidden>
         <header className="admin-topbar">
           <div>
-            <p className="admin-eyebrow">Administración</p>
-            <h1>Agenda de pacientes</h1>
+            <p className="admin-eyebrow">Dememoria · Área profesional</p>
+            <h1>Agenda</h1>
           </div>
-          <div className="admin-top-actions">
-            <a className="admin-secondary" href="/admin/clinica/?panel=1">Historiales</a>
-            <a id="admin-articles-link" className="admin-secondary" href="/admin/articulos/">Artículos</a>
-            <a className="admin-secondary" href="/admin/preguntas/">Preguntas</a>
-            <a className="admin-secondary" href="/admin/recursos/">Recursos</a>
-            <button id="admin-new" className="admin-primary" type="button">Nueva cita</button>
-            <button id="admin-block" className="admin-secondary" type="button">Bloquear horario</button>
-            <button id="pwa-install" className="admin-secondary" type="button" hidden>Instalar app</button>
-            <button id="admin-print" className="admin-secondary" type="button">Imprimir semana</button>
-            <button id="admin-access" className="admin-secondary" type="button">Acceso</button>
-            <button id="admin-logout" className="admin-text" type="button">Cerrar sesión</button>
-          </div>
+          <details className="admin-agenda-tools">
+            <summary>Acciones de agenda</summary>
+            <div className="admin-agenda-tool-list">
+              <button id="admin-new" className="admin-primary" type="button">Nueva cita</button>
+              <button id="admin-block" className="admin-secondary" type="button">Bloquear horario</button>
+              <button id="admin-print" className="admin-secondary" type="button">Imprimir semana</button>
+              <button id="pwa-install" className="admin-secondary" type="button" hidden>Instalar app</button>
+              <button id="admin-access" className="admin-secondary" type="button">Acceso y contraseña</button>
+              <button id="admin-logout" className="admin-text" type="button">Cerrar sesión</button>
+            </div>
+          </details>
         </header>
+        <AdminWorkspaceNav active="agenda" />
 
         <p id="pwa-install-hint" className="admin-muted" hidden />
 
@@ -61,7 +62,7 @@ export default function AdminAgendaPage() {
           <button id="view-today" className="active" type="button">Hoy</button>
           <button id="view-tomorrow" type="button">Mañana</button>
           <button id="view-week" type="button">Semana</button>
-          <button id="view-patients" type="button">Pacientes</button>
+          <button id="view-patients" type="button">Por paciente</button>
         </nav>
 
         <section id="today-view" className="admin-view">
