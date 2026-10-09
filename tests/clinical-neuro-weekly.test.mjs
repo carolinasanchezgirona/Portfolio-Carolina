@@ -57,7 +57,7 @@ test("El lector y el PDF respetan jerarquía, márgenes y separación semanal",(
   assert.match(viewer,/class=\\"exercise-card/);
   assert.match(viewer,/exercise-stack\{display:grid;gap:28px/);
   assert.match(viewer,/drawWeeklyNeuroInstructions/);
-  assert.match(viewer,/marginX = isNeuro \? 67 : 58/);
+  assert.match(viewer,/marginX = isNeuro \? 67 : 61/);
   assert.match(viewer,/ensureSpace\(Math\.max\(118, cardTop \+ 67\)\)/);
   assert.match(viewer,/drawWorkArea\(isNeuro \? 10 : 7\)/);
 });
