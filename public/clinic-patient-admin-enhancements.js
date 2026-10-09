@@ -180,10 +180,10 @@
 
   let lastId="";
   async function refreshEnhancements() {
-    const id=patientId(); if(!dialog.open||!id||id===lastId) return; lastId=id;
+    const id=patientId(); if(!!dialog.hidden||!id||id===lastId) return; lastId=id;
     setMessage("");
     await Promise.allSettled([loadDuplicates(),loadConsents(),loadAudit()]);
   }
-  const observer=new MutationObserver(()=>{if(dialog.open){lastId="";setTimeout(refreshEnhancements,60);}else{lastId="";duplicatePanel.hidden=true;}});
-  observer.observe(dialog,{attributes:true,attributeFilter:["open"]});
+  const observer=new MutationObserver(()=>{if(!dialog.hidden){lastId="";setTimeout(refreshEnhancements,60);}else{lastId="";duplicatePanel.hidden=true;}});
+  observer.observe(dialog,{attributes:true,attributeFilter:["hidden"]});
 })();
