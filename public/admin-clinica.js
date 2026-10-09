@@ -1000,7 +1000,12 @@
   function healthReportSelected() {
     const active = els.reportType.value === "evolution_health";
     const panel = document.querySelector("#clinic-health-report-sections");
-    if (panel) { panel.hidden = !active; panel.style.display = active ? "grid" : "none"; }
+    if (panel) { panel.hidden = true; panel.style.display = "none"; }
+    if (els.reportContext?.closest("#clinic-report-sheet")) els.reportContext.closest("#clinic-report-sheet").hidden = active;
+    if (els.generateReport) els.generateReport.textContent = active ? "Generar y descargar Word" : "Autogenerar borrador";
+    if (els.printReport) els.printReport.hidden = active;
+    if (els.saveReport) els.saveReport.hidden = active;
+    if (els.approveReport) els.approveReport.hidden = active;
     const label = document.querySelector("#clinic-report-current")?.closest("label");
     if (label) label.firstChild.textContent = active ? "Estado actual y objetivos pendientes" : "Situación actual y recomendaciones";
     return active;
@@ -1068,6 +1073,26 @@
       els.reportRecipient.value ||= "Profesional sanitario";
     }
     els.reportMessage.textContent = `Borrador generado a partir de ${sessions.length} sesión(es) aprobada(s) y de la ficha clínica estructurada. Revísalo antes de aprobar.`;
+  }
+  function downloadHealthReportWord() {
+    if (!currentPatient || !window.ClinicWordExport?.download) throw new Error("No se ha cargado el generador de Word. Actualiza la página y vuelve a intentarlo.");
+    const h = healthReportInputs();
+    if (!els.reportPurpose.value.trim()) throw new Error("Indica la finalidad clínica del informe antes de descargarlo.");
+    if (!els.reportStart.value || !els.reportEnd.value || els.reportStart.value > els.reportEnd.value) throw new Error("Selecciona un periodo de seguimiento válido.");
+    const sections = {
+      context: els.reportContext.value, interventions: els.reportInterventions.value,
+      ...Object.fromEntries(healthReportFields.map(([key]) => [key, h[key].value])),
+    };
+    const fullEvolution = els.reportEvolution.value.trim();
+    if (fullEvolution) sections.interventions = [sections.interventions, "Evolución cronológica documentada:\\n" + fullEvolution].filter(Boolean).join("\\n\\n");
+    window.ClinicWordExport.download({
+      identity: { name: currentPatient.full_name, code: currentPatient.public_code, birth: currentPatient.birth_date || "" },
+      period: els.reportStart.value + " a " + els.reportEnd.value,
+      purpose: els.reportPurpose.value.trim(), recipient: els.reportRecipient.value.trim() || "Profesional sanitario",
+      professional: "Carolina Sánchez Girona · Psicóloga General Sanitaria y Neuropsicóloga",
+      license: "", sections
+    });
+    els.reportMessage.textContent = "Archivo Word descargado como BORRADOR. Modifica los apartados clínicos en Word. Los cambios realizados fuera de Gestión Clínica no se sincronizan con la historia.";
   }
   function reportPayload(status) {
     const sessions = approvedSessionsInPeriod(currentPatient.id);
@@ -1883,7 +1908,7 @@
   els.newReport.addEventListener("click", () => openReport());
   els.reportClose.addEventListener("click", () => els.reportDialog.close());
   els.reportType.addEventListener("change", () => { els.reportTitlePreview.textContent = reportTypeLabel(els.reportType.value); healthReportInputs(); healthReportSelected(); });
-  els.generateReport.addEventListener("click", generateReportDraft);
+  els.generateReport.addEventListener("click", () => { try { generateReportDraft(); if (healthReportSelected()) downloadHealthReportWord(); } catch (error) { els.reportMessage.textContent = error.message; } });
   els.saveReport.addEventListener("click", () => persistReport("draft").catch((error) => { els.reportMessage.textContent = error.message; }));
   els.approveReport.addEventListener("click", () => persistReport("approved").catch((error) => { els.reportMessage.textContent = error.message; }));
   els.printReport.addEventListener("click", () => { try { printCurrentReport(); } catch (error) { els.reportMessage.textContent = error.message; } });
