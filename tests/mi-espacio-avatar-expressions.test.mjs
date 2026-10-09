@@ -14,11 +14,11 @@ test("five emotion states pick five complete images, not facial overlays", () =>
   assert.match(source, /backgroundSize: "500% 800%"/);
   assert.match(source, /\(displayedMood - 1\) \* 25/);
   assert.match(source, /\(portraitRow \/ 7\) \* 100/);
-  assert.match(source, /<MoodFriend mood={selected \|\| 3} avatarId={avatar}/);
+  assert.ok(source.includes("<MoodFriend mood={selected || 3} avatarId={avatar}"), "Main character uses selected mood");
   assert.doesNotMatch(source, /CompanionExpression|FACE_LANDMARKS|mood-expression-layer/);
 });
 test("initial character and settings use the same identity as mood check-in", () => {
   assert.match(source, /portraitOnly \? 3/);
-  assert.match(source, /<MoodFriend mood={4} avatarId={avatar.id} portraitOnly/);
+  assert.ok(source.includes("<MoodFriend mood={4} avatarId={avatar.id} portraitOnly"), "Choice preview uses same character");
   assert.match(source, /async function saveAvatar/);
 });
