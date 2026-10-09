@@ -40,7 +40,7 @@ function validEndpoint(endpoint: unknown): endpoint is string {
     ].includes(hostname) || (hostname.endsWith(".push.apple.com") && hostname.length < 100);
   } catch { return false; }
 }
-function svcHeaders(env: AdminPushEnv, extra: Record<string, string> = {}): HeadersInit {
+function svcHeaders(env: AdminPushEnv, extra: Record<string, string> = {}): Record<string,string> {
   return {
     apikey: env.SUPABASE_SERVICE_ROLE_KEY || "",
     Authorization: "Bearer " + (env.SUPABASE_SERVICE_ROLE_KEY || ""),
@@ -118,7 +118,7 @@ export async function adminPushRequest(
   if (action === "subscribe") {
     const r = await db(env, "admin_push_subscriptions?on_conflict=endpoint", {
       method: "POST", headers: {Prefer:"resolution=merge-duplicates,return=minimal"},
-      body: JSON.stringify({owner_id:OWNER_ID,endpoint,disabled_at:null}),
+      body: JSON.stringify({owner_id:OWNER_ID,endpoint,disabled_at:null,created_at:new Date().toISOString()}),
     });
     if (!r.ok) return json({error:"No se ha podido guardar el dispositivo."},502);
     return json({ok:true});
