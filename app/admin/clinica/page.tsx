@@ -433,6 +433,7 @@ export default function AdminClinicaPage() {
             </div>
             <label>Introducción breve<textarea id="clinic-exercise-introduction" rows={2} required /></label>
             <label>Por qué hacemos este ejercicio<textarea id="clinic-exercise-why" rows={4} required /></label>
+            <p>Material para dos semanas: psicoeducación, 3–5 ejercicios progresivos, esquemas explicativos y dudas para consulta. Revisa y adapta la propuesta antes de enviarla.</p>
             <label>Cómo hacerlo / contenido<textarea id="clinic-exercise-content" rows={10} required /></label>
             <details className="clinic-material-details">
               <summary>Completar objetivo, ejemplo, registro, seguridad y cierre</summary>
@@ -446,7 +447,7 @@ export default function AdminClinicaPage() {
               </div>
             </details>
           </section>
-          <label>Motivo clínico de la sugerencia <span>(solo profesional, no se envía)</span><textarea id="clinic-exercise-rationale" rows={2} /></label>
+          <label>Contexto para personalizar <span>(sin nombres ni datos identificativos; solo profesional, no se envía al paciente)</span><textarea id="clinic-exercise-rationale" rows={2} /></label>
           <label>Correo destinatario<input id="clinic-exercise-email" type="email" required /></label>
           <p className="clinic-note">El correo será neutro. El paciente podrá leer el material online y descargar un PDF profesional. El enlace personal caduca en 7 días.</p>
           <p id="clinic-exercise-message" className="clinic-message" role="status" />

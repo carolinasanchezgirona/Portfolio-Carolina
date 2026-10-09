@@ -1882,6 +1882,7 @@
         },
         body: JSON.stringify({
           query,
+          case_context: els.exerciseRationale.value.trim(),
           preferred_type: els.materialType?.value || "",
           preferred_process: els.materialProcess?.value || "",
           catalog
@@ -1951,7 +1952,7 @@
     }
 
     const existing = exerciseTemplates.find((item) => item.id === els.exerciseTemplateId.value) || null;
-    els.exerciseMessage.textContent = "Completando ejemplo y ficha para paciente…";
+    els.exerciseMessage.textContent = "Preparando cuaderno personalizado para dos semanas…";
     els.materialAiEnrich.disabled = true;
     try {
       const response = await fetch("/api/clinical/material-enrich", {
@@ -1962,6 +1963,7 @@
         },
         body: JSON.stringify({
           title,
+          case_context: els.exerciseRationale.value.trim(),
           material_type: els.materialType?.value || existing?.material_type || "exercise",
           summary: existing?.summary || pendingAiMaterial?.summary || els.exerciseObjective.value.trim(),
           process_tags: els.materialProcess?.value ? [els.materialProcess.value] : (existing?.process_tags || []),

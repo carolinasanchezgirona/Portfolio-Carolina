@@ -1436,6 +1436,25 @@ async function clinicalDiagnosticSuggestionRequest(request: Request, env: Env): 
   }
 }
 
+const TWO_WEEK_MATERIAL_GUIDELINES = [
+  "Cada material es un cuaderno personalizado para DOS SEMANAS, aunque su tipo sea psicoeducación. Incluye psicoeducación y entre 3 y 5 ejercicios complementarios, nunca solo un ejercicio.",
+  "Personaliza objetivos, ejemplos, lenguaje y carga a la información aportada, sin inventar historia, hechos, diagnósticos ni necesidades. Si no hay contexto suficiente, ofrece una propuesta adaptable y señala qué debe concretar la profesional.",
+  "why contiene psicoeducación sustancial y accesible sobre el proceso, distinguiendo hipótesis de hechos. No uses explicaciones causales no exploradas.",
+  "instructions contiene dos apartados titulados Semana 1 y Semana 2 y de 3 a 5 ejercicios numerados en total, cada título en una línea nueva con formato Ejercicio 1: título. Cada ejercicio incluye objetivo, pasos concretos, ejemplo contextualizado, duración, frecuencia, prioridad (principal u opcional), adaptación si cuesta y preguntas para responder. Distribuye comprensión y observación en semana 1, práctica y aplicación en semana 2. No exijas hacer todo ni práctica diaria por defecto.",
+  "frequency resume el plan de 14 días, progresivo y flexible. duration_minutes es el tiempo de una práctica, no el total de las dos semanas.",
+  "example incluye 1 o 2 imágenes explicativas codificadas como líneas de texto con formato exacto Esquema: etiqueta breve → etiqueta breve → etiqueta breve, con 3 a 5 pasos y hasta 45 caracteres por etiqueta. Esquemas específicos del proceso trabajado, no decorativos. Añade debajo una explicación de su relación con el caso y un ejemplo concreto. La interfaz transforma esas líneas en imágenes accesibles. No produzcas HTML, SVG, enlaces de imágenes ni diagramas ASCII.",
+  "record_prompt incluye espacios/preguntas para cada ejercicio y un apartado explícito Dudas para comentar en consulta: qué no entiendo, qué me cuesta o genera malestar, qué ocurrió que no esperaba y qué necesito revisar. remember incluye una revisión al final de las dos semanas: aprendizajes, obstáculos y siguiente paso.",
+  "session_questions contiene preguntas de revisión y al menos una sobre dudas. El material se entrega solo tras revisión profesional. No reveles el motivo clínico interno ni datos identificativos."
+].join("\n");
+
+function completeTwoWeekMaterial(doc: { instructions: string; example: string; record_prompt: string; frequency: string }): boolean {
+  const exercises = doc.instructions.match(/(?:^|\n)\s*(?:#{1,4}\s*|\*\*)?(?:Ejercicio\s+\d+|\d+[.)]\s+Ejercicio)/gi) || [];
+  return /semana\s*1/i.test(doc.instructions) && /semana\s*2/i.test(doc.instructions)
+    && exercises.length >= 3 && exercises.length <= 5
+    && /(?:^|\n)\s*Esquema:.*→.*→/m.test(doc.example)
+    && /dudas/i.test(doc.record_prompt) && Boolean(doc.frequency);
+}
+
 async function clinicalMaterialDraftRequest(request: Request, env: Env): Promise<Response> {
   if (request.method !== "POST") return editorialJson({ error: "Método no permitido." }, 405);
   if (!await verifyEditorialOwner(request)) return editorialJson({ error: "Sesión no autorizada." }, 401);
@@ -1446,7 +1465,9 @@ async function clinicalMaterialDraftRequest(request: Request, env: Env): Promise
   try { data = await request.json() as Record<string, unknown>; }
   catch { return editorialJson({ error: "Solicitud no válida." }, 400); }
 
-  const query = editorialText(data.query, 300);
+  const query = editorialText(data.query, 2000);
+  const caseContext = editorialText(data.case_context, 4000);
+  if (containsDirectPatientIdentifiers(caseContext)) return editorialJson({ error: CLINICAL_IDENTIFIERS_ERROR }, 422);
   const preferredType = data.preferred_type === "psychoeducation" ? "psychoeducation" : data.preferred_type === "exercise" ? "exercise" : "";
   const preferredProcess = editorialText(data.preferred_process, 120);
   const rawCatalog = Array.isArray(data.catalog) ? data.catalog.slice(0, 500) : [];
@@ -1472,6 +1493,7 @@ async function clinicalMaterialDraftRequest(request: Request, env: Env): Promise
     "Eres un asistente de biblioteca clínica para una psicóloga sanitaria y neuropsicóloga en España.",
     "Debes decidir si la petición del profesional ya está cubierta por un material conceptualmente equivalente de la biblioteca existente.",
     "No consideres duplicado solo por compartir palabras: debe cubrir sustancialmente el mismo objetivo clínico y uso.",
+    "La biblioteca enviada contiene solo metadatos; no permite verificar el cuaderno completo. En esta petición devuelve siempre una versión nueva personalizada, aunque exista una ficha básica equivalente.",
     "Si ya existe, devuelve status='existing' y el id exacto del material más equivalente.",
     "Si falta, crea UN material nuevo, listo para que la profesional lo revise antes de incorporarlo.",
     "El contenido debe ser clínicamente prudente, claro, útil para paciente y no diagnosticar por sí solo.",
@@ -1481,6 +1503,7 @@ async function clinicalMaterialDraftRequest(request: Request, env: Env): Promise
     "En adicciones no indiques retirada brusca de sustancias con posible dependencia física.",
     "En alimentación evita restricciones, conteos o instrucciones que puedan reforzar un TCA.",
     "En TEA usa un enfoque neuroafirmativo y evita normalización forzada o entrenamiento de enmascaramiento.",
+    TWO_WEEK_MATERIAL_GUIDELINES,
     "Devuelve SOLO JSON válido.",
     "Si existe: {status:'existing',existing_id:string,reason:string}.",
     "Si falta: {status:'new',reason:string,material:{title:string,summary:string,instructions:string,process_tags:string[],material_type:'exercise'|'psychoeducation',phase:string,duration_minutes:number|null,burden:'low'|'medium'|'high',objectives:string[],cautions:string[],sequence_rank:number,patient_document:{duration_minutes:number|null,frequency:string,introduction:string,why:string,objective:string,instructions:string,example:string,record_prompt:string,safety_note:string,remember:string,session_questions:string[]}}}.",
@@ -1505,6 +1528,7 @@ async function clinicalMaterialDraftRequest(request: Request, env: Env): Promise
           { role: "system", content: system },
           { role: "user", content: JSON.stringify({
             peticion: query,
+            contexto_desidentificado: caseContext || null,
             tipo_preferido: preferredType || null,
             proceso_preferido: preferredProcess || null,
             biblioteca: catalog
@@ -1521,14 +1545,7 @@ async function clinicalMaterialDraftRequest(request: Request, env: Env): Promise
 
     const raw = JSON.parse(result.choices[0].message.content) as Record<string, unknown>;
     if (raw.status === "existing") {
-      const existingId = editorialText(raw.existing_id, 80);
-      if (catalog.some((item) => item.id === existingId)) {
-        return editorialJson({
-          status: "existing",
-          existing_id: existingId,
-          reason: editorialText(raw.reason, 700)
-        });
-      }
+      return editorialJson({ error: "La IA ha propuesto una ficha existente sin adaptarla a dos semanas. Vuelve a generar el cuaderno personalizado." }, 502);
     }
 
     const materialRaw = raw.material && typeof raw.material === "object" && !Array.isArray(raw.material)
@@ -1543,7 +1560,7 @@ async function clinicalMaterialDraftRequest(request: Request, env: Env): Promise
     const patientDocumentRaw = materialRaw.patient_document && typeof materialRaw.patient_document === "object" && !Array.isArray(materialRaw.patient_document)
       ? materialRaw.patient_document as Record<string, unknown>
       : {};
-    const patientInstructions = editorialText(patientDocumentRaw.instructions, 7000) || editorialText(materialRaw.instructions, 7000);
+    const patientInstructions = editorialText(patientDocumentRaw.instructions, 18000) || editorialText(materialRaw.instructions, 18000);
     const patientDurationValue = Number(patientDocumentRaw.duration_minutes);
     const patientDocument = {
       version: 1,
@@ -1553,11 +1570,11 @@ async function clinicalMaterialDraftRequest(request: Request, env: Env): Promise
         : Number.isFinite(durationValue) && durationValue > 0 && durationValue <= 180 ? Math.round(durationValue) : null,
       frequency: editorialText(patientDocumentRaw.frequency, 500),
       introduction: editorialText(patientDocumentRaw.introduction, 1200),
-      why: editorialText(patientDocumentRaw.why, 2200),
+      why: editorialText(patientDocumentRaw.why, 5000),
       objective: editorialText(patientDocumentRaw.objective, 900),
       instructions: patientInstructions,
-      example: editorialText(patientDocumentRaw.example, 1800),
-      record_prompt: editorialText(patientDocumentRaw.record_prompt, 1800),
+      example: editorialText(patientDocumentRaw.example, 4000),
+      record_prompt: editorialText(patientDocumentRaw.record_prompt, 4000),
       safety_note: editorialText(patientDocumentRaw.safety_note, 1200),
       remember: editorialText(patientDocumentRaw.remember, 1400),
       session_questions: Array.isArray(patientDocumentRaw.session_questions)
@@ -1587,6 +1604,7 @@ async function clinicalMaterialDraftRequest(request: Request, env: Env): Promise
     };
 
     if (!material.instructions || !patientDocument.introduction || !patientDocument.why) return editorialJson({ error: "La IA no ha generado un documento para paciente suficientemente completo para revisar." }, 502);
+    if (!completeTwoWeekMaterial(patientDocument)) return editorialJson({ error: "El borrador no incluye todas las pautas (dos semanas, 3–5 ejercicios, esquema y dudas). Vuelve a generarlo antes de enviarlo." }, 502);
     return editorialJson({ status: "new", reason: editorialText(raw.reason, 700), material });
   } catch (error) {
     console.error("Clinical material request failed", error instanceof Error ? error.name : "Unknown");
@@ -1605,6 +1623,8 @@ async function clinicalMaterialEnrichRequest(request: Request, env: Env): Promis
   try { data = await request.json() as Record<string, unknown>; }
   catch { return editorialJson({ error: "Solicitud no válida." }, 400); }
 
+  const caseContext = editorialText(data.case_context, 4000);
+  if (containsDirectPatientIdentifiers(caseContext)) return editorialJson({ error: CLINICAL_IDENTIFIERS_ERROR }, 422);
   const title = editorialText(data.title, 220);
   const materialType = data.material_type === "psychoeducation" ? "psychoeducation" : "exercise";
   const summary = editorialText(data.summary, 900);
@@ -1621,11 +1641,11 @@ async function clinicalMaterialEnrichRequest(request: Request, env: Env): Promis
     duration_minutes: Number(currentRaw.duration_minutes) || null,
     frequency: editorialText(currentRaw.frequency, 500),
     introduction: editorialText(currentRaw.introduction, 1200),
-    why: editorialText(currentRaw.why, 2200),
+    why: editorialText(currentRaw.why, 5000),
     objective: editorialText(currentRaw.objective, 900),
-    instructions: editorialText(currentRaw.instructions, 7000),
-    example: editorialText(currentRaw.example, 1800),
-    record_prompt: editorialText(currentRaw.record_prompt, 1800),
+    instructions: editorialText(currentRaw.instructions, 18000),
+    example: editorialText(currentRaw.example, 4000),
+    record_prompt: editorialText(currentRaw.record_prompt, 4000),
     safety_note: editorialText(currentRaw.safety_note, 1200),
     remember: editorialText(currentRaw.remember, 1400),
     session_questions: Array.isArray(currentRaw.session_questions)
@@ -1648,6 +1668,7 @@ async function clinicalMaterialEnrichRequest(request: Request, env: Env): Promis
     "La nota de seguridad solo debe incluirse cuando resulte clínicamente útil. Si se incluye, debe recordar que no es necesario forzarse y que el material puede revisarse en sesión.",
     "En trauma prioriza estabilización. En TOC evita reaseguro. En adicciones no aconsejes retirada brusca. En alimentación evita restricciones o conteos. En TEA usa enfoque neuroafirmativo.",
     "No añadas datos identificativos del paciente.",
+    TWO_WEEK_MATERIAL_GUIDELINES,
     "Devuelve SOLO JSON válido con esta forma: {patient_document:{duration_minutes:number|null,frequency:string,introduction:string,why:string,objective:string,instructions:string,example:string,record_prompt:string,safety_note:string,remember:string,session_questions:string[]}}."
   ].join("\n");
 
@@ -1663,6 +1684,7 @@ async function clinicalMaterialEnrichRequest(request: Request, env: Env): Promis
           { role: "system", content: system },
           { role: "user", content: JSON.stringify({
             titulo: title,
+            contexto_desidentificado: caseContext || null,
             tipo: materialType,
             resumen_interno: summary || null,
             procesos: processTags,
@@ -1691,11 +1713,11 @@ async function clinicalMaterialEnrichRequest(request: Request, env: Env): Promis
         : currentDocument.duration_minutes,
       frequency: editorialText(docRaw.frequency, 500) || currentDocument.frequency,
       introduction: editorialText(docRaw.introduction, 1200) || currentDocument.introduction,
-      why: editorialText(docRaw.why, 2200) || currentDocument.why,
+      why: editorialText(docRaw.why, 5000) || currentDocument.why,
       objective: editorialText(docRaw.objective, 900) || currentDocument.objective,
-      instructions: editorialText(docRaw.instructions, 7000) || currentDocument.instructions,
-      example: editorialText(docRaw.example, 1800) || currentDocument.example,
-      record_prompt: editorialText(docRaw.record_prompt, 1800) || currentDocument.record_prompt,
+      instructions: editorialText(docRaw.instructions, 18000) || currentDocument.instructions,
+      example: editorialText(docRaw.example, 4000) || currentDocument.example,
+      record_prompt: editorialText(docRaw.record_prompt, 4000) || currentDocument.record_prompt,
       safety_note: editorialText(docRaw.safety_note, 1200) || currentDocument.safety_note,
       remember: editorialText(docRaw.remember, 1400) || currentDocument.remember,
       session_questions: Array.isArray(docRaw.session_questions)
@@ -1705,6 +1727,7 @@ async function clinicalMaterialEnrichRequest(request: Request, env: Env): Promis
     if (!patientDocument.introduction || !patientDocument.why || !patientDocument.instructions) {
       return editorialJson({ error: "La IA no ha generado una ficha suficientemente completa para revisar." }, 502);
     }
+    if (!completeTwoWeekMaterial(patientDocument)) return editorialJson({ error: "El borrador no incluye todas las pautas (dos semanas, 3–5 ejercicios, esquema y dudas). Vuelve a generarlo antes de enviarlo." }, 502);
     return editorialJson({ patient_document: patientDocument });
   } catch (error) {
     console.error("Clinical material enrichment request failed", error instanceof Error ? error.name : "Unknown");

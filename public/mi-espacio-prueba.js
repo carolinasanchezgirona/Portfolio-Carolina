@@ -519,6 +519,44 @@
     }
   }
 
+  function appendMaterialExamples(parent, value) {
+    if (!value) return;
+    for (const line of String(value).split(/\r?\n/)) {
+      if (!line.trim().startsWith("Esquema:")) {
+        appendPatientSection(parent, "", line);
+        continue;
+      }
+      const labels = line.trim().slice(8).split("→").map((label) => label.trim()).filter(Boolean).slice(0, 5);
+      if (labels.length < 3) { appendPatientSection(parent, "Ejemplo", line); continue; }
+      const ns = "http://www.w3.org/2000/svg";
+      const svg = document.createElementNS(ns, "svg");
+      svg.setAttribute("viewBox", `0 0 360 ${labels.length * 100 - 20}`);
+      svg.setAttribute("role", "img");
+      svg.setAttribute("aria-label", labels.join(" → "));
+      svg.style.cssText = "width:100%;max-width:360px;height:auto;display:block;margin:16px auto";
+      labels.forEach((label, index) => {
+        const rect = document.createElementNS(ns, "rect");
+        for (const [key, value] of Object.entries({x:10,y:index*100+5,width:340,height:65,rx:12,fill:index%2 ? "#EAF6FB" : "#d8f3ef"})) rect.setAttribute(key, String(value));
+        svg.append(rect);
+        const words = label.slice(0, 90).split(" ");
+        const lines = [""];
+        for (const word of words) { if ((lines[lines.length-1] + " " + word).trim().length > 34) lines.push(word); else lines[lines.length-1] = (lines[lines.length-1] + " " + word).trim(); }
+        lines.slice(0, 3).forEach((line, offset) => {
+          const text = document.createElementNS(ns, "text");
+          text.setAttribute("x", "180"); text.setAttribute("y", String(index*100+30+offset*18));
+          text.setAttribute("text-anchor", "middle"); text.setAttribute("fill", "#173A5E"); text.setAttribute("font-size", "16");
+          text.textContent = line; svg.append(text);
+        });
+        if (index < labels.length-1) {
+          const arrow = document.createElementNS(ns, "path");
+          arrow.setAttribute("d", `M180 ${index*100+75} v20 m-6 -6 l6 6 6 -6`);
+          arrow.setAttribute("fill", "none"); arrow.setAttribute("stroke", "#08A6A0"); arrow.setAttribute("stroke-width", "3"); svg.append(arrow);
+        }
+      });
+      parent.append(svg);
+    }
+  }
+
   function createPatientMaterial(item, index) {
     const documentData = item?.patient_document && typeof item.patient_document === "object" ? item.patient_document : {};
     const details = document.createElement("details");
@@ -540,12 +578,14 @@
 
     const body = document.createElement("div");
     body.className = "space-patient-material-body";
-    appendPatientSection(body, "Para qué sirve", documentData.introduction || documentData.why);
+    appendPatientSection(body, "Para qué sirve", documentData.introduction);
+    appendPatientSection(body, "Comprender lo que te pasa", documentData.why);
+    appendPatientSection(body, "Plan de práctica", documentData.frequency);
     appendPatientSection(body, documentData.material_type === "psychoeducation" ? "Contenido" : "Cómo hacerlo", documentData.instructions);
-    appendPatientSection(body, "Ejemplo", documentData.example);
+    appendMaterialExamples(body, documentData.example);
     appendPatientSection(body, "Qué conviene recordar", documentData.remember);
 
-    if (documentData.material_type !== "psychoeducation") {
+    if (documentData.material_type !== "psychoeducation" || documentData.record_prompt) {
       const questions = Array.isArray(documentData.session_questions) && documentData.session_questions.length
         ? documentData.session_questions.slice(0, 6)
         : ["¿Qué te resultó más fácil o más difícil?", "¿Qué observaste al probarlo?", "¿Qué ajustarías para que te resulte más útil?"];
