@@ -1312,3 +1312,7 @@ body.clinic-report-page-open{overflow:auto!important}
 .clinic-session-brief-row{margin:7px 0;line-height:1.5;font-size:.84rem;color:#354858;white-space:pre-wrap;overflow-wrap:anywhere}
 .clinic-session-brief-row strong{color:#26394a}
 .clinic-session-brief-note{margin:12px 0 0;font-size:.76rem;color:#60727c}
+
+/* File visibility is an explicit opt-in, never inferred from file category. */
+.clinic-dialog .clinic-document-share-option { display: flex; align-items: flex-start; gap: .7rem; }
+.clinic-dialog .clinic-document-share-option input { width: 1.1rem; min-width: 1.1rem; height: 1.1rem; margin: .15rem 0 0; }
