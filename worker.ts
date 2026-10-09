@@ -2023,7 +2023,7 @@ export default {
     if (url.pathname === "/api/clinical/material-enrich" || url.pathname === "/api/clinical/material-enrich/") return clinicalMaterialEnrichRequest(request, env);
     return env.ASSETS.fetch(request);
   },
-  async scheduled(_event: ScheduledEvent, env: Env, ctx: ExecutionContext): Promise<void> {
+  async scheduled(_event: unknown, env: Env, ctx: { waitUntil(promise: Promise<void>): void }): Promise<void> {
     ctx.waitUntil(runAdminPushCron(env));
   },
 };
