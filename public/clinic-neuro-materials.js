@@ -161,6 +161,7 @@
   }
   function hydrate(doc) {
     const clinicalArea = doc?.clinical_area === "neuropsychology" ? "neuropsychology" : "psychology";
+    if ($("clinic-neuro-reviewed")) $("clinic-neuro-reviewed").checked = false;
     if ($("clinic-clinical-area")) $("clinic-clinical-area").value = clinicalArea;
     const neuro = doc?.neuro_profile || {};
     for (const [name, id] of Object.entries({
