@@ -65,6 +65,12 @@ jobs:
           node --check public/clinic-scale-trends.js
           node --test tests/clinic-unified-patient.test.mjs
 
+      - name: Verificar notificaciones seguras de documentos
+        run: |
+          deno check supabase/functions/notify-clinical-file/index.ts
+          node --check public/admin-clinica.js
+          node --test tests/clinical-file-notifications.test.mjs
+
       - name: Validar documentos, audios y control de acceso de pacientes
         run: |
           node --check public/admin-clinica.js

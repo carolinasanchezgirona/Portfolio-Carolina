@@ -137,6 +137,7 @@
   let exerciseAssignments = [];
   let clinicalReports = [];
   let clinicalDocuments = [];
+  let clinicalDocumentEmailNotices = [];
   let scaleMeasurements = [];
   let speechRecognition = null;
   let isDictating = false;
@@ -1386,6 +1387,40 @@
     })[category] || "Documento";
   }
 
+
+  async function refreshClinicalFileNotices() {
+    clinicalDocumentEmailNotices = await rest(
+      "clinical_document_email_notices?select=document_id,shared_at,status,sent_at,claimed_at,error_code&order=claimed_at.desc&limit=1000"
+    ) || [];
+    if (currentPatient) renderDocuments(currentPatient);
+  }
+
+  async function sendClinicalFileNotice(docId, retry = false) {
+    let feedback = "El archivo ya está disponible en Mi espacio.";
+    try {
+      const response = await fetch(SUPABASE_URL + "/functions/v1/notify-clinical-file", {
+        method: "POST",
+        headers: { apikey: KEY, Authorization: "Bearer " + session.access_token, "Content-Type": "application/json" },
+        body: JSON.stringify({ document_id: docId, retry }),
+      });
+      const data = await response.json().catch(() => ({}));
+      if (response.ok && (data.status === "sent" || data.already_sent)) {
+        feedback = "Archivo compartido. Aviso por correo enviado.";
+      } else if (response.ok && data.status === "sending") {
+        feedback = "Archivo compartido. El aviso por correo está en proceso, sin confirmación de entrega.";
+      } else {
+        feedback = "Archivo compartido. Aviso por correo no enviado: " +
+          (data.error || "servicio temporalmente no disponible.") +
+          " Puedes reintentarlo desde la ficha.";
+      }
+    } catch {
+      feedback = "Archivo compartido. No se ha podido comprobar el envío del correo. Consulta el estado antes de reintentar.";
+    }
+    try { await refreshClinicalFileNotices(); } catch { /* Sharing is preserved if mail history is unavailable. */ }
+    els.patientMessage.textContent = feedback;
+    return feedback;
+  }
+
   async function setPatientDocumentSharing(doc, share) {
     if (!currentPatient || currentPatient.id !== doc.patient_id) throw new Error("Paciente no válido.");
     if (share && !window.confirm(`¿Publicar «${doc.title}» para este paciente en Mi espacio? Comprueba que el documento y su destinatario son correctos.`)) return;
@@ -1402,7 +1437,8 @@
     const index = clinicalDocuments.findIndex(item => item.id === doc.id);
     if (index >= 0) clinicalDocuments[index] = rows[0];
     renderDocuments(currentPatient);
-    els.patientMessage.textContent = share ? "Archivo disponible en Mi espacio del paciente." : "Acceso retirado de Mi espacio.";
+    if (share) await sendClinicalFileNotice(doc.id);
+    else els.patientMessage.textContent = "Acceso retirado de Mi espacio. Las copias descargadas anteriormente no pueden revocarse.";
   }
 
   function renderDocuments(patient) {
@@ -1411,6 +1447,7 @@
     if (!docs.length) { els.patientDocuments.append(create("p", "clinic-empty-inline", "Todavía no hay archivos.")); return; }
     docs.forEach((doc) => {
       const isShared = Boolean(doc.shared_at && !doc.share_revoked_at);
+      const notice = isShared ? clinicalDocumentEmailNotices.find(item => item.document_id === doc.id && new Date(item.shared_at).getTime() === new Date(doc.shared_at).getTime()) : null;
       const row = create("article");
       const info = create("div");
       info.append(
@@ -1418,6 +1455,7 @@
         create("span", "", `${documentCategoryLabel(doc.category)} · ${doc.file_name} · ${dateShort.format(new Date(doc.document_date || doc.created_at))}`),
         create("span", "clinic-material-state" + (isShared ? " opened" : ""), isShared ? "Compartido en Mi espacio" : "Solo archivo clínico")
       );
+      if (isShared) info.append(create("span", "clinic-material-state", notice?.status === "sent" ? "Aviso por correo enviado" : notice?.status === "sending" ? "Aviso por correo en proceso" : notice?.status === "failed" ? "Aviso por correo no enviado" : "Sin aviso por correo"));
       const actions = create("div", "clinic-material-row-actions");
       const openButton = create("button", "clinic-secondary", "Abrir");
       openButton.type = "button";
@@ -1440,6 +1478,16 @@
         finally { shareButton.disabled = false; }
       });
       actions.append(openButton, shareButton);
+      if (isShared && (!notice || notice.status === "failed")) {
+        const notify = create("button", "clinic-secondary", notice?.status === "failed" ? "Reintentar aviso" : "Enviar aviso");
+        notify.type = "button";
+        notify.addEventListener("click", async () => {
+          if (!window.confirm("¿Enviar un aviso neutro por correo? No incluirá archivos, títulos ni información clínica.")) return;
+          notify.disabled = true;
+          await sendClinicalFileNotice(doc.id, notice?.status === "failed");
+        });
+        actions.append(notify);
+      }
       row.append(info, actions);
       els.patientDocuments.append(row);
     });
@@ -1501,7 +1549,8 @@
     renderDocuments(currentPatient);
     renderTimeline(currentPatient);
     els.documentDialog.close();
-    els.patientMessage.textContent = share ? "Archivo compartido en Mi espacio." : "Archivo guardado solo en la historia clínica.";
+    if (share) await sendClinicalFileNotice(clinicalDocuments[0].id);
+    else els.patientMessage.textContent = "Archivo guardado solo en la historia clínica.";
     renderPending();
   }
   function renderScales(patient) {
@@ -1900,7 +1949,7 @@
 
   async function loadData() {
     setMessage("Cargando información clínica…");
-    const [bookingRows, patientRows, externalVisitRows, sessionRows, goalRows, templateRows, assignmentRows, reportRows, documentRows, scaleRows] = await Promise.all([
+    const [bookingRows, patientRows, externalVisitRows, sessionRows, goalRows, templateRows, assignmentRows, reportRows, documentRows, scaleRows, noticeRows] = await Promise.all([
       rest(`appointment_bookings?select=id,patient_name,patient_email,patient_phone,patient_type,status,starts_at,ends_at,service_code,clinical_patient_id&order=starts_at.desc&limit=1000`),
       rest("clinical_patients?select=*&order=full_name.asc"),
       rest("clinical_external_visits?select=*&order=visit_date.desc.nullslast,visit_time.desc"),
@@ -1911,6 +1960,7 @@
       rest("clinical_reports?select=*&order=created_at.desc"),
       rest("clinical_documents?select=*&order=created_at.desc"),
       rest("clinical_scale_measurements?select=*&order=measured_at.desc"),
+      rest("clinical_document_email_notices?select=document_id,shared_at,status,sent_at,claimed_at,error_code&order=claimed_at.desc&limit=1000"),
     ]);
     appointments = bookingRows || [];
     patients = patientRows || [];
@@ -1921,6 +1971,7 @@
     exerciseAssignments = assignmentRows || [];
     clinicalReports = reportRows || [];
     clinicalDocuments = documentRows || [];
+    clinicalDocumentEmailNotices = noticeRows || [];
     scaleMeasurements = scaleRows || [];
     renderToday();
     renderPatients(els.patientSearch.value);

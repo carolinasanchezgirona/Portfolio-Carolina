@@ -319,7 +319,7 @@ export default function AdminClinicaPage() {
           <label>Notas internas (no visibles para el paciente)<textarea id="clinic-document-notes" rows={3} /></label>
           <label>Mensaje para el paciente (opcional)<textarea id="clinic-document-patient-note" rows={2} maxLength={500} placeholder="Por ejemplo: escucha el audio cuando necesites practicar la relajación." /></label>
           <label className="clinic-document-share-option"><input id="clinic-document-share" type="checkbox" /> Publicar también en «Mi espacio» de este paciente</label>
-          <p className="clinic-note">Por defecto, solo tú puedes ver el documento. Compartirlo exige marcar la casilla o publicarlo posteriormente. PDF, Word, imágenes y audio. Máximo 25 MB. No se envían archivos clínicos como adjuntos por correo.</p>
+          <p className="clinic-note">El archivo será privado salvo que actives «Publicar». Al compartirlo se enviará automáticamente un aviso neutro por correo, sin nombre del documento ni adjuntos. Si el aviso falla, podrás reintentarlo desde la ficha. PDF, Word, imágenes y audio, hasta 25 MB.</p>
           <p id="clinic-document-message" className="clinic-message" />
           <div className="clinic-dialog-actions"><button className="clinic-primary" type="submit">Subir documento</button></div>
         </form>
@@ -614,7 +614,7 @@ export default function AdminClinicaPage() {
       </dialog>
 
       <Script src="/clinic-neuro-materials.js?v=20261009-1" strategy="afterInteractive" />
-      <Script src="/admin-clinica.js?v=20261009-files-neuro-1" strategy="afterInteractive" />
+      <Script src="/admin-clinica.js?v=20261009-file-notice-1" strategy="afterInteractive" />
       <Script src="/clinical-smart-intake.js?v=20261005-smart-state-5" strategy="afterInteractive" />
       <Script src="/clinical-diagnostic-assistant.js?v=20261007-dx-2" strategy="afterInteractive" />
       <Script src="/admin-clinica-audit-fixes.js?v=20260915-1" strategy="afterInteractive" />
