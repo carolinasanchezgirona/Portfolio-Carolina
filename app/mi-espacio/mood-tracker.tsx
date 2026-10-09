@@ -100,10 +100,10 @@ function useAvatar() {
  * For the remaining portraits, the color and the emotion label communicate the
  * chosen state until their full 3D expression series is created.
  */
-function MoodFriend({ mood, avatarId }: { mood: number; avatarId: AvatarId }) {
+function MoodFriend({ mood, avatarId, portraitOnly = false }: { mood: number; avatarId: AvatarId; portraitOnly?: boolean }) {
   const index = AVATARS.findIndex(option => option.id === avatarId);
   const avatar = AVATARS[index] ?? DEFAULT_AVATAR;
-  const isOlderMan = avatarId === "senior-man";
+  const isOlderMan = avatarId === "senior-man" && !portraitOnly;
   const col = (Math.max(index, 0) % 4) * 100 / 3;
   const row = Math.floor(Math.max(index, 0) / 4) * 100;
   const imageStyle = isOlderMan ? {
@@ -111,7 +111,7 @@ function MoodFriend({ mood, avatarId }: { mood: number; avatarId: AvatarId }) {
     backgroundSize: "500% 100%",
     backgroundPosition: `${(mood - 1) * 25}% 0%`,
   } : {
-    backgroundImage: 'url("/mi-espacio-art/avatares-3d.webp")',
+    backgroundImage: 'url("/mi-espacio-art/avatares-3d-hd.webp")',
     backgroundSize: "400% 200%",
     backgroundPosition: `${col}% ${row}%`,
   };
@@ -128,7 +128,7 @@ function AvatarChoices({ selected, onSelect }: { selected: AvatarId | null; onSe
       {AVATARS.map(avatar => (
         <button key={avatar.id} type="button" className={selected === avatar.id ? "mood-avatar-choice is-selected" : "mood-avatar-choice"}
           onClick={() => onSelect(avatar.id)} aria-pressed={selected === avatar.id}>
-          <span className="mood-avatar-portrait"><MoodFriend mood={4} avatarId={avatar.id} /></span>
+          <span className="mood-avatar-portrait"><MoodFriend mood={4} avatarId={avatar.id} portraitOnly /></span>
           <strong>{avatar.label}</strong><small>{avatar.stage}</small>
         </button>
       ))}
