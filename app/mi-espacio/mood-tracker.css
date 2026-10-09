@@ -7,7 +7,6 @@
 .mood-tracker-private{flex:none;padding:9px 12px;border-radius:99px;background:#f2f7f9;color:#567385;font-size:.7rem;font-weight:750}
 .mood-tracker-body{display:grid;grid-template-columns:minmax(210px,.8fr) minmax(0,1.3fr);gap:20px;align-items:stretch}
 .mood-friend-panel{position:relative;min-height:328px;padding:8px 16px 19px;border-radius:21px;display:flex;flex-direction:column;align-items:center;justify-content:center;transition:background .3s ease;isolation:isolate}
-.mood-friend-halo{position:absolute;top:8%;left:11%;width:78%;aspect-ratio:1;border:2px solid rgba(255,255,255,.6);border-radius:50%;z-index:-1}
 .mood-friend-svg{width:min(100%,242px);height:auto;filter:drop-shadow(0 11px 10px rgba(124,76,105,.12));animation:mood-arrive .35s ease}
 .mood-friend-caption{display:grid;gap:2px;text-align:center}
 .mood-friend-caption strong{color:#173a5e;font-size:.95rem;font-weight:850}
@@ -239,13 +238,6 @@
   background-color:transparent!important;
   -webkit-mask-image:radial-gradient(ellipse 76% 79% at 50% 45%,#000 53%,rgba(0,0,0,.94) 67%,transparent 96%);
   mask-image:radial-gradient(ellipse 76% 79% at 50% 45%,#000 53%,rgba(0,0,0,.94) 67%,transparent 96%);
-}
-.mood-friend-panel .mood-friend-halo{
-  top:12%;
-  left:9%;
-  width:82%;
-  opacity:.9;
-  border-width:2px;
 }
 .mood-friend-panel .mood-friend-caption{margin-top:0;position:relative;z-index:2}
 .mood-friend-panel .mood-friend-caption strong{font-size:1.05rem}

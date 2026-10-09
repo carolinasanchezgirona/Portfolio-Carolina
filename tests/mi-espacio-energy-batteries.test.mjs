@@ -26,6 +26,12 @@ test("companion portraits fade into pastel background without a square frame", (
   assert.match(css, /box-shadow:none!important/);
   assert.match(css, /@media\(max-width:380px\)/);
 });
+test("companion card has no circular halo and uses a soft flat gradient", () => {
+  assert.doesNotMatch(ui, /mood-friend-halo/);
+  assert.doesNotMatch(css, /mood-friend-halo/);
+  assert.match(ui, /linear-gradient\(155deg/);
+});
+
 test("battery selection remains distinguishable without colour", () => {
   assert.match(ui, /<span>\{item\}<\/span>/);
   assert.match(css, /button\.is-selected:after/);
