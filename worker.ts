@@ -1,5 +1,6 @@
 import { adminAppointmentVideo, patientAppointmentVideo } from './appointment-video';
 import { dailyTest } from "./daily-test";
+import { adminPushRequest, runAdminPushCron } from "./admin-webpush";
 import { containsDirectPatientIdentifiers, CLINICAL_IDENTIFIERS_ERROR } from "./clinical-privacy";
 
 interface Env {
@@ -8,6 +9,8 @@ interface Env {
   STRIPE_WEBHOOK_SECRET_TEST?: string;
   STRIPE_SECRET_KEY?: string;
   SUPABASE_SERVICE_ROLE_KEY?: string;
+  VAPID_PUBLIC_KEY?: string;
+  VAPID_PRIVATE_JWK?: string;
   OPENAI_API_KEY?: string;
   OPENAI_TEXT_MODEL?: string;
   OPENAI_CLINICAL_MODEL?: string;
@@ -1965,6 +1968,7 @@ export default {
   async fetch(request: Request, env: Env): Promise<Response> {
     const url = new URL(request.url);
 
+    if (url.pathname === "/api/admin/push" || url.pathname === "/api/admin/push/") return adminPushRequest(request, env, verifyEditorialOwner);
     if (url.pathname === "/api/video/appointment") return adminAppointmentVideo(request, env, verifyEditorialOwner);
     if (url.pathname === "/api/patient-portal/video") {
       const session = await patientPortalSession(request, env);
@@ -2018,5 +2022,8 @@ export default {
     if (url.pathname === "/api/clinical/material-draft" || url.pathname === "/api/clinical/material-draft/") return clinicalMaterialDraftRequest(request, env);
     if (url.pathname === "/api/clinical/material-enrich" || url.pathname === "/api/clinical/material-enrich/") return clinicalMaterialEnrichRequest(request, env);
     return env.ASSETS.fetch(request);
+  },
+  async scheduled(_event: ScheduledEvent, env: Env, ctx: ExecutionContext): Promise<void> {
+    ctx.waitUntil(runAdminPushCron(env));
   },
 };
