@@ -1294,3 +1294,14 @@ body.clinic-report-page-open{overflow:auto!important}
 
 .clinic-save-indicator{display:inline-flex;align-items:center;gap:7px;padding:7px 11px;font-size:.8rem;color:#4c6472;background:#f4f7f8;border:1px solid #d9e1e5;border-radius:6px}
 #clinic-session-autosave-state{margin:10px 0 0}
+
+/* Descriptive, source-attributed pre-session summary. */
+.clinic-preparation-unified{grid-template-columns:repeat(2,minmax(0,1fr));gap:13px}
+.clinic-preparation-unified article{border:1px solid #d5e0e6;border-radius:9px;background:#fff;box-shadow:none;min-width:0;padding:16px}
+.clinic-preparation-unified article>strong{display:block;color:#173A5E;font:700 .94rem Arial,Helvetica,sans-serif;margin-bottom:9px}
+.clinic-preparation-unified .clinic-preparation-item{margin:7px 0 0;white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.5;font-size:.83rem;color:#354a59}
+.clinic-preparation-label{font-weight:700;color:#405e6d}
+.clinic-preparation-action{margin:12px 0 0;min-height:34px!important;font-size:.76rem!important}
+.clinic-preparation-footnote{color:#566a78;font-size:.76rem;line-height:1.4;margin:12px 0 0}
+.clinic-preparation-unified .clinic-preparation-alert{border-left:3px solid #a56b35!important;background:#fffaf6!important}
+@media(max-width:700px){.clinic-preparation-unified{grid-template-columns:minmax(0,1fr)}.clinic-preparation-unified article{grid-column:1/-1}}
