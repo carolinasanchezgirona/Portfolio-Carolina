@@ -57,7 +57,7 @@ test("invoice PDF presentation is rendered locally without sending patient data 
   assert.match(app, /function esc\(s\)/);
   assert.match(app, /issuer_snapshot/);
   assert.match(app, /function csvCell\(value\)/);
-  assert.match(app, /\[=\\+\-@\\t\\r\]/);
+  assert.match(app, /if \(\/\^\[\\s\]/);
   assert.doesNotMatch(app, /jsdelivr|unpkg|pdfkit|api\.brevo\.com/);
   assert.doesNotMatch(app, /localStorage/);
   assert.match(page, /No se envían facturas por correo automáticamente/);
