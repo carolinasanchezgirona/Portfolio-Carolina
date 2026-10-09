@@ -2227,6 +2227,38 @@
       }
     }
   });
+  window.addEventListener("clinic-neuro-load-starter", (event) => {
+    const draft = event.detail || {};
+    if (!currentPatient) {
+      if (els.exerciseMessage) els.exerciseMessage.textContent = "Selecciona primero un paciente para preparar el material.";
+      return;
+    }
+    if (!draft.patient_document || !draft.title || !draft.domain) return;
+    if (!els.exerciseDialog.open) openExercise();
+    pendingAiMaterial = null;
+    applyExerciseTemplate(null);
+    const doc = { ...draft.patient_document, visual_blocks: Array.isArray(draft.patient_document.visual_blocks) ? draft.patient_document.visual_blocks : [] };
+    if (els.materialType) els.materialType.value = "exercise";
+    els.exerciseTemplateId.value = "";
+    els.exerciseTitle.value = draft.title;
+    els.exerciseContent.value = doc.instructions || "";
+    fillPatientDocument(doc);
+    const process = draft.domain;
+    populateMaterialProcessOptions(process);
+    if (els.materialProcess && !Array.from(els.materialProcess.options).some(option => option.value === process)) {
+      const option = document.createElement("option");
+      option.value = process;
+      option.textContent = "Neuropsicología · " + process.replaceAll("_", " ");
+      els.materialProcess.append(option);
+      els.materialProcess.value = process;
+    }
+    els.exerciseRationale.value = "Borrador inicial " + (draft.code || "") +
+      ". Revisión profesional: " + (draft.caution || "Comprobar adecuación y estímulos.") +
+      " Registro: " + (draft.record || "");
+    if (els.materialSearch) els.materialSearch.value = "";
+    els.exerciseMessage.textContent = "Propuesta cargada. Antes de enviar revisa materiales, fechas, consignas, nivel de ayuda y el objetivo funcional. No está validada ni prescrita.";
+  });
+
   els.materialSearch?.addEventListener("input", () => {
     populateExerciseLibrary("", els.materialSearch.value);
   });
