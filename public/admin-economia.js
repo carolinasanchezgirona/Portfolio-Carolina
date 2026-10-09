@@ -26,7 +26,10 @@
   function btn(label, cls, action) {
     const b = el("button", cls, label);
     b.type = "button";
-    b.addEventListener("click", () => Promise.resolve().then(() => action(b)).catch((error) => setStatus(error.message)));
+    b.addEventListener("click", () => {
+      try { const result = action(b); if (result && typeof result.catch === "function") result.catch(error => setStatus(error.message)); }
+      catch (error) { setStatus(error.message); }
+    });
     return b;
   }
   function fmtDate(value) { return value ? dateFormat.format(new Date(value.includes("T") ? value : value + "T12:00:00Z")) : ""; }
