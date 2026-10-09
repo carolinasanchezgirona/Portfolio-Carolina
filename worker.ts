@@ -401,7 +401,7 @@ async function handlePatientPortalSession(request: Request, env: Env): Promise<R
   if (!patient) return patientPortalJson({ authenticated: false }, 401, { "Set-Cookie": patientPortalCookie("", 0) });
 
   const now = new Date().toISOString();
-  const [appointmentResponse, materialsResponse] = await Promise.all([
+  const [appointmentResponse, materialsResponse, filesResponse] = await Promise.all([
     fetch(
       RESOURCE_SUPABASE + "/rest/v1/appointment_bookings?select=id,starts_at,ends_at,status,service_code&clinical_patient_id=eq." +
         encodeURIComponent(session.patient_id) + "&starts_at=gte." + encodeURIComponent(now) +
@@ -413,10 +413,17 @@ async function handlePatientPortalSession(request: Request, env: Env): Promise<R
         encodeURIComponent(session.patient_id) + "&revoked_at=is.null&status=in.(sent,assigned,reviewed)&order=sent_at.desc.nullslast,created_at.desc&limit=100",
       { headers: serviceHeaders(env), cache: "no-store" },
     ),
+    fetch(
+      RESOURCE_SUPABASE + "/rest/v1/clinical_documents?select=id,title,category,mime_type,patient_note,shared_at" +
+        "&patient_id=eq." + encodeURIComponent(session.patient_id) +
+        "&shared_at=not.is.null&share_revoked_at=is.null&order=shared_at.desc&limit=100",
+      { headers: serviceHeaders(env), cache: "no-store" },
+    ),
   ]);
 
   const appointments = appointmentResponse.ok ? await appointmentResponse.json().catch(() => []) : [];
   const materials = materialsResponse.ok ? await materialsResponse.json().catch(() => []) : [];
+  const files = filesResponse.ok ? await filesResponse.json().catch(() => []) : [];
 
   return patientPortalJson({
     authenticated: true,
@@ -424,9 +431,88 @@ async function handlePatientPortalSession(request: Request, env: Env): Promise<R
     session_expires_at: session.expires_at,
     next_appointment: Array.isArray(appointments) ? appointments[0] || null : null,
     materials: Array.isArray(materials) ? materials : [],
+    files: Array.isArray(files) ? files : [],
   });
 }
 
+
+/** Each file request revalidates the authenticated patient and the explicit grant. */
+async function handlePatientPortalFile(request: Request, env: Env): Promise<Response> {
+  if (request.method !== "GET") return patientPortalJson({ error: "Método no permitido." }, 405);
+  const session = await patientPortalSession(request, env);
+  if (!session) return patientPortalJson({ error: "Inicia sesión para acceder al archivo." }, 401);
+  const fileId = new URL(request.url).searchParams.get("id") || "";
+  if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(fileId)) {
+    return patientPortalJson({ error: "Archivo no válido." }, 400);
+  }
+
+  const active = await fetch(
+    RESOURCE_SUPABASE + "/rest/v1/clinical_patients?select=id&id=eq." +
+      encodeURIComponent(session.patient_id) + "&status=neq.archived&limit=1",
+    { headers: serviceHeaders(env), cache: "no-store" },
+  );
+  if (!active.ok) return patientPortalJson({ error: "Servicio no disponible." }, 503);
+  const patients = await active.json().catch(() => []);
+  if (!Array.isArray(patients) || patients.length !== 1) return patientPortalJson({ error: "Acceso no disponible." }, 403);
+
+  const metadata = await fetch(
+    RESOURCE_SUPABASE + "/rest/v1/clinical_documents?select=id,file_path,file_name,mime_type,patient_id" +
+      "&id=eq." + encodeURIComponent(fileId) +
+      "&patient_id=eq." + encodeURIComponent(session.patient_id) +
+      "&shared_at=not.is.null&share_revoked_at=is.null&limit=1",
+    { headers: serviceHeaders(env), cache: "no-store" },
+  );
+  if (!metadata.ok) return patientPortalJson({ error: "Servicio no disponible." }, 503);
+  const rows = await metadata.json().catch(() => []);
+  const file = Array.isArray(rows) ? rows[0] : null;
+  if (!file) return patientPortalJson({ error: "Archivo no disponible." }, 404);
+  const path = String(file.file_path || "");
+  if (!path.startsWith(session.patient_id + "/") || path.includes("..")) {
+    return patientPortalJson({ error: "Archivo no disponible." }, 404);
+  }
+
+  const range = request.headers.get("Range") || "";
+  if (range && !/^bytes=\d*-\d*$/.test(range)) return patientPortalJson({ error: "Rango no válido." }, 416);
+  const storageHeaders: Record<string, string> = {
+    apikey: RESOURCE_PUBLISHABLE,
+    Authorization: "Bearer " + env.SUPABASE_SERVICE_ROLE_KEY,
+  };
+  if (range) storageHeaders.Range = range;
+  const storage = await fetch(
+    RESOURCE_SUPABASE + "/storage/v1/object/authenticated/clinical-documents/" +
+      path.split("/").map(encodeURIComponent).join("/"),
+    { headers: storageHeaders, cache: "no-store" },
+  );
+  if (storage.status !== 200 && storage.status !== 206) {
+    return patientPortalJson({ error: "No se ha podido obtener el archivo." }, 502);
+  }
+
+  const safeMimeTypes = new Set([
+    "application/pdf", "image/jpeg", "image/png",
+    "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+    "audio/mpeg", "audio/mp4", "audio/x-m4a", "audio/wav", "audio/x-wav", "audio/ogg", "audio/webm",
+  ]);
+  const mimeType = String(file.mime_type || "").toLowerCase();
+  const safeMime = safeMimeTypes.has(mimeType) ? mimeType : "application/octet-stream";
+  const original = String(file.file_name || "archivo").slice(0, 160).replace(/[\r\n/\\]/g, "_");
+  const download = new URL(request.url).searchParams.get("download") === "1";
+  const inline = !download && (safeMime === "application/pdf" || safeMime.startsWith("image/") || safeMime.startsWith("audio/"));
+  const headers = new Headers({
+    "Content-Type": safeMime,
+    "Content-Disposition": (inline ? "inline" : "attachment") +
+      "; filename=\"archivo\"; filename*=UTF-8''" + encodeURIComponent(original),
+    "Cache-Control": "private, no-store, max-age=0",
+    "X-Content-Type-Options": "nosniff",
+    "Referrer-Policy": "no-referrer",
+    "X-Robots-Tag": "noindex, nofollow",
+    "X-Frame-Options": "DENY",
+  });
+  for (const key of ["Content-Length", "Content-Range", "Accept-Ranges"]) {
+    const value = storage.headers.get(key);
+    if (value) headers.set(key, value);
+  }
+  return new Response(storage.body, { status: storage.status, headers });
+}
 
 /** PDF generation is granted per download, never by a reusable bearer link. */
 async function handlePatientPortalMaterialPdf(request: Request, env: Env): Promise<Response> {
@@ -1857,6 +1943,7 @@ export default {
     if (url.pathname === "/api/patient-portal/preferences" || url.pathname === "/api/patient-portal/preferences/") return handlePatientPortalPreferences(request, env);
     if (url.pathname === "/api/patient-portal/response" || url.pathname === "/api/patient-portal/response/") return handlePatientPortalResponse(request, env);
     if (url.pathname === "/api/patient-portal/material-pdf" || url.pathname === "/api/patient-portal/material-pdf/") return handlePatientPortalMaterialPdf(request, env);
+    if (url.pathname === "/api/patient-portal/file" || url.pathname === "/api/patient-portal/file/") return handlePatientPortalFile(request, env);
     if (url.pathname === "/api/patient-portal/logout" || url.pathname === "/api/patient-portal/logout/") return handlePatientPortalLogout(request, env);
 
     if (url.pathname === "/api/editorial/status" || url.pathname === "/api/editorial/status/") {
