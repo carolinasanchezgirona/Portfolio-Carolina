@@ -403,7 +403,11 @@ export default function AdminClinicaPage() {
               <button id="clinic-neuro-starter-load" className="clinic-secondary" type="button">Cargar propuesta</button>
             </div>
             <p className="clinic-material-helper">Son 24 propuestas de intervención con estímulos estructurados. Cargar no prescribe ni envía nada: tendrás que revisar y adaptar cada actividad.</p>
+            <p className="clinic-neuro-week-note"><strong>Una semana por cuaderno.</strong> Tras revisar la evolución podrás crear la siguiente semana ajustando los ejercicios.</p>
             <div className="clinic-neuro-grid">
+              <label>Semana del programa
+                <input id="clinic-neuro-week-number" type="number" min={1} max={52} defaultValue={1} inputMode="numeric" aria-label="Número de semana del programa neuropsicológico" />
+              </label>
               <label>Dominio cognitivo
                 <select id="clinic-neuro-domain" defaultValue="">
                   <option value="">Seleccionar...</option>
@@ -499,7 +503,7 @@ export default function AdminClinicaPage() {
             </div>
             <label>Introducción breve<textarea id="clinic-exercise-introduction" rows={2} required /></label>
             <label>Por qué hacemos este ejercicio<textarea id="clinic-exercise-why" rows={4} required /></label>
-            <p>Material para dos semanas: psicoeducación, 3–5 ejercicios progresivos, esquemas explicativos y dudas para consulta. Revisa y adapta la propuesta antes de enviarla.</p>
+            <p id="clinic-material-period-help">Psicología: material para dos semanas. Neuropsicología: una semana por cuaderno, 3–4 actividades desarrolladas, recursos visuales, ayudas, registro y dudas. Revisa antes de enviar.</p>
             <label>Cómo hacerlo / contenido<textarea id="clinic-exercise-content" rows={10} required /></label>
             <details className="clinic-material-details">
               <summary>Completar objetivo, ejemplo, registro, seguridad y cierre</summary>
