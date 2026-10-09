@@ -62,3 +62,16 @@ test("invoice PDF presentation is rendered locally without sending patient data 
   assert.doesNotMatch(app, /localStorage/);
   assert.match(page, /No se envían facturas por correo automáticamente/);
 });
+
+test("an invoice cannot be issued without initial series number or for another patient's booking", () => {
+  const start = read("supabase/migrations/20261009_dememoria_billing_series_configuration.sql");
+  const appointment = read("supabase/migrations/20261009_dememoria_billing_appointment_guard.sql");
+  assert.match(start, /first_invoice_year integer/);
+  assert.match(start, /first_invoice_number integer/);
+  assert.match(start, /v_issuer.first_invoice_number is null/);
+  assert.match(start, /values \(v_year,'CSG',v_initial\)/);
+  assert.match(appointment, /a\.clinical_patient_id = v_invoice\.patient_id/);
+  assert.match(appointment, /a\.starts_at <= now\(\)/);
+  assert.match(appointment, /a\.status not in \('cancelled','canceled'\)/);
+  assert.match(page, /Primer número disponible de la serie/);
+});
