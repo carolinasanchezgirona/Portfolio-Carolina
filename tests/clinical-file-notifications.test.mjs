@@ -20,8 +20,8 @@ test("only the clinician can send; patient emails always originate from the clin
 test("notification content never leaks a file name, document title or clinical note", () => {
   const body = mailer.split("function emailMessage() {")[1]?.split("Deno.serve(")[0];
   assert.ok(body);
-  assert.match(body, /"Tienes una novedad en Mi espacio"/);
-  assert.match(body, /\/mi-espacio\//);
+  assert.match(body, /Tienes una novedad en Mi espacio/);
+  assert.match(mailer, /const PORTAL_URL = APP_ORIGIN \+ "\/mi-espacio\/"/);
   assert.doesNotMatch(body, /doc\.|documentId|recipient|mime_type|title:|patient_note|attachments/);
   assert.match(mailer, /"X-Mailin-Track-Opens": "0"/);
   assert.match(mailer, /"X-Mailin-Track-Clicks": "0"/);
