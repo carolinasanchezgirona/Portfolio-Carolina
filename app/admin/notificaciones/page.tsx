@@ -34,7 +34,18 @@ export default function AdminNotificationsPage() {
           <button type="button" id="admin-notice-refresh" className="admin-notice-action">Actualizar avisos</button>
         </div>
         <AdminWorkspaceNav active="otra" />
-        <p className="admin-notice-note">Estos avisos se consultan dentro del panel. <strong>Las notificaciones push con la aplicación cerrada todavía no están activadas.</strong> No se enviarán alertas clínicas al bloqueo del móvil.</p>
+        <p className="admin-notice-note">Los avisos push son opcionales y se activan por dispositivo. <strong>En la pantalla de bloqueo solo aparecerá un texto genérico, sin nombres ni información clínica.</strong> Por ahora se envían avisos de nuevas reservas web y respuestas compartidas a ejercicios.</p>
+        <section className="admin-notice-push" aria-labelledby="admin-notice-push-heading">
+          <div><h2 id="admin-notice-push-heading">Avisos en este dispositivo</h2>
+            <p id="admin-notice-push-state" role="status">Comprobando compatibilidad…</p>
+            <small>En iPhone o iPad es necesario abrir la aplicación instalada desde la pantalla de inicio. Puedes desactivar los avisos cuando quieras.</small>
+          </div>
+          <div className="admin-notice-push-actions">
+            <button type="button" id="admin-notice-push-enable" hidden>Activar avisos</button>
+            <button type="button" id="admin-notice-push-test" hidden>Enviar prueba</button>
+            <button type="button" id="admin-notice-push-disable" hidden>Desactivar</button>
+          </div>
+        </section>
         <nav className="admin-notice-filters" aria-label="Filtrar avisos por área">
           {groups.map(([key, label]) => (
             <button key={key} type="button" data-notice-filter={key} aria-pressed={key === "all" ? "true" : "false"}>{label}</button>
@@ -46,9 +57,9 @@ export default function AdminNotificationsPage() {
         </div>
         <p id="admin-notice-status" role="status" aria-live="polite" />
         <div id="admin-notice-list" className="admin-notice-list" />
-        <p className="admin-notice-footnote">La lectura se recuerda en este navegador. La sincronización entre dispositivos y los avisos push requieren completar el sistema de notificaciones del servidor.</p>
+        <p className="admin-notice-footnote">La lectura se recuerda en este navegador. Las alertas del móvil requieren permiso y solo se envían en las categorías expresamente habilitadas.</p>
       </section>
-      <Script src="/admin-notifications.js?v=20261009-1" strategy="afterInteractive" />
+      <Script src="/admin-notifications.js?v=20261010-push" strategy="afterInteractive" />
     </main>
   );
 }
