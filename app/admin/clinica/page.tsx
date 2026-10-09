@@ -276,6 +276,7 @@ export default function AdminClinicaPage() {
           </section>
 
           <div className="clinic-form-actions clinic-form-actions-bottom">
+            <span id="clinic-patient-save-state" className="clinic-save-indicator" role="status" aria-live="polite">Ficha guardada</span>
             <button className="clinic-primary" type="submit">Guardar ficha completa</button>
           </div>
 
