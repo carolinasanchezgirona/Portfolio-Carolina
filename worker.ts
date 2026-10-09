@@ -1620,6 +1620,31 @@ function normalizeNeuroVisualBlocks(raw: unknown) {
   }).filter(b => ["table","chart","diagram","calendar"].includes(b.type) && b.title && b.content);
 }
 
+const WEEKLY_NEURO_MATERIAL_GUIDELINES=[
+ "En NEUROPSICOLOGÍA preparar UNA SOLA SEMANA de intervención (7 días). Encabeza instructions con 'Semana N', donde N es neuro_profile.week_number. Jamás incluyas Semana N+1 dentro del mismo cuaderno.",
+ "Proponer TRES o CUATRO ejercicios diferentes y desarrollados para esta semana; no imponer práctica diaria ni actividades superiores a la tolerancia.",
+ "Separar ejercicios por una línea en blanco. Cada uno comienza 'Ejercicio 1: título' y contiene en líneas independientes con rótulo literal: Objetivo:, Materiales:, Preparación:, Pasos:, Ejemplo:, Ayudas:, Adaptación:, Duración y frecuencia:, Qué observar:.",
+ "Los pasos deben especificar estímulos, consigna al paciente, cómo practicar, cuándo ayudar y cómo concluir. Evita frases genéricas y relleno repetitivo. Incluye un ejemplo resuelto relevante y ayudas graduadas.",
+ "Vincula orientación temporal, espacial o personal y otras funciones a tareas significativas. Usa calendarios, tablas, fotografías, gráficos o esquemas solo cuando sean necesarios; nunca inventes biografía, cifras clínicas ni pruebas estandarizadas.",
+ "En record_prompt incluir registro de aciertos y errores cualitativos, cantidad y tipo de ayudas, participación, fatiga, transferencia y dudas. En el cierre explicar qué revisar con la profesional para ajustar la semana SIGUIENTE, sin desarrollar esa semana.",
+ "Mantener párrafos cortos, objetivos realistas y carga flexible. El material es un borrador sujeto a revisión clínica."
+].join("\n");
+
+function completeWeeklyNeuroMaterial(doc:{instructions:string;record_prompt:string;frequency:string;neuro_profile?:Record<string,unknown>|null}):boolean{
+ const text=doc.instructions||"";
+ const weeks=text.match(/(?:^|\n)\s*Semana\s+\d+\b/gi)||[];
+ const exercises=text.split(/(?:^|\n)\s*Ejercicio\s+\d+\s*:/gi).slice(1);
+ const week=Math.max(1,Math.min(52,Number(doc.neuro_profile?.week_number)||1));
+ const labels=["Objetivo:","Materiales:","Preparación:","Pasos:","Ejemplo:","Ayudas:","Adaptación:","Duración y frecuencia:","Qué observar:"];
+ return weeks.length===1 && new RegExp("(?:^|\\n)\\s*Semana\\s+"+week+"\\b","i").test(text)
+  && exercises.length>=3 && exercises.length<=4
+  && exercises.every(part=>part.trim().length>=350 && labels.every(label=>part.toLowerCase().includes(label.toLowerCase())))
+  && /dudas/i.test(doc.record_prompt||"") && Boolean(doc.frequency);
+}
+function validGeneratedMaterial(doc:{instructions:string;example:string;record_prompt:string;frequency:string;clinical_area?:string;neuro_profile?:Record<string,unknown>|null}):boolean{
+ return doc.clinical_area==="neuropsychology"?completeWeeklyNeuroMaterial(doc):completeTwoWeekMaterial(doc);
+}
+
 const TWO_WEEK_MATERIAL_GUIDELINES = [
   "Cada material es un cuaderno personalizado para DOS SEMANAS, aunque su tipo sea psicoeducación. Incluye psicoeducación y entre 3 y 5 ejercicios complementarios, nunca solo un ejercicio.",
   "Personaliza objetivos, ejemplos, lenguaje y carga a la información aportada, sin inventar historia, hechos, diagnósticos ni necesidades. Si no hay contexto suficiente, ofrece una propuesta adaptable y señala qué debe concretar la profesional.",
@@ -1656,6 +1681,7 @@ async function clinicalMaterialDraftRequest(request: Request, env: Env): Promise
   const preferredProcess = editorialText(data.preferred_process, 120);
   const clinicalArea = data.clinical_area === "neuropsychology" ? "neuropsychology" : "psychology";
   const neuroProfile = data.neuro_profile && typeof data.neuro_profile === "object" && !Array.isArray(data.neuro_profile) ? data.neuro_profile as Record<string, unknown> : {};
+  if(clinicalArea==="neuropsychology")neuroProfile.week_number=Math.max(1,Math.min(52,Number(neuroProfile.week_number)||1));
   const rawCatalog = Array.isArray(data.catalog) ? data.catalog.slice(0, 500) : [];
   if (query.length < 3) return editorialJson({ error: "Escribe qué material necesitas." }, 400);
   if (containsDirectPatientIdentifiers(query)) return editorialJson({ error: CLINICAL_IDENTIFIERS_ERROR }, 422);
@@ -1689,8 +1715,7 @@ async function clinicalMaterialDraftRequest(request: Request, env: Env): Promise
     "En adicciones no indiques retirada brusca de sustancias con posible dependencia física.",
     "En alimentación evita restricciones, conteos o instrucciones que puedan reforzar un TCA.",
     "En TEA usa un enfoque neuroafirmativo y evita normalización forzada o entrenamiento de enmascaramiento.",
-    TWO_WEEK_MATERIAL_GUIDELINES,
-    ...(clinicalArea === "neuropsychology" ? [NEURO_MATERIAL_GUIDELINES] : []),
+    ...(clinicalArea === "neuropsychology" ? [WEEKLY_NEURO_MATERIAL_GUIDELINES, NEURO_MATERIAL_GUIDELINES] : [TWO_WEEK_MATERIAL_GUIDELINES]),
     "Devuelve SOLO JSON válido.",
     "Si existe: {status:'existing',existing_id:string,reason:string}.",
     "Si falta: {status:'new',reason:string,material:{title:string,summary:string,instructions:string,process_tags:string[],material_type:'exercise'|'psychoeducation',phase:string,duration_minutes:number|null,burden:'low'|'medium'|'high',objectives:string[],cautions:string[],sequence_rank:number,patient_document:{duration_minutes:number|null,frequency:string,introduction:string,why:string,objective:string,instructions:string,example:string,record_prompt:string,safety_note:string,remember:string,session_questions:string[],visual_blocks?:{type:string,title:string,content:string}[]}}}.",
@@ -1796,7 +1821,7 @@ async function clinicalMaterialDraftRequest(request: Request, env: Env): Promise
     };
 
     if (!material.instructions || !patientDocument.introduction || !patientDocument.why) return editorialJson({ error: "La IA no ha generado un documento para paciente suficientemente completo para revisar." }, 502);
-    if (!completeTwoWeekMaterial(patientDocument)) return editorialJson({ error: "El borrador no incluye todas las pautas (dos semanas, 3–5 ejercicios, esquema y dudas). Vuelve a generarlo antes de enviarlo." }, 502);
+    if (!validGeneratedMaterial(patientDocument)) return editorialJson({ error: clinicalArea==="neuropsychology" ? "La propuesta neuropsicológica requiere una semana, 3-4 ejercicios desarrollados, ayudas, adaptaciones y dudas." : "El borrador no incluye todas las pautas (dos semanas, 3–5 ejercicios, esquema y dudas). Vuelve a generarlo antes de enviarlo." }, 502);
     return editorialJson({ status: "new", reason: editorialText(raw.reason, 700), material });
   } catch (error) {
     console.error("Clinical material request failed", error instanceof Error ? error.name : "Unknown");
@@ -1830,6 +1855,7 @@ async function clinicalMaterialEnrichRequest(request: Request, env: Env): Promis
 
   const clinicalArea = currentRaw.clinical_area === "neuropsychology" ? "neuropsychology" : "psychology";
   const neuroProfile = currentRaw.neuro_profile && typeof currentRaw.neuro_profile === "object" && !Array.isArray(currentRaw.neuro_profile) ? currentRaw.neuro_profile as Record<string, unknown> : {};
+  if(clinicalArea==="neuropsychology")neuroProfile.week_number=Math.max(1,Math.min(52,Number(neuroProfile.week_number)||1));
   const currentDocument = {
     material_type: materialType,
     clinical_area: clinicalArea,
@@ -1864,8 +1890,7 @@ async function clinicalMaterialEnrichRequest(request: Request, env: Env): Promis
     "La nota de seguridad solo debe incluirse cuando resulte clínicamente útil. Si se incluye, debe recordar que no es necesario forzarse y que el material puede revisarse en sesión.",
     "En trauma prioriza estabilización. En TOC evita reaseguro. En adicciones no aconsejes retirada brusca. En alimentación evita restricciones o conteos. En TEA usa enfoque neuroafirmativo.",
     "No añadas datos identificativos del paciente.",
-    TWO_WEEK_MATERIAL_GUIDELINES,
-    ...(clinicalArea === "neuropsychology" ? [NEURO_MATERIAL_GUIDELINES] : []),
+    ...(clinicalArea === "neuropsychology" ? [WEEKLY_NEURO_MATERIAL_GUIDELINES, NEURO_MATERIAL_GUIDELINES] : [TWO_WEEK_MATERIAL_GUIDELINES]),
     "Devuelve SOLO JSON válido con esta forma: {patient_document:{duration_minutes:number|null,frequency:string,introduction:string,why:string,objective:string,instructions:string,example:string,record_prompt:string,safety_note:string,remember:string,session_questions:string[],visual_blocks?:{type:string,title:string,content:string}[]}}."
   ].join("\n");
 
@@ -1928,7 +1953,7 @@ async function clinicalMaterialEnrichRequest(request: Request, env: Env): Promis
     if (!patientDocument.introduction || !patientDocument.why || !patientDocument.instructions) {
       return editorialJson({ error: "La IA no ha generado una ficha suficientemente completa para revisar." }, 502);
     }
-    if (!completeTwoWeekMaterial(patientDocument)) return editorialJson({ error: "El borrador no incluye todas las pautas (dos semanas, 3–5 ejercicios, esquema y dudas). Vuelve a generarlo antes de enviarlo." }, 502);
+    if (!validGeneratedMaterial(patientDocument)) return editorialJson({ error: clinicalArea==="neuropsychology" ? "La propuesta neuropsicológica requiere una semana, 3-4 ejercicios desarrollados, ayudas, adaptaciones y dudas." : "El borrador no incluye todas las pautas (dos semanas, 3–5 ejercicios, esquema y dudas). Vuelve a generarlo antes de enviarlo." }, 502);
     return editorialJson({ patient_document: patientDocument });
   } catch (error) {
     console.error("Clinical material enrichment request failed", error instanceof Error ? error.name : "Unknown");
