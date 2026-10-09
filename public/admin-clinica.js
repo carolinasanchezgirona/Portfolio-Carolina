@@ -219,7 +219,7 @@
   function patientFormSnapshot() {
     if (!els.patientForm) return "";
     return JSON.stringify([...els.patientForm.querySelectorAll("input, textarea, select")]
-      .filter((node) => !["button","submit","reset","file"].includes(String(node.type || "").toLowerCase()))
+      .filter((node) => !["button","submit","reset","file"].includes(String(node.type || "").toLowerCase()) && !node.closest("#clinic-consent-grid,.clinic-goals-manager,.clinic-task-box,.clinic-scale-trends"))
       .map((node) => ({
         id: node.id || "",
         value: node.type === "checkbox" || node.type === "radio" ? Boolean(node.checked) : String(node.value || "")
@@ -237,6 +237,7 @@
 
   function closePatientPage({ force = false } = {}) {
     if (!els.patientDialog || els.patientDialog.hidden) return true;
+    if (els.reportDialog?.open && !closeReportEditor({ force })) return false;
     const changed = patientFormBaseline && patientFormSnapshot() !== patientFormBaseline;
     if (!force && changed) {
       const leave = window.confirm("Hay cambios sin guardar en esta ficha. ¿Quieres volver a pacientes y descartarlos?");
