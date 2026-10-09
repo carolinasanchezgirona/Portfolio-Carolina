@@ -384,8 +384,9 @@ async function buildPdf(titleValue: string, patientDocument: PatientDocument, ma
   const titleFont = await pdf.embedFont(StandardFonts.TimesRomanBold);
 
   const A4: [number, number] = [595.28, 841.89];
-  const marginX = 58;
-  const bottom = 58;
+  const isNeuro = patientDocument.clinical_area === "neuropsychology";
+  const marginX = isNeuro ? 67 : 58;
+  const bottom = isNeuro ? 70 : 58;
   const maxWidth = A4[0] - marginX * 2;
   const navy = rgb(23 / 255, 58 / 255, 94 / 255);
   const turquoise = rgb(8 / 255, 166 / 255, 160 / 255);
@@ -396,7 +397,7 @@ async function buildPdf(titleValue: string, patientDocument: PatientDocument, ma
   const warm = rgb(1, 248 / 255, 238 / 255);
 
   let current = pdf.addPage(A4);
-  let y = A4[1] - 62;
+  let y = A4[1] - (isNeuro ? 70 : 62);
 
   function wrap(font: any, text: string, size: number, width: number) {
     const result: string[] = [];
@@ -432,7 +433,7 @@ async function buildPdf(titleValue: string, patientDocument: PatientDocument, ma
 
   function newPage() {
     current = pdf.addPage(A4);
-    y = A4[1] - 62;
+    y = A4[1] - (isNeuro ? 70 : 62);
     current.drawRectangle({ x: 0, y: A4[1] - 8, width: A4[0], height: 8, color: turquoise });
     current.drawText("ENTRE SESIONES", { x: marginX, y, size: 8.5, font: boldFont, color: turquoise });
     current.drawText("Carolina Sánchez Girona", { x: A4[0] - marginX - 115, y, size: 7.8, font: bodyFont, color: muted });
@@ -483,6 +484,61 @@ async function buildPdf(titleValue: string, patientDocument: PatientDocument, ma
     y -= 10;
     current.drawLine({ start: { x: marginX, y }, end: { x: A4[0] - marginX, y }, thickness: .6, color: lineColor });
     y -= 18;
+  }
+
+  function drawWeeklyNeuroInstructions(value: string) {
+    const chunks = String(value || "").split(/(?:^|\n)\s*(Ejercicio\s+\d+\s*:[^\n]*)\n/gi);
+    if (chunks.length < 3) { drawSection("Cómo hacerlo", value); return; }
+    ensureSpace(85);
+    current.drawText("ACTIVIDADES DE ESTA SEMANA", { x: marginX, y, size: 10.8, font: boldFont, color: navy });
+    y -= 29;
+    const week = /(?:^|\n)\s*Semana\s+\d+\b/i.exec(value)?.[0]?.trim() || "Semana de intervención";
+    current.drawRectangle({ x: marginX, y: y - 22, width: maxWidth, height: 28, color: sky });
+    current.drawText(pdfSafe(week).toUpperCase(), { x: marginX + 13, y: y - 12, size: 10.3, font: boldFont, color: navy });
+    y -= 46;
+    const labelRe = /^(Objetivo|Materiales|Preparación|Pasos|Ejemplo|Ayudas|Adaptación|Duración y frecuencia|Qué observar):\s*/i;
+    for (let i = 1; i + 1 < chunks.length; i += 2) {
+      const title = pdfSafe(chunks[i].trim());
+      const titleLines = wrap(boldFont, title, 12, maxWidth - 30);
+      const cardTop = titleLines.length * 17 + 22;
+      ensureSpace(Math.max(118, cardTop + 67));
+      current.drawRectangle({ x: marginX, y: y - cardTop + 8, width: maxWidth, height: cardTop, color: sky });
+      current.drawRectangle({ x: marginX, y: y - cardTop + 8, width: 4, height: cardTop, color: turquoise });
+      for (const [j, line] of titleLines.entries()) {
+        current.drawText(line, { x: marginX + 15, y: y - 12 - j * 17, size: 12, font: boldFont, color: navy });
+      }
+      y -= cardTop + 18;
+      const rows = chunks[i + 1].split(/\r?\n/);
+      for (const lineRaw of rows) {
+        const line = lineRaw.trim();
+        if (!line) { y -= 8; continue; }
+        const label = labelRe.exec(line);
+        if (label) {
+          ensureSpace(54);
+          current.drawText(pdfSafe(label[1]).toUpperCase(), { x: marginX + 4, y, size: 8.8, font: boldFont, color: navy });
+          y -= 19;
+          const bodyText = line.slice(label[0].length);
+          if (label[1].toLowerCase() === "pasos") {
+            const steps = bodyText.split(/(?=\b[1-9]\)\s)/).map(s => s.replace(/^\s*[1-9]\)\s*/, "").trim()).filter(Boolean);
+            if (steps.length > 1) {
+              for (const [index, step] of steps.entries()) {
+                ensureSpace(42);
+                drawParagraph(String(index + 1) + ". " + step, { size: 10.3, leading: 16.6, indent: 13 });
+                y -= 5;
+              }
+            } else drawParagraph(bodyText, { size: 10.3, leading: 16.6, indent: 13 });
+          } else drawParagraph(bodyText, { size: 10.3, leading: 16.6, indent: 13 });
+          y -= 13;
+        } else {
+          drawParagraph(line, { size: 10.3, leading: 16.6, indent: 13 });
+          y -= 8;
+        }
+      }
+      ensureSpace(26);
+      y -= 14;
+      current.drawLine({ start: { x: marginX, y }, end: { x: marginX + maxWidth, y }, thickness: 0.8, color: lineColor });
+      y -= 27;
+    }
   }
 
   function drawWorkArea(linesCount = 7) {
@@ -611,11 +667,12 @@ async function buildPdf(titleValue: string, patientDocument: PatientDocument, ma
   const whyHeading = patientDocument.material_type === "psychoeducation" ? "Por qué este material puede ayudarte" : "Por qué hacemos este ejercicio";
   drawSection(whyHeading, patientDocument.why || "", true);
   drawSection("Qué vamos a observar o entrenar", patientDocument.objective || "");
-  drawSection(patientDocument.material_type === "psychoeducation" ? "Contenido" : "Cómo hacerlo", patientDocument.instructions || "");
+  if (isNeuro) drawWeeklyNeuroInstructions(patientDocument.instructions || "");
+  else drawSection(patientDocument.material_type === "psychoeducation" ? "Contenido" : "Cómo hacerlo", patientDocument.instructions || "");
   drawSection("Ejemplo", patientDocument.example || "");
   await drawVisualResources(patientDocument.visual_blocks);
   drawSection("Tu registro / espacio para trabajar", patientDocument.record_prompt || "");
-  if (patientDocument.record_prompt && patientDocument.material_type !== "psychoeducation") drawWorkArea(7);
+  if (patientDocument.record_prompt && patientDocument.material_type !== "psychoeducation") drawWorkArea(isNeuro ? 10 : 7);
   drawSection("Si resulta demasiado intenso", patientDocument.safety_note || "", true, true);
   drawSection("Qué conviene recordar", patientDocument.remember || "", true);
 
