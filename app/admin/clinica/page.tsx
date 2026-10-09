@@ -335,11 +335,11 @@ export default function AdminClinicaPage() {
         </form>
       </dialog>
 
-      <dialog id="clinic-report-dialog" className="clinic-dialog clinic-report-dialog">
+      <dialog id="clinic-report-dialog" className="clinic-dialog clinic-report-dialog clinic-report-workspace" aria-label="Editor clínico de informes">
         <form id="clinic-report-form" className="clinic-dialog-content">
           <input id="clinic-report-id" type="hidden" />
           <div className="clinic-dialog-heading">
-            <div><p className="clinic-eyebrow">Documento clínico</p><h2 id="clinic-report-heading">Informe</h2></div>
+            <div><p className="clinic-eyebrow">Documento clínico · Editor de trabajo</p><h2 id="clinic-report-heading">Informe</h2><p className="clinic-muted">Revisa la redacción, guarda el borrador y descarga el Word. Los campos identificativos se obtienen de la ficha del paciente.</p></div>
             <button id="clinic-report-close" className="clinic-close" type="button" aria-label="Cerrar">×</button>
           </div>
           <div className="clinic-form-grid clinic-report-settings">
@@ -351,9 +351,9 @@ export default function AdminClinicaPage() {
           </div>
           <div className="clinic-report-toolbar">
             <button id="clinic-generate-report" className="clinic-secondary" type="button">Autogenerar borrador</button>
-            <span>Se incluirán únicamente registros aprobados del periodo seleccionado. Los cambios hechos posteriormente en Word se adjuntan desde «Adjuntar Word revisado».</span>
+            <span>Se incluirán únicamente registros aprobados del periodo seleccionado. Los cambios hechos posteriormente en Word se adjuntan desde «Adjuntar Word revisado». El borrador se guarda automáticamente cuando tiene finalidad y contenido suficientes.</span>
           </div>
-          <section id="clinic-report-sheet" className="clinic-report-sheet">
+          <section id="clinic-report-sheet" className="clinic-report-sheet" aria-label="Contenido clínico editable">
             <header><p>Carolina Sánchez Girona · Psicóloga General Sanitaria y Neuropsicóloga</p><h1 id="clinic-report-title-preview">Informe de evolución</h1><p id="clinic-report-meta" /></header>
             <label>Motivo y contexto<textarea id="clinic-report-context" rows={5} /></label>
             <label>Evolución clínica<textarea id="clinic-report-evolution" rows={8} /></label>
@@ -361,6 +361,7 @@ export default function AdminClinicaPage() {
             <label>Situación actual y recomendaciones<textarea id="clinic-report-current" rows={6} /></label>
             <footer><p id="clinic-report-signature" /></footer>
           </section>
+          <p id="clinic-report-save-state" className="clinic-report-save-state" role="status" aria-live="polite">Sin cambios</p>
           <p id="clinic-report-message" className="clinic-message" role="status" />
           <div className="clinic-dialog-actions">
             <button id="clinic-save-report" className="clinic-secondary" type="button">Guardar borrador</button>
