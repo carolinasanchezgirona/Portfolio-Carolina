@@ -1,6 +1,7 @@
 import Script from "next/script";
 import type { Metadata } from "next";
 import "./recursos.css";
+import AdminWorkspaceNav from "../workspace-nav";
 
 export const metadata: Metadata = {
   title: "Recursos digitales | Administración",
@@ -32,15 +33,17 @@ export default function AdminRecursosPage() {
             <p>Gestiona materiales, ventas y descargas seguras desde un único panel.</p>
           </div>
           <div className="resources-top-actions">
-            <a className="resources-secondary" href="/admin/clinica/?panel=1">Historiales</a>
-            <a className="resources-secondary" href="/admin/agenda/">Agenda</a>
-            <a className="resources-secondary" href="/admin/articulos/">Artículos</a>
-            <a className="resources-secondary" href="/admin/preguntas/">Preguntas</a>
-            <a className="resources-secondary" href="/recursos/" target="_blank" rel="noopener noreferrer">Ver recursos</a>
             <button id="resource-new" className="resources-primary" type="button">Nuevo recurso</button>
-            <button id="resources-logout" className="resources-text" type="button">Cerrar sesión</button>
+            <details className="workspace-context-menu">
+              <summary>Opciones</summary>
+              <div className="workspace-context-items">
+                <a href="/recursos/" target="_blank" rel="noopener noreferrer">Ver recursos publicados</a>
+                <button id="resources-logout" type="button">Cerrar sesión</button>
+              </div>
+            </details>
           </div>
         </header>
+        <AdminWorkspaceNav active="recursos" />
 
         <div className="resources-workspace">
           <aside className="resources-list-panel">
@@ -55,6 +58,7 @@ export default function AdminRecursosPage() {
           </aside>
 
           <section className="resources-editor-panel">
+            <button id="resources-back-to-list" className="workspace-back-to-list" type="button">← Volver a la biblioteca</button>
             <div id="resources-empty" className="resources-empty">
               <strong>Selecciona un recurso o crea uno nuevo</strong>
               <span>La ficha de edición aparecerá aquí.</span>
