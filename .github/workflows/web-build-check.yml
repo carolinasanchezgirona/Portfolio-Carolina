@@ -36,6 +36,12 @@ jobs:
       - name: Probar bloqueo de identificadores en la IA clínica
         run: node --experimental-strip-types --test tests/clinical-privacy.test.mjs
 
+      - name: Validar editor clínico, guardado automático y navegación
+        run: |
+          node --check public/admin-clinica.js
+          node --check public/clinic-report-options.js
+          node --test tests/clinic-admin-workspace.test.mjs
+
       - name: Validar Word clínico, protección y controles
         run: node --test tests/clinic-word-export.test.mjs
 
