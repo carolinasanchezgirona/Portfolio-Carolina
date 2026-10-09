@@ -209,16 +209,44 @@
 }
 @media(prefers-reduced-motion:reduce){.mood-scale-face{transition:none}}
 
-/* Five clear emotional expressions follow the selected patient companion.
-   The overlay uses the same facial coordinates for all states of each avatar. */
-.mood-friend-image{position:relative;isolation:isolate}
-.mood-expression-layer{
-  position:absolute;inset:0;width:100%;height:100%;
-  z-index:2;pointer-events:none;
-  animation:mood-expression-change .25s ease-out;
+
+/* One original 3D face for each mood and each avatar.
+   The image atlas is 5 columns × 8 rows; background positioning is discrete. */
+.mood-friend-image.mood-friend-complete{
+  width:min(235px,100%);
+  aspect-ratio:1;
+  height:auto;
+  display:block;
+  flex-shrink:0;
+  background-repeat:no-repeat;
+  background-color:#f8faf9;
+  background-origin:border-box;
+  background-clip:border-box;
+  border-radius:19px;
+  image-rendering:auto;
+  animation:mood-arrive .24s ease-out both;
 }
-@keyframes mood-expression-change{
-  from{opacity:.2;transform:scale(.97)}
-  to{opacity:1;transform:scale(1)}
+.mood-friend-panel .mood-friend-complete{
+  width:min(235px,100%);
+  aspect-ratio:1;
+  border:2px solid rgba(255,255,255,.7);
 }
-@media(prefers-reduced-motion:reduce){.mood-expression-layer{animation:none}}
+.mood-avatar-portrait .mood-friend-complete{
+  width:100%;
+  height:100%;
+  aspect-ratio:1;
+  box-shadow:none;
+  border:0;
+  border-radius:10px;
+  animation:none;
+}
+@media(max-width:780px){
+  .mood-friend-panel .mood-friend-complete{width:min(208px,100%)}
+  .mood-friend-panel{min-height:296px}
+}
+@media(max-width:410px){
+  .mood-friend-panel .mood-friend-complete{width:min(185px,100%)}
+}
+@media(prefers-reduced-motion:reduce){
+  .mood-friend-image.mood-friend-complete{animation:none}
+}
