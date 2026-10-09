@@ -165,3 +165,46 @@
 
 .mood-friend-panel .mood-friend-portrait{width:min(184px,100%)}
 @media(max-width:780px){.mood-friend-panel .mood-friend-portrait{width:min(166px,100%)}.mood-friend-panel{min-height:252px}}
+
+/* Emotional check-in: expressive faces instead of colour-only scale. */
+.mood-options{grid-template-columns:repeat(5,minmax(0,1fr));gap:8px}
+.mood-option{
+  position:relative;display:flex;flex-direction:column;justify-content:center;align-items:center;
+  min-height:116px;padding:13px 5px 12px;gap:7px;background:#fff;
+  border:1px solid #dce7ee;border-radius:17px;
+  color:#415d72;font-size:.78rem;font-weight:770;line-height:1.2;
+}
+.mood-option:nth-child(1){background:linear-gradient(180deg,#f2f6fb 0%,#fff 100%)}
+.mood-option:nth-child(2){background:linear-gradient(180deg,#f9f2f9 0%,#fff 100%)}
+.mood-option:nth-child(3){background:linear-gradient(180deg,#fff9ed 0%,#fff 100%)}
+.mood-option:nth-child(4){background:linear-gradient(180deg,#f1faf7 0%,#fff 100%)}
+.mood-option:nth-child(5){background:linear-gradient(180deg,#ecf9f7 0%,#fff 100%)}
+.mood-option.is-selected{
+ border:2px solid #0e9994;background:#f3fcfb;
+ box-shadow:0 0 0 2px rgba(8,166,160,.11),0 5px 14px rgba(20,101,110,.06);
+ color:#173a5e;
+}
+.mood-option:focus-visible{outline:3px solid #0e9994;outline-offset:3px}
+.mood-scale-face{
+ flex:none;display:block;width:clamp(37px,4.9vw,57px);height:auto;aspect-ratio:1;
+ filter:drop-shadow(0 3px 3px rgba(133,90,49,.12));
+ transition:transform .16s ease;
+}
+.mood-option:hover .mood-scale-face,.mood-option.is-selected .mood-scale-face{transform:scale(1.07)}
+.mood-option-check{
+ position:absolute;top:6px;right:6px;
+ width:18px;height:18px;display:grid;place-items:center;border-radius:50%;
+ background:#078f88;color:#fff;font-size:12px;font-weight:850;line-height:1;
+}
+@media(max-width:780px){
+ .mood-options{gap:6px}
+ .mood-option{min-height:103px;padding:11px 3px 9px;gap:6px;font-size:.69rem;border-radius:12px}
+ .mood-scale-face{width:clamp(34px,9vw,48px)}
+ .mood-option-check{top:4px;right:4px;width:15px;height:15px;font-size:10px}
+}
+@media(max-width:370px){
+ .mood-options{gap:4px}
+ .mood-option{min-height:96px;font-size:.64rem;padding:8px 2px}
+ .mood-scale-face{width:34px}
+}
+@media(prefers-reduced-motion:reduce){.mood-scale-face{transition:none}}
