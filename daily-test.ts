@@ -37,17 +37,29 @@ export async function dailyTest(request: Request, env: DailyEnv, authorize: (req
     const expected: Record<string, unknown> = {
       max_participants: 2, sfu_switchover: 3, exp,
       eject_at_room_exp: true, enable_knocking: false, enable_chat: false,
-      enable_live_captions_ui: false, enable_transcription_storage: false
+      enable_live_captions_ui: false
     };
     const mismatches = Object.entries(expected).filter(([field, value]) => room.config?.[field] !== value)
       .map(([field]) => `${field}: ${room.config?.[field] === undefined ? 'no devuelto' : 'valor distinto'}`);
+    // Daily may omit this optional property. Check domain inheritance before using
+    // the documented false default; an enabled or unknown value still fails closed.
+    let storage = room.config?.enable_transcription_storage;
+    if (storage === undefined) {
+      const domainResponse = await api('/');
+      if (!domainResponse.ok) return json({ error: 'No se ha podido comprobar la configuración de transcripciones del dominio.' }, 502);
+      const domain = await domainResponse.json() as { config?: Record<string, unknown> };
+      if (!domain.config || typeof domain.config !== 'object') return json({ error: 'Daily no ha devuelto la configuración del dominio.' }, 502);
+      storage = domain.config.enable_transcription_storage ?? false;
+    }
+    if (storage !== false) mismatches.push('almacenamiento de transcripciones');
+    if (room.config?.auto_transcription_settings) mismatches.push('transcripción automática');
     if (room.privacy !== 'private') mismatches.push('privacidad');
     if (!room.url || new URL(room.url).hostname !== 'carolinasanchezgirona.daily.co') mismatches.push('dominio');
     if (room.config?.enable_recording) mismatches.push('grabación');
     if (mismatches.length) {
       return json({ error: 'La sala no cumple la configuración privada de prueba. Comprobación: ' + mismatches.join('; ') + '.' }, 502);
     }
-    const tokenResponse = await api('/meeting-tokens', 'POST', { properties: { room_name: name, exp, eject_at_token_exp: true, is_owner: false, user_name: 'Prueba', start_video_off: true, start_audio_off: true, enable_recording: false, start_cloud_recording: false } });
+    const tokenResponse = await api('/meeting-tokens', 'POST', { properties: { room_name: name, exp, eject_at_token_exp: true, is_owner: false, permissions: { canAdmin: false }, auto_start_transcription: false, user_name: 'Prueba', start_video_off: true, start_audio_off: true, enable_recording: false, start_cloud_recording: false } });
     if (!tokenResponse.ok) return json({ error: 'No se ha podido autorizar la entrada a la prueba.' }, 502);
     const data = await tokenResponse.json() as { token?: string };
     if (!data.token) return json({ error: 'Daily no ha devuelto un acceso válido.' }, 502);
