@@ -20,6 +20,9 @@
   const preparation = select(".clinic-preparation");
   const goals = select(".clinic-goals-manager");
   const tasks = select(".clinic-task-box");
+  const consents = select(".clinic-consent-section");
+  const audit = select(".clinic-audit-section");
+  const duplicates = select("#clinic-duplicate-panel");
   const savedReports = select("#clinic-patient-reports");
   const history = select("#clinic-patient-history");
   if (details.length !== 5 || toolCards.length !== 3 || !summaryGrid || !preparation || !bottomSave || !exercise || !savedReports || !history) return;
@@ -82,6 +85,8 @@
   add("resumen",summarySave);
   add("resumen",tasks);
   add("datos",select(".clinic-personal-admin-section"));
+  add("datos",consents);
+  add("datos",duplicates);
   add("historia",details[0]);
   add("historia",details[2]);
   add("historia",details[4]);
@@ -94,6 +99,7 @@
   add("sesiones",history.previousElementSibling?.matches("h3") ? history.previousElementSibling : null);
   add("sesiones",history);
   add("documentos",toolCards[1]);
+  add("documentos",audit);
   add("documentos",savedReports.previousElementSibling?.matches("h3") ? savedReports.previousElementSibling : null);
   add("documentos",savedReports);
 
