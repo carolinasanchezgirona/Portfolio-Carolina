@@ -663,6 +663,52 @@
     }
   }
 
+
+  async function downloadPatientMaterial(item, button, status) {
+    const originalLabel = button.textContent;
+    button.disabled = true;
+    button.textContent = "Preparando PDF…";
+    status.textContent = "";
+    try {
+      const response = await fetch("/api/patient-portal/material-pdf?material_id=" + encodeURIComponent(item.id), {
+        method: "GET",
+        credentials: "include",
+        cache: "no-store"
+      });
+      if (response.status === 401) {
+        state.portalAuthenticated = false;
+        state.portalData = null;
+        showAccessGate();
+        setAccessMessage("Tu sesión ha caducado o tu acceso ha finalizado. Vuelve a identificarte.", true);
+        return;
+      }
+      if (!response.ok) {
+        const body = await response.json().catch(() => ({}));
+        throw new Error(body.error || "No se ha podido descargar el material.");
+      }
+      const blob = await response.blob();
+      if (!blob.size || !blob.type.startsWith("application/pdf")) {
+        throw new Error("El archivo recibido no es un PDF válido.");
+      }
+      const basename = String(item.title || "material").normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+        .toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 70) || "material";
+      const objectUrl = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = objectUrl;
+      link.download = "entre-sesiones-" + basename + ".pdf";
+      document.body.append(link);
+      link.click();
+      link.remove();
+      window.setTimeout(() => URL.revokeObjectURL(objectUrl), 15000);
+      status.textContent = "Descarga iniciada. Guarda el documento en un lugar privado.";
+    } catch (error) {
+      status.textContent = error?.message || "No se ha podido descargar el PDF.";
+    } finally {
+      button.disabled = false;
+      button.textContent = originalLabel;
+    }
+  }
+
   function createPatientMaterial(item, index) {
     const documentData = item?.patient_document && typeof item.patient_document === "object" ? item.patient_document : {};
     const details = document.createElement("details");
@@ -690,6 +736,21 @@
     appendPatientSection(body, documentData.material_type === "psychoeducation" ? "Contenido" : "Cómo hacerlo", documentData.instructions);
     appendMaterialExamples(body, documentData.example);
     appendPatientSection(body, "Qué conviene recordar", documentData.remember);
+
+    const downloadArea = document.createElement("div");
+    downloadArea.className = "space-patient-downloads";
+    const downloadButton = document.createElement("button");
+    downloadButton.type = "button";
+    downloadButton.className = "space-secondary space-material-download-button";
+    downloadButton.textContent = "↓ Descargar PDF";
+    const downloadStatus = document.createElement("span");
+    downloadStatus.className = "space-material-download-status";
+    downloadStatus.setAttribute("role", "status");
+    downloadStatus.setAttribute("aria-live", "polite");
+    downloadButton.addEventListener("click", () => downloadPatientMaterial(item, downloadButton, downloadStatus));
+    downloadArea.append(downloadButton, downloadStatus);
+    body.append(downloadArea);
+
 
     if (documentData.material_type !== "psychoeducation" || documentData.record_prompt) {
       const questions = Array.isArray(documentData.session_questions) && documentData.session_questions.length

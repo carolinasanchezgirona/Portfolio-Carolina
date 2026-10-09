@@ -612,8 +612,56 @@ async function updatePatientSubmission(req: Request) {
   return new Response(null, { status: 303, headers: { Location: redirect.toString(), "Cache-Control": "no-store" } });
 }
 
+
+/** Internal renderer: no bearer URLs, no patients query, no client-side service keys. */
+async function renderAuthenticatedPortalPdf(req: Request): Promise<Response> {
+  if (!SERVICE_ROLE_KEY || req.headers.get("Authorization") !== "Bearer " + SERVICE_ROLE_KEY) {
+    return new Response(JSON.stringify({ error: "No autorizado." }), {
+      status: 403, headers: { "Content-Type": "application/json", "Cache-Control": "no-store" }
+    });
+  }
+  if (Number(req.headers.get("content-length") || "0") > 180000) {
+    return new Response(JSON.stringify({ error: "Contenido demasiado extenso." }), { status: 413, headers: { "Content-Type": "application/json", "Cache-Control": "no-store" } });
+  }
+  let input: Record<string, unknown>;
+  try { input = await req.json(); }
+  catch { return new Response(JSON.stringify({ error: "Solicitud no válida." }), { status: 400, headers: { "Content-Type": "application/json", "Cache-Control": "no-store" } }); }
+  if (input.action !== "portal-pdf" || typeof input.title !== "string" || !input.title.trim() || input.title.length > 250) {
+    return new Response(JSON.stringify({ error: "Solicitud no válida." }), { status: 400, headers: { "Content-Type": "application/json", "Cache-Control": "no-store" } });
+  }
+  const content = typeof input.content === "string" ? input.content.slice(0, 100000) : "";
+  const doc = normalizePatientDocument(input.patient_document, content);
+  if (!doc.instructions) return new Response(JSON.stringify({ error: "Material vacío." }), { status: 422, headers: { "Content-Type": "application/json", "Cache-Control": "no-store" } });
+  try {
+    return await pdfResponse(input.title.trim(), doc,
+      typeof input.issued_at === "string" ? input.issued_at : undefined, {
+        "Cache-Control": "private, no-store, max-age=0",
+        "X-Robots-Tag": "noindex, nofollow, noarchive",
+      });
+  } catch (error) {
+    console.error("[portal-pdf] Error generating PDF", error instanceof Error ? error.name : "Unknown");
+    return new Response(JSON.stringify({ error: "No se ha podido generar el PDF." }), { status: 500, headers: { "Content-Type": "application/json", "Cache-Control": "no-store" } });
+  }
+}
+
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { status: 204, headers: corsHeaders() });
+  if (req.method === "POST" && req.headers.get("x-portal-pdf") === "1") return await renderAuthenticatedPortalPdf(req);
+  // Legacy bearer links are retired: clinical material must be opened through the authenticated patient portal.
+  // Never reuse URL bearer tokens to render material or accept clinical responses.
+  if (req.method === "GET") {
+    return new Response(null, { status: 302, headers: {
+      "Location": "https://carolinasanchezgirona.com/mi-espacio/",
+      "Cache-Control": "no-store", "Referrer-Policy": "no-referrer", "X-Robots-Tag": "noindex, nofollow"
+    } });
+  }
+  if (req.method === "POST") {
+    const legacyType = req.headers.get("content-type") ?? "";
+    if (legacyType.includes("application/x-www-form-urlencoded") || legacyType.includes("multipart/form-data")) {
+      return page("Acceso actualizado", "<main class=\"shell\"><article class=\"card\"><div class=\"content\"><h1>Acceso actualizado</h1><p>Para consultar o responder a tus ejercicios, inicia sesión en Mi espacio con tu correo y contraseña.</p><p><a href=\"https://carolinasanchezgirona.com/mi-espacio/\">Entrar en Mi espacio</a></p></div></article></main>", 410, { "Cache-Control": "no-store", "Referrer-Policy": "no-referrer" });
+    }
+  }
+
 
   if (req.method === "POST") {
     const contentType = req.headers.get("content-type") ?? "";
