@@ -29,7 +29,7 @@ const sections: { href: string; icon: IconName; eyebrow: string; title: string; 
   { href: "/admin/clinica/?panel=1", icon: "clinical", eyebrow: "Atención sanitaria", title: "Gestión clínica", detail: "Pacientes, sesiones, informes, actividades y Mi espacio.", secondary: "Abrir gestión clínica", tone: "navy" },
   { href: "/admin/agenda/", icon: "calendar", eyebrow: "Organización", title: "Agenda", detail: "Citas, disponibilidad, cambios, confirmaciones y recordatorios.", secondary: "Abrir agenda", tone: "turquoise" },
   { href: "/admin/notificaciones/", icon: "bell", eyebrow: "Actividad", title: "Centro de avisos", detail: "Nuevas reservas, actividades entregadas, tareas y facturas pendientes.", secondary: "Revisar avisos", tone: "navy" },
-  { href: "/admin/economia/", icon: "economy", eyebrow: "Administración", title: "Gestión económica", detail: "Facturas, cobros, gastos, importaciones y exportaciones.", secondary: "Abrir gestión económica", tone: "coral" },
+  { href: "/admin/economia/", icon: "economy", eyebrow: "Administración", title: "Contabilidad", detail: "Facturas, cobros, gastos, importaciones y exportaciones.", secondary: "Abrir contabilidad", tone: "coral" },
   { href: "/admin/articulos/", icon: "editorial", eyebrow: "Comunicación", title: "Centro editorial", detail: "Artículos, contenidos web y publicaciones de Instagram.", secondary: "Abrir centro editorial", tone: "navy" },
   { href: "/admin/recursos/", icon: "resources", eyebrow: "Materiales digitales", title: "Recursos", detail: "Publicación, materiales gratuitos y de pago, pedidos y descargas.", secondary: "Administrar recursos", tone: "turquoise" },
   { href: "/admin/preguntas/", icon: "questions", eyebrow: "Participación", title: "Preguntas", detail: "Revisar, preparar y publicar las preguntas recibidas.", secondary: "Revisar preguntas", tone: "coral" },
@@ -116,7 +116,7 @@ export default function AdminHomePage() {
               <div id="admin-home-clinical" className="admin-home-list"><p className="admin-home-empty">Cargando…</p></div>
             </section>
             <section className="admin-home-panel">
-              <div className="admin-home-panel-heading"><div><p className="admin-home-eyebrow">Economía</p><h3>Facturas y cobros</h3></div><a href="/admin/economia/">Abrir economía</a></div>
+              <div className="admin-home-panel-heading"><div><p className="admin-home-eyebrow">Economía</p><h3>Facturas y cobros</h3></div><a href="/admin/economia/">Abrir contabilidad</a></div>
               <div id="admin-home-economy" className="admin-home-list"><p className="admin-home-empty">Cargando…</p></div>
             </section>
             <section className="admin-home-panel">
