@@ -2517,7 +2517,9 @@
     }
 
     const existing = exerciseTemplates.find((item) => item.id === els.exerciseTemplateId.value) || null;
-    els.exerciseMessage.textContent = "Preparando cuaderno personalizado para dos semanas…";
+    els.exerciseMessage.textContent = window.ClinicNeuroMaterials?.read?.().clinical_area === "neuropsychology"
+      ? "Preparando una semana de actividades neuropsicológicas detalladas…"
+      : "Preparando cuaderno personalizado para dos semanas…";
     els.materialAiEnrich.disabled = true;
     try {
       const response = await fetch("/api/clinical/material-enrich", {
