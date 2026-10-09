@@ -745,3 +745,22 @@ main {
     grid-template-columns: 1fr 1fr;
   }
 }
+
+/* Compact cookie preferences control inside the patient portal on phones.
+   Keeps consent choices available without obscuring exercises or graphs. */
+@media (max-width: 760px) {
+  body:has(.space-page) .analytics-consent-settings {
+    min-height: 32px;
+    padding: 7px 10px;
+    right: 9px;
+    bottom: calc(9px + env(safe-area-inset-bottom, 0px));
+    font-size: 0.71rem;
+    line-height: 1.15;
+    opacity: 0.9;
+    box-shadow: 0 4px 12px rgba(36, 33, 31, 0.17);
+  }
+  body:has(.space-page) .analytics-consent-settings:focus-visible {
+    outline: 3px solid #08a6a0;
+    opacity: 1;
+  }
+}
