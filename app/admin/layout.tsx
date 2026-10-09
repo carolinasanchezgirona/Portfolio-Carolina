@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Script from "next/script";
 import "./admin-unified.css";
+import "./workspace-navigation.css";
 
 export const metadata: Metadata = {
   title: "Administración | Carolina Sánchez",
@@ -15,7 +16,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   return (
     <>
       {children}
-      <Script src="/admin-shell.js?v=20261006-1" strategy="afterInteractive" />
+      <Script src="/admin-shell.js?v=20261009-nav-2" strategy="afterInteractive" />
       <Script src="/admin-articles-media.js?v=20260914-media-1" strategy="afterInteractive" />
     </>
   );
