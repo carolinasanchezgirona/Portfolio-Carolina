@@ -28,11 +28,11 @@
   function authHeaders(token) { return { apikey: KEY, Authorization: "Bearer " + token }; }
   function safeDate(value) {
     const time = Date.parse(value || "");
-    return Number.isFinite(time) && time <= Date.now() + 180000 ? time : 0;
+    return Number.isFinite(time) ? time : 0;
   }
   function recent(value) {
     const time = safeDate(value);
-    return time && now - time <= MAX_AGE;
+    return time && time <= now + 180000 && now - time <= MAX_AGE;
   }
   function storeSeen() {
     try { localStorage.setItem(READ_KEY, JSON.stringify(Array.from(seen).slice(-1000))); }
@@ -59,7 +59,7 @@
     const tasks = [
       ["agenda", "appointment_bookings?select=id,status,created_at,created_by_admin&order=created_at.desc&limit=60"],
       ["patients", "clinical_patients?select=id,created_at&order=created_at.desc&limit=50"],
-      ["clinical", "clinical_exercise_assignments?select=id,patient_response_shared_at,reviewed_at&not.patient_response_shared_at=is.null&order=patient_response_shared_at.desc&limit=50"],
+      ["clinical", "clinical_exercise_assignments?select=id,patient_response_shared_at,reviewed_at&patient_response_shared_at=not.is.null&order=patient_response_shared_at.desc&limit=50"],
       ["clinical", "clinical_admin_tasks?select=id,due_at,status,created_at&order=created_at.desc&limit=80"],
       ["economy", "billing_invoices?select=id,status,created_at,updated_at&order=updated_at.desc&limit=50"],
     ];
