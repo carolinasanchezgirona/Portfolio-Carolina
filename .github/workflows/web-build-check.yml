@@ -42,6 +42,16 @@ jobs:
           node --check public/clinic-report-options.js
           node --test tests/clinic-admin-workspace.test.mjs
 
+      - name: Validar ficha clínica única y preparación de sesiones
+        run: |
+          node --check public/clinic-patient-workspace.js
+          node --check public/admin-clinica.js
+          node --check public/clinic-patient-dashboard.js
+          node --check public/clinic-goals-manager.js
+          node --check public/clinic-admin-tasks.js
+          node --check public/clinic-scale-trends.js
+          node --test tests/clinic-unified-patient.test.mjs
+
       - name: Validar Word clínico, protección y controles
         run: node --test tests/clinic-word-export.test.mjs
 
