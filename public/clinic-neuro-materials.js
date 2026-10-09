@@ -109,11 +109,12 @@
     $("clinic-visual-add")?.toggleAttribute("disabled", blocks.length >= LIMIT);
   }
   function validDocument(doc) {
-    if (doc.clinical_area !== "neuropsychology") return { ok: true, issues: [] };
     const issues = [];
-    if (!doc.neuro_profile?.domain) issues.push("seleccionar dominio neuropsicológico");
-    if (!doc.neuro_profile?.level) issues.push("seleccionar nivel de demanda");
-    if (!String(doc.objective || "").trim()) issues.push("definir objetivo observable");
+    if (doc.clinical_area === "neuropsychology") {
+      if (!doc.neuro_profile?.domain) issues.push("seleccionar dominio neuropsicológico");
+      if (!doc.neuro_profile?.level) issues.push("seleccionar nivel de demanda");
+      if (!String(doc.objective || "").trim()) issues.push("definir objetivo observable");
+    }
     (doc.visual_blocks || []).forEach((b, i) => {
       if (!b.title?.trim()) issues.push("titular recurso " + (i + 1));
       if (b.type === "image" && (!b.data || !b.alt?.trim())) issues.push("imagen " + (i + 1) + " sin archivo o descripción");
