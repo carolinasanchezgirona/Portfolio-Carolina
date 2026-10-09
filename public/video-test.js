@@ -3,6 +3,29 @@
   const start = document.getElementById('start');
   const leave = document.getElementById('leave');
   const message = document.getElementById('message');
+  const googleStart = document.getElementById('google-start');
+  const googleLink = document.getElementById('google-link');
+  const googleMessage = document.getElementById('google-message');
+  googleStart.addEventListener('click', async () => {
+    googleStart.disabled = true;
+    googleLink.hidden = true;
+    try {
+      const session = JSON.parse(sessionStorage.getItem('dememoria_admin_session') || 'null');
+      if (!session?.access_token) {
+        location.assign('/admin/clinica/acceso/?next=/admin/videoconsulta/prueba/');
+        return;
+      }
+      const response = await fetch('/api/video/test', { method: 'POST', headers: { Authorization: 'Bearer ' + session.access_token, 'Content-Type': 'application/json' }, body: JSON.stringify({ provider: 'google' }), cache: 'no-store' });
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error || 'No se ha podido preparar Google Meet.');
+      const url = new URL(data.url);
+      if (url.origin !== 'https://meet.google.com') throw new Error('Enlace de reunión no válido.');
+      googleLink.href = url.href;
+      googleLink.hidden = false;
+      googleMessage.textContent = 'Acceso preparado. Pulsa «Abrir Google Meet».';
+    } catch (error) { googleMessage.textContent = errorText(error); }
+    finally { googleStart.disabled = false; }
+  });
   let call = null;
   let expiry = null;
   let failure = '';
