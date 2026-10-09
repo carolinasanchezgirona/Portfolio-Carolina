@@ -28,7 +28,7 @@ test("one central admin route for all six management sections",()=>{
     "admin-home-editorial","admin-home-commerce",
     "admin-home-refresh","admin-home-logout"
   ]) assert.equal((page.match(new RegExp('id="'+id+'"','g'))||[]).length,1,id);
-  assert.match(page,/Gestión económica/);
+  assert.match(page,/Contabilidad/);
   assert.match(page,/Centro editorial/);
   assert.match(page,/Mi espacio/);
 });

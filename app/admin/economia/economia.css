@@ -128,3 +128,22 @@
   .econ-page .econ-expense-register-inner{padding:14px}
 }
 @media print{.econ-page .econ-expense-register,.econ-page .econ-movement-filters{display:none!important}}
+
+
+/* Movimientos documentados fuera del libro de facturas interno. */
+.econ-page .econ-external-confirm{display:flex;align-items:flex-start;gap:10px;max-width:100%;margin:17px 0;padding:12px 13px;border:1px solid #dce6ec;border-radius:10px;background:#f5fafb;color:#173a5e;font-size:.83rem;line-height:1.55}
+.econ-page .econ-external-confirm input{flex:0 0 19px;width:19px;height:19px;margin:2px 0 0;accent-color:#08a6a0}
+.econ-page .econ-external-void-actions{margin-left:auto}
+.econ-page .econ-external-void-actions .econ-outline{min-height:36px;padding:7px 11px;font-size:.78rem}
+.econ-page .econ-void-form{grid-column:1/-1;width:100%;padding:15px;border:1px solid #f0d5d5;border-radius:11px;background:#fffaf9}
+.econ-page .econ-void-form label{display:grid;gap:7px;font-size:.83rem;font-weight:650}
+.econ-page .econ-void-form input{width:100%;min-height:40px;padding:9px 12px;border:1px solid #dce6ec;border-radius:8px;font:inherit}
+.econ-page .econ-voided-history{margin-top:16px;border-top:1px solid #dce6ec;padding-top:15px}
+.econ-page .econ-voided-history>summary{cursor:pointer;color:#385b75;font-weight:750;font-size:.83rem}
+.econ-page .econ-voided-history .econ-list{margin-top:12px}
+.econ-page .econ-movement-entry:has(.econ-external-void-actions){flex-wrap:wrap}
+@media(max-width:620px){
+ .econ-page .econ-external-void-actions{width:100%;margin:6px 0 0}
+ .econ-page .econ-external-void-actions .econ-outline{width:100%}
+ .econ-page .econ-void-form .econ-actions{flex-wrap:wrap}
+}

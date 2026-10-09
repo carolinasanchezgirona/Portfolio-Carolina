@@ -13,7 +13,7 @@
   const statusEl = $("#econ-status");
   const contents = $("#econ-content");
   let session;
-  let issuer = null, patients = [], bookings = [], invoices = [], receipts = [], expenses = [];
+  let issuer = null, patients = [], bookings = [], invoices = [], receipts = [], expenses = [], externalIncome = [];
   let editingInvoice = null;
   let movementFilter = "all";
 
@@ -72,6 +72,7 @@
       rest("billing_expenses?select=*&order=expense_date.desc&limit=1000"),
       rest("clinical_patients?select=id,full_name,national_id,address,care_context,status&order=full_name.asc&limit=1000"),
       rest("appointment_bookings?select=id,clinical_patient_id,starts_at,price_eur,service_code,status&order=starts_at.desc&limit=1000"),
+      rest("billing_external_income?select=*&order=received_date.desc&limit=1000"),
     ]);
     issuer = data[0]?.[0] || null;
     invoices = data[1] || [];
@@ -79,6 +80,7 @@
     expenses = data[3] || [];
     patients = data[4] || [];
     bookings = data[5] || [];
+    externalIncome = data[6] || [];
     renderAll();
     setStatus("");
   }
@@ -126,7 +128,9 @@
     const monthInvoices = invoices.filter(i => i.status === "issued" && i.issue_date?.startsWith(month));
     const invoiceAmount = monthInvoices.reduce((s, i) => s + Number(i.total_cents), 0);
     const allOutstanding = invoices.filter(i => i.status === "issued").reduce((s, i) => s + Math.max(0, Number(i.total_cents) - paid(i)), 0);
-    const collected = receipts.filter(r => r.paid_date?.startsWith(month)).reduce((s, r) => s + Number(r.amount_cents), 0);
+    const invoiceReceipts = receipts.filter(r => r.paid_date?.startsWith(month)).reduce((s, r) => s + Number(r.amount_cents), 0);
+    const externalReceipts = externalIncome.filter(r => !r.voided_at && r.received_date?.startsWith(month)).reduce((s, r) => s + Number(r.amount_cents), 0);
+    const collected = invoiceReceipts + externalReceipts;
     const spent = expenses.filter(e => e.expense_date?.startsWith(month)).reduce((s, e) => s + Number(e.amount_cents), 0);
     $("#econ-kpi-issued").textContent = money(invoiceAmount);
     $("#econ-kpi-collected").textContent = money(collected);
@@ -248,13 +252,93 @@
         details: [invoice?.recipient_name || "Sin factura vinculada", ({bizum:"Bizum",bank_transfer:"Transferencia",card:"Tarjeta",cash:"Efectivo",other:"Otro"}[row.method] || "Medio no indicado")].join(" · ")
       };
     });
+    const independent = externalIncome.filter(row => !row.voided_at && row.received_date?.startsWith(month)).map(row => ({
+      kind: "income", externalId: row.id, date: row.received_date, amount: Number(row.amount_cents),
+      concept: "Ingreso externo · " + row.concept,
+      details: [row.external_reference, row.source === "external_invoice" ? "Factura externa" : "Otro justificante",
+        ({bizum:"Bizum",bank_transfer:"Transferencia",card:"Tarjeta",cash:"Efectivo",other:"Otro"}[row.payment_method] || "Otro")].join(" · ")
+    }));
     const outgoing = expenses.filter(row => row.expense_date?.startsWith(month)).map(row => ({
       kind: "expense", date: row.expense_date, amount: Number(row.amount_cents),
       concept: row.concept || "Gasto registrado",
       details: [row.supplier, ({rent:"Alquiler",utilities:"Suministros",software:"Programas y suscripciones",materials:"Materiales",marketing:"Publicidad",training:"Formación",professional:"Servicios profesionales",other:"Otros"}[row.category] || "Otros")].filter(Boolean).join(" · ")
     }));
-    return [...income, ...outgoing].sort((a, b) => b.date.localeCompare(a.date) || a.kind.localeCompare(b.kind));
+    return [...income, ...independent, ...outgoing].sort((a, b) => b.date.localeCompare(a.date) || a.kind.localeCompare(b.kind));
   }
+
+  function renderVoidedExternalIncome() {
+    const list = $("#econ-external-voided-list");
+    list.replaceChildren();
+    const rows = externalIncome.filter(row => row.voided_at);
+    if (!rows.length) { list.append(el("p", "econ-help", "Todavía no se ha anulado ningún ingreso.")); return; }
+    rows.forEach(row => {
+      const card = el("article", "econ-movement-entry expense");
+      const content = el("div", "econ-movement-info");
+      content.append(el("strong", "", row.concept), el("small", "",
+        [row.external_reference, fmtDate(row.received_date), money(row.amount_cents), "Motivo: " + row.void_reason].join(" · ")));
+      card.append(content); list.append(card);
+    });
+  }
+  function showVoidExternalIncome(card, incomeId) {
+    card.querySelector(".econ-void-form")?.remove();
+    const form = el("form", "econ-void-form");
+    const explanation = el("p", "econ-help", "El movimiento quedará anulado y seguirá visible en el historial de auditoría. No se eliminará ningún registro.");
+    const label = el("label", "", "Motivo de la anulación");
+    const reason = el("input"); reason.type="text"; reason.required=true; reason.minLength=6; reason.maxLength=250;
+    reason.placeholder="P. ej., ingreso duplicado con factura interna";
+    label.append(reason);
+    const actions = el("div", "econ-actions");
+    const confirm = el("button", "econ-button", "Confirmar anulación"); confirm.type="submit";
+    actions.append(confirm, btn("Cancelar", "econ-outline", () => form.remove()));
+    form.append(explanation,label,actions);
+    form.addEventListener("submit", async event => {
+      event.preventDefault();
+      const details = reason.value.trim();
+      if (details.length < 6) return;
+      confirm.disabled = true;
+      try {
+        await rest("billing_external_income?id=eq." + encodeURIComponent(incomeId), {
+          method:"PATCH", headers:{Prefer:"return=minimal"},
+          body:JSON.stringify({voided_at:new Date().toISOString(),void_reason:details})
+        });
+        await load();
+        setStatus("Movimiento anulado; el original se conserva en el historial.");
+      } catch (error) { setStatus(error.message); confirm.disabled=false; }
+    });
+    card.append(form); reason.focus();
+  }
+  async function addExternalIncome(event) {
+    event.preventDefault();
+    const form = event.currentTarget;
+    const save = $("#econ-external-income-save");
+    const ref = $("#econ-external-income-reference").value.trim();
+    const concept = $("#econ-external-income-concept").value.trim();
+    const amount = requirePositiveCents($("#econ-external-income-amount").value);
+    const receiptDate = $("#econ-external-income-date").value;
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(receiptDate) || Number.isNaN(Date.parse(receiptDate + "T12:00:00Z")))
+      throw new Error("Fecha de ingreso incorrecta.");
+    if (ref.length < 3 || ref.length > 100 || concept.length < 5 || concept.length > 200)
+      throw new Error("Completa concepto y referencia del justificante.");
+    if (!$("#econ-external-income-confirm").checked)
+      throw new Error("Confirma que no se ha registrado ya el cobro.");
+    if (externalIncome.some(row => row.external_reference.trim().toLowerCase() === ref.toLowerCase()))
+      throw new Error("Ya existe un ingreso con esa referencia, aunque esté anulado.");
+    save.disabled = true;
+    try {
+      await rest("billing_external_income", {
+        method:"POST", headers:{Prefer:"return=minimal"},
+        body:JSON.stringify({
+          received_date:receiptDate,source:$("#econ-external-income-source").value,
+          concept,external_reference:ref,payment_method:$("#econ-external-income-method").value,
+          amount_cents:amount
+        }),
+      });
+      form.reset(); $("#econ-external-income-date").value = today();
+      $("#econ-external-income-register").open = false;
+      await load(); setStatus("Ingreso externo documentado registrado. Se conserva la referencia del justificante.");
+    } finally { save.disabled = false; }
+  }
+
   function filteredMovementRows() {
     return movementRows().filter(row => movementFilter === "all" || row.kind === movementFilter);
   }
@@ -278,6 +362,11 @@
       main.append(el("span", "econ-movement-date", fmtDate(row.date)), el("strong", "", row.concept), el("small", "", row.details));
       const amount = el("strong", "econ-movement-amount", (row.kind === "income" ? "+ " : "− ") + money(row.amount));
       card.append(main, amount);
+      if (row.externalId) {
+        const actions = el("div", "econ-external-void-actions");
+        actions.append(btn("Anular ingreso", "econ-outline", () => showVoidExternalIncome(card, row.externalId)));
+        card.append(actions);
+      }
       list.append(card);
     });
   }
@@ -296,7 +385,7 @@
       filteredMovementRows().map(row => [row.date, row.kind === "income" ? "Ingreso cobrado" : "Gasto",
         row.concept, row.details, (row.kind === "income" ? "" : "-") + fmtInputEuros(row.amount)]));
   }
-  function renderAll() { fillPatients(); renderIssuer(); renderOverview(); renderInvoiceList(); renderExpenses(); renderMovements(); }
+  function renderAll() { fillPatients(); renderIssuer(); renderOverview(); renderInvoiceList(); renderExpenses(); renderMovements(); renderVoidedExternalIncome(); }
   function choosePatient() {
     const patient = patients.find(p => p.id === $("#econ-invoice-patient").value);
     fillBookings(patient?.id);
@@ -407,6 +496,8 @@
   $("#econ-invoice-service").addEventListener("change", () => {
     $("#econ-custom-service-wrap").hidden = $("#econ-invoice-service").value !== "custom";
   });
+  $("#econ-external-income-date").value = today();
+  $("#econ-external-income-form").addEventListener("submit", event => addExternalIncome(event).catch(error => setStatus(error.message)));
   $("#econ-month").value = today().slice(0,7);
   $("#econ-movement-month").value = today().slice(0,7);
   $("#econ-month").addEventListener("change", renderOverview);

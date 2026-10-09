@@ -47,7 +47,7 @@ test("separates exempt health care from other taxable operations and invoices fr
   assert.match(page, /IVA general 21 %/);
   assert.match(migration, /tax_treatment in \('exempt_healthcare','vat_21'\)/);
   assert.match(migration, /round\(v_total_base \* 0\.21\)/);
-  assert.match(app, /const collected = receipts\.filter/);
+  assert.match(app, /const collected = invoiceReceipts \+ externalReceipts/);
   assert.match(app, /const spent = expenses\.filter/);
   assert.match(migration, /if v_existing \+ new\.amount_cents > v_due/);
 });
