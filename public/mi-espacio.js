@@ -406,6 +406,7 @@
         localStorage.removeItem(COMPLETED_KEY);
       } catch {}
     }
+    loadJourney();
     renderWellness();
     renderProgress();
   }
@@ -980,6 +981,115 @@
     return state.favorites.includes(id);
   }
 
+
+  const JOURNEY_KEY = "wellness_journey_v1";
+  const routes = [
+    ["Ansiedad y preocupación", "Responder con más flexibilidad a la preocupación", ["poner-nombre", "problema-o-prediccion", "pensamiento-no-orden", "aterrizar-presente"]],
+    ["Descanso y sobrecarga", "Hacer espacio para descansar", ["descarga-mental", "energia-minima", "cierre-trabajo", "frase-limite"]],
+    ["Autoestima y autoexigencia", "Tratarme con menos exigencia", ["poner-nombre", "voz-critica", "primer-paso", "culpa-limite"]],
+    ["Relaciones y límites", "Expresar mis necesidades y sostener límites", ["poner-nombre", "frase-limite", "culpa-limite", "pausa-enfado"]],
+    ["Regulación emocional", "Elegir cómo responder cuando me desbordo", ["poner-nombre", "bajar-revoluciones", "pausa-enfado", "aterrizar-presente"]],
+    ["Cambios y pérdidas", "Cuidarme mientras me adapto a un cambio", ["poner-nombre", "energia-minima", "pensamiento-no-orden", "primer-paso"]],
+    ["Hábitos cotidianos", "Organizarme con pasos realistas", ["descarga-mental", "primer-paso", "bloque-foco", "cierre-trabajo"]],
+    ["Bienestar cognitivo", "Organizar mi atención y mis apoyos cotidianos", ["descarga-mental", "bloque-foco", "memoria-externa", "primer-paso"]]
+  ];
+  const stages = ["Reconocer", "Practicar", "Aplicar", "Mantener"];
+  let journey = null;
+  let journeyDraft = null;
+  let question = 0;
+  let journeyNotice = "";
+  function loadJourney() {
+    journey = null; journeyDraft = null; question = 0;
+    try {
+      const value = JSON.parse(localStorage.getItem(scopedWellnessKey(JOURNEY_KEY)) || "null");
+      if (value && Number.isInteger(value.route) && routes[value.route] && Number.isInteger(value.step) && value.step >= 0 && value.step <= 4 && Array.isArray(value.seen)) journey = value;
+    } catch {}
+  }
+  function saveJourney() {
+    const key = scopedWellnessKey(JOURNEY_KEY);
+    if (!key) return;
+    try { localStorage.setItem(key, JSON.stringify(journey)); journeyNotice = ""; }
+    catch { journeyNotice = "No se ha podido guardar en este dispositivo. Tus cambios se mantienen solo mientras esta página esté abierta."; }
+  }
+  function currentJourneyActivity() { return routes[journey.route][2][journey.step]; }
+  function element(tag, text, parent) {
+    const node = document.createElement(tag); node.textContent = text; parent.append(node); return node;
+  }
+  function action(label, parent, handler) {
+    const button = element("button", label, parent); button.type = "button"; button.className = "space-secondary"; button.addEventListener("click", handler); return button;
+  }
+  function renderJourney() {
+    const root = document.getElementById("wellness-journey");
+    if (!root) return;
+    root.replaceChildren();
+    if (!state.storageScope) { element("p", "Preparando tu espacio personal…", root); return; }
+    if (journeyNotice) element("p", journeyNotice, root);
+    if (!journey || journeyDraft) {
+      if (!journeyDraft) journeyDraft = { route: 0, secondary: "", situation: "", goal: "", tried: "", time: "5 minutos", format: "Combinación" };
+      const questions = ["¿Qué te gustaría trabajar primero?", "¿Quieres añadir un objetivo complementario?", "¿En qué situaciones te cuesta más?", "¿Qué te gustaría poder hacer al terminar?", "¿Qué has probado y cómo te ha resultado?", "¿Cuánto tiempo puedes dedicar a una práctica?", "¿Cómo prefieres trabajar?", "Esta es tu propuesta"];
+      element("p", `Paso ${question + 1} de 8 · Puedes revisar tus respuestas`, root);
+      const heading = element("h3", questions[question], root); heading.tabIndex = -1;
+      const form = element("form", "", root);
+      let input;
+      const field = ["route", "secondary", "situation", "goal", "tried", "time", "format"][question];
+      if ([0,1,5,6].includes(question)) {
+        input = element("select", "", form); input.setAttribute("aria-label", questions[question]);
+        const choices = question <= 1 ? (question === 1 ? [["", "Solo un objetivo por ahora"], ...routes.map((r,i) => [String(i),r[0]]).filter(([i]) => Number(i) !== journeyDraft.route)] : routes.map((r,i) => [String(i), r[0]])) : (question === 5 ? ["2 minutos", "5 minutos", "10 minutos", "15 minutos"] : ["Texto", "Audio", "Ejercicios interactivos", "Combinación"]).map(v => [v,v]);
+        choices.forEach(([value,label]) => { const option = element("option",label,input); option.value = value; });
+        input.value = String(journeyDraft[field]);
+      } else if (question < 7) {
+        input = element("textarea", "", form); input.maxLength = 1000; input.rows = 3; input.setAttribute("aria-label", questions[question]); input.value = journeyDraft[field];
+        if (question === 3) input.placeholder = routes[journeyDraft.route][1];
+        element("p", "Puedes dejarlo en blanco y concretarlo más adelante. Evita nombres o datos de otras personas.", form);
+      } else {
+        element("p", "Tu objetivo: " + (journeyDraft.goal || routes[journeyDraft.route][1]), form);
+        if (journeyDraft.secondary !== "") element("p", "Después podrás explorar: " + routes[Number(journeyDraft.secondary)][0], form);
+        element("p", "Reconocer → Practicar → Aplicar → Mantener. Cada etapa se propone para dos semanas; puedes repetirla o avanzar a tu ritmo.",form);
+        element("p", "Empezarás con una herramienta breve. El formato elegido queda anotado; esta primera versión ofrece ejercicios de lectura y práctica. Los objetivos acordados con tu profesional tienen prioridad.",form);
+      }
+      const controls = element("div", "", form); controls.className = "journey-actions";
+      if (question > 0) action("Anterior",controls,() => { capture(); question--; renderWellness(); root.querySelector("h3")?.focus(); });
+      if (journey) action("Cancelar cambios", controls, () => { journeyDraft = null; renderWellness(); });
+      const next = element("button", question === 7 ? "Confirmar mi recorrido" : "Continuar",controls); next.type = "submit"; next.className = "space-primary";
+      function capture() { if(input) journeyDraft[field] = question === 0 ? Number(input.value) : input.value.trim(); if (String(journeyDraft.route) === journeyDraft.secondary) journeyDraft.secondary = ""; }
+      form.addEventListener("submit", event => {
+        event.preventDefault(); capture();
+        if(question < 7) question++;
+        else { journey = {...journeyDraft, step:0, seen:[], reviews:[], doubts: journey?.doubts || ""}; journeyDraft = null; question = 0; saveJourney(); }
+        renderWellness(); root.querySelector("h3")?.focus();
+      });
+      element("p", "Se guarda en este dispositivo, separado por cuenta. No se envía automáticamente a tu historia clínica.",root);
+      return;
+    }
+    element("p", "Mi objetivo",root); element("h3",journey.goal || routes[journey.route][1],root);
+    const map = element("ol","",root); map.className = "journey-map";
+    stages.forEach((name,i) => { const li = element("li", `${name}${i === journey.step ? " · Ahora" : i < journey.step ? " · Trabajada" : " · Más adelante"}`,map); if(i === journey.step) li.setAttribute("aria-current","step"); });
+    if(journey.step < 4) {
+      element("h4", "Mi siguiente paso · " + stages[journey.step],root);
+      element("p", "Durante las próximas dos semanas, prueba esta herramienta en situaciones de tu día a día. No necesitas usarla a diario.",root);
+      const current = activities.find(a => a.id === currentJourneyActivity());
+      action("Abrir: " + current.title,root,() => openActivity(current));
+      const review = element("form","",root);
+      const label = element("label", "¿Qué te ha ayudado y qué sigue costando?",review);
+      const answer = element("textarea","",label); answer.rows = 3; answer.maxLength = 1000;
+      const controls = element("div","",review); controls.className = "journey-actions";
+      action("Seguir practicando",controls,() => { journey.reviews.push({step:journey.step, text:answer.value.trim(),at:new Date().toISOString()}); saveJourney(); element("p","Puedes repetir la práctica o probarla en otra situación.",review); });
+      const next = element("button","Continuar a la siguiente etapa",controls); next.className = "space-primary"; next.type = "submit";
+      review.addEventListener("submit",event => { event.preventDefault(); if(!journey.seen.includes(current.id)) journey.seen.push(current.id); journey.reviews.push({step:journey.step,text:answer.value.trim(),at:new Date().toISOString()}); journey.step++; saveJourney(); renderWellness(); });
+    } else {
+      element("h4","Recorrido revisado",root); element("p","Puedes volver a tus herramientas, repetir el recorrido o elegir otro objetivo. Haber completado etapas no significa que la dificultad esté resuelta.",root);
+      if(journey.secondary !== "") action("Trabajar mi objetivo complementario",root,() => { journeyDraft = {...journey,route:Number(journey.secondary),secondary:"",goal:""}; question=7; renderWellness(); });
+    }
+    const doubts = element("details","",root); element("summary","Mis dudas",doubts);
+    const label = element("label","Anota lo que quieras revisar en tu próxima sesión",doubts);
+    const input = element("textarea","",label); input.rows=3; input.maxLength=2000; input.value=journey.doubts || "";
+    action("Guardar mis dudas",doubts,() => { journey.doubts=input.value.trim(); saveJourney(); element("p",journeyNotice || "Guardado en este dispositivo. No se envía a tu profesional.",doubts); });
+    const past = element("details","",root); element("summary","Mis revisiones anteriores",past);
+    (journey.reviews || []).forEach(r => element("p", stages[r.step] + ": " + (r.text || "Sin anotación"),past));
+    action("Revisar mis objetivos",root,() => { journeyDraft={...journey}; question=0; renderWellness(); });
+    element("h4","Mis herramientas disponibles",root);
+  }
+
   function filteredActivities() {
     return activities.filter(activity => {
       if (state.filter === "favoritos" && !isFavorite(activity.id)) return false;
@@ -991,7 +1101,8 @@
 
   function renderWellness() {
     if (!wellnessList) return;
-    const items = filteredActivities();
+    renderJourney();
+    const items = filteredActivities().filter(item => journey && !journeyDraft && (journey.step >= 4 ? journey.seen.includes(item.id) : item.id === currentJourneyActivity() || journey.seen.includes(item.id)));
     wellnessList.replaceChildren();
 
     if (state.need) {
@@ -1218,7 +1329,7 @@
   });
 
   document.getElementById("space-clear-local")?.addEventListener("click", () => {
-    const ok = window.confirm("¿Quieres borrar de este dispositivo tus favoritos y el registro de actividades realizadas?");
+    const ok = window.confirm("¿Quieres borrar de este dispositivo tus objetivos, dudas, favoritos y el registro de actividades realizadas?");
     if (!ok) return;
     state.favorites = [];
     state.completed = [];

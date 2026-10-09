@@ -465,3 +465,12 @@
 .space-membership-note{display:flex;flex-direction:column;gap:6px;margin:0 0 25px;padding:15px 20px;border:1px solid #f3dfbc;border-radius:16px;background:linear-gradient(110deg,#fff6e5,#fffaf1);color:#173a5e}
 .space-membership-note strong{font-size:.88rem}
 .space-membership-note p{margin:0;color:#647584;font-size:.77rem;line-height:1.55}
+
+#wellness-journey{background:#fff;border:1px solid var(--space-line);border-radius:18px;padding:clamp(18px,4vw,30px);margin-bottom:20px;font-size:1rem;line-height:1.6}
+#wellness-journey h3{font-size:1.5rem;color:var(--space-ink)}
+#wellness-journey select,#wellness-journey textarea{display:block;width:100%;box-sizing:border-box;font:inherit;color:var(--space-ink);padding:12px;border:1px solid #8198aa;border-radius:10px;margin:12px 0;background:white}
+#wellness-journey label{display:block;margin-top:18px}
+.journey-actions{display:flex;flex-wrap:wrap;gap:12px;margin:18px 0}
+.journey-map{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;list-style:none;padding:0}.journey-map li{padding:12px;background:#eaf6fb;border-radius:10px}.journey-map [aria-current]{background:#173a5e;color:white}
+#wellness-journey details{margin:20px 0}#wellness-journey summary{cursor:pointer;font-weight:700}
+@media(max-width:640px){.journey-map{grid-template-columns:repeat(2,minmax(0,1fr))}}

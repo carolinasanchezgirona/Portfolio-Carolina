@@ -97,7 +97,7 @@ export default function MiEspacioPage() {
             <div className="space-hero">
               <p className="space-eyebrow">Hoy</p>
               <h2 id="space-today-title">Un espacio para ti</h2>
-              <p>Herramientas para tu bienestar y recursos para continuar lo trabajado en consulta, a tu ritmo.</p>
+              <p>Tu recorrido, paso a paso y recursos para continuar lo trabajado en consulta, a tu ritmo.</p>
             </div>
 
             <MoodTracker />
@@ -205,28 +205,11 @@ export default function MiEspacioPage() {
           <section className="space-view" data-space-panel="wellness" hidden>
             <div className="space-hero">
               <p className="space-eyebrow">Wellness</p>
-              <h2>Herramientas para tu bienestar</h2>
-              <p>Propuestas prácticas para explorar emociones, entrenar habilidades cognitivas y cuidar tu día a día. No sustituyen la evaluación ni la intervención clínica.</p>
+              <h2>Tu recorrido, paso a paso</h2>
+              <p>Elige qué quieres trabajar. Verás tu objetivo y una propuesta cada vez, a tu ritmo.</p>
             </div>
 
-            <details className="space-learning-card">
-              <summary><span className="space-learning-icon" aria-hidden="true">◎</span><span><strong>Comprender lo que nos pasa</strong><small>Una explicación visual, sencilla y sin etiquetas</small></span><span aria-hidden="true">+</span></summary>
-              <div className="space-learning-body">
-                <p>Podemos observar una situación desde distintas perspectivas, sin que ninguna sea necesariamente «la verdad» de lo que sentimos.</p>
-                <div className="space-learning-flow" role="img" aria-label="Tres elementos que pueden influirse mutuamente: situación, pensamientos y emociones, respuesta.">
-                  <span><strong>01</strong> Situación</span><span><strong>02</strong> Pienso y siento</span><span><strong>03</strong> Respondo</span>
-                </div>
-                <p className="space-learning-caption">Una orientación para observar tu experiencia, no un diagnóstico ni una explicación causal universal.</p>
-              </div>
-            </details>
-
-            <div className="space-filter-row" role="group" aria-label="Filtrar herramientas Wellness">
-              <button className="is-active" type="button" data-wellness-filter="all">Todo</button>
-              <button type="button" data-wellness-filter="emocional">Emocional</button>
-              <button type="button" data-wellness-filter="cognitivo">Cognitivo</button>
-              <button type="button" data-wellness-filter="autocuidado">Autocuidado</button>
-              <button type="button" data-wellness-filter="favoritos">Favoritos</button>
-            </div>
+            <div id="wellness-journey" aria-live="polite" />
 
             <div id="wellness-context" className="space-context" hidden />
             <div id="wellness-list" className="space-wellness-list" aria-live="polite" />
@@ -309,7 +292,7 @@ export default function MiEspacioPage() {
         <span>Si existe una emergencia, llama al 112. Si hay riesgo o ideación suicida, puedes contactar con el 024.</span>
       </aside>
 
-      <Script src="/mi-espacio.js?v=20261008-privacidad2" strategy="afterInteractive" />
+      <Script src="/mi-espacio.js?v=20261009-recorrido1" strategy="afterInteractive" />
     </main>
   );
 }
