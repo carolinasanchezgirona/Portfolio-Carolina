@@ -34,3 +34,27 @@ test('creates private expiring P2P room and bounded token without names or recor
     assert.ok(!JSON.stringify(await result.json()).includes('fake-secret'));
   } finally {global.fetch=saved;Date.now=savedNow;}
 });
+test('omitted storage checks domain default and rejects enabled storage', async () => {
+  const saved=global.fetch, savedNow=Date.now;
+  Date.now=()=>1800000000000;
+  try {
+    for (const enabled of [false,true]) {
+      let tokenIssued=false;
+      global.fetch=async(url,options)=>{
+        if(url==='https://api.daily.co/v1/') return Response.json({config:enabled ? {enable_transcription_storage:true} : {}});
+        if(options.method==='GET') return new Response('{}',{status:404});
+        const body=JSON.parse(options.body);
+        if(url.endsWith('/rooms')) {
+          const config={...body.properties};delete config.enable_transcription_storage;
+          return Response.json({url:'https://carolinasanchezgirona.daily.co/'+body.name,privacy:'private',config});
+        }
+        tokenIssued=true;
+        assert.equal(body.properties.permissions.canAdmin,false);
+        assert.equal(body.properties.auto_start_transcription,false);
+        return Response.json({token:'test-token'});
+      };
+      assert.equal((await dailyTest(req(),{DAILY_API_KEY:'fake'},async()=>true)).status,enabled ? 502 : 200);
+      assert.equal(tokenIssued,!enabled);
+    }
+  } finally {global.fetch=saved;Date.now=savedNow;}
+});
