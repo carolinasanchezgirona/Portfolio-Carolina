@@ -14,7 +14,11 @@ export const metadata: Metadata = {
 export default function AdminAgendaPage() {
   return (
     <main className="admin-page">
-      <section id="admin-login" className="admin-login-shell">
+      <section id="admin-agenda-loading" className="admin-agenda-loading" role="status" aria-live="polite">
+        <span className="admin-agenda-spinner" aria-hidden="true" />
+        <p>Abriendo tu agenda…</p>
+      </section>
+      <section id="admin-login" className="admin-login-shell" hidden>
         <form id="admin-login-form" className="admin-login-card">
           <p className="admin-eyebrow">Área privada</p>
           <h1>Agenda profesional</h1>
@@ -191,7 +195,7 @@ export default function AdminAgendaPage() {
         </form>
       </dialog>
 
-      <Script src="/admin-agenda-v3.js?v=20261005-single-auth-2" strategy="afterInteractive" />
+      <Script src="/admin-agenda-v3.js?v=20261009-no-login-flicker-1" strategy="afterInteractive" />
       <Script src="/pwa.js?v=20260915-admin-2" strategy="afterInteractive" />
     </main>
   );
