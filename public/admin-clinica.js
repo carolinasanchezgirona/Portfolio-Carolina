@@ -2349,14 +2349,18 @@
           material_type: els.materialType?.value || existing?.material_type || "exercise",
           summary: existing?.summary || pendingAiMaterial?.summary || els.exerciseObjective.value.trim(),
           process_tags: els.materialProcess?.value ? [els.materialProcess.value] : (existing?.process_tags || []),
-          patient_document: patientDocumentFromForm(els.materialType?.value || existing?.material_type || "exercise")
+          patient_document: (() => { const doc = patientDocumentFromForm(els.materialType?.value || existing?.material_type || "exercise"); return { ...doc, visual_blocks: (doc.visual_blocks || []).filter(b => b.type !== "image").map(({ data, ...rest }) => rest) }; })()
         })
       });
       const body = await response.json().catch(() => ({}));
       if (!response.ok) throw new Error(body.error || "No se ha podido completar la ficha.");
+      const current = patientDocumentFromForm(els.materialType?.value || "exercise");
       const document = body.patient_document || {};
-      fillPatientDocument(document);
-      els.exerciseContent.value = document.instructions || els.exerciseContent.value;
+      const preservedImages = (current.visual_blocks || []).filter(block => block.type === "image");
+      const generatedVisuals = Array.isArray(document.visual_blocks) ? document.visual_blocks : (current.visual_blocks || []).filter(block => block.type !== "image");
+      const mergedDocument = { ...current, ...document, visual_blocks: [...preservedImages, ...generatedVisuals].slice(0, 8) };
+      fillPatientDocument(mergedDocument);
+      els.exerciseContent.value = mergedDocument.instructions || els.exerciseContent.value;
       els.exerciseMessage.textContent = existing
         ? "Ficha completada. Revísala y pulsa «Actualizar biblioteca» si quieres conservar esta versión."
         : "Ficha completada. Revísala antes de añadirla a la biblioteca o enviarla.";
