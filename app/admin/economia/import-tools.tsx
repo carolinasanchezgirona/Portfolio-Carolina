@@ -154,8 +154,8 @@ export default function EconomyImportTools() {
             <label>Fecha <input aria-label="Fecha OCR" type="date" value={ocr.expense_date} onChange={e=>setOcr({...ocr,expense_date:e.target.value})}/></label>
             <label>Proveedor <input aria-label="Proveedor OCR" maxLength={160} value={ocr.supplier} onChange={e=>setOcr({...ocr,supplier:e.target.value})}/></label>
             <label>Concepto <input aria-label="Concepto OCR" maxLength={250} value={ocr.concept} onChange={e=>setOcr({...ocr,concept:e.target.value})}/></label>
-            <label>Importe total (€) <input aria-label="Importe OCR" inputMode="decimal" value={ocr.amount_cents?money(ocr.amount_cents):""}
-              onChange={e=>setOcr({...ocr,amount_cents:amountCents(e.target.value)})}/></label>
+            <label>Importe total (€) <input aria-label="Importe OCR" inputMode="decimal" defaultValue={ocr.amount_cents?money(ocr.amount_cents):""}
+              onBlur={e=>setOcr({...ocr,amount_cents:amountCents(e.target.value)})}/></label>
             <label>Categoría <select aria-label="Categoría OCR" value={ocr.category} onChange={e=>setOcr({...ocr,category:e.target.value as Category})}>
               {categories.map(cat=><option key={cat.value} value={cat.value}>{cat.name}</option>)}</select></label>
           </div>
@@ -201,7 +201,7 @@ export default function EconomyImportTools() {
             <td><input aria-label={"Concepto fila "+row.source} maxLength={250} value={row.concept} onChange={e=>changeRow(i,{concept:e.target.value})}/></td>
             <td><select aria-label={"Categoría fila "+row.source} value={row.category} onChange={e=>changeRow(i,{category:e.target.value as Category})}>
               {categories.map(cat=><option key={cat.value} value={cat.value}>{cat.name}</option>)}</select></td>
-            <td><input aria-label={"Importe fila "+row.source} type="text" inputMode="decimal" value={row.amount_cents?money(row.amount_cents):""} onChange={e=>changeRow(i,{amount_cents:amountCents(e.target.value)})}/></td>
+            <td><input key={fileName+"-"+sheetIndex+"-"+map.amount+"-"+row.key+"-"+row.amount_cents} aria-label={"Importe fila "+row.source} type="text" inputMode="decimal" defaultValue={row.amount_cents?money(row.amount_cents):""} onBlur={e=>changeRow(i,{amount_cents:amountCents(e.target.value)})}/></td>
             <td>{row.issue|| (duplicates[i]?"Posible duplicado":"Correcto")}</td>
           </tr>)}</tbody>
         </table>
