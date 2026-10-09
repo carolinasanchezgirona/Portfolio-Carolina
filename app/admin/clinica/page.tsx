@@ -2,12 +2,25 @@ import Script from "next/script";
 import type { Metadata } from "next";
 import PatientBulkImport from "./patient-bulk-import";
 import "./clinica.css";
+import "./clinic-navigation.css";
 
 export const metadata: Metadata = {
   title: "Gestión clínica | Carolina Sánchez",
   description: "Aplicación privada para la gestión clínica de Dememoria.",
   robots: { index: false, follow: false, nocache: true },
 };
+
+type ClinicIconName = "today" | "agenda" | "patients" | "pending" | "more" | "refresh";
+function ClinicIcon({ name }: { name: ClinicIconName }) {
+  return <svg className="clinic-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.9} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" focusable="false">
+    {name === "today" && <><path d="m3 10 9-7 9 7v10H3V10Z" /><path d="M9 21v-8h6v8" /></>}
+    {name === "agenda" && <><rect x="3" y="5" width="18" height="16" rx="2" /><path d="M7 3v4M17 3v4M3 10h18M8 14h3M8 17h3" /></>}
+    {name === "patients" && <><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2M16 3a4 4 0 0 1 0 8M22 21v-2a4 4 0 0 0-3-3.87" /><circle cx="9" cy="7" r="4" /></>}
+    {name === "pending" && <><rect x="5" y="4" width="14" height="18" rx="2" /><path d="M9 4.5h6M9 11h6M9 15h6M9 19h4" /></>}
+    {name === "more" && <path d="M4 6h16M4 12h16M4 18h16" />}
+    {name === "refresh" && <><path d="M20 7v5h-5M4 17v-5h5" /><path d="M5.8 9a7 7 0 0 1 12.4-2L20 12M4 12l1.8 5a7 7 0 0 0 12.4-2" /></>}
+  </svg>;
+}
 
 export default function AdminClinicaPage() {
   return (
@@ -23,20 +36,29 @@ export default function AdminClinicaPage() {
             </div>
           </div>
           <div className="clinic-top-actions">
-            <a className="clinic-secondary" href="/admin/agenda/">Agenda</a>
-            <a className="clinic-secondary" href="/admin/economia/">Economía y facturas</a>
-            <a className="clinic-secondary" href="/admin/articulos/">Artículos</a>
-            <a className="clinic-secondary" href="/admin/preguntas/">Preguntas</a>
-            <a className="clinic-secondary" href="/admin/recursos/">Recursos</a>
-            <button id="clinic-refresh" className="clinic-secondary" type="button">Actualizar</button>
-            <button id="clinic-logout" className="clinic-text" type="button">Cerrar sesión</button>
+            <button id="clinic-refresh" className="clinic-icon-action" type="button" title="Actualizar información" aria-label="Actualizar información"><ClinicIcon name="refresh" /></button>
           </div>
         </header>
 
-        <nav className="clinic-tabs" aria-label="Vistas de gestión clínica">
-          <button id="clinic-view-today" className="active" type="button">Hoy</button>
-          <button id="clinic-view-patients" type="button">Pacientes</button>
-          <button id="clinic-view-pending" type="button">Pendientes <span id="clinic-pending-badge" className="clinic-tab-badge">0</span></button>
+        <nav className="clinic-tabs clinic-navigation" aria-label="Navegación principal de gestión clínica">
+          <button id="clinic-view-today" className="active" type="button" aria-current="page"><ClinicIcon name="today" /><span className="clinic-nav-label">Hoy</span></button>
+          <a className="clinic-nav-link" href="/admin/agenda/"><ClinicIcon name="agenda" /><span className="clinic-nav-label">Agenda</span></a>
+          <button id="clinic-view-patients" type="button"><ClinicIcon name="patients" /><span className="clinic-nav-label">Pacientes</span></button>
+          <button id="clinic-view-pending" type="button"><ClinicIcon name="pending" /><span className="clinic-nav-label">Pendientes</span><span id="clinic-pending-badge" className="clinic-tab-badge" aria-label="Número de pendientes">0</span></button>
+          <details className="clinic-more-menu">
+            <summary><ClinicIcon name="more" /><span className="clinic-nav-label">Más</span></summary>
+            <div className="clinic-more-panel">
+              <p className="clinic-more-heading">Herramientas</p>
+              <a className="clinic-more-item" href="/admin/recursos/">Recursos</a>
+              <a className="clinic-more-item" href="/admin/preguntas/">Preguntas</a>
+              <a className="clinic-more-item" href="/admin/articulos/">Artículos</a>
+              <p className="clinic-more-heading">Administración</p>
+              <a className="clinic-more-item" href="/admin/economia/">Economía y facturas</a>
+              <a className="clinic-more-item" href="/admin/">Panel general</a>
+              <div className="clinic-more-install-slot" />
+              <button id="clinic-logout" className="clinic-more-item clinic-more-logout" type="button">Cerrar sesión</button>
+            </div>
+          </details>
         </nav>
 
         <p id="clinic-status" className="clinic-message" role="status" aria-live="polite" />

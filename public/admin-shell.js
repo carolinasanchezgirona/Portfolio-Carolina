@@ -1,6 +1,6 @@
 (() => {
   "use strict";
-  if (window.location.pathname === "/admin/" || window.location.pathname.startsWith("/admin/clinica/acceso")) return;
+  if (window.location.pathname === "/admin/" || window.location.pathname.startsWith("/admin/clinica")) return;
 
   function addHomeLink() {
     if (document.querySelector('[data-admin-home-link="true"]')) return;

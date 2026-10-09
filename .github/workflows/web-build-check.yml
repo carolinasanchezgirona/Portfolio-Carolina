@@ -53,7 +53,9 @@ jobs:
         run: |
           node --check public/admin-clinica.js
           node --check public/clinic-report-options.js
-          node --test tests/clinic-admin-workspace.test.mjs
+          node --check public/admin-shell.js
+          node --check public/clinic-pwa.js
+          node --test tests/clinic-admin-workspace.test.mjs tests/clinic-navigation.test.mjs
 
       - name: Validar ficha clínica única y preparación de sesiones
         run: |

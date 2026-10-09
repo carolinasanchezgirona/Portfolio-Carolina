@@ -2280,6 +2280,11 @@
     els.viewToday.classList.toggle("active", name === "today");
     els.viewPatients.classList.toggle("active", name === "patients");
     els.viewPending.classList.toggle("active", name === "pending");
+    [[els.viewToday, "today"], [els.viewPatients, "patients"], [els.viewPending, "pending"]].forEach(([button, key]) => {
+      if (name === key) button.setAttribute("aria-current", "page");
+      else button.removeAttribute("aria-current");
+    });
+    document.querySelector(".clinic-more-menu")?.removeAttribute("open");
     if (name === "patients") els.patientSearch.focus();
   }
 

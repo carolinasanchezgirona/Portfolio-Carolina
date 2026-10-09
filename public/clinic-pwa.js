@@ -15,7 +15,7 @@
   }
 
   const loginForm = document.querySelector("#clinic-login-form");
-  const topActions = document.querySelector(".clinic-top-actions");
+  const topActions = document.querySelector(".clinic-more-install-slot");
 
   const ensureInstallButton = (container, className = "clinic-secondary") => {
     if (!container) return null;
@@ -42,7 +42,7 @@
   };
 
   const loginButton = ensureInstallButton(loginForm, "clinic-secondary clinic-pwa-install-login");
-  const appButton = ensureInstallButton(topActions, "clinic-secondary");
+  const appButton = ensureInstallButton(topActions, "clinic-more-item");
   const installButtons = [loginButton, appButton].filter(Boolean);
 
   const ensureHint = () => {
