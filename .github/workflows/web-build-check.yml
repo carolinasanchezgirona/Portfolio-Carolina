@@ -36,6 +36,19 @@ jobs:
       - name: Probar bloqueo de identificadores en la IA clínica
         run: node --experimental-strip-types --test tests/clinical-privacy.test.mjs
 
+      - name: Configurar Deno para validar la función de PDF
+        uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.x
+
+      - name: Comprobar TypeScript de la función neuropsicológica
+        run: deno check --node-modules-dir=auto supabase/functions/view-clinical-exercise/index.ts
+
+      - name: Validar recursos visuales neuropsicológicos y editor
+        run: |
+          node --check public/clinic-neuro-materials.js
+          node --experimental-strip-types --test tests/clinical-neuro-visual.test.mjs tests/clinical-neuro-library.test.mjs
+
       - name: Validar editor clínico, guardado automático y navegación
         run: |
           node --check public/admin-clinica.js

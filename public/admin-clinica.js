@@ -611,6 +611,7 @@
     els.exerciseSafety.value = doc.safety_note || "";
     els.exerciseRemember.value = doc.remember || "";
     els.exerciseSessionQuestions.value = Array.isArray(doc.session_questions) ? doc.session_questions.join("\n") : "";
+    window.ClinicNeuroMaterials?.hydrate(doc);
     renderPatientDocumentQuality(doc);
   }
 
@@ -630,7 +631,8 @@
       record_prompt: els.exerciseRecord.value.trim(),
       safety_note: els.exerciseSafety.value.trim(),
       remember: els.exerciseRemember.value.trim(),
-      session_questions: els.exerciseSessionQuestions.value.split(/\r?\n/).map((item) => item.trim()).filter(Boolean).slice(0, 6)
+      session_questions: els.exerciseSessionQuestions.value.split(/\r?\n/).map((item) => item.trim()).filter(Boolean).slice(0, 6),
+      ...(window.ClinicNeuroMaterials?.read?.() || { clinical_area: "psychology", visual_blocks: [] })
     };
   }
 
@@ -889,8 +891,17 @@
     if (!currentPatient) return;
     if (sendAfterSave) {
       const materialTypeForQuality = els.materialType?.value || "exercise";
-      const quality = patientDocumentQuality(patientDocumentFromForm(materialTypeForQuality));
+      const docForQuality = patientDocumentFromForm(materialTypeForQuality);
+      const validation = window.ClinicNeuroMaterials?.validate?.(docForQuality);
+      if (validation && !validation.ok) throw new Error("Antes de prescribir: " + validation.issues.join("; ") + ".");
+      if (docForQuality.clinical_area === "neuropsychology" && !document.getElementById("clinic-neuro-reviewed")?.checked) {
+        throw new Error("Debes confirmar la revisión clínica de los estímulos y consignas antes de enviar esta actividad.");
+      }
+      const quality = patientDocumentQuality(docForQuality);
       if (!quality.complete) {
+        if (docForQuality.clinical_area === "neuropsychology") {
+          throw new Error("Completa todos los campos necesarios para prescribir: " + quality.missing.join(", ") + ".");
+        }
         const proceed = window.confirm(`Esta ficha todavía está marcada como básica. Falta: ${quality.missing.join(", ")}.\n\nPuedes enviarla igualmente o cancelar para completarla con IA.`);
         if (!proceed) {
           els.exerciseMessage.textContent = "Envío cancelado. Puedes completar la ficha antes de enviarla.";
@@ -1361,39 +1372,6 @@
       els.patientTimeline.append(row);
     });
   }
-  function documentCategoryLabel(category) {
-    return ({
-      intervention_plan: "Plan de intervención",
-      information_notice: "Circular informativa",
-      relaxation_audio: "Audio de relajación",
-      external_report: "Informe externo",
-      referral: "Derivación",
-      consent: "Consentimiento",
-      test_result: "Resultado de prueba",
-      attendance: "Justificante",
-      other: "Otro"
-    })[category] || "Documento";
-  }
-
-  async function setPatientDocumentSharing(doc, share) {
-    if (!currentPatient || currentPatient.id !== doc.patient_id) throw new Error("Paciente no válido.");
-    if (share && !window.confirm(`¿Publicar «${doc.title}» para este paciente en Mi espacio? Comprueba que el documento y su destinatario son correctos.`)) return;
-    if (!share && !window.confirm(`¿Retirar el acceso de este paciente a «${doc.title}»? Las copias ya descargadas no se pueden retirar.`)) return;
-    const now = new Date().toISOString();
-    const rows = await rest("clinical_documents?id=eq." + encodeURIComponent(doc.id) + "&patient_id=eq." + encodeURIComponent(doc.patient_id) + "&select=*", {
-      method: "PATCH",
-      headers: { Prefer: "return=representation" },
-      body: JSON.stringify(share
-        ? { shared_at: now, share_revoked_at: null }
-        : { share_revoked_at: now })
-    });
-    if (!Array.isArray(rows) || rows.length !== 1) throw new Error("No se ha podido actualizar el acceso.");
-    const index = clinicalDocuments.findIndex(item => item.id === doc.id);
-    if (index >= 0) clinicalDocuments[index] = rows[0];
-    renderDocuments(currentPatient);
-    els.patientMessage.textContent = share ? "Archivo disponible en Mi espacio del paciente." : "Acceso retirado de Mi espacio.";
-  }
-
   function renderDocuments(patient) {
     els.patientDocuments.replaceChildren();
     const docs = clinicalDocuments.filter((item) => item.patient_id === patient.id);
@@ -2310,6 +2288,38 @@
       }
     }
   });
+  window.addEventListener("clinic-neuro-load-starter", (event) => {
+    const draft = event.detail || {};
+    if (!currentPatient) {
+      if (els.exerciseMessage) els.exerciseMessage.textContent = "Selecciona primero un paciente para preparar el material.";
+      return;
+    }
+    if (!draft.patient_document || !draft.title || !draft.domain) return;
+    if (!els.exerciseDialog.open) openExercise();
+    pendingAiMaterial = null;
+    applyExerciseTemplate(null);
+    const doc = { ...draft.patient_document, visual_blocks: Array.isArray(draft.patient_document.visual_blocks) ? draft.patient_document.visual_blocks : [] };
+    if (els.materialType) els.materialType.value = "exercise";
+    els.exerciseTemplateId.value = "";
+    els.exerciseTitle.value = draft.title;
+    els.exerciseContent.value = doc.instructions || "";
+    fillPatientDocument(doc);
+    const process = draft.domain;
+    populateMaterialProcessOptions(process);
+    if (els.materialProcess && !Array.from(els.materialProcess.options).some(option => option.value === process)) {
+      const option = document.createElement("option");
+      option.value = process;
+      option.textContent = "Neuropsicología · " + process.replaceAll("_", " ");
+      els.materialProcess.append(option);
+      els.materialProcess.value = process;
+    }
+    els.exerciseRationale.value = "Borrador inicial " + (draft.code || "") +
+      ". Revisión profesional: " + (draft.caution || "Comprobar adecuación y estímulos.") +
+      " Registro: " + (draft.record || "");
+    if (els.materialSearch) els.materialSearch.value = "";
+    els.exerciseMessage.textContent = "Propuesta cargada. Antes de enviar revisa materiales, fechas, consignas, nivel de ayuda y el objetivo funcional. No está validada ni prescrita.";
+  });
+
   els.materialSearch?.addEventListener("input", () => {
     populateExerciseLibrary("", els.materialSearch.value);
   });
@@ -2354,6 +2364,8 @@
           case_context: els.exerciseRationale.value.trim(),
           preferred_type: els.materialType?.value || "",
           preferred_process: els.materialProcess?.value || "",
+          clinical_area: window.ClinicNeuroMaterials?.read?.().clinical_area || "psychology",
+          neuro_profile: window.ClinicNeuroMaterials?.read?.().neuro_profile || null,
           catalog
         })
       });
@@ -2436,14 +2448,18 @@
           material_type: els.materialType?.value || existing?.material_type || "exercise",
           summary: existing?.summary || pendingAiMaterial?.summary || els.exerciseObjective.value.trim(),
           process_tags: els.materialProcess?.value ? [els.materialProcess.value] : (existing?.process_tags || []),
-          patient_document: patientDocumentFromForm(els.materialType?.value || existing?.material_type || "exercise")
+          patient_document: (() => { const doc = patientDocumentFromForm(els.materialType?.value || existing?.material_type || "exercise"); return { ...doc, visual_blocks: (doc.visual_blocks || []).filter(b => b.type !== "image").map(({ data, ...rest }) => rest) }; })()
         })
       });
       const body = await response.json().catch(() => ({}));
       if (!response.ok) throw new Error(body.error || "No se ha podido completar la ficha.");
+      const current = patientDocumentFromForm(els.materialType?.value || "exercise");
       const document = body.patient_document || {};
-      fillPatientDocument(document);
-      els.exerciseContent.value = document.instructions || els.exerciseContent.value;
+      const preservedImages = (current.visual_blocks || []).filter(block => block.type === "image");
+      const generatedVisuals = Array.isArray(document.visual_blocks) ? document.visual_blocks : (current.visual_blocks || []).filter(block => block.type !== "image");
+      const mergedDocument = { ...current, ...document, visual_blocks: [...preservedImages, ...generatedVisuals].slice(0, 8) };
+      fillPatientDocument(mergedDocument);
+      els.exerciseContent.value = mergedDocument.instructions || els.exerciseContent.value;
       els.exerciseMessage.textContent = existing
         ? "Ficha completada. Revísala y pulsa «Actualizar biblioteca» si quieres conservar esta versión."
         : "Ficha completada. Revísala antes de añadirla a la biblioteca o enviarla.";
@@ -2460,6 +2476,12 @@
     const process = els.materialProcess?.value || "";
     const materialType = els.materialType?.value || "exercise";
     const existing = exerciseTemplates.find((item) => item.id === els.exerciseTemplateId.value) || null;
+    const neuroCheck = window.ClinicNeuroMaterials?.validate?.(patientDocumentFromForm(materialType));
+    if (neuroCheck && !neuroCheck.ok) { els.exerciseMessage.textContent = "Revisa la ficha: " + neuroCheck.issues.join("; "); return; }
+    if (window.ClinicNeuroMaterials?.read?.().clinical_area === "neuropsychology" && !document.getElementById("clinic-neuro-reviewed")?.checked) {
+      els.exerciseMessage.textContent = "Confirma la revisión profesional antes de incorporar la actividad neuropsicológica a la biblioteca.";
+      return;
+    }
     if (!title || !content || !process) {
       els.exerciseMessage.textContent = "Para guardar el material indica título, contenido y categoría.";
       return;
