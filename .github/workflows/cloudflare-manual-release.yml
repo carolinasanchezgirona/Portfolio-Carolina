@@ -70,6 +70,8 @@ jobs:
           node --check public/admin-economia.js
           node --check public/admin-agenda-view-switcher.js
           node --check public/admin-notifications.js
+          node --check public/sw.js
+          node --check scripts/ensure-vapid.mjs
           node --test tests/billing-invoices.test.mjs tests/patient-shared-files.test.mjs tests/clinical-file-notifications.test.mjs tests/admin-agenda-notifications.test.mjs
 
       - name: Compilar proyecto completo
@@ -93,6 +95,13 @@ jobs:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           command: deploy
+
+      - name: Inicializar Web Push sin exponer claves ni rotarlas
+        shell: bash
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: node scripts/ensure-vapid.mjs
 
       - name: Verificar página pública nueva, sin iniciar sesión
         shell: bash
@@ -132,4 +141,10 @@ jobs:
             echo "::error::No se han podido confirmar Agenda simplificada y Centro de avisos en el dominio."
             exit 1
           fi
-          echo "Publicación verificada en Agenda, Centro de avisos y Gestión económica. Las operaciones privadas requieren comprobación con cuenta de prueba."
+          config_status=$(curl -sS --max-time 20 -o /tmp/dememoria-push-check.json -w '%{http_code}' \
+            "https://carolinasanchezgirona.com/api/admin/push" || true)
+          if [ "$config_status" != "401" ]; then
+            echo "::error::La API privada de avisos debe rechazar solicitudes sin sesión (401). HTTP: $config_status."
+            exit 1
+          fi
+          echo "Publicación verificada: Agenda, Centro de avisos, API push protegida y Gestión económica."

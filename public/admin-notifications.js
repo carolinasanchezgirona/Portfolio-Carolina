@@ -147,6 +147,111 @@
   function redirect() {
     location.replace("/admin/clinica/acceso/?next=" + encodeURIComponent("/admin/notificaciones/"));
   }
+
+  // Los endpoints push solo se envían a la API propia tras autenticar al titular.
+  let pushPublicKey = null;
+  let currentPushSubscription = null;
+  function pushState(message) { $("#admin-notice-push-state").textContent = message; }
+  function pushButtons(active, available) {
+    $("#admin-notice-push-enable").hidden = !available || active;
+    $("#admin-notice-push-test").hidden = !active;
+    $("#admin-notice-push-disable").hidden = !active;
+  }
+  function decodePublicKey(input) {
+    const raw = atob(input.replace(/-/g, "+").replace(/_/g, "/") + "=".repeat((4 - input.length % 4) % 4));
+    return Uint8Array.from(raw, c => c.charCodeAt(0));
+  }
+  async function pushRequest(payload) {
+    const token = session()?.access_token;
+    if (!token) throw new Error("La sesión ha caducado.");
+    const r = await fetch("/api/admin/push", {
+      method: "POST", cache: "no-store",
+      headers: { Authorization: "Bearer " + token, "Content-Type": "application/json" },
+      body: JSON.stringify(payload)
+    });
+    const result = await r.json().catch(() => ({}));
+    if (!r.ok) throw new Error(result.error || "No se ha completado la operación.");
+    return result;
+  }
+  async function initPush() {
+    const enable = $("#admin-notice-push-enable");
+    const test = $("#admin-notice-push-test");
+    const disable = $("#admin-notice-push-disable");
+    const supported = window.isSecureContext && "Notification" in window && "serviceWorker" in navigator && "PushManager" in window;
+    if (!supported) {
+      pushState("Este navegador no admite avisos push. El Centro de avisos sigue disponible.");
+      pushButtons(false, false);
+      return;
+    }
+    try {
+      const r = await fetch("/api/admin/push", {headers:{Authorization:"Bearer " + session().access_token},cache:"no-store"});
+      if (!r.ok) throw new Error("No se pudo comprobar la configuración.");
+      const config = await r.json();
+      if (!config.enabled || !config.publicKey) {
+        pushState("Los avisos del móvil aún no están configurados en el servidor.");
+        pushButtons(false, false); return;
+      }
+      pushPublicKey = config.publicKey;
+      const reg = await navigator.serviceWorker.register("/sw.js", {scope:"/"});
+      currentPushSubscription = await reg.pushManager.getSubscription();
+      if (Notification.permission === "denied") {
+        pushState("El navegador ha bloqueado las notificaciones. Puedes desbloquearlas en Ajustes.");
+        pushButtons(false, false); return;
+      }
+      if (currentPushSubscription) {
+        // Una suscripción previa también se reactiva en el servidor al visitar esta pantalla.
+        await pushRequest({action:"subscribe",endpoint:currentPushSubscription.endpoint});
+        pushState("Avisos activados en este dispositivo.");
+        pushButtons(true, true);
+      } else {
+        pushState("Puedes recibir avisos genéricos incluso con la aplicación cerrada.");
+        pushButtons(false, true);
+      }
+    } catch (error) {
+      pushState(error.message || "No se pudo comprobar el estado de los avisos.");
+      pushButtons(false, false);
+    }
+    enable.addEventListener("click", async () => {
+      enable.disabled = true;
+      try {
+        // Debe ejecutarse por una pulsación directa para que el navegador permita mostrar el permiso.
+        const permission = await Notification.requestPermission();
+        if (permission !== "granted") throw new Error("No se ha concedido permiso para notificaciones.");
+        const reg = await navigator.serviceWorker.ready;
+        const sub = await reg.pushManager.subscribe({
+          userVisibleOnly: true, applicationServerKey: decodePublicKey(pushPublicKey),
+        });
+        try { await pushRequest({action:"subscribe",endpoint:sub.endpoint}); }
+        catch (error) { await sub.unsubscribe(); throw error; }
+        currentPushSubscription = sub;
+        pushState("Avisos activados. Puedes enviarte una prueba.");
+        pushButtons(true, true);
+      } catch (error) { pushState(error.message || "No ha sido posible activar los avisos."); }
+      finally { enable.disabled = false; }
+    });
+    test.addEventListener("click", async () => {
+      if (!currentPushSubscription) return;
+      test.disabled = true;
+      pushState("Enviando aviso de prueba…");
+      try {
+        await pushRequest({action:"test",endpoint:currentPushSubscription.endpoint});
+        pushState("Prueba aceptada por el proveedor. Comprueba las notificaciones de tu dispositivo.");
+      } catch (error) { pushState(error.message || "La prueba no ha podido enviarse."); }
+      finally { test.disabled = false; }
+    });
+    disable.addEventListener("click", async () => {
+      if (!currentPushSubscription) return;
+      disable.disabled = true;
+      try {
+        await pushRequest({action:"unsubscribe",endpoint:currentPushSubscription.endpoint});
+        await currentPushSubscription.unsubscribe();
+        currentPushSubscription = null;
+        pushState("Avisos desactivados en este dispositivo.");
+        pushButtons(false, Notification.permission !== "denied");
+      } catch (error) { pushState(error.message || "No se pudieron desactivar los avisos."); }
+      finally { disable.disabled = false; }
+    });
+  }
   async function init() {
     const token = session()?.access_token;
     if (!token) { redirect(); return; }
@@ -176,7 +281,7 @@
         render();
       });
     });
-    await load();
+    await Promise.allSettled([load(), initPush()]);
   }
   init();
 })();
