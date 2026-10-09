@@ -894,8 +894,14 @@
       const docForQuality = patientDocumentFromForm(materialTypeForQuality);
       const validation = window.ClinicNeuroMaterials?.validate?.(docForQuality);
       if (validation && !validation.ok) throw new Error("Antes de prescribir: " + validation.issues.join("; ") + ".");
+      if (docForQuality.clinical_area === "neuropsychology" && !document.getElementById("clinic-neuro-reviewed")?.checked) {
+        throw new Error("Debes confirmar la revisión clínica de los estímulos y consignas antes de enviar esta actividad.");
+      }
       const quality = patientDocumentQuality(docForQuality);
       if (!quality.complete) {
+        if (docForQuality.clinical_area === "neuropsychology") {
+          throw new Error("Completa todos los campos necesarios para prescribir: " + quality.missing.join(", ") + ".");
+        }
         const proceed = window.confirm(`Esta ficha todavía está marcada como básica. Falta: ${quality.missing.join(", ")}.\n\nPuedes enviarla igualmente o cancelar para completarla con IA.`);
         if (!proceed) {
           els.exerciseMessage.textContent = "Envío cancelado. Puedes completar la ficha antes de enviarla.";
@@ -2379,6 +2385,10 @@
     const existing = exerciseTemplates.find((item) => item.id === els.exerciseTemplateId.value) || null;
     const neuroCheck = window.ClinicNeuroMaterials?.validate?.(patientDocumentFromForm(materialType));
     if (neuroCheck && !neuroCheck.ok) { els.exerciseMessage.textContent = "Revisa la ficha: " + neuroCheck.issues.join("; "); return; }
+    if (window.ClinicNeuroMaterials?.read?.().clinical_area === "neuropsychology" && !document.getElementById("clinic-neuro-reviewed")?.checked) {
+      els.exerciseMessage.textContent = "Confirma la revisión profesional antes de incorporar la actividad neuropsicológica a la biblioteca.";
+      return;
+    }
     if (!title || !content || !process) {
       els.exerciseMessage.textContent = "Para guardar el material indica título, contenido y categoría.";
       return;
