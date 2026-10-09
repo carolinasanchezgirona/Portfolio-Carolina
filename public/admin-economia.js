@@ -396,6 +396,71 @@
       await load(); setStatus("Datos fiscales guardados. Comprueba que sean correctos antes de emitir.");
     } catch (err) { setStatus(err.message); }
   });
+  // The import interface receives a capability only after the owner has been authenticated.
+  // Every write still goes through Supabase RLS; incoming file bytes never reach this API.
+  function expenseIdentity(row) {
+    const clean = (s) => String(s || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^a-z0-9]/g, "");
+    return [row.expense_date, clean(row.supplier), clean(row.concept), Number(row.amount_cents)].join("|");
+  }
+  function validateImportedExpense(row) {
+    const validDate = /^\d{4}-\d{2}-\d{2}$/.test(row.expense_date) &&
+      !Number.isNaN(Date.parse(row.expense_date + "T12:00:00Z"));
+    if (!validDate) throw new Error("Fecha de gasto no válida.");
+    if (String(row.supplier || "").trim().length < 2 || String(row.supplier || "").length > 160) throw new Error("Proveedor incorrecto.");
+    if (String(row.concept || "").trim().length < 2 || String(row.concept || "").length > 250) throw new Error("Concepto incorrecto.");
+    if (!Number.isSafeInteger(row.amount_cents) || row.amount_cents < 1 || row.amount_cents > 10000000) throw new Error("Importe incorrecto.");
+    if (!["rent","utilities","software","materials","marketing","training","professional","other"].includes(row.category)) throw new Error("Categoría incorrecta.");
+    return {
+      expense_date: row.expense_date,
+      category: row.category,
+      supplier: row.supplier.trim(),
+      concept: row.concept.trim(),
+      amount_cents: row.amount_cents
+    };
+  }
+  function stageImportedExpense(raw) {
+    const row = validateImportedExpense(raw);
+    showTab("expenses");
+    $("#econ-expense-date").value = row.expense_date;
+    $("#econ-expense-category").value = row.category;
+    $("#econ-expense-supplier").value = row.supplier;
+    $("#econ-expense-concept").value = row.concept;
+    $("#econ-expense-amount").value = (row.amount_cents / 100).toFixed(2);
+    $("#econ-expense-form").scrollIntoView({ behavior: "smooth", block: "center" });
+    setStatus("Borrador completado desde OCR. Comprueba todos los campos antes de guardar.");
+  }
+  async function importReviewedExpenses(input) {
+    if (!session?.access_token) throw new Error("Sesión profesional no válida.");
+    if (!Array.isArray(input) || input.length < 1 || input.length > 250) throw new Error("Selecciona entre 1 y 250 gastos.");
+    const rows = input.map(validateImportedExpense);
+    // Refresh identities immediately before bulk insert to catch duplicates across prior imports.
+    const latest = await rest("billing_expenses?select=expense_date,category,supplier,concept,amount_cents&limit=10000");
+    const known = new Set(latest.map(expenseIdentity)), seen = new Set();
+    for (const [i,row] of rows.entries()) {
+      const key = expenseIdentity(row);
+      if (known.has(key) || seen.has(key)) throw new Error("La fila " + (i + 1) + " parece duplicada. No se ha importado ninguna fila.");
+      seen.add(key);
+    }
+    await rest("billing_expenses", {
+      method:"POST",
+      headers:{Prefer:"return=minimal"},
+      body:JSON.stringify(rows)
+    });
+    await load();
+    return rows.length;
+  }
+  function exposeImportBridge() {
+    window.DememoriaEconBridge = {
+      existing: () => expenses.map(row => ({
+        expense_date:row.expense_date, category:row.category, supplier:row.supplier,
+        concept:row.concept, amount_cents:Number(row.amount_cents)
+      })),
+      stageExpense: stageImportedExpense,
+      importExpenses: importReviewedExpenses
+    };
+    window.dispatchEvent(new Event("dememoria-econ-ready"));
+  }
+
   $("#econ-expense-date").value = today();
   $("#econ-expense-form").addEventListener("submit", async event => {
     event.preventDefault();
@@ -426,9 +491,11 @@
       if (user?.id !== OWNER) throw new Error("Acceso restringido.");
       contents.hidden = false;
       await load();
+      exposeImportBridge();
     } catch (err) {
       contents.hidden = true;
       $("#econ-access").hidden = false;
+      window.DememoriaEconBridge = undefined;
       setStatus(err.message);
     }
   })();
