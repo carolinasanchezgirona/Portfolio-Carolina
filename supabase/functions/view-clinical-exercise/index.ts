@@ -140,7 +140,8 @@ function slug(value: string) {
 
 function page(title: string, body: string, status = 200, extraHeaders: Record<string,string> = {}) {
   const css = ".visual-item{padding:16px 0;border-bottom:1px solid #D7E5EE}.visual-item h3{color:#173A5E}.visual-item figure{margin:0}.visual-item img{max-width:100%;max-height:360px;object-fit:contain}.visual-item figcaption{font-size:12px;color:#6B7C87;margin-top:6px}.visual-scroll{overflow-x:auto}.visual-item table{width:100%;border-collapse:collapse;table-layout:fixed}.visual-item th,.visual-item td{border:1px solid #D7E5EE;padding:9px;overflow-wrap:anywhere}.visual-item th{background:#EAF6FB}.visual-calendar td{height:62px;vertical-align:top}.visual-calendar small{display:block;font-size:10px}.visual-chart{display:grid;gap:10px}.visual-bar{display:grid;grid-template-columns:minmax(80px,1fr) minmax(90px,3fr) auto;gap:9px;align-items:center}.visual-bar>div{height:17px;background:#EAF6FB}.visual-bar i{display:block;height:100%;background:#08A6A0}.visual-steps{display:grid;gap:9px;padding-left:25px}.visual-steps li{background:#EAF6FB;border-radius:8px;padding:12px}:root{--navy:#173A5E;--turq:#08A6A0;--sky:#EAF6FB;--ink:#243746;--muted:#6B7C87;--line:#D7E5EE;--warm:#FFF8EE}*{box-sizing:border-box}body{margin:0;background:#F4F8FA;color:var(--ink);font-family:Arial,Helvetica,sans-serif}.shell{max-width:1080px;margin:0 auto;padding:26px 16px 44px}.portal{display:grid;grid-template-columns:260px minmax(0,1fr);gap:18px}.library{align-self:start;position:sticky;top:18px;background:#fff;border:1px solid var(--line);border-radius:18px;padding:18px;box-shadow:0 12px 34px rgba(23,58,94,.06)}.library h2{margin:3px 0 5px;color:var(--navy);font-family:Georgia,serif;font-size:21px}.library-note{margin:0 0 14px;color:var(--muted);font-size:12px;line-height:1.45}.library-list{display:grid;gap:7px}.library-item{display:block;padding:10px 11px;border:1px solid transparent;border-radius:10px;color:#435c6b;text-decoration:none;font-size:12.5px;line-height:1.35}.library-item:hover{background:#F5FAFC}.library-item.active{border-color:#BDE1E3;background:#EFFAFA;color:var(--navy);font-weight:700}.card{overflow:hidden;background:#fff;border:1px solid var(--line);border-radius:22px;box-shadow:0 18px 55px rgba(23,58,94,.09)}.topline{height:8px;background:var(--turq)}.content{padding:clamp(24px,5vw,46px)}.brand{display:flex;justify-content:space-between;gap:18px;align-items:flex-start;margin-bottom:22px}.eyebrow{margin:0;color:var(--turq);font-size:12px;font-weight:800;letter-spacing:.12em;text-transform:uppercase}.brand-name{margin:0;color:var(--muted);font-size:12px;text-align:right;line-height:1.45}h1{margin:8px 0 12px;color:var(--navy);font-family:Georgia,'Times New Roman',serif;font-size:clamp(29px,6vw,43px);line-height:1.08;font-weight:700}.intro{margin:0 0 20px;color:#405766;font-size:17px;line-height:1.65}.meta{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 24px}.meta span{display:inline-flex;align-items:center;min-height:30px;padding:5px 10px;border-radius:999px;background:#F0F6F9;color:#496577;font-size:12px;font-weight:700}.section{padding:22px 0;border-top:1px solid #E4EDF2}.section h2{margin:0 0 10px;color:var(--navy);font-size:15px;line-height:1.25}.copy{white-space:pre-wrap;font-size:15px;line-height:1.72}.section.why{margin:8px 0 4px;padding:20px;border:0;border-radius:15px;background:var(--sky);box-shadow:inset 4px 0 0 var(--turq)}.section.remember{margin-top:8px;padding:18px 20px;border:1px solid #CDE5EA;border-radius:14px;background:#F7FCFC}.section.safety{margin-top:8px;padding:18px 20px;border:1px solid #F0DEC2;border-radius:14px;background:var(--warm)}.questions{margin:8px 0 0;padding-left:20px}.questions li{margin:7px 0;line-height:1.55}.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:24px;padding-top:22px;border-top:1px solid #E4EDF2}.button{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:11px 18px;border-radius:10px;border:1px solid var(--navy);background:var(--navy);color:#fff;text-decoration:none;font-size:14px;font-weight:750}.response-box{margin-top:18px;padding:20px;border:1px solid #BFDDE3;border-radius:16px;background:#FBFEFF}.response-box h2{margin:0 0 6px;color:var(--navy);font-size:17px}.response-box>p{margin:0 0 16px;color:var(--muted);font-size:12.5px;line-height:1.55}.response-field{display:grid;gap:7px;margin-top:14px}.response-field span{color:var(--navy);font-size:13px;font-weight:750;line-height:1.45}.response-field textarea{width:100%;min-height:112px;resize:vertical;border:1px solid #BED0DB;border-radius:11px;padding:12px 13px;background:#fff;color:var(--ink);font:inherit;font-size:14px;line-height:1.55}.response-field textarea:focus{outline:2px solid rgba(8,166,160,.18);border-color:var(--turq)}.response-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}.response-actions button{min-height:40px;padding:9px 13px;border-radius:10px;font:inherit;font-size:12.5px;font-weight:800;cursor:pointer}.response-save{border:1px solid #B9CFDA;background:#fff;color:var(--navy)}.response-share{border:1px solid var(--navy);background:var(--navy);color:#fff}.response-status{margin-top:12px;padding:10px 12px;border-radius:10px;background:#F1F7F9;color:#4B6675;font-size:12px;line-height:1.45}.response-status.shared{background:#EAF9F8;color:#145D5A}.state-box{margin-top:18px;padding:18px;border-radius:14px;background:#F8FBFC;border:1px solid var(--line)}.state-box h2{margin:0 0 5px;color:var(--navy);font-size:15px}.state-box p{margin:0 0 12px;color:var(--muted);font-size:12px;line-height:1.5}.state-actions{display:flex;gap:7px;flex-wrap:wrap}.state-actions form{margin:0}.state-actions button{min-height:36px;padding:8px 11px;border:1px solid #C8D9E4;border-radius:9px;background:#fff;color:#3D5868;font:inherit;font-size:12px;font-weight:700;cursor:pointer}.state-actions button.active{border-color:var(--turq);background:#EAF9F8;color:#145D5A}.small{margin:16px 0 0;color:var(--muted);font-size:12px;line-height:1.55}.footer{padding:18px 24px;background:#F8FBFC;color:var(--muted);font-size:12px;line-height:1.5}@media(max-width:760px){.portal{grid-template-columns:1fr}.library{position:static}.library-list{display:flex;overflow:auto;padding-bottom:3px}.library-item{min-width:190px}.brand{display:block}.brand-name{text-align:left;margin-top:8px}.content{padding:24px 20px}}";
-  return new Response("<!doctype html><html lang=\"es\"><head><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><meta name=\"robots\" content=\"noindex,nofollow\"><title>" + escapeHtml(title) + "</title><style>" + css + "</style></head><body>" + body + "</body></html>", {
+  const spacingCss = ".content{padding:clamp(30px,5vw,58px)}.section{padding:30px 0}.section h2{margin-bottom:18px;font-size:16px}.copy{line-height:1.85;white-space:pre-wrap}.visual-item{padding:24px 0}.visual-item th,.visual-item td{padding:13px 10px}.visual-item figure{padding:8px 0 14px}.weekly-work{padding:34px 0}.weekly-heading{font:700 16px Arial,sans-serif;color:#173A5E;margin:0 0 23px;padding:13px 18px;border-radius:10px;background:#EAF6FB}.exercise-stack{display:grid;gap:28px}.exercise-card{padding:26px 28px 30px;background:#fff;border:1px solid #D7E5EE;border-radius:16px;box-shadow:0 6px 22px rgba(23,58,94,.045);break-inside:avoid-page}.exercise-card h3{color:#173A5E;font-size:18px;line-height:1.4;margin:0 0 19px;padding:0 0 15px;border-bottom:2px solid #08A6A0}.exercise-field{padding:0 0 15px;margin:0 0 15px;border-bottom:1px solid #E4EDF2}.exercise-field:last-child{padding-bottom:0;margin-bottom:0;border-bottom:0}.exercise-field h4{font-size:13px;line-height:1.35;margin:0 0 7px;color:#173A5E}.exercise-field p{font-size:15px;line-height:1.85;margin:0;color:#293F4C}.exercise-steps{margin:8px 0 2px;padding-left:25px;display:grid;gap:9px}.exercise-steps li{font-size:15px;line-height:1.75;padding-left:5px}.response-box{padding:26px}.questions li{margin:14px 0;line-height:1.75}@media(max-width:700px){.content{padding:26px 20px}.exercise-card{padding:21px 19px 24px}.exercise-stack{gap:21px}}@media print{.content{padding:0}.exercise-card{box-shadow:none;break-inside:avoid-page;page-break-inside:avoid;margin:0 0 24px}.visual-item{break-inside:avoid-page}.response-box{break-inside:avoid-page}body{background:white}}";
+  return new Response("<!doctype html><html lang=\"es\"><head><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><meta name=\"robots\" content=\"noindex,nofollow\"><title>" + escapeHtml(title) + "</title><style>" + css + spacingCss + "</style></head><body>" + body + "</body></html>", {
     status,
     headers: {
       "Content-Type": "text/html; charset=utf-8",
@@ -156,6 +157,41 @@ function page(title: string, body: string, status = 200, extraHeaders: Record<st
 function sectionHtml(title: string, value: string, className = "") {
   if (!value) return "";
   return "<section class=\"section " + className + "\"><h2>" + escapeHtml(title) + "</h2><div class=\"copy\">" + escapeHtml(value) + "</div></section>";
+}
+
+function weeklyInstructionsHtml(value: string) {
+  const matches = String(value || "").split(/(?:^|\n)\s*(Ejercicio\s+\d+\s*:[^\n]*)\n/gi);
+  if (matches.length < 3) return "<div class=\"copy\">" + escapeHtml(value) + "</div>";
+  const heading = /(?:^|\n)\s*Semana\s+\d+\b/i.exec(value)?.[0]?.trim() || "Programa semanal";
+  const fields = /^(Objetivo|Materiales|Preparación|Pasos|Ejemplo|Ayudas|Adaptación|Duración y frecuencia|Qué observar):\s*/i;
+  const activities: string[] = [];
+  for (let index = 1; index + 1 < matches.length; index += 2) {
+    const title = matches[index].trim();
+    let label = "";
+    let buffer: string[] = [];
+    const sections: string[] = [];
+    const flush = () => {
+      const text = buffer.join(" ").trim();
+      if (!text) { buffer = []; label = ""; return; }
+      let content = "<p>" + escapeHtml(text) + "</p>";
+      if (label.toLowerCase() === "pasos") {
+        const items = text.split(/(?=\b[1-9]\)\s)/).map(x => x.replace(/^\s*[1-9]\)\s*/, "").trim()).filter(Boolean);
+        if (items.length > 1) content = "<ol class=\"exercise-steps\">" + items.map(x => "<li>" + escapeHtml(x) + "</li>").join("") + "</ol>";
+      }
+      sections.push("<div class=\"exercise-field\">" + (label ? "<h4>" + escapeHtml(label) + "</h4>" : "") + content + "</div>");
+      label = ""; buffer = [];
+    };
+    for (const part of matches[index + 1].split(/\r?\n/)) {
+      const text = part.trim();
+      if (!text) { flush(); continue; }
+      const m = fields.exec(text);
+      if (m) { flush(); label = m[1]; buffer.push(text.slice(m[0].length)); }
+      else buffer.push(text);
+    }
+    flush();
+    activities.push("<article class=\"exercise-card\"><h3>" + escapeHtml(title) + "</h3>" + sections.join("") + "</article>");
+  }
+  return "<div class=\"weekly-program\"><p class=\"weekly-heading\">" + escapeHtml(heading) + "</p><div class=\"exercise-stack\">" + activities.join("") + "</div></div>";
 }
 
 function patientStateLabel(value: string | undefined) {
@@ -257,7 +293,7 @@ function materialContentHtml(item: MaterialRow, token: string | null, preview = 
     (metaParts.length ? "<div class=\"meta\">" + metaParts.join("") + "</div>" : "") +
     sectionHtml(whyHeading, doc.why || "", "why") +
     sectionHtml("Qué vamos a observar o entrenar", doc.objective || "") +
-    sectionHtml(doc.material_type === "psychoeducation" ? "Contenido" : "Cómo hacerlo", doc.instructions || "") +
+    (doc.clinical_area === "neuropsychology" ? "<section class=\"section weekly-work\"><h2>Actividades de esta semana</h2>" + weeklyInstructionsHtml(doc.instructions || "") + "</section>" : sectionHtml(doc.material_type === "psychoeducation" ? "Contenido" : "Cómo hacerlo", doc.instructions || "")) +
     sectionHtml("Ejemplo", doc.example || "") +
     visualHtml(doc.visual_blocks, escapeHtml) +
     sectionHtml("Tu registro / espacio para trabajar", doc.record_prompt || "") +
@@ -348,8 +384,9 @@ async function buildPdf(titleValue: string, patientDocument: PatientDocument, ma
   const titleFont = await pdf.embedFont(StandardFonts.TimesRomanBold);
 
   const A4: [number, number] = [595.28, 841.89];
-  const marginX = 58;
-  const bottom = 58;
+  const isNeuro = patientDocument.clinical_area === "neuropsychology";
+  const marginX = isNeuro ? 67 : 61;
+  const bottom = isNeuro ? 70 : 64;
   const maxWidth = A4[0] - marginX * 2;
   const navy = rgb(23 / 255, 58 / 255, 94 / 255);
   const turquoise = rgb(8 / 255, 166 / 255, 160 / 255);
@@ -360,7 +397,7 @@ async function buildPdf(titleValue: string, patientDocument: PatientDocument, ma
   const warm = rgb(1, 248 / 255, 238 / 255);
 
   let current = pdf.addPage(A4);
-  let y = A4[1] - 62;
+  let y = A4[1] - (isNeuro ? 70 : 62);
 
   function wrap(font: any, text: string, size: number, width: number) {
     const result: string[] = [];
@@ -396,7 +433,7 @@ async function buildPdf(titleValue: string, patientDocument: PatientDocument, ma
 
   function newPage() {
     current = pdf.addPage(A4);
-    y = A4[1] - 62;
+    y = A4[1] - (isNeuro ? 70 : 62);
     current.drawRectangle({ x: 0, y: A4[1] - 8, width: A4[0], height: 8, color: turquoise });
     current.drawText("ENTRE SESIONES", { x: marginX, y, size: 8.5, font: boldFont, color: turquoise });
     current.drawText("Carolina Sánchez Girona", { x: A4[0] - marginX - 115, y, size: 7.8, font: bodyFont, color: muted });
@@ -409,8 +446,8 @@ async function buildPdf(titleValue: string, patientDocument: PatientDocument, ma
 
   function drawParagraph(text: string, options: { size?: number; leading?: number; font?: any; color?: any; indent?: number } = {}) {
     if (!text) return;
-    const size = options.size ?? 10.5;
-    const leading = options.leading ?? 15.2;
+    const size = options.size ?? 10.7;
+    const leading = options.leading ?? 16.7;
     const font = options.font ?? bodyFont;
     const color = options.color ?? ink;
     const indent = options.indent ?? 0;
@@ -444,9 +481,65 @@ async function buildPdf(titleValue: string, patientDocument: PatientDocument, ma
     current.drawText(pdfSafe(heading).toUpperCase(), { x: marginX, y, size: 9.4, font: boldFont, color: navy });
     y -= 20;
     drawParagraph(text);
-    y -= 10;
+    y -= 16;
+    ensureSpace(22);
     current.drawLine({ start: { x: marginX, y }, end: { x: A4[0] - marginX, y }, thickness: .6, color: lineColor });
-    y -= 18;
+    y -= 25;
+  }
+
+  function drawWeeklyNeuroInstructions(value: string) {
+    const chunks = String(value || "").split(/(?:^|\n)\s*(Ejercicio\s+\d+\s*:[^\n]*)\n/gi);
+    if (chunks.length < 3) { drawSection("Cómo hacerlo", value); return; }
+    ensureSpace(85);
+    current.drawText("ACTIVIDADES DE ESTA SEMANA", { x: marginX, y, size: 10.8, font: boldFont, color: navy });
+    y -= 29;
+    const week = /(?:^|\n)\s*Semana\s+\d+\b/i.exec(value)?.[0]?.trim() || "Semana de intervención";
+    current.drawRectangle({ x: marginX, y: y - 22, width: maxWidth, height: 28, color: sky });
+    current.drawText(pdfSafe(week).toUpperCase(), { x: marginX + 13, y: y - 12, size: 10.3, font: boldFont, color: navy });
+    y -= 46;
+    const labelRe = /^(Objetivo|Materiales|Preparación|Pasos|Ejemplo|Ayudas|Adaptación|Duración y frecuencia|Qué observar):\s*/i;
+    for (let i = 1; i + 1 < chunks.length; i += 2) {
+      const title = pdfSafe(chunks[i].trim());
+      const titleLines = wrap(boldFont, title, 12, maxWidth - 30);
+      const cardTop = titleLines.length * 17 + 22;
+      ensureSpace(Math.max(118, cardTop + 67));
+      current.drawRectangle({ x: marginX, y: y - cardTop + 8, width: maxWidth, height: cardTop, color: sky });
+      current.drawRectangle({ x: marginX, y: y - cardTop + 8, width: 4, height: cardTop, color: turquoise });
+      for (const [j, line] of titleLines.entries()) {
+        current.drawText(line, { x: marginX + 15, y: y - 12 - j * 17, size: 12, font: boldFont, color: navy });
+      }
+      y -= cardTop + 18;
+      const rows = chunks[i + 1].split(/\r?\n/);
+      for (const lineRaw of rows) {
+        const line = lineRaw.trim();
+        if (!line) { y -= 8; continue; }
+        const label = labelRe.exec(line);
+        if (label) {
+          ensureSpace(54);
+          current.drawText(pdfSafe(label[1]).toUpperCase(), { x: marginX + 4, y, size: 8.8, font: boldFont, color: navy });
+          y -= 19;
+          const bodyText = line.slice(label[0].length);
+          if (label[1].toLowerCase() === "pasos") {
+            const steps = bodyText.split(/(?=\b[1-9]\)\s)/).map(s => s.replace(/^\s*[1-9]\)\s*/, "").trim()).filter(Boolean);
+            if (steps.length > 1) {
+              for (const [index, step] of steps.entries()) {
+                ensureSpace(42);
+                drawParagraph(String(index + 1) + ". " + step, { size: 10.3, leading: 16.6, indent: 13 });
+                y -= 5;
+              }
+            } else drawParagraph(bodyText, { size: 10.3, leading: 16.6, indent: 13 });
+          } else drawParagraph(bodyText, { size: 10.3, leading: 16.6, indent: 13 });
+          y -= 13;
+        } else {
+          drawParagraph(line, { size: 10.3, leading: 16.6, indent: 13 });
+          y -= 8;
+        }
+      }
+      ensureSpace(26);
+      y -= 14;
+      current.drawLine({ start: { x: marginX, y }, end: { x: marginX + maxWidth, y }, thickness: 0.8, color: lineColor });
+      y -= 27;
+    }
   }
 
   function drawWorkArea(linesCount = 7) {
@@ -575,11 +668,12 @@ async function buildPdf(titleValue: string, patientDocument: PatientDocument, ma
   const whyHeading = patientDocument.material_type === "psychoeducation" ? "Por qué este material puede ayudarte" : "Por qué hacemos este ejercicio";
   drawSection(whyHeading, patientDocument.why || "", true);
   drawSection("Qué vamos a observar o entrenar", patientDocument.objective || "");
-  drawSection(patientDocument.material_type === "psychoeducation" ? "Contenido" : "Cómo hacerlo", patientDocument.instructions || "");
+  if (isNeuro) drawWeeklyNeuroInstructions(patientDocument.instructions || "");
+  else drawSection(patientDocument.material_type === "psychoeducation" ? "Contenido" : "Cómo hacerlo", patientDocument.instructions || "");
   drawSection("Ejemplo", patientDocument.example || "");
   await drawVisualResources(patientDocument.visual_blocks);
   drawSection("Tu registro / espacio para trabajar", patientDocument.record_prompt || "");
-  if (patientDocument.record_prompt && patientDocument.material_type !== "psychoeducation") drawWorkArea(7);
+  if (patientDocument.record_prompt && patientDocument.material_type !== "psychoeducation") drawWorkArea(isNeuro ? 10 : 7);
   drawSection("Si resulta demasiado intenso", patientDocument.safety_note || "", true, true);
   drawSection("Qué conviene recordar", patientDocument.remember || "", true);
 
