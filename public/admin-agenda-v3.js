@@ -191,13 +191,18 @@
   }
 
   function showApp() {
-    els.login.hidden = true;
+    if (els.login) els.login.hidden = true;
     els.app.hidden = false;
+    const loading = document.querySelector("#admin-agenda-loading");
+    if (loading) loading.hidden = true;
   }
 
   function showLogin() {
     els.app.hidden = true;
-    els.login.hidden = false;
+    if (els.login) els.login.hidden = true;
+    const loading = document.querySelector("#admin-agenda-loading");
+    if (loading) loading.hidden = false;
+    window.location.replace("/admin/clinica/acceso/?next=" + encodeURIComponent("/admin/agenda/"));
   }
 
   function openAccess() {
