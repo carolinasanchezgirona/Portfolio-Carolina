@@ -1013,7 +1013,7 @@
   function openReport(report = null) {
     if (!currentPatient) return;
     els.reportId.value = report?.id || "";
-    els.reportType.value = report?.report_type || "evolution";
+    els.reportType.value = report?.report_type || "evolution_health";
     els.reportRecipient.value = report?.recipient || "";
     els.reportPurpose.value = report?.purpose || "";
     els.reportStart.value = report?.period_start || "";
