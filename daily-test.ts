@@ -33,8 +33,19 @@ export async function dailyTest(request: Request, env: DailyEnv, authorize: (req
     }
     if (!response.ok) return json({ error: 'Daily no ha permitido crear la sala. Comprueba la clave y la cuenta.' }, 502);
     const room = await response.json() as { url?: string; privacy?: string; config?: Record<string, unknown> };
-    if (room.privacy !== 'private' || !room.url || new URL(room.url).hostname !== 'carolinasanchezgirona.daily.co' || room.config?.max_participants !== 2 || room.config?.enable_recording || room.config?.sfu_switchover !== 3 || room.config?.exp !== exp || room.config?.eject_at_room_exp !== true || room.config?.enable_knocking !== false || room.config?.enable_chat !== false || room.config?.enable_live_captions_ui !== false || room.config?.enable_transcription_storage !== false) {
-      return json({ error: 'La sala no cumple la configuración privada de prueba.' }, 502);
+    // Report only fixed configuration names; never expose room URLs, tokens or keys.
+    const expected: Record<string, unknown> = {
+      max_participants: 2, sfu_switchover: 3, exp,
+      eject_at_room_exp: true, enable_knocking: false, enable_chat: false,
+      enable_live_captions_ui: false, enable_transcription_storage: false
+    };
+    const mismatches = Object.entries(expected).filter(([field, value]) => room.config?.[field] !== value)
+      .map(([field]) => `${field}: ${room.config?.[field] === undefined ? 'no devuelto' : 'valor distinto'}`);
+    if (room.privacy !== 'private') mismatches.push('privacidad');
+    if (!room.url || new URL(room.url).hostname !== 'carolinasanchezgirona.daily.co') mismatches.push('dominio');
+    if (room.config?.enable_recording) mismatches.push('grabación');
+    if (mismatches.length) {
+      return json({ error: 'La sala no cumple la configuración privada de prueba. Comprobación: ' + mismatches.join('; ') + '.' }, 502);
     }
     const tokenResponse = await api('/meeting-tokens', 'POST', { properties: { room_name: name, exp, eject_at_token_exp: true, is_owner: false, user_name: 'Prueba', start_video_off: true, start_audio_off: true, enable_recording: false, start_cloud_recording: false } });
     if (!tokenResponse.ok) return json({ error: 'No se ha podido autorizar la entrada a la prueba.' }, 502);
