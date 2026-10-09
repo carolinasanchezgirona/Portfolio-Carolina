@@ -2,6 +2,7 @@ import Script from "next/script";
 import type { Metadata } from "next";
 import "./economia.css";
 import EconomyImportTools from "./import-tools";
+import AdminWorkspaceNav from "../workspace-nav";
 
 export const metadata: Metadata = {
   title: "Gestión económica | Carolina Sánchez Girona",
@@ -18,15 +19,10 @@ export default function EconomiaPage() {
             <span aria-hidden="true" className="econ-mark">D</span>
             <div>
               <p className="econ-eyebrow">Dememoria · Administración privada</p>
-              <h1>Gestión económica</h1>
-              <p>Facturas, cobros y gastos de carolinasanchezgirona.com</p>
+              <h1>Contabilidad</h1>
+              <p>Gestión económica de la consulta: ingresos, gastos y facturación</p>
             </div>
           </div>
-          <nav aria-label="Administración" className="econ-top-links">
-            <a href="/admin/">Panel general</a>
-            <a href="/admin/clinica/?panel=1">Gestión clínica</a>
-            <a href="/admin/agenda/">Agenda</a>
-          </nav>
         </header>
 
         <section id="econ-access" className="econ-card" hidden>
@@ -37,11 +33,12 @@ export default function EconomiaPage() {
         <p id="econ-status" role="status" aria-live="polite" className="econ-status">Comprobando acceso…</p>
 
         <div id="econ-content" hidden>
-          <nav className="econ-tabs" aria-label="Secciones de economía">
+          <AdminWorkspaceNav active="economia" />
+          <nav className="econ-tabs" aria-label="Secciones de contabilidad">
             <button type="button" className="active" data-econ-tab="overview">Resumen</button>
+            <button type="button" data-econ-tab="movements">Movimientos</button>
             <button type="button" data-econ-tab="invoices">Facturas</button>
-            <button type="button" data-econ-tab="expenses">Gastos</button>
-            <button type="button" data-econ-tab="settings">Datos fiscales</button>
+            <button type="button" data-econ-tab="settings">Configuración fiscal</button>
           </nav>
 
           <section data-econ-panel="overview">
@@ -115,9 +112,30 @@ export default function EconomiaPage() {
             <div id="econ-invoice-list" className="econ-list" />
           </section>
 
-          <section data-econ-panel="expenses" hidden>
+          <section data-econ-panel="movements" hidden>
             <div className="econ-section-heading">
-              <div><p className="econ-eyebrow">Solo actividad profesional de la consulta</p><h2>Gastos</h2></div>
+              <div><p className="econ-eyebrow">Ingresos y gastos, sin duplicar facturas</p><h2>Movimientos</h2></div>
+              <div className="econ-actions">
+                <label className="econ-inline-label">Mes <input type="month" id="econ-movement-month" /></label>
+                <button id="econ-export-movements" type="button" className="econ-outline">Exportar CSV</button>
+              </div>
+            </div>
+            <div className="econ-kpis econ-movement-kpis">
+              <article><span>Ingresos cobrados</span><strong id="econ-movement-in">0,00 €</strong></article>
+              <article><span>Gastos registrados</span><strong id="econ-movement-out">0,00 €</strong></article>
+              <article><span>Saldo de caja orientativo</span><strong id="econ-movement-net">0,00 €</strong></article>
+            </div>
+            <div className="econ-movement-filters" role="group" aria-label="Filtrar movimientos">
+              <button type="button" className="active" aria-pressed="true" data-econ-filter="all">Todos</button>
+              <button type="button" aria-pressed="false" data-econ-filter="income">Ingresos</button>
+              <button type="button" aria-pressed="false" data-econ-filter="expense">Gastos</button>
+            </div>
+            <p className="econ-help">Los ingresos se registran como cobros de facturas, no por emitirlas ni por tener una cita. Para registrar un cobro, abre la factura correspondiente. Los ingresos no vinculados a factura todavía no se pueden registrar en este módulo.</p>
+            <details id="econ-expense-register" className="econ-expense-register">
+              <summary>+ Registrar gasto o importar justificantes</summary>
+              <div className="econ-expense-register-inner">
+            <div className="econ-section-heading">
+              <div><p className="econ-eyebrow">Solo actividad profesional de la consulta</p><h3>Registro de gastos</h3></div>
               <button id="econ-export-expenses" type="button" className="econ-outline">Exportar gastos CSV</button>
             </div>
             <form id="econ-expense-form" className="econ-card">
@@ -138,7 +156,10 @@ export default function EconomiaPage() {
             </form>
             <EconomyImportTools />
             <p className="econ-help">El registro sirve para el control interno. Guarda los justificantes originales y consulta con tu gestoría su deducibilidad y el IVA soportado; este importe no equivale automáticamente a un gasto fiscal deducible.</p>
-            <div id="econ-expense-list" className="econ-list" />
+            <div id="econ-expense-list" className="econ-list" hidden />
+              </div>
+            </details>
+            <div id="econ-movement-list" className="econ-movement-list" aria-live="polite" />
           </section>
 
           <section data-econ-panel="settings" hidden>
@@ -162,7 +183,7 @@ export default function EconomiaPage() {
           </section>
         </div>
       </div>
-      <Script src="/admin-economia.js?v=20261009-ocr-excel-1" strategy="afterInteractive" />
+      <Script src="/admin-economia.js?v=20261009-movimientos-2" strategy="afterInteractive" />
     </main>
   );
 }
