@@ -12,7 +12,8 @@ export const metadata: Metadata = {
 export default function AdminRecursosPage() {
   return (
     <main className="resources-admin-page">
-      <section id="resources-login" className="resources-login-shell">
+      <div id="resources-auth-loading" className="workspace-auth-loading" role="status">Comprobando acceso profesional…</div>
+      <section id="resources-login" className="resources-login-shell" hidden>
         <form id="resources-login-form" className="resources-login-card">
           <p className="resources-eyebrow">Área privada</p>
           <h1>Recursos digitales</h1>
@@ -161,7 +162,7 @@ export default function AdminRecursosPage() {
         </div>
       </section>
 
-      <Script src="/admin-resources.js?v=20261006-sales-1" strategy="afterInteractive" />
+      <Script src="/admin-resources.js?v=20261009-unified-mobile-1" strategy="afterInteractive" />
     </main>
   );
 }
