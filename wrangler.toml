@@ -9,6 +9,9 @@ OPENAI_CLINICAL_MODEL = "gpt-6.1-sol"
 [build]
 command = "npm run build"
 
+[triggers]
+crons = ["*/10 * * * *"]
+
 [assets]
 directory = "./out"
 binding = "ASSETS"
