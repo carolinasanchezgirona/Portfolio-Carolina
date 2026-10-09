@@ -46,7 +46,7 @@
       await login();
       password.value = "";
       const next = new URL(window.location.href).searchParams.get("next");
-      window.location.assign(next && next.startsWith("/admin/") ? next : "/admin/clinica/?panel=1");
+      window.location.assign(next && next.startsWith("/admin/") ? next : "/admin/");
     } catch (error) {
       message.textContent = error?.message || "No se ha podido iniciar sesión.";
       submit.disabled = false;
@@ -60,6 +60,6 @@
       return;
     }
     const next = new URL(window.location.href).searchParams.get("next");
-    window.location.replace(next && next.startsWith("/admin/") ? next : "/admin/clinica/?panel=1");
+    window.location.replace(next && next.startsWith("/admin/") ? next : "/admin/");
   })();
 })();

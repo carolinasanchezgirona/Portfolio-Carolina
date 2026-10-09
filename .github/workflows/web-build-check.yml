@@ -73,6 +73,13 @@ jobs:
           node --check public/admin-clinica.js
           node --test tests/clinical-file-notifications.test.mjs
 
+      - name: Verificar panel central, navegación y acceso privado
+        run: |
+          node --check public/admin-dashboard.js
+          node --check public/admin-shell.js
+          node --check public/clinical-access.js
+          node --test tests/admin-unified-hub.test.mjs
+
       - name: Verificar facturación privada y generación de facturas
         run: |
           node --check public/admin-economia.js
