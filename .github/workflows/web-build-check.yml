@@ -53,6 +53,9 @@ jobs:
           grep -q '/mi-espacio/?vista=panel' public/mi-espacio.js
           ! grep -q 'id="space-code-form"' app/mi-espacio/page.tsx
 
+      - name: Verificar acceso a videoconsulta de prueba
+        run: node --experimental-strip-types --test tests/daily-test.test.mjs
+
       - name: Compilar y exportar web
         run: npm run build
 
@@ -61,7 +64,7 @@ jobs:
           test -d out
           test -f out/index.html
           test -f out/_headers
-          grep -q 'run_worker_first = \[ "/api/\*" \]' wrangler.toml
+          python3 -c 'import tomllib; c=tomllib.load(open("wrangler.toml","rb")); assert "/api/*" in c["assets"]["run_worker_first"]; assert "/admin/videoconsulta/prueba/" in c["assets"]["run_worker_first"]'
           echo "Compilación y configuración de seguridad correctas: ./out generado"
 
   comprobar-autenticacion:
@@ -107,3 +110,4 @@ jobs:
             echo "::error::Solicitud de invitación fallida: estado ${status}."
             exit 1
           fi
+
