@@ -46,23 +46,34 @@ export default function AdminAgendaPage() {
             <p className="admin-eyebrow">Dememoria · Área profesional</p>
             <h1>Agenda</h1>
           </div>
-          <details className="admin-agenda-tools">
-            <summary>Acciones de agenda</summary>
-            <div className="admin-agenda-tool-list">
-              <button id="admin-new" className="admin-primary" type="button">Nueva cita</button>
+          <div className="admin-agenda-header-actions">
+            <button id="admin-new" className="admin-primary" type="button">+ Nueva cita</button>
+            <details className="admin-agenda-tools">
+              <summary>Más acciones</summary>
+              <div className="admin-agenda-tool-list">
               <button id="admin-block" className="admin-secondary" type="button">Bloquear horario</button>
               <button id="admin-print" className="admin-secondary" type="button">Imprimir semana</button>
               <button id="pwa-install" className="admin-secondary" type="button" hidden>Instalar app</button>
               <button id="admin-access" className="admin-secondary" type="button">Acceso y contraseña</button>
               <button id="admin-logout" className="admin-text" type="button">Cerrar sesión</button>
-            </div>
-          </details>
+              </div>
+            </details>
+          </div>
         </header>
         <AdminWorkspaceNav active="agenda" />
 
         <p id="pwa-install-hint" className="admin-muted" hidden />
 
-        <nav className="admin-view-tabs" aria-label="Vistas de la agenda">
+        <div className="admin-agenda-view-picker">
+          <label htmlFor="admin-agenda-view-select">Mostrar</label>
+          <select id="admin-agenda-view-select" aria-label="Vista de agenda" defaultValue="view-today">
+            <option value="view-today">Hoy</option>
+            <option value="view-tomorrow">Mañana</option>
+            <option value="view-week">Semana</option>
+            <option value="view-patients">Por paciente</option>
+          </select>
+        </div>
+        <nav className="admin-view-tabs agenda-view-tabs-source" aria-label="Vistas internas de la agenda">
           <button id="view-today" className="active" type="button">Hoy</button>
           <button id="view-tomorrow" type="button">Mañana</button>
           <button id="view-week" type="button">Semana</button>
