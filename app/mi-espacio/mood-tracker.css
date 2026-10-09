@@ -151,3 +151,14 @@
  .mood-recent-text strong{font-size:.77rem}
  .mood-recent-text small{font-size:.72rem}
 }
+
+/* The original 3D sprite has low source resolution; cap on-screen enlargement
+   until the production art export is replaced with higher resolution assets. */
+.mood-friend-panel .mood-friend-portrait{width:min(132px,100%);height:auto;aspect-ratio:1}
+.mood-friend-panel .mood-friend-expressive{width:min(160px,100%);height:auto}
+.mood-friend-panel{gap:7px}
+@media(max-width:780px){
+ .mood-friend-panel{min-height:206px;padding:20px 12px}
+ .mood-friend-panel .mood-friend-portrait{width:min(114px,100%)}
+ .mood-friend-panel .mood-friend-expressive{width:min(142px,100%)}
+}
