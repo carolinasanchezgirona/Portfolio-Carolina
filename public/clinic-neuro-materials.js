@@ -39,8 +39,12 @@
     if (section) section.hidden = !visible;
     const hint = $("clinic-clinical-area-hint");
     if (hint) hint.textContent = visible
-      ? "Rehabilitación, estimulación y compensación cognitiva. Adapta materiales y apoyos al perfil funcional."
+      ? "Un cuaderno por semana: ejercicios desarrollados, con ayudas y recursos visuales revisados."
       : "Se conserva íntegramente el generador de materiales psicológicos.";
+    const period = $("clinic-material-period-help");
+    if (period) period.textContent = visible
+      ? "Neuropsicología: programa de 7 días con 3–4 ejercicios completos. La semana siguiente se genera después de revisar la evolución."
+      : "Psicología: cuaderno para dos semanas con psicoeducación, actividades y espacio para dudas.";
   }
   function redraw() {
     panelVisible();
@@ -174,7 +178,8 @@
         intervention: $("clinic-neuro-intervention")?.value || "",
         level: $("clinic-neuro-level")?.value || "",
         theme: $("clinic-neuro-theme")?.value?.trim() || "",
-        functional_goal: $("clinic-neuro-functional-goal")?.value?.trim() || ""
+        functional_goal: $("clinic-neuro-functional-goal")?.value?.trim() || "",
+        week_number: Math.max(1, Math.min(52, Number($("clinic-neuro-week-number")?.value) || 1))
       } : null,
       visual_blocks: blocks.map(b => ({ ...b }))
     };
@@ -185,6 +190,7 @@
     if ($("clinic-neuro-reviewed")) $("clinic-neuro-reviewed").checked = false;
     if ($("clinic-clinical-area")) $("clinic-clinical-area").value = clinicalArea;
     const neuro = doc?.neuro_profile || {};
+    if ($("clinic-neuro-week-number")) $("clinic-neuro-week-number").value = String(Math.max(1,Math.min(52,Number(neuro.week_number)||1)));
     for (const [name, id] of Object.entries({
       domain: "clinic-neuro-domain", intervention: "clinic-neuro-intervention",
       level: "clinic-neuro-level", theme: "clinic-neuro-theme",
@@ -205,44 +211,58 @@
   };
   let starterEntries = [];
   function starterToDocument(item) {
-    const tasks = Array.isArray(item.steps) ? item.steps.slice(0, 4) : [];
-    const introduction = "Este cuaderno propone actividades breves relacionadas con " +
-      (DOMAIN_LABELS[item.domain] || "funciones cognitivas").toLowerCase() +
-      ". Puedes realizarlo con la ayuda acordada en consulta. No se trata de hacer un examen.";
-    const instructions = ["Semana 1", ...tasks.slice(0, 2).map((step, i) =>
-      "Ejercicio " + (i + 1) + ": " + step.split(" ")[0].toUpperCase() + step.slice(step.indexOf(" ")) + 
-      "\nObjetivo: " + item.objective +
-      "\nPasos: " + step + ". Presenta el estímulo visual cuando corresponda, comprueba comprensión, practica y registra la ayuda necesaria." +
-      "\nDuración orientativa: 8-15 minutos, según tolerancia. Frecuencia: una o dos veces esta semana. Prioridad: principal." +
-      "\nAdaptación si cuesta: reducir la demanda, proporcionar una clave visual o suspender si hay malestar." +
-      "\nPregunta: ¿qué ayuda facilitó más la realización?"),
-      "Semana 2",
-      ...tasks.slice(2, 4).map((step, i) =>
-      "Ejercicio " + (i + 3) + ": " + step +
-      "\nObjetivo: aplicar o consolidar el mismo objetivo funcional." +
-      "\nPasos: " + step + ". Utilizar el recurso visual como apoyo y revisar con la persona la experiencia." +
-      "\nDuración orientativa: 8-15 minutos. Frecuencia: una o dos ocasiones, no de forma obligatoria." +
-      "\nAdaptación si cuesta: ofrecer elección entre dos opciones o apoyos de acompañante." +
-      "\nPregunta: ¿cómo podría utilizarse en la vida diaria?")
-    ].join("\n\n");
+    const tasks=Array.isArray(item.steps)?item.steps.slice(0,4):[];
+    const week=Math.max(1,Math.min(52,Number($("clinic-neuro-week-number")?.value)||1));
+    const domain=DOMAIN_LABELS[item.domain]||"funciones cognitivas";
+    const visual=Array.isArray(item.visual_blocks)?item.visual_blocks[0]:null;
+    const visualName=visual?.title||"material de apoyo seleccionado por la profesional";
+    const visualSample=(visual?.content||"").split(/\r?\n/).slice(1,3).join("; ")||"un ejemplo previamente modelado";
+    const support=item.level==="apoyo_alto"
+      ?"Mostrar primero la respuesta mediante modelado, ofrecer dos opciones y permitir señalamiento o respuesta no verbal. Evitar corregir confrontando."
+      :item.level==="apoyo_moderado"
+      ?"Comenzar con una pista contextual o visual; si no basta, dividir la consigna y ofrecer dos alternativas. Anotar qué pista ayudó."
+      :"Permitir intento autónomo con apoyos a la vista; proporcionar una pista por vez y favorecer la autocorrección sin presionar.";
+    const phases=[
+      ["Familiarización y ejemplo guiado","Leer la consigna y presentar un modelo resuelto antes de solicitar la primera respuesta.","Comprobar que entiende la tarea sin usar la velocidad como criterio."],
+      ["Práctica dirigida con apoyo graduado","Repetir con uno o dos estímulos diferentes, según tolerancia, y aplicar una pista solo cuando sea necesaria.","Comparar respuesta espontánea y respuesta con ayuda."],
+      ["Variación contextual","Modificar un solo elemento de la actividad para comprobar que la estrategia sigue siendo comprensible.","Observar si mantiene la consigna o necesita volver al modelo."],
+      ["Aplicación cotidiana y revisión (opcional)","Intentar la habilidad en una situación real y segura, con acompañamiento cuando corresponda.","Registrar utilidad funcional, iniciativa, fatiga y preferencias."]
+    ];
+    const exercises=tasks.map((task,i)=>{
+      const [phase,guide,observed]=phases[i];
+      return [
+        "Ejercicio "+(i+1)+": "+phase,
+        "Objetivo: "+item.objective+". En esta actividad: "+task+".",
+        "Materiales: "+visualName+". Preparar el estímulo en tamaño legible y comprobar que es correcto, familiar y culturalmente apropiado.",
+        "Preparación: Trabajar en un lugar tranquilo, con iluminación adecuada y sin distractores innecesarios. Explicar que se puede pedir ayuda o detener la actividad. Revisar las adaptaciones sensoriales y motoras.",
+        "Pasos: 1) "+task+". 2) "+guide+" 3) Mostrar el recurso, dar una única consigna clara y permitir tiempo suficiente para responder. 4) Comprobar con la persona qué estrategia ha resultado útil y cerrar sin examen final.",
+        "Ejemplo: En el recurso «"+visualName+"», trabajar con "+visualSample+". El profesional verificará el ejemplo y decidirá qué respuesta se considera adecuada para este caso.",
+        "Ayudas: "+support,
+        "Adaptación: Si resulta difícil, reducir el número de elementos, mantener a la vista una clave y pasar de evocación a reconocimiento. Si resulta fácil y es pertinente, retirar una pista, no aumentar la velocidad automáticamente.",
+        "Duración y frecuencia: Propuesta de 10–15 minutos, una ocasión durante esta semana; la cuarta actividad es opcional. Interrumpir antes si surge fatiga o frustración. La pauta definitiva la acordará la profesional.",
+        "Qué observar: "+observed+" Registrar participación, respuesta espontánea, errores cualitativos, ayudas, cansancio y posibilidad de transferencia."
+      ].join("\n");
+    });
     return {
-      version: 1, clinical_area: "neuropsychology", material_type: "exercise",
-      duration_minutes: 12, frequency: "Cuatro actividades distribuidas durante dos semanas, ajustadas al esfuerzo y la tolerancia.",
-      introduction, why: "Propuesta de trabajo sobre " + (DOMAIN_LABELS[item.domain] || "una capacidad cognitiva").toLowerCase() +
-        ". Se busca mejorar la participación y el uso de estrategias en situaciones significativas; los resultados de las tareas no equivalen a pruebas diagnósticas ni garantizan mejoría general.",
-      objective: item.objective, instructions,
-      example: "Esquema: Observar el recurso → Elegir una acción → Revisar con ayuda\nEjemplo trabajado: utilizar el estímulo que acompaña a esta ficha, practicar un ejemplo guiado y ajustar las pistas.",
-      record_prompt: "Ejercicio 1: ¿qué consiguió realizar y con qué ayudas?\nEjercicio 2: ¿qué errores o dudas aparecieron?\nEjercicio 3: ¿qué estrategia facilitó la tarea?\nEjercicio 4: ¿hubo aplicación cotidiana?\nDudas para comentar en consulta: ¿qué costó, qué resultó agradable, qué debería adaptarse?",
-      safety_note: "Se puede detener o acortar la tarea si aparecen fatiga, frustración o malestar. La profesional adaptará intensidad y apoyos.",
-      remember: "Tras las dos semanas, revisaremos qué actividades resultaron útiles, qué apoyos fueron necesarios y cuál será el siguiente objetivo.",
-      session_questions: ["¿Con qué ayudas participó mejor?", "¿Hubo interés o fatiga?", "¿Qué transferencia se observó?", "¿Qué dudas deben revisarse?"],
-      neuro_profile: {
-        domain: item.domain, intervention: item.intervention, level: item.level,
-        theme: item.theme || "", functional_goal: item.objective
-      },
-      visual_blocks: Array.isArray(item.visual_blocks) ? item.visual_blocks.map(block => ({...block})) : []
+      version:2,clinical_area:"neuropsychology",material_type:"exercise",duration_minutes:12,
+      frequency:"Semana "+week+": elegir tres prácticas breves y, si resulta apropiado, una cuarta opcional. Ajustar días, duración y ayudas a la tolerancia.",
+      introduction:"Semana "+week+" de intervención en "+domain.toLowerCase()+". Encontrarás ejercicios diferenciados, ejemplos y apoyos; no necesitas terminarlos todos ni responder sin ayuda.",
+      why:"Esta propuesta trabaja «"+item.objective+"» mediante tareas concretas, apoyos graduados y una posible aplicación cotidiana. Su finalidad es favorecer la participación y las estrategias funcionales, no obtener una puntuación diagnóstica.",
+      objective:item.objective,
+      instructions:["Semana "+week, ...exercises].join("\n\n"),
+      example:"Esquema: Preparar material → Modelar consigna → Practicar con apoyo → Revisar en consulta\nEjemplo específico: revisar «"+visualName+"» con el estímulo «"+visualSample+"» antes de comenzar. La profesional debe confirmar la exactitud y pertinencia.",
+      record_prompt:tasks.map((task,i)=>
+        "Ejercicio "+(i+1)+": "+task+"\nRespuesta o participación: ______________________\nAyuda utilizada: _______________________________\nFatiga, interés o dudas: _________________________"
+      ).join("\n\n")+
+        "\n\nDudas para comentar en consulta: ¿qué resultó más fácil?, ¿qué ayuda funcionó?, ¿qué habría que modificar?, ¿se utilizó algo en la vida diaria?",
+      safety_note:"Respeta las pausas y la comodidad de la persona. Detén la tarea si aparecen frustración, cansancio o malestar. No fuerces recuerdos ni prácticas que impliquen riesgos.",
+      remember:"Al finalizar esta semana revisaremos participación, ayudas y utilidad cotidiana. La profesional decidirá si conviene mantener, modificar o sustituir las actividades para la semana siguiente.",
+      session_questions:["¿Qué facilitó la participación?","¿Cuáles fueron las ayudas necesarias?","¿Qué se pudo trasladar a una situación real?","¿Qué dudas o ajustes deben abordarse?"],
+      neuro_profile:{domain:item.domain,intervention:item.intervention,level:item.level,theme:item.theme||"",functional_goal:item.objective,week_number:week},
+      visual_blocks:Array.isArray(item.visual_blocks)?item.visual_blocks.map(block=>({...block})):[]
     };
   }
+
   async function initializeStarterLibrary() {
     const selector = $("clinic-neuro-starter");
     if (!selector) return;
