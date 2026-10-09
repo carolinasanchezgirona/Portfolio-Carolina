@@ -13,7 +13,8 @@ export const metadata: Metadata = {
 export default function AdminArticlesPage() {
   return (
     <main className="articles-admin-page">
-      <section id="articles-login" className="articles-login-shell">
+      <div id="articles-auth-loading" className="workspace-auth-loading" role="status">Comprobando acceso profesional…</div>
+      <section id="articles-login" className="articles-login-shell" hidden>
         <form id="articles-login-form" className="articles-login-card">
           <p className="articles-eyebrow">Área privada</p>
           <h1>Artículos</h1>
@@ -229,7 +230,7 @@ export default function AdminArticlesPage() {
         </div>
       </dialog>
 
-      <Script src="/admin-articles.js?v=20261005-single-auth-2" strategy="afterInteractive" />
+      <Script src="/admin-articles.js?v=20261009-unified-mobile-1" strategy="afterInteractive" />
       <Script src="/editorial-instagram.js?v=20260925-oneclick-4" strategy="afterInteractive" />
     </main>
   );
