@@ -1516,6 +1516,24 @@ async function clinicalDiagnosticSuggestionRequest(request: Request, env: Env): 
   }
 }
 
+const NEURO_MATERIAL_GUIDELINES = [
+  "Intervención NEUROPSICOLÓGICA individualizada. Distingue estimulación, entrenamiento, rehabilitación funcional y compensación; no diagnostiques ni atribuyas validez psicométrica a ejercicios caseros.",
+  "Adapta carga y ayudas a capacidades preservadas, escolaridad, idioma, alteraciones sensoriales y motoras, fatiga, participación y autonomía.",
+  "En orientación temporal, espacial y personal utiliza referentes culturales pertinentes, calendarios, mapas, rutinas y recuerdos confirmados. Nunca inventes biografía, nombres familiares ni acontecimientos personales.",
+  "Aporta una actividad con objetivo observable, consignas exactas, jerarquía de pistas, respuestas esperables, adaptaciones y registro clínico. Evita interrogatorios, infantilización y confrontación en demencia.",
+  "Produce recursos visuales estructurados cuando aporten utilidad, mediante visual_blocks (máximo 5) con type table, chart, diagram o calendar y campos title y content. No generes imágenes falsas, URL ni referencias a fotos inexistentes.",
+  "Una tabla se codifica con encabezados en primera línea y filas separadas por salto de línea; columnas separadas por |. Un diagrama se codifica con un paso por línea. Un calendario comienza por AAAA-MM y permite líneas día | actividad.",
+  "Un gráfico se codifica con pares etiqueta | valor numérico, solo si los datos vienen dados expresamente o se identifican como EJEMPLO FICTICIO. No inventes puntuaciones, normas, evidencia ni evolución del paciente.",
+  "La intervención temática puede ser estacional y vinculada a orientación, lenguaje y actividad funcional; no presupongas costumbres religiosas ni información personal."
+].join("\n");
+function normalizeNeuroVisualBlocks(raw: unknown) {
+  if (!Array.isArray(raw)) return [];
+  return raw.slice(0, 8).map((x) => {
+    const row = x && typeof x === "object" && !Array.isArray(x) ? x as Record<string, unknown> : {};
+    return { type: editorialText(row.type, 32), title: editorialText(row.title, 140), content: editorialText(row.content, 2500) };
+  }).filter(b => ["table","chart","diagram","calendar"].includes(b.type) && b.title && b.content);
+}
+
 const TWO_WEEK_MATERIAL_GUIDELINES = [
   "Cada material es un cuaderno personalizado para DOS SEMANAS, aunque su tipo sea psicoeducación. Incluye psicoeducación y entre 3 y 5 ejercicios complementarios, nunca solo un ejercicio.",
   "Personaliza objetivos, ejemplos, lenguaje y carga a la información aportada, sin inventar historia, hechos, diagnósticos ni necesidades. Si no hay contexto suficiente, ofrece una propuesta adaptable y señala qué debe concretar la profesional.",
@@ -1550,6 +1568,8 @@ async function clinicalMaterialDraftRequest(request: Request, env: Env): Promise
   if (containsDirectPatientIdentifiers(caseContext)) return editorialJson({ error: CLINICAL_IDENTIFIERS_ERROR }, 422);
   const preferredType = data.preferred_type === "psychoeducation" ? "psychoeducation" : data.preferred_type === "exercise" ? "exercise" : "";
   const preferredProcess = editorialText(data.preferred_process, 120);
+  const clinicalArea = data.clinical_area === "neuropsychology" ? "neuropsychology" : "psychology";
+  const neuroProfile = data.neuro_profile && typeof data.neuro_profile === "object" && !Array.isArray(data.neuro_profile) ? data.neuro_profile as Record<string, unknown> : {};
   const rawCatalog = Array.isArray(data.catalog) ? data.catalog.slice(0, 500) : [];
   if (query.length < 3) return editorialJson({ error: "Escribe qué material necesitas." }, 400);
   if (containsDirectPatientIdentifiers(query)) return editorialJson({ error: CLINICAL_IDENTIFIERS_ERROR }, 422);
@@ -1584,6 +1604,7 @@ async function clinicalMaterialDraftRequest(request: Request, env: Env): Promise
     "En alimentación evita restricciones, conteos o instrucciones que puedan reforzar un TCA.",
     "En TEA usa un enfoque neuroafirmativo y evita normalización forzada o entrenamiento de enmascaramiento.",
     TWO_WEEK_MATERIAL_GUIDELINES,
+    ...(clinicalArea === "neuropsychology" ? [NEURO_MATERIAL_GUIDELINES] : []),
     "Devuelve SOLO JSON válido.",
     "Si existe: {status:'existing',existing_id:string,reason:string}.",
     "Si falta: {status:'new',reason:string,material:{title:string,summary:string,instructions:string,process_tags:string[],material_type:'exercise'|'psychoeducation',phase:string,duration_minutes:number|null,burden:'low'|'medium'|'high',objectives:string[],cautions:string[],sequence_rank:number,patient_document:{duration_minutes:number|null,frequency:string,introduction:string,why:string,objective:string,instructions:string,example:string,record_prompt:string,safety_note:string,remember:string,session_questions:string[]}}}.",
@@ -1611,6 +1632,8 @@ async function clinicalMaterialDraftRequest(request: Request, env: Env): Promise
             contexto_desidentificado: caseContext || null,
             tipo_preferido: preferredType || null,
             proceso_preferido: preferredProcess || null,
+            area_clinica: clinicalArea,
+            perfil_neuropsicologico: clinicalArea === "neuropsychology" ? neuroProfile : null,
             biblioteca: catalog
           }) }
         ]
@@ -1659,7 +1682,10 @@ async function clinicalMaterialDraftRequest(request: Request, env: Env): Promise
       remember: editorialText(patientDocumentRaw.remember, 1400),
       session_questions: Array.isArray(patientDocumentRaw.session_questions)
         ? patientDocumentRaw.session_questions.slice(0, 4).map((item) => editorialText(item, 350)).filter(Boolean)
-        : []
+        : [],
+      clinical_area: clinicalArea,
+      neuro_profile: clinicalArea === "neuropsychology" ? neuroProfile : null,
+      visual_blocks: clinicalArea === "neuropsychology" ? normalizeNeuroVisualBlocks(patientDocumentRaw.visual_blocks) : []
     };
 
     const material = {
