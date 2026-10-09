@@ -48,6 +48,7 @@ export default function AdminAgendaPage() {
           </div>
           <div className="admin-agenda-header-actions">
             <button id="admin-new" className="admin-primary" type="button">+ Nueva cita</button>
+            <a className="admin-agenda-notice-link" href="/admin/notificaciones/" aria-label="Centro de avisos">Avisos</a>
             <details className="admin-agenda-tools">
               <summary>Más acciones</summary>
               <div className="admin-agenda-tool-list">
