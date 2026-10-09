@@ -1002,9 +1002,9 @@
     const panel = document.querySelector("#clinic-health-report-sections");
     if (panel) { panel.hidden = true; panel.style.display = "none"; }
     if (els.reportContext?.closest("#clinic-report-sheet")) { const sheet = els.reportContext.closest("#clinic-report-sheet"); sheet.hidden = active; sheet.style.display = active ? "none" : ""; }
-    if (els.generateReport) els.generateReport.textContent = active ? "Generar y descargar Word" : "Autogenerar borrador";
-    if (els.printReport) { els.printReport.hidden = active; els.printReport.style.display = active ? "none" : ""; }
-    if (els.saveReport) { els.saveReport.hidden = active; els.saveReport.style.display = active ? "none" : ""; }
+    if (els.generateReport) els.generateReport.textContent = active ? "Descargar Word editable" : "Autogenerar borrador";
+    if (els.printReport) { els.printReport.hidden = false; els.printReport.style.display = ""; els.printReport.textContent = active ? "Imprimir borrador" : "Imprimir / guardar PDF"; }
+    if (els.saveReport) { els.saveReport.hidden = false; els.saveReport.style.display = ""; els.saveReport.textContent = active ? "Guardar en Gestión Clínica" : "Guardar borrador"; }
     if (els.approveReport) { els.approveReport.hidden = active; els.approveReport.style.display = active ? "none" : ""; }
     const label = document.querySelector("#clinic-report-current")?.closest("label");
     if (label) label.firstChild.textContent = active ? "Estado actual y objetivos pendientes" : "Situación actual y recomendaciones";
@@ -1909,7 +1909,7 @@
   els.reportClose.addEventListener("click", () => els.reportDialog.close());
   els.reportType.addEventListener("change", () => { els.reportTitlePreview.textContent = reportTypeLabel(els.reportType.value); healthReportInputs(); healthReportSelected(); });
   els.generateReport.addEventListener("click", () => { try { generateReportDraft(); if (healthReportSelected()) downloadHealthReportWord(); } catch (error) { els.reportMessage.textContent = error.message; } });
-  els.saveReport.addEventListener("click", () => persistReport("draft").catch((error) => { els.reportMessage.textContent = error.message; }));
+  els.saveReport.addEventListener("click", () => { if (healthReportSelected() && !els.reportPurpose.value.trim()) { els.reportMessage.textContent = "Indica la finalidad del informe antes de guardarlo."; return; } persistReport("draft").then(() => { if (healthReportSelected()) els.reportMessage.textContent = "Borrador guardado en la historia clínica. La edición posterior del Word descargado no se sincroniza automáticamente."; }).catch((error) => { els.reportMessage.textContent = error.message; }); });
   els.approveReport.addEventListener("click", () => persistReport("approved").catch((error) => { els.reportMessage.textContent = error.message; }));
   els.printReport.addEventListener("click", () => { try { printCurrentReport(); } catch (error) { els.reportMessage.textContent = error.message; } });
   els.newExercise.addEventListener("click", () => openExercise());
