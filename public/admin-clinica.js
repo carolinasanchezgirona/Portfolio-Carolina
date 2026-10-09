@@ -1080,15 +1080,18 @@
     if (!els.reportPurpose.value.trim()) throw new Error("Indica la finalidad clínica del informe antes de descargarlo.");
     if (els.reportStart.value && els.reportEnd.value && els.reportStart.value > els.reportEnd.value) throw new Error("El periodo seleccionado no es válido.");
     if (healthReportSelected() && (!els.reportStart.value || !els.reportEnd.value)) throw new Error("Selecciona un periodo de seguimiento para este tipo de informe.");
+    const isHealthcare = healthReportSelected();
+    const additional = isHealthcare ? Object.fromEntries(healthReportFields.map(([key]) => [key, h[key].value])) : {};
     const sections = {
-      context: els.reportContext.value, interventions: els.reportInterventions.value,
-      observation: els.reportCurrent.value, plan: els.reportCurrent.value,
-      ...Object.fromEntries(healthReportFields.map(([key]) => [key, h[key].value])),
+      context: els.reportContext.value,
+      interventions: els.reportInterventions.value,
+      observation: els.reportCurrent.value,
+      plan: els.reportCurrent.value,
+      ...additional
     };
-    const fullEvolution = els.reportEvolution.value.trim();
-    if (fullEvolution) sections.interventions = [sections.interventions, "Evolución cronológica documentada:\n" + fullEvolution].filter(Boolean).join("\n\n");
-    if (els.reportEvolution.value.trim()) sections.interventions = [sections.interventions, "Evolución clínica registrada:\n" + els.reportEvolution.value].filter(Boolean).join("\n\n");
-    if (healthReportSelected() && els.reportCurrent.value.trim()) sections.plan = [sections.plan, els.reportCurrent.value].filter(Boolean).join("\n\n");
+    const evolution = els.reportEvolution.value.trim();
+    if (evolution) sections.interventions = [sections.interventions, "Evolución cronológica documentada:\n" + evolution].filter(Boolean).join("\n\n");
+    if (isHealthcare && els.reportCurrent.value.trim()) sections.plan = [sections.plan, els.reportCurrent.value].filter(Boolean).join("\n\n");
     window.ClinicWordExport.download({
       type: els.reportType.value, title: reportTypeLabel(els.reportType.value),
       identity: { name: currentPatient.full_name, code: currentPatient.public_code, birth: currentPatient.birth_date || "" },
