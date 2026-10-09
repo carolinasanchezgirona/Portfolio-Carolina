@@ -43,3 +43,24 @@ test("pre-session brief is factual and uses only patient-linked authorized in-me
   assert.match(brief,/document\.createTextNode/);
   assert.doesNotMatch(brief,/innerHTML|fetch\(|localStorage|eval\(/);
 });
+
+test("consent and audit panels remain within the same patient form", () => {
+  assert.match(workspace,/clinic-consent-section/);
+  assert.match(workspace,/clinic-audit-section/);
+  assert.match(workspace,/clinic-duplicate-panel/);
+  const enhancements=file("public/clinic-patient-admin-enhancements.js");
+  assert.match(enhancements,/attributeFilter:\s*\["hidden"\]/);
+});
+
+test("session editor presents previously approved data without changing clinical notes", () => {
+  const start=main.indexOf("function renderSessionBrief(patient,appointment)");
+  const end=main.indexOf("function openSession(patient, appointment)",start);
+  assert.ok(start>=0 && end>start);
+  const brief=main.slice(start,end);
+  assert.match(brief,/status === "approved"/);
+  assert.match(brief,/patientGoals\(patient.id\)/);
+  assert.match(brief,/patientExercises\(patient.id\)/);
+  assert.match(brief,/document\.createTextNode/);
+  assert.doesNotMatch(brief,/fetch\(|innerHTML|localStorage|persistClinicalSession/);
+  assert.match(file("app/admin/clinica/page.tsx"),/clinic-session-brief/);
+});
