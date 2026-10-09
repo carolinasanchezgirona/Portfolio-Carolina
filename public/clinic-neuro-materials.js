@@ -139,6 +139,11 @@
       if (!doc.neuro_profile?.domain) issues.push("seleccionar dominio neuropsicológico");
       if (!doc.neuro_profile?.level) issues.push("seleccionar nivel de demanda");
       if (!String(doc.objective || "").trim()) issues.push("definir objetivo observable");
+      const expectedWeek = Math.max(1,Math.min(52,Number(doc.neuro_profile?.week_number)||1));
+      const headings = (doc.instructions || "").match(/(?:^|\n)\s*Semana\s+\d+\b/gi) || [];
+      const exercises = (doc.instructions || "").match(/(?:^|\n)\s*Ejercicio\s+\d+\s*:/gi) || [];
+      if (headings.length !== 1 || !new RegExp("(?:^|\\n)\\s*Semana\\s+" + expectedWeek + "\\b","i").test(doc.instructions || "")) issues.push("un único apartado Semana " + expectedWeek + " por cuaderno");
+      if (exercises.length < 3 || exercises.length > 4) issues.push("entre tres y cuatro ejercicios desarrollados en esta semana");
     }
     (doc.visual_blocks || []).forEach((b, i) => {
       if (!b.title?.trim()) issues.push("titular recurso " + (i + 1));
