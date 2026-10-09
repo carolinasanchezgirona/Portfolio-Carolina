@@ -385,8 +385,8 @@ async function buildPdf(titleValue: string, patientDocument: PatientDocument, ma
 
   const A4: [number, number] = [595.28, 841.89];
   const isNeuro = patientDocument.clinical_area === "neuropsychology";
-  const marginX = isNeuro ? 67 : 58;
-  const bottom = isNeuro ? 70 : 58;
+  const marginX = isNeuro ? 67 : 61;
+  const bottom = isNeuro ? 70 : 64;
   const maxWidth = A4[0] - marginX * 2;
   const navy = rgb(23 / 255, 58 / 255, 94 / 255);
   const turquoise = rgb(8 / 255, 166 / 255, 160 / 255);
@@ -446,8 +446,8 @@ async function buildPdf(titleValue: string, patientDocument: PatientDocument, ma
 
   function drawParagraph(text: string, options: { size?: number; leading?: number; font?: any; color?: any; indent?: number } = {}) {
     if (!text) return;
-    const size = options.size ?? 10.5;
-    const leading = options.leading ?? 15.2;
+    const size = options.size ?? 10.7;
+    const leading = options.leading ?? 16.7;
     const font = options.font ?? bodyFont;
     const color = options.color ?? ink;
     const indent = options.indent ?? 0;
@@ -481,9 +481,10 @@ async function buildPdf(titleValue: string, patientDocument: PatientDocument, ma
     current.drawText(pdfSafe(heading).toUpperCase(), { x: marginX, y, size: 9.4, font: boldFont, color: navy });
     y -= 20;
     drawParagraph(text);
-    y -= 10;
+    y -= 16;
+    ensureSpace(22);
     current.drawLine({ start: { x: marginX, y }, end: { x: A4[0] - marginX, y }, thickness: .6, color: lineColor });
-    y -= 18;
+    y -= 25;
   }
 
   function drawWeeklyNeuroInstructions(value: string) {
