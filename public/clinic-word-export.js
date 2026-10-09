@@ -2,6 +2,9 @@
 (() => {
 "use strict";
 const xmlEscape = x => String(x ?? "").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&apos;");
+// Texto general orientativo: la cláusula no acredita por sí sola la legitimación del destinatario.
+const LEGAL_CONFIDENTIALITY = "El presente informe contiene información clínica y datos personales relativos a la salud, sujetos a confidencialidad y secreto profesional. Su acceso, utilización y comunicación quedan limitados a las personas legitimadas y a las finalidades legalmente autorizadas, conforme al Reglamento (UE) 2016/679, la Ley Orgánica 3/2018, la Ley 41/2002 y la Ley 21/2000 de Cataluña. La comunicación a terceros exige comprobar previamente la base jurídica aplicable y, cuando proceda, la autorización correspondiente. El destinatario deberá preservar la confidencialidad de la información.";
+const DEFAULT_SCOPE = "El presente informe tiene carácter clínico-asistencial y se fundamenta en la información disponible durante el periodo de evaluación o seguimiento indicado. Sus conclusiones corresponden a ese contexto y podrán revisarse ante nuevos datos o cambios en la evolución clínica. No constituye una evaluación pericial ni una valoración médico-legal independiente.";
 const xmlText = x => xmlEscape(x).replace(/\r\n?/g,"\n").split("\n").map(v=>'<w:t xml:space="preserve">'+v+"</w:t>").join("<w:br/>");
 const para = (value, style="Normal", editable=false, id=0) => {
  const text=String(value||"").trim() || "[Completar durante la revisión profesional]";
@@ -47,10 +50,10 @@ function download(payload){
   ["Intervención terapéutica y evolución","interventions"],["Conclusiones","conclusions"],
   ["Recomendaciones y plan de seguimiento","plan"],["Limitaciones y vigencia","limitations"]
  ];
- let n=1,body=para("DEMEMORIA  ·  DOCUMENTACIÓN CLÍNICA","Eyebrow");
+ let n=1,body=para("CAROLINA SÁNCHEZ GIRONA  ·  DOCUMENTACIÓN CLÍNICA","Eyebrow");
  body+=para(data.title || "Informe clínico de evolución y seguimiento","Title");
- body+=para("BORRADOR  |  Pendiente de revisión profesional y firma","State");
- body+=para("Carolina Sánchez Girona  ·  Psicóloga General Sanitaria y Neuropsicóloga","Subheading");
+ body+=para("ESTADO: BORRADOR · Pendiente de revisión y firma","State");
+ body+=para(data.professional || "Carolina Sánchez Girona · Psicóloga General Sanitaria y Neuropsicóloga","Subheading");
  body+=para("1. Datos de identificación","Heading1");
  body+=table([["Paciente",identity.name],["Código de historia",identity.code],["Fecha de nacimiento",identity.birth],["Periodo de seguimiento",data.period],["Destinatario",data.recipient||"Profesional sanitario"],["Finalidad",data.purpose],["Fecha de emisión",date],["Profesional",data.professional||"Carolina Sánchez Girona · Psicóloga General Sanitaria y Neuropsicóloga"],...(data.license ? [["N.º de colegiación",data.license]] : [])]);
  n=2;
@@ -60,9 +63,17 @@ function download(payload){
   body+=para(v||"", "Normal",true,n+30);
   n++;
  }
- body+=para(n+". Cierre, firma y confidencialidad","Heading1");
- body+=para(data.professional||"Carolina Sánchez Girona · Psicóloga General Sanitaria y Neuropsicóloga");
- body+=para("Documento clínico confidencial, destinado exclusivamente a la finalidad asistencial indicada. Borrador no firmado.");
+ body+=para(n+". Alcance clínico del informe","Heading1");
+ body+=para(sections.scope || DEFAULT_SCOPE,"Normal",true,n+30);
+ n++;
+ body+=para(n+". Confidencialidad y protección de datos","Heading1");
+ body+=para(LEGAL_CONFIDENTIALITY,"Legal");
+ n++;
+ body+=para(n+". Cierre y firma","Heading1");
+ body+=para("Fecha de emisión: "+date,"Signature");
+ body+=para(data.professional || "Carolina Sánchez Girona · Psicóloga General Sanitaria y Neuropsicóloga","Signature");
+ if(data.license) body+=para("N.º de colegiación: "+data.license,"Signature");
+ body+=para("Firma: pendiente de firma profesional.","Signature");
  const styles='<?xml version="1.0" encoding="UTF-8" standalone="yes"?><w:styles xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"><w:style w:type="paragraph" w:default="1" w:styleId="Normal"><w:name w:val="Normal"/><w:rPr><w:rFonts w:ascii="Aptos" w:hAnsi="Aptos"/><w:sz w:val="21"/><w:color w:val="173A5E"/></w:rPr><w:pPr><w:spacing w:after="160" w:line="300" w:lineRule="auto"/></w:pPr></w:style><w:style w:type="paragraph" w:styleId="Title"><w:name w:val="Title"/><w:rPr><w:b/><w:sz w:val="36"/><w:color w:val="173A5E"/></w:rPr><w:pPr><w:spacing w:after="220"/></w:pPr></w:style><w:style w:type="paragraph" w:styleId="Heading1"><w:name w:val="heading 1"/><w:rPr><w:b/><w:sz w:val="25"/><w:color w:val="19747A"/></w:rPr><w:pPr><w:spacing w:before="250" w:after="130"/><w:keepNext/></w:pPr></w:style><w:style w:type="paragraph" w:styleId="State"><w:name w:val="State"/><w:rPr><w:b/><w:color w:val="B64A2B"/><w:sz w:val="18"/></w:rPr></w:style><w:style w:type="paragraph" w:styleId="TableLabel"><w:name w:val="Table Label"/><w:rPr><w:b/><w:color w:val="173A5E"/></w:rPr></w:style><w:style w:type="paragraph" w:styleId="Eyebrow"><w:name w:val="Eyebrow"/><w:rPr><w:b/><w:sz w:val="17"/><w:color w:val="19747A"/></w:rPr><w:pPr><w:spacing w:after="180"/></w:pPr></w:style><w:style w:type="paragraph" w:styleId="Subheading"><w:name w:val="Subheading"/><w:rPr><w:sz w:val="18"/><w:color w:val="526B7A"/></w:rPr><w:pPr><w:spacing w:after="220"/></w:pPr></w:style></w:styles>';
  const docXml='<?xml version="1.0" encoding="UTF-8" standalone="yes"?><w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"><w:body>'+body+'<w:sectPr><w:pgSz w:w="11906" w:h="16838"/><w:pgMar w:top="1300" w:right="1300" w:bottom="1300" w:left="1300"/></w:sectPr></w:body></w:document>';
  // Word editable-range permissions: narrative can be edited; identification and headings remain protected.
@@ -76,5 +87,5 @@ function download(payload){
  a.href=url;a.download="Informe_clinico_"+safe+"_"+now.toISOString().slice(0,10)+".docx";document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);
  return true;
 }
-window.ClinicWordExport={download};
+window.ClinicWordExport={download,legalTexts:{confidentiality:LEGAL_CONFIDENTIALITY,scope:DEFAULT_SCOPE}};
 })();
