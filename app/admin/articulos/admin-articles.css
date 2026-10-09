@@ -11,3 +11,26 @@
 .articles-workspace{grid-template-columns:300px minmax(0,1fr)!important;gap:10px!important}
 .articles-list-panel,.articles-editor-panel,.editor-section{border-radius:8px!important}
 .article-list-item{padding:10px 12px!important}
+
+
+/* Corrección final: un solo panel por vista en móvil, nunca dos columnas fijas. */
+@media(max-width:900px){
+ .articles-admin-page .articles-workspace{grid-template-columns:minmax(0,1fr)!important;max-width:100%}
+ .articles-admin-page .articles-workspace>*{min-width:0;max-width:100%}
+ .articles-admin-page .articles-list-panel{position:static!important}
+ .articles-admin-page .articles-workspace:not(.workspace-show-editor)>.articles-editor-panel{display:none!important}
+ .articles-admin-page .articles-workspace.workspace-show-editor>.articles-list-panel{display:none!important}
+ .articles-admin-page .articles-list{max-height:none!important;overflow:visible}
+ .articles-admin-page .articles-editor-panel{width:100%;min-width:0;overflow-wrap:anywhere}
+ .articles-admin-page .articles-editor-panel form{min-width:0}
+}
+@media(max-width:720px){
+ .articles-admin-page .articles-topbar{display:flex;align-items:flex-start;flex-direction:column;gap:14px}
+ .articles-admin-page .articles-top-actions{width:100%;display:flex;justify-content:flex-start;align-items:center;gap:9px!important}
+ .articles-admin-page .articles-top-actions>*{flex:0 1 auto!important}
+ .articles-admin-page .articles-topbar h1{font-size:1.65rem!important}
+ .articles-admin-page .articles-editor-panel form{padding:14px!important}
+ .articles-admin-page .editor-actions{width:100%}
+ .articles-admin-page .editor-toolbar{max-width:100%;overflow-x:auto}
+ .articles-admin-page .rich-editor{min-width:0;max-width:100%;overflow-wrap:anywhere}
+}
