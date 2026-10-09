@@ -1,3 +1,4 @@
+import { adminAppointmentVideo, patientAppointmentVideo } from './appointment-video';
 import { dailyTest } from "./daily-test";
 import { containsDirectPatientIdentifiers, CLINICAL_IDENTIFIERS_ERROR } from "./clinical-privacy";
 
@@ -1739,6 +1740,11 @@ export default {
   async fetch(request: Request, env: Env): Promise<Response> {
     const url = new URL(request.url);
 
+    if (url.pathname === "/api/video/appointment") return adminAppointmentVideo(request, env, verifyEditorialOwner);
+    if (url.pathname === "/api/patient-portal/video") {
+      const session = await patientPortalSession(request, env);
+      return patientAppointmentVideo(request, env, session?.patient_id || null);
+    }
     if (url.pathname === "/api/video/test") return dailyTest(request, env, verifyEditorialOwner);
     if (["/admin/videoconsulta/prueba", "/admin/videoconsulta/prueba/"].includes(url.pathname)) {
       const assetUrl = new URL("/video-test", request.url);

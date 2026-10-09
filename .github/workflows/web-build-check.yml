@@ -57,7 +57,7 @@ jobs:
           ! grep -q 'id="space-code-form"' app/mi-espacio/page.tsx
 
       - name: Verificar acceso a videoconsulta de prueba
-        run: node --experimental-strip-types --test tests/daily-test.test.mjs
+        run: node --experimental-strip-types --test tests/daily-test.test.mjs tests/appointment-video.test.mjs
 
       - name: Compilar y exportar web
         run: npm run build

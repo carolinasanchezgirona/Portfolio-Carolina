@@ -292,6 +292,7 @@ export default function MiEspacioPage() {
         <span>Si existe una emergencia, llama al 112. Si hay riesgo o ideación suicida, puedes contactar con el 024.</span>
       </aside>
 
+      <Script src="/patient-video.js?v=20261009-1" strategy="afterInteractive" />
       <Script src="/mi-espacio.js?v=20261009-recorrido1" strategy="afterInteractive" />
     </main>
   );
