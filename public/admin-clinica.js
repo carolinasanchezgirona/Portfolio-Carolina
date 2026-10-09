@@ -1372,6 +1372,39 @@
       els.patientTimeline.append(row);
     });
   }
+  function documentCategoryLabel(category) {
+    return ({
+      intervention_plan: "Plan de intervención",
+      information_notice: "Circular informativa",
+      relaxation_audio: "Audio de relajación",
+      external_report: "Informe externo",
+      referral: "Derivación",
+      consent: "Consentimiento",
+      test_result: "Resultado de prueba",
+      attendance: "Justificante",
+      other: "Otro"
+    })[category] || "Documento";
+  }
+
+  async function setPatientDocumentSharing(doc, share) {
+    if (!currentPatient || currentPatient.id !== doc.patient_id) throw new Error("Paciente no válido.");
+    if (share && !window.confirm(`¿Publicar «${doc.title}» para este paciente en Mi espacio? Comprueba que el documento y su destinatario son correctos.`)) return;
+    if (!share && !window.confirm(`¿Retirar el acceso de este paciente a «${doc.title}»? Las copias ya descargadas no se pueden retirar.`)) return;
+    const now = new Date().toISOString();
+    const rows = await rest("clinical_documents?id=eq." + encodeURIComponent(doc.id) + "&patient_id=eq." + encodeURIComponent(doc.patient_id) + "&select=*", {
+      method: "PATCH",
+      headers: { Prefer: "return=representation" },
+      body: JSON.stringify(share
+        ? { shared_at: now, share_revoked_at: null }
+        : { share_revoked_at: now })
+    });
+    if (!Array.isArray(rows) || rows.length !== 1) throw new Error("No se ha podido actualizar el acceso.");
+    const index = clinicalDocuments.findIndex(item => item.id === doc.id);
+    if (index >= 0) clinicalDocuments[index] = rows[0];
+    renderDocuments(currentPatient);
+    els.patientMessage.textContent = share ? "Archivo disponible en Mi espacio del paciente." : "Acceso retirado de Mi espacio.";
+  }
+
   function renderDocuments(patient) {
     els.patientDocuments.replaceChildren();
     const docs = clinicalDocuments.filter((item) => item.patient_id === patient.id);
