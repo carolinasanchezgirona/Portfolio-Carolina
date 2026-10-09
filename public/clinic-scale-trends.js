@@ -98,7 +98,7 @@
 
   async function load(){
     const patientId=patientIdField.value;
-    if(!patientId||!patientDialog.open)return;
+    if(!patientId||!!patientDialog.hidden)return;
     status.textContent="Cargando evolución…";
     try{
       const res=await fetch(`${REST_URL}/clinical_scale_measurements?select=id,instrument,measured_at,total_score,interpretation,notes&patient_id=eq.${encodeURIComponent(patientId)}&order=measured_at.asc`,{headers:headers(),cache:"no-store"});
@@ -108,7 +108,7 @@
   }
 
   select.addEventListener("change",render);
-  const observer=new MutationObserver(()=>{if(patientDialog.open&&patientIdField.value)setTimeout(load,100);});
-  observer.observe(patientDialog,{attributes:true,attributeFilter:["open"]});
+  const observer=new MutationObserver(()=>{if(!patientDialog.hidden&&patientIdField.value)setTimeout(load,100);});
+  observer.observe(patientDialog,{attributes:true,attributeFilter:["hidden"]});
   document.querySelector("#clinic-add-scale")?.addEventListener("click",()=>setTimeout(load,500));
 })();
