@@ -52,7 +52,7 @@ test("Centro de avisos autentica al titular y minimiza datos antes de consultar 
 test("Los avisos push requieren activación voluntaria y contenido seguro en pantalla de bloqueo", () => {
   assert.match(noticesPage, /Avisos en este dispositivo/);
   assert.match(noticesPage, /id="admin-notice-push-enable"/);
-  assert.match(serviceWorker, /addEventListener\\("push"/);
+  assert.ok(serviceWorker.includes('self.addEventListener("push"'));
   assert.match(serviceWorker, /notificationclick/);
   assert.doesNotMatch(serviceWorker, /patient_name|patient_email|clinical_summary/);
 });
