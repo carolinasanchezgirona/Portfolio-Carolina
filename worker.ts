@@ -1607,7 +1607,7 @@ async function clinicalMaterialDraftRequest(request: Request, env: Env): Promise
     ...(clinicalArea === "neuropsychology" ? [NEURO_MATERIAL_GUIDELINES] : []),
     "Devuelve SOLO JSON válido.",
     "Si existe: {status:'existing',existing_id:string,reason:string}.",
-    "Si falta: {status:'new',reason:string,material:{title:string,summary:string,instructions:string,process_tags:string[],material_type:'exercise'|'psychoeducation',phase:string,duration_minutes:number|null,burden:'low'|'medium'|'high',objectives:string[],cautions:string[],sequence_rank:number,patient_document:{duration_minutes:number|null,frequency:string,introduction:string,why:string,objective:string,instructions:string,example:string,record_prompt:string,safety_note:string,remember:string,session_questions:string[]}}}.",
+    "Si falta: {status:'new',reason:string,material:{title:string,summary:string,instructions:string,process_tags:string[],material_type:'exercise'|'psychoeducation',phase:string,duration_minutes:number|null,burden:'low'|'medium'|'high',objectives:string[],cautions:string[],sequence_rank:number,patient_document:{duration_minutes:number|null,frequency:string,introduction:string,why:string,objective:string,instructions:string,example:string,record_prompt:string,safety_note:string,remember:string,session_questions:string[],visual_blocks?:{type:string,title:string,content:string}[]}}}.",
     "Las instrucciones deben estar dirigidas al paciente cuando sea material enviable.",
     "patient_document es obligatorio en materiales nuevos y debe poder entregarse directamente al paciente.",
     "introduction debe ser una introducción breve. why debe explicar en lenguaje claro por qué hacemos el ejercicio o para qué sirve el material, sin revelar formulación clínica interna ni diagnósticos no comunicados.",
@@ -1742,8 +1742,12 @@ async function clinicalMaterialEnrichRequest(request: Request, env: Env): Promis
     : {};
   if (!title) return editorialJson({ error: "Falta el título del material." }, 400);
 
+  const clinicalArea = currentRaw.clinical_area === "neuropsychology" ? "neuropsychology" : "psychology";
+  const neuroProfile = currentRaw.neuro_profile && typeof currentRaw.neuro_profile === "object" && !Array.isArray(currentRaw.neuro_profile) ? currentRaw.neuro_profile as Record<string, unknown> : {};
   const currentDocument = {
     material_type: materialType,
+    clinical_area: clinicalArea,
+    neuro_profile: clinicalArea === "neuropsychology" ? neuroProfile : null,
     duration_minutes: Number(currentRaw.duration_minutes) || null,
     frequency: editorialText(currentRaw.frequency, 500),
     introduction: editorialText(currentRaw.introduction, 1200),
@@ -1775,7 +1779,8 @@ async function clinicalMaterialEnrichRequest(request: Request, env: Env): Promis
     "En trauma prioriza estabilización. En TOC evita reaseguro. En adicciones no aconsejes retirada brusca. En alimentación evita restricciones o conteos. En TEA usa enfoque neuroafirmativo.",
     "No añadas datos identificativos del paciente.",
     TWO_WEEK_MATERIAL_GUIDELINES,
-    "Devuelve SOLO JSON válido con esta forma: {patient_document:{duration_minutes:number|null,frequency:string,introduction:string,why:string,objective:string,instructions:string,example:string,record_prompt:string,safety_note:string,remember:string,session_questions:string[]}}."
+    ...(clinicalArea === "neuropsychology" ? [NEURO_MATERIAL_GUIDELINES] : []),
+    "Devuelve SOLO JSON válido con esta forma: {patient_document:{duration_minutes:number|null,frequency:string,introduction:string,why:string,objective:string,instructions:string,example:string,record_prompt:string,safety_note:string,remember:string,session_questions:string[],visual_blocks?:{type:string,title:string,content:string}[]}}."
   ].join("\n");
 
   try {
@@ -1794,7 +1799,8 @@ async function clinicalMaterialEnrichRequest(request: Request, env: Env): Promis
             tipo: materialType,
             resumen_interno: summary || null,
             procesos: processTags,
-            ficha_actual: currentDocument
+            ficha_actual: currentDocument,
+            recursos_visuales_actuales: normalizeNeuroVisualBlocks(currentRaw.visual_blocks)
           }) }
         ]
       })
@@ -1828,7 +1834,10 @@ async function clinicalMaterialEnrichRequest(request: Request, env: Env): Promis
       remember: editorialText(docRaw.remember, 1400) || currentDocument.remember,
       session_questions: Array.isArray(docRaw.session_questions)
         ? docRaw.session_questions.slice(0, 4).map((item) => editorialText(item, 350)).filter(Boolean)
-        : currentDocument.session_questions
+        : currentDocument.session_questions,
+      clinical_area: clinicalArea,
+      neuro_profile: clinicalArea === "neuropsychology" ? neuroProfile : null,
+      visual_blocks: clinicalArea === "neuropsychology" ? (normalizeNeuroVisualBlocks(docRaw.visual_blocks).length ? normalizeNeuroVisualBlocks(docRaw.visual_blocks) : normalizeNeuroVisualBlocks(currentRaw.visual_blocks)) : []
     };
     if (!patientDocument.introduction || !patientDocument.why || !patientDocument.instructions) {
       return editorialJson({ error: "La IA no ha generado una ficha suficientemente completa para revisar." }, 502);
