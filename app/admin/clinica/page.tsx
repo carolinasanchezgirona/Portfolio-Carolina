@@ -44,7 +44,7 @@ export default function AdminClinicaPage() {
           <button id="clinic-view-today" className="active" type="button" aria-current="page"><ClinicIcon name="today" /><span className="clinic-nav-label">Hoy</span></button>
           <a className="clinic-nav-link" href="/admin/agenda/"><ClinicIcon name="agenda" /><span className="clinic-nav-label">Agenda</span></a>
           <button id="clinic-view-patients" type="button"><ClinicIcon name="patients" /><span className="clinic-nav-label">Pacientes</span></button>
-          <button id="clinic-view-pending" type="button"><ClinicIcon name="pending" /><span className="clinic-nav-label">Pendientes</span><span id="clinic-pending-badge" className="clinic-tab-badge" aria-label="Número de pendientes">0</span></button>
+          <button id="clinic-view-pending" type="button"><ClinicIcon name="pending" /><span className="clinic-nav-label">Pendientes</span><span id="clinic-pending-badge" className="clinic-tab-badge" aria-label="Número de tareas pendientes">0</span></button>
           <details className="clinic-more-menu">
             <summary><ClinicIcon name="more" /><span className="clinic-nav-label">Más</span></summary>
             <div className="clinic-more-panel">
@@ -53,7 +53,7 @@ export default function AdminClinicaPage() {
               <a className="clinic-more-item" href="/admin/preguntas/">Preguntas</a>
               <a className="clinic-more-item" href="/admin/articulos/">Artículos</a>
               <p className="clinic-more-heading">Administración</p>
-              <a className="clinic-more-item" href="/admin/economia/">Gestión económica</a>
+              <a className="clinic-more-item" href="/admin/economia/">Contabilidad</a>
               <a className="clinic-more-item" href="/admin/">Panel general</a>
               <div className="clinic-more-install-slot" />
               <button id="clinic-logout" className="clinic-more-item clinic-more-logout" type="button">Cerrar sesión</button>
@@ -71,14 +71,14 @@ export default function AdminClinicaPage() {
           <div className="clinic-summary" aria-label="Resumen del día">
             <article><strong id="clinic-total-today">0</strong><span>Citas hoy</span></article>
             <article><strong id="clinic-confirmed-today">0</strong><span>Confirmadas</span></article>
-            <article><strong id="clinic-pending-today">0</strong><span>Pendientes</span></article>
+            <article><strong id="clinic-pending-today">0</strong><span>Citas pendientes</span></article>
             <article><strong id="clinic-finished-today">0</strong><span>Realizadas</span></article>
           </div>
           <div id="clinic-today-list" className="clinic-list" />
         </section>
 
         <section id="clinic-pending-view" className="clinic-view" hidden>
-          <div className="clinic-section-heading"><div><p className="clinic-eyebrow">Carga administrativa</p><h2>Pendientes</h2></div></div>
+          <div className="clinic-section-heading"><div><p className="clinic-eyebrow">Carga administrativa</p><h2>Tareas pendientes</h2></div></div>
           <div id="clinic-pending-summary" className="clinic-summary" />
           <div id="clinic-pending-list" className="clinic-pending-list" />
         </section>

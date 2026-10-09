@@ -83,3 +83,48 @@
 .econ-import-confirm input{width:19px;height:19px;flex:none;margin:2px 0 0}
 @media(max-width:950px){.econ-import-mapping{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:760px){.econ-import-tools{padding:21px 16px}.econ-import-columns{grid-template-columns:1fr}.econ-import-fields{grid-template-columns:1fr}.econ-import-fields label:nth-child(3){grid-column:auto}.econ-import-mapping{grid-template-columns:1fr}}
+
+
+/* Contabilidad: distribución por tareas, movimientos y facturación independiente. */
+.econ-page .econ-header{margin-bottom:16px}
+.econ-page .econ-tabs{display:flex;flex-wrap:nowrap;gap:4px;width:max-content;max-width:100%;overflow-x:auto;overflow-y:hidden;scrollbar-width:thin;padding:4px;margin:14px 0 22px}
+.econ-page .econ-tabs button{flex:0 0 auto;white-space:nowrap;padding:11px 15px}
+.econ-page .econ-movement-kpis{grid-template-columns:repeat(3,minmax(0,1fr))}
+.econ-page .econ-movement-filters{display:inline-flex;max-width:100%;padding:4px;margin:0 0 10px;gap:3px;background:#f2f7fa;border:1px solid #dbe6ec;border-radius:12px}
+.econ-page .econ-movement-filters button{min-height:39px;padding:8px 17px;border:0;border-radius:9px;background:transparent;color:#385b75;font:inherit;font-size:.88rem;font-weight:750;cursor:pointer}
+.econ-page .econ-movement-filters button.active{background:#173a5e;color:#fff}
+.econ-page .econ-movement-filters button:focus-visible,.econ-page .econ-expense-register summary:focus-visible{outline:3px solid #08a6a0;outline-offset:3px}
+.econ-page .econ-movement-list{display:grid;gap:10px;margin-top:17px}
+.econ-page .econ-movement-entry{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:16px 20px;border:1px solid #dce6ec;border-left:4px solid #08a6a0;border-radius:13px;background:#fff}
+.econ-page .econ-movement-entry.expense{border-left-color:#f2766b}
+.econ-page .econ-movement-info{display:flex;flex-direction:column;gap:5px;min-width:0}
+.econ-page .econ-movement-info strong{overflow-wrap:anywhere;color:#173a5e;font-size:.98rem}
+.econ-page .econ-movement-date,.econ-page .econ-movement-info small{font-size:.8rem;color:#6b7f8f}
+.econ-page .econ-movement-amount{white-space:nowrap;color:#087d79;font-variant-numeric:tabular-nums;font-size:1.03rem}
+.econ-page .econ-movement-entry.expense .econ-movement-amount{color:#a04b44}
+.econ-page .econ-expense-register{margin:17px 0 8px;border:1px solid #dce6ec;border-radius:13px;background:#fff}
+.econ-page .econ-expense-register>summary{list-style:none;cursor:pointer;padding:17px 20px;color:#173a5e;font-size:.94rem;font-weight:750}
+.econ-page .econ-expense-register>summary::marker{content:""}
+.econ-page .econ-expense-register>summary::-webkit-details-marker{display:none}
+.econ-page .econ-expense-register[open]>summary{border-bottom:1px solid #dce6ec}
+.econ-page .econ-expense-register-inner{padding:17px 19px 12px}
+.econ-page .econ-expense-register-inner .econ-section-heading{margin-bottom:16px}
+.econ-page .econ-expense-register-inner .econ-section-heading h3{font-size:1.12rem;margin:0}
+.econ-page .econ-expense-register-inner #econ-expense-list[hidden]{display:none}
+@media(max-width:850px){
+  .econ-page .econ-movement-kpis{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .econ-page .econ-movement-kpis article{padding:14px 11px}
+  .econ-page .econ-movement-kpis strong{font-size:clamp(1rem,3vw,1.3rem)}
+}
+@media(max-width:620px){
+  .econ-page .econ-tabs{width:100%;border-radius:11px}
+  .econ-page .econ-tabs button{font-size:.79rem;padding:11px 12px}
+  .econ-page .econ-movement-kpis{grid-template-columns:1fr 1fr}
+  .econ-page .econ-movement-kpis article:last-child{grid-column:1/-1}
+  .econ-page .econ-movement-entry{padding:14px 13px;gap:8px;align-items:flex-start}
+  .econ-page .econ-movement-amount{font-size:.91rem}
+  .econ-page .econ-movement-filters{width:100%}
+  .econ-page .econ-movement-filters button{flex:1}
+  .econ-page .econ-expense-register-inner{padding:14px}
+}
+@media print{.econ-page .econ-expense-register,.econ-page .econ-movement-filters{display:none!important}}

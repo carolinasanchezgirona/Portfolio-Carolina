@@ -83,7 +83,7 @@ jobs:
           node --check public/admin-dashboard.js
           node --check public/admin-shell.js
           node --check public/clinical-access.js
-          node --test tests/admin-unified-hub.test.mjs
+          node --test tests/admin-unified-hub.test.mjs tests/admin-nav-accounting.test.mjs
 
       - name: Verificar facturación privada y generación de facturas
         run: |

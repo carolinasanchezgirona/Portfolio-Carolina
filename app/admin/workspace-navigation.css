@@ -1,0 +1,39 @@
+/* Navegación compartida entre agenda y contabilidad. La clínica conserva sus controles de vista internos. */
+.admin-workspace-nav{display:flex;align-items:stretch;gap:5px;width:max-content;max-width:100%;margin:8px 0 22px;padding:5px;border:1px solid #dce6ec;border-radius:14px;background:#fff;box-shadow:0 4px 18px #173a5e0c;isolation:isolate;font-family:var(--font-inter),system-ui,sans-serif}
+.admin-workspace-nav>a,.admin-workspace-nav>details>summary{display:flex;align-items:center;justify-content:center;gap:8px;min-width:105px;min-height:46px;padding:10px 13px;border-radius:10px;background:transparent;color:#516676;font-size:.88rem;font-weight:680;line-height:1.2;text-decoration:none;cursor:pointer}
+.admin-workspace-nav a.is-active,.admin-workspace-nav summary.is-active{background:#12a7bd;color:#fff}
+.admin-workspace-nav>a:not(.is-active):hover,.admin-workspace-nav>details>summary:hover,.admin-workspace-nav>details[open]>summary{background:#eaf6f8;color:#075a68}
+.admin-workspace-nav .workspace-nav-icon{width:20px;height:20px;flex:0 0 20px}
+.admin-workspace-nav>details{position:relative}
+.admin-workspace-nav summary{list-style:none}
+.admin-workspace-nav summary::-webkit-details-marker{display:none}
+.admin-workspace-nav summary::marker{content:""}
+.admin-workspace-more-panel{position:absolute;z-index:61;top:calc(100% + 8px);right:0;width:min(295px,calc(100vw - 24px));max-height:calc(100dvh - 125px);overflow:auto;padding:9px;background:#fff;border:1px solid #dce6ec;border-radius:14px;box-shadow:0 18px 55px #173a5e2e}
+.admin-workspace-more-panel>a{display:block;padding:12px;border-radius:8px;font-size:.88rem;font-weight:580;text-decoration:none;color:#173a5e}
+.admin-workspace-more-panel>a:hover,.admin-workspace-more-panel>a[aria-current="page"]{background:#eaf6f8}
+.admin-workspace-more-label{margin:10px 10px 5px;color:#6b7f8f;font-size:.7rem;font-weight:800;letter-spacing:.055em;text-transform:uppercase}
+.admin-workspace-nav a:focus-visible,.admin-workspace-nav summary:focus-visible{outline:3px solid #f2766b;outline-offset:2px}
+.admin-agenda-tools{position:relative}
+.admin-agenda-tools>summary{list-style:none;cursor:pointer;display:flex;align-items:center;min-height:39px;padding:9px 13px;border:1px solid #d5e0e5;border-radius:10px;background:#fff;color:#173a5e;font-size:.86rem;font-weight:700}
+.admin-agenda-tools>summary::marker{content:""}
+.admin-agenda-tools>summary::-webkit-details-marker{display:none}
+.admin-agenda-tool-list{position:absolute;top:calc(100% + 7px);right:0;z-index:35;display:grid;gap:7px;min-width:min(265px,calc(100vw - 30px));padding:12px;border:1px solid #dce6ec;border-radius:12px;background:#fff;box-shadow:0 14px 40px #173a5e23}
+.admin-agenda-tool-list>button{width:100%;text-align:left}
+.admin-agenda-tools summary:focus-visible{outline:3px solid #f2766b;outline-offset:2px}
+@media(min-width:1100px){
+  .admin-page .admin-app{width:min(1530px,calc(100% - 32px))!important;padding-left:235px!important}
+  .econ-page .econ-container{max-width:1530px;padding-left:260px}
+  .admin-workspace-nav{position:fixed;z-index:52;top:108px;left:max(16px,calc((100vw - 1530px) / 2 + 14px));flex-direction:column;width:211px;max-width:211px;padding:8px;margin:0}
+  .admin-workspace-nav>a,.admin-workspace-nav>details>summary{justify-content:flex-start;width:100%;min-height:48px}
+  .admin-workspace-more-panel{top:0;left:calc(100% + 12px);right:auto}
+}
+@media(max-width:800px){
+  .admin-page .admin-app{padding-bottom:calc(113px + env(safe-area-inset-bottom))!important}
+  .econ-page .econ-container{padding-bottom:calc(124px + env(safe-area-inset-bottom))!important}
+  .admin-workspace-nav{position:fixed;z-index:52;top:auto;bottom:0;left:0;right:0;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));width:100%;max-width:none;min-width:0;margin:0;padding:5px 6px calc(7px + env(safe-area-inset-bottom));gap:2px;border:0;border-top:1px solid #dce6ec;border-radius:14px 14px 0 0;background:#fffc;box-shadow:0 -8px 26px #173a5e1c;backdrop-filter:blur(12px)}
+  .admin-workspace-nav>a,.admin-workspace-nav>details>summary{display:flex;flex-direction:column;gap:4px;min-width:0;width:100%;min-height:57px;padding:7px 1px 5px;font-size:clamp(.64rem,2.55vw,.75rem);line-height:1.05;text-align:center}
+  .admin-workspace-nav .workspace-nav-icon{width:21px;height:21px;flex-basis:21px}
+  .admin-workspace-more-panel{top:auto;bottom:calc(100% + 11px);left:auto;right:3px;width:min(310px,calc(100vw - 20px));max-height:calc(100dvh - 112px - env(safe-area-inset-bottom))}
+  .admin-agenda-tools{margin-left:auto}
+}
+@media print{.admin-workspace-nav,.admin-agenda-tools{display:none!important}.admin-page .admin-app,.econ-page .econ-container{padding-left:0!important;padding-bottom:0!important}}

@@ -3,6 +3,7 @@
   if (window.location.pathname === "/admin/" || window.location.pathname.startsWith("/admin/clinica")) return;
 
   function addHomeLink() {
+    if (document.querySelector(".admin-workspace-nav")) return;
     if (document.querySelector('[data-admin-home-link="true"]')) return;
     const hosts = [
       ".clinic-top-actions",
