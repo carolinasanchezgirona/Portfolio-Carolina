@@ -38,7 +38,7 @@ export function amountCents(value: unknown): number {
   const lastComma=dec.lastIndexOf(","),lastDot=dec.lastIndexOf(".");
   if(lastComma>=0 && lastDot>=0) {
     const decimal=lastComma>lastDot ? "," : ".";
-    dec=dec.replace(decimal==="," ? /\./g : /,/g,"").replace(decimal,",",".");
+    dec=dec.replace(decimal==="," ? /\./g : /,/g,"").replace(decimal,".");
   } else if(lastComma>=0) {
     dec=dec.replace(/\./g,"").replace(",",".");
   } else if((dec.match(/\./g)||[]).length>1) dec=dec.replace(/\./g,"");
