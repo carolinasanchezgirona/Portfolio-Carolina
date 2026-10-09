@@ -71,6 +71,11 @@ jobs:
           node --check public/admin-clinica.js
           node --test tests/clinical-file-notifications.test.mjs
 
+      - name: Verificar facturación privada y generación de facturas
+        run: |
+          node --check public/admin-economia.js
+          node --test tests/billing-invoices.test.mjs
+
       - name: Validar documentos, audios y control de acceso de pacientes
         run: |
           node --check public/admin-clinica.js
