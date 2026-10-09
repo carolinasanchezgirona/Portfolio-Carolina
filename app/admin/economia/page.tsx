@@ -161,7 +161,7 @@ export default function EconomiaPage() {
           </section>
         </div>
       </div>
-      <Script src="/admin-economia.js?v=20261009-1" strategy="afterInteractive" />
+      <Script src="/admin-economia.js?v=20261009-ocr-excel-1" strategy="afterInteractive" />
     </main>
   );
 }
