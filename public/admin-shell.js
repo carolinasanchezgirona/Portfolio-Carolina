@@ -6,6 +6,7 @@
     if (document.querySelector('[data-admin-home-link="true"]')) return;
     const hosts = [
       ".clinic-top-actions",
+      ".econ-top-links",
       ".admin-top-actions",
       ".articles-top-actions",
       ".resources-top-actions",
@@ -16,7 +17,7 @@
     if (!host) return;
     const link = document.createElement("a");
     link.href = "/admin/";
-    link.textContent = "Inicio";
+    link.textContent = "Panel general";
     link.dataset.adminHomeLink = "true";
     link.className = "admin-home-link";
     host.prepend(link);
