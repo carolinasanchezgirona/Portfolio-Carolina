@@ -1059,11 +1059,11 @@
       const dated = (note, item) => note ? dateShort.format(new Date(item.session_date)) + ": " + note : "";
       h.sources.value = sessions.length ? sessions.length + " sesiones aprobadas entre " + dateShort.format(new Date(sessions[0].session_date)) + " y " + dateShort.format(new Date(sessions[sessions.length - 1].session_date)) + ". Fuentes: anotaciones clínicas aprobadas y ficha estructurada." : "No constan sesiones aprobadas en el periodo seleccionado.";
       h.background.value = currentPatient.clinical_summary || "[Completar antecedentes relevantes si procede]";
-      h.observation.value = sessions.map(item => dated(item.response_note, item)).filter(Boolean).join("\\n\\n") || "[Completar observaciones relevantes del estado actual]";
+      h.observation.value = sessions.map(item => dated(item.response_note, item)).filter(Boolean).join("\n\n") || "[Completar observaciones relevantes del estado actual]";
       h.results.value = "[Completar únicamente con resultados y medidas verificables; no se han importado puntuaciones psicométricas]";
       h.integration.value = "";
       h.conclusions.value = "";
-      h.plan.value = [profile.treatment_plan, currentPatient.next_session_focus].filter(Boolean).join("\\n\\n") || "[Completar el plan si está documentado]";
+      h.plan.value = [profile.treatment_plan, currentPatient.next_session_focus].filter(Boolean).join("\n\n") || "[Completar el plan si está documentado]";
       h.limitations.value = "Este borrador sintetiza únicamente los registros aprobados incluidos en el periodo. La ausencia de una medición estandarizada no permite cuantificar el cambio clínico.";
       els.reportRecipient.value ||= "Profesional sanitario";
     }
@@ -1088,7 +1088,7 @@
       if (!els.reportPurpose.value.trim() || !els.reportRecipient.value.trim() || !els.reportStart.value || !els.reportEnd.value) throw new Error("Indica finalidad, destinatario y periodo antes de aprobar.");
       if (els.reportStart.value > els.reportEnd.value) throw new Error("El periodo de fechas no es válido.");
       if (!h.integration.value.trim() || !h.conclusions.value.trim()) throw new Error("Revisa y redacta expresamente la integración y las conclusiones antes de aprobar.");
-      if (Object.values(h).some(x => /\\[completar/i.test(x.value))) throw new Error("Hay apartados pendientes de completar.");
+      if (Object.values(h).some(x => /\[completar/i.test(x.value))) throw new Error("Hay apartados pendientes de completar.");
     }
     if (status === "approved" && !els.reportEvolution.value.trim() && !els.reportContext.value.trim()) throw new Error("El informe no contiene información suficiente para aprobarlo.");
     els.reportMessage.textContent = status === "approved" ? "Aprobando informe…" : "Guardando borrador…";
