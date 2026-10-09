@@ -58,8 +58,8 @@
     saveSession(body);
   }
 
-  function showApp() { els.login.hidden = true; els.app.hidden = false; }
-  function showLogin() { els.app.hidden = true; els.login.hidden = false; }
+  function showApp() { document.querySelector("#articles-auth-loading")?.setAttribute("hidden",""); els.login.hidden = true; els.app.hidden = false; }
+  function showLogin() { document.querySelector("#articles-auth-loading")?.setAttribute("hidden",""); els.app.hidden = true; els.login.hidden = false; }
 
   function articleUiStatus(article) {
     if (article.status === "published" && isFuture(article.published_at)) return "scheduled";
