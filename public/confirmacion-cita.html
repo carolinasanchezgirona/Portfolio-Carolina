@@ -25,14 +25,14 @@
 var state=new URLSearchParams(window.location.search).get("state");
 var title=document.getElementById("title"),message=document.getElementById("message"),label=document.getElementById("label"),next=document.getElementById("next");
 if(state==="ok"){
-label.textContent="Confirmación completada";
-title.textContent="Tu cita se ha confirmado";
-message.textContent="Consulta el correo de la reserva para revisar la fecha, la hora y la modalidad de la sesión.";
-next.textContent="No necesitas volver a reservar ni repetir la confirmación.";
+label.textContent="Nos vemos en consulta";
+title.textContent="Tu cita está confirmada";
+message.textContent="Gracias por confiar en mí. En tu correo encontrarás la fecha, la hora y los detalles de la sesión.";
+next.textContent="Ya está todo listo. Nos vemos pronto.";
 }else if(state==="error"||state==="expired"||state==="invalid"){
 label.textContent="Revisa tu confirmación";
-title.textContent="No se ha podido completar la confirmación";
-message.textContent="El enlace puede haber caducado o no estar disponible. Contacta con la consulta para comprobar el estado de tu cita.";
+title.textContent="Vamos a comprobar tu cita";
+message.textContent="Este enlace ya no está disponible o no ha podido completarse. Escríbeme y te ayudaré a comprobar tu cita.";
 next.textContent="Evita crear otra reserva hasta comprobar la anterior.";
 }
 })();
