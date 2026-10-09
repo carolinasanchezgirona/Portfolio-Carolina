@@ -1908,10 +1908,11 @@
   els.newReport.addEventListener("click", () => openReport());
   els.reportClose.addEventListener("click", () => els.reportDialog.close());
   els.reportType.addEventListener("change", () => { els.reportTitlePreview.textContent = reportTypeLabel(els.reportType.value); healthReportInputs(); healthReportSelected(); });
-  els.generateReport.addEventListener("click", () => { try { generateReportDraft(); if (healthReportSelected()) downloadHealthReportWord(); } catch (error) { els.reportMessage.textContent = error.message; } });
-  els.saveReport.addEventListener("click", () => { if (healthReportSelected() && !els.reportPurpose.value.trim()) { els.reportMessage.textContent = "Indica la finalidad del informe antes de guardarlo."; return; } persistReport("draft").then(() => { if (healthReportSelected()) els.reportMessage.textContent = "Borrador guardado en la historia clínica. La edición posterior del Word descargado no se sincroniza automáticamente."; }).catch((error) => { els.reportMessage.textContent = error.message; }); });
+  els.generateReport.addEventListener("click", () => { try { if (!els.reportId.value || !els.reportContext.value.trim()) generateReportDraft(); if (healthReportSelected()) downloadHealthReportWord(); else generateReportDraft(); } catch (error) { els.reportMessage.textContent = error.message; } });
+  els.saveReport.addEventListener("click", () => { if (healthReportSelected() && !els.reportContext.value.trim()) generateReportDraft(); if (healthReportSelected() && !els.reportPurpose.value.trim()) { els.reportMessage.textContent = "Indica la finalidad del informe antes de guardarlo."; return; } persistReport("draft").then(() => { if (healthReportSelected()) els.reportMessage.textContent = "Borrador guardado en la historia clínica. La edición posterior del Word descargado no se sincroniza automáticamente."; }).catch((error) => { els.reportMessage.textContent = error.message; }); });
   els.approveReport.addEventListener("click", () => persistReport("approved").catch((error) => { els.reportMessage.textContent = error.message; }));
-  els.printReport.addEventListener("click", () => { try { printCurrentReport(); } catch (error) { els.reportMessage.textContent = error.message; } });
+  window.ClinicReportPreparePrint = () => { if (healthReportSelected() && !els.reportContext.value.trim()) generateReportDraft(); };
+  els.printReport.addEventListener("click", () => { try { window.ClinicReportPreparePrint(); printCurrentReport(); } catch (error) { els.reportMessage.textContent = error.message; } });
   els.newExercise.addEventListener("click", () => openExercise());
   els.exerciseLibrary?.addEventListener("change", () => {
     const template = exerciseTemplates.find((item) => item.id === els.exerciseLibrary.value) || null;
