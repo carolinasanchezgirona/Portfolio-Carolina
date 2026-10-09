@@ -602,7 +602,7 @@ async function buildPdf(titleValue: string, patientDocument: PatientDocument, ma
 
 async function pdfResponse(title: string, doc: PatientDocument, dateValue?: string, extraHeaders: Record<string,string> = {}) {
   const bytes = await buildPdf(title, doc, dateValue);
-  return new Response(bytes, {
+  return new Response(Uint8Array.from(bytes).buffer, {
     status: 200,
     headers: {
       "Content-Type": "application/pdf",
