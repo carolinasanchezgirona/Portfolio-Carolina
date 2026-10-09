@@ -8,7 +8,7 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false, nocache: true },
 };
 
-type IconName = "clinical" | "calendar" | "economy" | "editorial" | "resources" | "questions" | "arrow" | "shield";
+type IconName = "clinical" | "calendar" | "economy" | "editorial" | "resources" | "questions" | "arrow" | "shield" | "bell";
 function AdminIcon({ name }: { name: IconName }) {
   return (
     <svg className="admin-hub-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" focusable="false">
@@ -20,6 +20,7 @@ function AdminIcon({ name }: { name: IconName }) {
       {name === "questions" && <><path d="M20 11.5a8.5 8.5 0 0 1-8.5 8.5 9 9 0 0 1-4-.9L3 20l1.2-4.1a8.5 8.5 0 1 1 15.8-4.4Z" /><path d="M9.5 9a2.5 2.5 0 1 1 4.1 1.9c-.9.7-1.6 1.1-1.6 2.1M12 16h.01" /></>}
       {name === "arrow" && <><path d="M5 12h14M13 6l6 6-6 6" /></>}
       {name === "shield" && <><path d="m12 22-8-4V6l8-4 8 4v12l-8 4Z" /><path d="m9 12 2 2 4-4" /></>}
+      {name === "bell" && <><path d="M18 8a6 6 0 0 0-12 0c0 7-3 8-3 9h18c0-1-3-2-3-9M10 21h4" /></>}
     </svg>
   );
 }
@@ -27,6 +28,7 @@ function AdminIcon({ name }: { name: IconName }) {
 const sections: { href: string; icon: IconName; eyebrow: string; title: string; detail: string; secondary: string; tone: string }[] = [
   { href: "/admin/clinica/?panel=1", icon: "clinical", eyebrow: "Atención sanitaria", title: "Gestión clínica", detail: "Pacientes, sesiones, informes, actividades y Mi espacio.", secondary: "Abrir gestión clínica", tone: "navy" },
   { href: "/admin/agenda/", icon: "calendar", eyebrow: "Organización", title: "Agenda", detail: "Citas, disponibilidad, cambios, confirmaciones y recordatorios.", secondary: "Abrir agenda", tone: "turquoise" },
+  { href: "/admin/notificaciones/", icon: "bell", eyebrow: "Actividad", title: "Centro de avisos", detail: "Nuevas reservas, actividades entregadas, tareas y facturas pendientes.", secondary: "Revisar avisos", tone: "navy" },
   { href: "/admin/economia/", icon: "economy", eyebrow: "Administración", title: "Gestión económica", detail: "Facturas, cobros, gastos, importaciones y exportaciones.", secondary: "Abrir gestión económica", tone: "coral" },
   { href: "/admin/articulos/", icon: "editorial", eyebrow: "Comunicación", title: "Centro editorial", detail: "Artículos, contenidos web y publicaciones de Instagram.", secondary: "Abrir centro editorial", tone: "navy" },
   { href: "/admin/recursos/", icon: "resources", eyebrow: "Materiales digitales", title: "Recursos", detail: "Publicación, materiales gratuitos y de pago, pedidos y descargas.", secondary: "Administrar recursos", tone: "turquoise" },
