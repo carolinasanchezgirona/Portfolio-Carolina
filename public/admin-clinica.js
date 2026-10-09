@@ -1000,7 +1000,7 @@
   function healthReportSelected() {
     const active = els.reportType.value === "evolution_health";
     const panel = document.querySelector("#clinic-health-report-sections");
-    if (panel) panel.hidden = !active;
+    if (panel) { panel.hidden = !active; panel.style.display = active ? "grid" : "none"; }
     const label = document.querySelector("#clinic-report-current")?.closest("label");
     if (label) label.firstChild.textContent = active ? "Estado actual y objetivos pendientes" : "Situación actual y recomendaciones";
     return active;
