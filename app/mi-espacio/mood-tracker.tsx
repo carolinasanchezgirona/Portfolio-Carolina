@@ -149,17 +149,6 @@ function useAvatar() {
 }
 
 /**
- * Static assets stored in this site. The original 3D faces are preserved; 
- * mood-specific character artwork is currently available for the older man.
- * For the remaining portraits, the color and the emotion label communicate the
- * chosen state until their full 3D expression series is created.
- */
-/**
- * The chosen companion must react visibly as the patient changes their mood,
- * including for portraits without a complete 3D expression sheet.
- * Facial landmarks are avatar-specific to preserve the original portrait.
- */
-/**
  * A complete 3D portrait is available for every one of the eight companions,
  * in each of five different facial expressions. No expression is painted over
  * the original face. The selected companion is represented consistently in
