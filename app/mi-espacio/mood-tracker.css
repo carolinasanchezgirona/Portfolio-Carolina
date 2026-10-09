@@ -162,3 +162,6 @@
  .mood-friend-panel .mood-friend-portrait{width:min(114px,100%)}
  .mood-friend-panel .mood-friend-expressive{width:min(142px,100%)}
 }
+
+.mood-friend-panel .mood-friend-portrait{width:min(184px,100%)}
+@media(max-width:780px){.mood-friend-panel .mood-friend-portrait{width:min(166px,100%)}.mood-friend-panel{min-height:252px}}
