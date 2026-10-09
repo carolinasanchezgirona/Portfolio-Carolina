@@ -351,7 +351,7 @@ export default function AdminClinicaPage() {
           </div>
           <div className="clinic-report-toolbar">
             <button id="clinic-generate-report" className="clinic-secondary" type="button">Autogenerar borrador</button>
-            <span>Se incluirán únicamente registros aprobados del periodo seleccionado.</span>
+            <span>Se incluirán únicamente registros aprobados del periodo seleccionado. Los cambios hechos posteriormente en Word se adjuntan desde «Adjuntar Word revisado».</span>
           </div>
           <section id="clinic-report-sheet" className="clinic-report-sheet">
             <header><p>Carolina Sánchez Girona · Psicóloga General Sanitaria y Neuropsicóloga</p><h1 id="clinic-report-title-preview">Informe de evolución</h1><p id="clinic-report-meta" /></header>
@@ -366,6 +366,7 @@ export default function AdminClinicaPage() {
             <button id="clinic-save-report" className="clinic-secondary" type="button">Guardar borrador</button>
             <button id="clinic-approve-report" className="clinic-secondary" type="button">Aprobar informe</button>
             <button id="clinic-print-report" className="clinic-primary" type="button">Imprimir / guardar PDF</button>
+            <button id="clinic-upload-revised-word" className="clinic-secondary" type="button">Adjuntar Word revisado</button>
           </div>
         </form>
       </dialog>
