@@ -44,3 +44,42 @@
 .econ-inline-error{font-size:.84rem;color:#af382e}
 @media(max-width:850px){.econ-kpis{grid-template-columns:repeat(2,1fr)}.econ-two-columns{grid-template-columns:1fr}}
 @media(max-width:620px){.econ-container{padding:22px 14px 70px}.econ-form-grid{grid-template-columns:1fr}.econ-span-full{grid-column:auto}.econ-kpis{gap:9px}.econ-kpis article,.econ-card,.econ-invoice{padding:16px}.econ-tabs{width:100%}.econ-tabs button{flex:1;padding:10px 8px;font-size:.82rem}}
+
+
+/* Facturas recibidas y libro de gastos: revisión local antes de cualquier asiento. */
+.econ-import-tools{margin:26px 0 25px;background:#fff;border:1px solid #ccdfeb;border-radius:20px;padding:26px 28px;box-shadow:0 10px 28px rgba(23,58,94,.035)}
+.econ-import-title,.econ-import-head{display:flex;justify-content:space-between;gap:22px;align-items:center;flex-wrap:wrap}
+.econ-import-title h3{font:600 1.37rem/1.3 Georgia,serif;color:#173A5E;margin:0 0 12px}
+.econ-import-label{padding:7px 11px;border:1px solid #c8e5e5;background:#f1fbfa;color:#0e6865;border-radius:20px;font-weight:750;font-size:.76rem}
+.econ-import-columns{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin:23px 0 8px}
+.econ-import-panel{min-width:0;padding:22px;border:1px solid #e0eaf0;background:#fbfdfe;border-radius:15px}
+.econ-import-panel h4,.econ-import-review h4{color:#173A5E;font-size:1rem;margin:0 0 12px}
+.econ-import-panel>p,.econ-import-review p{font-size:.85rem;color:#5c7181;line-height:1.75;margin:0 0 14px}
+.econ-upload-label{display:grid;gap:11px;font-size:.84rem;font-weight:700;color:#173A5E}
+.econ-upload-label input{max-width:100%;padding:13px;border-style:dashed;background:#fff}
+.econ-upload-label input::file-selector-button{border:1px solid #a4c3d4;border-radius:8px;background:#eaf6fb;color:#173A5E;padding:9px 12px;cursor:pointer;font-weight:700}
+.econ-ocr-review{margin-top:22px;border-top:1px solid #d9e6ee;padding-top:19px}
+.econ-import-fields{display:grid;grid-template-columns:1fr 1fr;gap:13px;margin:15px 0}
+.econ-import-fields label{display:grid;gap:8px;font-size:.8rem;font-weight:750}
+.econ-import-fields label:nth-child(3){grid-column:1/-1}
+.econ-import-tools details{margin-top:15px}.econ-import-tools summary{cursor:pointer;color:#173A5E;font-size:.85rem;font-weight:700}
+.econ-ocr-raw{margin:12px 0 0;white-space:pre-wrap;overflow-wrap:anywhere;max-height:220px;overflow:auto;background:#f5f8fa;border:1px solid #dae6ee;border-radius:9px;padding:13px;font-size:.75rem;color:#405663}
+.econ-import-busy,.econ-import-message{font-size:.86rem;line-height:1.6;padding:12px 16px;border-radius:10px;background:#eaf6fb;color:#173A5E;margin:13px 0}
+.econ-import-error{font-size:.82rem!important;color:#b64238!important;font-weight:700}
+.econ-import-small{margin-top:13px!important;font-size:.77rem!important}
+.econ-import-review{margin-top:27px;padding-top:24px;border-top:1px solid #d9e6ee}
+.econ-import-head h4{margin:0 0 8px}.econ-import-head label,.econ-import-mapping label{display:grid;gap:7px;font-weight:700;font-size:.8rem}
+.econ-import-mapping{display:grid;grid-template-columns:repeat(5,minmax(140px,1fr));gap:11px;margin:23px 0}
+.econ-import-count{font-weight:750;color:#173A5E!important}
+.econ-import-scroll{overflow-x:auto;max-height:480px;border-radius:12px;border:1px solid #dce6ed;margin:12px 0 18px}
+.econ-import-table{width:100%;border-collapse:collapse;font-size:.8rem;min-width:1010px}
+.econ-import-table th{position:sticky;top:0;background:#eaf6fb;color:#173A5E;text-align:left;padding:13px 10px;z-index:1}
+.econ-import-table td{border-top:1px solid #e6edf2;padding:9px;vertical-align:middle}
+.econ-import-table td:nth-child(1){width:64px;text-align:center}.econ-import-table input[type=checkbox]{width:19px;height:19px}
+.econ-import-table td input,.econ-import-table td select{min-width:110px;padding:8px 9px;font-size:.8rem}
+.econ-import-table td:nth-child(2) input{min-width:135px}.econ-import-table td:nth-child(4) input{min-width:210px}
+.econ-import-attention{background:#fff8ef}
+.econ-import-confirm{display:flex;align-items:flex-start;gap:11px;margin:20px 0;font-weight:700;color:#173A5E;font-size:.85rem;line-height:1.6}
+.econ-import-confirm input{width:19px;height:19px;flex:none;margin:2px 0 0}
+@media(max-width:950px){.econ-import-mapping{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:760px){.econ-import-tools{padding:21px 16px}.econ-import-columns{grid-template-columns:1fr}.econ-import-fields{grid-template-columns:1fr}.econ-import-fields label:nth-child(3){grid-column:auto}.econ-import-mapping{grid-template-columns:1fr}}

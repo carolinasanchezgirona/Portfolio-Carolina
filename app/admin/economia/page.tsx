@@ -1,6 +1,7 @@
 import Script from "next/script";
 import type { Metadata } from "next";
 import "./economia.css";
+import EconomyImportTools from "./import-tools";
 
 export const metadata: Metadata = {
   title: "Gestión económica y facturas | Carolina Sánchez Girona",
@@ -134,6 +135,7 @@ export default function EconomiaPage() {
               </div>
               <button className="econ-button" type="submit">Guardar gasto</button>
             </form>
+            <EconomyImportTools />
             <p className="econ-help">El registro sirve para el control interno. Guarda los justificantes originales y consulta con tu gestoría su deducibilidad y el IVA soportado; este importe no equivale automáticamente a un gasto fiscal deducible.</p>
             <div id="econ-expense-list" className="econ-list" />
           </section>
