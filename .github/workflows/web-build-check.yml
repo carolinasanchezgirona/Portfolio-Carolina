@@ -45,6 +45,9 @@ jobs:
       - name: Validar escala emocional intuitiva
         run: node --test tests/mi-espacio-mood-scale.test.mjs
 
+      - name: Validar baterías de energía y personaje integrado
+        run: node --test tests/mi-espacio-energy-batteries.test.mjs
+
       - name: Validar expresiones del personaje elegido
         run: node --test tests/mi-espacio-avatar-expressions.test.mjs
 

@@ -14,6 +14,26 @@ const MOODS = [
 ];
 const ENERGY = ["Muy baja", "Baja", "Media", "Alta", "Muy alta"];
 
+
+/**
+ * Energy is independent of mood: segment count and wording carry the value,
+ * while colours are a secondary visual cue.
+ */
+function EnergyBattery({ level }: { level: number }) {
+  const palette = ["#E9787C", "#F2A06B", "#E7BC4A", "#79BF89", "#20A99B"];
+  const fill = palette[Math.max(0, Math.min(4, level - 1))];
+  return (
+    <svg className="mood-battery-icon" viewBox="0 0 80 54" aria-hidden="true" focusable="false">
+      <rect x="4" y="8" width="64" height="38" rx="7" fill="#FFFFFF" stroke="#617786" strokeWidth="3" />
+      <path d="M69 20 H72 Q76 20 76 24 V30 Q76 34 72 34 H69Z" fill="#617786"/>
+      {Array.from({ length: 5 }, (_, index) => (
+        <rect key={index} x={10 + index * 11} y="14" width="8" height="26" rx="2"
+          fill={index < level ? fill : "#E9EFF1"} />
+      ))}
+    </svg>
+  );
+}
+
 /**
  * Five readable expressions instead of five almost identical colour dots.
  * The numeric 1–5 scale and existing patient entries remain unchanged.
@@ -368,7 +388,12 @@ export default function MoodTracker() {
             <p className="mood-tracker-question">¿Y tu nivel de energía?</p>
             <div role="group" aria-label="Nivel de energía" className="mood-energy-options">
               {ENERGY.map((item, index) => (
-                <button key={item} type="button" aria-pressed={energy === index} className={energy === index ? "is-selected" : ""} onClick={() => setEnergy(index)}>{item}</button>
+                <button key={item} type="button" aria-label={`Energía ${item.toLowerCase()}`}
+                  aria-pressed={energy === index} className={energy === index ? "is-selected" : ""}
+                  onClick={() => setEnergy(index)}>
+                  <EnergyBattery level={index + 1} />
+                  <span>{item}</span>
+                </button>
               ))}
             </div>
           </div>

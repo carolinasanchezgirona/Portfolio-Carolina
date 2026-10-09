@@ -219,3 +219,106 @@
 .mood-chart-detail{display:flex;flex-wrap:wrap;gap:12px 24px;background:#173a5e;color:#fff;padding:16px 20px;border-radius:12px;margin-top:14px;font-size:1rem}.mood-chart-detail strong{color:#fff}.mood-chart-table{margin:16px 0;font-size:.95rem}.mood-chart-table summary{cursor:pointer;color:#173a5e}.mood-chart-table ul{list-style:none;padding:0;display:grid;gap:8px}.mood-chart-table button{border:1px solid #cbdfe9;border-radius:8px;background:#fff;padding:10px;text-align:left;font:inherit;color:#173a5e;cursor:pointer;width:100%}
 .mood-tracker-body>*{min-width:0}.mood-tracker-heading h3{overflow-wrap:anywhere}
 @media(max-width:520px){.mood-evolution{padding:14px}.mood-chart-detail{flex-direction:column;gap:8px}.mood-periods button{padding:9px 12px}.mood-friend-panel .mood-friend-expressive{width:min(190px,100%)}}
+
+
+/* Patient mood: blend the 3D companion into its pastel stage, without a
+   visible square portrait card. Keep avatar chooser thumbnails unchanged. */
+.mood-friend-panel{
+  overflow:hidden;
+  padding:20px 16px 24px;
+  gap:10px;
+}
+.mood-friend-panel .mood-friend-image,
+.mood-friend-panel .mood-friend-expressive{
+  width:min(258px,90%)!important;
+  aspect-ratio:1!important;
+  height:auto!important;
+  border:0!important;
+  border-radius:0!important;
+  box-shadow:none!important;
+  background-color:transparent!important;
+  -webkit-mask-image:radial-gradient(ellipse 76% 79% at 50% 45%,#000 53%,rgba(0,0,0,.94) 67%,transparent 96%);
+  mask-image:radial-gradient(ellipse 76% 79% at 50% 45%,#000 53%,rgba(0,0,0,.94) 67%,transparent 96%);
+}
+.mood-friend-panel .mood-friend-halo{
+  top:12%;
+  left:9%;
+  width:82%;
+  opacity:.9;
+  border-width:2px;
+}
+.mood-friend-panel .mood-friend-caption{margin-top:0;position:relative;z-index:2}
+.mood-friend-panel .mood-friend-caption strong{font-size:1.05rem}
+
+/* Energy: progressively filled batteries remain understandable without colour. */
+.mood-energy-options{
+  display:grid;
+  grid-template-columns:repeat(5,minmax(0,1fr));
+  gap:8px;
+}
+.mood-energy-options button{
+  display:flex;
+  position:relative;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  min-width:0;
+  min-height:102px;
+  padding:12px 4px 10px;
+  gap:8px;
+  border:1px solid #dce8ee;
+  border-radius:15px;
+  background:#fff;
+  color:#526d7d;
+  font-size:.77rem;
+  font-weight:800;
+  line-height:1.2;
+  text-align:center;
+}
+.mood-energy-options button:nth-child(1){background:linear-gradient(180deg,#fef3f4,#fff)}
+.mood-energy-options button:nth-child(2){background:linear-gradient(180deg,#fff5ee,#fff)}
+.mood-energy-options button:nth-child(3){background:linear-gradient(180deg,#fffaec,#fff)}
+.mood-energy-options button:nth-child(4){background:linear-gradient(180deg,#f0faf3,#fff)}
+.mood-energy-options button:nth-child(5){background:linear-gradient(180deg,#ecfaf7,#fff)}
+.mood-energy-options button.is-selected{
+  color:#14575d;
+  border:2px solid #0d9994;
+  background:#eefaf8;
+  box-shadow:0 0 0 2px rgba(8,166,160,.13);
+}
+.mood-energy-options button.is-selected:after{
+  content:"✓";
+  position:absolute;
+  top:5px;right:6px;
+  width:17px;height:17px;
+  border-radius:50%;
+  display:grid;place-items:center;
+  background:#0b938e;
+  color:white;
+  font-size:11px;
+  line-height:1;
+}
+.mood-battery-icon{
+  width:min(100%,62px);
+  height:auto;
+  display:block;
+  aspect-ratio:80/54;
+  filter:drop-shadow(0 2px 3px rgba(47,88,102,.10));
+}
+.mood-energy-options button:focus-visible{
+  outline:3px solid #0b9995;
+  outline-offset:3px;
+}
+@media(max-width:780px){
+  .mood-friend-panel{padding:14px 13px 20px;min-height:270px}
+  .mood-friend-panel .mood-friend-image,
+  .mood-friend-panel .mood-friend-expressive{width:min(232px,80%)!important}
+  .mood-energy-options{gap:5px}
+  .mood-energy-options button{min-height:88px;padding:10px 2px 8px;gap:6px;font-size:.68rem;border-radius:12px}
+  .mood-battery-icon{width:min(90%,48px)}
+}
+@media(max-width:380px){
+  .mood-energy-options{gap:4px}
+  .mood-energy-options button{font-size:.61rem;min-height:82px;padding:9px 1px 7px}
+  .mood-battery-icon{width:min(90%,44px)}
+}
