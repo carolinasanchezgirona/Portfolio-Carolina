@@ -49,5 +49,5 @@ test("accounting separates cash movements from issued invoices", () => {
   assert.match(econJs, /const outgoing = expenses\.filter/);
   assert.match(econJs, /tab === "expenses" \? "movements"/);
   assert.match(econJs, /function exportMovements/);
-  assert.match(economy, /Los ingresos no vinculados a factura todavía no se pueden registrar/);
+  assert.match(economy, /Los ingresos externos deben estar documentados y no pueden duplicar cobros ya registrados/);
 });
