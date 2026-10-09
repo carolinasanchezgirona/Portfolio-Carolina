@@ -19,3 +19,9 @@
 
 .clinic-neuro-review{display:flex!important;flex-direction:row!important;align-items:flex-start;gap:10px;margin:14px 0;line-height:1.45;font-size:.92rem;}
 .clinic-neuro-review input{width:18px!important;height:18px!important;flex:none;margin:2px 0 0;}
+
+.clinic-neuro-library-picker{display:flex;align-items:flex-end;gap:12px;margin:12px 0 6px;}
+.clinic-neuro-library-picker label{flex:1;min-width:0;}
+.clinic-neuro-library-picker select{width:100%;}
+.clinic-neuro-library-picker button{white-space:nowrap;}
+@media(max-width:650px){.clinic-neuro-library-picker{flex-direction:column;align-items:stretch;}}
