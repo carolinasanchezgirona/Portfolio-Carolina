@@ -85,6 +85,12 @@ jobs:
           node --check public/clinical-access.js
           node --test tests/admin-unified-hub.test.mjs tests/admin-nav-accounting.test.mjs
 
+      - name: Verificar agenda simplificada y centro de avisos privado
+        run: |
+          node --check public/admin-agenda-view-switcher.js
+          node --check public/admin-notifications.js
+          node --test tests/admin-agenda-notifications.test.mjs
+
       - name: Verificar facturación privada y generación de facturas
         run: |
           node --check public/admin-economia.js
