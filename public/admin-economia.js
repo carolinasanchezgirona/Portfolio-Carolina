@@ -107,6 +107,8 @@
     $("#econ-issuer-nif").value = issuer?.tax_id || "";
     $("#econ-issuer-address").value = issuer?.fiscal_address || "";
     $("#econ-issuer-email").value = issuer?.email || "contact@carolinasanchezgirona.com";
+    $("#econ-issuer-first-year").value = issuer?.first_invoice_year || Number(today().slice(0,4));
+    $("#econ-issuer-first-number").value = issuer?.first_invoice_number || "";
   }
   const paid = invoice => receipts.filter(r => r.invoice_id === invoice.id).reduce((s, r) => s + Number(r.amount_cents), 0);
   const invoiceGross = invoice => invoice.status === "issued" ? Number(invoice.total_cents) :
@@ -383,10 +385,13 @@
       const tax_id = $("#econ-issuer-nif").value.trim().toUpperCase();
       const fiscal_address = $("#econ-issuer-address").value.trim();
       const email = $("#econ-issuer-email").value.trim();
+      const first_invoice_year = Number($("#econ-issuer-first-year").value);
+      const first_invoice_number = Number($("#econ-issuer-first-number").value);
+      if (!Number.isInteger(first_invoice_year) || first_invoice_year < 2020 || first_invoice_year > 2100 || !Number.isInteger(first_invoice_number) || first_invoice_number < 1 || first_invoice_number > 999999) throw new Error("Indica el año y el primer número disponible de la serie CSG.");
       if (legal_name.length < 3 || tax_id.length < 8 || fiscal_address.length < 10) throw new Error("Completa el nombre, NIF y domicilio fiscal.");
       await rest("billing_issuer_settings?id=eq.1", {
         method:"PATCH", headers:{Prefer:"return=representation"},
-        body:JSON.stringify({legal_name,tax_id,fiscal_address,email}),
+        body:JSON.stringify({legal_name,tax_id,fiscal_address,email,first_invoice_year,first_invoice_number}),
       });
       await load(); setStatus("Datos fiscales guardados. Comprueba que sean correctos antes de emitir.");
     } catch (err) { setStatus(err.message); }
