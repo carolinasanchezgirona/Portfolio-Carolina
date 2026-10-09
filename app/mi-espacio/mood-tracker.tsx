@@ -361,8 +361,7 @@ export default function MoodTracker() {
         <span className="mood-tracker-private">Personal · Solo en este dispositivo</span>
       </div>
       <div className="mood-tracker-body">
-        <div className="mood-friend-panel" style={{ background: `radial-gradient(circle at 50% 30%, #ffffff 0%, ${displayed.color} 100%)` }}>
-          <div className="mood-friend-halo" aria-hidden="true"/>
+        <div className="mood-friend-panel" style={{ background: `linear-gradient(155deg, #f8fbfd 0%, ${displayed.color} 100%)` }}>
           <MoodFriend mood={selected || 3} avatarId={avatar} />
           <div className="mood-friend-caption" aria-live="polite">
             <strong>{selected ? displayed.name : "Aquí estoy contigo"}</strong>
