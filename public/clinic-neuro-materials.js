@@ -118,9 +118,29 @@
       if (!b.title?.trim()) issues.push("titular recurso " + (i + 1));
       if (b.type === "image" && (!b.data || !b.alt?.trim())) issues.push("imagen " + (i + 1) + " sin archivo o descripción");
       if (b.type !== "image" && !b.content?.trim()) issues.push("completar recurso " + (i + 1));
-      if (b.type === "chart" && (b.content || "").split("\n").some(row => {
-        const p = row.split("|"); return p.length !== 2 || !p[0].trim() || !Number.isFinite(Number(p[1]));
-      })) issues.push("revisar los pares etiqueta | número del gráfico " + (i + 1));
+      const lines = (b.content || "").split(/\r?\n/).map(x => x.trim()).filter(Boolean);
+      if (b.type === "chart" && (lines.length < 2 || lines.length > 8 || lines.some(row => {
+        const p = row.split("|");
+        const value = Number(p[1]);
+        return p.length !== 2 || !p[0].trim() || !Number.isFinite(value) || value < 0 || value > 10000;
+      }))) issues.push("revisar el gráfico " + (i + 1) + ": de 2 a 8 etiquetas con valores de 0 a 10.000");
+      if (b.type === "table" && (() => {
+        const cells = lines.map(row => row.split("|"));
+        const columns = cells[0]?.length || 0;
+        return lines.length < 2 || lines.length > 13 || columns < 2 || columns > 6 || cells.some(row => row.length !== columns);
+      })()) issues.push("revisar la tabla " + (i + 1) + ": encabezados y filas con iguales columnas (2 a 6)");
+      if (b.type === "diagram" && (lines.length < 2 || lines.length > 8)) issues.push("la secuencia " + (i + 1) + " necesita entre 2 y 8 pasos");
+      if (b.type === "calendar" && (() => {
+        const match = /^(\d{4})-(0[1-9]|1[0-2])$/.exec(lines[0] || "");
+        if (!match) return true;
+        const year = Number(match[1]), month = Number(match[2]);
+        const maxDay = new Date(Date.UTC(year, month, 0)).getUTCDate();
+        return year < 1900 || year > 2100 || lines.slice(1).some(row => {
+          const parts = row.split("|");
+          const day = Number(parts[0]);
+          return parts.length < 2 || !Number.isInteger(day) || day < 1 || day > maxDay || !parts.slice(1).join("|").trim();
+        });
+      })()) issues.push("revisar el calendario " + (i + 1) + ": AAAA-MM y líneas día | actividad");
     });
     return { ok: !issues.length, issues };
   }
