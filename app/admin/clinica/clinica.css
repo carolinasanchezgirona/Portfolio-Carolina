@@ -1291,3 +1291,6 @@ body.clinic-report-page-open{overflow:auto!important}
  .clinic-report-workspace .clinic-dialog-actions{position:static}
  .clinic-report-workspace .clinic-dialog-actions button{width:100%}
 }
+
+.clinic-save-indicator{display:inline-flex;align-items:center;gap:7px;padding:7px 11px;font-size:.8rem;color:#4c6472;background:#f4f7f8;border:1px solid #d9e1e5;border-radius:6px}
+#clinic-session-autosave-state{margin:10px 0 0}
