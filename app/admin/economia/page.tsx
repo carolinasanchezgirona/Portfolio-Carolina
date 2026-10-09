@@ -4,7 +4,7 @@ import "./economia.css";
 import EconomyImportTools from "./import-tools";
 
 export const metadata: Metadata = {
-  title: "Gestión económica y facturas | Carolina Sánchez Girona",
+  title: "Gestión económica | Carolina Sánchez Girona",
   description: "Panel privado de facturación y gastos de la consulta de Carolina Sánchez Girona.",
   robots: { index: false, follow: false, nocache: true },
 };
