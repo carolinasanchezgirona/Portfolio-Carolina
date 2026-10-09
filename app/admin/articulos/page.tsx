@@ -2,6 +2,7 @@ import Script from "next/script";
 import type { Metadata } from "next";
 import "./admin-articles.css";
 import "./instagram-factory.css";
+import AdminWorkspaceNav from "../workspace-nav";
 
 export const metadata: Metadata = {
   title: "Centro editorial | Carolina Sánchez",
@@ -33,15 +34,17 @@ export default function AdminArticlesPage() {
             <p>Artículos de la web y publicaciones de Instagram desde un mismo lugar.</p>
           </div>
           <div className="articles-top-actions">
-            <a className="articles-secondary" href="/admin/clinica/?panel=1">Historiales</a>
-            <a className="articles-secondary" href="/admin/agenda/">Agenda</a>
-            <a className="articles-secondary" href="/admin/recursos/">Recursos</a>
-            <a className="articles-secondary" href="/admin/preguntas/">Preguntas</a>
-            <a className="articles-secondary" href="/articulos/" target="_blank" rel="noopener noreferrer">Ver artículos</a>
             <button id="article-new" className="articles-primary" type="button">Nuevo artículo</button>
-            <button id="articles-logout" className="articles-text" type="button">Cerrar sesión</button>
+            <details className="workspace-context-menu">
+              <summary>Opciones</summary>
+              <div className="workspace-context-items">
+                <a href="/articulos/" target="_blank" rel="noopener noreferrer">Ver artículos publicados</a>
+                <button id="articles-logout" type="button">Cerrar sesión</button>
+              </div>
+            </details>
           </div>
         </header>
+        <AdminWorkspaceNav active="articulos" />
 
         <nav className="editorial-tabs" aria-label="Secciones del centro editorial">
           <button id="editorial-tab-articles" type="button" aria-selected="true" aria-controls="article-workspace">Artículos del blog</button>
@@ -60,6 +63,7 @@ export default function AdminArticlesPage() {
           </aside>
 
           <section className="articles-editor-panel">
+            <button id="articles-back-to-list" className="workspace-back-to-list" type="button">← Volver a la biblioteca</button>
             <div id="articles-empty" className="articles-empty">
               <strong>Selecciona un artículo o crea uno nuevo</strong>
               <span>El editor editorial aparecerá aquí.</span>
