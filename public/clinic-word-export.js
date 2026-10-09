@@ -5,8 +5,10 @@ const xmlEscape = x => String(x ?? "").replace(/&/g,"&amp;").replace(/</g,"&lt;"
 const xmlText = x => xmlEscape(x).replace(/\r\n?/g,"\n").split("\n").map(v=>'<w:t xml:space="preserve">'+v+"</w:t>").join("<w:br/>");
 const para = (value, style="Normal", editable=false, id=0) => {
  const text=String(value||"").trim() || "[Completar durante la revisión profesional]";
- const content='<w:p><w:pPr><w:pStyle w:val="'+style+'"/></w:pPr><w:r><w:t xml:space="preserve">'+xmlEscape(text).replace(/\r\n?/g,"\n").replace(/\n/g,"</w:t><w:br/><w:t xml:space=\"preserve\">")+"</w:t></w:r></w:p>";
- return editable ? '<w:permStart w:id="'+id+'" w:edGrp="everyone"/>'+content+'<w:permEnd w:id="'+id+'"/>' : content;
+ const run='<w:r><w:t xml:space="preserve">'+xmlEscape(text).replace(/\r\n?/g,"\n").replace(/\n/g,'</w:t><w:br/><w:t xml:space="preserve">')+'</w:t></w:r>';
+ const start=editable ? '<w:permStart w:id="'+id+'" w:edGrp="everyone"/>' : "";
+ const end=editable ? '<w:permEnd w:id="'+id+'"/>' : "";
+ return '<w:p><w:pPr><w:pStyle w:val="'+style+'"/></w:pPr>'+start+run+end+'</w:p>';
 };
 const table = rows => '<w:tbl><w:tblPr><w:tblW w:w="0" w:type="auto"/><w:tblBorders><w:bottom w:val="single" w:color="C9E4E3"/></w:tblBorders></w:tblPr><w:tblGrid><w:gridCol w:w="2800"/><w:gridCol w:w="6600"/></w:tblGrid>'+rows.map(([a,b],i)=>'<w:tr><w:tc><w:tcPr><w:shd w:fill="'+(i%2?'FFFFFF':'EAF6F5')+'"/></w:tcPr>'+para(a,"TableLabel")+'</w:tc><w:tc><w:tcPr><w:shd w:fill="'+(i%2?'FFFFFF':'EAF6F5')+'"/></w:tcPr>'+para(b||"No consta","Normal")+"</w:tc></w:tr>").join("")+"</w:tbl>";
 function crc32(bytes){let c=-1;for(const v of bytes){c^=v;for(let j=0;j<8;j++)c=(c>>>1)^(0xEDB88320&-(c&1));}return (c^-1)>>>0;}
@@ -26,24 +28,31 @@ function zip(files){
 function download(payload){
  const data=payload||{}, sections=data.sections||{}, identity=data.identity||{}, now=new Date();
  const date=now.toLocaleDateString("es-ES");
- const order=[
-  ["Motivo del informe y pregunta clínica","context"],
-  ["Fuentes de información y procedimiento","sources"],
-  ["Antecedentes clínicos relevantes","background"],
-  ["Observación conductual y estado mental","observation"],
-  ["Resultados y evolución clínica","results"],
-  ["Integración e impresión clínica","integration"],
-  ["Intervención terapéutica y evolución","interventions"],
-  ["Conclusiones","conclusions"],
-  ["Recomendaciones y plan de seguimiento","plan"],
-  ["Limitaciones y vigencia","limitations"]
+ const order = data.type === "referral" ? [
+  ["Motivo de la derivación y pregunta clínica","context"],["Fuentes y procedimiento","sources"],
+  ["Antecedentes relevantes","background"],["Estado clínico actual","observation"],
+  ["Resultados relevantes","results"],["Impresión clínica","integration"],
+  ["Conclusiones de la derivación","conclusions"],["Solicitud al profesional receptor y plan","plan"],
+  ["Limitaciones y alcance","limitations"]
+ ] : data.type === "clinical_summary" ? [
+  ["Motivo y finalidad del resumen","context"],["Fuentes de información","sources"],
+  ["Antecedentes relevantes","background"],["Estado clínico y evolución","observation"],
+  ["Resultados disponibles","results"],["Integración clínica","integration"],
+  ["Intervenciones realizadas","interventions"],["Conclusiones","conclusions"],
+  ["Plan de seguimiento","plan"],["Limitaciones","limitations"]
+ ] : [
+  ["Motivo del informe y pregunta clínica","context"],["Fuentes de información y procedimiento","sources"],
+  ["Antecedentes clínicos relevantes","background"],["Observación conductual y estado mental","observation"],
+  ["Resultados y evolución clínica","results"],["Integración e impresión clínica","integration"],
+  ["Intervención terapéutica y evolución","interventions"],["Conclusiones","conclusions"],
+  ["Recomendaciones y plan de seguimiento","plan"],["Limitaciones y vigencia","limitations"]
  ];
- let n=1,body=para("DEM​EMORIA  ·  DOCUMENTACIÓN CLÍNICA","Eyebrow");
- body+=para("Informe clínico de evolución y seguimiento","Title");
+ let n=1,body=para("DEMEMORIA  ·  DOCUMENTACIÓN CLÍNICA","Eyebrow");
+ body+=para(data.title || "Informe clínico de evolución y seguimiento","Title");
  body+=para("BORRADOR  |  Pendiente de revisión profesional y firma","State");
  body+=para("Carolina Sánchez Girona  ·  Psicóloga General Sanitaria y Neuropsicóloga","Subheading");
  body+=para("1. Datos de identificación","Heading1");
- body+=table([["Paciente",identity.name],["Código de historia",identity.code],["Fecha de nacimiento",identity.birth],["Periodo de seguimiento",data.period],["Destinatario",data.recipient||"Profesional sanitario"],["Finalidad",data.purpose],["Fecha de emisión",date],["Profesional",data.professional||"Carolina Sánchez Girona · Psicóloga General Sanitaria y Neuropsicóloga"],["N.º de colegiación",data.license||"Pendiente de completar"]]);
+ body+=table([["Paciente",identity.name],["Código de historia",identity.code],["Fecha de nacimiento",identity.birth],["Periodo de seguimiento",data.period],["Destinatario",data.recipient||"Profesional sanitario"],["Finalidad",data.purpose],["Fecha de emisión",date],["Profesional",data.professional||"Carolina Sánchez Girona · Psicóloga General Sanitaria y Neuropsicóloga"],...(data.license ? [["N.º de colegiación",data.license]] : [])]);
  n=2;
  for(const [label,key] of order){
   const v=sections[key];if(!v && ["observation","results","background"].includes(key))continue;
@@ -64,7 +73,7 @@ function download(payload){
  const blob=zip({"[Content_Types].xml":ct,"_rels/.rels":rels,"word/document.xml":docXml,"word/styles.xml":styles,"word/settings.xml":settings,"word/_rels/document.xml.rels":docRels});
  const a=document.createElement("a"),url=URL.createObjectURL(blob);
  const safe=(identity.code||"paciente").replace(/[^a-z0-9_-]/gi,"_").slice(0,48);
- a.href=url;a.download="Informe_evolucion_"+safe+"_"+now.toISOString().slice(0,10)+".docx";document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);
+ a.href=url;a.download="Informe_clinico_"+safe+"_"+now.toISOString().slice(0,10)+".docx";document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);
  return true;
 }
 window.ClinicWordExport={download};
