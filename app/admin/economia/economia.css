@@ -1,0 +1,46 @@
+.econ-page{min-height:100vh;background:#f4f7fa;color:#173A5E;font-family:var(--font-dm-sans),Arial,sans-serif}
+.econ-page *{box-sizing:border-box}.econ-container{max-width:1220px;margin:auto;padding:30px 26px 90px}
+.econ-header{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:22px;margin-bottom:28px}
+.econ-brand{display:flex;align-items:center;gap:15px}.econ-mark{width:48px;height:48px;border-radius:16px;display:grid;place-items:center;color:white;background:#173A5E;font-size:24px;font-family:Georgia,serif}
+.econ-eyebrow{margin:0 0 8px;text-transform:uppercase;font-size:.76rem;letter-spacing:.12em;font-weight:750;color:#008d88}
+.econ-header h1{font:600 clamp(1.7rem,3vw,2.25rem)/1.2 Georgia,serif;margin:0}
+.econ-header p:last-child{margin:6px 0 0;font-size:.87rem;color:#5e7386}
+.econ-top-links,.econ-actions{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.econ-top-links a{color:#173A5E;font-weight:700;text-decoration:none;padding:10px 13px;border:1px solid #cfdbe6;border-radius:10px;background:white}
+.econ-button,.econ-outline{display:inline-flex;justify-content:center;align-items:center;padding:11px 17px;min-height:42px;border-radius:11px;font:700 .88rem inherit;cursor:pointer;text-decoration:none}
+.econ-button{background:#173A5E;border:1px solid #173A5E;color:white}
+.econ-outline{background:white;color:#173A5E;border:1px solid #aac7d8}
+.econ-button:disabled,.econ-outline:disabled{opacity:.45;cursor:not-allowed}
+.econ-button:focus-visible,.econ-outline:focus-visible,.econ-top-links a:focus-visible,.econ-tabs button:focus-visible{outline:3px solid #08A6A0;outline-offset:3px}
+.econ-tabs{display:flex;gap:7px;flex-wrap:wrap;margin:0 0 25px;padding:5px;background:white;border:1px solid #dce7ed;border-radius:14px;width:fit-content}
+.econ-tabs button{border:0;border-radius:10px;padding:12px 19px;font-weight:700;color:#365b79;background:transparent;cursor:pointer}
+.econ-tabs button.active{color:white;background:#173A5E}
+.econ-status{font-size:.88rem;margin:12px 0;min-height:18px;color:#b03c30}.econ-status:empty{display:none}
+.econ-section-heading{display:flex;align-items:end;justify-content:space-between;flex-wrap:wrap;gap:17px;margin:20px 0}
+.econ-section-heading h2{font:600 1.8rem/1.1 Georgia,serif;margin:0}
+.econ-kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin:19px 0}
+.econ-kpis article,.econ-card,.econ-invoice{background:white;border:1px solid #dbe5ee;border-radius:16px;padding:23px;box-shadow:0 8px 30px rgba(23,58,94,.025)}
+.econ-kpis article span{color:#687d8e;font-size:.83rem;display:block;margin-bottom:14px}
+.econ-kpis article strong{font-size:clamp(1.25rem,2.5vw,1.85rem);font-variant-numeric:tabular-nums}
+.econ-two-columns{display:grid;grid-template-columns:1fr 1fr;gap:15px}.econ-card{margin-bottom:16px}.econ-card h3{margin:0 0 14px;font-size:1.1rem}
+.econ-balance{font-size:2rem;display:block;margin:12px 0}
+.econ-card p,.econ-help{color:#567087;font-size:.85rem;line-height:1.7}.econ-help{margin:0 0 17px}
+.econ-form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;margin-bottom:21px}
+.econ-form-grid label{display:grid;gap:8px;font-weight:700;font-size:.85rem}
+.econ-inline-label{display:flex;align-items:center;gap:9px;font-weight:700;font-size:.83rem}
+.econ-page input,.econ-page select{width:100%;min-width:0;padding:12px 13px;border:1px solid #c5d4df;border-radius:9px;font:inherit;background:white;color:#173A5E}
+.econ-inline-label input{width:auto}.econ-page input:focus,.econ-page select:focus{outline:2px solid #08A6A0;outline-offset:1px}
+.econ-span-full{grid-column:1/-1}.econ-list{display:grid;gap:12px;margin:18px 0}
+.econ-invoice-head{display:flex;justify-content:space-between;gap:15px;align-items:flex-start;flex-wrap:wrap}
+.econ-invoice h3{margin:0 0 8px;font-size:1.12rem}.econ-invoice p{color:#61798d;font-size:.84rem;margin:4px 0}
+.econ-invoice .econ-actions{margin-top:15px}.econ-invoice .econ-outline{min-height:37px;padding:8px 13px}
+.econ-status-pill{font-weight:700;font-size:.76rem;background:#eaf6fb;color:#173A5E;padding:6px 10px;border-radius:999px}
+.econ-status-pill.draft{background:#fff3d7;color:#805b19}
+.econ-confirm-panel{border-left:4px solid #F2766B;background:#fff6f3;margin-top:14px;padding:16px;border-radius:8px}
+.econ-confirm-panel p{color:#6a3b32}.econ-payment-form{display:flex;gap:10px;align-items:end;flex-wrap:wrap;margin-top:15px;padding:14px;background:#f4f8fc;border-radius:10px}
+.econ-payment-form label{font-size:.8rem;font-weight:700;display:grid;gap:7px}
+.econ-payment-form input{width:150px}.econ-payment-form select{width:190px}
+.econ-empty{padding:25px;border:1px dashed #aac0d1;border-radius:12px;background:white;color:#5d778a}
+.econ-inline-error{font-size:.84rem;color:#af382e}
+@media(max-width:850px){.econ-kpis{grid-template-columns:repeat(2,1fr)}.econ-two-columns{grid-template-columns:1fr}}
+@media(max-width:620px){.econ-container{padding:22px 14px 70px}.econ-form-grid{grid-template-columns:1fr}.econ-span-full{grid-column:auto}.econ-kpis{gap:9px}.econ-kpis article,.econ-card,.econ-invoice{padding:16px}.econ-tabs{width:100%}.econ-tabs button{flex:1;padding:10px 8px;font-size:.82rem}}
