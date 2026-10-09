@@ -56,7 +56,7 @@ test("la importación exige autorización, confirmación y no emite facturas",()
  assert.match(ui,/!selected\.length\|\|!confirmed/);
  assert.match(ui,/No se suben ni se guardan como adjuntos/);
  assert.doesNotMatch(ui,/billing_invoices/);
- assert.match(bridge,/return:minimal/);
+ assert.match(bridge,/return=minimal/);
 });
 test("OCR se ejecuta en navegador y los datos no se guardan sin revisión",()=>{
  assert.match(ui,/createWorker\("spa"\)/);
