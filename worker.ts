@@ -1718,7 +1718,7 @@ export default {
 
     if (url.pathname === "/api/video/test") return dailyTest(request, env, verifyEditorialOwner);
     if (["/admin/videoconsulta/prueba", "/admin/videoconsulta/prueba/"].includes(url.pathname)) {
-      const assetUrl = new URL("/video-test.html", request.url);
+      const assetUrl = new URL("/video-test", request.url);
       const asset = await env.ASSETS.fetch(new Request(assetUrl, request));
       const headers = new Headers(asset.headers);
       headers.set("Permissions-Policy", 'camera=(self "https://carolinasanchezgirona.daily.co"), microphone=(self "https://carolinasanchezgirona.daily.co"), geolocation=()');
