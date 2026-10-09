@@ -24,6 +24,7 @@ export default function AdminClinicaPage() {
           </div>
           <div className="clinic-top-actions">
             <a className="clinic-secondary" href="/admin/agenda/">Agenda</a>
+            <a className="clinic-secondary" href="/admin/economia/">Economía y facturas</a>
             <a className="clinic-secondary" href="/admin/articulos/">Artículos</a>
             <a className="clinic-secondary" href="/admin/preguntas/">Preguntas</a>
             <a className="clinic-secondary" href="/admin/recursos/">Recursos</a>
