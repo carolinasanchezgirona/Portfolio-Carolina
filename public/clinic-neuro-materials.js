@@ -82,13 +82,34 @@
             input.value = "";
             return;
           }
-          const reader = new FileReader();
-          reader.onload = () => {
-            block.data = String(reader.result || "");
+          try {
+            // Rasterizar elimina metadatos EXIF/GPS antes de guardar la fotografía.
+            const bitmap = await createImageBitmap(file);
+            const side = Math.max(bitmap.width, bitmap.height);
+            const factor = Math.min(1, 1100 / side);
+            const canvas = document.createElement("canvas");
+            canvas.width = Math.max(1, Math.round(bitmap.width * factor));
+            canvas.height = Math.max(1, Math.round(bitmap.height * factor));
+            const context = canvas.getContext("2d");
+            if (!context) throw new Error("No se puede preparar esta imagen.");
+            context.fillStyle = "#ffffff";
+            context.fillRect(0, 0, canvas.width, canvas.height);
+            context.drawImage(bitmap, 0, 0, canvas.width, canvas.height);
+            bitmap.close?.();
+            let encoded = canvas.toDataURL("image/jpeg", 0.8);
+            if (encoded.length > 650000) encoded = canvas.toDataURL("image/jpeg", 0.6);
+            if (encoded.length > 650000) throw new Error("La imagen sigue siendo demasiado grande; reduce sus dimensiones.");
+            const others = blocks.filter(entry => entry !== block && entry.type === "image" && entry.data);
+            if (others.length >= 2 || others.reduce((sum, entry) => sum + (entry.data?.length || 0), 0) + encoded.length > 1600000) {
+              throw new Error("Límite del cuaderno: tres imágenes y 1,6 MB entre todas.");
+            }
+            block.data = encoded;
             redraw();
-            if (message) message.textContent = "Imagen incorporada a la actividad. Comprueba la vista previa antes de prescribir.";
-          };
-          reader.readAsDataURL(file);
+            if (message) message.textContent = "Imagen normalizada sin metadatos e incorporada. Revisa su contenido antes de prescribir.";
+          } catch (error) {
+            input.value = "";
+            if (message) message.textContent = error?.message || "No se ha podido preparar la fotografía.";
+          }
         });
         label.append(input);
         card.append(label);
