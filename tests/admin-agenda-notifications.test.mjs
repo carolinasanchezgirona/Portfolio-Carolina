@@ -30,6 +30,8 @@ test("Agenda muestra una única cita principal y un selector de vistas que prese
   assert.match(agendaSwitcher, /target\.click\(\)/);
   assert.match(agendaSwitcher, /select\.replaceChildren/);
   assert.match(month, /"#view-tomorrow"/);
+  assert.match(month, /document\.createElement\("details"\); dayMenu\.className="month-day-menu"/);
+  assert.match(month, /dayMenu\.append\(menuTrigger,dayMenuPanel\)/);
 });
 
 test("Centro de avisos autentica al titular y minimiza datos antes de consultar las fuentes", () => {
