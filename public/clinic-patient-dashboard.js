@@ -82,7 +82,7 @@
 
   async function loadDashboard() {
     const patientId = patientIdField.value;
-    if (!patientId || !dialog.open) return;
+    if (!patientId || !!dialog.hidden) return;
     status.textContent = "Actualizando resumen…";
     alerts.hidden = true;
     const now = new Date().toISOString();
@@ -131,13 +131,13 @@
   }
 
   const observer = new MutationObserver(() => {
-    if (dialog.open && patientIdField.value) setTimeout(loadDashboard, 80);
+    if (!dialog.hidden && patientIdField.value) setTimeout(loadDashboard, 80);
   });
-  observer.observe(dialog, { attributes: true, attributeFilter: ["open"] });
+  observer.observe(dialog, { attributes: true, attributeFilter: ["hidden"] });
   refresh.addEventListener("click", loadDashboard);
 
   const patientIdObserver = new MutationObserver(() => {
-    if (dialog.open && patientIdField.value) loadDashboard();
+    if (!dialog.hidden && patientIdField.value) loadDashboard();
   });
   patientIdObserver.observe(patientIdField, { attributes: true, attributeFilter: ["value"] });
 
