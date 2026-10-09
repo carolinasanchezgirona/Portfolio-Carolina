@@ -19,3 +19,27 @@
 .resources-sales-list article{display:flex;justify-content:space-between;gap:10px;padding:8px;border:1px solid #edf1f4;border-radius:7px}
 .resources-sales-list article>div{display:grid;gap:2px}.resources-sales-list strong{font-size:.72rem;color:#173A5E}.resources-sales-list span{font-size:.64rem;color:#788692}
 @media(max-width:700px){.resources-sales-head{align-items:flex-start;flex-direction:column}.resources-sales-summary{width:calc(100% - 18px)}}
+
+/* Acceso: el atributo hidden debe prevalecer frente al display de la tarjeta de login. */
+.resources-admin-page .resources-login-shell[hidden],.resources-admin-page .resources-app[hidden]{display:none!important}
+.resources-admin-page .resources-checking[hidden]{display:none!important}
+.resources-admin-page .resources-checking{display:grid;place-items:center;min-height:40vh;padding:32px 16px;color:#536b7c;font-size:.88rem}
+@media(max-width:900px){
+ .resources-admin-page .resources-workspace{grid-template-columns:minmax(0,1fr)!important;min-height:auto!important}
+ .resources-admin-page .resources-workspace>*{min-width:0;max-width:100%}
+ .resources-admin-page .resources-list-panel{border-right:0}
+ .resources-admin-page .resources-workspace:not(.workspace-show-editor)>.resources-editor-panel{display:none!important}
+ .resources-admin-page .resources-workspace.workspace-show-editor>.resources-list-panel{display:none!important}
+ .resources-admin-page .resources-app:has(.workspace-show-editor) #resources-sales-summary{display:none!important}
+ .resources-admin-page .resources-editor-panel{width:100%;padding:16px!important}
+}
+@media(max-width:700px){
+ .resources-admin-page .resources-login-shell{min-height:calc(100dvh - 60px);display:flex;align-items:flex-start;justify-content:center;padding:24px 14px}
+ .resources-admin-page .resources-login-card{width:min(440px,100%);padding:24px}
+ .resources-admin-page .resources-topbar{padding:17px 15px!important;gap:13px;align-items:flex-start}
+ .resources-admin-page .resources-topbar h1{font-size:1.6rem!important}
+ .resources-admin-page .resources-top-actions{display:flex;flex-wrap:nowrap;justify-content:flex-start;gap:9px!important}
+ .resources-admin-page .resources-top-actions>*{flex:0 1 auto!important}
+ .resources-admin-page .resource-section{padding:15px}
+ .resources-admin-page .resource-media-grid{grid-template-columns:minmax(0,1fr)}
+}
