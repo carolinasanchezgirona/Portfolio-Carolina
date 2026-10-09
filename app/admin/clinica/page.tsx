@@ -518,6 +518,10 @@ export default function AdminClinicaPage() {
               <button id="clinic-visual-add" className="clinic-secondary" type="button">Añadir recurso</button>
             </div>
             <div id="clinic-visual-block-list" />
+            <label className="clinic-neuro-review">
+              <input id="clinic-neuro-reviewed" type="checkbox" />
+              He comprobado consignas, estímulos, respuestas, accesibilidad y adecuación individual antes de prescribir este material.
+            </label>
             <p className="clinic-material-helper">Máximo 8 recursos por ficha. Usa imágenes sin información identificativa. La generación con IA prepara tablas, gráficos y secuencias, pero no inventa fotografías ni datos personales.</p>
           </section>
           <label>Contexto para personalizar <span>(sin nombres ni datos identificativos; solo profesional, no se envía al paciente)</span><textarea id="clinic-exercise-rationale" rows={2} /></label>
