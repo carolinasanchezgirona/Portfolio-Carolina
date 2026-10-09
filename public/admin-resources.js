@@ -39,8 +39,8 @@
     if(body.user?.id!==ALLOWED_USER_ID)throw new Error("Esta cuenta no tiene acceso.");
     saveSession(body);
   }
-  function showApp(){els.login.hidden=true;els.app.hidden=false;}
-  function showLogin(){els.app.hidden=true;els.login.hidden=false;}
+  function showApp(){document.querySelector("#resources-auth-loading")?.setAttribute("hidden","");els.login.hidden=true;els.app.hidden=false;}
+  function showLogin(){document.querySelector("#resources-auth-loading")?.setAttribute("hidden","");els.app.hidden=true;els.login.hidden=false;}
   function euro(cents){return new Intl.NumberFormat("es-ES",{style:"currency",currency:"EUR"}).format((Number(cents)||0)/100);}
   function statusText(status){return status==="published"?"Publicado":status==="archived"?"Archivado":"Borrador";}
   async function loadData(selectId=null){
