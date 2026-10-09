@@ -137,6 +137,7 @@
   let exerciseAssignments = [];
   let clinicalReports = [];
   let clinicalDocuments = [];
+  let clinicalDocumentEmailNotices = [];
   let scaleMeasurements = [];
   let speechRecognition = null;
   let isDictating = false;
@@ -1386,6 +1387,40 @@
     })[category] || "Documento";
   }
 
+
+  async function refreshClinicalFileNotices() {
+    clinicalDocumentEmailNotices = await rest(
+      "clinical_document_email_notices?select=document_id,shared_at,status,sent_at,claimed_at,error_code&order=claimed_at.desc&limit=1000"
+    ) || [];
+    if (currentPatient) renderDocuments(currentPatient);
+  }
+
+  async function sendClinicalFileNotice(docId, retry = false) {
+    let feedback = "El archivo ya está disponible en Mi espacio.";
+    try {
+      const response = await fetch(SUPABASE_URL + "/functions/v1/notify-clinical-file", {
+        method: "POST",
+        headers: { apikey: KEY, Authorization: "Bearer " + session.access_token, "Content-Type": "application/json" },
+        body: JSON.stringify({ document_id: docId, retry }),
+      });
+      const data = await response.json().catch(() => ({}));
+      if (response.ok && (data.status === "sent" || data.already_sent)) {
+        feedback = "Archivo compartido. Aviso por correo enviado.";
+      } else if (response.ok && data.status === "sending") {
+        feedback = "Archivo compartido. El aviso por correo está en proceso, sin confirmación de entrega.";
+      } else {
+        feedback = "Archivo compartido. Aviso por correo no enviado: " +
+          (data.error || "servicio temporalmente no disponible.") +
+          " Puedes reintentarlo desde la ficha.";
+      }
+    } catch {
+      feedback = "Archivo compartido. No se ha podido comprobar el envío del correo. Consulta el estado antes de reintentar.";
+    }
+    try { await refreshClinicalFileNotices(); } catch { /* Sharing is preserved if mail history is unavailable. */ }
+    els.patientMessage.textContent = feedback;
+    return feedback;
+  }
+
   async function setPatientDocumentSharing(doc, share) {
     if (!currentPatient || currentPatient.id !== doc.patient_id) throw new Error("Paciente no válido.");
     if (share && !window.confirm(`¿Publicar «${doc.title}» para este paciente en Mi espacio? Comprueba que el documento y su destinatario son correctos.`)) return;
@@ -1402,7 +1437,8 @@
     const index = clinicalDocuments.findIndex(item => item.id === doc.id);
     if (index >= 0) clinicalDocuments[index] = rows[0];
     renderDocuments(currentPatient);
-    els.patientMessage.textContent = share ? "Archivo disponible en Mi espacio del paciente." : "Acceso retirado de Mi espacio.";
+    if (share) await sendClinicalFileNotice(doc.id);
+    else els.patientMessage.textContent = "Acceso retirado de Mi espacio. Las copias descargadas anteriormente no pueden revocarse.";
   }
 
   function renderDocuments(patient) {
