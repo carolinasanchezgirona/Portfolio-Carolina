@@ -18,6 +18,7 @@ export default function AgendaLayout({ children }: Readonly<{ children: React.Re
       <script src="/admin-waitlist.js?v=20260915-2" defer />
       <script src="/admin-recurrence-v2.js?v=20261006-1" defer />
       <script src="/admin-communications.js?v=20261006-1" defer />
+      <script src="/admin-agenda-view-switcher.js?v=20261009-1" defer />
     </>
   );
 }

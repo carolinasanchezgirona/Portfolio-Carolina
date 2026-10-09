@@ -37,3 +37,27 @@
   .admin-agenda-tools{margin-left:auto}
 }
 @media print{.admin-workspace-nav,.admin-agenda-tools{display:none!important}.admin-page .admin-app,.econ-page .econ-container{padding-left:0!important;padding-bottom:0!important}}
+
+
+/* Agenda: una sola acción principal y un selector de vistas.
+   La barra original permanece en el DOM para mantener los eventos de los módulos. */
+.admin-page .admin-agenda-header-actions{display:flex;align-items:center;justify-content:flex-end;gap:9px;flex-wrap:wrap}
+.admin-page .admin-agenda-header-actions>#admin-new{min-height:40px!important;padding:10px 15px!important;font-size:.84rem!important}
+.admin-page .admin-view-tabs.agenda-view-tabs-source{display:none!important}
+.admin-page .admin-agenda-view-picker{display:flex;align-items:center;justify-content:flex-start;gap:12px;margin:12px 0 19px;padding:12px 15px;background:#fff;border:1px solid #dce6ec;border-radius:12px}
+.admin-page .admin-agenda-view-picker label{color:#587184;font-weight:720;font-size:.86rem}
+.admin-page .admin-agenda-view-picker select{min-height:41px;min-width:190px;max-width:100%;padding:9px 35px 9px 12px;border:1px solid #cddce6;border-radius:9px;background:#f7fafb;color:#173a5e;font:inherit;font-size:.9rem;font-weight:690;cursor:pointer}
+.admin-page .admin-agenda-view-picker select:focus-visible{outline:3px solid #f2766b;outline-offset:2px}
+/* Ya existe una nueva cita permanente en la cabecera. Eliminar repeticiones sin romper sus IDs. */
+.admin-page #today-new,.admin-page #tomorrow-new{display:none!important}
+@media(max-width:620px){
+  .admin-page .admin-topbar{align-items:flex-start!important;flex-direction:column!important}
+  .admin-page .admin-agenda-header-actions{width:100%;justify-content:space-between;flex-wrap:nowrap}
+  .admin-page .admin-agenda-header-actions>#admin-new{white-space:nowrap}
+  .admin-page .admin-agenda-view-picker{margin:12px 0 16px}
+  .admin-page .admin-agenda-view-picker select{flex:1;min-width:0}
+}
+@media print{.admin-page .admin-agenda-view-picker,.admin-page .admin-agenda-header-actions{display:none!important}}
+
+.admin-page .admin-agenda-notice-link{display:inline-flex;align-items:center;justify-content:center;min-height:40px;padding:9px 12px;border:1px solid #d5e0e5;border-radius:9px;background:#fff;color:#173a5e;font-size:.84rem;font-weight:700;text-decoration:none}
+.admin-page .admin-agenda-notice-link:hover{border-color:#08a6a0;background:#eaf6fb}
