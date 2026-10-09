@@ -63,7 +63,7 @@
         setMessage(`No se ha eliminado. La ficha contiene: ${blockers}.`, true);
         return;
       }
-      dialog.close();
+      dialog.hidden = true;
       setMessage("Ficha eliminada.");
       window.location.reload();
     } catch (error) { setMessage(error?.message || "No se ha podido eliminar.", true); }
