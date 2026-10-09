@@ -54,6 +54,17 @@
     .month-toolbar{display:flex;justify-content:space-between;align-items:center;gap:16px;margin-bottom:18px}.month-toolbar h2{margin:2px 0 0}.month-nav{display:flex;gap:8px}.month-nav button{min-height:40px;padding:8px 12px;border:1px solid #9EDCE7;border-radius:10px;background:#fff;color:#075A68;cursor:pointer}.month-summary{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:18px}.month-summary article{padding:14px;border:1px solid #d8eaee;border-radius:14px;background:#fff;display:grid;gap:3px}.month-summary strong{font-size:1.4rem;color:#075A68}.month-summary span{color:#667983;font-size:.9rem}.month-weekdays,.month-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:8px}.month-weekdays{margin-bottom:7px;text-align:center;font-size:.8rem;font-weight:700;color:#667983}.month-day{min-height:122px;padding:9px;border:1px solid #d8eaee;border-radius:12px;background:#fff;overflow:hidden}.month-day.is-outside{opacity:.42}.month-day.is-today{outline:2px solid #11A6C2;outline-offset:1px}.month-day-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:7px}.month-day-number{font-weight:800;color:#24343d}.month-day-count{font-size:.75rem;color:#667983}.month-appointments{display:grid;gap:5px}.month-appointment{display:block;width:100%;text-align:left;border:0;border-radius:8px;padding:6px 7px;background:#EAF6F8;color:#075A68;font-size:.78rem;line-height:1.25;cursor:pointer;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.month-appointment.is-neuro{background:#eef1ff;color:#36479f}.month-appointment.is-cancelled{opacity:.48;text-decoration:line-through}.month-more{font-size:.72rem;color:#667983;padding:2px 4px}.month-empty{font-size:.75rem;color:#9aa7ae}.month-day-add{margin-top:6px;width:100%;border:0;background:transparent;color:#11A6C2;font-size:.74rem;cursor:pointer;text-align:left;padding:2px 0}.month-holidays{display:grid;gap:3px;margin:5px 0 7px}.month-holiday{display:block;padding:3px 6px;border-radius:7px;background:#fff4d8;color:#72520b;font-size:.68rem;line-height:1.25}.month-holiday.is-local{background:#edf4f7;color:#2f5f78}.month-availability{display:flex;gap:5px;flex-wrap:wrap;margin:5px 0}.month-availability-tag{display:inline-flex;align-items:center;padding:3px 6px;border-radius:999px;background:#f0eee9;color:#625b54;font-size:.66rem;font-weight:700}.month-availability-tag.is-open{background:#e8f6ed;color:#27623b}.month-availability-tag.is-closed{background:#fff0ec;color:#8a3b25}.month-day-controls{display:flex;gap:5px;flex-wrap:wrap;margin-top:6px}.month-day-control{border:1px solid #cbd9df;border-radius:999px;background:#fff;color:#2f5f78;padding:4px 7px;font:inherit;font-size:.68rem;font-weight:700;cursor:pointer}.month-day-control.is-danger{border-color:#e2c3b8;color:#9b3516}.month-day-control:hover{background:#edf4f7}.day-availability-dialog{width:min(520px,calc(100% - 24px));border:0;border-radius:18px;padding:0;background:#fffdf9;color:#2d322f;box-shadow:0 30px 90px rgba(45,50,47,.22)}.day-availability-dialog::backdrop{background:rgba(45,50,47,.45)}.day-availability-dialog form{padding:24px}.day-availability-dialog .dialog-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:18px}
 @media(max-width:900px){.month-grid,.month-weekdays{gap:4px}.month-day{min-height:96px;padding:6px}.month-appointment{font-size:.7rem;padding:5px}.month-summary{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(max-width:640px){.month-toolbar{align-items:flex-start;flex-direction:column}.month-weekdays{display:none}.month-grid{display:grid;grid-template-columns:1fr;gap:8px}.month-day,.month-day.is-outside{min-height:auto;opacity:1}.month-day.is-outside{display:none}.month-day-head{margin-bottom:5px}.month-appointments{gap:4px}}
   `;
+  style.textContent += `
+    .month-day-menu{border-top:1px solid #e8eef2;margin-top:8px;padding-top:5px}
+    .month-day-menu>summary{list-style:none;display:inline-flex;align-items:center;justify-content:flex-start;cursor:pointer;color:#577789;font-size:.7rem;font-weight:700;padding:5px 2px;min-height:29px}
+    .month-day-menu>summary::-webkit-details-marker{display:none}
+    .month-day-menu>summary::before{content:"⋯";font-size:1.4rem;line-height:.6;margin-right:6px}
+    .month-day-menu[open]>summary{color:#173a5e}
+    .month-day-menu-panel{display:grid;gap:8px;padding:8px 0 4px}
+    .month-day-menu-panel .month-day-controls{display:grid;grid-template-columns:1fr;gap:5px}
+    .month-day-menu-panel .month-day-control{text-align:left;white-space:normal;border-radius:7px;min-height:31px}
+    .month-day-menu-panel .month-day-add{padding:7px 3px;margin-top:0;font-weight:700}
+  `;
   document.head.append(style);
 
   const title = section.querySelector("#month-title");
@@ -304,6 +315,12 @@
         if(dayRows.length>4){const more=document.createElement("span");more.className="month-more";more.textContent=`+ ${dayRows.length-4} más`;list.append(more);}
       }
       if (!outside) {
+        // Un único menú contextual por día: los controles no ocupan cada celda.
+        const dayMenu=document.createElement("details"); dayMenu.className="month-day-menu";
+        const menuTrigger=document.createElement("summary");
+        menuTrigger.textContent="Opciones del día";
+        menuTrigger.setAttribute("aria-label","Opciones del día "+k);
+        const dayMenuPanel=document.createElement("div"); dayMenuPanel.className="month-day-menu-panel";
         const controls=document.createElement("div"); controls.className="month-day-controls";
         if (weekday === 6) {
           if (dayOpenings.length) {
@@ -324,9 +341,10 @@
           const closeDay=document.createElement("button"); closeDay.type="button"; closeDay.className="month-day-control is-danger";
           closeDay.textContent="Cerrar día"; closeDay.addEventListener("click",()=>closeWholeDay(k)); controls.append(closeDay);
         }
-        list.append(controls);
-        const add=document.createElement("button"); add.type="button"; add.className="month-day-add"; add.textContent="+ Añadir cita";
-        add.addEventListener("click",()=>openNew(k)); list.append(add);
+        dayMenuPanel.append(controls);
+        const add=document.createElement("button"); add.type="button"; add.className="month-day-add"; add.textContent="Añadir cita";
+        add.addEventListener("click",()=>openNew(k)); dayMenuPanel.append(add);
+        dayMenu.append(menuTrigger,dayMenuPanel); list.append(dayMenu);
       }
       cell.append(head,list); grid.append(cell);
     }
