@@ -392,6 +392,15 @@ export default function AdminClinicaPage() {
           </div>
           <fieldset id="clinic-neuro-settings" className="clinic-neuro-settings" hidden>
             <legend>Planificación neuropsicológica</legend>
+            <div className="clinic-neuro-library-picker">
+              <label>Biblioteca inicial de actividades (borradores pendientes de revisión clínica)
+                <select id="clinic-neuro-starter" defaultValue="">
+                  <option value="">Elegir actividad neuropsicológica...</option>
+                </select>
+              </label>
+              <button id="clinic-neuro-starter-load" className="clinic-secondary" type="button">Cargar propuesta</button>
+            </div>
+            <p className="clinic-material-helper">Son 24 propuestas de intervención con estímulos estructurados. Cargar no prescribe ni envía nada: tendrás que revisar y adaptar cada actividad.</p>
             <div className="clinic-neuro-grid">
               <label>Dominio cognitivo
                 <select id="clinic-neuro-domain" defaultValue="">
