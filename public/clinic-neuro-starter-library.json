@@ -261,7 +261,7 @@
       "theme": "Esfuerzo sostenido",
       "objective": "Sostener una tarea breve con pausas y autorregistro",
       "steps": [
-        "Modelar una regla sencilla",
+        "Modelar una regla sencilla de selección de estímulos y comprobar comprensión",
         "Completar un bloque visual de duración tolerada",
         "Hacer pausa deliberada y valorar cansancio",
         "Trasladar la pausa a una tarea cotidiana"
@@ -536,7 +536,7 @@
       "theme": "Discriminación espacial",
       "objective": "Distinguir cambios de posición entre dos configuraciones no estandarizadas",
       "steps": [
-        "Mostrar un modelo claro",
+        "Mostrar un modelo visual claro y explicar qué elementos debe comparar",
         "Elegir configuración coincidente entre dos opciones",
         "Señalar una diferencia concreta",
         "Reproducir con tres objetos si la motricidad lo permite"
