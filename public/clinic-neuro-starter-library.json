@@ -1,0 +1,606 @@
+{
+  "version": "1.0",
+  "status": "draft_requires_clinical_review",
+  "activities": [
+    {
+      "code": "OR-T01",
+      "title": "Hoy, ayer y mañana",
+      "domain": "orientacion_temporal",
+      "intervention": "estimulacion",
+      "level": "apoyo_moderado",
+      "theme": "Calendario y rutinas",
+      "objective": "Localizar hoy y una actividad futura en un calendario real",
+      "steps": [
+        "Marcar la fecha en un calendario actualizado",
+        "Relacionar ayer, hoy y mañana con una rutina conocida",
+        "Anotar una actividad próxima confirmada",
+        "Revisar de nuevo la fecha utilizando una pista"
+      ],
+      "visual_blocks": [
+        {
+          "type": "calendar",
+          "title": "Calendario de práctica",
+          "content": "2026-10\n12|Ejemplo: día señalado"
+        }
+      ],
+      "caution": "No utilizar fechas de ejemplo como eventos reales; actualizar el calendario antes de prescribir.",
+      "record": "Anotar respuestas espontáneas, tipo y número de ayudas, fatiga, participación y transferencia observada; no generar puntuaciones normativas.",
+      "review_status": "draft_requires_clinical_review"
+    },
+    {
+      "code": "OR-T02",
+      "title": "Las cuatro estaciones",
+      "domain": "orientacion_temporal",
+      "intervention": "estimulacion",
+      "level": "apoyo_moderado",
+      "theme": "Estaciones del año",
+      "objective": "Asociar señales estacionales al calendario y al entorno",
+      "steps": [
+        "Observar elementos de cada estación",
+        "Clasificar objetos y actividades en una tabla",
+        "Comprobar señales en el entorno real",
+        "Elegir una actividad pertinente para la estación"
+      ],
+      "visual_blocks": [
+        {
+          "type": "table",
+          "title": "Clasificación estacional",
+          "content": "Estación|Elemento frecuente\nPrimavera|Flores\nVerano|Sombrero\nOtoño|Castañas\nInvierno|Abrigo"
+        }
+      ],
+      "caution": "Aceptar variación cultural y climática; no puntuación rígida.",
+      "record": "Anotar respuestas espontáneas, tipo y número de ayudas, fatiga, participación y transferencia observada; no generar puntuaciones normativas.",
+      "review_status": "draft_requires_clinical_review"
+    },
+    {
+      "code": "OR-T03",
+      "title": "Tradiciones y celebraciones",
+      "domain": "orientacion_temporal",
+      "intervention": "estimulacion",
+      "level": "apoyo_moderado",
+      "theme": "Calendario cultural",
+      "objective": "Relacionar fechas relevantes con meses y preferencias personales",
+      "steps": [
+        "Elegir celebraciones significativas sin presuponerlas",
+        "Consultar en calendario el mes de cada celebración",
+        "Conversar opcionalmente sobre preparativos",
+        "Localizar una fecha real futura"
+      ],
+      "visual_blocks": [
+        {
+          "type": "table",
+          "title": "Calendario cultural personalizable",
+          "content": "Celebración opcional|Mes habitual\nSant Jordi|Abril\nCastanyada|Octubre o noviembre\nOtra elegida|A completar"
+        }
+      ],
+      "caution": "No imponer festividades religiosas ni inventar recuerdos autobiográficos.",
+      "record": "Anotar respuestas espontáneas, tipo y número de ayudas, fatiga, participación y transferencia observada; no generar puntuaciones normativas.",
+      "review_status": "draft_requires_clinical_review"
+    },
+    {
+      "code": "OR-E01",
+      "title": "Espacios familiares",
+      "domain": "orientacion_espacial",
+      "intervention": "compensacion",
+      "level": "apoyo_moderado",
+      "theme": "El domicilio",
+      "objective": "Utilizar referencias visuales para ubicar objetos cotidianos",
+      "steps": [
+        "Identificar habitaciones realmente presentes",
+        "Relacionar cada objeto con su lugar habitual",
+        "Ordenar un recorrido interior seguro",
+        "Colocar una señal útil elegida por el paciente"
+      ],
+      "visual_blocks": [
+        {
+          "type": "table",
+          "title": "Mapa funcional de objetos",
+          "content": "Objeto|Lugar habitual\nLlaves|A completar\nGafas|A completar\nAgenda|A completar"
+        }
+      ],
+      "caution": "No asumir distribución real ni modificar zonas críticas sin valoración.",
+      "record": "Anotar respuestas espontáneas, tipo y número de ayudas, fatiga, participación y transferencia observada; no generar puntuaciones normativas.",
+      "review_status": "draft_requires_clinical_review"
+    },
+    {
+      "code": "OR-E02",
+      "title": "Mi barrio",
+      "domain": "orientacion_espacial",
+      "intervention": "rehabilitacion",
+      "level": "apoyo_moderado",
+      "theme": "Entorno próximo",
+      "objective": "Reconocer hitos del entorno y utilizar un apoyo para recorridos acompañados",
+      "steps": [
+        "Elegir dos destinos realmente conocidos",
+        "Comprobar direcciones e hitos con información fiable",
+        "Ordenar referencias de un trayecto",
+        "Ensayar una tarjeta de dirección para salida acompañada"
+      ],
+      "visual_blocks": [
+        {
+          "type": "diagram",
+          "title": "Secuencia para un recorrido",
+          "content": "Elegir destino verificado\nConsultar dirección\nIdentificar punto de referencia\nSalir con acompañante cuando proceda"
+        }
+      ],
+      "caution": "No autoriza deambulación independiente ni sustituye evaluación de seguridad.",
+      "record": "Anotar respuestas espontáneas, tipo y número de ayudas, fatiga, participación y transferencia observada; no generar puntuaciones normativas.",
+      "review_status": "draft_requires_clinical_review"
+    },
+    {
+      "code": "OR-E03",
+      "title": "Leer un plano sencillo",
+      "domain": "orientacion_espacial",
+      "intervention": "entrenamiento",
+      "level": "autonomo",
+      "theme": "Leyenda de mapas",
+      "objective": "Aplicar una leyenda simple a una representación espacial",
+      "steps": [
+        "Reconocer tres símbolos de leyenda",
+        "Señalar dos posiciones en plano diseñado para la sesión",
+        "Seguir con el dedo un trayecto corto",
+        "Consultar un mapa real supervisado"
+      ],
+      "visual_blocks": [
+        {
+          "type": "table",
+          "title": "Leyenda de ejemplo",
+          "content": "Símbolo|Significado\nC|Casa\nP|Parque\nS|Supermercado"
+        }
+      ],
+      "caution": "No presentar planos ficticios como si fueran lugares reales.",
+      "record": "Anotar respuestas espontáneas, tipo y número de ayudas, fatiga, participación y transferencia observada; no generar puntuaciones normativas.",
+      "review_status": "draft_requires_clinical_review"
+    },
+    {
+      "code": "OR-P01",
+      "title": "Mi historia por capítulos",
+      "domain": "orientacion_personal",
+      "intervention": "estimulacion",
+      "level": "apoyo_alto",
+      "theme": "Autobiografía voluntaria",
+      "objective": "Compartir aspectos significativos de la identidad de forma emocionalmente segura",
+      "steps": [
+        "Elegir una preferencia actual",
+        "Poner nombre a una etapa vital que desee comentar",
+        "Describir una fotografía consentida si desea hacerlo",
+        "Seleccionar una actividad significativa para el presente"
+      ],
+      "visual_blocks": [
+        {
+          "type": "table",
+          "title": "Aspectos personales opcionales",
+          "content": "Tema|Mi respuesta\nMe gusta|A completar\nUn lugar relevante|A completar\nMe gustaría hacer|A completar"
+        }
+      ],
+      "caution": "Nunca forzar evocación, verificar biografía ni confrontar recuerdos.",
+      "record": "Anotar respuestas espontáneas, tipo y número de ayudas, fatiga, participación y transferencia observada; no generar puntuaciones normativas.",
+      "review_status": "draft_requires_clinical_review"
+    },
+    {
+      "code": "OR-P02",
+      "title": "Vínculos y personas importantes",
+      "domain": "orientacion_personal",
+      "intervention": "estimulacion",
+      "level": "apoyo_alto",
+      "theme": "Personas significativas",
+      "objective": "Favorecer reconocimiento relacional con imágenes autorizadas",
+      "steps": [
+        "Elegir personas que el paciente desee incluir",
+        "Observar fotografías rotuladas con consentimiento",
+        "Relacionar cada persona con una actividad agradable",
+        "Preparar una tarjeta de apoyo si resulta útil"
+      ],
+      "visual_blocks": [
+        {
+          "type": "table",
+          "title": "Relaciones significativas",
+          "content": "Persona elegida|Actividad compartida\nA completar|A completar\nA completar|A completar"
+        }
+      ],
+      "caution": "No asumir parentescos, presencia actual ni nombres; evitar fotos sin autorización.",
+      "record": "Anotar respuestas espontáneas, tipo y número de ayudas, fatiga, participación y transferencia observada; no generar puntuaciones normativas.",
+      "review_status": "draft_requires_clinical_review"
+    },
+    {
+      "code": "OR-P03",
+      "title": "Quién soy en el presente",
+      "domain": "orientacion_personal",
+      "intervention": "estimulacion",
+      "level": "apoyo_moderado",
+      "theme": "Preferencias actuales",
+      "objective": "Expresar preferencias y decisiones cotidianas sin exigir evocación de datos",
+      "steps": [
+        "Elegir entre actividades presentes",
+        "Identificar una habilidad preservada",
+        "Expresar qué apoyo facilita participar",
+        "Tomar una decisión pequeña para la semana"
+      ],
+      "visual_blocks": [
+        {
+          "type": "table",
+          "title": "Preferencias y apoyos",
+          "content": "Actividad|Me interesa|Ayuda necesaria\nEscuchar música|A completar|A completar\nConversar|A completar|A completar"
+        }
+      ],
+      "caution": "No inferir ausencia de preferencias a partir de dificultades expresivas.",
+      "record": "Anotar respuestas espontáneas, tipo y número de ayudas, fatiga, participación y transferencia observada; no generar puntuaciones normativas.",
+      "review_status": "draft_requires_clinical_review"
+    },
+    {
+      "code": "AT-01",
+      "title": "Búsqueda visual de letras",
+      "domain": "atencion",
+      "intervention": "entrenamiento",
+      "level": "apoyo_moderado",
+      "theme": "Atención selectiva",
+      "objective": "Detectar estímulos diana en matriz con distractores",
+      "steps": [
+        "Explicar y modelar la búsqueda de A",
+        "Marcar todas las A de una matriz breve",
+        "Repetir con un objetivo distinto tras pausa",
+        "Buscar una palabra relevante en listado cotidiano"
+      ],
+      "visual_blocks": [
+        {
+          "type": "table",
+          "title": "Matriz no estandarizada",
+          "content": "1|2|3|4\nA|M|A|N\nP|A|R|M\nN|A|P|A"
+        }
+      ],
+      "caution": "Controlar agudeza visual, negligencia, tamaño de estímulos y fatiga.",
+      "record": "Anotar respuestas espontáneas, tipo y número de ayudas, fatiga, participación y transferencia observada; no generar puntuaciones normativas.",
+      "review_status": "draft_requires_clinical_review"
+    },
+    {
+      "code": "AT-02",
+      "title": "Concentración y descanso",
+      "domain": "atencion",
+      "intervention": "entrenamiento",
+      "level": "apoyo_moderado",
+      "theme": "Esfuerzo sostenido",
+      "objective": "Sostener una tarea breve con pausas y autorregistro",
+      "steps": [
+        "Modelar una regla sencilla",
+        "Completar un bloque visual de duración tolerada",
+        "Hacer pausa deliberada y valorar cansancio",
+        "Trasladar la pausa a una tarea cotidiana"
+      ],
+      "visual_blocks": [
+        {
+          "type": "table",
+          "title": "Registro de bloques",
+          "content": "Bloque|Duración acordada|Fatiga observada\nUno|A completar|A completar\nDos|A completar|A completar"
+        }
+      ],
+      "caution": "No imponer tiempos rígidos ni equiparar lentitud a falta de atención.",
+      "record": "Anotar respuestas espontáneas, tipo y número de ayudas, fatiga, participación y transferencia observada; no generar puntuaciones normativas.",
+      "review_status": "draft_requires_clinical_review"
+    },
+    {
+      "code": "AT-03",
+      "title": "Escuchar una instrucción",
+      "domain": "atencion",
+      "intervention": "estimulacion",
+      "level": "apoyo_alto",
+      "theme": "Atención auditiva",
+      "objective": "Mantener atención a consignas verbales breves con respuesta accesible",
+      "steps": [
+        "Comprobar audición y comprender una consigna simple",
+        "Señalar una palabra diana entre tres",
+        "Modificar modalidad de respuesta si es necesario",
+        "Ensayar confirmar una instrucción cotidiana"
+      ],
+      "visual_blocks": [
+        {
+          "type": "table",
+          "title": "Consignas de ejemplo",
+          "content": "Serie oral|Objetivo\nTaza, llave, libro|Llave\nCasa, pan, mesa|Casa"
+        }
+      ],
+      "caution": "Valorar hipoacusia, afasia y alerta antes de atribuir errores a atención.",
+      "record": "Anotar respuestas espontáneas, tipo y número de ayudas, fatiga, participación y transferencia observada; no generar puntuaciones normativas.",
+      "review_status": "draft_requires_clinical_review"
+    },
+    {
+      "code": "MEM-01",
+      "title": "Aprendizaje espaciado funcional",
+      "domain": "memoria",
+      "intervention": "rehabilitacion",
+      "level": "apoyo_moderado",
+      "theme": "Aprendizaje con claves",
+      "objective": "Aprender dónde consultar una información útil mediante ensayos espaciados",
+      "steps": [
+        "Elegir un objetivo funcional no crítico",
+        "Mostrar el apoyo visual y modelar respuesta",
+        "Repetir a intervalos tolerados con corrección amable",
+        "Comprobar uso espontáneo del apoyo en rutina"
+      ],
+      "visual_blocks": [
+        {
+          "type": "diagram",
+          "title": "Aprendizaje con apoyo",
+          "content": "Elegir información\nMostrar clave\nRecuperar con ayuda\nRepetir sin forzar"
+        }
+      ],
+      "caution": "Evitar objetivos de seguridad crítica sin supervisión; registrar intervalos.",
+      "record": "Anotar respuestas espontáneas, tipo y número de ayudas, fatiga, participación y transferencia observada; no generar puntuaciones normativas.",
+      "review_status": "draft_requires_clinical_review"
+    },
+    {
+      "code": "MEM-02",
+      "title": "Agenda y memoria prospectiva",
+      "domain": "memoria",
+      "intervention": "compensacion",
+      "level": "autonomo",
+      "theme": "Recordatorios externos",
+      "objective": "Configurar y consultar un aviso para una actividad real",
+      "steps": [
+        "Elegir agenda de papel o digital conocida",
+        "Anotar fecha y actividad verificadas",
+        "Ensayar la lectura de un recordatorio",
+        "Comprobar qué ayuda se precisó en la rutina"
+      ],
+      "visual_blocks": [
+        {
+          "type": "table",
+          "title": "Plan personal de avisos",
+          "content": "Actividad|Fecha comprobada|Dónde anotar|Revisado\nA completar|A completar|A completar|A completar"
+        }
+      ],
+      "caution": "No inventar citas ni delegar medicación únicamente a alarmas.",
+      "record": "Anotar respuestas espontáneas, tipo y número de ayudas, fatiga, participación y transferencia observada; no generar puntuaciones normativas.",
+      "review_status": "draft_requires_clinical_review"
+    },
+    {
+      "code": "MEM-03",
+      "title": "Asociaciones funcionales",
+      "domain": "memoria",
+      "intervention": "estimulacion",
+      "level": "apoyo_moderado",
+      "theme": "Objetos cotidianos",
+      "objective": "Relacionar objetos familiares y funciones, diferenciando reconocimiento de evocación",
+      "steps": [
+        "Presentar dos pares objeto-función",
+        "Relacionar cada objeto con su uso",
+        "Repetir tras intervalo breve con claves",
+        "Aplicar una asociación en rutina"
+      ],
+      "visual_blocks": [
+        {
+          "type": "table",
+          "title": "Objeto y función",
+          "content": "Objeto|Uso\nLlaves|Abrir puerta\nCalendario|Consultar fechas\nPeine|Peinarse"
+        }
+      ],
+      "caution": "No confundir memoria episódica con conocimiento semántico.",
+      "record": "Anotar respuestas espontáneas, tipo y número de ayudas, fatiga, participación y transferencia observada; no generar puntuaciones normativas.",
+      "review_status": "draft_requires_clinical_review"
+    },
+    {
+      "code": "FE-01",
+      "title": "Preparar una salida",
+      "domain": "funciones_ejecutivas",
+      "intervention": "rehabilitacion",
+      "level": "apoyo_moderado",
+      "theme": "Planificación",
+      "objective": "Secuenciar preparativos y consultar una lista en salida acompañada",
+      "steps": [
+        "Identificar los objetos necesarios",
+        "Ordenar pasos en tarjetas visuales",
+        "Resolver un imprevisto sencillo con ayuda",
+        "Usar lista en salida acompañada"
+      ],
+      "visual_blocks": [
+        {
+          "type": "diagram",
+          "title": "Secuencia de preparación",
+          "content": "Consultar calendario\nPreparar objetos\nComprobar llaves\nAvisar acompañante"
+        }
+      ],
+      "caution": "No inferir aptitud para desplazarse sin supervisión.",
+      "record": "Anotar respuestas espontáneas, tipo y número de ayudas, fatiga, participación y transferencia observada; no generar puntuaciones normativas.",
+      "review_status": "draft_requires_clinical_review"
+    },
+    {
+      "code": "FE-02",
+      "title": "Elegir prioridades",
+      "domain": "funciones_ejecutivas",
+      "intervention": "compensacion",
+      "level": "autonomo",
+      "theme": "Plan del día",
+      "objective": "Clasificar tareas como esenciales, opcionales y pausas",
+      "steps": [
+        "Seleccionar tres actividades reales",
+        "Marcar prioridad de cada tarea",
+        "Introducir una pausa de esfuerzo",
+        "Revisar la viabilidad del plan sin juicio"
+      ],
+      "visual_blocks": [
+        {
+          "type": "table",
+          "title": "Prioridades del día",
+          "content": "Actividad|Prioridad|Pausa o ayuda\nA completar|A completar|A completar\nA completar|A completar|A completar"
+        }
+      ],
+      "caution": "Contemplar fatiga, apatía, dolor y variaciones funcionales.",
+      "record": "Anotar respuestas espontáneas, tipo y número de ayudas, fatiga, participación y transferencia observada; no generar puntuaciones normativas.",
+      "review_status": "draft_requires_clinical_review"
+    },
+    {
+      "code": "FE-03",
+      "title": "Cambiar de criterio",
+      "domain": "funciones_ejecutivas",
+      "intervention": "entrenamiento",
+      "level": "autonomo",
+      "theme": "Flexibilidad",
+      "objective": "Aplicar dos reglas explícitas a objetos nuevos, sin copiar tests",
+      "steps": [
+        "Clasificar objetos por categoría",
+        "Anunciar cambio de criterio a función",
+        "Describir la regla actual con apoyo",
+        "Aplicar estrategia a pequeño cambio de rutina"
+      ],
+      "visual_blocks": [
+        {
+          "type": "table",
+          "title": "Clasificación de práctica",
+          "content": "Objeto|Categoría|Uso\nTaza|Utensilio|Beber\nAbrigo|Ropa|Abrigar\nLápiz|Escritura|Escribir"
+        }
+      ],
+      "caution": "No reproducir WCST ni interpretarlo como medida psicométrica.",
+      "record": "Anotar respuestas espontáneas, tipo y número de ayudas, fatiga, participación y transferencia observada; no generar puntuaciones normativas.",
+      "review_status": "draft_requires_clinical_review"
+    },
+    {
+      "code": "LEN-01",
+      "title": "Palabras de la vida diaria",
+      "domain": "lenguaje",
+      "intervention": "estimulacion",
+      "level": "apoyo_moderado",
+      "theme": "Denominación",
+      "objective": "Facilitar acceso léxico con imágenes inequívocas y pistas graduadas",
+      "steps": [
+        "Seleccionar fotografías consentidas de objetos comunes",
+        "Intentar denominación con tiempo de respuesta",
+        "Añadir pista semántica y fonológica si procede",
+        "Relacionar nombre con uso cotidiano"
+      ],
+      "visual_blocks": [
+        {
+          "type": "table",
+          "title": "Guion para fotografías revisadas",
+          "content": "Objeto visual a preparar|Clave semántica\nLlave|Para abrir\nTaza|Para beber\nPeine|Para arreglar cabello"
+        }
+      ],
+      "caution": "Fotografías reales deben incorporarse y verificarse antes de uso.",
+      "record": "Anotar respuestas espontáneas, tipo y número de ayudas, fatiga, participación y transferencia observada; no generar puntuaciones normativas.",
+      "review_status": "draft_requires_clinical_review"
+    },
+    {
+      "code": "LEN-02",
+      "title": "Instrucciones comprensibles",
+      "domain": "lenguaje",
+      "intervention": "rehabilitacion",
+      "level": "apoyo_moderado",
+      "theme": "Comprensión funcional",
+      "objective": "Seguir y reformular consignas de uno o dos pasos",
+      "steps": [
+        "Verificar una consigna de una acción",
+        "Añadir dos acciones con apoyo visual",
+        "Practicar solicitar aclaración",
+        "Generalizar a una instrucción cotidiana"
+      ],
+      "visual_blocks": [
+        {
+          "type": "diagram",
+          "title": "Secuencia de comprensión",
+          "content": "Escuchar o leer\nConfirmar significado\nRealizar un paso\nPedir aclaración si precisa"
+        }
+      ],
+      "caution": "Separar comprensión lingüística de capacidad auditiva y motora.",
+      "record": "Anotar respuestas espontáneas, tipo y número de ayudas, fatiga, participación y transferencia observada; no generar puntuaciones normativas.",
+      "review_status": "draft_requires_clinical_review"
+    },
+    {
+      "code": "VIS-01",
+      "title": "Posiciones en cuadrícula",
+      "domain": "visuoespacial",
+      "intervention": "entrenamiento",
+      "level": "apoyo_moderado",
+      "theme": "Relaciones espaciales",
+      "objective": "Situar fichas según fila y columna en una matriz clara",
+      "steps": [
+        "Explicar filas y columnas con modelo",
+        "Situar una ficha en posición indicada",
+        "Cambiar un elemento sin variar el resto",
+        "Trasladar a organización de objetos en bandeja"
+      ],
+      "visual_blocks": [
+        {
+          "type": "table",
+          "title": "Cuadrícula funcional",
+          "content": "Col 1|Col 2|Col 3\nA1|A2|A3\nB1|B2|B3\nC1|C2|C3"
+        }
+      ],
+      "caution": "Considerar heminegligencia, lateralidad y limitaciones visuales.",
+      "record": "Anotar respuestas espontáneas, tipo y número de ayudas, fatiga, participación y transferencia observada; no generar puntuaciones normativas.",
+      "review_status": "draft_requires_clinical_review"
+    },
+    {
+      "code": "VIS-02",
+      "title": "Comparar configuraciones",
+      "domain": "visuoespacial",
+      "intervention": "estimulacion",
+      "level": "apoyo_moderado",
+      "theme": "Discriminación espacial",
+      "objective": "Distinguir cambios de posición entre dos configuraciones no estandarizadas",
+      "steps": [
+        "Mostrar un modelo claro",
+        "Elegir configuración coincidente entre dos opciones",
+        "Señalar una diferencia concreta",
+        "Reproducir con tres objetos si la motricidad lo permite"
+      ],
+      "visual_blocks": [
+        {
+          "type": "table",
+          "title": "Comparación textual de ejemplo",
+          "content": "Posición|Modelo A|Modelo B\nArriba|Círculo|Círculo\nCentro|Cuadrado|Triángulo\nAbajo|Triángulo|Cuadrado"
+        }
+      ],
+      "caution": "Preparar lámina visual real cuando sea necesaria, no depender de texto.",
+      "record": "Anotar respuestas espontáneas, tipo y número de ayudas, fatiga, participación y transferencia observada; no generar puntuaciones normativas.",
+      "review_status": "draft_requires_clinical_review"
+    },
+    {
+      "code": "PRAX-01",
+      "title": "Gestos y objetos familiares",
+      "domain": "praxias_gnosias",
+      "intervention": "rehabilitacion",
+      "level": "apoyo_moderado",
+      "theme": "Secuencias seguras",
+      "objective": "Identificar pasos de una acción cotidiana y adaptar la respuesta motora",
+      "steps": [
+        "Identificar el uso de un objeto conocido",
+        "Ordenar tarjetas de una actividad segura",
+        "Representar o describir un gesto según movilidad",
+        "Enlazar la secuencia a rutina con ayuda"
+      ],
+      "visual_blocks": [
+        {
+          "type": "diagram",
+          "title": "Infusión sin riesgo",
+          "content": "Preparar taza\nColocar bolsita\nSolicitar agua templada preparada por acompañante\nRetirar bolsita"
+        }
+      ],
+      "caution": "Evitar agua hirviendo, cuchillos y otras tareas de riesgo.",
+      "record": "Anotar respuestas espontáneas, tipo y número de ayudas, fatiga, participación y transferencia observada; no generar puntuaciones normativas.",
+      "review_status": "draft_requires_clinical_review"
+    },
+    {
+      "code": "FUN-01",
+      "title": "Lista de compra acompañada",
+      "domain": "cognicion_funcional",
+      "intervention": "rehabilitacion",
+      "level": "apoyo_moderado",
+      "theme": "Compras cotidianas",
+      "objective": "Preparar y utilizar lista de tres productos en actividad supervisada",
+      "steps": [
+        "Elegir productos realmente pertinentes",
+        "Anotar o señalar cada producto",
+        "Simular comprobación con imágenes",
+        "Utilizar lista en compra acompañada cuando proceda"
+      ],
+      "visual_blocks": [
+        {
+          "type": "table",
+          "title": "Lista simulada",
+          "content": "Producto|Necesario|Revisado\nPan|Sí/No|Sí/No\nFruta|Sí/No|Sí/No\nBebida|Sí/No|Sí/No"
+        }
+      ],
+      "caution": "No concluir autonomía instrumental sin evaluación funcional.",
+      "record": "Anotar respuestas espontáneas, tipo y número de ayudas, fatiga, participación y transferencia observada; no generar puntuaciones normativas.",
+      "review_status": "draft_requires_clinical_review"
+    }
+  ]
+}
