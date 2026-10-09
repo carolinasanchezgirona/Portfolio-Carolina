@@ -1,0 +1,93 @@
+name: Publicar carolinasanchezgirona.com en Cloudflare
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: cloudflare-production-portfolio-carolina
+  cancel-in-progress: false
+
+jobs:
+  release:
+    name: Compilar, publicar y verificar
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - name: Descargar la última versión de main
+        uses: actions/checkout@v4
+
+      - name: Comprobar credenciales de Cloudflare
+        shell: bash
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: |
+          if [ -z "$CLOUDFLARE_API_TOKEN" ] || [ -z "$CLOUDFLARE_ACCOUNT_ID" ]; then
+            echo "::error::Configura CLOUDFLARE_API_TOKEN y CLOUDFLARE_ACCOUNT_ID como secretos del repositorio. Nunca publiques sus valores en los registros."
+            exit 1
+          fi
+
+      - name: Verificar destino único y configuración Worker
+        shell: bash
+        run: |
+          grep -qx 'name = "portfolio-carolina"' wrangler.toml
+          grep -q '^keep_vars = true$' wrangler.toml
+          grep -qx 'main = "./worker.ts"' wrangler.toml
+          grep -q 'directory = "./out"' wrangler.toml
+
+      - name: Instalar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Instalar dependencias
+        run: npm ci
+
+      - name: Validar funcionalidades sensibles
+        run: |
+          node --check public/admin-economia.js
+          node --test tests/billing-invoices.test.mjs tests/patient-shared-files.test.mjs tests/clinical-file-notifications.test.mjs
+
+      - name: Compilar proyecto completo
+        run: npm run build
+
+      - name: Confirmar exportación de pantallas privadas
+        run: |
+          test -f out/admin/economia/index.html
+          test -f out/admin/clinica/index.html
+          test -f out/mi-espacio/index.html
+          test -f out/admin-economia.js
+
+      - name: Publicar Worker y archivos estáticos en Cloudflare
+        id: deploy
+        uses: cloudflare/wrangler-action@v4
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: deploy
+
+      - name: Verificar página pública nueva, sin iniciar sesión
+        shell: bash
+        run: |
+          set -euo pipefail
+          url="https://carolinasanchezgirona.com/admin/economia/"
+          ok=0
+          for i in 1 2 3 4 5 6; do
+            status=$(curl -sS --max-time 20 --output /tmp/dememoria-economia.html --write-out '%{http_code}' \
+              "$url?deploy_check=$GITHUB_SHA" || true)
+            if [ "$status" = "200" ] && grep -q "Gestión económica" /tmp/dememoria-economia.html; then
+              ok=1
+              break
+            fi
+            sleep 8
+          done
+          if [ "$ok" != "1" ]; then
+            echo "::error::Cloudflare aceptó el despliegue, pero no se confirma /admin/economia/ en el dominio principal. Comprueba la asignación de dominio/ruta al Worker portfolio-carolina."
+            exit 1
+          fi
+          echo "La nueva versión se sirve desde el dominio. Las operaciones privadas requieren comprobación con una cuenta de prueba."
