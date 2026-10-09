@@ -61,3 +61,14 @@
 .today-heading h2,.patients-heading h2{font-size:1.45rem!important}
 .admin-summary article,.today-summary article{padding:10px 12px!important;border-radius:8px!important}
 .appointment-card{padding:8px 9px!important;border-radius:7px!important}
+
+
+/* No authentication flash: never display private agenda or legacy sign-in while verifying. */
+.admin-page #admin-login[hidden],
+.admin-page #admin-app[hidden],
+.admin-page #admin-agenda-loading[hidden] { display: none !important; }
+.admin-agenda-loading { min-height: 65vh; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 14px; padding: 40px 20px; color: #173a5e; background: #f7f9fb; text-align: center; }
+.admin-agenda-loading p { margin: 0; color: #607688; font-size: .94rem; }
+.admin-agenda-spinner { display: block; width: 30px; height: 30px; border: 3px solid #d9e8ee; border-top-color: #08a6a0; border-radius: 50%; animation: adminAgendaSpin .85s linear infinite; }
+@keyframes adminAgendaSpin { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) { .admin-agenda-spinner { animation: none; border-top-color: #173a5e; } }
