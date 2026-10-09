@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<meta name="referrer" content="no-referrer">
+<title>Confirmación de cita · Carolina Sánchez Girona</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#EAF6FB;color:#173A5E;font:1rem/1.65 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}main{min-height:100svh;display:grid;place-items:center;padding:24px}.card{width:100%;max-width:620px;background:white;border:1px solid #d3e5ee;border-radius:20px;padding:clamp(24px,6vw,48px)}.brand{font-size:1rem;margin:0 0 32px;font-weight:600}.label{color:#087d79;font-weight:600;margin:0 0 12px}h1{font:600 clamp(1.9rem,5vw,2.8rem)/1.15 Georgia,serif;margin:0 0 20px}p{margin:0 0 20px}.actions{margin-top:28px;display:flex;flex-wrap:wrap;gap:16px}a{color:#173A5E;text-underline-offset:4px}.button{display:inline-block;background:#087d79;color:white;padding:12px 22px;border-radius:8px;text-decoration:none;font-weight:600}a:focus-visible{outline:3px solid #173A5E;outline-offset:4px}.note{font-size:.9rem;margin-top:28px;margin-bottom:0}
+</style>
+</head>
+<body>
+<main><section class="card" aria-labelledby="title">
+<p class="brand">Carolina Sánchez Girona · Dememòria</p>
+<p class="label" id="label">Información de tu cita</p>
+<h1 id="title">Consulta la confirmación de tu cita</h1>
+<p id="message">Revisa el correo de la reserva para comprobar la fecha, la hora y el estado de tu cita.</p>
+<p id="next">Si ya has recibido la confirmación, no necesitas volver a reservar.</p>
+<div class="actions"><a class="button" href="/">Volver a la web</a><a href="mailto:contact@carolinasanchezgirona.com">Contactar con la consulta</a></div>
+<p class="note">Para cambiar o cancelar la cita, utiliza las instrucciones del correo. Avisa con al menos 24 horas de antelación.</p>
+</section></main>
+<script>
+(function(){
+var state=new URLSearchParams(window.location.search).get("state");
+var title=document.getElementById("title"),message=document.getElementById("message"),label=document.getElementById("label"),next=document.getElementById("next");
+if(state==="ok"){
+label.textContent="Confirmación completada";
+title.textContent="Tu cita se ha confirmado";
+message.textContent="Consulta el correo de la reserva para revisar la fecha, la hora y la modalidad de la sesión.";
+next.textContent="No necesitas volver a reservar ni repetir la confirmación.";
+}else if(state==="error"||state==="expired"||state==="invalid"){
+label.textContent="Revisa tu confirmación";
+title.textContent="No se ha podido completar la confirmación";
+message.textContent="El enlace puede haber caducado o no estar disponible. Contacta con la consulta para comprobar el estado de tu cita.";
+next.textContent="Evita crear otra reserva hasta comprobar la anterior.";
+}
+})();
+</script>
+</body>
+</html>
