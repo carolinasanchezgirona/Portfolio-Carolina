@@ -174,6 +174,84 @@
     blocks = Array.isArray(doc?.visual_blocks) ? doc.visual_blocks.filter(b => types[b.type]).slice(0, LIMIT).map(b => ({ ...b })) : [];
     redraw();
   }
+
+  const DOMAIN_LABELS = {
+    orientacion_temporal: "Orientación temporal", orientacion_espacial: "Orientación espacial",
+    orientacion_personal: "Orientación personal", atencion: "Atención", memoria: "Memoria",
+    funciones_ejecutivas: "Funciones ejecutivas", lenguaje: "Lenguaje",
+    visuoespacial: "Visuoespacial", praxias_gnosias: "Praxias y gnosias",
+    cognicion_funcional: "Cognición funcional"
+  };
+  let starterEntries = [];
+  function starterToDocument(item) {
+    const tasks = Array.isArray(item.steps) ? item.steps.slice(0, 4) : [];
+    const introduction = "Este cuaderno propone actividades breves relacionadas con " +
+      (DOMAIN_LABELS[item.domain] || "funciones cognitivas").toLowerCase() +
+      ". Puedes realizarlo con la ayuda acordada en consulta. No se trata de hacer un examen.";
+    const instructions = ["Semana 1", ...tasks.slice(0, 2).map((step, i) =>
+      "Ejercicio " + (i + 1) + ": " + step.split(" ")[0].toUpperCase() + step.slice(step.indexOf(" ")) + 
+      "\nObjetivo: " + item.objective +
+      "\nPasos: " + step + ". Presenta el estímulo visual cuando corresponda, comprueba comprensión, practica y registra la ayuda necesaria." +
+      "\nDuración orientativa: 8-15 minutos, según tolerancia. Frecuencia: una o dos veces esta semana. Prioridad: principal." +
+      "\nAdaptación si cuesta: reducir la demanda, proporcionar una clave visual o suspender si hay malestar." +
+      "\nPregunta: ¿qué ayuda facilitó más la realización?"),
+      "Semana 2",
+      ...tasks.slice(2, 4).map((step, i) =>
+      "Ejercicio " + (i + 3) + ": " + step +
+      "\nObjetivo: aplicar o consolidar el mismo objetivo funcional." +
+      "\nPasos: " + step + ". Utilizar el recurso visual como apoyo y revisar con la persona la experiencia." +
+      "\nDuración orientativa: 8-15 minutos. Frecuencia: una o dos ocasiones, no de forma obligatoria." +
+      "\nAdaptación si cuesta: ofrecer elección entre dos opciones o apoyos de acompañante." +
+      "\nPregunta: ¿cómo podría utilizarse en la vida diaria?")
+    ].join("\n\n");
+    return {
+      version: 1, clinical_area: "neuropsychology", material_type: "exercise",
+      duration_minutes: 12, frequency: "Cuatro actividades distribuidas durante dos semanas, ajustadas al esfuerzo y la tolerancia.",
+      introduction, why: "Propuesta de trabajo sobre " + (DOMAIN_LABELS[item.domain] || "una capacidad cognitiva").toLowerCase() +
+        ". Se busca mejorar la participación y el uso de estrategias en situaciones significativas; los resultados de las tareas no equivalen a pruebas diagnósticas ni garantizan mejoría general.",
+      objective: item.objective, instructions,
+      example: "Esquema: Observar el recurso → Elegir una acción → Revisar con ayuda\nEjemplo trabajado: utilizar el estímulo que acompaña a esta ficha, practicar un ejemplo guiado y ajustar las pistas.",
+      record_prompt: "Ejercicio 1: ¿qué consiguió realizar y con qué ayudas?\nEjercicio 2: ¿qué errores o dudas aparecieron?\nEjercicio 3: ¿qué estrategia facilitó la tarea?\nEjercicio 4: ¿hubo aplicación cotidiana?\nDudas para comentar en consulta: ¿qué costó, qué resultó agradable, qué debería adaptarse?",
+      safety_note: "Se puede detener o acortar la tarea si aparecen fatiga, frustración o malestar. La profesional adaptará intensidad y apoyos.",
+      remember: "Tras las dos semanas, revisaremos qué actividades resultaron útiles, qué apoyos fueron necesarios y cuál será el siguiente objetivo.",
+      session_questions: ["¿Con qué ayudas participó mejor?", "¿Hubo interés o fatiga?", "¿Qué transferencia se observó?", "¿Qué dudas deben revisarse?"],
+      neuro_profile: {
+        domain: item.domain, intervention: item.intervention, level: item.level,
+        theme: item.theme || "", functional_goal: item.objective
+      },
+      visual_blocks: Array.isArray(item.visual_blocks) ? item.visual_blocks.map(block => ({...block})) : []
+    };
+  }
+  async function initializeStarterLibrary() {
+    const selector = $("clinic-neuro-starter");
+    if (!selector) return;
+    try {
+      const response = await fetch("/clinic-neuro-starter-library.json", { cache: "no-store" });
+      if (!response.ok) throw new Error("Biblioteca no disponible");
+      const parsed = await response.json();
+      starterEntries = Array.isArray(parsed.activities) ? parsed.activities : [];
+      starterEntries.forEach(item => {
+        if (!item.code || !item.title || !item.domain || !Array.isArray(item.steps) || item.steps.length !== 4) return;
+        const option = document.createElement("option");
+        option.value = item.code;
+        option.textContent = (DOMAIN_LABELS[item.domain] || item.domain) + " · " + item.title;
+        selector.append(option);
+      });
+    } catch {
+      const status = $("clinic-exercise-message");
+      if (status) status.textContent = "No se pudo recuperar la biblioteca inicial. Puedes seguir creando actividades manualmente.";
+    }
+    $("clinic-neuro-starter-load")?.addEventListener("click", () => {
+      const selected = starterEntries.find(item => item.code === selector.value);
+      if (!selected) return;
+      window.dispatchEvent(new CustomEvent("clinic-neuro-load-starter", {
+        detail: { title: selected.title, code: selected.code, domain: selected.domain,
+          patient_document: starterToDocument(selected), caution: selected.caution,
+          record: selected.record }
+      }));
+    });
+  }
+
   function init() {
     if (!$("clinic-clinical-area")) return;
     $("clinic-clinical-area").addEventListener("change", panelVisible);
@@ -184,6 +262,7 @@
       redraw();
     });
     redraw();
+    initializeStarterLibrary();
   }
   window.ClinicNeuroMaterials = { read, hydrate, validate: validDocument };
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init);
