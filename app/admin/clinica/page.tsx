@@ -431,9 +431,6 @@ export default function AdminClinicaPage() {
             <label>Objetivo funcional
               <textarea id="clinic-neuro-functional-goal" rows={2} placeholder="Conducta observable o aplicación cotidiana..." />
             </label>
-            <label>Adaptaciones / ayudas profesionales (no incluir datos identificativos)
-              <textarea id="clinic-neuro-notes" rows={2} placeholder="Consignas, apoyos, fatiga, adaptaciones sensoriales..." />
-            </label>
             <p className="clinic-material-helper">Evita tareas infantilizantes y el uso de ítems protegidos de pruebas estandarizadas. No interpreta resultados como puntuaciones diagnósticas.</p>
           </fieldset>
           <div className="clinic-material-picker">
