@@ -2,6 +2,11 @@ name: Publicar carolinasanchezgirona.com en Cloudflare
 
 on:
   workflow_dispatch:
+  # Publicación automática solo tras la compilación íntegra y satisfactoria de main.
+  workflow_run:
+    workflows: ["Comprobar compilación web"]
+    types: [completed]
+    branches: [main]
 
 permissions:
   contents: read
@@ -15,10 +20,22 @@ jobs:
     name: Compilar, publicar y verificar
     runs-on: ubuntu-latest
     timeout-minutes: 20
-    if: github.ref == 'refs/heads/main'
+    if: >-
+      github.ref == 'refs/heads/main' &&
+      (
+        github.event_name == 'workflow_dispatch' ||
+        (
+          github.event_name == 'workflow_run' &&
+          github.event.workflow_run.conclusion == 'success' &&
+          github.event.workflow_run.head_branch == 'main' &&
+          github.event.workflow_run.head_repository.full_name == github.repository
+        )
+      )
     steps:
-      - name: Descargar la última versión de main
+      - name: Descargar exactamente la revisión que superó las pruebas
         uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event_name == 'workflow_run' && github.event.workflow_run.head_sha || 'main' }}
 
       - name: Comprobar credenciales de Cloudflare
         shell: bash
@@ -51,7 +68,9 @@ jobs:
       - name: Validar funcionalidades sensibles
         run: |
           node --check public/admin-economia.js
-          node --test tests/billing-invoices.test.mjs tests/patient-shared-files.test.mjs tests/clinical-file-notifications.test.mjs
+          node --check public/admin-agenda-view-switcher.js
+          node --check public/admin-notifications.js
+          node --test tests/billing-invoices.test.mjs tests/patient-shared-files.test.mjs tests/clinical-file-notifications.test.mjs tests/admin-agenda-notifications.test.mjs
 
       - name: Compilar proyecto completo
         run: npm run build
@@ -60,8 +79,12 @@ jobs:
         run: |
           test -f out/admin/economia/index.html
           test -f out/admin/clinica/index.html
+          test -f out/admin/agenda/index.html
+          test -f out/admin/notificaciones/index.html
           test -f out/mi-espacio/index.html
           test -f out/admin-economia.js
+          test -f out/admin-notifications.js
+          test -f out/admin-agenda-view-switcher.js
 
       - name: Publicar Worker y archivos estáticos en Cloudflare
         id: deploy
@@ -90,4 +113,23 @@ jobs:
             echo "::error::Cloudflare aceptó el despliegue, pero no se confirma /admin/economia/ en el dominio principal. Comprueba la asignación de dominio/ruta al Worker portfolio-carolina."
             exit 1
           fi
-          echo "La nueva versión se sirve desde el dominio. Las operaciones privadas requieren comprobación con una cuenta de prueba."
+          echo "Contabilidad confirmada. Comprobando Agenda y avisos..."
+          ok=0
+          for i in 1 2 3 4 5 6; do
+            agenda_status=$(curl -sS --max-time 20 -o /tmp/dememoria-agenda.html -w '%{http_code}' \
+              "https://carolinasanchezgirona.com/admin/agenda/?deploy_check=$GITHUB_SHA" || true)
+            avisos_status=$(curl -sS --max-time 20 -o /tmp/dememoria-avisos.html -w '%{http_code}' \
+              "https://carolinasanchezgirona.com/admin/notificaciones/?deploy_check=$GITHUB_SHA" || true)
+            if [ "$agenda_status" = "200" ] && [ "$avisos_status" = "200" ] \
+               && grep -q 'admin-agenda-view-select' /tmp/dememoria-agenda.html \
+               && grep -q 'Centro de avisos' /tmp/dememoria-avisos.html; then
+              ok=1
+              break
+            fi
+            sleep 8
+          done
+          if [ "$ok" != "1" ]; then
+            echo "::error::No se han podido confirmar Agenda simplificada y Centro de avisos en el dominio."
+            exit 1
+          fi
+          echo "Publicación verificada en Agenda, Centro de avisos y Gestión económica. Las operaciones privadas requieren comprobación con cuenta de prueba."
