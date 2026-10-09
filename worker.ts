@@ -427,6 +427,85 @@ async function handlePatientPortalSession(request: Request, env: Env): Promise<R
   });
 }
 
+
+/** PDF generation is granted per download, never by a reusable bearer link. */
+async function handlePatientPortalMaterialPdf(request: Request, env: Env): Promise<Response> {
+  if (request.method !== "GET") return patientPortalJson({ error: "Método no permitido." }, 405);
+  const session = await patientPortalSession(request, env);
+  if (!session) return patientPortalJson({ error: "Inicia sesión para descargar el material." }, 401, {
+    "Set-Cookie": patientPortalCookie("", 0),
+  });
+  const materialId = new URL(request.url).searchParams.get("material_id") || "";
+  if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(materialId)) {
+    return patientPortalJson({ error: "Material no válido." }, 400);
+  }
+
+  // Sessions can outlive treatment: recheck the patient's current access on every download.
+  const patientResponse = await fetch(
+    RESOURCE_SUPABASE + "/rest/v1/clinical_patients?select=id&id=eq." +
+      encodeURIComponent(session.patient_id) + "&status=neq.archived&limit=1",
+    { headers: serviceHeaders(env), cache: "no-store" },
+  );
+  if (!patientResponse.ok) return patientPortalJson({ error: "Descarga temporalmente no disponible." }, 503);
+  const patients = await patientResponse.json().catch(() => []);
+  if (!Array.isArray(patients) || patients.length !== 1) {
+    return patientPortalJson({ error: "Tu acceso ya no está disponible." }, 401, {
+      "Set-Cookie": patientPortalCookie("", 0),
+    });
+  }
+
+  const materialResponse = await fetch(
+    RESOURCE_SUPABASE + "/rest/v1/clinical_exercise_assignments?select=id,title,content,patient_document,sent_at,created_at" +
+      "&id=eq." + encodeURIComponent(materialId) +
+      "&patient_id=eq." + encodeURIComponent(session.patient_id) +
+      "&revoked_at=is.null&status=in.(sent,assigned,reviewed)&limit=1",
+    { headers: serviceHeaders(env), cache: "no-store" },
+  );
+  if (!materialResponse.ok) return patientPortalJson({ error: "No se ha podido consultar el material." }, 503);
+  const materials = await materialResponse.json().catch(() => []);
+  const material = Array.isArray(materials) ? materials[0] : null;
+  if (!material) return patientPortalJson({ error: "Este material ya no está disponible." }, 404);
+
+  try {
+    // Only the server-side service key can invoke this PDF renderer.
+    const rendered = await fetch(RESOURCE_SUPABASE + "/functions/v1/view-clinical-exercise", {
+      method: "POST",
+      cache: "no-store",
+      headers: {
+        apikey: RESOURCE_PUBLISHABLE,
+        Authorization: "Bearer " + env.SUPABASE_SERVICE_ROLE_KEY,
+        "Content-Type": "application/json",
+        "X-Portal-Pdf": "1",
+      },
+      body: JSON.stringify({
+        action: "portal-pdf",
+        title: material.title,
+        content: material.content,
+        patient_document: material.patient_document,
+        issued_at: material.sent_at || material.created_at || null,
+      }),
+    });
+    if (!rendered.ok || !rendered.headers.get("content-type")?.startsWith("application/pdf")) {
+      return patientPortalJson({ error: "No se ha podido preparar el PDF." }, 502);
+    }
+    // No patient identifiers, clinical answers or durable download URLs are sent to the browser.
+    return new Response(rendered.body, {
+      status: 200,
+      headers: {
+        "Content-Type": "application/pdf",
+        "Content-Disposition": rendered.headers.get("content-disposition") || 'attachment; filename="entre-sesiones.pdf"',
+        "Cache-Control": "private, no-store, max-age=0",
+        "X-Robots-Tag": "noindex, nofollow, noarchive",
+        "Referrer-Policy": "no-referrer",
+        "X-Content-Type-Options": "nosniff",
+        "X-Frame-Options": "DENY",
+      },
+    });
+  } catch {
+    return patientPortalJson({ error: "No se ha podido preparar el PDF." }, 502);
+  }
+}
+
 const PATIENT_PORTAL_ALLOWED_AVATARS = new Set([
   "boy", "girl", "teen-boy", "teen-girl", "adult-man", "adult-woman", "senior-man", "senior-woman",
 ]);
@@ -1777,6 +1856,7 @@ export default {
     if (url.pathname === "/api/patient-portal/session" || url.pathname === "/api/patient-portal/session/") return handlePatientPortalSession(request, env);
     if (url.pathname === "/api/patient-portal/preferences" || url.pathname === "/api/patient-portal/preferences/") return handlePatientPortalPreferences(request, env);
     if (url.pathname === "/api/patient-portal/response" || url.pathname === "/api/patient-portal/response/") return handlePatientPortalResponse(request, env);
+    if (url.pathname === "/api/patient-portal/material-pdf" || url.pathname === "/api/patient-portal/material-pdf/") return handlePatientPortalMaterialPdf(request, env);
     if (url.pathname === "/api/patient-portal/logout" || url.pathname === "/api/patient-portal/logout/") return handlePatientPortalLogout(request, env);
 
     if (url.pathname === "/api/editorial/status" || url.pathname === "/api/editorial/status/") {
