@@ -42,7 +42,7 @@ jobs:
           deno-version: v2.x
 
       - name: Comprobar TypeScript de la función neuropsicológica
-        run: deno check supabase/functions/view-clinical-exercise/index.ts
+        run: deno check --node-modules-dir=auto supabase/functions/view-clinical-exercise/index.ts
 
       - name: Validar recursos visuales neuropsicológicos y editor
         run: |
