@@ -145,6 +145,9 @@
   let patientPageReturnScroll = 0;
   let patientFormBaseline = "";
   let sessionFormBaseline = "";
+  let sessionSaveTimer = null;
+  let sessionSaveActive = false;
+  let sessionSavePending = false;
 
   const dateLong = new Intl.DateTimeFormat("es-ES", { weekday: "long", day: "numeric", month: "long", year: "numeric", timeZone: ZONE });
   const dateShort = new Intl.DateTimeFormat("es-ES", { day: "numeric", month: "short", year: "numeric", timeZone: ZONE });
@@ -186,9 +189,29 @@
       .filter(input => !["button","submit","reset"].includes(input.type || ""))
       .map(input => [input.id || input.name || "",input.type === "checkbox" || input.type === "radio" ? input.checked : input.value]));
   }
+  function markSessionSaved() {
+    sessionFormBaseline = sessionFormSnapshot();
+    const el = document.querySelector("#clinic-session-autosave-state");
+    if (el) el.textContent = els.sessionId.value ? "Borrador de sesión guardado" : "Sesión nueva · sin guardar";
+  }
+  function scheduleSessionAutoSave() {
+    if (!els.sessionDialog.open || els.saveDraft.disabled || !els.sessionPatientId.value) return;
+    const state = document.querySelector("#clinic-session-autosave-state");
+    window.clearTimeout(sessionSaveTimer);
+    if (sessionFormSnapshot() === sessionFormBaseline) {
+      if (state) state.textContent = "Sin cambios pendientes";
+      return;
+    }
+    if (state) state.textContent = "Cambios pendientes · guardado automático en 5 segundos";
+    sessionSaveTimer = window.setTimeout(() => persistClinicalSession("draft", { auto: true }).catch(err => {
+      if (state) state.textContent = "No se ha podido guardar: " + err.message;
+    }), 5000);
+  }
   function closeSessionEditor() {
     if (!els.sessionDialog.open) return true;
+    if (sessionSaveActive) { els.sessionMessage.textContent = "Se está guardando el borrador. Espera a que finalice."; return false; }
     if (sessionFormBaseline && sessionFormSnapshot() !== sessionFormBaseline && !window.confirm("Hay notas de esta sesión sin guardar. ¿Quieres cerrarla y descartarlas?")) return false;
+    window.clearTimeout(sessionSaveTimer);
     if (isDictating) speechRecognition?.stop();
     els.sessionDialog.close();
     return true;
@@ -1470,7 +1493,7 @@
     els.approveSession.disabled = approved;
     els.dictate.disabled = approved;
     els.sessionDialog.showModal();
-    sessionFormBaseline = sessionFormSnapshot();
+    markSessionSaved();
   }
 
   function renderHistory(patient) {
@@ -1909,7 +1932,12 @@
     };
   }
 
-  async function persistClinicalSession(status) {
+  async function persistClinicalSession(status, { auto = false } = {}) {
+    if (sessionSaveActive) { sessionSavePending = true; if (!auto) throw new Error("Se está guardando el borrador; inténtalo de nuevo en unos segundos."); return; }
+    if (auto && (!els.sessionDialog.open || els.saveDraft.disabled || sessionFormSnapshot() === sessionFormBaseline)) return;
+    const savingSnapshot = sessionFormSnapshot();
+    sessionSaveActive = true;
+    try {
     if (status === "approved" && !els.evolutionNote.value.trim() && !els.interventionNote.value.trim()) {
       throw new Error("Añade al menos la evolución o la intervención antes de aprobar.");
     }
@@ -1929,8 +1957,8 @@
     if (!saved) throw new Error("No se ha podido recuperar el registro guardado.");
     clinicalSessions = [...clinicalSessions.filter((item) => item.id !== saved.id), saved];
     els.sessionId.value = saved.id;
-    els.sessionMessage.textContent = status === "approved" ? "Registro aprobado y cerrado." : "Borrador guardado.";
-    sessionFormBaseline = sessionFormSnapshot();
+    els.sessionMessage.textContent = status === "approved" ? "Registro aprobado y cerrado." : (auto ? "" : "Borrador guardado.");
+    if (sessionFormSnapshot() === savingSnapshot) markSessionSaved();
     if (status === "approved") {
       if (currentPatient && els.nextSessionNote.value.trim()) {
         const updatedPatients = await rest(`clinical_patients?id=eq.${encodeURIComponent(currentPatient.id)}&select=*`, {
@@ -1954,6 +1982,12 @@
     }
     renderToday();
     renderPatients(els.patientSearch.value);
+    } finally {
+      sessionSaveActive = false;
+      const needsSaving = sessionSavePending || (auto && els.sessionDialog.open && sessionFormSnapshot() !== sessionFormBaseline);
+      sessionSavePending = false;
+      if (needsSaving && els.sessionDialog.open && !els.saveDraft.disabled) scheduleSessionAutoSave();
+    }
   }
 
   function setView(name) {
@@ -2004,7 +2038,7 @@
   window.addEventListener("beforeunload", event => {
     const patientUnsaved = !els.patientDialog.hidden && patientFormBaseline && patientFormSnapshot() !== patientFormBaseline;
     const reportUnsaved = els.reportDialog.open && (reportDirty || reportSaveActive);
-    const sessionUnsaved = els.sessionDialog.open && sessionFormBaseline && sessionFormSnapshot() !== sessionFormBaseline;
+    const sessionUnsaved = els.sessionDialog.open && (sessionSaveActive || sessionFormBaseline && sessionFormSnapshot() !== sessionFormBaseline);
     if (patientUnsaved || reportUnsaved || sessionUnsaved) { event.preventDefault(); event.returnValue = ""; }
   });
   els.sessionClose.addEventListener("click", () => closeSessionEditor());
@@ -2312,6 +2346,8 @@
     } catch (error) { els.sessionMessage.textContent = error.message; }
   });
   els.saveDraft.addEventListener("click", () => persistClinicalSession("draft").catch((error) => { els.sessionMessage.textContent = error.message; }));
+  els.sessionForm.addEventListener("input", event => { if (event.target.matches("input,textarea,select")) scheduleSessionAutoSave(); });
+  els.sessionForm.addEventListener("change", event => { if (event.target.matches("input,textarea,select")) scheduleSessionAutoSave(); });
   els.sessionForm.addEventListener("submit", (event) => {
     event.preventDefault();
     persistClinicalSession("approved").catch((error) => { els.sessionMessage.textContent = error.message; });
