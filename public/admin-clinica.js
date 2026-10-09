@@ -1447,6 +1447,7 @@
     if (!docs.length) { els.patientDocuments.append(create("p", "clinic-empty-inline", "Todavía no hay archivos.")); return; }
     docs.forEach((doc) => {
       const isShared = Boolean(doc.shared_at && !doc.share_revoked_at);
+      const notice = isShared ? clinicalDocumentEmailNotices.find(item => item.document_id === doc.id && new Date(item.shared_at).getTime() === new Date(doc.shared_at).getTime()) : null;
       const row = create("article");
       const info = create("div");
       info.append(
@@ -1454,6 +1455,7 @@
         create("span", "", `${documentCategoryLabel(doc.category)} · ${doc.file_name} · ${dateShort.format(new Date(doc.document_date || doc.created_at))}`),
         create("span", "clinic-material-state" + (isShared ? " opened" : ""), isShared ? "Compartido en Mi espacio" : "Solo archivo clínico")
       );
+      if (isShared) info.append(create("span", "clinic-material-state", notice?.status === "sent" ? "Aviso por correo enviado" : notice?.status === "sending" ? "Aviso por correo en proceso" : notice?.status === "failed" ? "Aviso por correo no enviado" : "Sin aviso por correo"));
       const actions = create("div", "clinic-material-row-actions");
       const openButton = create("button", "clinic-secondary", "Abrir");
       openButton.type = "button";
@@ -1476,6 +1478,16 @@
         finally { shareButton.disabled = false; }
       });
       actions.append(openButton, shareButton);
+      if (isShared && (!notice || notice.status === "failed")) {
+        const notify = create("button", "clinic-secondary", notice?.status === "failed" ? "Reintentar aviso" : "Enviar aviso");
+        notify.type = "button";
+        notify.addEventListener("click", async () => {
+          if (!window.confirm("¿Enviar un aviso neutro por correo? No incluirá archivos, títulos ni información clínica.")) return;
+          notify.disabled = true;
+          await sendClinicalFileNotice(doc.id, notice?.status === "failed");
+        });
+        actions.append(notify);
+      }
       row.append(info, actions);
       els.patientDocuments.append(row);
     });
@@ -1537,7 +1549,8 @@
     renderDocuments(currentPatient);
     renderTimeline(currentPatient);
     els.documentDialog.close();
-    els.patientMessage.textContent = share ? "Archivo compartido en Mi espacio." : "Archivo guardado solo en la historia clínica.";
+    if (share) await sendClinicalFileNotice(clinicalDocuments[0].id);
+    else els.patientMessage.textContent = "Archivo guardado solo en la historia clínica.";
     renderPending();
   }
   function renderScales(patient) {
@@ -1936,7 +1949,7 @@
 
   async function loadData() {
     setMessage("Cargando información clínica…");
-    const [bookingRows, patientRows, externalVisitRows, sessionRows, goalRows, templateRows, assignmentRows, reportRows, documentRows, scaleRows] = await Promise.all([
+    const [bookingRows, patientRows, externalVisitRows, sessionRows, goalRows, templateRows, assignmentRows, reportRows, documentRows, scaleRows, noticeRows] = await Promise.all([
       rest(`appointment_bookings?select=id,patient_name,patient_email,patient_phone,patient_type,status,starts_at,ends_at,service_code,clinical_patient_id&order=starts_at.desc&limit=1000`),
       rest("clinical_patients?select=*&order=full_name.asc"),
       rest("clinical_external_visits?select=*&order=visit_date.desc.nullslast,visit_time.desc"),
@@ -1947,6 +1960,7 @@
       rest("clinical_reports?select=*&order=created_at.desc"),
       rest("clinical_documents?select=*&order=created_at.desc"),
       rest("clinical_scale_measurements?select=*&order=measured_at.desc"),
+      rest("clinical_document_email_notices?select=document_id,shared_at,status,sent_at,claimed_at,error_code&order=claimed_at.desc&limit=1000"),
     ]);
     appointments = bookingRows || [];
     patients = patientRows || [];
@@ -1957,6 +1971,7 @@
     exerciseAssignments = assignmentRows || [];
     clinicalReports = reportRows || [];
     clinicalDocuments = documentRows || [];
+    clinicalDocumentEmailNotices = noticeRows || [];
     scaleMeasurements = scaleRows || [];
     renderToday();
     renderPatients(els.patientSearch.value);
