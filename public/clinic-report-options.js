@@ -64,14 +64,39 @@
       ["integration","Integración e impresión clínica"],["conclusions","Conclusiones"],
       ["plan","Plan de seguimiento"],["limitations","Limitaciones y alcance"]
     ];
-    const healthSections = health ? healthFields.map(([key,label]) => {
-      const value = document.querySelector("#clinic-health-" + key)?.value?.trim();
-      return value ? `<h2>${escapeHtml(label)}</h2><div class="text">${escapeHtml(value)}</div>` : "";
-    }).join("") : "";
-    const watermark = approved ? "" : `<div class="watermark">BORRADOR · NO APROBADO</div>`;
-
+    const sectionText = (label, selector) => {
+      const value = document.querySelector(selector)?.value?.trim() || "";
+      return value ? '<section><h2>'+escapeHtml(label)+'</h2><div class="text">'+escapeHtml(value)+'</div></section>' : "";
+    };
+    const sectionItems = health ? [
+      ["Motivo del informe y pregunta clínica", "#clinic-report-context"],
+      ...healthFields.slice(0,5).map(([key,label]) => [label, "#clinic-health-" + key]),
+      ["Intervención y evolución","#clinic-report-interventions"],
+      ["Evolución cronológica","#clinic-report-evolution"],
+      ...healthFields.slice(5).map(([key,label]) => [label, "#clinic-health-" + key]),
+      ["Situación actual y objetivos pendientes","#clinic-report-current"]
+    ] : [
+      ["Motivo del informe","#clinic-report-context"],["Evolución documentada","#clinic-report-evolution"],
+      ["Intervenciones realizadas","#clinic-report-interventions"],["Situación actual y plan","#clinic-report-current"]
+    ];
+    const sectionsHtml = sectionItems.map(([label, selector]) => sectionText(label, selector)).join("");
+    const watermark = approved ? "" : '<p class="watermark">BORRADOR · NO APROBADO</p>';
+    const metaParts = meta.split(" · ");
+    const patientCode = metaParts.length > 1 ? metaParts.shift() : "";
+    const patientName = metaParts.join(" · ") || meta;
+    const date = new Date().toLocaleDateString("es-ES");
+    const start = document.querySelector("#clinic-report-start")?.value || "";
+    const end = document.querySelector("#clinic-report-end")?.value || "";
+    const cells = [
+      ["Paciente",patientName],["Código de historia",patientCode],["Periodo de seguimiento",[start,end].filter(Boolean).join(" a ")],
+      ["Destinatario",recipient],["Finalidad",purpose],["Fecha",date]
+    ].filter(([,v])=>Boolean(v));
+    const identity = '<table class="identity">'+cells.map(([label,value])=>'<tr><th>'+escapeHtml(label)+'</th><td>'+escapeHtml(value)+'</td></tr>').join("")+'</table>';
+    const head = '<header><div class="kicker">DEMEMORIA · DOCUMENTACIÓN CLÍNICA</div><h1>'+escapeHtml(title)+'</h1>'+watermark+'<p class="professional">Carolina Sánchez Girona · Psicóloga General Sanitaria y Neuropsicóloga</p></header>';
+    const css = '@page{size:A4;margin:18mm}body{font-family:Arial,sans-serif;color:#173A5E;font-size:10.5pt;line-height:1.52}header{border-top:7px solid #19747A;padding:18px 0 10px;margin-bottom:14px;border-bottom:1px solid #C9E4E3}.kicker{color:#19747A;font-size:9pt;font-weight:700;letter-spacing:.11em}h1{font-size:21pt;line-height:1.22;margin:12px 0;color:#173A5E}h2{font-size:12pt;margin:23px 0 9px;color:#19747A;break-after:avoid}section{break-inside:auto}.professional{color:#526B7A;font-size:9pt}.watermark{display:inline-block;border:1px solid #B64A2B;color:#9B3516;font-size:9pt;padding:6px 10px;font-weight:bold}.identity{width:100%;border-collapse:collapse;margin:18px 0 22px}th,td{text-align:left;vertical-align:top;padding:8px 10px;border-bottom:1px solid #C9E4E3}th{width:34%;background:#EAF6F5;color:#173A5E}tr:nth-child(even) td{background:#FAFCFC}.text{white-space:pre-wrap;overflow-wrap:anywhere}.signature{margin-top:35px}.privacy{font-size:8.5pt;color:#526B7A;margin-top:20px}';
+    const html = '<!doctype html><html lang="es"><head><meta charset="utf-8"><title>'+escapeHtml(title)+'</title><style>'+css+'</style></head><body>'+head+'<h2>Datos de identificación</h2>'+identity+sectionsHtml+'<section class="signature"><h2>Cierre y firma</h2><p>Carolina Sánchez Girona</p></section><p class="privacy">Documento clínico confidencial destinado a la finalidad asistencial indicada.</p><script>window.onload=function(){window.print()};<\/script></body></html>';
     popup.opener = null;
-    popup.document.write(`<!doctype html><html lang="es"><head><meta charset="utf-8"><title>${escapeHtml(title)}</title><style>@page{size:A4;margin:18mm}body{font-family:Arial,sans-serif;color:#1f2933;font-size:11pt;line-height:1.5}.watermark{border:2px solid #b64a2b;color:#9b3516;font-weight:800;text-align:center;padding:10px;margin-bottom:18px;letter-spacing:.05em}header{border-top:6px solid #19747A;border-bottom:1px solid #C9E4E3;margin-bottom:24px;padding:18px 0}h1{font-size:21pt;color:#173A5E;margin:12px 0}h2{font-size:13pt;color:#19747A;margin:24px 0 8px}.meta{color:#526b7a;font-size:9.5pt}.text{white-space:pre-wrap}.signature{margin-top:48px}.privacy{margin-top:30px;color:#607786;font-size:8.5pt}@media print{button{display:none}}</style></head><body>${watermark}<header><p>Carolina Sánchez Girona · Psicóloga General Sanitaria y Neuropsicóloga</p><h1>${escapeHtml(title)}</h1><p class="meta">${escapeHtml(meta)}<br>Destinatario: ${escapeHtml(recipient)} · Finalidad: ${escapeHtml(purpose)}</p></header>${section("Motivo y contexto", "#clinic-report-context", "context")}${section("Evolución clínica", "#clinic-report-evolution", "evolution")}${section("Intervenciones realizadas", "#clinic-report-interventions", "interventions")}${section(health ? "Estado actual y objetivos pendientes" : "Situación actual y recomendaciones", "#clinic-report-current", "current")}${healthSections}<div class="signature"><p>Carolina Sánchez Girona</p></div><p class="privacy">Documento confidencial que contiene datos de salud.</p><script>window.onload=()=>window.print()<\/script></body></html>`);
+    popup.document.write(html);
     popup.document.close();
   }, true);
 })();
