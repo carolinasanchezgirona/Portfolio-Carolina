@@ -355,6 +355,6 @@
   section.querySelector("#month-next").addEventListener("click",()=>{cursor=new Date(Date.UTC(cursor.getUTCFullYear(),cursor.getUTCMonth()+1,1,12));loadMonth();});
   section.querySelector("#month-today").addEventListener("click",()=>{const n=new Date();cursor=new Date(Date.UTC(n.getUTCFullYear(),n.getUTCMonth(),1,12));loadMonth();});
 
-  ["#view-today","#view-week","#view-patients"].forEach(sel=>document.querySelector(sel)?.addEventListener("click",()=>{section.hidden=true;monthButton.classList.remove("active");}));
+  ["#view-today","#view-tomorrow","#view-week","#view-patients"].forEach(sel=>document.querySelector(sel)?.addEventListener("click",()=>{section.hidden=true;monthButton.classList.remove("active");}));
 })();
 // build 20260915-2
