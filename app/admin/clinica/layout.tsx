@@ -19,8 +19,8 @@ export default function ClinicaLayout({ children }: Readonly<{ children: React.R
       <script src="/clinic-video-manager.js?v=20261009-1" defer />
       <script src="/admin-clinica-print-fixes.js?v=20260915-1" defer />
       <script src="/clinic-rebook.js?v=20260915-1" defer />
-      <script src="/clinic-word-export.js?v=20261009-1" defer />
-      <script src="/clinic-report-options.js?v=20261009-3" defer />
+      <script src="/clinic-word-export.js?v=20261009-2" defer />
+      <script src="/clinic-report-options.js?v=20261009-5" defer />
       <script src="/clinic-ux-guards.js?v=20260915-1" defer />
       <script src="/clinic-patient-dashboard.js?v=20260915-2" defer />
       <script src="/clinic-goals-manager.js?v=20260915-2" defer />
