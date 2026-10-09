@@ -50,7 +50,7 @@ const aliases:Record<keyof ColMap,string[]> = {
  date:["fecha","fechagasto","fechafactura","fechaoperacion","date","dia","fechaemision"],
  supplier:["proveedor","emisor","comercio","establecimiento","beneficiario","supplier","tercero"],
  concept:["concepto","descripcion","detalle","descripcions","producto","servicio","observaciones","description"],
- amount:["importe","importetotal","total","totaleur","importeconiva","cantidad","amount","monto","importegasto","totalfactura"],
+ amount:["importe","importeeur","importetotal","total","totaleur","importeconiva","cantidad","amount","monto","importegasto","totalfactura"],
  category:["categoria","tipo","clase","category","grupogasto"]
 };
 export function guessColumns(row: unknown[]): ColMap {
