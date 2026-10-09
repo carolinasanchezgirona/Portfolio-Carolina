@@ -315,7 +315,7 @@
     const concept = $("#econ-external-income-concept").value.trim();
     const amount = requirePositiveCents($("#econ-external-income-amount").value);
     const receiptDate = $("#econ-external-income-date").value;
-    if (!/^\\d{4}-\\d{2}-\\d{2}$/.test(receiptDate) || Number.isNaN(Date.parse(receiptDate + "T12:00:00Z")))
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(receiptDate) || Number.isNaN(Date.parse(receiptDate + "T12:00:00Z")))
       throw new Error("Fecha de ingreso incorrecta.");
     if (ref.length < 3 || ref.length > 100 || concept.length < 5 || concept.length > 200)
       throw new Error("Completa concepto y referencia del justificante.");
