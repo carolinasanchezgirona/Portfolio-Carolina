@@ -1430,7 +1430,7 @@
     speechRecognition.onresult = (event) => {
       let interim = ""; for (let i = event.resultIndex; i < event.results.length; i += 1) { const text = event.results[i][0].transcript; if (event.results[i].isFinal) finalText += text + " "; else interim += text; }
       els.dictationState.textContent = interim || "Escuchando…";
-      if (finalText) { els.workNotes.value = [els.workNotes.value.trim(), finalText.trim()].filter(Boolean).join("\n"); finalText = ""; }
+      if (finalText) { els.workNotes.value = [els.workNotes.value.trim(), finalText.trim()].filter(Boolean).join("\n"); finalText = ""; scheduleSessionAutoSave(); }
     };
     speechRecognition.onerror = (event) => { els.dictationState.textContent = `Error de dictado: ${event.error}`; };
     speechRecognition.onend = () => { isDictating = false; els.dictate.textContent = "Iniciar dictado"; if (!els.dictationState.textContent.startsWith("Error")) els.dictationState.textContent = "Dictado detenido."; };
@@ -2333,7 +2333,7 @@
   els.exerciseClose.addEventListener("click", () => els.exerciseDialog.close());
   els.saveExercise.addEventListener("click", () => saveExercise(false).catch((error) => { els.exerciseMessage.textContent = error.message; }));
   els.exerciseForm.addEventListener("submit", (event) => { event.preventDefault(); saveExercise(true).catch((error) => { els.exerciseMessage.textContent = error.message; }); });
-  els.generateDraft.addEventListener("click", generateStructuredDraft);
+  els.generateDraft.addEventListener("click", () => { generateStructuredDraft(); scheduleSessionAutoSave(); });
   els.addGoal.addEventListener("click", async () => {
     if (!currentPatient) return;
     const title = window.prompt("Escribe el objetivo terapéutico:");
