@@ -208,3 +208,17 @@
  .mood-scale-face{width:34px}
 }
 @media(prefers-reduced-motion:reduce){.mood-scale-face{transition:none}}
+
+/* Five clear emotional expressions follow the selected patient companion.
+   The overlay uses the same facial coordinates for all states of each avatar. */
+.mood-friend-image{position:relative;isolation:isolate}
+.mood-expression-layer{
+  position:absolute;inset:0;width:100%;height:100%;
+  z-index:2;pointer-events:none;
+  animation:mood-expression-change .25s ease-out;
+}
+@keyframes mood-expression-change{
+  from{opacity:.2;transform:scale(.97)}
+  to{opacity:1;transform:scale(1)}
+}
+@media(prefers-reduced-motion:reduce){.mood-expression-layer{animation:none}}
