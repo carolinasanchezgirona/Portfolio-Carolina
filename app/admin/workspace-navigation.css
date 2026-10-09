@@ -62,3 +62,6 @@
   .resources-admin-page .resources-app,.questions-admin-page{padding-bottom:calc(114px + env(safe-area-inset-bottom))!important}
 }
 @media print{.workspace-context-menu,.workspace-back-to-list{display:none!important}}
+
+.workspace-auth-loading{display:grid;place-items:center;min-height:40vh;padding:24px;color:#536b7c;font-size:.9rem;text-align:center}
+.workspace-auth-loading[hidden]{display:none!important}
