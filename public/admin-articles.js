@@ -116,6 +116,10 @@
     }
   }
 
+  function showMobileEditor() {
+    document.querySelector("#article-workspace")?.classList.add("workspace-show-editor");
+  }
+
   function newArticle() {
     els.form.reset();
     els.id.value = "";
@@ -126,6 +130,7 @@
     els.deleteButton.hidden = true;
     els.empty.hidden = true;
     els.form.hidden = false;
+    showMobileEditor();
     setMessage("");
     resetMediaPreview();
     updateLiveTools();
@@ -158,6 +163,7 @@
     els.deleteButton.hidden = false;
     els.empty.hidden = true;
     els.form.hidden = false;
+    showMobileEditor();
     setMessage("");
     resetMediaPreview();
     updateLiveTools();
@@ -332,7 +338,9 @@
     setMessage("Eliminando…");
     const r = await fetch(`${REST_URL}/articles?id=eq.${encodeURIComponent(id)}`, { method: "DELETE", headers: authHeaders() });
     if (!r.ok) { const body = await r.json().catch(() => ({})); throw new Error(body.message || "No se ha podido eliminar."); }
-    els.form.hidden = true; els.empty.hidden = false; els.id.value = ""; await loadArticles();
+    els.form.hidden = true; els.empty.hidden = false; els.id.value = "";
+    document.querySelector("#article-workspace")?.classList.remove("workspace-show-editor");
+    await loadArticles();
   }
 
   els.loginForm?.addEventListener("submit", async (event) => {
@@ -342,6 +350,7 @@
   });
   els.logout?.addEventListener("click", () => { saveSession(null); window.location.assign("/admin/clinica/acceso/"); });
   els.newButton?.addEventListener("click", newArticle);
+  document.querySelector("#articles-back-to-list")?.addEventListener("click", () => document.querySelector("#article-workspace")?.classList.remove("workspace-show-editor"));
   els.title?.addEventListener("input", () => { if (!els.id.value) els.slug.value = slugify(els.title.value); updateLiveTools(); });
   [els.subtitle, els.excerpt, els.seoTitle, els.seoDescription, els.imageAlt, els.tags, els.ctaLabel, els.ctaUrl].forEach((el) => el?.addEventListener("input", updateLiveTools));
   els.related?.addEventListener("change", updateLiveTools);
