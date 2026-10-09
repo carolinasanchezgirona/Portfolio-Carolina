@@ -120,3 +120,45 @@
 .mood-recent-list small{font-size:.7rem;color:#657d8c}
 .mood-recent-empty{font-size:.8rem;line-height:1.55;color:#68808e;margin:0}
 @media(max-width:520px){.mood-energy-options{gap:4px}.mood-energy-options button{font-size:.64rem;padding:7px 2px}.mood-recent-list li{grid-template-columns:12px 45px 1fr;column-gap:8px}.mood-recent-list small{grid-column:3;justify-self:start;margin-top:3px}}
+
+/* 2026-10-09: single recent-entry layout. Override earlier experimental
+   flex/grid rules so date, mood and energy never overlap on small screens. */
+.mood-recent{min-width:0;padding:18px 0 0;margin-top:20px;border-top:1px solid #e4eef0}
+.mood-recent-heading{display:flex;align-items:baseline;justify-content:space-between;gap:6px 14px;flex-wrap:wrap;margin-bottom:13px}
+.mood-recent-heading h4{margin:0;font-size:.95rem;line-height:1.3;color:#173a5e}
+.mood-recent-heading>span{font-size:.75rem;color:#697d8c}
+.mood-recent-list{display:grid;grid-template-columns:minmax(0,1fr);gap:9px;margin:0;padding:0;list-style:none}
+.mood-recent-list li{
+  box-sizing:border-box;display:grid;
+  grid-template-columns:14px minmax(56px,auto) minmax(0,1fr);
+  align-items:center;column-gap:12px;row-gap:0;
+  border:1px solid #e4edf1;border-radius:14px;background:#f9fcfd;
+  min-height:60px;padding:11px 14px;
+  overflow-wrap:anywhere;
+}
+.mood-recent-indicator{grid-column:1;display:block;width:14px;height:14px;border-radius:50%;border:1px solid rgba(23,58,94,.09)}
+.mood-recent-day{grid-column:2;justify-self:start;white-space:nowrap;font-size:.8rem;color:#587180;text-transform:capitalize}
+.mood-recent-text{grid-column:3;min-width:0;display:flex;flex-direction:column;align-items:flex-start;gap:3px}
+.mood-recent-text strong{color:#173a5e;font-size:.84rem;line-height:1.35}
+.mood-recent-text small{color:#617989;font-size:.76rem;line-height:1.4;grid-column:auto}
+@media(max-width:520px){
+ .mood-recent-list li{grid-template-columns:13px 52px minmax(0,1fr);column-gap:8px;padding:12px 10px}
+ .mood-recent-text small{grid-column:auto;justify-self:auto;margin:0}
+ .mood-recent-heading>span{font-size:.72rem}
+}
+@media(max-width:350px){
+ .mood-recent-list li{grid-template-columns:12px 47px minmax(0,1fr);column-gap:7px}
+ .mood-recent-text strong{font-size:.77rem}
+ .mood-recent-text small{font-size:.72rem}
+}
+
+/* The original 3D sprite has low source resolution; cap on-screen enlargement
+   until the production art export is replaced with higher resolution assets. */
+.mood-friend-panel .mood-friend-portrait{width:min(132px,100%);height:auto;aspect-ratio:1}
+.mood-friend-panel .mood-friend-expressive{width:min(160px,100%);height:auto}
+.mood-friend-panel{gap:7px}
+@media(max-width:780px){
+ .mood-friend-panel{min-height:206px;padding:20px 12px}
+ .mood-friend-panel .mood-friend-portrait{width:min(114px,100%)}
+ .mood-friend-panel .mood-friend-expressive{width:min(142px,100%)}
+}

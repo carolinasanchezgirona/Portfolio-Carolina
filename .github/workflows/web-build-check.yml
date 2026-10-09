@@ -39,6 +39,9 @@ jobs:
       - name: Validar láminas 3D de Mi espacio
         run: node --test tests/mi-espacio-art.test.mjs
 
+      - name: Prevenir duplicados de registros y solapamiento móvil
+        run: node --test tests/mi-espacio-mood-mobile.test.mjs
+
       - name: Validar pantallas de Mi espacio
         run: |
           node --check public/mi-espacio.js
