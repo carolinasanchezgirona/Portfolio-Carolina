@@ -343,7 +343,7 @@ export default function AdminClinicaPage() {
             <button id="clinic-report-close" className="clinic-close" type="button" aria-label="Cerrar">×</button>
           </div>
           <div className="clinic-form-grid clinic-report-settings">
-            <label>Tipo de informe<select id="clinic-report-type"><option value="evolution">Informe de evolución</option><option value="clinical_summary">Resumen clínico</option><option value="referral">Informe de derivación</option></select></label>
+            <label>Tipo de informe<select id="clinic-report-type"><option value="evolution_health">Evolución y seguimiento · Profesional sanitario</option><option value="evolution">Informe de evolución</option><option value="clinical_summary">Resumen clínico</option><option value="referral">Informe de derivación</option></select></label>
             <label>Destinatario<input id="clinic-report-recipient" placeholder="Paciente, profesional, entidad…" /></label>
             <label className="clinic-full">Finalidad<input id="clinic-report-purpose" placeholder="Finalidad asistencial del documento…" /></label>
             <label>Desde<input id="clinic-report-start" type="date" /></label>
