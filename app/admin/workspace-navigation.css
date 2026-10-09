@@ -58,3 +58,6 @@
   .admin-page .admin-agenda-view-picker select{flex:1;min-width:0}
 }
 @media print{.admin-page .admin-agenda-view-picker,.admin-page .admin-agenda-header-actions{display:none!important}}
+
+.admin-page .admin-agenda-notice-link{display:inline-flex;align-items:center;justify-content:center;min-height:40px;padding:9px 12px;border:1px solid #d5e0e5;border-radius:9px;background:#fff;color:#173a5e;font-size:.84rem;font-weight:700;text-decoration:none}
+.admin-page .admin-agenda-notice-link:hover{border-color:#08a6a0;background:#eaf6fb}
