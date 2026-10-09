@@ -1104,6 +1104,10 @@
     renderJourney();
     const items = filteredActivities().filter(item => journey && !journeyDraft && (journey.step >= 4 ? journey.seen.includes(item.id) : item.id === currentJourneyActivity() || journey.seen.includes(item.id)));
     wellnessList.replaceChildren();
+    if (!journey || journeyDraft || !state.storageScope) {
+      if (wellnessContext) wellnessContext.hidden = true;
+      return;
+    }
 
     if (state.need) {
       const labels = {
