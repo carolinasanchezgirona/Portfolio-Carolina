@@ -1253,3 +1253,41 @@ body.clinic-patient-page-open{
     white-space:normal;
   }
 }
+
+
+/* Clinical report editor: dedicated in-page workspace, not a blocking popup. */
+#clinic-patient-form[hidden]{display:none!important}
+.clinic-patient-page .clinic-report-workspace[open]{
+  display:block!important;
+  position:static!important;
+  inset:auto!important;
+  transform:none!important;
+  width:min(1040px,calc(100% - 28px))!important;
+  max-width:1040px!important;
+  max-height:none!important;
+  overflow:visible!important;
+  margin:22px auto 42px!important;
+  border:1px solid #d5dce2!important;
+  border-radius:10px!important;
+  box-shadow:none!important;
+  padding:0!important;
+  background:#fff!important;
+}
+.clinic-report-workspace .clinic-dialog-content{max-height:none!important;overflow:visible!important;padding:clamp(16px,3vw,32px)}
+.clinic-report-workspace .clinic-dialog-heading{align-items:flex-start}
+.clinic-report-workspace .clinic-dialog-heading h2{font-family:Arial,Helvetica,sans-serif;font-size:1.5rem;font-weight:700;color:#253341}
+.clinic-report-workspace .clinic-report-sheet{max-width:none;margin:20px 0;padding:20px;border:1px solid #d9e0e6;border-radius:7px;box-shadow:none;background:#fff}
+.clinic-report-workspace .clinic-report-sheet header{border-bottom:1px solid #d8e0e6}
+.clinic-report-workspace .clinic-report-sheet h1{font-family:Arial,Helvetica,sans-serif;color:#253341;font-size:1.2rem}
+.clinic-report-workspace .clinic-report-sheet label,.clinic-report-workspace #clinic-health-report-sections label{display:grid;gap:7px;margin:13px 0;font-size:.9rem;color:#334350;font-weight:600}
+.clinic-report-workspace .clinic-report-sheet textarea,.clinic-report-workspace #clinic-health-report-sections textarea{min-height:105px;width:100%;border:1px solid #bdcbd3;border-radius:6px;padding:12px;font-family:Arial,Helvetica,sans-serif;font-size:.94rem;font-weight:400;line-height:1.5;background:#fff}
+.clinic-report-workspace .clinic-report-save-state{margin:15px 0 0;color:#476277;font-size:.85rem;font-weight:600}
+.clinic-report-workspace .clinic-dialog-actions{display:flex;flex-wrap:wrap;gap:10px;justify-content:flex-start;position:sticky;bottom:0;background:#fff;padding:14px 0;border-top:1px solid #d9e0e6;z-index:2}
+.clinic-report-workspace .clinic-report-toolbar{display:flex;gap:14px;flex-wrap:wrap;align-items:center}
+body.clinic-report-page-open{overflow:auto!important}
+@media(max-width:620px){
+ .clinic-patient-page .clinic-report-workspace[open]{width:calc(100% - 16px)!important;margin:8px auto 24px!important}
+ .clinic-report-workspace .clinic-dialog-content{padding:16px!important}
+ .clinic-report-workspace .clinic-dialog-actions{position:static}
+ .clinic-report-workspace .clinic-dialog-actions button{width:100%}
+}
