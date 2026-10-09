@@ -1919,6 +1919,18 @@
   els.generateReport.addEventListener("click", () => { try { if (!els.reportId.value && !els.reportContext.value.trim()) generateReportDraft(); downloadHealthReportWord(); } catch (error) { els.reportMessage.textContent = error.message; } });
   els.saveReport.addEventListener("click", () => { if (healthReportSelected() && !els.reportContext.value.trim()) generateReportDraft(); if (healthReportSelected() && !els.reportPurpose.value.trim()) { els.reportMessage.textContent = "Indica la finalidad del informe antes de guardarlo."; return; } persistReport("draft").then(() => { if (healthReportSelected()) els.reportMessage.textContent = "Borrador guardado en la historia clínica. La edición posterior del Word descargado no se sincroniza automáticamente."; }).catch((error) => { els.reportMessage.textContent = error.message; }); });
   els.approveReport.addEventListener("click", () => persistReport("approved").catch((error) => { els.reportMessage.textContent = error.message; }));
+  $("#clinic-upload-revised-word")?.addEventListener("click", () => {
+    if (!currentPatient) return;
+    els.reportDialog.close();
+    els.documentForm.reset();
+    els.documentTitle.value = reportTypeLabel(els.reportType.value) + " · Word revisado";
+    els.documentCategory.value = "other";
+    els.documentDate.value = todayKey();
+    els.documentNotes.value = "Versión Word revisada externamente. Comprobar identificación, contenido clínico y estado de firma antes de su uso.";
+    els.documentMessage.textContent = "Selecciona el archivo .docx revisado. Se guardará en el almacenamiento privado de este paciente.";
+    els.documentDialog.showModal();
+  });
+
   window.ClinicReportPreparePrint = () => { if (!els.reportId.value && !els.reportContext.value.trim()) generateReportDraft(); };
   els.printReport.addEventListener("click", () => { try { window.ClinicReportPreparePrint(); printCurrentReport(); } catch (error) { els.reportMessage.textContent = error.message; } });
   els.newExercise.addEventListener("click", () => openExercise());
