@@ -5,7 +5,7 @@ import EconomyImportTools from "./import-tools";
 import AdminWorkspaceNav from "../workspace-nav";
 
 export const metadata: Metadata = {
-  title: "Gestión económica | Carolina Sánchez Girona",
+  title: "Contabilidad | Carolina Sánchez Girona",
   description: "Panel privado de facturación y gastos de la consulta de Carolina Sánchez Girona.",
   robots: { index: false, follow: false, nocache: true },
 };
@@ -130,7 +130,35 @@ export default function EconomiaPage() {
               <button type="button" aria-pressed="false" data-econ-filter="income">Ingresos</button>
               <button type="button" aria-pressed="false" data-econ-filter="expense">Gastos</button>
             </div>
-            <p className="econ-help">Los ingresos se registran como cobros de facturas, no por emitirlas ni por tener una cita. Para registrar un cobro, abre la factura correspondiente. Los ingresos no vinculados a factura todavía no se pueden registrar en este módulo.</p>
+            <p className="econ-help">Los cobros de las facturas emitidas aquí se registran exclusivamente desde «Facturas». Los ingresos externos deben estar documentados y no pueden duplicar cobros ya registrados. Ninguno de estos registros sustituye una factura exigible.</p>
+            <details id="econ-external-income-register" className="econ-expense-register">
+              <summary>+ Registrar ingreso externo documentado</summary>
+              <div className="econ-expense-register-inner">
+                <form id="econ-external-income-form" className="econ-card">
+                  <h3>Ingreso no registrado en este módulo de facturación</h3>
+                  <p className="econ-help">Únicamente para ingresos de la consulta con justificante propio, como facturas emitidas fuera de este programa. No introduzcas nombres ni datos sanitarios de pacientes.</p>
+                  <div className="econ-form-grid">
+                    <label>Fecha de cobro <input id="econ-external-income-date" type="date" required /></label>
+                    <label>Origen <select id="econ-external-income-source" required>
+                      <option value="external_invoice">Factura emitida fuera de la aplicación</option>
+                      <option value="other_documented">Otro ingreso profesional documentado</option>
+                    </select></label>
+                    <label className="econ-span-full">Concepto administrativo <input id="econ-external-income-concept" maxLength={200} minLength={5} placeholder="Sin datos personales o clínicos" required /></label>
+                    <label>Referencia única del justificante <input id="econ-external-income-reference" maxLength={100} minLength={3} required placeholder="Número de factura externa u operación" /></label>
+                    <label>Medio de pago <select id="econ-external-income-method">
+                      <option value="bank_transfer">Transferencia</option>
+                      <option value="bizum">Bizum</option><option value="card">Tarjeta</option><option value="cash">Efectivo</option><option value="other">Otro</option>
+                    </select></label>
+                    <label>Importe recibido (€) <input id="econ-external-income-amount" type="number" min="0.01" max="100000" step="0.01" required /></label>
+                  </div>
+                  <label className="econ-external-confirm"><input id="econ-external-income-confirm" type="checkbox" required />Confirmo que este cobro corresponde a la consulta, tiene justificante y no está registrado en otra factura o movimiento de Dememoria.</label>
+                  <button id="econ-external-income-save" type="submit" className="econ-button">Guardar ingreso documentado</button>
+                </form>
+                <details className="econ-voided-history"><summary>Historial de ingresos anulados</summary>
+                  <div id="econ-external-voided-list" className="econ-list" />
+                </details>
+              </div>
+            </details>
             <details id="econ-expense-register" className="econ-expense-register">
               <summary>+ Registrar gasto o importar justificantes</summary>
               <div className="econ-expense-register-inner">
@@ -183,7 +211,7 @@ export default function EconomiaPage() {
           </section>
         </div>
       </div>
-      <Script src="/admin-economia.js?v=20261009-movimientos-2" strategy="afterInteractive" />
+      <Script src="/admin-economia.js?v=20261009-ingresos-externos-1" strategy="afterInteractive" />
     </main>
   );
 }
