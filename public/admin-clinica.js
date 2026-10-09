@@ -1550,6 +1550,41 @@
     els.preparation.append(attribution);
   }
 
+  function renderSessionBrief(patient,appointment) {
+    const host = document.querySelector("#clinic-session-brief");
+    if(!host) return;
+    host.replaceChildren();
+    const heading = create("h3","","Antes de comenzar");
+    host.append(heading);
+    const earlier = patientSessions(patient.id).filter(item =>
+      item.status === "approved" && new Date(item.session_date) < new Date(appointment.starts_at)
+    )[0];
+    const goals = patientGoals(patient.id);
+    const assignment = patientExercises(patient.id).find(item =>
+      item.patient_response_status === "shared" || ["sent","assigned","prepared"].includes(item.status)
+    );
+    const scale = scaleMeasurements.filter(item => item.patient_id === patient.id && new Date(item.measured_at) <= new Date(appointment.starts_at))
+      .sort((a,b) => new Date(b.measured_at) - new Date(a.measured_at))[0];
+    const profile = clinicalProfile(patient);
+    const rows = [
+      ["Foco documentado",patient.next_session_focus || earlier?.next_session_note || "No consta un foco previamente registrado"],
+      ["Última sesión aprobada",earlier
+        ? dateShort.format(new Date(earlier.session_date)) + " · " + (earlier.evolution_note || earlier.intervention_note || "Sin síntesis narrativa")
+        : "No constan sesiones anteriores aprobadas"],
+      ["Objetivos activos",goals.length ? goals.slice(0,4).map(item => item.title).join("; ") : "No constan objetivos activos"],
+      ["Trabajo entre sesiones",assignment
+        ? (assignment.title || "Material asignado") + (assignment.patient_response_status === "shared" ? " · respuesta compartida pendiente de revisión" : " · estado: " + assignment.status)
+        : "No constan actividades pendientes"],
+      ["Última medición",scale ? (scale.instrument || "Escala") + (scale.total_score === null || scale.total_score === undefined ? "" : ": " + scale.total_score) + " · " + String(scale.measured_at).slice(0,10) : "Sin mediciones registradas"]
+    ];
+    if(profile.risk_safety) rows.push(["Seguridad: registro previo",profile.risk_safety]);
+    for (const [label,value] of rows) {
+      const row = create("p","clinic-session-brief-row");
+      row.append(create("strong","",label + ": "),document.createTextNode(String(value)));
+      host.append(row);
+    }
+    host.append(create("p","clinic-session-brief-note","Resumen documental para revisar en consulta. No actualiza por sí mismo la valoración clínica."));
+  }
   function openSession(patient, appointment) {
     currentPatient = patient;
     currentAppointment = appointment;
@@ -1571,6 +1606,7 @@
     setEvolutionValues(existing?.evolution_markers || {});
     renderSessionGoals(patient.id, existing?.worked_goal_ids || []);
     els.sessionMessage.textContent = "";
+    renderSessionBrief(patient,appointment);
     const approved = existing?.status === "approved";
     els.sessionState.textContent = approved
       ? `Registro aprobado el ${dateShort.format(new Date(existing.approved_at))}. No puede sobrescribirse.`
