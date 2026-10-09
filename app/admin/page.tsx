@@ -65,6 +65,7 @@ export default function AdminHomePage() {
           </div>
           <nav className="admin-hub-shortcuts" aria-label="Acciones rápidas">
             <a href="/admin/agenda/">Ver las citas</a>
+            <a href="/admin/notificaciones/">Centro de avisos</a>
             <a href="/admin/clinica/?panel=1">Buscar un paciente</a>
             <a href="/admin/economia/?tab=invoices&amp;nuevo=1">Crear un borrador de factura</a>
             <a href="/admin/articulos/">Preparar contenido</a>
