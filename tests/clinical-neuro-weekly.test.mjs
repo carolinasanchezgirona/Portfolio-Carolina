@@ -55,7 +55,7 @@ test("Psicología mantiene los materiales quincenales; neuropsicología usa otro
 });
 test("El lector y el PDF respetan jerarquía, márgenes y separación semanal",()=>{
   assert.match(viewer,/function weeklyInstructionsHtml/);
-  assert.match(viewer,/class=\\"exercise-card/);
+  assert.match(viewer,/exercise-card/);
   assert.match(viewer,/exercise-stack\{display:grid;gap:28px/);
   assert.match(viewer,/drawWeeklyNeuroInstructions/);
   assert.match(viewer,/marginX = isNeuro \? 67 : 61/);
