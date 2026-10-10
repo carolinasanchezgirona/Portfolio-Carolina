@@ -126,8 +126,8 @@
       chosen[(week+variation)%chosen.length];
     if(opts.mode==="individual")return [first];
     return [first,second,{
-      ...first,title:"Transferencia funcional: "+label(domain),
-      task:"En una situación cotidiana segura y simulada, aplica la estrategia practicada en la tarea anterior. Elige una clave o ayuda externa y explica cómo comprobarías el resultado sin presuponer autonomía.",
+      ...first,title:"Aplicar una estrategia en un caso cotidiano: "+label(domain),
+      task:"Imagina que debes recordar una cita, preparar una salida o seguir una pequeña lista. Elige una ayuda que puedas consultar (por ejemplo, una nota o un calendario). Escribe cómo la utilizarías y cómo comprobarías que no falta nada.",
       stimuli:"Identificar la estrategia | Elegir una ayuda | Practicar sin riesgo | Revisar",
       solution:"La solución depende del objetivo funcional acordado; no se presupone información autobiográfica real.",
       visualType:"diagram",visualTitle:"Generalización de la estrategia",format:"funcional",generated:false
