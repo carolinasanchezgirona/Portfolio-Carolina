@@ -446,6 +446,39 @@ export default function AdminClinicaPage() {
               <button id="clinic-neuro-starter-load" className="clinic-secondary" type="button">Cargar propuesta</button>
             </div>
             <p className="clinic-material-helper">Puedes partir de una de las 24 fichas existentes o crear un material nuevo con una colección ampliada de actividades y estímulos originales. Todo borrador requiere revisión clínica.</p></details>
+            <details className="clinic-neuro-catalog" id="clinic-neuro-catalog">
+              <summary>Explorar catálogo clínico · 78 actividades originales graduadas</summary>
+              <p className="clinic-material-helper">Busca por función, estímulos o tipo de tarea. La selección prepara una ficha individual editable, sin asignarla ni enviarla automáticamente. Los criterios de corrección son exclusivamente para revisión profesional.</p>
+              <div className="clinic-neuro-catalog-filters">
+                <label>Buscar actividad
+                  <input id="clinic-neuro-catalog-search" type="search" placeholder="Ej. interferencia, rutas, memoria de trabajo…" autoComplete="off" />
+                </label>
+                <label>Función
+                  <select id="clinic-neuro-catalog-domain" defaultValue=""><option value="">Todas</option></select>
+                </label>
+                <label>Demanda
+                  <select id="clinic-neuro-catalog-level" defaultValue="">
+                    <option value="">Todas</option>
+                    <option value="apoyo_alto">Inicial</option>
+                    <option value="apoyo_moderado">Intermedio</option>
+                    <option value="autonomo">Avanzado</option>
+                  </select>
+                </label>
+                <label>Modalidad
+                  <select id="clinic-neuro-catalog-format" defaultValue="">
+                    <option value="">Todas</option>
+                    <option value="visual">Visual</option>
+                    <option value="verbal">Verbal</option>
+                    <option value="funcional">Funcional</option>
+                    <option value="logico">Razonamiento</option>
+                  </select>
+                </label>
+              </div>
+              <p id="clinic-neuro-catalog-count" role="status" aria-live="polite" className="clinic-material-helper">Cargando catálogo…</p>
+              <div id="clinic-neuro-catalog-results" className="clinic-neuro-catalog-results" />
+              <button id="clinic-neuro-catalog-more" type="button" className="clinic-secondary" hidden>Mostrar más actividades</button>
+              <p className="clinic-material-helper">Biblioteca propia en revisión clínica. No reproduce pruebas psicométricas ni actividades protegidas de terceros.</p>
+            </details>
             <p className="clinic-neuro-week-note"><strong>Plan semanal individualizado.</strong> La cobertura es multicomponente y flexible: no implica completar tareas inadecuadas o mantener una práctica diaria si hay fatiga. Revisa la evolución antes de generar la semana siguiente.</p>
             <div className="clinic-neuro-grid">
               <label>Semana del programa
@@ -698,6 +731,7 @@ export default function AdminClinicaPage() {
       <Script src="/clinic-neuro-graded-recipes.js?v=20261010-1" strategy="afterInteractive" />
       <Script src="/clinic-neuro-variant-factory.js?v=20261010-logic-1" strategy="afterInteractive" />
       <Script src="/clinic-neuro-weekly-composer.js?v=20261010-logic-4" strategy="afterInteractive" />
+      <Script src="/clinic-neuro-catalog-browser.js?v=20261010-catalog-2" strategy="afterInteractive" />
       <Script src="/admin-clinica.js?v=20261010-ux-1" strategy="afterInteractive" />
       <Script src="/clinical-smart-intake.js?v=20261005-smart-state-5" strategy="afterInteractive" />
       <Script src="/clinical-diagnostic-assistant.js?v=20261007-dx-2" strategy="afterInteractive" />
