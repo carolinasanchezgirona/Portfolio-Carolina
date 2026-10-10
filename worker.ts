@@ -1641,7 +1641,7 @@ async function clinicalNeuroVisualImageRequest(request:Request,env:Env):Promise<
 
 const NEURO_MATERIAL_GUIDELINES = [
   "Intervención NEUROPSICOLÓGICA individualizada. Distingue estimulación, entrenamiento, rehabilitación funcional y compensación; no diagnostiques ni atribuyas validez psicométrica a ejercicios caseros.",
-  "Adapta carga y ayudas a capacidades preservadas, escolaridad, idioma, alteraciones sensoriales y motoras, fatiga, participación y autonomía.",
+  Ajusta la demanda (neuro_profile.level) por separado de las ayudas (neuro_profile.support), sin equiparar ninguna al diagnóstico. Adapta carga y ayudas a capacidades preservadas, escolaridad, idioma, alteraciones sensoriales y motoras, fatiga, participación y autonomía.",
   "En orientación temporal, espacial y personal utiliza referentes culturales pertinentes, calendarios, mapas, rutinas y recuerdos confirmados. Nunca inventes biografía, nombres familiares ni acontecimientos personales.",
   "Para cada actividad define objetivo observable, consigna exacta, jerarquía de pistas, solución verificable solo para revisión profesional, adaptaciones y registro clínico. Evita interrogatorios, infantilización y confrontación en demencia.",
   "Produce recursos visuales estructurados cuando aporten utilidad, mediante visual_blocks (máximo 8) con type table, chart, diagram o calendar y campos title y content. No generes imágenes falsas, URL ni referencias a fotos inexistentes.",
@@ -1659,14 +1659,14 @@ function normalizeNeuroVisualBlocks(raw: unknown) {
 }
 
 const MULTIDOMAIN_WEEKLY_NEURO_MATERIAL_GUIDELINES=[
- "Crea un cuaderno de 7 días orientativos con exactamente 14 ejercicios: dos ejercicios distintos de cada Día 1 a Día 7. Titula cada uno 'Ejercicio N: Día D · título (dominio)'.",
+ "Crea un cuaderno de 7 días orientativos con exactamente 14 ejercicios: dos ejercicios distintos de cada Día 1 a Día 7. Encabeza instructions con una única línea 'Semana N', según neuro_profile.week_number. Titula cada uno 'Ejercicio N: Día D · título (dominio)'.",
  "La semana cubre 13 dominios: Orientación temporal, Orientación espacial, Orientación personal, Atención, Memoria, Funciones ejecutivas, Lenguaje, Procesamiento visuoespacial, Praxias y gnosias, Cálculo funcional, Cognición social, Velocidad de procesamiento y Cognición funcional.",
  "La práctica es flexible. No imponer todas las actividades si aparecen fatiga o limitaciones. Seleccionar ficha focal si la cobertura completa no es apropiada.",
  "Usa estímulos originales concretos, ejemplos con solución verificable, y tareas de distintos formatos y modalidades. Alterna rastreo, clasificación, memoria, planificación, reconocimiento, cálculo funcional, lenguaje y escenarios de la vida diaria.",
  "No repitas ejercicios sustituyendo solo palabras ni reproduzcas automáticamente las mismas consignas en semanas consecutivas. Los días son orientativos, no una dosis clínica obligatoria.",
  "Cada actividad debe incluir en líneas independientes: Objetivo:, Materiales:, Preparación:, Pasos:, Ejemplo:, Ayudas:, Adaptación:, Duración y frecuencia:, Qué observar:.",
  "No uses estímulos comerciales protegidos, baremos o puntuaciones diagnósticas. No inventes familiares ni biografía. Usa solo calendarios reales y datos ficticios rotulados como tales.",
- "Máximo ocho recursos visuales originales en visual_blocks de tipo table, chart, diagram o calendar. No cites imágenes que no hayas creado o que no consten en la ficha."
+ "Máximo ocho recursos visuales originales en visual_blocks de tipo table, chart, diagram o calendar, repartidos cuando aporten valor y referidos al ejercicio correcto. En record_prompt incluye dudas, ayudas, fatiga y comentarios sin puntuaciones clínicas. No cites imágenes que no hayas creado o que no consten en la ficha."
 ].join("\n");
 
 const WEEKLY_NEURO_MATERIAL_GUIDELINES=[
