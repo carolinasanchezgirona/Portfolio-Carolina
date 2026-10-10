@@ -8,7 +8,7 @@ const codes=["○","△","□","◇","★","●"];
 const levelIndex={apoyo_alto:0,apoyo_moderado:1,autonomo:2};
 const asTable=(rows)=>rows.map(row=>row.join("|")).join("\n");
 const normalize=n=>Math.abs(Math.trunc(Number(n)||0));
-const seeded=seed=>{let state=(normalize(seed)^0x9e3779b9)>>>0;return ()=>{state=(Math.imul(state,1664525)+1013904223)>>>0;return state;};};
+const seeded=seed=>{let state=(normalize(seed)^0x9e3779b9)>>>0;return ()=>{state^=state<<13;state^=state>>>17;state^=state<<5;return state>>>0;};};
 function create(domain,level,variation) {
   const s=normalize(variation),depth=levelIndex[level]??1;
   const titleSuffix="";
@@ -35,7 +35,7 @@ function create(domain,level,variation) {
       for(let y=0;y<n;y++){
         const row=[String(y+1)];
         for(let x=0;x<n;x++)row.push(x===0&&y===0?"Salida":x===n-1&&y===n-1?destination:
-          x===1&&y===1?"Obras":x===0&&y===n-1?landmark:x===0&&y===1?"Calle "+district:"Calle");
+          x===1&&y===1?"Obras":x===0&&y===n-1?landmark:y===0&&x===n-1?"Calle "+district:"Calle");
         rows.push(row);
       }
       let path=["A1"];
@@ -156,7 +156,7 @@ function create(domain,level,variation) {
         ["Seleccionar un libro","Abrirlo por una página","Colocar un marcador","Cerrar el libro"]
       ];
       const steps=pick(sequences,s).slice(0,depth+2);
-      const question=pick(["Señala el primer paso","Identifica el último paso","Explica por qué se necesita un orden","Distingue acción y resultado","Señala el segundo paso","Explica qué tarjeta pondrías antes","Elige qué paso revisarías al terminar"],Math.floor(s/6));
+      const question=pick(["Señala el primer paso","Identifica el último paso","Explica por qué se necesita un orden","Distingue acción y resultado","Señala el segundo paso","Explica qué tarjeta pondrías antes","Elige qué paso revisarías al terminar","Nombra un material que se utilizaría","Propón una ayuda para recordar los pasos"],Math.floor(s/6));
       const shuffled=steps.slice().reverse();
       title="Ordenar una actividad instrumental";
       task="Estas tarjetas representan una actividad cotidiana ficticia. Ordénalas para que la secuencia resulte coherente; describe cómo usarías los objetos, sin necesidad de ejecutar el gesto.";
