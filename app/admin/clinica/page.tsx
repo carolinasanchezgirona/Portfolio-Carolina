@@ -424,7 +424,8 @@ export default function AdminClinicaPage() {
               <label>¿Qué quieres preparar?
                 <select id="clinic-neuro-mode" defaultValue="weekly">
                   <option value="weekly">Cuaderno completo · 7 días</option>
-                  <option value="single">Ficha por función cognitiva</option>
+                  <option value="single">Ficha por función cognitiva · 3 ejercicios</option>
+                  <option value="individual">Ejercicio individual · 1 actividad</option>
                 </select>
               </label>
               <div className="clinic-neuro-mode-action"><p id="clinic-neuro-mode-note">7 días orientativos, 14 ejercicios distintos y cobertura de 13 dominios.</p><button id="clinic-neuro-generate" className="clinic-primary" type="button">Crear borrador del material</button></div>
