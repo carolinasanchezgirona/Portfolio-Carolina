@@ -534,12 +534,13 @@
     if (status) status.textContent = action === "share" ? "Compartiendo…" : "Guardando…";
     try {
       const record = form.querySelector("[data-response-record]")?.value || "";
+      const neuroAnswers=[...form.closest(".space-patient-material-body").querySelectorAll("[data-neuro-answer]")].map(field=>field.value.slice(0,3000));
       const answers = [...form.querySelectorAll("[data-response-answer]")].map((field) => field.value || "");
       const response = await fetch("/api/patient-portal/response", {
         method: "POST",
         credentials: "include",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ material_id: item.id, action, record, answers })
+        body: JSON.stringify({ material_id: item.id, action, record, answers, ...(neuroAnswers.length ? { neuro_answers: neuroAnswers } : {}) })
       });
       const body = await response.json().catch(() => ({}));
       if (response.status === 401) {
@@ -550,7 +551,7 @@
         return;
       }
       if (!response.ok) throw new Error(body.error || "No se ha podido guardar.");
-      item.patient_response = { version: 1, record, answers };
+      item.patient_response = { version: neuroAnswers.length ? 2 : 1, record, answers, ...(neuroAnswers.length ? { neuro_answers: neuroAnswers } : {}) };
       item.patient_response_status = body.status;
       item.patient_response_updated_at = body.saved_at;
       item.patient_response_shared_at = body.status === "shared" ? body.saved_at : null;
@@ -710,6 +711,95 @@
     }
   }
 
+  // El cuaderno se presenta a quien lo realiza; no se envían al navegador las soluciones.
+  function appendNeuroWorkbook(container, doc, item) {
+    const chunks=String(doc.instructions||"").split(/(?:^|\n)\s*(Ejercicio\s+\d+\s*:[^\n]*)\n/gi);
+    if(chunks.length<3)return false;
+    const saved=Array.isArray(item?.patient_response?.neuro_answers)?item.patient_response.neuro_answers:[];
+    const visuals=Array.isArray(doc.visual_blocks)?doc.visual_blocks:[];
+    const wrap=document.createElement("section");
+    wrap.className="space-neuro-workbook";
+    const intro=document.createElement("p");
+    intro.className="space-neuro-workbook-intro";
+    intro.textContent="Tus actividades de esta semana. Cada ejercicio tiene su material y un espacio para responder. Puedes guardar un borrador y continuar otro día.";
+    wrap.append(intro);
+    function visualInto(target,resource) {
+      if(!resource||!resource.type)return;
+      const panel=document.createElement("div");
+      panel.className="space-neuro-visual";
+      const h=document.createElement("h6");h.textContent=String(resource.title||"Material para observar").replace(/^Ejercicio \d+\s*·\s*/,"");
+      panel.append(h);
+      const values=String(resource.content||"").split(/\r?\n/).map(row=>row.trim()).filter(Boolean).slice(0,13);
+      if(resource.type==="table"||resource.type==="calendar"){
+        let rows=resource.type==="table"?values.map(row=>row.split("|").map(cell=>cell.trim().slice(0,110))):[];
+        if(resource.type==="calendar"){
+          const m=/^(\d{4})-(\d{2})$/.exec(values[0]||"");
+          if(m){
+            const year=Number(m[1]),month=Number(m[2]),days=new Date(Date.UTC(year,month,0)).getUTCDate();
+            const offset=(new Date(Date.UTC(year,month-1,1)).getUTCDay()+6)%7;
+            const events=new Map(values.slice(1).map(x=>x.split("|")).filter(x=>Number.isInteger(Number(x[0]))).map(x=>[Number(x[0]),x.slice(1).join("|")]));
+            rows=[["L","M","X","J","V","S","D"]];
+            for(let n=0;n<Math.ceil((offset+days)/7);n++){
+              rows.push(Array.from({length:7},(_,i)=>{
+                const day=n*7+i-offset+1;
+                return day<1||day>days?"":String(day)+(events.has(day)?" · "+String(events.get(day)).slice(0,25):"");
+              }));
+            }
+          }
+        }
+        const width=rows[0]?.length||0;
+        if(rows.length>=2&&width>=2&&width<=7&&rows.every(row=>row.length===width)){
+          const scrolling=document.createElement("div");scrolling.className="space-neuro-table-scroll";
+          const table=document.createElement("table");
+          rows.forEach((row,i)=>{const tr=document.createElement("tr");row.forEach(value=>{const cell=document.createElement(i===0?"th":"td");cell.textContent=value;tr.append(cell);});table.append(tr);});
+          scrolling.append(table);panel.append(scrolling);
+        }
+      }else if(resource.type==="diagram"){
+        const list=document.createElement("ol");list.className="space-neuro-diagram";
+        values.slice(0,8).forEach(line=>{const li=document.createElement("li");li.textContent=line;list.append(li);});
+        panel.append(list);
+      }else if(resource.type==="chart"){
+        const pairs=values.map(v=>v.split("|")).filter(row=>row.length===2&&Number.isFinite(Number(row[1]))&&Number(row[1])>=0).slice(0,8);
+        const highest=Math.max(1,...pairs.map(p=>Number(p[1])));
+        pairs.forEach(([name,n])=>{const row=document.createElement("div");row.className="space-neuro-chart-row";
+          const caption=document.createElement("span");caption.textContent=name;
+          const track=document.createElement("div");track.className="space-neuro-chart-track";
+          const bar=document.createElement("i");bar.style.width=Math.min(100,Math.round(Number(n)/highest*100))+"%";track.append(bar);
+          const count=document.createElement("strong");count.textContent=n;row.append(caption,track,count);panel.append(row);
+        });
+      }else if(resource.type==="image"&&/^data:image\/(?:png|jpeg);base64,[A-Za-z0-9+/=]+$/.test(String(resource.data||""))&&String(resource.data).length<=650000){
+        const img=document.createElement("img");img.src=resource.data;img.alt=String(resource.alt||"Material visual");img.loading="lazy";img.className="space-neuro-image";panel.append(img);
+      }
+      if(panel.children.length>1)target.append(panel);
+    }
+    for(let i=1;i+1<chunks.length;i+=2){
+      const title=chunks[i],number=Number(/Ejercicio\s+(\d+)/i.exec(title)?.[1]||0);
+      if(!number||number>14)continue;
+      const card=document.createElement("article");
+      card.className="space-neuro-task";
+      const heading=document.createElement("h5");heading.textContent=title.replace(/^Ejercicio\s+\d+\s*:\s*/i,"Ejercicio "+number+" · ");card.append(heading);
+      for(const line of chunks[i+1].split(/\r?\n/)){
+        const pair=/^(Consigna|Material|Cómo responder):\s*(.*)$/i.exec(line.trim());
+        if(!pair)continue;
+        if(pair[1]==="Material")continue;
+        const block=document.createElement("div");block.className="space-neuro-task-instruction";
+        const strong=document.createElement("strong");strong.textContent=pair[1];
+        const p=document.createElement("p");p.textContent=pair[2];block.append(strong,p);card.append(block);
+      }
+      const visual=visuals.find(x=>x?.title?.startsWith("Ejercicio "+number+" ·"));
+      visualInto(card,visual);
+      const answerLabel=document.createElement("label");answerLabel.className="space-neuro-task-answer";
+      const caption=document.createElement("strong");caption.textContent="Tu respuesta · Ejercicio "+number;
+      const textarea=document.createElement("textarea");textarea.rows=4;textarea.maxLength=3000;textarea.dataset.neuroAnswer=String(number-1);textarea.placeholder="Escribe aquí tu respuesta, pasos o dudas…";
+      textarea.value=String(saved[number-1]||"").slice(0,3000);
+      answerLabel.append(caption,textarea);card.append(answerLabel);
+      wrap.append(card);
+    }
+    if(!wrap.querySelector("textarea[data-neuro-answer]"))return false;
+    container.append(wrap);
+    return true;
+  }
+
   function createPatientMaterial(item, index) {
     const documentData = item?.patient_document && typeof item.patient_document === "object" ? item.patient_document : {};
     const details = document.createElement("details");
@@ -734,7 +824,9 @@
     appendPatientSection(body, "Para qué sirve", documentData.introduction);
     appendPatientSection(body, "Comprender lo que te pasa", documentData.why);
     appendPatientSection(body, "Plan de práctica", documentData.frequency);
-    appendPatientSection(body, documentData.material_type === "psychoeducation" ? "Contenido" : "Cómo hacerlo", documentData.instructions);
+    if(documentData.clinical_area!=="neuropsychology"||!appendNeuroWorkbook(body,documentData,item)) {
+      appendPatientSection(body, documentData.material_type === "psychoeducation" ? "Contenido" : "Cómo hacerlo", documentData.instructions);
+    }
     appendMaterialExamples(body, documentData.example);
     appendPatientSection(body, "Qué conviene recordar", documentData.remember);
 
