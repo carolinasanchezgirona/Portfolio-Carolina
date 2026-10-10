@@ -34,3 +34,25 @@
 .clinic-exercise-dialog .clinic-material-details-grid{gap:20px;}
 .clinic-exercise-dialog .clinic-visual-block{padding:18px;gap:15px;}
 @media(max-width:650px){.clinic-exercise-dialog .clinic-patient-document{padding:17px;margin:13px 0;}}
+
+/* Biblioteca neuropsicológica: edición espaciosa, jerarquía clara y contraste AA orientativo. */
+.clinic-neuro-settings {padding:22px 24px;margin:20px 0 26px;}
+.clinic-neuro-settings legend {font-weight:750;letter-spacing:.01em;padding:0 10px;}
+.clinic-neuro-settings .clinic-material-helper {max-width:72ch;line-height:1.65;margin:12px 0;}
+.clinic-neuro-grid {column-gap:20px;row-gap:17px;margin:20px 0;}
+.clinic-neuro-grid label {line-height:1.5;font-size:.95rem;}
+.clinic-neuro-grid select,.clinic-neuro-grid input {min-height:44px;}
+.clinic-neuro-library-picker {padding:15px 0 12px;border-bottom:1px solid #d6e6ee;}
+.clinic-neuro-visual-section {padding:22px 24px;margin-top:25px;}
+.clinic-visual-block-list {gap:18px;}
+.clinic-visual-block {padding:20px 22px;gap:16px;margin:0;box-shadow:0 3px 18px rgba(23,58,94,.035);}
+.clinic-visual-block textarea {min-height:120px;line-height:1.7;resize:vertical;}
+.clinic-visual-block-top strong {font-size:1rem;line-height:1.45;}
+.clinic-visual-preview-image {max-height:320px;background:#fff;padding:10px;object-fit:contain;}
+.clinic-neuro-week-note {margin:22px 0;padding:18px 20px;line-height:1.75;}
+@media(max-width:650px){
+ .clinic-neuro-settings,.clinic-neuro-visual-section {padding:17px 16px;}
+ .clinic-neuro-grid {gap:16px;}
+ .clinic-visual-block {padding:18px 16px;}
+ .clinic-neuro-week-note {padding:15px 16px;}
+}
