@@ -63,6 +63,7 @@ jobs:
           mkdir -p backup/database
           mkdir -p backup/storage/article-images
           mkdir -p backup/storage/clinical-documents
+          mkdir -p backup/storage/clinical-neuro-handwriting
           mkdir -p backup/storage/resource-files
           mkdir -p backup/storage/resource-covers
           mkdir -p backup/storage/instagram-assets
@@ -108,14 +109,14 @@ jobs:
             "supabasesource:clinical-documents" \
             "backup/storage/clinical-documents"
 
-          for BUCKET in resource-files resource-covers instagram-assets; do
+          for BUCKET in resource-files resource-covers instagram-assets clinical-neuro-handwriting; do
             echo "Descargando bucket ${BUCKET}..."
             rclone copy "supabasesource:${BUCKET}" "backup/storage/${BUCKET}"
           done
 
           echo "Supabase Storage descargado correctamente."
 
-      - name: Contrastar los cinco buckets con Storage de origen
+      - name: Contrastar los seis buckets con Storage de origen
         if: steps.horario.outputs.should_run == 'true'
         env:
           RCLONE_CONFIG_SUPABASESOURCE_TYPE: s3
@@ -126,7 +127,7 @@ jobs:
           RCLONE_CONFIG_SUPABASESOURCE_REGION: ${{ vars.CLINICAL_BACKUP_SUPABASE_S3_REGION }}
           RCLONE_CONFIG_SUPABASESOURCE_FORCE_PATH_STYLE: "true"
         run: |
-          for BUCKET in article-images clinical-documents resource-files resource-covers instagram-assets; do
+          for BUCKET in article-images clinical-documents resource-files resource-covers instagram-assets clinical-neuro-handwriting; do
             # Never emit clinical filenames to workflow logs.
             if rclone check "supabasesource:${BUCKET}" "backup/storage/${BUCKET}" --one-way --size-only > /dev/null 2>&1; then
               echo "Verificación correcta del bucket ${BUCKET}."
@@ -142,6 +143,7 @@ jobs:
           test -s backup/database/supabase-db.dump
           test -d backup/storage/article-images
           test -d backup/storage/clinical-documents
+          test -d backup/storage/clinical-neuro-handwriting
           test -d backup/storage/resource-files
           test -d backup/storage/resource-covers
           test -d backup/storage/instagram-assets
