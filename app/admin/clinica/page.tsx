@@ -429,7 +429,7 @@ export default function AdminClinicaPage() {
               </label>
               <div className="clinic-neuro-mode-action"><p id="clinic-neuro-mode-note">7 días orientativos, 14 ejercicios distintos y cobertura de 13 dominios.</p><button id="clinic-neuro-generate" className="clinic-primary" type="button">Crear borrador del material</button></div>
             </div>
-            <div className="clinic-neuro-library-picker">
+            <details className="clinic-neuro-starter-advanced"><summary>Usar una ficha de la biblioteca neuropsicológica</summary><div className="clinic-neuro-library-picker">
               <label>Biblioteca inicial de actividades (borradores pendientes de revisión clínica)
                 <select id="clinic-neuro-starter" defaultValue="">
                   <option value="">Elegir actividad neuropsicológica...</option>
@@ -437,7 +437,7 @@ export default function AdminClinicaPage() {
               </label>
               <button id="clinic-neuro-starter-load" className="clinic-secondary" type="button">Cargar propuesta</button>
             </div>
-            <p className="clinic-material-helper">Puedes partir de una de las 24 fichas existentes o crear un material nuevo con una colección ampliada de actividades y estímulos originales. Todo borrador requiere revisión clínica.</p>
+            <p className="clinic-material-helper">Puedes partir de una de las 24 fichas existentes o crear un material nuevo con una colección ampliada de actividades y estímulos originales. Todo borrador requiere revisión clínica.</p></details>
             <p className="clinic-neuro-week-note"><strong>Plan semanal individualizado.</strong> La cobertura es multicomponente y flexible: no implica completar tareas inadecuadas o mantener una práctica diaria si hay fatiga. Revisa la evolución antes de generar la semana siguiente.</p>
             <div className="clinic-neuro-grid">
               <label>Semana del programa
