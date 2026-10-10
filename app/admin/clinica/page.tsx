@@ -689,7 +689,8 @@ export default function AdminClinicaPage() {
 
       <Script src="/clinic-neuro-materials.js?v=20261010-ux-1" strategy="afterInteractive" />
       <Script src="/clinic-neuro-graded-recipes.js?v=20261010-1" strategy="afterInteractive" />
-      <Script src="/clinic-neuro-weekly-composer.js?v=20261010-graded-2" strategy="afterInteractive" />
+      <Script src="/clinic-neuro-variant-factory.js?v=20261010-logic-1" strategy="afterInteractive" />
+      <Script src="/clinic-neuro-weekly-composer.js?v=20261010-logic-3" strategy="afterInteractive" />
       <Script src="/admin-clinica.js?v=20261010-ux-1" strategy="afterInteractive" />
       <Script src="/clinical-smart-intake.js?v=20261005-smart-state-5" strategy="afterInteractive" />
       <Script src="/clinical-diagnostic-assistant.js?v=20261007-dx-2" strategy="afterInteractive" />
