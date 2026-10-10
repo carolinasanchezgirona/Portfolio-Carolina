@@ -144,3 +144,32 @@ details.clinic-neuro-visual-section[open]>summary{margin-bottom:16px}
   .clinic-material-review-buttons{flex-direction:column}
   .clinic-material-review-buttons button{width:100%}
 }
+
+
+/* Editor en formato espacio de trabajo, sin modal estrecho. */
+.clinic-exercise-dialog[open]{
+  width:min(1140px,calc(100vw - 24px))!important;
+  max-width:1140px!important;
+  max-height:94dvh!important;
+  height:auto;
+  padding:0!important;
+  overflow:auto;
+  border-radius:14px!important;
+  background:#fff;
+}
+.clinic-exercise-dialog .clinic-dialog-content{
+  padding:clamp(18px,3vw,36px)!important;
+  max-height:none!important;
+  overflow:visible!important;
+}
+.clinic-exercise-dialog .clinic-dialog-heading{
+  position:sticky;top:0;z-index:5;background:white;
+  padding:12px 0 16px;border-bottom:1px solid #e2eaf0;margin-bottom:20px;
+}
+.clinic-exercise-dialog .clinic-dialog-heading h2{font-size:clamp(1.3rem,3vw,1.75rem)}
+.clinic-exercise-dialog .clinic-dialog-heading .clinic-muted{font-size:.85rem;line-height:1.5;margin-top:6px}
+@media(max-width:650px){
+  .clinic-exercise-dialog[open]{width:100vw!important;max-width:100vw!important;max-height:100dvh!important;height:100dvh!important;border-radius:0!important}
+  .clinic-exercise-dialog .clinic-dialog-content{padding:16px!important}
+  .clinic-exercise-dialog .clinic-dialog-heading{top:0}
+}
