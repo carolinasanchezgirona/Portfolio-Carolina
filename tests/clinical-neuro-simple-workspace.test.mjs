@@ -45,7 +45,7 @@ test("la prioridad seleccionada obtiene una segunda actividad sin perder el rest
   assert.equal(recipes.filter(x=>x.domain===domain).length,2,domain);
   assert.equal(doc.neuro_profile.priority_domain,domain);
   assert.equal(doc.neuro_profile.covered_domains.length,13);
-  assert.equal(doc.visual_blocks.length,8);
+  assert.equal(doc.visual_blocks.length,14);
  }
 });
 test("equilibrado no privilegia una función fija y mantiene 7 jornadas con 14 tareas",()=>{

@@ -698,8 +698,9 @@
     const source = item.patient_response && typeof item.patient_response === "object" ? item.patient_response : {};
     const record = String(source.record || "").trim();
     const answers = Array.isArray(source.answers) ? source.answers.map((value) => String(value || "").trim()) : [];
-    if (!record && !answers.some(Boolean)) return null;
-    return { record, answers };
+    const neuro_answers = Array.isArray(source.neuro_answers) ? source.neuro_answers.slice(0,14).map(value => String(value || "").trim()) : [];
+    if (!record && !answers.some(Boolean) && !neuro_answers.some(Boolean)) return null;
+    return { record, answers, neuro_answers };
   }
 
   function previewFileName(title) {
@@ -845,6 +846,12 @@
           if (!answer) return;
           const block = create("article");
           block.append(create("strong", "", questions[index] || `Respuesta ${index + 1}`), create("p", "", answer));
+          body.append(block);
+        });
+        patientResponse.neuro_answers.forEach((answer, index) => {
+          if (!answer) return;
+          const block = create("article");
+          block.append(create("strong", "", "Ejercicio " + (index + 1)), create("p", "", answer));
           body.append(block);
         });
         if (item.patient_response_shared_at) {
@@ -2427,7 +2434,8 @@
     }
     els.exerciseRationale.value = "Borrador inicial " + (draft.code || "") +
       ". Revisión profesional: " + (draft.caution || "Comprobar adecuación y estímulos.") +
-      " Registro: " + (draft.record || "");
+      " Registro: " + (draft.record || "") +
+      (draft.professional_answer_key ? "\n\nUSO PROFESIONAL EXCLUSIVO · SOLUCIONES Y CRITERIOS (NO EN EL CUADERNO DEL PACIENTE)\n" + String(draft.professional_answer_key).slice(0,16000) : "");
     if (els.materialSearch) els.materialSearch.value = "";
     els.exerciseMessage.textContent = "Propuesta cargada. Antes de enviar revisa materiales, fechas, consignas, nivel de ayuda y el objetivo funcional. No está validada ni prescrita.";
   });

@@ -665,6 +665,17 @@ async function handlePatientPortalResponse(request: Request, env: Env): Promise<
   const answers = Array.from({ length: questions.length }, (_, index) =>
     typeof answersInput[index] === "string" ? String(answersInput[index]).slice(0, 6000) : ""
   );
+  // Solo se aceptan respuestas por ejercicio si el material prescrito contiene ese cuaderno.
+  const digitalTaskCount=document.clinical_area==="neuropsychology"
+    ? Math.min(14,(String(document.instructions||"").match(/(?:^|\n)\s*Ejercicio\s+\d+\s*:/gi)||[]).length)
+    : 0;
+  const rawNeuroAnswers=body.neuro_answers;
+  const suppliedNeuro=rawNeuroAnswers!==undefined;
+  if(suppliedNeuro&&(!digitalTaskCount||!Array.isArray(rawNeuroAnswers)||rawNeuroAnswers.length!==digitalTaskCount||
+    rawNeuroAnswers.some(value=>typeof value!=="string"||value.length>3000))){
+    return patientPortalJson({error:"Revisa el número o la longitud de las respuestas del cuaderno."},400);
+  }
+  const neuroAnswers=suppliedNeuro?(rawNeuroAnswers as string[]):null;
   const savedAt = new Date().toISOString();
 
   const update = await fetch(
@@ -675,7 +686,7 @@ async function handlePatientPortalResponse(request: Request, env: Env): Promise<
       method: "PATCH",
       headers: serviceHeaders(env, { Prefer: "return=representation" }),
       body: JSON.stringify({
-        patient_response: { version: 1, record, answers },
+        patient_response: { version: neuroAnswers ? 2 : 1, record, answers, ...(neuroAnswers ? { neuro_answers: neuroAnswers } : {}) },
         patient_response_status: action === "share" ? "shared" : "draft",
         patient_response_updated_at: savedAt,
         patient_response_shared_at: action === "share" ? savedAt : null,
@@ -1643,8 +1654,8 @@ const NEURO_MATERIAL_GUIDELINES = [
   "Intervención NEUROPSICOLÓGICA individualizada. Distingue estimulación, entrenamiento, rehabilitación funcional y compensación; no diagnostiques ni atribuyas validez psicométrica a ejercicios caseros.",
   "Ajusta la demanda (neuro_profile.level) por separado de las ayudas (neuro_profile.support), sin equiparar ninguna al diagnóstico. Adapta carga y ayudas a capacidades preservadas, escolaridad, idioma, alteraciones sensoriales y motoras, fatiga, participación y autonomía.",
   "En orientación temporal, espacial y personal utiliza referentes culturales pertinentes, calendarios, mapas, rutinas y recuerdos confirmados. Nunca inventes biografía, nombres familiares ni acontecimientos personales.",
-  "Para cada actividad define objetivo observable, consigna exacta, jerarquía de pistas, solución verificable solo para revisión profesional, adaptaciones y registro clínico. Evita interrogatorios, infantilización y confrontación en demencia.",
-  "Produce recursos visuales estructurados cuando aporten utilidad, mediante visual_blocks (máximo 8) con type table, chart, diagram o calendar y campos title y content. No generes imágenes falsas, URL ni referencias a fotos inexistentes.",
+  "Comprueba internamente objetivo, consigna, estímulos y solución antes de generar el cuaderno. En el documento destinado al paciente NO muestres soluciones, pautas de corrección, jerarquía de pistas, puntuación ni registro clínico.",
+  "Produce recursos visuales estructurados cuando aporten utilidad, mediante visual_blocks (máximo 14) con type table, chart, diagram o calendar y campos title y content. No generes imágenes falsas, URL ni referencias a fotos inexistentes.",
   "Una tabla se codifica con encabezados en primera línea y filas separadas por salto de línea; columnas separadas por |. Un diagrama se codifica con un paso por línea. Un calendario comienza por AAAA-MM y permite líneas día | actividad.",
   "Un gráfico se codifica con pares etiqueta | valor numérico, solo si los datos vienen dados expresamente o se identifican como EJEMPLO FICTICIO. No inventes puntuaciones, normas, evidencia ni evolución del paciente.",
   "Aplicar los principios editoriales de fichas neuropsicológicas originales: variedad visual, estímulos efectivamente imprimibles, jerarquía clara, muestras de respuesta, ayudas graduadas, espacio para practicar y transferencia funcional explícita.",
@@ -1659,51 +1670,44 @@ const NEURO_MATERIAL_GUIDELINES = [
 ].join("\n");
 function normalizeNeuroVisualBlocks(raw: unknown) {
   if (!Array.isArray(raw)) return [];
-  return raw.slice(0, 8).map((x) => {
+  return raw.slice(0, 14).map((x) => {
     const row = x && typeof x === "object" && !Array.isArray(x) ? x as Record<string, unknown> : {};
     return { type: editorialText(row.type, 32), title: editorialText(row.title, 140), content: editorialText(row.content, 2500) };
   }).filter(b => ["table","chart","diagram","calendar"].includes(b.type) && b.title && b.content);
 }
 
+const PATIENT_NEURO_WORKBOOK_FIELDS=[
+ "Consigna:", "Material:", "Cómo responder:", "Tu respuesta:", "Dudas o notas:"
+];
+const PATIENT_NEURO_WORKBOOK_GUIDELINES=[
+ "IMPORTANTE: El documento se entrega DIRECTAMENTE AL PACIENTE ADULTO. Escribe a esa persona (tú) con frases concretas, breves, respetuosas y no infantilizantes. No es un protocolo para la profesional.",
+ "Cada ejercicio lleva cinco rótulos exactos en líneas independientes: Consigna:, Material:, Cómo responder:, Tu respuesta:, Dudas o notas:. Al final de Tu respuesta: y Dudas o notas: deja la línea disponible para escribir. Nunca insertes soluciones.",
+ "No uses en el material que ve el paciente: Objetivo clínico:, Preparación:, Qué observar:, Ayudas graduadas:, Adaptación:, Demanda y modalidad:, intensidades de apoyo, baremos, criterios de corrección ni tablas de seguimiento.",
+ "Cada material visual de visual_blocks debe titularse 'Ejercicio N · nombre del material', correspondiendo exactamente al ejercicio N y contener los estímulos que la persona necesita para resolver la consigna. No remitas a estímulos inexistentes.",
+ "Nunca incluyas la clave de soluciones en patient_document, introduction, why, instructions, example, record_prompt, remember ni neuro_profile. Verifica internamente la lógica y retira tareas sin solución fiable.",
+ "Introduce instrucciones de descanso, posibilidad de respuesta oral o escrita y observaciones sencillas que la persona desee compartir. Mantén el ritmo flexible y no conviertas el cuaderno en un examen."
+].join("\n");
+
 const MULTIDOMAIN_WEEKLY_NEURO_MATERIAL_GUIDELINES=[
- "Crea un cuaderno de 7 días orientativos con exactamente 14 ejercicios: dos ejercicios distintos de cada Día 1 a Día 7. Encabeza instructions con una única línea 'Semana N', según neuro_profile.week_number. Titula cada uno 'Ejercicio N: Día D · título (dominio)'.",
- "La semana cubre 13 dominios: Orientación temporal, Orientación espacial, Orientación personal, Atención, Memoria, Funciones ejecutivas, Lenguaje, Procesamiento visuoespacial, Praxias y gnosias, Cálculo funcional, Cognición social, Velocidad de procesamiento y Cognición funcional.",
- "La práctica es flexible. No imponer todas las actividades si aparecen fatiga o limitaciones. Seleccionar ficha focal si la cobertura completa no es apropiada.",
- "Usa estímulos originales concretos, ejemplos con solución verificable, y tareas de distintos formatos y modalidades. Alterna rastreo, clasificación, memoria, planificación, reconocimiento, cálculo funcional, lenguaje y escenarios de la vida diaria.",
- "No repitas ejercicios sustituyendo solo palabras ni reproduzcas automáticamente las mismas consignas en semanas consecutivas. Los días son orientativos, no una dosis clínica obligatoria.",
- "Cuando neuro_profile.activity_type sea 'generador', diseña estímulos inéditos parametrizables; si es 'ficha', mantén estímulos cerrados; si es 'mixto', combina ambos. Ninguna modalidad implica juegos interactivos ya disponibles. No fuerces una tarea irrelevante solo por cubrir un dominio.",
- "En ejercicios avanzados evita consignas de uno o dos pasos obvios: incluye planificación con restricciones compatibles, interferencia, flexibilidad o memoria de trabajo donde proceda. Comprueba mentalmente la solución y los distractores antes de devolver el cuaderno.",
- "Cada actividad debe incluir en líneas independientes: Objetivo:, Materiales:, Preparación:, Pasos:, Ejemplo:, Ayudas:, Adaptación:, Duración y frecuencia:, Qué observar:.",
- "No uses estímulos comerciales protegidos, baremos o puntuaciones diagnósticas. No inventes familiares ni biografía. Usa solo calendarios reales y datos ficticios rotulados como tales.",
- "Máximo ocho recursos visuales originales en visual_blocks de tipo table, chart, diagram o calendar, repartidos cuando aporten valor y referidos al ejercicio correcto. En record_prompt incluye dudas, ayudas, fatiga y comentarios sin puntuaciones clínicas. No cites imágenes que no hayas creado o que no consten en la ficha."
+ "Crea un cuaderno de 7 días orientativos con exactamente 14 ejercicios diferentes, dos por día, encabezados por 'Semana N' seguido de 'Ejercicio N: Día D · título'.",
+ "Reparte la práctica entre los 13 dominios: Orientación temporal, Orientación espacial, Orientación personal, Atención, Memoria, Funciones ejecutivas, Lenguaje, Procesamiento visuoespacial, Praxias y gnosias, Cálculo funcional, Cognición social, Velocidad de procesamiento y Cognición funcional. No hace falta imprimir todas estas etiquetas clínicas en el cuaderno.",
+ "Alterna operaciones diferentes: búsqueda visual, memoria de trabajo, planificación, uso de calendarios, lenguaje, cálculo, secuencias y tareas de orientación. La variación debe ser cognitiva, no cambiar solo números o nombres.",
+ "Los ejemplos deben ser originales y no revelar las respuestas del ejercicio. Adapta la exigencia al nivel elegido sin llamar a un nivel 'grave', 'infantil' o 'diagnóstico'.",
+ "Añade material concreto, imprimible, con visual_blocks de hasta 14 recursos y un recurso por ejercicio siempre que se cite en Material. No uses imágenes hipotéticas ni datos personales inventados.",
+ PATIENT_NEURO_WORKBOOK_GUIDELINES
 ].join("\n");
 
 const WEEKLY_NEURO_MATERIAL_GUIDELINES=[
- "En NEUROPSICOLOGÍA preparar UNA SOLA SEMANA de intervención (7 días). Encabeza instructions con 'Semana N', donde N es neuro_profile.week_number. Jamás incluyas Semana N+1 dentro del mismo cuaderno.",
- "En modo 'single' proponer TRES ejercicios diferentes, dos del dominio elegido y uno de transferencia funcional. No imponer práctica diaria ni actividades superiores a la tolerancia.",
- "Separar ejercicios por una línea en blanco. Cada uno comienza 'Ejercicio 1: título' y contiene en líneas independientes con rótulo literal: Objetivo:, Materiales:, Preparación:, Pasos:, Ejemplo:, Ayudas:, Adaptación:, Duración y frecuencia:, Qué observar:.",
- "Los pasos deben especificar estímulos, consigna al paciente, cómo practicar, cuándo ayudar y cómo concluir. Evita frases genéricas y relleno repetitivo. Incluye un ejemplo resuelto distinto de los ítems evaluados, sin revelar las respuestas de la actividad. Ofrece ayudas graduadas.",
- "Vincula orientación temporal, espacial o personal y otras funciones a tareas significativas. Usa calendarios, tablas, fotografías, gráficos o esquemas solo cuando sean necesarios; nunca inventes biografía, cifras clínicas ni pruebas estandarizadas.",
- "En record_prompt incluir registro de aciertos y errores cualitativos, cantidad y tipo de ayudas, participación, fatiga, transferencia y dudas. En el cierre explicar qué revisar con la profesional para ajustar la semana SIGUIENTE, sin desarrollar esa semana.",
- "Priorizar VARIEDAD REAL de tareas y soportes: rastreo y cancelación visual, asociación, clasificación, secuenciación, evocación o reconocimiento, copia o discriminación espacial, calendarios y estrategias de la vida diaria según objetivo. No generar cuatro versiones del mismo ejercicio ni rellenar texto repetitivo.",
- "Si la demanda es avanzada, especifica variables cognoscitivas efectivas (interferencia, cambio de criterio, actualización, distractores plausibles, planificación multietapa); comprueba exhaustivamente las reglas y evita pseudocomplejidad por texto extenso.",
- "Separa fichas de estímulos cerrados de generadores reproducibles con estímulos variables. Nunca prometas juego digital o autocorrección si se va a entregar un PDF o una ficha editable.",
- "Para cada ejercicio definir función principal y demandas secundarias (visión, lenguaje, motricidad y comprensión), la regla precisa, estímulos concretos, ejemplo resuelto comprobable y criterio observable de logro sin crear baremos.",
- "Modificar UNA dimensión de dificultad cada vez: número de estímulos, similitud de distractores, longitud de la consigna, demora o ayudas. El nivel de apoyo no se equipara automáticamente a severidad diagnóstica; no usar cronometría por defecto.",
- "Usar neuro_profile.response_mode (oral, escrita, señalamiento o flexible) y neuro_profile.accessibility si existen para adaptar consignas, tamaño del material, modalidad de respuesta y apoyos.",
- "Crear recursos visuales originales con visual_blocks cuando la tarea lo requiera: matriz en tabla de 2 a 6 columnas, secuencias en diagramas, calendario real verificado y gráficos solo con datos aportados o rotulados como ejemplos ficticios. No citar fotografías que no se hayan adjuntado o generado.",
- "Los recursos visuales deben contener estímulos utilizables, no solo una descripción de lo que habría que construir después. Cuidar contraste, espacios para respuestas y accesibilidad para personas mayores; evitar infantilización.",
- "Ofrecer pistas graduadas, descansos y una actividad de transferencia funcional opcional y segura; no asumir recuerdos, domicilio, fechas ni relaciones personales reales.",
- "Separar instrucciones destinadas al paciente y observaciones técnicas de la profesional. En texto visible al paciente, evitar diagnósticos, resultados inventados o indicaciones de registrar parámetros clínicos técnicos.",
- "Mantener párrafos cortos, objetivos realistas y carga flexible. El material es un borrador sujeto a revisión clínica."
+ "Prepara UNA SOLA SEMANA con exactamente TRES ejercicios: dos de la función elegida y otro sobre una aplicación cotidiana segura. Encabeza 'Semana N' y cada actividad 'Ejercicio N: título'.",
+ "Cada ejercicio tiene una consigna que el paciente pueda realizar y estímulos precisos. Incluye recursos visuales en visual_blocks junto al ejercicio cuando sean necesarios.",
+ "Nunca incluyas soluciones en las fichas destinadas al paciente, ni instrucciones para la profesional dentro de las consignas.",
+ PATIENT_NEURO_WORKBOOK_GUIDELINES
 ].join("\n");
 
 const INDIVIDUAL_NEURO_MATERIAL_GUIDELINES=[
- "En modo neuro_profile.mode='individual' genera EXACTAMENTE UN ejercicio desarrollado de la función indicada. Encabeza instructions con 'Semana N' y después 'Ejercicio 1: título'.",
- "Incluye los campos Objetivo:, Materiales:, Preparación:, Pasos:, Ejemplo:, Ayudas:, Adaptación:, Duración y frecuencia:, Qué observar:, cada uno con un contenido específico verificable.",
- "Describe estímulos imprimibles y una consigna exacta; los ejemplos han de usar estímulos distintos y no mostrar la solución de la tarea. No incluyas pruebas estandarizadas ni puntuaciones diagnósticas.",
- "Adapta el esfuerzo al nivel solicitado y los apoyos de forma independiente; se permiten respuestas orales, señaladas o escritas, según el perfil.",
- "Anota en record_prompt un espacio para comentarios y dudas. No generes apartados 'Ejercicio 2' o 'Semana 2'."
+ "Genera EXACTAMENTE UN ejercicio desarrollado. Encabeza instructions con 'Semana N' seguido de 'Ejercicio 1: título'.",
+ "Incluye material visual imprimible y la consigna exacta, sin soluciones en el texto del paciente.",
+ PATIENT_NEURO_WORKBOOK_GUIDELINES
 ].join("\n");
 
 function completeWeeklyNeuroMaterial(doc:{instructions:string;record_prompt:string;frequency:string;neuro_profile?:Record<string,unknown>|null}):boolean{
@@ -1711,17 +1715,15 @@ function completeWeeklyNeuroMaterial(doc:{instructions:string;record_prompt:stri
  const weeks=value.match(/(?:^|\n)\s*Semana\s+\d+\b/gi)||[];
  const exercises=value.split(/(?:^|\n)\s*Ejercicio\s+\d+\s*:/gi).slice(1);
  const week=Math.max(1,Math.min(52,Number(doc.neuro_profile?.week_number)||1));
- const labels=["Objetivo:","Materiales:","Preparación:","Pasos:","Ejemplo:","Ayudas:","Adaptación:","Duración y frecuencia:","Qué observar:"];
  const mode=doc.neuro_profile?.mode;
- const multidomain=mode==="weekly";
- const individual=mode==="individual";
- const countOk=multidomain?exercises.length===14:individual?exercises.length===1:exercises.length>=3&&exercises.length<=4;
+ const multidomain=mode==="weekly",individual=mode==="individual";
+ const countOk=multidomain?exercises.length===14:individual?exercises.length===1:exercises.length===3;
  const daysOk=!multidomain||Array.from({length:7},(_,i)=>(value.match(new RegExp("Día "+(i+1)+"\\s*[·:]","g"))||[]).length===2).every(Boolean);
- const domains=["Orientación temporal","Orientación espacial","Orientación personal","Atención","Memoria","Funciones ejecutivas","Lenguaje","Procesamiento visuoespacial","Praxias y gnosias","Cálculo funcional","Cognición social","Velocidad de procesamiento","Cognición funcional"];
- const domainsOk=!multidomain||domains.every(d=>value.toLowerCase().includes(d.toLowerCase()));
+ const labels=PATIENT_NEURO_WORKBOOK_FIELDS;
+ const patientOnly=exercises.every(part=>part.trim().length>=110&&labels.every(label=>part.toLowerCase().includes(label.toLowerCase()))&&
+   !/(?:^|\n)\s*(?:Qué observar|Ayudas|Adaptación|Demanda y modalidad|Criterio de corrección|Solución):/im.test(part));
  return weeks.length===1&&new RegExp("(?:^|\\n)\\s*Semana\\s+"+week+"\\b","i").test(value)
-   &&countOk&&daysOk&&domainsOk
-   &&exercises.every(part=>part.trim().length>=350&&labels.every(label=>part.toLowerCase().includes(label.toLowerCase())))
+   &&countOk&&daysOk&&patientOnly
    &&/dudas/i.test(doc.record_prompt||"")&&Boolean(doc.frequency);
 }
 
