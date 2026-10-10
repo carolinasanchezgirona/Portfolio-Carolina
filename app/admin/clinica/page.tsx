@@ -428,6 +428,13 @@ export default function AdminClinicaPage() {
                   <option value="individual">Ejercicio individual · 1 actividad</option>
                 </select>
               </label>
+              <label>Tipo de actividad
+                <select id="clinic-neuro-activity-type" defaultValue="mixto">
+                  <option value="mixto">Combinado · fichas y variantes</option>
+                  <option value="ficha">Ficha · estímulos definidos y editables</option>
+                  <option value="generador">Generador · nuevos estímulos paramétricos</option>
+                </select>
+              </label>
               <div className="clinic-neuro-mode-action"><p id="clinic-neuro-mode-note">7 días orientativos, 14 ejercicios distintos y cobertura de 13 dominios.</p><button id="clinic-neuro-generate" className="clinic-primary" type="button">Crear borrador del material</button></div>
             </div>
             <details className="clinic-neuro-starter-advanced"><summary>Usar una ficha de la biblioteca neuropsicológica</summary><div className="clinic-neuro-library-picker">
@@ -515,7 +522,7 @@ export default function AdminClinicaPage() {
             <label>Objetivo funcional
               <textarea id="clinic-neuro-functional-goal" rows={2} placeholder="Conducta observable o aplicación cotidiana..." />
             </label>
-            <p className="clinic-material-helper">Evita tareas infantilizantes y el uso de ítems protegidos de pruebas estandarizadas. No interpreta resultados como puntuaciones diagnósticas.</p>
+            <p className="clinic-material-helper">Selecciona explícitamente la demanda antes de crear la ficha. Las fichas contienen estímulos cerrados; los generadores producen variantes originales. La modalidad interactiva con juegos y autocorrección todavía no está disponible. Evita tareas infantilizantes y pruebas estandarizadas protegidas: estos ejercicios no son puntuaciones diagnósticas.</p>
           </fieldset>
           <label className="clinic-material-context">Objetivo o contexto para personalizar <span>(sin nombres ni datos identificativos, solo profesional)</span><textarea id="clinic-exercise-rationale" rows={2} placeholder="¿Qué se busca trabajar? ¿Qué apoyos, límites o preferencias hay que contemplar?" /></label>
           <div className="clinic-material-picker">
@@ -690,7 +697,7 @@ export default function AdminClinicaPage() {
       <Script src="/clinic-neuro-materials.js?v=20261010-ux-1" strategy="afterInteractive" />
       <Script src="/clinic-neuro-graded-recipes.js?v=20261010-1" strategy="afterInteractive" />
       <Script src="/clinic-neuro-variant-factory.js?v=20261010-logic-1" strategy="afterInteractive" />
-      <Script src="/clinic-neuro-weekly-composer.js?v=20261010-logic-3" strategy="afterInteractive" />
+      <Script src="/clinic-neuro-weekly-composer.js?v=20261010-logic-4" strategy="afterInteractive" />
       <Script src="/admin-clinica.js?v=20261010-ux-1" strategy="afterInteractive" />
       <Script src="/clinical-smart-intake.js?v=20261005-smart-state-5" strategy="afterInteractive" />
       <Script src="/clinical-diagnostic-assistant.js?v=20261007-dx-2" strategy="afterInteractive" />
