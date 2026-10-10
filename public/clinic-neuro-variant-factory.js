@@ -33,7 +33,7 @@ function create(domain,level,variation) {
       const landmark=pick(["Plaza","Jardín","Quiosco","Centro cultural","Farmacia","Panadería","Taller","Fuente","Mercado antiguo","Galería","Estación"],Math.floor(s/13));
       // Cinco columnas de mapa más una de encabezados: tablas imprimibles y accesibles.
       // Nivel avanzado: verdadero problema de navegación con parada obligatoria y obras.
-      const blocked=depth===2?new Set(["1,1","3,2","1,3",...(s%2===0?["3,3"]:["1,2"])]):new Set(["1,1"]);
+      const blocked=depth===2?new Set(["1,1","3,2","1,3",...(s%2===0?["3,3"]:["1,2"])]):depth===1?new Set(["1,1"]):new Set();
       const rows=[["Fila/col",...key.slice(0,n)]];
       for(let y=0;y<n;y++){
         const row=[String(y+1)];
