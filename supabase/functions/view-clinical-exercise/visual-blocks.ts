@@ -52,7 +52,7 @@ export function getCalendar(raw: string) {
   return { year, month, days, offset, events };
 }
 
-export function visualHtml(raw: unknown, escapeHtml: (value: unknown) => string) {
+export function visualHtml(raw: unknown, escapeHtml: (value: unknown) => string, inline = false) {
   const blocks = normalizeVisualBlocks(raw);
   if (!blocks.length) return "";
   const items = blocks.map(block => {
@@ -92,5 +92,5 @@ export function visualHtml(raw: unknown, escapeHtml: (value: unknown) => string)
     }
     return content ? '<article class="visual-item"><h3>' + escapeHtml(block.title) + "</h3>" + content + "</article>" : "";
   }).join("");
-  return items ? '<section class="section visual-resources"><h2>Recursos visuales</h2>' + items + "</section>" : "";
+  return !items ? "" : inline ? '<div class="exercise-inline-visual">' + items + "</div>" : '<section class="section visual-resources"><h2>Recursos visuales</h2>' + items + "</section>";
 }
