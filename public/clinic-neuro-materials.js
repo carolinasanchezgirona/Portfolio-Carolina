@@ -4,7 +4,7 @@
   const area = () => $("clinic-clinical-area")?.value || "psychology";
   let blocks = [];
   let coveredDomains = [];
-  const LIMIT = 8;
+  const LIMIT = 14;
   const types = {
     image: "Fotografía o imagen",
     table: "Tabla de trabajo",
