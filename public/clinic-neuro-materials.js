@@ -46,7 +46,7 @@
       : "Se conserva íntegramente el generador de materiales psicológicos.";
     const period = $("clinic-material-period-help");
     if (period) period.textContent = visible
-      ? ($("clinic-neuro-mode")?.value==="weekly" ? "Cuaderno: 7 días orientativos, dos actividades por día y cobertura cognitiva." : "Ficha focal: tres actividades desarrolladas y adaptables.")
+      ? ($("clinic-neuro-mode")?.value==="weekly" ? "Cuaderno: 7 días orientativos, dos actividades por día y cobertura cognitiva." : $("clinic-neuro-mode")?.value==="individual" ? "Ejercicio individual: una actividad graduada, lista para revisar e imprimir." : "Ficha focal: tres actividades desarrolladas y adaptables.")
       : "Psicología: cuaderno para dos semanas con psicoeducación, actividades y espacio para dudas.";
   }
 
@@ -235,12 +235,14 @@
       const instructions=doc.instructions||"";
       const exercises=instructions.match(/(?:^|\n)\s*Ejercicio\s+\d+\s*:/gi)||[];
       const weekly=doc.neuro_profile?.mode==="weekly";
+      const individual=doc.neuro_profile?.mode==="individual";
       if(headings.length!==1||!new RegExp("(?:^|\\n)\\s*Semana\\s+"+expectedWeek+"\\b","i").test(instructions))issues.push("un único apartado Semana "+expectedWeek+" por cuaderno");
       if(weekly){
         if(exercises.length!==14)issues.push("14 ejercicios, dos por cada uno de los siete días");
         for(let day=1;day<=7;day++)if((instructions.match(new RegExp("Día "+day+"\\s*[·:]","g"))||[]).length!==2)issues.push("dos ejercicios de Día "+day);
         for(const name of Object.values(DOMAIN_LABELS).filter(x=>x!=="Todas las funciones"))if(!instructions.toLowerCase().includes(name.toLowerCase()))issues.push("cobertura de "+name);
-      }else if(exercises.length<3||exercises.length>4)issues.push("entre tres y cuatro ejercicios desarrollados en la ficha");
+      }else if(individual&&exercises.length!==1)issues.push("un ejercicio en el material individual");
+      else if(!individual&&(exercises.length<3||exercises.length>4))issues.push("entre tres y cuatro ejercicios desarrollados en la ficha");
     }
     (doc.visual_blocks || []).forEach((b, i) => {
       if (!b.title?.trim()) issues.push("titular recurso " + (i + 1));
@@ -299,7 +301,7 @@
     if ($("clinic-clinical-area")) $("clinic-clinical-area").value = clinicalArea;
     const neuro = doc?.neuro_profile || {};
     coveredDomains=Array.isArray(neuro.covered_domains)?neuro.covered_domains.slice(0,15):[];
-    if($("clinic-neuro-mode"))$("clinic-neuro-mode").value=neuro.mode==="weekly"||neuro.domain==="multidominio"?"weekly":"single";
+    if($("clinic-neuro-mode"))$("clinic-neuro-mode").value=neuro.mode==="weekly"||neuro.domain==="multidominio"?"weekly":neuro.mode==="individual"?"individual":"single";
     if ($("clinic-neuro-week-number")) $("clinic-neuro-week-number").value = String(Math.max(1,Math.min(52,Number(neuro.week_number)||1)));
     for (const [name, id] of Object.entries({
       domain: "clinic-neuro-domain", intervention: "clinic-neuro-intervention",
