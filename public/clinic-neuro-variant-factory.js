@@ -16,11 +16,12 @@ function create(domain,level,variation) {
     case "orientacion_temporal": {
       const start=s%7,delay=depth===0?1:depth===1?2+s%2:3+s%2;
       const hour=9+s%7;const end=days[(start+delay)%7];
+      const scenario=pick(["lectura","visita al museo","cita cultural","paseo","reunión de club","actividad de biblioteca","taller de música","clase de dibujo"],s);
       title="Cambiar un compromiso en la agenda";
       task=depth===0?"Un compromiso se traslada al día siguiente. Indica el nuevo día.":
         depth===1?"El compromiso se traslada el número de días indicado. Indica el día de llegada.":
         "El compromiso se traslada varios días y se adelanta una hora. Indica el día y la hora definitiva.";
-      stimuli=asTable([["Referencia","Dato"],["Día inicial",days[start]],["Hora inicial",hour+":00"],["Aplazamiento",delay+" día(s)"],...(depth===2?[["Cambio horario","Una hora antes"]]:[])]);
+      stimuli=asTable([["Referencia","Dato"],["Compromiso ficticio",scenario],["Día inicial",days[start]],["Hora inicial",hour+":00"],["Aplazamiento",delay+" día(s)"],...(depth===2?[["Cambio horario","Una hora antes"]]:[])]);
       solution="Día de llegada: "+end+(depth===2?", a las "+(hour-1)+":00":"")+". Se trata de una agenda ficticia.";
       format="funcional";visualTitle="Agenda y cambios";break;
     }
@@ -38,9 +39,9 @@ function create(domain,level,variation) {
       for(let x=1;x<n;x++)path.push(key[x]+"1");
       for(let y=1;y<n;y++)path.push(key[n-1]+(y+1));
       title="Ruta urbana con un desvío";
-      task="En este plano ficticio el norte está arriba. Parte de A1, llega a "+destination+" y evita las obras. Puedes desplazarte solo a casillas contiguas horizontal o verticalmente.";
+      task="En este plano ficticio el norte está arriba. Parte de A1 y llega a "+destination+(n>2?" evitando las obras":"")+". Puedes desplazarte solo a casillas contiguas horizontal o verticalmente.";
       stimuli=asTable(rows);
-      solution="Una ruta válida: "+path.join(" → ")+"; no atraviesa la casilla B2.";
+      solution="Una ruta válida: "+path.join(" → ")+(n>2?"; no atraviesa la casilla B2.":".");
       format="visual";visualTitle="Mapa con obstáculos";break;
     }
     case "orientacion_personal": {
@@ -98,7 +99,7 @@ function create(domain,level,variation) {
       task=depth===0?"Ordena las dos tareas según el orden indicado y estima a qué hora terminarán.":"Planifica las tareas en el orden indicado sin solapamientos"+(depth===2?", incorpora un descanso de 10 minutos después de la segunda tarea":"")+". Escribe el horario de inicio y final.";
       const sequence=todo.map((e,i)=>[e,durations[i]+" min"]);
       if(s%2===0)sequence.reverse();
-      stimuli=asTable([["Actividad","Duración"],...sequence,["Inicio",start+":00"],["Condición","Clasificar antes de preparar; preparar antes de revisar"]]);
+      stimuli=asTable([["Actividad","Duración"],...sequence,["Inicio",start+":00"],["Condición",count===2?"Clasificar antes de preparar":"Clasificar antes de preparar; preparar antes de revisar"]]);
       const total=durations.slice(0,count).reduce((a,b)=>a+b,0)+(depth===2?10:0);
       const finishing=new Date(Date.UTC(2020,0,1,start,0)+total*60000).toISOString().slice(11,16);
       solution="Orden: "+todo.join(" → ")+(depth===2?" con 10 minutos de descanso tras la segunda actividad":"")+". Fin: "+finishing+".";
@@ -196,7 +197,7 @@ function create(domain,level,variation) {
       task="Usando la clave visible, sustituye las letras por los números correspondientes en el mismo orden. Registra pausas sin comparar el tiempo con normas clínicas.";
       const group=[];
       for(let i=0;i<sequence.length;i+=4)group.push([String(i/4+1),...sequence.slice(i,i+4),...Array.from({length:Math.max(0,4-sequence.slice(i,i+4).length)},()=>"-")]);
-      stimuli=asTable([["Clave","Código"],...letters.map((e,i)=>[e,String(i+1)])])+"\n"+asTable([["Fila","1","2","3","4"],...group]);
+      stimuli=asTable([["Fila","1","2","3","4"],["Clave","A→1","B→2","C→3","D→4"],...group]);
       solution="Solución por orden: "+sequence.map(e=>letters.indexOf(e)+1).join(" ")+".";
       format="visual";visualTitle="Clave de sustitución";break;
     }
