@@ -120,6 +120,47 @@
         });
         label.append(input);
         card.append(label);
+        const prompt = field("Describe la ilustración que necesitas (sin datos personales)",block.prompt||"",v=>{block.prompt=v;},true);
+        const generate = el("button","Generar ilustración con IA","clinic-secondary");
+        generate.type="button";
+        generate.addEventListener("click",async()=>{
+          const message=$("clinic-exercise-message");
+          const brief=(block.prompt||"").trim();
+          if(brief.length<12){if(message)message.textContent="Describe el contenido de la imagen con al menos 12 caracteres.";return;}
+          let token="";
+          try{token=JSON.parse(sessionStorage.getItem("dememoria_admin_session")||"null")?.access_token||"";}catch{}
+          if(!token){if(message)message.textContent="Necesitas iniciar sesión profesional.";return;}
+          generate.disabled=true;generate.textContent="Generando ilustración…";
+          if(message)message.textContent="Generando ilustración genérica sin datos del paciente…";
+          try{
+            const response=await fetch("/api/clinical/visual-image",{
+              method:"POST",headers:{Authorization:"Bearer "+token,"Content-Type":"application/json"},
+              body:JSON.stringify({brief})
+            });
+            const json=await response.json().catch(()=>({}));
+            if(!response.ok||!json.data_url)throw new Error(json.error||"No se ha generado la ilustración.");
+            const blob=await fetch(json.data_url).then(x=>x.blob());
+            const bitmap=await createImageBitmap(blob);
+            const factor=Math.min(1,1000/Math.max(bitmap.width,bitmap.height));
+            const canvas=document.createElement("canvas");
+            canvas.width=Math.max(1,Math.round(bitmap.width*factor));
+            canvas.height=Math.max(1,Math.round(bitmap.height*factor));
+            const ctx=canvas.getContext("2d");
+            if(!ctx)throw new Error("No se ha podido preparar la imagen.");
+            ctx.fillStyle="#ffffff";ctx.fillRect(0,0,canvas.width,canvas.height);
+            ctx.drawImage(bitmap,0,0,canvas.width,canvas.height);bitmap.close?.();
+            let encoded=canvas.toDataURL("image/jpeg",.74);
+            if(encoded.length>650000)encoded=canvas.toDataURL("image/jpeg",.54);
+            const others=blocks.filter(x=>x!==block&&x.type==="image"&&x.data);
+            if(encoded.length>650000||others.length>=2||others.reduce((sum,x)=>sum+(x.data?.length||0),0)+encoded.length>1600000)
+              throw new Error("Límite de tres imágenes y 1,6 MB entre ellas. Elimina imágenes o usa otras más pequeñas.");
+            block.data=encoded;block.alt||=brief.slice(0,180);
+            redraw();
+            if(message)message.textContent="Ilustración añadida. Antes de enviar verifica cada elemento, cantidad y relación espacial.";
+          }catch(error){if(message)message.textContent=error?.message||"No se ha podido crear la ilustración.";}
+          finally{generate.disabled=false;generate.textContent="Generar ilustración con IA";}
+        });
+        card.append(prompt,generate);
         card.append(field("Descripción accesible de la imagen", block.alt || "", v => { block.alt = v; }));
         if (block.data) {
           const img = el("img");
