@@ -677,7 +677,7 @@ export default function AdminClinicaPage() {
               <button id="clinic-visual-add" className="clinic-secondary" type="button">Añadir recurso</button>
             </div>
             <div id="clinic-visual-block-list" />
-            <p className="clinic-material-helper">Máximo 8 recursos por ficha. Los gráficos deben tener datos correctos; las imágenes generadas se revisan antes del envío. No incluyas datos identificativos.</p>
+            <p className="clinic-material-helper">Hasta 14 recursos por cuaderno semanal, uno por ejercicio. Los gráficos deben tener datos correctos; las imágenes generadas se revisan antes del envío. No incluyas datos identificativos.</p>
           </details>
           <label id="clinic-neuro-review-wrapper" className="clinic-neuro-review" hidden>
             <input id="clinic-neuro-reviewed" type="checkbox" />
