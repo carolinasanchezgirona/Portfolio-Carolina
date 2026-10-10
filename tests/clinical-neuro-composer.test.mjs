@@ -6,6 +6,7 @@ import vm from "node:vm";
 const read = path => readFileSync(new URL("../"+path,import.meta.url),"utf8");
 const window = {};
 const document = {readyState:"loading",addEventListener(){}};
+vm.runInNewContext(read("public/clinic-neuro-variant-factory.js"),{window,document,Intl,Date});
 vm.runInNewContext(read("public/clinic-neuro-graded-recipes.js"),{window,document,Intl,Date});
 vm.runInNewContext(read("public/clinic-neuro-weekly-composer.js"),{window,document,Intl,Date});
 const composer=window.NeuroWeeklyComposer;
@@ -114,7 +115,7 @@ test("la biblioteca cubre todos los dominios y tres niveles con dos recetas dist
 
 test("los tres niveles generan tareas diferentes con cobertura de 13 funciones",()=>{
  const docs=["apoyo_alto","apoyo_moderado","autonomo"].map(level=>composer.build({...settings(3),level,support:"moderado",format:"mixto"}));
- const stimuli=docs.map(doc=>doc.instructions.match(/Contenido: .*/g)||[]);
+ const stimuli=docs.map(doc=>doc.instructions.match(/Estímulos: .*/g)||[]);
  assert.equal(stimuli.length,3);
  assert.notDeepEqual(stimuli[0],stimuli[1]);
  assert.notDeepEqual(stimuli[1],stimuli[2]);
