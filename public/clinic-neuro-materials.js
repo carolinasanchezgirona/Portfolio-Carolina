@@ -272,6 +272,8 @@
         });
       })()) issues.push("revisar el calendario " + (i + 1) + ": AAAA-MM y líneas día | actividad");
     });
+    if (doc?.clinical_area === "neuropsychology" && $("clinic-neuro-digital-enabled")?.checked && !Array.isArray(doc.neuro_profile?.digital_activities)) issues.push("volver a generar las actividades digitales");
+    if (doc?.clinical_area === "neuropsychology" && $("clinic-neuro-digital-enabled")?.checked && !doc.neuro_profile?.digital_activities?.length) issues.push("elegir una función compatible con actividades digitales o desactivar esta opción");
     return { ok: !issues.length, issues };
   }
   function read() {
@@ -284,6 +286,7 @@
         intervention: $("clinic-neuro-intervention")?.value || "",
         level: $("clinic-neuro-level")?.value || "",
         support: $("clinic-neuro-support")?.value || "moderado",
+        digital_activities: $("clinic-neuro-digital-enabled")?.checked ? (window.ClinicNeuroMaterialsDigitalDraft || []).filter(x=>x?.level===$("clinic-neuro-level")?.value) : [],
         format: $("clinic-neuro-format")?.value || "mixto",
         theme: $("clinic-neuro-theme")?.value?.trim() || "",
         functional_goal: $("clinic-neuro-functional-goal")?.value?.trim() || "",
@@ -301,6 +304,8 @@
     if ($("clinic-clinical-area")) $("clinic-clinical-area").value = clinicalArea;
     const neuro = doc?.neuro_profile || {};
     coveredDomains=Array.isArray(neuro.covered_domains)?neuro.covered_domains.slice(0,15):[];
+    window.ClinicNeuroMaterialsDigitalDraft=Array.isArray(neuro.digital_activities)?neuro.digital_activities.filter(x=>x&&x.version===1).slice(0,3):[];
+    if($("clinic-neuro-digital-enabled"))$("clinic-neuro-digital-enabled").checked=window.ClinicNeuroMaterialsDigitalDraft.length>0;
     if($("clinic-neuro-mode"))$("clinic-neuro-mode").value=neuro.mode==="weekly"||neuro.domain==="multidominio"?"weekly":neuro.mode==="individual"?"individual":"single";
     if ($("clinic-neuro-week-number")) $("clinic-neuro-week-number").value = String(Math.max(1,Math.min(52,Number(neuro.week_number)||1)));
     for (const [name, id] of Object.entries({
