@@ -173,3 +173,7 @@ details.clinic-neuro-visual-section[open]>summary{margin-bottom:16px}
   .clinic-exercise-dialog .clinic-dialog-content{padding:16px!important}
   .clinic-exercise-dialog .clinic-dialog-heading{top:0}
 }
+
+.clinic-neuro-starter-advanced{border:1px solid #d9e6ed;border-radius:10px;margin:14px 0;padding:8px 14px;background:white}
+.clinic-neuro-starter-advanced>summary{font-weight:700;font-size:.9rem;cursor:pointer;padding:8px 0;color:#173a5e}
+.clinic-neuro-starter-advanced[open]>summary{margin-bottom:8px}
