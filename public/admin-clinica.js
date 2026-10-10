@@ -2427,7 +2427,8 @@
     }
     els.exerciseRationale.value = "Borrador inicial " + (draft.code || "") +
       ". Revisión profesional: " + (draft.caution || "Comprobar adecuación y estímulos.") +
-      " Registro: " + (draft.record || "");
+      " Registro: " + (draft.record || "") +
+      (draft.professional_answer_key ? "\n\nUSO PROFESIONAL EXCLUSIVO · SOLUCIONES Y CRITERIOS (NO EN EL CUADERNO DEL PACIENTE)\n" + String(draft.professional_answer_key).slice(0,16000) : "");
     if (els.materialSearch) els.materialSearch.value = "";
     els.exerciseMessage.textContent = "Propuesta cargada. Antes de enviar revisa materiales, fechas, consignas, nivel de ayuda y el objetivo funcional. No está validada ni prescrita.";
   });
