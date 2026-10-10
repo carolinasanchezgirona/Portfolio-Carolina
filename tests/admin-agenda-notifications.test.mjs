@@ -56,3 +56,19 @@ test("Los avisos push requieren activación voluntaria y contenido seguro en pan
   assert.match(serviceWorker, /notificationclick/);
   assert.doesNotMatch(serviceWorker, /patient_name|patient_email|clinical_summary/);
 });
+
+
+test("Ayuda de notificaciones siempre disponible en Android y iPhone/iPad", () => {
+  assert.match(noticesPage, /id="admin-notice-push-help-android"/);
+  assert.match(noticesPage, /id="admin-notice-push-help-ios"/);
+  assert.match(noticesPage, /Añadir a pantalla de inicio/);
+  assert.match(noticesPage, /Configuración de sitios/);
+  assert.match(noticesPage, /id="admin-notice-push-help-action"/);
+  assert.match(noticesClient, /Notification.permission === "denied"/);
+  assert.match(noticesClient, /pushButtons\(false, false, true\)/);
+  assert.match(noticesClient, /platformHelp\.open = true/);
+  assert.match(noticesClient, /permission === "denied"/);
+  assert.match(noticesPage, /id="admin-notice-filter-select"/);
+  assert.match(noticesClient, /function chooseFilter\(key\)/);
+  assert.match(noticesClient, /"#admin-notice-filter-select"\)\.addEventListener\("change"/);
+});
