@@ -451,43 +451,32 @@
       const text = String(v.content || "").split(/\r?\n/).slice(0,3).map(row => row.split("|").map(cell=>cell.trim()).join(" / ")).join("; ");
       return v.title + ": " + text;
     }).join(". ");
-    const exercises = tasks.map((task,i) => {
-      const variation = formats[i];
-      const title = task.replace(/[.\s]+$/,"");
-      const supportName = visuals.length ? "«"+visuals[i % visuals.length].title+"»" : materialName;
-      const option = i===0 ? profile.simplify : i===2 ? profile.extend : i===3 ? "mantener el apoyo que haya resultado útil" : profile.simplify;
-      const specificExample = Array.isArray(item.examples) && item.examples[i] ? item.examples[i] :
-        "Usa " + supportName + " con un ejemplo de la propia ficha previamente comprobado; no completes con nombres, fechas o respuestas ficticias que puedan confundirse con hechos personales.";
-      return [
-        "Ejercicio "+(i+1)+": "+variation.prefix+" — "+title,
-        "Objetivo: "+item.objective+". Tarea concreta: "+task+". Proceso principal: "+profile.process+".",
-        "Materiales: "+supportName+". Preparar material impreso legible o el equivalente en pantalla, comprobando contraste, exactitud, contenido y pertinencia cultural.",
-        "Preparación: Disponer de una superficie despejada, luz adecuada y una única consigna. Preguntar si desea participar; permitir pausas. "+profile.access+".",
-        "Pasos: 1) "+variation.cue+" 2) "+task+". 3) "+variation.change+" 4) Revisar con la persona qué apoyo facilitó la actividad y cerrar sin convertirla en un examen.",
-        "Ejemplo: "+specificExample+" Estímulos disponibles: "+examples.slice(0,250)+".",
-        "Ayudas: "+support+" Para responder, "+responseText+".",
-        "Adaptación: Si aumenta la dificultad, "+profile.simplify+". Si la tarea resulta cómoda, "+option+". No incrementar velocidad por defecto.",
-        "Duración y frecuencia: 8–15 minutos ajustables, una práctica esta semana, con pausa antes si hay fatiga o frustración. La cuarta práctica es opcional; ajustar la pauta al caso.",
-        "Qué observar: ¿Necesitaste alguna pista?, ¿qué parte resultó más cómoda?, ¿cuándo preferiste descansar? Puedes comentarlo sin contar aciertos."
-      ].join("\n");
-    });
+    const patientVisuals=tasks.map((task,i)=>{
+      const visual=visuals.length?visuals[i%visuals.length]:null;
+      return visual ? {...visual,title:"Ejercicio "+(i+1)+" · "+visual.title} : null;
+    }).filter(Boolean);
+    const exercises=tasks.map((task,i)=>[
+      "Ejercicio "+(i+1)+": "+task.replace(/[.\s]+$/,""),
+      "Consigna: Tu tarea es "+task.charAt(0).toLowerCase()+task.slice(1).replace(/[.\s]+$/,"")+".",
+      "Material: Observa el cuadro, los símbolos o el calendario que aparece debajo de este ejercicio.",
+      "Cómo responder: Puedes hacerlo en voz alta, por escrito o señalando, según te resulte más cómodo. Si lo necesitas, pide una pausa.",
+      "Tu respuesta:",
+      "Dudas o notas:"
+    ].join("\n"));
     return {
-      version:3,clinical_area:"neuropsychology",material_type:"exercise",duration_minutes:12,
-      frequency:"Semana "+week+": tres actividades breves y una cuarta opcional. Repartir según tolerancia; revisar la siguiente semana tras la sesión.",
-      introduction:"Cuaderno de la semana "+week+" sobre "+domain.toLowerCase()+". Trabaja con calma, utiliza los apoyos acordados y no necesitas completar todas las actividades.",
-      why:"Estas propuestas practican "+profile.process+" a través de tareas concretas. Lo importante es la participación, la estrategia y su posible utilidad cotidiana; no obtener una puntuación diagnóstica.",
-      objective:item.objective,
+      version:6,clinical_area:"neuropsychology",material_type:"exercise",duration_minutes:12,
+      frequency:"Semana "+week+": puedes repartir estas cuatro actividades en diferentes momentos, con las pausas que necesites.",
+      introduction:"Este es tu cuaderno de actividades sobre "+domain.toLowerCase()+". Puedes seguir las propuestas a tu ritmo y pedir ayuda si la necesitas.",
+      why:"Encontrarás actividades para practicar habilidades cotidianas y descubrir estrategias que te sirvan. No es un examen y no importa hacerlo perfecto.",
+      objective:"Trabajar con ejemplos concretos y anotar lo que te resulte útil.",
       instructions:["Semana "+week,...exercises].join("\n\n"),
-      example:"Esquema: Comprender la consigna → Probar con apoyo → Ajustar dificultad → Aplicar cuando sea seguro\nLa profesional revisará los estímulos y las posibles respuestas antes de entregar el material.",
-      record_prompt:tasks.map((task,i) =>
-        "Ejercicio "+(i+1)+": "+task+"\n¿Pudiste hacerlo o participar? ____________________\n¿Qué ayuda te sirvió? ____________________________\n¿Te cansaste o quisiste parar? _____________________"
-      ).join("\n\n")+
-        "\n\nDudas para comentar en consulta: qué no entendí, qué me ayudó y qué me gustaría cambiar.",
-      safety_note:"Las actividades se pueden adaptar o detener. Evita forzar recuerdos, corregir de manera confrontativa o realizar prácticas funcionales de riesgo sin acompañamiento adecuado.",
-      remember:"Al terminar esta semana revisaremos contigo las ayudas, la participación y su utilidad. Solo después ajustaremos la siguiente semana.",
-      session_questions:["¿Qué recurso ayudó más?","¿Qué actividad preferiste y por qué?","¿Hubo fatiga o alguna dificultad sensorial?","¿Qué podría ser útil en el día a día?"],
-      neuro_profile:{domain:item.domain,intervention:item.intervention,level:item.level,theme:item.theme||"",functional_goal:item.objective,week_number:week,response_mode:responseMode,accessibility:sensoryNotes},
-      visual_blocks:visuals.map(block => ({...block}))
+      example:"Lee la consigna y observa el material de cada actividad antes de responder. Si prefieres hacerla otro día, puedes retomarla después.",
+      record_prompt:"Aquí puedes dejar notas sobre los ejercicios, las ayudas que te resultaron útiles y las dudas que quieras comentar.",
+      safety_note:"Haz una pausa si te cansas. Puedes detener una actividad y retomarla más adelante.",
+      remember:"No necesitas acertarlo todo. Comenta tus dudas en la próxima sesión para revisar juntos lo que necesites.",
+      session_questions:["¿Qué actividad te gustó más?","¿En qué ejercicio necesitaste ayuda?","¿Qué quieres comentar?"],
+      neuro_profile:{mode:"single",domain:item.domain,intervention:item.intervention,level:item.level,theme:item.theme||"",functional_goal:item.objective,week_number:week,response_mode:responseMode,accessibility:sensoryNotes},
+      visual_blocks:patientVisuals
     };
   }
 
