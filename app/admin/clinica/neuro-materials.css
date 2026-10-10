@@ -56,3 +56,45 @@
  .clinic-visual-block {padding:18px 16px;}
  .clinic-neuro-week-note {padding:15px 16px;}
 }
+
+/* Seguimiento neuropsicológico profesional, sin controles repetidos en el menú global. */
+.neuro-followup{margin:24px 0 8px;padding:23px 25px;border:1px solid #cfdee7;border-radius:16px;background:#f8fbfc;color:#173a5e}
+.neuro-followup-heading{display:flex;align-items:start;justify-content:space-between;gap:16px;margin:0 0 15px}
+.neuro-followup-heading h3{font:500 1.42rem/1.25 Newsreader,Georgia,serif;margin:4px 0 7px}
+.neuro-followup-heading h4{font:600 1.2rem/1.3 Newsreader,Georgia,serif;margin:0}
+.neuro-followup-heading p{max-width:72ch;margin:0;color:#38586b;line-height:1.6;font-size:.88rem}
+.neuro-followup-editor{margin:20px 0 24px;background:white;border:1px solid #d9e6ed;border-radius:14px;padding:24px;display:grid;gap:23px}
+.neuro-followup-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:15px 20px}
+.neuro-followup-grid label,.neuro-block,.neuro-chart-select{display:grid;gap:7px;font-size:.9rem;font-weight:600;line-height:1.4}
+.neuro-followup input:not([type="checkbox"]),.neuro-followup select,.neuro-followup textarea{width:100%;min-width:0;border:1px solid #bed4e0;border-radius:9px;background:white;padding:11px 12px;font:inherit;color:#173a5e}
+.neuro-followup input:not([type="checkbox"]),.neuro-followup select{min-height:44px}
+.neuro-followup textarea{line-height:1.65;resize:vertical}
+.neuro-wide{grid-column:1/-1}
+.neuro-followup-chips{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.neuro-followup-chips fieldset,.neuro-comparability,.neuro-photos{border:1px solid #d9e6ed;border-radius:12px;padding:18px 19px;min-width:0}
+.neuro-followup fieldset legend{font-weight:700;padding:0 8px}
+.neuro-followup-chips fieldset{display:flex;flex-wrap:wrap;align-content:start;gap:8px}
+.neuro-followup-chips fieldset legend{width:100%}
+.neuro-followup-chips fieldset label{display:inline-flex;align-items:center;gap:6px;padding:7px 11px;border-radius:30px;border:1px solid #d5e5ea;background:#f5fbfb;font-size:.84rem;line-height:1.35}
+.neuro-followup input[type="checkbox"]{width:18px;height:18px;accent-color:#08a6a0;flex:none}
+.neuro-check{display:flex;align-items:start;gap:10px;line-height:1.6;margin:9px 0 15px;font-size:.9rem}
+.neuro-comparability .neuro-followup-grid{margin-top:12px}
+.neuro-comparability p,.neuro-photos p{color:#465e6b;font-size:.88rem;line-height:1.65;margin:10px 0}
+.neuro-photos{display:grid;gap:12px}
+.neuro-photos button{justify-self:start}
+.neuro-followup-actions{display:flex;justify-content:flex-end;padding-top:2px}
+.neuro-followup-results{border-top:1px solid #d4e3e9;padding-top:20px;margin-top:18px}
+.neuro-chart{background:white;border:1px solid #d8e5eb;padding:15px 18px;border-radius:12px;margin:16px 0}
+.neuro-chart svg{width:100%;max-height:260px;display:block}
+.neuro-chart p{font-size:.84rem;line-height:1.6;color:#415a67}
+.neuro-timeline{display:grid;gap:13px;margin-top:18px}
+.neuro-timeline article{background:#fff;border:1px solid #d7e5ee;border-radius:12px;padding:17px 19px}
+.neuro-timeline article p{font-size:.9rem;line-height:1.6;margin:8px 0;color:#354d5a}
+.neuro-timeline .neuro-entry-top{display:flex;justify-content:space-between;gap:10px;align-items:baseline}
+.neuro-timeline .neuro-entry-top strong{color:#173a5e;font-weight:700}
+.neuro-timeline .neuro-entry-top span{font-size:.8rem;color:#607783}
+.neuro-entry-notes{white-space:pre-wrap}
+.neuro-timeline pre{white-space:pre-wrap;overflow-wrap:anywhere;font:inherit;padding:13px;background:#f4f9fb;border-radius:9px;line-height:1.6}
+.neuro-photo-links{display:flex;gap:8px;flex-wrap:wrap;padding:10px 0}
+.neuro-chart-select{max-width:560px}
+@media(max-width:690px){.neuro-followup{padding:16px}.neuro-followup-editor{padding:17px}.neuro-followup-heading{align-items:stretch;flex-direction:column}.neuro-followup-grid,.neuro-followup-chips{grid-template-columns:1fr}.neuro-wide{grid-column:auto}.neuro-timeline .neuro-entry-top{align-items:start;flex-direction:column}.neuro-followup-actions button{width:100%}}
