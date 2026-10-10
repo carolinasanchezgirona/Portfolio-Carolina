@@ -43,6 +43,8 @@
       if(!mode || !chosenDomain || !chosenLevel || !chosenFormat)return;
       mode.value="individual";
       chosenDomain.value=item.domain;
+      const focus=$("clinic-neuro-focus");
+      if(focus)focus.value=item.domain;
       chosenLevel.value=item.level;
       chosenFormat.value=item.format;
       const activityType=$("clinic-neuro-activity-type");
