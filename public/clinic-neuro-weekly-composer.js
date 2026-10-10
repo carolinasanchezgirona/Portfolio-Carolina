@@ -221,9 +221,9 @@
     const patientDocument=build(opts);
     const button=$("clinic-neuro-generate");
     if(button)button.textContent="Generar otra versión";
-    const title=opts.mode==="weekly"?"Cuaderno neuropsicológico multicomponente · Semana "+opts.week:
-      opts.mode==="individual"?"Ejercicio de "+label(opts.domain).toLowerCase()+" · Nivel "+(LEVEL_NAMES[opts.level]||"Intermedio"):
-      "Actividades de "+label(opts.domain).toLowerCase()+" · Semana "+opts.week;
+    const title=opts.mode==="weekly"?"Tu cuaderno de actividades · Semana "+opts.week:
+      opts.mode==="individual"?"Tu actividad de "+label(opts.domain).toLowerCase()+" · Semana "+opts.week:
+      "Tus actividades de "+label(opts.domain).toLowerCase()+" · Semana "+opts.week;
     window.dispatchEvent(new CustomEvent("clinic-neuro-load-starter",{detail:{
       title,code:"PROGRAMA-NEURO-"+opts.week,domain:patientDocument.neuro_profile.domain,
       patient_document:patientDocument,caution:"Borrador original; comprobar pertinencia clínica, estímulos, soluciones, accesibilidad y carga antes de prescribir.",

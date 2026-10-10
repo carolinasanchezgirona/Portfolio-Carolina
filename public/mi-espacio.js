@@ -822,7 +822,7 @@
     const body = document.createElement("div");
     body.className = "space-patient-material-body";
     appendPatientSection(body, "Para qué sirve", documentData.introduction);
-    appendPatientSection(body, "Comprender lo que te pasa", documentData.why);
+    appendPatientSection(body, documentData.clinical_area==="neuropsychology" ? "Para qué sirven estas actividades" : "Comprender lo que te pasa", documentData.why);
     appendPatientSection(body, "Plan de práctica", documentData.frequency);
     if(documentData.clinical_area!=="neuropsychology"||!appendNeuroWorkbook(body,documentData,item)) {
       appendPatientSection(body, documentData.material_type === "psychoeducation" ? "Contenido" : "Cómo hacerlo", documentData.instructions);
@@ -855,18 +855,21 @@
       const heading = document.createElement("h4");
       heading.textContent = "Rellena el ejercicio aquí";
       const explainer = document.createElement("p");
-      explainer.textContent = "Puedes escribir o utilizar el autorregistro guiado. Solo se comparte con Carolina si pulsas «Compartir respuestas».";
+      explainer.textContent = documentData.clinical_area==="neuropsychology"
+        ? "Escribe en los espacios de cada ejercicio. Guarda un borrador para continuar otro día; Carolina solo verá las respuestas cuando decidas compartirlas."
+        : "Puedes escribir o utilizar el autorregistro guiado. Solo se comparte con Carolina si pulsas «Compartir respuestas».";
       const form = document.createElement("form");
 
       const recordLabel = document.createElement("label");
-      recordLabel.textContent = documentData.record_prompt || "Mis notas y autorregistros";
+      recordLabel.textContent = documentData.clinical_area==="neuropsychology" ? "Notas generales y dudas del cuaderno" : (documentData.record_prompt || "Mis notas y autorregistros");
       const record = document.createElement("textarea");
       record.dataset.responseRecord = "true";
       record.maxLength = 12000;
       record.value = saved.record;
       record.placeholder = "Escribe aquí…";
       recordLabel.append(record);
-      form.append(createGuidedRecord(record), recordLabel);
+      if(documentData.clinical_area!=="neuropsychology")form.append(createGuidedRecord(record));
+      form.append(recordLabel);
 
       questions.forEach((question, questionIndex) => {
         const label = document.createElement("label");
