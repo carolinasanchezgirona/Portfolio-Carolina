@@ -7,7 +7,7 @@ const script=readFileSync(new URL("../public/clinic-neuro-materials.js",import.m
 const worker=readFileSync(new URL("../worker.ts",import.meta.url),"utf8");
 const viewer=readFileSync(new URL("../supabase/functions/view-clinical-exercise/index.ts",import.meta.url),"utf8");
 const catalog=JSON.parse(readFileSync(new URL("../public/clinic-neuro-starter-library.json",import.meta.url),"utf8"));
-const start=script.indexOf("  function starterToDocument(item) {");
+const start=script.indexOf("  const DOMAIN_PRACTICE = {");
 const end=script.indexOf("  async function initializeStarterLibrary()",start);
 assert.ok(start>=0&&end>start,"Se localiza el generador de borradores iniciales");
 const make=vm.runInNewContext(script.slice(start,end)+"\n starterToDocument;",{
@@ -16,7 +16,7 @@ const make=vm.runInNewContext(script.slice(start,end)+"\n starterToDocument;",{
     atencion:"Atención",memoria:"Memoria",funciones_ejecutivas:"Funciones ejecutivas",lenguaje:"Lenguaje",
     visuoespacial:"Visuoespacial",praxias_gnosias:"Praxias y gnosias",cognicion_funcional:"Cognición funcional"
   },
-  $:()=>({value:"3"})
+  $:(id)=>({value:id==="clinic-neuro-week-number"?"3":id==="clinic-neuro-response-mode"?"senalamiento":""})
 });
 
 test("Los 24 borradores son semanales, con número configurable, sin segunda semana",()=>{
@@ -60,4 +60,19 @@ test("El lector y el PDF respetan jerarquía, márgenes y separación semanal",(
   assert.match(viewer,/marginX = isNeuro \? 67 : 61/);
   assert.match(viewer,/ensureSpace\(Math\.max\(118, cardTop \+ 67\)\)/);
   assert.match(viewer,/drawWorkArea\(isNeuro \? 10 : 7\)/);
+});
+
+test("Gradación cognitiva y modalidades accesibles en las fichas semanales",()=>{
+  assert.match(script,/const DOMAIN_PRACTICE/);
+  assert.match(script,/response_mode:responseMode/);
+  assert.match(script,/accesibilidad|accessibility/i);
+  for(const item of catalog.activities){
+    assert.equal(item.visual_blocks.length,2,item.code);
+    assert.equal(item.examples.length,4,item.code);
+    const doc=make(item);
+    assert.equal(doc.neuro_profile.response_mode,"senalamiento",item.code);
+    assert.ok(doc.instructions.includes("Adaptación:"),item.code);
+    assert.match(doc.record_prompt,/Qué ayuda te sirvió/i,item.code);
+    assert.ok(doc.visual_blocks.length===2,item.code);
+  }
 });
