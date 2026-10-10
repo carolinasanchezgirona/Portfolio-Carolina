@@ -59,6 +59,7 @@
     return {
       mode:["single","individual"].includes($("clinic-neuro-mode")?.value)?$("clinic-neuro-mode").value:"weekly",
       selectedRecipe:window.NeuroSelectedRecipe||null,
+      priority:$("clinic-neuro-focus")?.value||"equilibrado",
       domain:$("clinic-neuro-domain")?.value||"atencion",
       week:weekNumber(),
       level:$("clinic-neuro-level")?.value||"",
@@ -102,7 +103,8 @@
         const matches=eligibleRecipes(domain,opts);
         return variedRecipe(matches[(week-1+index+variation)%matches.length],opts,index);
       });
-      const extraDomain=["atencion","memoria","funciones_ejecutivas"][(week-1)%3];
+      const requested=GROUPS.some(([name])=>name===opts.priority)?opts.priority:null;
+      const extraDomain=requested||["atencion","memoria","funciones_ejecutivas"][(week-1)%3];
       const candidates=eligibleRecipes(extraDomain,opts);
       const base=candidates.find(r=>!selection.some(p=>p.title===r.title&&p.domain===r.domain))||candidates[0];
       if(base){
@@ -215,29 +217,32 @@
       safety_note:"Realiza las actividades de manera flexible. No fuerces recuerdos, no corrijas confrontativamente y evita practicar situaciones funcionales de riesgo sin supervisión adecuada.",
       remember:"La semana siguiente se diseña tras revisar juntos qué actividades y apoyos fueron útiles. Este material no constituye una evaluación diagnóstica.",
       session_questions:["¿Qué ejercicios resultaron más accesibles?","¿Qué apoyos se necesitaron?","¿Se observó transferencia funcional?","¿Qué conviene adaptar la semana siguiente?"],
-      neuro_profile:{mode:opts.mode,domain:weekly?"multidominio":opts.domain,intervention:opts.intervention,level:opts.level,support:opts.support||"moderado",format:opts.format||"mixto",activity_type:opts.activity_type||"mixto",theme:opts.theme,functional_goal:opts.goal,week_number:opts.week,response_mode:opts.response,accessibility:opts.accessibility,covered_domains:Array.from(covered),selected_activity:opts.mode!=="weekly"&&opts.selectedRecipe?.domain===opts.domain&&opts.selectedRecipe?.level===opts.level?opts.selectedRecipe.title:null},
+      neuro_profile:{mode:opts.mode,domain:weekly?"multidominio":opts.domain,intervention:opts.intervention,level:opts.level,support:opts.support||"moderado",format:opts.format||"mixto",activity_type:opts.activity_type||"mixto",theme:opts.theme,functional_goal:opts.goal,week_number:opts.week,response_mode:opts.response,accessibility:opts.accessibility,covered_domains:Array.from(covered),priority_domain:weekly?(opts.priority||"equilibrado"):opts.domain,selected_activity:opts.mode!=="weekly"&&opts.selectedRecipe?.domain===opts.domain&&opts.selectedRecipe?.level===opts.level?opts.selectedRecipe.title:null},
       visual_blocks:visuals
     };
   }
   function generate() {
     const opts=options();
+    const summary=$("clinic-neuro-draft-summary");
+    const reportError=(message)=>{if(summary){summary.hidden=false;summary.textContent=message;}const old=$("clinic-exercise-message");if(old)old.textContent=message;};
+
     if(!LEVEL_NAMES[opts.level]){
-      $("clinic-exercise-message").textContent="Selecciona la demanda cognitiva: inicial, intermedia o avanzada. No se asignará automáticamente un nivel.";
+      reportError("Selecciona la demanda cognitiva: inicial, intermedia o avanzada.");
       $("clinic-neuro-level")?.focus();
       return;
     }
     if(opts.mode!=="weekly"&&!GROUPS.some(row=>row[0]===opts.domain)){
-      $("clinic-exercise-message").textContent="Selecciona una función cognitiva para crear su ficha.";
+      reportError("Selecciona una función cognitiva para crear su ficha.");
       return;
     }
     if(catalog().length<78||typeof window.NeuroVariantFactory?.create!=="function"){
-      $("clinic-exercise-message").textContent="La biblioteca neuropsicológica no ha terminado de cargar. Recarga la página antes de generar el material.";
+      reportError("La biblioteca no ha terminado de cargar. Recarga la página.");
       return;
     }
     opts.variant=variantCounter++;
     const patientDocument=build(opts);
     const button=$("clinic-neuro-generate");
-    if(button)button.textContent="Crear otra variante";
+    if(button)button.textContent="Generar otra versión";
     const title=opts.mode==="weekly"?"Cuaderno neuropsicológico multicomponente · Semana "+opts.week:
       opts.mode==="individual"?"Ejercicio de "+label(opts.domain).toLowerCase()+" · Nivel "+(LEVEL_NAMES[opts.level]||"Intermedio"):
       "Actividades de "+label(opts.domain).toLowerCase()+" · Semana "+opts.week;
@@ -246,18 +251,37 @@
       patient_document:patientDocument,caution:"Borrador original; comprobar pertinencia clínica, estímulos, soluciones, accesibilidad y carga antes de prescribir.",
       record:"Registrar observaciones y corrección de fotografías manuscritas en Seguimiento neuropsicológico."
     }}));
+    const dialog=$("clinic-exercise-dialog");
+    if(dialog)dialog.classList.add("neuro-ready");
+    if(summary){summary.hidden=false;summary.textContent="Borrador generado: "+(opts.mode==="weekly"?"14 actividades para 7 días":opts.mode==="single"?"3 actividades":"1 actividad")+". Revísalo abajo antes de guardar o enviar."}
     $("clinic-exercise-title")?.scrollIntoView({behavior:"smooth",block:"center"});
   }
   function init(){
-    $("clinic-neuro-generate")?.addEventListener("click",generate);
-    $("clinic-neuro-mode")?.addEventListener("change",()=>{
-      const weekly=$("clinic-neuro-mode").value==="weekly";
-      const label=$("clinic-neuro-domain")?.closest("label");
-      if(label)label.hidden=weekly;
-      const note=$("clinic-neuro-mode-note");
-      if(note)note.textContent=weekly?"7 días orientativos, 14 ejercicios y cobertura de 13 dominios, con demanda y apoyos ajustables.":$("clinic-neuro-mode").value==="individual"?"Un ejercicio completo y autónomo: estímulo, consigna, ayudas y espacio de revisión.":"Dos ejercicios de una función y una tarea de transferencia; demanda, apoyos y formato a elegir.";
-    });
-    $("clinic-neuro-mode")?.dispatchEvent(new Event("change"));
+    const mode=$("clinic-neuro-mode"),focus=$("clinic-neuro-focus"),domain=$("clinic-neuro-domain"),
+          action=$("clinic-neuro-generate"),note=$("clinic-neuro-mode-note"),
+          summary=$("clinic-neuro-draft-summary"),dialog=$("clinic-exercise-dialog");
+    const names=Object.fromEntries(GROUPS);
+    function syncMode(changed=false){
+      if(!mode || !focus)return;
+      const weekly=mode.value==="weekly";
+      if(!weekly&&focus.value==="equilibrado")focus.value="atencion";
+      if(domain)domain.value=weekly?"multidominio":focus.value;
+      if(note)note.textContent=weekly
+        ? "Una semana, 14 tareas en 7 jornadas. "+(focus.value==="equilibrado"?"Todas las funciones en equilibrio.":"Todas las funciones y una tarea extra de "+(names[focus.value]||"la prioridad seleccionada").toLowerCase()+".")
+        :mode.value==="single"?"Tres actividades: dos focales y una de transferencia cotidiana.":"Una actividad de la función seleccionada.";
+      if(action)action.textContent=weekly?"Generar cuaderno":mode.value==="single"?"Generar ficha":"Generar ejercicio";
+      if(changed&&dialog?.classList.contains("neuro-ready")){
+        dialog.classList.remove("neuro-ready");
+        if(summary){summary.hidden=false;summary.textContent="Has cambiado las opciones. Vuelve a generar para actualizar el borrador antes de guardarlo o enviarlo.";}
+      }
+      const domainLabel=domain?.closest("label");
+      if(domainLabel)domainLabel.hidden=true;
+    }
+    mode?.addEventListener("change",()=>syncMode(true));
+    focus?.addEventListener("change",()=>syncMode(true));
+    $("clinic-neuro-level")?.addEventListener("change",()=>syncMode(true));
+    syncMode(false);
+    action?.addEventListener("click",generate);
   }
   window.NeuroWeeklyComposer={GROUPS,RECIPES,catalog,build,selectRecipes,visualFor};
   if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",init);else init();

@@ -38,6 +38,8 @@
     const visible = area() === "neuropsychology";
     const section = $("clinic-neuro-settings");
     if (section) section.hidden = !visible;
+    const workspace=$("clinic-exercise-dialog");
+    if(workspace){workspace.classList.toggle("neuro-fullscreen",visible);if(!visible)workspace.classList.remove("neuro-ready");}
     const review=$("clinic-neuro-review-wrapper");
     if(review) review.hidden=!visible;
     const hint = $("clinic-clinical-area-hint");
@@ -284,6 +286,7 @@
         intervention: $("clinic-neuro-intervention")?.value || "",
         level: $("clinic-neuro-level")?.value || "",
         support: $("clinic-neuro-support")?.value || "moderado",
+        priority_domain: $("clinic-neuro-focus")?.value || "equilibrado",
         format: $("clinic-neuro-format")?.value || "mixto",
         theme: $("clinic-neuro-theme")?.value?.trim() || "",
         functional_goal: $("clinic-neuro-functional-goal")?.value?.trim() || "",
@@ -301,6 +304,7 @@
     if ($("clinic-clinical-area")) $("clinic-clinical-area").value = clinicalArea;
     const neuro = doc?.neuro_profile || {};
     coveredDomains=Array.isArray(neuro.covered_domains)?neuro.covered_domains.slice(0,15):[];
+    if($("clinic-neuro-focus"))$("clinic-neuro-focus").value=neuro.priority_domain||((neuro.domain&&neuro.domain!=="multidominio")?neuro.domain:"equilibrado");
     if($("clinic-neuro-mode"))$("clinic-neuro-mode").value=neuro.mode==="weekly"||neuro.domain==="multidominio"?"weekly":neuro.mode==="individual"?"individual":"single";
     if ($("clinic-neuro-week-number")) $("clinic-neuro-week-number").value = String(Math.max(1,Math.min(52,Number(neuro.week_number)||1)));
     for (const [name, id] of Object.entries({
@@ -314,6 +318,8 @@
     blocks = Array.isArray(doc?.visual_blocks) ? doc.visual_blocks.filter(b => types[b.type]).slice(0, LIMIT).map(b => ({ ...b })) : [];
     redraw();
     $("clinic-neuro-mode")?.dispatchEvent(new Event("change"));
+    const workspace=$("clinic-exercise-dialog");
+    if(workspace){workspace.classList.toggle("neuro-fullscreen",clinicalArea==="neuropsychology");workspace.classList.toggle("neuro-ready",clinicalArea==="neuropsychology"&&Boolean(neuro.level)&&Boolean(String(doc?.instructions||"").trim()));}
     if(blocks.length&&$("clinic-visual-details"))$("clinic-visual-details").open=true;
   }
 

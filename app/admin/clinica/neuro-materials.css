@@ -203,3 +203,77 @@ details.clinic-neuro-visual-section[open]>summary{margin-bottom:16px}
 @media(max-width:700px){.clinic-neuro-catalog{padding:15px;}.clinic-neuro-catalog-results,.clinic-neuro-catalog-filters{grid-template-columns:minmax(0,1fr);}.clinic-neuro-catalog-card{padding:16px;}}
 
 .clinic-neuro-catalog [hidden]{display:none!important;}
+
+
+/* Neuropsicología: un único espacio de trabajo a pantalla completa y edición progresiva. */
+.clinic-exercise-dialog.neuro-fullscreen[open]{
+  inset:0!important;width:100vw!important;max-width:100vw!important;
+  height:100dvh!important;max-height:100dvh!important;border-radius:0!important;
+  margin:0!important;overflow-y:auto!important;overscroll-behavior:contain;
+}
+.clinic-exercise-dialog.neuro-fullscreen .clinic-dialog-content{
+  width:min(100%,1150px)!important;max-width:1150px!important;
+  margin:0 auto;padding:clamp(18px,3vw,36px)!important;
+}
+.clinic-exercise-dialog.neuro-fullscreen .clinic-neuro-simple{
+  margin:16px 0;padding:clamp(20px,3vw,34px);border:1px solid #d5e3eb;
+  border-radius:16px;background:#fff;
+}
+.clinic-exercise-dialog.neuro-fullscreen .clinic-neuro-simple legend{
+  font-size:.88rem;color:#456577;letter-spacing:.025em;font-weight:700;
+}
+.clinic-neuro-simple-intro h3{
+  margin:4px 0 8px;font-size:clamp(1.4rem,2.5vw,1.9rem);line-height:1.22;
+  font-family:var(--font-newsreader),Georgia,serif;color:#173a5e;
+}
+.clinic-neuro-simple-intro p:last-child{max-width:70ch;color:#506a7a;line-height:1.6;margin:0;}
+.clinic-neuro-simple-grid{
+  display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;
+  margin:24px 0 18px;
+}
+.clinic-neuro-simple-grid label{
+  font-weight:700;font-size:.94rem;display:grid;gap:9px;margin:0;
+}
+.clinic-neuro-simple-grid select{
+  width:100%;min-width:0;min-height:53px;border:1px solid #adc7d6;
+  padding:12px;border-radius:10px;background:#f9fcfd;color:#173a5e;
+}
+.clinic-neuro-simple-grid select:focus-visible,.clinic-neuro-simple-actions button:focus-visible{
+  outline:3px solid #08a6a0;outline-offset:3px;
+}
+.clinic-neuro-simple-actions{
+  display:flex;align-items:center;justify-content:space-between;gap:20px;
+  padding:16px 0;border-top:1px solid #e3edf1;
+}
+.clinic-neuro-simple-actions strong{color:#173a5e;font-size:.93rem;line-height:1.45;}
+.clinic-neuro-simple-actions p{margin:5px 0 0;color:#577183;font-size:.83rem;}
+.clinic-neuro-simple-actions button{min-height:50px;min-width:190px;}
+.clinic-neuro-advanced{margin-top:14px;border-top:1px solid #e5edf1;padding-top:12px;}
+.clinic-neuro-advanced>summary{
+  color:#173a5e;font-weight:650;font-size:.9rem;cursor:pointer;
+  padding:10px 2px;list-style:disclosure-closed;
+}
+.clinic-neuro-advanced>summary span{font-weight:400;color:#637f8c;}
+.clinic-neuro-advanced-body{padding:12px 0 4px;border-top:1px solid #e7eff3;}
+.clinic-neuro-advanced-body>p{line-height:1.6;max-width:72ch;color:#557080;font-size:.9rem;}
+.clinic-neuro-draft-summary{
+  margin:15px 0 0;border:1px solid #bbd9df;border-radius:10px;
+  padding:13px 15px;background:#f7fbfc;color:#173a5e;line-height:1.55;
+}
+.clinic-neuro-draft-summary[hidden]{display:none!important;}
+.clinic-exercise-dialog.neuro-fullscreen:not(.neuro-ready) #clinic-material-editor-stage{
+  display:none!important;
+}
+.clinic-exercise-dialog.neuro-fullscreen.neuro-ready #clinic-material-editor-stage{
+  padding-top:14px;animation:neuro-material-appear .18s ease-out;
+}
+@keyframes neuro-material-appear{from{opacity:.65}to{opacity:1}}
+@media(max-width:740px){
+  .clinic-neuro-simple-grid{grid-template-columns:1fr;gap:14px;margin:18px 0;}
+  .clinic-neuro-simple-actions{flex-direction:column;align-items:stretch;}
+  .clinic-neuro-simple-actions button{width:100%;}
+  .clinic-exercise-dialog.neuro-fullscreen .clinic-neuro-simple{padding:18px;}
+}
+@media(prefers-reduced-motion:reduce){
+  .clinic-exercise-dialog.neuro-fullscreen.neuro-ready #clinic-material-editor-stage{animation:none;}
+}
