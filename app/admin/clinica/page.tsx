@@ -446,6 +446,14 @@ export default function AdminClinicaPage() {
               <button id="clinic-neuro-starter-load" className="clinic-secondary" type="button">Cargar propuesta</button>
             </div>
             <p className="clinic-material-helper">Puedes partir de una de las 24 fichas existentes o crear un material nuevo con una colección ampliada de actividades y estímulos originales. Todo borrador requiere revisión clínica.</p></details>
+            <div className="clinic-neuro-digital-option">
+              <label className="clinic-neuro-digital-choice">
+                <input id="clinic-neuro-digital-enabled" type="checkbox" />
+                <span><strong>Añadir actividades digitales interactivas</strong>
+                <small>Disponibles para atención, memoria y flexibilidad ejecutiva; en cuaderno semanal se incluyen las tres. Se corrigen automáticamente como práctica descriptiva, no como pruebas diagnósticas.</small></span>
+              </label>
+              <p className="clinic-material-helper">Se mostrarán en Mi espacio únicamente después de que revises y envíes el material. La ejecución se registra de forma privada. Puedes desmarcar esta opción para generar exclusivamente fichas de papel.</p>
+            </div>
             <details className="clinic-neuro-catalog" id="clinic-neuro-catalog">
               <summary>Explorar catálogo clínico · 78 actividades originales graduadas</summary>
               <p className="clinic-material-helper">Busca por función, estímulos o tipo de tarea. La selección prepara una ficha individual editable, sin asignarla ni enviarla automáticamente. Los criterios de corrección son exclusivamente para revisión profesional.</p>
