@@ -35,7 +35,9 @@ test("la ficha individual respeta exactamente la propuesta elegida también en s
  const document=composer.build({...settings,selectedRecipe});
  assert.equal(document.neuro_profile.selected_activity,recipe.title);
  assert.match(document.instructions,new RegExp("Ejercicio 1:.*"+recipe.title));
- assert.ok(document.instructions.includes(recipe.stimuli));
+ assert.equal(document.visual_blocks.length,1);
+ assert.equal(document.visual_blocks[0].title.startsWith("Ejercicio 1 ·"),true);
+ assert.doesNotMatch(document.instructions,/Criterio de revisión|Solución orientativa/i);
  assert.equal((document.instructions.match(/Ejercicio \d+:/g)||[]).length,1);
  const selected=composer.selectRecipes({...settings,selectedRecipe})[0];
  assert.equal(selected.title,recipe.title);
