@@ -100,8 +100,12 @@
         return variedRecipe(matches[(week-1+index+variation)%matches.length],opts,index);
       });
       const extraDomain=["atencion","memoria","funciones_ejecutivas"][(week-1)%3];
-      const alternate=eligibleRecipes(extraDomain,opts).find(r=>!selection.some(p=>p.title===r.title&&p.domain===r.domain));
-      if(alternate)selection.push(alternate);
+      const candidates=eligibleRecipes(extraDomain,opts);
+      const base=candidates.find(r=>!selection.some(p=>p.title===r.title&&p.domain===r.domain))||candidates[0];
+      if(base){
+        const alternate=variedRecipe(base,opts,50);
+        selection.push({...alternate,title:"Actividad complementaria: "+alternate.title});
+      }
       return selection;
     }
     const domain=GROUPS.some(row=>row[0]===opts.domain)?opts.domain:"atencion";
