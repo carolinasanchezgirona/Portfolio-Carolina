@@ -10,7 +10,7 @@ const TYPES = new Set(["image", "table", "chart", "diagram", "calendar"]);
 
 export function normalizeVisualBlocks(value: unknown): VisualBlock[] {
   if (!Array.isArray(value)) return [];
-  return value.slice(0, 8).flatMap((value): VisualBlock[] => {
+  return value.slice(0, 14).flatMap((value): VisualBlock[] => {
     if (!value || typeof value !== "object" || Array.isArray(value)) return [];
     const obj = value as Record<string, unknown>;
     const type = String(obj.type ?? "");
