@@ -136,7 +136,11 @@ function create(domain,level,variation) {
       const next=seeded(s);
       for(let y=0;y<size;y++){
         const row=[String(y+1)];
-        for(let x=0;x<size;x++)row.push(codes[next()%codes.length]);
+        for(let x=0;x<size;x++){
+          const encoded=((s*37+13)%1296);
+          const k=y*size+x;
+          row.push(codes[size===2?Math.floor(encoded/Math.pow(6,k))%6:next()%codes.length]);
+        }
         board.push(row);
       }
       const dy=depth===2?2:1,dx=depth===2?2:1;
