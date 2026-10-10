@@ -98,3 +98,49 @@
 .neuro-photo-links{display:flex;gap:8px;flex-wrap:wrap;padding:10px 0}
 .neuro-chart-select{max-width:560px}
 @media(max-width:690px){.neuro-followup{padding:16px}.neuro-followup-editor{padding:17px}.neuro-followup-heading{align-items:stretch;flex-direction:column}.neuro-followup-grid,.neuro-followup-chips{grid-template-columns:1fr}.neuro-wide{grid-column:auto}.neuro-timeline .neuro-entry-top{align-items:start;flex-direction:column}.neuro-followup-actions button{width:100%}}
+
+
+/* Entre Sesiones: progresión visual de planificación, edición y revisión. */
+.clinic-exercise-dialog .clinic-dialog-content{width:min(100%,1040px);max-width:1040px}
+.clinic-exercise-dialog .clinic-material-area{background:#f8fbfc;padding:14px 18px}
+.clinic-exercise-dialog .clinic-material-picker,.clinic-exercise-dialog .clinic-material-advanced{border:1px solid #d7e6ed;border-radius:14px;padding:18px;background:#fff;margin:16px 0}
+.clinic-material-picker-heading{grid-column:1/-1;margin:0 0 5px}
+.clinic-material-picker-heading strong{font-size:1rem;color:#173a5e}
+.clinic-material-picker-heading p{margin:7px 0 0;font-size:.86rem;color:#536b7a}
+.clinic-material-generate-action{grid-column:1/-1;justify-self:start}
+.clinic-material-advanced{padding:0!important}
+.clinic-material-advanced summary{font-weight:700;padding:16px 18px;cursor:pointer;color:#173a5e}
+.clinic-material-advanced .clinic-material-create-row{padding:4px 18px 18px}
+.clinic-material-section-title{font-size:1.14rem;color:#173a5e;margin:0 0 18px;font-weight:700}
+.clinic-material-context{display:grid;gap:9px;margin:17px 0;color:#173a5e;font-weight:600;font-size:.95rem}
+.clinic-material-context textarea{width:100%;resize:vertical;min-height:83px}
+.clinic-material-context span{font-weight:400;font-size:.81rem;color:#5a7585}
+.clinic-neuro-mode-grid{align-items:end;border:1px solid #d8e6ec;border-radius:12px;background:#fff;padding:14px;margin:4px 0 20px}
+.clinic-neuro-mode-action{display:grid;gap:9px}
+.clinic-neuro-mode-action p{margin:0;font-size:.83rem;line-height:1.45;color:#506d7c}
+.clinic-neuro-mode-action button{width:100%;min-height:44px}
+.clinic-neuro-settings label[hidden],#clinic-neuro-review-wrapper[hidden]{display:none!important}
+.clinic-neuro-visual-section{border:1px solid #cfdee7;background:#f8fbfc}
+details.clinic-neuro-visual-section>summary{font-weight:700;cursor:pointer;color:#173a5e;font-size:1rem;line-height:1.5;padding:4px}
+details.clinic-neuro-visual-section[open]>summary{margin-bottom:16px}
+.clinic-neuro-review{background:#f7fafc;border:1px solid #d8e5ec;border-radius:10px;padding:14px 16px;margin:18px 0}
+.clinic-material-review-actions{border-top:1px solid #e1e8ee;margin:18px 0 0;padding-top:12px}
+.clinic-material-review-actions>details>summary{cursor:pointer;font-weight:700;color:#173a5e;padding:10px 2px}
+.clinic-material-review-buttons{display:flex;flex-wrap:wrap;gap:10px;padding:12px 0}
+.clinic-exercise-dialog .clinic-material-actions{background:white;border-top:1px solid #d7e2e9;padding:15px 0;position:sticky;bottom:0;z-index:3;display:flex;justify-content:flex-end;gap:12px}
+.clinic-exercise-dialog .clinic-material-actions button{min-height:46px}
+.clinic-visual-block-preview{border:1px solid #d7e5ed;border-radius:10px;background:#fff;padding:15px;overflow-x:auto}
+.clinic-visual-block-preview table{border-collapse:collapse;width:100%;font-size:.91rem}
+.clinic-visual-block-preview td,.clinic-visual-block-preview th{padding:9px 12px;border:1px solid #d8e6eb;text-align:left}
+.clinic-visual-block-preview th{background:#eaf6fb;color:#173a5e}
+.clinic-visual-bar-row{display:grid;grid-template-columns:minmax(75px,1fr) minmax(80px,3fr) auto;align-items:center;gap:12px;margin:10px 0;font-size:.88rem}
+.clinic-visual-bar-track{height:16px;background:#eaf6fb;border-radius:7px;overflow:hidden}
+.clinic-visual-bar-fill{height:100%;background:#08a6a0;min-width:0}
+@media(max-width:700px){
+  .clinic-neuro-mode-grid{grid-template-columns:1fr}
+  .clinic-exercise-dialog .clinic-material-actions{position:static;flex-direction:column}
+  .clinic-exercise-dialog .clinic-material-actions button{width:100%}
+  .clinic-material-generate-action{width:100%;justify-self:stretch}
+  .clinic-material-review-buttons{flex-direction:column}
+  .clinic-material-review-buttons button{width:100%}
+}
