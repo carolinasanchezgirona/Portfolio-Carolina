@@ -60,7 +60,7 @@ test("la vista online y el PDF anclan tablas e imágenes a cada ejercicio",()=>{
  const visuals=read("supabase/functions/view-clinical-exercise/visual-blocks.ts");
  assert.match(viewer,/weeklyInstructionsHtml\(doc\.instructions \|\| "", doc\.visual_blocks\)/);
  assert.match(viewer,/await drawVisualResources\(\[visual\],true\)/);
- assert.match(viewer,/drawShapeGlyph/);
+ assert.match(viewer,/stimulusSymbol/);
  assert.match(viewer,/exercise-answer-space/);
  assert.match(visuals,/return value\.slice\(0, 14\)/);
  assert.match(visuals,/inline \? '<div class="exercise-inline-visual">/);
