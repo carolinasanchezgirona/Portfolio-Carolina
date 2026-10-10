@@ -108,7 +108,7 @@ test("servidor e interfaz admiten ejercicio individual con los mismos límites",
   const worker=read("worker.ts"),page=read("app/admin/clinica/page.tsx");
   assert.match(worker,/INDIVIDUAL_NEURO_MATERIAL_GUIDELINES/);
   assert.match(worker,/individual\?exercises\.length===1/);
-  assert.ok(page.indexOf('src="/clinic-neuro-variant-factory.js"')>=0);
-  assert.ok(page.indexOf('src="/clinic-neuro-variant-factory.js"')<page.indexOf('src="/clinic-neuro-weekly-composer.js"'));
+  assert.ok(page.indexOf('src="/clinic-neuro-variant-factory.js')>=0);
+  assert.ok(page.indexOf('src="/clinic-neuro-variant-factory.js')<page.indexOf('src="/clinic-neuro-weekly-composer.js'));
   assert.equal((page.match(/id="clinic-neuro-generate"/g)||[]).length,1);
 });
