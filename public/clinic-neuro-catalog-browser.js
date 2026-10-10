@@ -4,7 +4,7 @@
   const $ = id => document.getElementById(id);
   const LEVELS = {apoyo_alto:"Inicial",apoyo_moderado:"Intermedio",autonomo:"Avanzado"};
   const FORMATS = {visual:"Visual",verbal:"Verbal",funcional:"Funcional",logico:"Razonamiento"};
-  const normalize = value => String(value || "").normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase().trim();
+  const normalize = value => String(value || "").normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase().replace(/_/g," ").trim();
   const key = item => [item.domain,item.level,item.title].join("::");
   const filter = (items,filters={}) => items.filter(item =>
     (!filters.domain || item.domain===filters.domain) &&
@@ -45,6 +45,8 @@
       chosenDomain.value=item.domain;
       chosenLevel.value=item.level;
       chosenFormat.value=item.format;
+      const activityType=$("clinic-neuro-activity-type");
+      if(activityType)activityType.value="ficha";
       mode.dispatchEvent(new Event("change",{bubbles:true}));
       window.NeuroSelectedRecipe={domain:item.domain,level:item.level,title:item.title};
       try {
