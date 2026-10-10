@@ -1,5 +1,5 @@
 {
-  "version": "1.0",
+  "version": "1.1",
   "status": "draft_requires_clinical_review",
   "activities": [
     {
@@ -21,11 +21,24 @@
           "type": "calendar",
           "title": "Calendario de práctica",
           "content": "2026-10\n12|Ejemplo: día señalado"
+        },
+        {
+          "type": "table",
+          "title": "Ayer, hoy y mañana: fecha real",
+          "content": "Referencia|Fecha comprobada|Rutina\nAyer|A completar|A completar\nHoy|A completar|A completar\nMañana|A completar|A completar"
         }
       ],
       "caution": "No utilizar fechas de ejemplo como eventos reales; actualizar el calendario antes de prescribir.",
       "record": "Anotar respuestas espontáneas, tipo y número de ayudas, fatiga, participación y transferencia observada; no generar puntuaciones normativas.",
-      "review_status": "draft_requires_clinical_review"
+      "review_status": "draft_requires_clinical_review",
+      "examples": [
+        "Practicar: Marcar la fecha en un calendario actualizado. Mostrar un modelo concreto con el recurso revisado, sin datos personales inventados.",
+        "Practicar: Relacionar ayer, hoy y mañana con una rutina conocida. Mostrar un modelo concreto con el recurso revisado, sin datos personales inventados.",
+        "Practicar: Anotar una actividad próxima confirmada. Mostrar un modelo concreto con el recurso revisado, sin datos personales inventados.",
+        "Practicar: Revisar de nuevo la fecha utilizando una pista. Trasladar a una actividad segura y acordada, solo si procede."
+      ],
+      "visual_design": "Espacio amplio, instrucciones cortas, contraste suficiente y variedad de recursos sin sobrecarga.",
+      "cognitive_load": "Modificar una sola variable por ejercicio, con pistas graduadas."
     },
     {
       "code": "OR-T02",
@@ -46,11 +59,24 @@
           "type": "table",
           "title": "Clasificación estacional",
           "content": "Estación|Elemento frecuente\nPrimavera|Flores\nVerano|Sombrero\nOtoño|Castañas\nInvierno|Abrigo"
+        },
+        {
+          "type": "diagram",
+          "title": "Secuencia de práctica: Las cuatro estaciones",
+          "content": "Observar elementos de cada estación\nClasificar objetos y actividades en una tabla\nComprobar señales en el entorno real\nElegir una actividad pertinente para la estación"
         }
       ],
       "caution": "Aceptar variación cultural y climática; no puntuación rígida.",
       "record": "Anotar respuestas espontáneas, tipo y número de ayudas, fatiga, participación y transferencia observada; no generar puntuaciones normativas.",
-      "review_status": "draft_requires_clinical_review"
+      "review_status": "draft_requires_clinical_review",
+      "examples": [
+        "Practicar: Observar elementos de cada estación. Mostrar un modelo concreto con el recurso revisado, sin datos personales inventados.",
+        "Practicar: Clasificar objetos y actividades en una tabla. Mostrar un modelo concreto con el recurso revisado, sin datos personales inventados.",
+        "Practicar: Comprobar señales en el entorno real. Mostrar un modelo concreto con el recurso revisado, sin datos personales inventados.",
+        "Practicar: Elegir una actividad pertinente para la estación. Trasladar a una actividad segura y acordada, solo si procede."
+      ],
+      "visual_design": "Espacio amplio, instrucciones cortas, contraste suficiente y variedad de recursos sin sobrecarga.",
+      "cognitive_load": "Modificar una sola variable por ejercicio, con pistas graduadas."
     },
     {
       "code": "OR-T03",
@@ -71,11 +97,24 @@
           "type": "table",
           "title": "Calendario cultural personalizable",
           "content": "Celebración opcional|Mes habitual\nSant Jordi|Abril\nCastanyada|Octubre o noviembre\nOtra elegida|A completar"
+        },
+        {
+          "type": "diagram",
+          "title": "Secuencia de práctica: Tradiciones y celebraciones",
+          "content": "Elegir celebraciones significativas sin presuponerlas\nConsultar en calendario el mes de cada celebración\nConversar opcionalmente sobre preparativos\nLocalizar una fecha real futura"
         }
       ],
       "caution": "No imponer festividades religiosas ni inventar recuerdos autobiográficos.",
       "record": "Anotar respuestas espontáneas, tipo y número de ayudas, fatiga, participación y transferencia observada; no generar puntuaciones normativas.",
-      "review_status": "draft_requires_clinical_review"
+      "review_status": "draft_requires_clinical_review",
+      "examples": [
+        "Practicar: Elegir celebraciones significativas sin presuponerlas. Mostrar un modelo concreto con el recurso revisado, sin datos personales inventados.",
+        "Practicar: Consultar en calendario el mes de cada celebración. Mostrar un modelo concreto con el recurso revisado, sin datos personales inventados.",
+        "Practicar: Conversar opcionalmente sobre preparativos. Mostrar un modelo concreto con el recurso revisado, sin datos personales inventados.",
+        "Practicar: Localizar una fecha real futura. Trasladar a una actividad segura y acordada, solo si procede."
+      ],
+      "visual_design": "Espacio amplio, instrucciones cortas, contraste suficiente y variedad de recursos sin sobrecarga.",
+      "cognitive_load": "Modificar una sola variable por ejercicio, con pistas graduadas."
     },
     {
       "code": "OR-E01",
@@ -96,11 +135,24 @@
           "type": "table",
           "title": "Mapa funcional de objetos",
           "content": "Objeto|Lugar habitual\nLlaves|A completar\nGafas|A completar\nAgenda|A completar"
+        },
+        {
+          "type": "diagram",
+          "title": "Secuencia de práctica: Espacios familiares",
+          "content": "Identificar habitaciones realmente presentes\nRelacionar cada objeto con su lugar habitual\nOrdenar un recorrido interior seguro\nColocar una señal útil elegida por el paciente"
         }
       ],
       "caution": "No asumir distribución real ni modificar zonas críticas sin valoración.",
       "record": "Anotar respuestas espontáneas, tipo y número de ayudas, fatiga, participación y transferencia observada; no generar puntuaciones normativas.",
-      "review_status": "draft_requires_clinical_review"
+      "review_status": "draft_requires_clinical_review",
+      "examples": [
+        "Practicar: Identificar habitaciones realmente presentes. Mostrar un modelo concreto con el recurso revisado, sin datos personales inventados.",
+        "Practicar: Relacionar cada objeto con su lugar habitual. Mostrar un modelo concreto con el recurso revisado, sin datos personales inventados.",
+        "Practicar: Ordenar un recorrido interior seguro. Mostrar un modelo concreto con el recurso revisado, sin datos personales inventados.",
+        "Practicar: Colocar una señal útil elegida por el paciente. Trasladar a una actividad segura y acordada, solo si procede."
+      ],
+      "visual_design": "Espacio amplio, instrucciones cortas, contraste suficiente y variedad de recursos sin sobrecarga.",
+      "cognitive_load": "Modificar una sola variable por ejercicio, con pistas graduadas."
     },
     {
       "code": "OR-E02",
@@ -121,11 +173,24 @@
           "type": "diagram",
           "title": "Secuencia para un recorrido",
           "content": "Elegir destino verificado\nConsultar dirección\nIdentificar punto de referencia\nSalir con acompañante cuando proceda"
+        },
+        {
+          "type": "diagram",
+          "title": "Secuencia de práctica: Mi barrio",
+          "content": "Elegir dos destinos realmente conocidos\nComprobar direcciones e hitos con información fiable\nOrdenar referencias de un trayecto\nEnsayar una tarjeta de dirección para salida acompañada"
         }
       ],
       "caution": "No autoriza deambulación independiente ni sustituye evaluación de seguridad.",
       "record": "Anotar respuestas espontáneas, tipo y número de ayudas, fatiga, participación y transferencia observada; no generar puntuaciones normativas.",
-      "review_status": "draft_requires_clinical_review"
+      "review_status": "draft_requires_clinical_review",
+      "examples": [
+        "Practicar: Elegir dos destinos realmente conocidos. Mostrar un modelo concreto con el recurso revisado, sin datos personales inventados.",
+        "Practicar: Comprobar direcciones e hitos con información fiable. Mostrar un modelo concreto con el recurso revisado, sin datos personales inventados.",
+        "Practicar: Ordenar referencias de un trayecto. Mostrar un modelo concreto con el recurso revisado, sin datos personales inventados.",
+        "Practicar: Ensayar una tarjeta de dirección para salida acompañada. Trasladar a una actividad segura y acordada, solo si procede."
+      ],
+      "visual_design": "Espacio amplio, instrucciones cortas, contraste suficiente y variedad de recursos sin sobrecarga.",
+      "cognitive_load": "Modificar una sola variable por ejercicio, con pistas graduadas."
     },
     {
       "code": "OR-E03",
@@ -146,11 +211,24 @@
           "type": "table",
           "title": "Leyenda de ejemplo",
           "content": "Símbolo|Significado\nC|Casa\nP|Parque\nS|Supermercado"
+        },
+        {
+          "type": "diagram",
+          "title": "Secuencia de práctica: Leer un plano sencillo",
+          "content": "Reconocer tres símbolos de leyenda\nSeñalar dos posiciones en plano diseñado para la sesión\nSeguir con el dedo un trayecto corto\nConsultar un mapa real supervisado"
         }
       ],
       "caution": "No presentar planos ficticios como si fueran lugares reales.",
       "record": "Anotar respuestas espontáneas, tipo y número de ayudas, fatiga, participación y transferencia observada; no generar puntuaciones normativas.",
-      "review_status": "draft_requires_clinical_review"
+      "review_status": "draft_requires_clinical_review",
+      "examples": [
+        "Practicar: Reconocer tres símbolos de leyenda. Mostrar un modelo concreto con el recurso revisado, sin datos personales inventados.",
+        "Practicar: Señalar dos posiciones en plano diseñado para la sesión. Mostrar un modelo concreto con el recurso revisado, sin datos personales inventados.",
+        "Practicar: Seguir con el dedo un trayecto corto. Mostrar un modelo concreto con el recurso revisado, sin datos personales inventados.",
+        "Practicar: Consultar un mapa real supervisado. Trasladar a una actividad segura y acordada, solo si procede."
+      ],
+      "visual_design": "Espacio amplio, instrucciones cortas, contraste suficiente y variedad de recursos sin sobrecarga.",
+      "cognitive_load": "Modificar una sola variable por ejercicio, con pistas graduadas."
     },
     {
       "code": "OR-P01",
@@ -171,11 +249,24 @@
           "type": "table",
           "title": "Aspectos personales opcionales",
           "content": "Tema|Mi respuesta\nMe gusta|A completar\nUn lugar relevante|A completar\nMe gustaría hacer|A completar"
+        },
+        {
+          "type": "diagram",
+          "title": "Secuencia de práctica: Mi historia por capítulos",
+          "content": "Elegir una preferencia actual\nPoner nombre a una etapa vital que desee comentar\nDescribir una fotografía consentida si desea hacerlo\nSeleccionar una actividad significativa para el presente"
         }
       ],
       "caution": "Nunca forzar evocación, verificar biografía ni confrontar recuerdos.",
       "record": "Anotar respuestas espontáneas, tipo y número de ayudas, fatiga, participación y transferencia observada; no generar puntuaciones normativas.",
-      "review_status": "draft_requires_clinical_review"
+      "review_status": "draft_requires_clinical_review",
+      "examples": [
+        "Practicar: Elegir una preferencia actual. Mostrar un modelo concreto con el recurso revisado, sin datos personales inventados.",
+        "Practicar: Poner nombre a una etapa vital que desee comentar. Mostrar un modelo concreto con el recurso revisado, sin datos personales inventados.",
+        "Practicar: Describir una fotografía consentida si desea hacerlo. Mostrar un modelo concreto con el recurso revisado, sin datos personales inventados.",
+        "Practicar: Seleccionar una actividad significativa para el presente. Trasladar a una actividad segura y acordada, solo si procede."
+      ],
+      "visual_design": "Espacio amplio, instrucciones cortas, contraste suficiente y variedad de recursos sin sobrecarga.",
+      "cognitive_load": "Modificar una sola variable por ejercicio, con pistas graduadas."
     },
     {
       "code": "OR-P02",
@@ -196,11 +287,24 @@
           "type": "table",
           "title": "Relaciones significativas",
           "content": "Persona elegida|Actividad compartida\nA completar|A completar\nA completar|A completar"
+        },
+        {
+          "type": "diagram",
+          "title": "Secuencia de práctica: Vínculos y personas importantes",
+          "content": "Elegir personas que el paciente desee incluir\nObservar fotografías rotuladas con consentimiento\nRelacionar cada persona con una actividad agradable\nPreparar una tarjeta de apoyo si resulta útil"
         }
       ],
       "caution": "No asumir parentescos, presencia actual ni nombres; evitar fotos sin autorización.",
       "record": "Anotar respuestas espontáneas, tipo y número de ayudas, fatiga, participación y transferencia observada; no generar puntuaciones normativas.",
-      "review_status": "draft_requires_clinical_review"
+      "review_status": "draft_requires_clinical_review",
+      "examples": [
+        "Practicar: Elegir personas que el paciente desee incluir. Mostrar un modelo concreto con el recurso revisado, sin datos personales inventados.",
+        "Practicar: Observar fotografías rotuladas con consentimiento. Mostrar un modelo concreto con el recurso revisado, sin datos personales inventados.",
+        "Practicar: Relacionar cada persona con una actividad agradable. Mostrar un modelo concreto con el recurso revisado, sin datos personales inventados.",
+        "Practicar: Preparar una tarjeta de apoyo si resulta útil. Trasladar a una actividad segura y acordada, solo si procede."
+      ],
+      "visual_design": "Espacio amplio, instrucciones cortas, contraste suficiente y variedad de recursos sin sobrecarga.",
+      "cognitive_load": "Modificar una sola variable por ejercicio, con pistas graduadas."
     },
     {
       "code": "OR-P03",
@@ -221,11 +325,24 @@
           "type": "table",
           "title": "Preferencias y apoyos",
           "content": "Actividad|Me interesa|Ayuda necesaria\nEscuchar música|A completar|A completar\nConversar|A completar|A completar"
+        },
+        {
+          "type": "diagram",
+          "title": "Secuencia de práctica: Quién soy en el presente",
+          "content": "Elegir entre actividades presentes\nIdentificar una habilidad preservada\nExpresar qué apoyo facilita participar\nTomar una decisión pequeña para la semana"
         }
       ],
       "caution": "No inferir ausencia de preferencias a partir de dificultades expresivas.",
       "record": "Anotar respuestas espontáneas, tipo y número de ayudas, fatiga, participación y transferencia observada; no generar puntuaciones normativas.",
-      "review_status": "draft_requires_clinical_review"
+      "review_status": "draft_requires_clinical_review",
+      "examples": [
+        "Practicar: Elegir entre actividades presentes. Mostrar un modelo concreto con el recurso revisado, sin datos personales inventados.",
+        "Practicar: Identificar una habilidad preservada. Mostrar un modelo concreto con el recurso revisado, sin datos personales inventados.",
+        "Practicar: Expresar qué apoyo facilita participar. Mostrar un modelo concreto con el recurso revisado, sin datos personales inventados.",
+        "Practicar: Tomar una decisión pequeña para la semana. Trasladar a una actividad segura y acordada, solo si procede."
+      ],
+      "visual_design": "Espacio amplio, instrucciones cortas, contraste suficiente y variedad de recursos sin sobrecarga.",
+      "cognitive_load": "Modificar una sola variable por ejercicio, con pistas graduadas."
     },
     {
       "code": "AT-01",
@@ -246,11 +363,24 @@
           "type": "table",
           "title": "Matriz no estandarizada",
           "content": "1|2|3|4\nA|M|A|N\nP|A|R|M\nN|A|P|A"
+        },
+        {
+          "type": "table",
+          "title": "Segunda matriz de búsqueda: M",
+          "content": "1|2|3|4|5\nM|N|A|M|P\nA|M|P|N|M\nN|A|M|P|A\nP|M|N|M|N"
         }
       ],
       "caution": "Controlar agudeza visual, negligencia, tamaño de estímulos y fatiga.",
       "record": "Anotar respuestas espontáneas, tipo y número de ayudas, fatiga, participación y transferencia observada; no generar puntuaciones normativas.",
-      "review_status": "draft_requires_clinical_review"
+      "review_status": "draft_requires_clinical_review",
+      "examples": [
+        "Practicar: Explicar y modelar la búsqueda de A. Mostrar un modelo concreto con el recurso revisado, sin datos personales inventados.",
+        "Practicar: Marcar todas las A de una matriz breve. Mostrar un modelo concreto con el recurso revisado, sin datos personales inventados.",
+        "Practicar: Repetir con un objetivo distinto tras pausa. Mostrar un modelo concreto con el recurso revisado, sin datos personales inventados.",
+        "Practicar: Buscar una palabra relevante en listado cotidiano. Trasladar a una actividad segura y acordada, solo si procede."
+      ],
+      "visual_design": "Espacio amplio, instrucciones cortas, contraste suficiente y variedad de recursos sin sobrecarga.",
+      "cognitive_load": "Modificar una sola variable por ejercicio, con pistas graduadas."
     },
     {
       "code": "AT-02",
@@ -271,11 +401,24 @@
           "type": "table",
           "title": "Registro de bloques",
           "content": "Bloque|Duración acordada|Fatiga observada\nUno|A completar|A completar\nDos|A completar|A completar"
+        },
+        {
+          "type": "diagram",
+          "title": "Secuencia de práctica: Concentración y descanso",
+          "content": "Modelar una regla sencilla de selección de estímulos y comprobar comprensión\nCompletar un bloque visual de duración tolerada\nHacer pausa deliberada y valorar cansancio\nTrasladar la pausa a una tarea cotidiana"
         }
       ],
       "caution": "No imponer tiempos rígidos ni equiparar lentitud a falta de atención.",
       "record": "Anotar respuestas espontáneas, tipo y número de ayudas, fatiga, participación y transferencia observada; no generar puntuaciones normativas.",
-      "review_status": "draft_requires_clinical_review"
+      "review_status": "draft_requires_clinical_review",
+      "examples": [
+        "Practicar: Modelar una regla sencilla de selección de estímulos y comprobar comprensión. Mostrar un modelo concreto con el recurso revisado, sin datos personales inventados.",
+        "Practicar: Completar un bloque visual de duración tolerada. Mostrar un modelo concreto con el recurso revisado, sin datos personales inventados.",
+        "Practicar: Hacer pausa deliberada y valorar cansancio. Mostrar un modelo concreto con el recurso revisado, sin datos personales inventados.",
+        "Practicar: Trasladar la pausa a una tarea cotidiana. Trasladar a una actividad segura y acordada, solo si procede."
+      ],
+      "visual_design": "Espacio amplio, instrucciones cortas, contraste suficiente y variedad de recursos sin sobrecarga.",
+      "cognitive_load": "Modificar una sola variable por ejercicio, con pistas graduadas."
     },
     {
       "code": "AT-03",
@@ -296,11 +439,24 @@
           "type": "table",
           "title": "Consignas de ejemplo",
           "content": "Serie oral|Objetivo\nTaza, llave, libro|Llave\nCasa, pan, mesa|Casa"
+        },
+        {
+          "type": "table",
+          "title": "Segunda serie de atención auditiva",
+          "content": "Serie oral|Diana\nPan, mesa, reloj|Mesa\nLibro, vaso, silla|Vaso"
         }
       ],
       "caution": "Valorar hipoacusia, afasia y alerta antes de atribuir errores a atención.",
       "record": "Anotar respuestas espontáneas, tipo y número de ayudas, fatiga, participación y transferencia observada; no generar puntuaciones normativas.",
-      "review_status": "draft_requires_clinical_review"
+      "review_status": "draft_requires_clinical_review",
+      "examples": [
+        "Practicar: Comprobar audición y comprender una consigna simple. Mostrar un modelo concreto con el recurso revisado, sin datos personales inventados.",
+        "Practicar: Señalar una palabra diana entre tres. Mostrar un modelo concreto con el recurso revisado, sin datos personales inventados.",
+        "Practicar: Modificar modalidad de respuesta si es necesario. Mostrar un modelo concreto con el recurso revisado, sin datos personales inventados.",
+        "Practicar: Ensayar confirmar una instrucción cotidiana. Trasladar a una actividad segura y acordada, solo si procede."
+      ],
+      "visual_design": "Espacio amplio, instrucciones cortas, contraste suficiente y variedad de recursos sin sobrecarga.",
+      "cognitive_load": "Modificar una sola variable por ejercicio, con pistas graduadas."
     },
     {
       "code": "MEM-01",
@@ -321,11 +477,24 @@
           "type": "diagram",
           "title": "Aprendizaje con apoyo",
           "content": "Elegir información\nMostrar clave\nRecuperar con ayuda\nRepetir sin forzar"
+        },
+        {
+          "type": "diagram",
+          "title": "Secuencia de práctica: Aprendizaje espaciado funcional",
+          "content": "Elegir un objetivo funcional no crítico\nMostrar el apoyo visual y modelar respuesta\nRepetir a intervalos tolerados con corrección amable\nComprobar uso espontáneo del apoyo en rutina"
         }
       ],
       "caution": "Evitar objetivos de seguridad crítica sin supervisión; registrar intervalos.",
       "record": "Anotar respuestas espontáneas, tipo y número de ayudas, fatiga, participación y transferencia observada; no generar puntuaciones normativas.",
-      "review_status": "draft_requires_clinical_review"
+      "review_status": "draft_requires_clinical_review",
+      "examples": [
+        "Practicar: Elegir un objetivo funcional no crítico. Mostrar un modelo concreto con el recurso revisado, sin datos personales inventados.",
+        "Practicar: Mostrar el apoyo visual y modelar respuesta. Mostrar un modelo concreto con el recurso revisado, sin datos personales inventados.",
+        "Practicar: Repetir a intervalos tolerados con corrección amable. Mostrar un modelo concreto con el recurso revisado, sin datos personales inventados.",
+        "Practicar: Comprobar uso espontáneo del apoyo en rutina. Trasladar a una actividad segura y acordada, solo si procede."
+      ],
+      "visual_design": "Espacio amplio, instrucciones cortas, contraste suficiente y variedad de recursos sin sobrecarga.",
+      "cognitive_load": "Modificar una sola variable por ejercicio, con pistas graduadas."
     },
     {
       "code": "MEM-02",
@@ -346,11 +515,24 @@
           "type": "table",
           "title": "Plan personal de avisos",
           "content": "Actividad|Fecha comprobada|Dónde anotar|Revisado\nA completar|A completar|A completar|A completar"
+        },
+        {
+          "type": "diagram",
+          "title": "Secuencia de práctica: Agenda y memoria prospectiva",
+          "content": "Elegir agenda de papel o digital conocida\nAnotar fecha y actividad verificadas\nEnsayar la lectura de un recordatorio\nComprobar qué ayuda se precisó en la rutina"
         }
       ],
       "caution": "No inventar citas ni delegar medicación únicamente a alarmas.",
       "record": "Anotar respuestas espontáneas, tipo y número de ayudas, fatiga, participación y transferencia observada; no generar puntuaciones normativas.",
-      "review_status": "draft_requires_clinical_review"
+      "review_status": "draft_requires_clinical_review",
+      "examples": [
+        "Practicar: Elegir agenda de papel o digital conocida. Mostrar un modelo concreto con el recurso revisado, sin datos personales inventados.",
+        "Practicar: Anotar fecha y actividad verificadas. Mostrar un modelo concreto con el recurso revisado, sin datos personales inventados.",
+        "Practicar: Ensayar la lectura de un recordatorio. Mostrar un modelo concreto con el recurso revisado, sin datos personales inventados.",
+        "Practicar: Comprobar qué ayuda se precisó en la rutina. Trasladar a una actividad segura y acordada, solo si procede."
+      ],
+      "visual_design": "Espacio amplio, instrucciones cortas, contraste suficiente y variedad de recursos sin sobrecarga.",
+      "cognitive_load": "Modificar una sola variable por ejercicio, con pistas graduadas."
     },
     {
       "code": "MEM-03",
@@ -371,11 +553,24 @@
           "type": "table",
           "title": "Objeto y función",
           "content": "Objeto|Uso\nLlaves|Abrir puerta\nCalendario|Consultar fechas\nPeine|Peinarse"
+        },
+        {
+          "type": "table",
+          "title": "Objetos y funciones cotidianas",
+          "content": "Objeto|Función\nPeine|Peinar\nLlave|Abrir una cerradura\nTaza|Beber"
         }
       ],
       "caution": "No confundir memoria episódica con conocimiento semántico.",
       "record": "Anotar respuestas espontáneas, tipo y número de ayudas, fatiga, participación y transferencia observada; no generar puntuaciones normativas.",
-      "review_status": "draft_requires_clinical_review"
+      "review_status": "draft_requires_clinical_review",
+      "examples": [
+        "Practicar: Presentar dos pares objeto-función. Mostrar un modelo concreto con el recurso revisado, sin datos personales inventados.",
+        "Practicar: Relacionar cada objeto con su uso. Mostrar un modelo concreto con el recurso revisado, sin datos personales inventados.",
+        "Practicar: Repetir tras intervalo breve con claves. Mostrar un modelo concreto con el recurso revisado, sin datos personales inventados.",
+        "Practicar: Aplicar una asociación en rutina. Trasladar a una actividad segura y acordada, solo si procede."
+      ],
+      "visual_design": "Espacio amplio, instrucciones cortas, contraste suficiente y variedad de recursos sin sobrecarga.",
+      "cognitive_load": "Modificar una sola variable por ejercicio, con pistas graduadas."
     },
     {
       "code": "FE-01",
@@ -396,11 +591,24 @@
           "type": "diagram",
           "title": "Secuencia de preparación",
           "content": "Consultar calendario\nPreparar objetos\nComprobar llaves\nAvisar acompañante"
+        },
+        {
+          "type": "diagram",
+          "title": "Secuencia de práctica: Preparar una salida",
+          "content": "Identificar los objetos necesarios\nOrdenar pasos en tarjetas visuales\nResolver un imprevisto sencillo con ayuda\nUsar lista en salida acompañada"
         }
       ],
       "caution": "No inferir aptitud para desplazarse sin supervisión.",
       "record": "Anotar respuestas espontáneas, tipo y número de ayudas, fatiga, participación y transferencia observada; no generar puntuaciones normativas.",
-      "review_status": "draft_requires_clinical_review"
+      "review_status": "draft_requires_clinical_review",
+      "examples": [
+        "Practicar: Identificar los objetos necesarios. Mostrar un modelo concreto con el recurso revisado, sin datos personales inventados.",
+        "Practicar: Ordenar pasos en tarjetas visuales. Mostrar un modelo concreto con el recurso revisado, sin datos personales inventados.",
+        "Practicar: Resolver un imprevisto sencillo con ayuda. Mostrar un modelo concreto con el recurso revisado, sin datos personales inventados.",
+        "Practicar: Usar lista en salida acompañada. Trasladar a una actividad segura y acordada, solo si procede."
+      ],
+      "visual_design": "Espacio amplio, instrucciones cortas, contraste suficiente y variedad de recursos sin sobrecarga.",
+      "cognitive_load": "Modificar una sola variable por ejercicio, con pistas graduadas."
     },
     {
       "code": "FE-02",
@@ -421,11 +629,24 @@
           "type": "table",
           "title": "Prioridades del día",
           "content": "Actividad|Prioridad|Pausa o ayuda\nA completar|A completar|A completar\nA completar|A completar|A completar"
+        },
+        {
+          "type": "diagram",
+          "title": "Secuencia de práctica: Elegir prioridades",
+          "content": "Seleccionar tres actividades reales\nMarcar prioridad de cada tarea\nIntroducir una pausa de esfuerzo\nRevisar la viabilidad del plan sin juicio"
         }
       ],
       "caution": "Contemplar fatiga, apatía, dolor y variaciones funcionales.",
       "record": "Anotar respuestas espontáneas, tipo y número de ayudas, fatiga, participación y transferencia observada; no generar puntuaciones normativas.",
-      "review_status": "draft_requires_clinical_review"
+      "review_status": "draft_requires_clinical_review",
+      "examples": [
+        "Practicar: Seleccionar tres actividades reales. Mostrar un modelo concreto con el recurso revisado, sin datos personales inventados.",
+        "Practicar: Marcar prioridad de cada tarea. Mostrar un modelo concreto con el recurso revisado, sin datos personales inventados.",
+        "Practicar: Introducir una pausa de esfuerzo. Mostrar un modelo concreto con el recurso revisado, sin datos personales inventados.",
+        "Practicar: Revisar la viabilidad del plan sin juicio. Trasladar a una actividad segura y acordada, solo si procede."
+      ],
+      "visual_design": "Espacio amplio, instrucciones cortas, contraste suficiente y variedad de recursos sin sobrecarga.",
+      "cognitive_load": "Modificar una sola variable por ejercicio, con pistas graduadas."
     },
     {
       "code": "FE-03",
@@ -446,11 +667,24 @@
           "type": "table",
           "title": "Clasificación de práctica",
           "content": "Objeto|Categoría|Uso\nTaza|Utensilio|Beber\nAbrigo|Ropa|Abrigar\nLápiz|Escritura|Escribir"
+        },
+        {
+          "type": "table",
+          "title": "Clasificar cambiando de criterio",
+          "content": "Objeto|Categoría|Uso\nTaza|Vajilla|Beber\nCuchara|Cubiertos|Comer\nVaso|Vajilla|Beber"
         }
       ],
       "caution": "No reproducir WCST ni interpretarlo como medida psicométrica.",
       "record": "Anotar respuestas espontáneas, tipo y número de ayudas, fatiga, participación y transferencia observada; no generar puntuaciones normativas.",
-      "review_status": "draft_requires_clinical_review"
+      "review_status": "draft_requires_clinical_review",
+      "examples": [
+        "Practicar: Clasificar objetos por categoría. Mostrar un modelo concreto con el recurso revisado, sin datos personales inventados.",
+        "Practicar: Anunciar cambio de criterio a función. Mostrar un modelo concreto con el recurso revisado, sin datos personales inventados.",
+        "Practicar: Describir la regla actual con apoyo. Mostrar un modelo concreto con el recurso revisado, sin datos personales inventados.",
+        "Practicar: Aplicar estrategia a pequeño cambio de rutina. Trasladar a una actividad segura y acordada, solo si procede."
+      ],
+      "visual_design": "Espacio amplio, instrucciones cortas, contraste suficiente y variedad de recursos sin sobrecarga.",
+      "cognitive_load": "Modificar una sola variable por ejercicio, con pistas graduadas."
     },
     {
       "code": "LEN-01",
@@ -471,11 +705,24 @@
           "type": "table",
           "title": "Guion para fotografías revisadas",
           "content": "Objeto visual a preparar|Clave semántica\nLlave|Para abrir\nTaza|Para beber\nPeine|Para arreglar cabello"
+        },
+        {
+          "type": "diagram",
+          "title": "Secuencia de práctica: Palabras de la vida diaria",
+          "content": "Seleccionar fotografías consentidas de objetos comunes\nIntentar denominación con tiempo de respuesta\nAñadir pista semántica y fonológica si procede\nRelacionar nombre con uso cotidiano"
         }
       ],
       "caution": "Fotografías reales deben incorporarse y verificarse antes de uso.",
       "record": "Anotar respuestas espontáneas, tipo y número de ayudas, fatiga, participación y transferencia observada; no generar puntuaciones normativas.",
-      "review_status": "draft_requires_clinical_review"
+      "review_status": "draft_requires_clinical_review",
+      "examples": [
+        "Practicar: Seleccionar fotografías consentidas de objetos comunes. Mostrar un modelo concreto con el recurso revisado, sin datos personales inventados.",
+        "Practicar: Intentar denominación con tiempo de respuesta. Mostrar un modelo concreto con el recurso revisado, sin datos personales inventados.",
+        "Practicar: Añadir pista semántica y fonológica si procede. Mostrar un modelo concreto con el recurso revisado, sin datos personales inventados.",
+        "Practicar: Relacionar nombre con uso cotidiano. Trasladar a una actividad segura y acordada, solo si procede."
+      ],
+      "visual_design": "Espacio amplio, instrucciones cortas, contraste suficiente y variedad de recursos sin sobrecarga.",
+      "cognitive_load": "Modificar una sola variable por ejercicio, con pistas graduadas."
     },
     {
       "code": "LEN-02",
@@ -496,11 +743,24 @@
           "type": "diagram",
           "title": "Secuencia de comprensión",
           "content": "Escuchar o leer\nConfirmar significado\nRealizar un paso\nPedir aclaración si precisa"
+        },
+        {
+          "type": "table",
+          "title": "Consignas de una y dos acciones",
+          "content": "Nivel|Ejemplo\nUna acción|Señala el libro\nDos acciones|Señala el libro y después la taza"
         }
       ],
       "caution": "Separar comprensión lingüística de capacidad auditiva y motora.",
       "record": "Anotar respuestas espontáneas, tipo y número de ayudas, fatiga, participación y transferencia observada; no generar puntuaciones normativas.",
-      "review_status": "draft_requires_clinical_review"
+      "review_status": "draft_requires_clinical_review",
+      "examples": [
+        "Practicar: Verificar una consigna de una acción. Mostrar un modelo concreto con el recurso revisado, sin datos personales inventados.",
+        "Practicar: Añadir dos acciones con apoyo visual. Mostrar un modelo concreto con el recurso revisado, sin datos personales inventados.",
+        "Practicar: Practicar solicitar aclaración. Mostrar un modelo concreto con el recurso revisado, sin datos personales inventados.",
+        "Practicar: Generalizar a una instrucción cotidiana. Trasladar a una actividad segura y acordada, solo si procede."
+      ],
+      "visual_design": "Espacio amplio, instrucciones cortas, contraste suficiente y variedad de recursos sin sobrecarga.",
+      "cognitive_load": "Modificar una sola variable por ejercicio, con pistas graduadas."
     },
     {
       "code": "VIS-01",
@@ -521,11 +781,24 @@
           "type": "table",
           "title": "Cuadrícula funcional",
           "content": "Col 1|Col 2|Col 3\nA1|A2|A3\nB1|B2|B3\nC1|C2|C3"
+        },
+        {
+          "type": "table",
+          "title": "Segunda cuadrícula de posiciones",
+          "content": "A|B|C\n1|2|3\n4|5|6\n7|8|9"
         }
       ],
       "caution": "Considerar heminegligencia, lateralidad y limitaciones visuales.",
       "record": "Anotar respuestas espontáneas, tipo y número de ayudas, fatiga, participación y transferencia observada; no generar puntuaciones normativas.",
-      "review_status": "draft_requires_clinical_review"
+      "review_status": "draft_requires_clinical_review",
+      "examples": [
+        "Practicar: Explicar filas y columnas con modelo. Mostrar un modelo concreto con el recurso revisado, sin datos personales inventados.",
+        "Practicar: Situar una ficha en posición indicada. Mostrar un modelo concreto con el recurso revisado, sin datos personales inventados.",
+        "Practicar: Cambiar un elemento sin variar el resto. Mostrar un modelo concreto con el recurso revisado, sin datos personales inventados.",
+        "Practicar: Trasladar a organización de objetos en bandeja. Trasladar a una actividad segura y acordada, solo si procede."
+      ],
+      "visual_design": "Espacio amplio, instrucciones cortas, contraste suficiente y variedad de recursos sin sobrecarga.",
+      "cognitive_load": "Modificar una sola variable por ejercicio, con pistas graduadas."
     },
     {
       "code": "VIS-02",
@@ -546,11 +819,24 @@
           "type": "table",
           "title": "Comparación textual de ejemplo",
           "content": "Posición|Modelo A|Modelo B\nArriba|Círculo|Círculo\nCentro|Cuadrado|Triángulo\nAbajo|Triángulo|Cuadrado"
+        },
+        {
+          "type": "table",
+          "title": "Patrones visuales no estandarizados",
+          "content": "Modelo|Opción A|Opción B\nO X O|O O X|O X O\nX O X|X O X|O X X"
         }
       ],
       "caution": "Preparar lámina visual real cuando sea necesaria, no depender de texto.",
       "record": "Anotar respuestas espontáneas, tipo y número de ayudas, fatiga, participación y transferencia observada; no generar puntuaciones normativas.",
-      "review_status": "draft_requires_clinical_review"
+      "review_status": "draft_requires_clinical_review",
+      "examples": [
+        "Practicar: Mostrar un modelo visual claro y explicar qué elementos debe comparar. Mostrar un modelo concreto con el recurso revisado, sin datos personales inventados.",
+        "Practicar: Elegir configuración coincidente entre dos opciones. Mostrar un modelo concreto con el recurso revisado, sin datos personales inventados.",
+        "Practicar: Señalar una diferencia concreta. Mostrar un modelo concreto con el recurso revisado, sin datos personales inventados.",
+        "Practicar: Reproducir con tres objetos si la motricidad lo permite. Trasladar a una actividad segura y acordada, solo si procede."
+      ],
+      "visual_design": "Espacio amplio, instrucciones cortas, contraste suficiente y variedad de recursos sin sobrecarga.",
+      "cognitive_load": "Modificar una sola variable por ejercicio, con pistas graduadas."
     },
     {
       "code": "PRAX-01",
@@ -571,11 +857,24 @@
           "type": "diagram",
           "title": "Infusión sin riesgo",
           "content": "Preparar taza\nColocar bolsita\nSolicitar agua templada preparada por acompañante\nRetirar bolsita"
+        },
+        {
+          "type": "diagram",
+          "title": "Secuencia de práctica: Gestos y objetos familiares",
+          "content": "Identificar el uso de un objeto conocido\nOrdenar tarjetas de una actividad segura\nRepresentar o describir un gesto según movilidad\nEnlazar la secuencia a rutina con ayuda"
         }
       ],
       "caution": "Evitar agua hirviendo, cuchillos y otras tareas de riesgo.",
       "record": "Anotar respuestas espontáneas, tipo y número de ayudas, fatiga, participación y transferencia observada; no generar puntuaciones normativas.",
-      "review_status": "draft_requires_clinical_review"
+      "review_status": "draft_requires_clinical_review",
+      "examples": [
+        "Practicar: Identificar el uso de un objeto conocido. Mostrar un modelo concreto con el recurso revisado, sin datos personales inventados.",
+        "Practicar: Ordenar tarjetas de una actividad segura. Mostrar un modelo concreto con el recurso revisado, sin datos personales inventados.",
+        "Practicar: Representar o describir un gesto según movilidad. Mostrar un modelo concreto con el recurso revisado, sin datos personales inventados.",
+        "Practicar: Enlazar la secuencia a rutina con ayuda. Trasladar a una actividad segura y acordada, solo si procede."
+      ],
+      "visual_design": "Espacio amplio, instrucciones cortas, contraste suficiente y variedad de recursos sin sobrecarga.",
+      "cognitive_load": "Modificar una sola variable por ejercicio, con pistas graduadas."
     },
     {
       "code": "FUN-01",
@@ -596,11 +895,25 @@
           "type": "table",
           "title": "Lista simulada",
           "content": "Producto|Necesario|Revisado\nPan|Sí/No|Sí/No\nFruta|Sí/No|Sí/No\nBebida|Sí/No|Sí/No"
+        },
+        {
+          "type": "diagram",
+          "title": "Secuencia de práctica: Lista de compra acompañada",
+          "content": "Elegir productos realmente pertinentes\nAnotar o señalar cada producto\nSimular comprobación con imágenes\nUtilizar lista en compra acompañada cuando proceda"
         }
       ],
       "caution": "No concluir autonomía instrumental sin evaluación funcional.",
       "record": "Anotar respuestas espontáneas, tipo y número de ayudas, fatiga, participación y transferencia observada; no generar puntuaciones normativas.",
-      "review_status": "draft_requires_clinical_review"
+      "review_status": "draft_requires_clinical_review",
+      "examples": [
+        "Practicar: Elegir productos realmente pertinentes. Mostrar un modelo concreto con el recurso revisado, sin datos personales inventados.",
+        "Practicar: Anotar o señalar cada producto. Mostrar un modelo concreto con el recurso revisado, sin datos personales inventados.",
+        "Practicar: Simular comprobación con imágenes. Mostrar un modelo concreto con el recurso revisado, sin datos personales inventados.",
+        "Practicar: Utilizar lista en compra acompañada cuando proceda. Trasladar a una actividad segura y acordada, solo si procede."
+      ],
+      "visual_design": "Espacio amplio, instrucciones cortas, contraste suficiente y variedad de recursos sin sobrecarga.",
+      "cognitive_load": "Modificar una sola variable por ejercicio, con pistas graduadas."
     }
-  ]
+  ],
+  "description": "Borradores originales de una semana con consignas, ejemplos y soportes visuales complementarios. Requieren revisión profesional."
 }
