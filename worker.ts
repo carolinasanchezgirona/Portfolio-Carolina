@@ -1613,6 +1613,7 @@ const NEURO_MATERIAL_GUIDELINES = [
   "Produce recursos visuales estructurados cuando aporten utilidad, mediante visual_blocks (máximo 5) con type table, chart, diagram o calendar y campos title y content. No generes imágenes falsas, URL ni referencias a fotos inexistentes.",
   "Una tabla se codifica con encabezados en primera línea y filas separadas por salto de línea; columnas separadas por |. Un diagrama se codifica con un paso por línea. Un calendario comienza por AAAA-MM y permite líneas día | actividad.",
   "Un gráfico se codifica con pares etiqueta | valor numérico, solo si los datos vienen dados expresamente o se identifican como EJEMPLO FICTICIO. No inventes puntuaciones, normas, evidencia ni evolución del paciente.",
+  "Aplicar los principios editoriales de fichas neuropsicológicas originales: variedad visual, estímulos efectivamente imprimibles, jerarquía clara, muestras de respuesta, ayudas graduadas, espacio para practicar y transferencia funcional explícita.",
   "La intervención temática puede ser estacional y vinculada a orientación, lenguaje y actividad funcional; no presupongas costumbres religiosas ni información personal."
 ].join("\n");
 function normalizeNeuroVisualBlocks(raw: unknown) {
@@ -1630,6 +1631,14 @@ const WEEKLY_NEURO_MATERIAL_GUIDELINES=[
  "Los pasos deben especificar estímulos, consigna al paciente, cómo practicar, cuándo ayudar y cómo concluir. Evita frases genéricas y relleno repetitivo. Incluye un ejemplo resuelto relevante y ayudas graduadas.",
  "Vincula orientación temporal, espacial o personal y otras funciones a tareas significativas. Usa calendarios, tablas, fotografías, gráficos o esquemas solo cuando sean necesarios; nunca inventes biografía, cifras clínicas ni pruebas estandarizadas.",
  "En record_prompt incluir registro de aciertos y errores cualitativos, cantidad y tipo de ayudas, participación, fatiga, transferencia y dudas. En el cierre explicar qué revisar con la profesional para ajustar la semana SIGUIENTE, sin desarrollar esa semana.",
+ "Priorizar VARIEDAD REAL de tareas y soportes: rastreo y cancelación visual, asociación, clasificación, secuenciación, evocación o reconocimiento, copia o discriminación espacial, calendarios y estrategias de la vida diaria según objetivo. No generar cuatro versiones del mismo ejercicio ni rellenar texto repetitivo.",
+ "Para cada ejercicio definir función principal y demandas secundarias (visión, lenguaje, motricidad y comprensión), la regla precisa, estímulos concretos, ejemplo resuelto comprobable y criterio observable de logro sin crear baremos.",
+ "Modificar UNA dimensión de dificultad cada vez: número de estímulos, similitud de distractores, longitud de la consigna, demora o ayudas. El nivel de apoyo no se equipara automáticamente a severidad diagnóstica; no usar cronometría por defecto.",
+ "Usar neuro_profile.response_mode (oral, escrita, señalamiento o flexible) y neuro_profile.accessibility si existen para adaptar consignas, tamaño del material, modalidad de respuesta y apoyos.",
+ "Crear recursos visuales originales con visual_blocks cuando la tarea lo requiera: matriz en tabla de 2 a 6 columnas, secuencias en diagramas, calendario real verificado y gráficos solo con datos aportados o rotulados como ejemplos ficticios. No citar fotografías que no se hayan adjuntado o generado.",
+ "Los recursos visuales deben contener estímulos utilizables, no solo una descripción de lo que habría que construir después. Cuidar contraste, espacios para respuestas y accesibilidad para personas mayores; evitar infantilización.",
+ "Ofrecer pistas graduadas, descansos y una actividad de transferencia funcional opcional y segura; no asumir recuerdos, domicilio, fechas ni relaciones personales reales.",
+ "Separar instrucciones destinadas al paciente y observaciones técnicas de la profesional. En texto visible al paciente, evitar diagnósticos, resultados inventados o indicaciones de registrar parámetros clínicos técnicos.",
  "Mantener párrafos cortos, objetivos realistas y carga flexible. El material es un borrador sujeto a revisión clínica."
 ].join("\n");
 
