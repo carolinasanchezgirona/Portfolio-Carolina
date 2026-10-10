@@ -59,6 +59,7 @@
     return {
       mode:["single","individual"].includes($("clinic-neuro-mode")?.value)?$("clinic-neuro-mode").value:"weekly",
       selectedRecipe:window.NeuroSelectedRecipe||null,
+      include_digital:!!$("clinic-neuro-digital-enabled")?.checked,
       domain:$("clinic-neuro-domain")?.value||"atencion",
       week:weekNumber(),
       level:$("clinic-neuro-level")?.value||"",
@@ -180,6 +181,17 @@
       "Qué observar: Registrar participación, tipo e intensidad de ayuda, errores cualitativos, fatiga, dudas y posible transferencia; detener si la actividad no resulta adecuada."
     ].join("\n");
   }
+  // Prescripciones deterministas; el servidor reconstruye cada estímulo antes de puntuar.
+  const digitalDomain={cancelacion:"atencion",secuencia:"memoria",flexibilidad:"funciones_ejecutivas"};
+  function digitalFor(opts){
+    if(!opts.include_digital || !LEVEL_NAMES[opts.level])return [];
+    const types=opts.mode==="weekly"?["cancelacion","secuencia","flexibilidad"]:
+      Object.keys(digitalDomain).filter(key=>digitalDomain[key]===opts.domain);
+    return types.map((type,index)=>({
+      type,version:1,level:opts.level,domain:digitalDomain[type],
+      seed:1+((Math.imul((Number(opts.week)||1),7919)+Math.imul((Number(opts.variant)||0)+1,15427)+(index+1)*31847)>>>0)%2147483646
+    }));
+  }
   function build(opts) {
     const tasks=selectRecipes(opts);
     const covered=new Set(tasks.map(x=>x.domain));
@@ -215,7 +227,7 @@
       safety_note:"Realiza las actividades de manera flexible. No fuerces recuerdos, no corrijas confrontativamente y evita practicar situaciones funcionales de riesgo sin supervisión adecuada.",
       remember:"La semana siguiente se diseña tras revisar juntos qué actividades y apoyos fueron útiles. Este material no constituye una evaluación diagnóstica.",
       session_questions:["¿Qué ejercicios resultaron más accesibles?","¿Qué apoyos se necesitaron?","¿Se observó transferencia funcional?","¿Qué conviene adaptar la semana siguiente?"],
-      neuro_profile:{mode:opts.mode,domain:weekly?"multidominio":opts.domain,intervention:opts.intervention,level:opts.level,support:opts.support||"moderado",format:opts.format||"mixto",activity_type:opts.activity_type||"mixto",theme:opts.theme,functional_goal:opts.goal,week_number:opts.week,response_mode:opts.response,accessibility:opts.accessibility,covered_domains:Array.from(covered),selected_activity:opts.mode!=="weekly"&&opts.selectedRecipe?.domain===opts.domain&&opts.selectedRecipe?.level===opts.level?opts.selectedRecipe.title:null},
+      neuro_profile:{mode:opts.mode,domain:weekly?"multidominio":opts.domain,intervention:opts.intervention,level:opts.level,support:opts.support||"moderado",format:opts.format||"mixto",activity_type:opts.activity_type||"mixto",theme:opts.theme,functional_goal:opts.goal,week_number:opts.week,response_mode:opts.response,accessibility:opts.accessibility,covered_domains:Array.from(covered),digital_activities:digitalFor(opts),selected_activity:opts.mode!=="weekly"&&opts.selectedRecipe?.domain===opts.domain&&opts.selectedRecipe?.level===opts.level?opts.selectedRecipe.title:null},
       visual_blocks:visuals
     };
   }
@@ -259,6 +271,6 @@
     });
     $("clinic-neuro-mode")?.dispatchEvent(new Event("change"));
   }
-  window.NeuroWeeklyComposer={GROUPS,RECIPES,catalog,build,selectRecipes,visualFor};
+  window.NeuroWeeklyComposer={GROUPS,RECIPES,catalog,build,selectRecipes,visualFor,digitalFor};
   if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",init);else init();
 })();
