@@ -364,6 +364,14 @@ export default function NeuroFollowup(){
               {row.clinician_notes&&<p className="neuro-entry-notes">{row.clinician_notes}</p>}
               {row.ocr_transcript&&<details><summary>Transcripción OCR revisada</summary><pre>{row.ocr_transcript}</pre></details>}
               {row.photo_paths.length>0&&<div className="neuro-photo-links">{row.photo_paths.map((path,i)=><button type="button" className="clinic-secondary" key={path} onClick={()=>openPhoto(path)}>Ver foto privada {i+1}</button>)}</div>}
+              {row.supersedes_id&&<details className="neuro-audit-history"><summary>Ver registro original conservado</summary>
+                {entries.filter(p=>p.id===row.supersedes_id).map(previous=><div key={previous.id}>
+                  <p>Registro anterior: {dateDisplay(previous.observed_on)} · {previous.task_name}</p>
+                  {previous.clinician_notes&&<p className="neuro-entry-notes">{previous.clinician_notes}</p>}
+                  {previous.ocr_transcript&&<pre>{previous.ocr_transcript}</pre>}
+                  <div className="neuro-photo-links">{previous.photo_paths.map((path,i)=><button type="button" key={path} className="clinic-secondary" onClick={()=>openPhoto(path)}>Foto original {i+1}</button>)}</div>
+                </div>)}
+              </details>}
               <button type="button" className="clinic-text" onClick={()=>supersede(row)}>Registrar corrección</button>
             </article>)}</div>
           </>
