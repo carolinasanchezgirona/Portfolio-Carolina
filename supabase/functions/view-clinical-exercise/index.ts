@@ -493,7 +493,7 @@ async function buildPdf(titleValue: string, patientDocument: PatientDocument, ma
     y -= 25;
   }
 
-  function drawWeeklyNeuroInstructions(value: string) {
+  async function drawWeeklyNeuroInstructions(value: string, rawVisual?: VisualBlock[]) {
     const chunks = String(value || "").split(/(?:^|\n)\s*(Ejercicio\s+\d+\s*:[^\n]*)\n/gi);
     if (chunks.length < 3) { drawSection("Cómo hacerlo", value); return; }
     ensureSpace(85);
@@ -503,7 +503,8 @@ async function buildPdf(titleValue: string, patientDocument: PatientDocument, ma
     current.drawRectangle({ x: marginX, y: y - 22, width: maxWidth, height: 28, color: sky });
     current.drawText(pdfSafe(week).toUpperCase(), { x: marginX + 13, y: y - 12, size: 10.3, font: boldFont, color: navy });
     y -= 46;
-    const labelRe = /^(Objetivo|Materiales|Preparación|Pasos|Ejemplo|Ayudas|Adaptación|Duración y frecuencia|Qué observar):\s*/i;
+    const labelRe = /^(Consigna|Material|Cómo responder|Tu respuesta|Dudas o notas|Objetivo|Materiales|Preparación|Pasos|Ejemplo|Ayudas|Adaptación|Duración y frecuencia|Qué observar):\s*/i;
+    const resources = normalizeVisualBlocks(rawVisual);
     for (let i = 1; i + 1 < chunks.length; i += 2) {
       const title = pdfSafe(chunks[i].trim());
       const titleLines = wrap(boldFont, title, 12, maxWidth - 30);
@@ -515,6 +516,8 @@ async function buildPdf(titleValue: string, patientDocument: PatientDocument, ma
         current.drawText(line, { x: marginX + 15, y: y - 12 - j * 17, size: 12, font: boldFont, color: navy });
       }
       y -= cardTop + 18;
+      const number=Number(/Ejercicio\s+(\d+)/i.exec(chunks[i])?.[1]||0);
+      const visual=resources.find(x=>x.title.startsWith("Ejercicio "+number+" ·"));
       const rows = chunks[i + 1].split(/\r?\n/);
       for (const lineRaw of rows) {
         const line = lineRaw.trim();
@@ -525,7 +528,17 @@ async function buildPdf(titleValue: string, patientDocument: PatientDocument, ma
           current.drawText(pdfSafe(label[1]).toUpperCase(), { x: marginX + 4, y, size: 8.8, font: boldFont, color: navy });
           y -= 19;
           const bodyText = line.slice(label[0].length);
-          if (label[1].toLowerCase() === "pasos") {
+          if(label[1]==="Tu respuesta"||label[1]==="Dudas o notas"){
+            const lineCount=label[1]==="Tu respuesta"?3:2;
+            for(let l=0;l<lineCount;l++){
+              ensureSpace(27);
+              current.drawLine({start:{x:marginX+13,y},end:{x:A4[0]-marginX-8,y},thickness:.65,color:lineColor});
+              y-=27;
+            }
+          }else if(label[1]==="Material"){
+            drawParagraph(bodyText,{size:10.3,leading:16.6,indent:13});
+            if(visual)await drawVisualResources([visual],true);
+          }else           if (label[1].toLowerCase() === "pasos") {
             const steps = bodyText.split(/(?=\b[1-9]\)\s)/).map(s => s.replace(/^\s*[1-9]\)\s*/, "").trim()).filter(Boolean);
             if (steps.length > 1) {
               for (const [index, step] of steps.entries()) {
@@ -565,10 +578,10 @@ async function buildPdf(titleValue: string, patientDocument: PatientDocument, ma
   current.drawText("Carolina Sánchez Girona", { x: A4[0] - marginX - 115, y, size: 7.8, font: bodyFont, color: muted });
   y -= 38;
 
-  async function drawVisualResources(raw: VisualBlock[] | undefined) {
+  async function drawVisualResources(raw: VisualBlock[] | undefined, inline = false) {
     const blocks = normalizeVisualBlocks(raw);
     if (!blocks.length) return;
-    drawSection("Recursos visuales", "Observa los estímulos y sigue las consignas acordadas en sesión.");
+    if(!inline)drawSection("Recursos visuales", "Observa los estímulos que acompañan a las actividades.");
     function rowCells(values: string[], count: number, header = false, height = 33) {
       // Celdas con legibilidad adaptada al número de columnas, también en A4.
       const cellHeight = Math.max(height, count <= 3 ? 46 : count <= 5 ? 41 : 34);
@@ -586,7 +599,7 @@ async function buildPdf(titleValue: string, patientDocument: PatientDocument, ma
     }
     for (const block of blocks) {
       ensureSpace(65);
-      drawParagraph(block.title.toUpperCase(), { size: 10, leading: 15, font: boldFont, color: navy });
+      drawParagraph((inline?"MATERIAL DEL EJERCICIO":"RECURSO VISUAL")+" · "+block.title, { size: 10, leading: 15, font: boldFont, color: navy });
       y -= 8;
       if (block.type === "image" && block.data) {
         try {
@@ -676,13 +689,13 @@ async function buildPdf(titleValue: string, patientDocument: PatientDocument, ma
 
   const whyHeading = patientDocument.material_type === "psychoeducation" ? "Por qué este material puede ayudarte" : "Por qué hacemos este ejercicio";
   drawSection(whyHeading, patientDocument.why || "", true);
-  drawSection("Qué vamos a observar o entrenar", patientDocument.objective || "");
-  if (isNeuro) drawWeeklyNeuroInstructions(patientDocument.instructions || "");
+  drawSection(isNeuro?"Lo que vas a practicar":"Qué vamos a observar o entrenar", patientDocument.objective || "");
+  if (isNeuro) await drawWeeklyNeuroInstructions(patientDocument.instructions || "", patientDocument.visual_blocks);
   else drawSection(patientDocument.material_type === "psychoeducation" ? "Contenido" : "Cómo hacerlo", patientDocument.instructions || "");
   drawSection("Ejemplo", patientDocument.example || "");
-  await drawVisualResources(patientDocument.visual_blocks);
+  if (!isNeuro || !/(?:^|\n)\s*Ejercicio\s+\d+\s*:/i.test(patientDocument.instructions||"")) await drawVisualResources(patientDocument.visual_blocks);
   drawSection("Tu registro / espacio para trabajar", patientDocument.record_prompt || "");
-  if (patientDocument.record_prompt && patientDocument.material_type !== "psychoeducation") drawWorkArea(isNeuro ? 10 : 7);
+  if (patientDocument.record_prompt && patientDocument.material_type !== "psychoeducation") drawWorkArea(isNeuro ? 4 : 7);
   drawSection("Si resulta demasiado intenso", patientDocument.safety_note || "", true, true);
   drawSection("Qué conviene recordar", patientDocument.remember || "", true);
 
