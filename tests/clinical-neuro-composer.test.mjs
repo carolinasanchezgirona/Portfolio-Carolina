@@ -61,8 +61,8 @@ test("cada actividad tiene guía, estímulos y criterios observacionales, sin ba
 test("las visualizaciones están estructuradas, son imprimibles y corresponden al tipo esperado",()=>{
  for(let week=1;week<=12;week++){
   const doc=composer.build(settings(week));
-  assert.ok(doc.visual_blocks.length>=6);
-  assert.ok(doc.visual_blocks.length<=8);
+  assert.equal(doc.visual_blocks.length,14);
+  assert.ok(doc.visual_blocks.length<=14);
   for(const block of doc.visual_blocks){
    assert.ok(block.title);
    if(block.type==="table"){
