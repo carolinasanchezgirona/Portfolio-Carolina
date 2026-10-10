@@ -32,20 +32,21 @@ test("Los 24 borradores son semanales, con número configurable, sin segunda sem
     assert.doesNotMatch(doc.remember,/dos semanas/i,item.code);
   }
 });
-test("Cada uno de los 96 ejercicios de la biblioteca contiene instrucciones completas y legibles",()=>{
+test("Los 96 ejercicios de biblioteca están escritos para quien los realiza",()=>{
   for(const item of catalog.activities){
     const doc=make(item);
     const chunks=doc.instructions.split(/(?:^|\n)Ejercicio\s+\d+:/g).slice(1);
+    assert.equal(chunks.length,4,item.code);
     for(const [index,chunk] of chunks.entries()){
-      assert.ok(chunk.length>=350,item.code+" ejercicio "+(index+1));
-      for(const label of ["Objetivo:","Materiales:","Preparación:","Pasos:","Ejemplo:","Ayudas:","Adaptación:","Duración y frecuencia:","Qué observar:"]){
-        assert.ok(chunk.includes(label),item.code+" "+label);
+      for(const label of ["Consigna:","Material:","Cómo responder:","Tu respuesta:","Dudas o notas:"]){
+        assert.ok(chunk.includes(label),item.code+" ejercicio "+(index+1)+" "+label);
       }
-      assert.ok((chunk.match(/\b[1-4]\)/g)||[]).length>=3,item.code+" pasos claros");
+      assert.doesNotMatch(chunk,/Qué observar:|Adaptación:|Modelar primero|No incrementar velocidad|no puntuación rígida/i,item.code);
     }
-    assert.match(doc.record_prompt,/Dudas para comentar en consulta/i,item.code);
+    assert.match(doc.record_prompt,/dudas/i,item.code);
   }
 });
+
 test("Psicología mantiene los materiales quincenales; neuropsicología usa otro contrato",()=>{
   assert.ok(worker.includes("TWO_WEEK_MATERIAL_GUIDELINES"));
   assert.ok(worker.includes("WEEKLY_NEURO_MATERIAL_GUIDELINES"));
@@ -59,7 +60,7 @@ test("El lector y el PDF respetan jerarquía, márgenes y separación semanal",(
   assert.match(viewer,/drawWeeklyNeuroInstructions/);
   assert.match(viewer,/marginX = isNeuro \? 67 : 61/);
   assert.match(viewer,/ensureSpace\(Math\.max\(118, cardTop \+ 67\)\)/);
-  assert.match(viewer,/drawWorkArea\(isNeuro \? 10 : 7\)/);
+  assert.match(viewer,/drawWorkArea\(isNeuro \? 4 : 7\)/);
 });
 
 test("Gradación cognitiva y modalidades accesibles en las fichas semanales",()=>{
@@ -71,8 +72,8 @@ test("Gradación cognitiva y modalidades accesibles en las fichas semanales",()=
     assert.equal(item.examples.length,4,item.code);
     const doc=make(item);
     assert.equal(doc.neuro_profile.response_mode,"senalamiento",item.code);
-    assert.ok(doc.instructions.includes("Adaptación:"),item.code);
-    assert.match(doc.record_prompt,/Qué ayuda te sirvió/i,item.code);
-    assert.ok(doc.visual_blocks.length===2,item.code);
+    assert.ok(doc.instructions.includes("Tu respuesta:"),item.code);
+    assert.match(doc.record_prompt,/dudas/i,item.code);
+    assert.equal(doc.visual_blocks.length,4,item.code);
   }
 });
