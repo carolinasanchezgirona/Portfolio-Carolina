@@ -602,6 +602,25 @@ async function buildPdf(titleValue: string, patientDocument: PatientDocument, ma
         current.drawLine({start:{x:point[0],y:point[1]},end:{x:next[0],y:next[1]},thickness:thick,color:navy});
       });
     }
+    // pdf-lib StandardFonts no incluyen símbolos cognitivos Unicode. Dibujarlos
+    // como figuras geométricas para que no desaparezcan en los cuadernos impresos.
+    const stimulusShapes=new Set(["○","●","□","■","◇","◆","△","▲","★","☆"]);
+    function stimulusSymbol(symbol:string,cx:number,cy:number,size=7){
+      const filled=["●","■","◆","▲","★"].includes(symbol);
+      if(symbol==="○"||symbol==="●"){
+        current.drawCircle({x:cx,y:cy,size,borderColor:navy,borderWidth:1.5,...(filled?{color:navy}:{})});return;
+      }
+      if(symbol==="□"||symbol==="■"){
+        current.drawRectangle({x:cx-size,y:cy-size,width:size*2,height:size*2,borderColor:navy,borderWidth:1.5,...(filled?{color:navy}:{})});return;
+      }
+      const sides=symbol==="◇"||symbol==="◆"?4:symbol==="△"||symbol==="▲"?3:10;
+      const outer=Array.from({length:sides},(_,i)=>{
+        const radius=sides===10&&i%2===1?size*.45:size;
+        const theta=-Math.PI/2+i*2*Math.PI/sides;
+        return {x:cx+Math.cos(theta)*radius,y:cy+Math.sin(theta)*radius};
+      });
+      for(let i=0;i<outer.length;i++)current.drawLine({start:outer[i],end:outer[(i+1)%outer.length],thickness:filled?2.2:1.4,color:navy});
+    }
     function rowCells(values: string[], count: number, header = false, height = 33) {
       // Celdas con legibilidad adaptada al número de columnas, también en A4.
       const cellHeight = Math.max(height, count <= 3 ? 46 : count <= 5 ? 41 : 34);
@@ -618,7 +637,14 @@ async function buildPdf(titleValue: string, patientDocument: PatientDocument, ma
           const symbolSize=Math.min(13,gap-4);
           shapes.forEach((symbol,j)=>drawShapeGlyph(symbol,x+width/2+(j-(shapes.length-1)/2)*gap,y-cellHeight/2+3,symbolSize));
         }else{
-          wrap(header ? boldFont : bodyFont, value, fontSize, width - 14).slice(0, 3).forEach((line, j) => {
+          const glyphs=String(value||"").trim().split(/\s+/);
+        if(glyphs.length&&glyphs.length<=8&&glyphs.every(g=>stimulusShapes.has(g))){
+          const spacing=Math.min(21,(width-12)/glyphs.length);
+          const middle=x+width/2,cy=y+7-cellHeight/2;
+          glyphs.forEach((g,j)=>stimulusSymbol(g,middle+(j-(glyphs.length-1)/2)*spacing,cy,Math.min(7,spacing*.32)));
+          return;
+        }
+        wrap(header ? boldFont : bodyFont, value, fontSize, width - 14).slice(0, 3).forEach((line, j) => {
             current.drawText(line, { x: x + 7, y: y - 11 - j * (fontSize + 3), size: fontSize, font: header ? boldFont : bodyFont, color: ink });
           });
         }
