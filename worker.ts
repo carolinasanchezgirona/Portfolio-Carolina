@@ -1641,7 +1641,7 @@ async function clinicalNeuroVisualImageRequest(request:Request,env:Env):Promise<
 
 const NEURO_MATERIAL_GUIDELINES = [
   "Intervención NEUROPSICOLÓGICA individualizada. Distingue estimulación, entrenamiento, rehabilitación funcional y compensación; no diagnostiques ni atribuyas validez psicométrica a ejercicios caseros.",
-  Ajusta la demanda (neuro_profile.level) por separado de las ayudas (neuro_profile.support), sin equiparar ninguna al diagnóstico. Adapta carga y ayudas a capacidades preservadas, escolaridad, idioma, alteraciones sensoriales y motoras, fatiga, participación y autonomía.",
+  "Ajusta la demanda (neuro_profile.level) por separado de las ayudas (neuro_profile.support), sin equiparar ninguna al diagnóstico. Adapta carga y ayudas a capacidades preservadas, escolaridad, idioma, alteraciones sensoriales y motoras, fatiga, participación y autonomía.",
   "En orientación temporal, espacial y personal utiliza referentes culturales pertinentes, calendarios, mapas, rutinas y recuerdos confirmados. Nunca inventes biografía, nombres familiares ni acontecimientos personales.",
   "Para cada actividad define objetivo observable, consigna exacta, jerarquía de pistas, solución verificable solo para revisión profesional, adaptaciones y registro clínico. Evita interrogatorios, infantilización y confrontación en demencia.",
   "Produce recursos visuales estructurados cuando aporten utilidad, mediante visual_blocks (máximo 8) con type table, chart, diagram o calendar y campos title y content. No generes imágenes falsas, URL ni referencias a fotos inexistentes.",
