@@ -58,6 +58,7 @@
   function options() {
     return {
       mode:["single","individual"].includes($("clinic-neuro-mode")?.value)?$("clinic-neuro-mode").value:"weekly",
+      selectedRecipe:window.NeuroSelectedRecipe||null,
       domain:$("clinic-neuro-domain")?.value||"atencion",
       week:weekNumber(),
       level:$("clinic-neuro-level")?.value||"apoyo_moderado",
@@ -112,7 +113,10 @@
     }
     const domain=GROUPS.some(row=>row[0]===opts.domain)?opts.domain:"atencion";
     const chosen=eligibleRecipes(domain,opts);
-    const first=variedRecipe(chosen[(week-1+variation)%chosen.length],opts,0),second=chosen[(week+variation)%chosen.length];
+    const selected=opts.selectedRecipe?.domain===domain&&opts.selectedRecipe?.level===opts.level
+      ?chosen.find(recipe=>recipe.title===opts.selectedRecipe.title):null;
+    const first=selected||variedRecipe(chosen[(week-1+variation)%chosen.length],opts,0);
+    const second=chosen.find(recipe=>recipe.title!==first.title)||chosen[(week+variation)%chosen.length];
     if(opts.mode==="individual")return [first];
     return [first,second,{
       ...first,title:"Transferencia funcional: "+label(domain),
@@ -206,7 +210,7 @@
       safety_note:"Realiza las actividades de manera flexible. No fuerces recuerdos, no corrijas confrontativamente y evita practicar situaciones funcionales de riesgo sin supervisión adecuada.",
       remember:"La semana siguiente se diseña tras revisar juntos qué actividades y apoyos fueron útiles. Este material no constituye una evaluación diagnóstica.",
       session_questions:["¿Qué ejercicios resultaron más accesibles?","¿Qué apoyos se necesitaron?","¿Se observó transferencia funcional?","¿Qué conviene adaptar la semana siguiente?"],
-      neuro_profile:{mode:opts.mode,domain:weekly?"multidominio":opts.domain,intervention:opts.intervention,level:opts.level,support:opts.support||"moderado",format:opts.format||"mixto",theme:opts.theme,functional_goal:opts.goal,week_number:opts.week,response_mode:opts.response,accessibility:opts.accessibility,covered_domains:Array.from(covered)},
+      neuro_profile:{mode:opts.mode,domain:weekly?"multidominio":opts.domain,intervention:opts.intervention,level:opts.level,support:opts.support||"moderado",format:opts.format||"mixto",theme:opts.theme,functional_goal:opts.goal,week_number:opts.week,response_mode:opts.response,accessibility:opts.accessibility,covered_domains:Array.from(covered),selected_activity:opts.mode!=="weekly"&&opts.selectedRecipe?.domain===opts.domain&&opts.selectedRecipe?.level===opts.level?opts.selectedRecipe.title:null},
       visual_blocks:visuals
     };
   }
