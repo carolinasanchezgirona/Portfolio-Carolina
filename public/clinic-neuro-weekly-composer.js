@@ -216,8 +216,8 @@
       $("clinic-exercise-message").textContent="Selecciona una función cognitiva para crear su ficha.";
       return;
     }
-    if(catalog().length<78){
-      $("clinic-exercise-message").textContent="La biblioteca graduada no está disponible. Recarga la página antes de generar el material.";
+    if(catalog().length<78||typeof window.NeuroVariantFactory?.create!=="function"){
+      $("clinic-exercise-message").textContent="La biblioteca neuropsicológica no ha terminado de cargar. Recarga la página antes de generar el material.";
       return;
     }
     opts.variant=variantCounter++;
