@@ -662,6 +662,28 @@
     populateMaterialProcessOptions((template?.process_tags || [])[0] || "");
     if (els.materialType) els.materialType.value = template?.material_type || "exercise";
     applyExerciseTemplate(template);
+    if (!template) {
+      // La propuesta semanal siguiente se obtiene del material realmente asignado,
+      // nunca de una inferencia clínica ni de un borrador sin enviar.
+      const priorWeeks = patientExercises(currentPatient.id)
+        .filter(item => ["sent","assigned","reviewed"].includes(item.status) && item.patient_document?.clinical_area === "neuropsychology")
+        .map(item => Number(item.patient_document?.neuro_profile?.week_number))
+        .filter(week => Number.isInteger(week) && week >= 1 && week <= 52);
+      const suggestedWeek = priorWeeks.length ? Math.min(52,Math.max(...priorWeeks)+1) : 1;
+      const weekInput = document.getElementById("clinic-neuro-week-number");
+      if (weekInput) weekInput.value = String(suggestedWeek);
+      const mode = document.getElementById("clinic-neuro-mode");
+      const focus = document.getElementById("clinic-neuro-focus");
+      const level = document.getElementById("clinic-neuro-level");
+      const advanced = document.querySelector(".clinic-neuro-advanced");
+      const summary = document.getElementById("clinic-neuro-draft-summary");
+      if(mode)mode.value = "weekly";
+      if(focus)focus.value = "equilibrado";
+      if(level)level.value = "";
+      if(advanced)advanced.open = false;
+      if(summary){summary.hidden=true;summary.textContent="";}
+      mode?.dispatchEvent(new Event("change"));
+    }
     els.exercisePatientCode.textContent = `Paciente ${currentPatient.public_code} · La identidad no aparecerá en el correo.`;
     els.exerciseRationale.value = rationale;
     els.exerciseEmail.value = currentPatient.email || "";
