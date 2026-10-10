@@ -124,7 +124,7 @@
     for (const item of shown) {
       const card = make("article", "admin-notice-card" + (seen.has(item.id) ? "" : " unread"));
       const info = make("div", "admin-notice-card-info");
-      const label = { agenda:"Agenda", patients:"Pacientes", clinical:"Gestión clínica", portal:"Mi espacio", economy:"Gestión económica", security:"Seguridad", system:"Sistema" }[item.category] || "Dememoria";
+      const label = { agenda:"Agenda", patients:"Pacientes", clinical:"Gestión clínica", portal:"Mi espacio", economy:"Contabilidad", security:"Seguridad", system:"Sistema" }[item.category] || "Dememoria";
       info.append(make("small", "", label));
       info.append(make("h3", "", item.title));
       info.append(make("p", "", item.description));
@@ -152,10 +152,11 @@
   let pushPublicKey = null;
   let currentPushSubscription = null;
   function pushState(message) { $("#admin-notice-push-state").textContent = message; }
-  function pushButtons(active, available) {
-    $("#admin-notice-push-enable").hidden = !available || active;
+  function pushButtons(active, available, blocked = false) {
+    $("#admin-notice-push-enable").hidden = !available || active || blocked;
     $("#admin-notice-push-test").hidden = !active;
     $("#admin-notice-push-disable").hidden = !active;
+    $("#admin-notice-push-help-action").hidden = !blocked;
   }
   function decodePublicKey(input) {
     const raw = atob(input.replace(/-/g, "+").replace(/_/g, "/") + "=".repeat((4 - input.length % 4) % 4));
@@ -177,10 +178,21 @@
     const enable = $("#admin-notice-push-enable");
     const test = $("#admin-notice-push-test");
     const disable = $("#admin-notice-push-disable");
+    const appleMobile = /iPhone|iPad|iPod/.test(navigator.userAgent) || (/Macintosh/.test(navigator.userAgent) && navigator.maxTouchPoints > 1);
+    const platformHelp = $(appleMobile ? "#admin-notice-push-help-ios" : "#admin-notice-push-help-android");
+    $("#admin-notice-push-help-action").addEventListener("click", () => {
+      platformHelp.open = true;
+      platformHelp.scrollIntoView({behavior:"smooth",block:"nearest"});
+    });
     const supported = window.isSecureContext && "Notification" in window && "serviceWorker" in navigator && "PushManager" in window;
     if (!supported) {
-      pushState("Este navegador no admite avisos push. El Centro de avisos sigue disponible.");
-      pushButtons(false, false);
+      pushState(appleMobile ? "En iPhone o iPad, instala la web en la pantalla de inicio desde Safari para recibir avisos." : "Este navegador no admite avisos push. Prueba Chrome o la aplicación instalada.");
+      pushButtons(false, false, true);
+      return;
+    }
+    if (Notification.permission === "denied") {
+      pushState("Los avisos están bloqueados. Permítelos en los ajustes del dispositivo para activarlos.");
+      pushButtons(false, false, true);
       return;
     }
     try {
@@ -195,8 +207,8 @@
       const reg = await navigator.serviceWorker.register("/sw.js", {scope:"/"});
       currentPushSubscription = await reg.pushManager.getSubscription();
       if (Notification.permission === "denied") {
-        pushState("El navegador ha bloqueado las notificaciones. Puedes desbloquearlas en Ajustes.");
-        pushButtons(false, false); return;
+        pushState("Los avisos están bloqueados. Permítelos en los ajustes del dispositivo para activarlos.");
+        pushButtons(false, false, true); return;
       }
       if (currentPushSubscription) {
         // Una suscripción previa también se reactiva en el servidor al visitar esta pantalla.
@@ -216,7 +228,11 @@
       try {
         // Debe ejecutarse por una pulsación directa para que el navegador permita mostrar el permiso.
         const permission = await Notification.requestPermission();
-        if (permission !== "granted") throw new Error("No se ha concedido permiso para notificaciones.");
+        if (permission !== "granted") {
+          pushState(permission === "denied" ? "Avisos bloqueados. Revisa los permisos del dispositivo." : "Permiso aún no concedido. Puedes intentarlo de nuevo.");
+          pushButtons(false, permission !== "denied", permission === "denied");
+          return;
+        }
         const reg = await navigator.serviceWorker.ready;
         const sub = await reg.pushManager.subscribe({
           userVisibleOnly: true, applicationServerKey: decodePublicKey(pushPublicKey),
@@ -226,8 +242,10 @@
         currentPushSubscription = sub;
         pushState("Avisos activados. Puedes enviarte una prueba.");
         pushButtons(true, true);
-      } catch (error) { pushState(error.message || "No ha sido posible activar los avisos."); }
-      finally { enable.disabled = false; }
+      } catch (error) {
+        pushState(error.message || "No ha sido posible activar los avisos.");
+        pushButtons(false, Notification.permission !== "denied", Notification.permission === "denied");
+      } finally { enable.disabled = false; }
     });
     test.addEventListener("click", async () => {
       if (!currentPushSubscription) return;
@@ -272,15 +290,18 @@
       storeSeen();
       render();
     });
-    document.querySelectorAll("[data-notice-filter]").forEach(button => {
-      button.addEventListener("click", () => {
-        filter = button.dataset.noticeFilter;
-        document.querySelectorAll("[data-notice-filter]").forEach(el => {
-          el.setAttribute("aria-pressed", String(el === button));
-        });
-        render();
+    function chooseFilter(key) {
+      filter = key;
+      $("#admin-notice-filter-select").value = key;
+      document.querySelectorAll("[data-notice-filter]").forEach(button => {
+        button.setAttribute("aria-pressed", String(button.dataset.noticeFilter === key));
       });
+      render();
+    }
+    document.querySelectorAll("[data-notice-filter]").forEach(button => {
+      button.addEventListener("click", () => chooseFilter(button.dataset.noticeFilter));
     });
+    $("#admin-notice-filter-select").addEventListener("change", event => chooseFilter(event.target.value));
     await Promise.allSettled([load(), initPush()]);
   }
   init();
