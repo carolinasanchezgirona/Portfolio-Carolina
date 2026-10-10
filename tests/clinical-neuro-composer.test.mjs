@@ -32,8 +32,10 @@ test("los cuadernos de doce semanas contienen catorce actividades y toda la cobe
   assert.equal((doc.instructions.match(/(?:^|\n)Ejercicio\s+\d+:/g)||[]).length,14);
   for(let day=1;day<=7;day++)assert.equal((doc.instructions.match(new RegExp("Día "+day+"\\s*[·:]","g"))||[]).length,2);
   assert.equal(new Set(doc.neuro_profile.covered_domains).size,13);
-  for(const label of domainLabels)assert.ok(doc.instructions.toLowerCase().includes(label.toLowerCase()),label+" semana "+week);
-  assert.match(doc.record_prompt,/Dudas para comentar/);
+  assert.equal(doc.visual_blocks.length,14);
+  assert.ok(doc.instructions.includes("Tu respuesta:"));
+  assert.ok(doc.instructions.includes("Cómo responder:"));
+  assert.match(doc.record_prompt,/dudas/i);
   assert.doesNotMatch(doc.instructions,/(?:^|\n)Semana (?:0|53)/);
  }
 });
@@ -46,13 +48,13 @@ test("la ficha focal se mantiene distinta del cuaderno multicomponente",()=>{
  assert.match(doc.instructions,/Transferencia funcional/);
 });
 
-test("cada actividad tiene guía, estímulos y criterios observacionales, sin baremos",()=>{
+test("cada actividad se dirige al paciente y no contiene instrucciones de valoración profesional",()=>{
  for(const mode of ["weekly","single"]){
   const doc=composer.build(settings(4,mode,"lenguaje"));
   const tasks=doc.instructions.split(/(?:^|\n)Ejercicio\s+\d+:/g).slice(1);
   for(const task of tasks){
-   for(const label of ["Objetivo:","Materiales:","Preparación:","Pasos:","Ejemplo:","Ayudas:","Adaptación:","Duración y frecuencia:","Qué observar:"]) assert.ok(task.includes(label),label);
-   assert.ok(task.length>350);
+   for(const label of ["Consigna:","Material:","Cómo responder:","Tu respuesta:","Dudas o notas:"]) assert.ok(task.includes(label),label);
+   assert.doesNotMatch(task,/Qué observar:|Demanda y modalidad:|Modelar una respuesta|No facilitar soluciones|baremos|puntuación normativa/i);
   }
   assert.doesNotMatch(doc.instructions,/z_score|baremo validado|puntuación normativa/);
  }
@@ -62,7 +64,7 @@ test("las visualizaciones están estructuradas, son imprimibles y corresponden a
  for(let week=1;week<=12;week++){
   const doc=composer.build(settings(week));
   assert.equal(doc.visual_blocks.length,14);
-  assert.ok(doc.visual_blocks.length<=14);
+  assert.equal(doc.visual_blocks.length,14);
   for(const block of doc.visual_blocks){
    assert.ok(block.title);
    if(block.type==="table"){
@@ -115,15 +117,15 @@ test("la biblioteca cubre todos los dominios y tres niveles con dos recetas dist
 
 test("los tres niveles generan tareas diferentes con cobertura de 13 funciones",()=>{
  const docs=["apoyo_alto","apoyo_moderado","autonomo"].map(level=>composer.build({...settings(3),level,support:"moderado",format:"mixto"}));
- const stimuli=docs.map(doc=>doc.instructions.match(/Estímulos: .*/g)||[]);
+ const stimuli=docs.map(doc=>doc.visual_blocks.map(block=>block.content||""));
  assert.equal(stimuli.length,3);
  assert.notDeepEqual(stimuli[0],stimuli[1]);
  assert.notDeepEqual(stimuli[1],stimuli[2]);
  for(const doc of docs){
   assert.equal((doc.instructions.match(/(?:^|\n)Ejercicio\s+\d+:/g)||[]).length,14);
   assert.equal(new Set(doc.neuro_profile.covered_domains).size,13);
-  assert.match(doc.instructions,/Demanda y modalidad:/);
-  assert.match(doc.instructions,/La dificultad describe la tarea/);
+  assert.match(doc.instructions,/Tu respuesta:/);
+  assert.doesNotMatch(doc.instructions,/Demanda y modalidad:|La dificultad describe la tarea/);
  }
 });
 
@@ -134,7 +136,8 @@ test("ejercicio individual: una tarea, modalidad y apoyos independientes",()=>{
   assert.equal(doc.neuro_profile.support,"alto");
   assert.equal((doc.instructions.match(/(?:^|\n)Ejercicio\s+\d+:/g)||[]).length,1);
   assert.equal(doc.visual_blocks.length,1);
-  assert.match(doc.instructions,/Modelar una respuesta/);
+  assert.match(doc.instructions,/Cómo responder:/);
+  assert.doesNotMatch(doc.instructions,/Modelar una respuesta|registrar participación/i);
  }
 });
 
