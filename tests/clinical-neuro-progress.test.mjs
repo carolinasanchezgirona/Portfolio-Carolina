@@ -49,3 +49,12 @@ test("tracking only mounts inside clinical treatment and does not pollute patien
   assert.match(page,/<NeuroFollowup \/>/);
   assert.match(admin,/#clinic-consent-grid,.clinic-goals-manager,.clinic-task-box,.clinic-scale-trends,.neuro-followup/);
 });
+
+test("phone photographs are sanitized before upload and originals never expose EXIF location",()=>{
+  assert.match(component,/async function sanitizeImage/);
+  assert.match(component,/createImageBitmap\(file\)/);
+  assert.match(component,/canvas\.toBlob\(resolve,"image\/jpeg"/);
+  assert.match(component,/new File\(\[blob\],"ficha-manuscrita-"/);
+  assert.match(component,/HEIC/);
+  assert.match(component,/for\(const \[i,file\] of selected\.entries\(\)\)cleaned\.push\(await sanitizeImage\(file,i\)\)/);
+});
