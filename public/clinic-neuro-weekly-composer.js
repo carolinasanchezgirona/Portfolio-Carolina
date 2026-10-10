@@ -3,6 +3,7 @@
 (() => {
   "use strict";
   const $ = id => document.getElementById(id);
+  let variantCounter=0;
   const GROUPS = [
     ["orientacion_temporal","Orientación temporal"],["orientacion_espacial","Orientación espacial"],
     ["orientacion_personal","Orientación personal"],["atencion","Atención"],
@@ -74,14 +75,15 @@
     const choices=catalog().filter(recipe=>recipe.domain===domain&&recipe.level===level);
     const byFormat=opts.format&&opts.format!=="mixto"?choices.filter(recipe=>recipe.format===opts.format):[];
     // Si el formato deseado limita la variedad, se priorizan dos ejercicios distintos.
-    return byFormat.length>=2?byFormat:choices;
+    return byFormat.length>=(opts.mode==="individual"?1:2)?byFormat:choices;
   }
   function selectRecipes(opts) {
     const week=Math.max(1,Math.min(52,Number(opts.week)||1));
+    const variation=Math.max(0,Math.floor(Number(opts.variant)||0));
     if(opts.mode==="weekly"){
       const selection=GROUPS.map(([domain],index)=>{
         const matches=eligibleRecipes(domain,opts);
-        return matches[(week-1+index)%matches.length];
+        return matches[(week-1+index+variation)%matches.length];
       });
       const extraDomain=["atencion","memoria","funciones_ejecutivas"][(week-1)%3];
       const alternate=eligibleRecipes(extraDomain,opts).find(r=>!selection.some(p=>p.title===r.title&&p.domain===r.domain));
@@ -90,7 +92,7 @@
     }
     const domain=GROUPS.some(row=>row[0]===opts.domain)?opts.domain:"atencion";
     const chosen=eligibleRecipes(domain,opts);
-    const first=chosen[(week-1)%chosen.length],second=chosen[week%chosen.length];
+    const first=chosen[(week-1+variation)%chosen.length],second=chosen[(week+variation)%chosen.length];
     if(opts.mode==="individual")return [first];
     return [first,second,{
       ...first,title:"Transferencia funcional: "+label(domain),
@@ -172,7 +174,10 @@
       $("clinic-exercise-message").textContent="La biblioteca graduada no está disponible. Recarga la página antes de generar el material.";
       return;
     }
+    opts.variant=variantCounter++;
     const patientDocument=build(opts);
+    const button=$("clinic-neuro-generate");
+    if(button)button.textContent="Crear otra variante";
     const title=opts.mode==="weekly"?"Cuaderno neuropsicológico multicomponente · Semana "+opts.week:
       opts.mode==="individual"?"Ejercicio de "+label(opts.domain).toLowerCase()+" · Nivel "+(LEVEL_NAMES[opts.level]||"Intermedio"):
       "Actividades de "+label(opts.domain).toLowerCase()+" · Semana "+opts.week;
