@@ -56,7 +56,7 @@
   }
   function options() {
     return {
-      mode:$("clinic-neuro-mode")?.value==="single"?"single":"weekly",
+      mode:["single","individual"].includes($("clinic-neuro-mode")?.value)?$("clinic-neuro-mode").value:"weekly",
       domain:$("clinic-neuro-domain")?.value||"atencion",
       week:weekNumber(),
       level:$("clinic-neuro-level")?.value||"apoyo_moderado",
@@ -91,6 +91,7 @@
     const domain=GROUPS.some(row=>row[0]===opts.domain)?opts.domain:"atencion";
     const chosen=eligibleRecipes(domain,opts);
     const first=chosen[(week-1)%chosen.length],second=chosen[week%chosen.length];
+    if(opts.mode==="individual")return [first];
     return [first,second,{
       ...first,title:"Transferencia funcional: "+label(domain),
       task:"En una situación cotidiana segura y simulada, aplica la estrategia practicada en la tarea anterior. Elige una clave o ayuda externa y explica cómo comprobarías el resultado sin presuponer autonomía.",
@@ -144,10 +145,11 @@
       if(!visuals.some(x=>x.type===block.type&&x.content===block.content))visuals.push(block);
     }
     const weekly=opts.mode==="weekly";
+    const individual=opts.mode==="individual";
     return {
       version:5,clinical_area:"neuropsychology",material_type:"exercise",duration_minutes:12,
-      frequency:weekly?"Semana "+opts.week+": hasta dos actividades breves por día durante siete días orientativos; descanso y adaptación según tolerancia.":"Semana "+opts.week+": tres propuestas breves adaptables; no es obligatorio completar todas.",
-      introduction:weekly?"Cuaderno neuropsicológico multicomponente · Semana "+opts.week+". Encontrarás 7 jornadas orientativas con 2 tareas diferentes cada una. Puedes distribuirlas, descansar o hacer menos según el acuerdo terapéutico.":"Ficha de "+label(opts.domain).toLowerCase()+" · Semana "+opts.week+". Trabaja a tu ritmo y pide ayudas cuando las necesites.",
+      frequency:weekly?"Semana "+opts.week+": hasta dos actividades breves por día durante siete días orientativos; descanso y adaptación según tolerancia.":individual?"Una actividad independiente, con pausas y ayudas según tolerancia.":"Semana "+opts.week+": tres propuestas breves adaptables; no es obligatorio completar todas.",
+      introduction:weekly?"Cuaderno neuropsicológico multicomponente · Semana "+opts.week+". Encontrarás 7 jornadas orientativas con 2 tareas diferentes cada una. Puedes distribuirlas, descansar o hacer menos según el acuerdo terapéutico.":individual?"Ejercicio individual de "+label(opts.domain).toLowerCase()+". Adapta la actividad a tu ritmo y utiliza las ayudas previstas.":"Ficha de "+label(opts.domain).toLowerCase()+" · Semana "+opts.week+". Trabaja a tu ritmo y pide ayudas cuando las necesites.",
       why:"Estas actividades permiten practicar distintas habilidades cognitivas, identificar estrategias útiles y explorar su aplicación cotidiana. No son pruebas psicométricas y los resultados no indican por sí mismos una mejoría clínica.",
       objective:opts.goal||(weekly?"Estimulación multicomponente con cobertura semanal y adaptación individual.":"Trabajar "+label(opts.domain).toLowerCase()+" con apoyos graduados."),
       instructions:["Semana "+opts.week,...tasks.map((task,i)=>exercise(task,i,opts))].join("\n\n"),
@@ -162,7 +164,7 @@
   }
   function generate() {
     const opts=options();
-    if(opts.mode==="single"&&!GROUPS.some(row=>row[0]===opts.domain)){
+    if(opts.mode!=="weekly"&&!GROUPS.some(row=>row[0]===opts.domain)){
       $("clinic-exercise-message").textContent="Selecciona una función cognitiva para crear su ficha.";
       return;
     }
@@ -172,6 +174,7 @@
     }
     const patientDocument=build(opts);
     const title=opts.mode==="weekly"?"Cuaderno neuropsicológico multicomponente · Semana "+opts.week:
+      opts.mode==="individual"?"Ejercicio de "+label(opts.domain).toLowerCase()+" · Nivel "+(LEVEL_NAMES[opts.level]||"Intermedio"):
       "Actividades de "+label(opts.domain).toLowerCase()+" · Semana "+opts.week;
     window.dispatchEvent(new CustomEvent("clinic-neuro-load-starter",{detail:{
       title,code:"PROGRAMA-NEURO-"+opts.week,domain:patientDocument.neuro_profile.domain,
@@ -187,7 +190,7 @@
       const label=$("clinic-neuro-domain")?.closest("label");
       if(label)label.hidden=weekly;
       const note=$("clinic-neuro-mode-note");
-      if(note)note.textContent=weekly?"7 días orientativos, 14 ejercicios y cobertura de 13 dominios, con demanda y apoyos ajustables.":"Dos ejercicios de una función y una tarea de transferencia; demanda, apoyos y formato a elegir.";
+      if(note)note.textContent=weekly?"7 días orientativos, 14 ejercicios y cobertura de 13 dominios, con demanda y apoyos ajustables.":$("clinic-neuro-mode").value==="individual"?"Un ejercicio completo y autónomo: estímulo, consigna, ayudas y espacio de revisión.":"Dos ejercicios de una función y una tarea de transferencia; demanda, apoyos y formato a elegir.";
     });
     $("clinic-neuro-mode")?.dispatchEvent(new Event("change"));
   }
