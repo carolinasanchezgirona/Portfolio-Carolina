@@ -84,7 +84,9 @@
     if(recipe.visualType==="chart")return {type:"chart",title:recipe.visualTitle,content:recipe.stimuli};
     if(recipe.visualType==="table"){
       const raw=recipe.stimuli.split("\n");
-      const rows=raw.length>1&&raw.every(x=>x.includes("|"))?raw: ["Estímulo|Dato","1|"+recipe.stimuli.slice(0,160)];
+      const candidate=raw.map(x=>x.split("|").map(v=>v.trim()));
+      const valid=raw.length>1&&candidate[0].length>=2&&candidate[0].length<=6&&candidate.every(r=>r.length===candidate[0].length);
+      const rows=valid?candidate.map(r=>r.join("|")):["Estímulo|Dato","1|"+recipe.stimuli.replaceAll("|"," / ").replaceAll("\n","; ").slice(0,160)];
       return {type:"table",title:recipe.visualTitle,content:rows.join("\n")};
     }
     return {type:"diagram",title:recipe.visualTitle,content:recipe.stimuli.split("|").map(x=>x.trim()).filter(Boolean).slice(0,8).join("\n")||"Leer consigna\nRevisar solución"};
