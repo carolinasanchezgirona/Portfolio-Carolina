@@ -665,6 +665,17 @@ async function handlePatientPortalResponse(request: Request, env: Env): Promise<
   const answers = Array.from({ length: questions.length }, (_, index) =>
     typeof answersInput[index] === "string" ? String(answersInput[index]).slice(0, 6000) : ""
   );
+  // Solo se aceptan respuestas por ejercicio si el material prescrito contiene ese cuaderno.
+  const digitalTaskCount=document.clinical_area==="neuropsychology"
+    ? Math.min(14,(String(document.instructions||"").match(/(?:^|\n)\s*Ejercicio\s+\d+\s*:/gi)||[]).length)
+    : 0;
+  const rawNeuroAnswers=body.neuro_answers;
+  const suppliedNeuro=rawNeuroAnswers!==undefined;
+  if(suppliedNeuro&&(!digitalTaskCount||!Array.isArray(rawNeuroAnswers)||rawNeuroAnswers.length!==digitalTaskCount||
+    rawNeuroAnswers.some(value=>typeof value!=="string"||value.length>3000))){
+    return patientPortalJson({error:"Revisa el número o la longitud de las respuestas del cuaderno."},400);
+  }
+  const neuroAnswers=suppliedNeuro?(rawNeuroAnswers as string[]):null;
   const savedAt = new Date().toISOString();
 
   const update = await fetch(
@@ -675,7 +686,7 @@ async function handlePatientPortalResponse(request: Request, env: Env): Promise<
       method: "PATCH",
       headers: serviceHeaders(env, { Prefer: "return=representation" }),
       body: JSON.stringify({
-        patient_response: { version: 1, record, answers },
+        patient_response: { version: neuroAnswers ? 2 : 1, record, answers, ...(neuroAnswers ? { neuro_answers: neuroAnswers } : {}) },
         patient_response_status: action === "share" ? "shared" : "draft",
         patient_response_updated_at: savedAt,
         patient_response_shared_at: action === "share" ? savedAt : null,
