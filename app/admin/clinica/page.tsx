@@ -426,7 +426,7 @@ export default function AdminClinicaPage() {
               </label>
               <button id="clinic-neuro-starter-load" className="clinic-secondary" type="button">Cargar propuesta</button>
             </div>
-            <p className="clinic-material-helper">Son 24 propuestas de intervención con estímulos estructurados. Cargar no prescribe ni envía nada: tendrás que revisar y adaptar cada actividad.</p>
+            <p className="clinic-material-helper">24 propuestas originales revisables: ejercicios variados, materiales visuales, ayudas graduadas y objetivos cotidianos. La revisión profesional sigue siendo obligatoria.</p>
             <p className="clinic-neuro-week-note"><strong>Una semana por cuaderno.</strong> Tras revisar la evolución podrás crear la siguiente semana ajustando los ejercicios.</p>
             <div className="clinic-neuro-grid">
               <label>Semana del programa
@@ -465,6 +465,19 @@ export default function AdminClinicaPage() {
               </label>
               <label>Tema estacional o autobiográfico (opcional)
                 <input id="clinic-neuro-theme" placeholder="Ej. La Castanyada, el barrio, mi calendario..." />
+              </label>
+            </div>
+            <div className="clinic-neuro-grid">
+              <label>Modalidad de respuesta preferida
+                <select id="clinic-neuro-response-mode" defaultValue="flexible">
+                  <option value="flexible">Flexible, según capacidad</option>
+                  <option value="verbal">Oral</option>
+                  <option value="escrita">Escrita</option>
+                  <option value="senalamiento">Señalamiento o elección</option>
+                </select>
+              </label>
+              <label>Adaptaciones de accesibilidad
+                <input id="clinic-neuro-accessibility" maxLength={220} placeholder="Ej. letra grande, contraste alto, claves auditivas..." />
               </label>
             </div>
             <label>Objetivo funcional
@@ -561,7 +574,7 @@ export default function AdminClinicaPage() {
               <input id="clinic-neuro-reviewed" type="checkbox" />
               He comprobado consignas, estímulos, respuestas, accesibilidad y adecuación individual antes de prescribir este material.
             </label>
-            <p className="clinic-material-helper">Máximo 8 recursos por ficha. Usa imágenes sin información identificativa. La generación con IA prepara tablas, gráficos y secuencias, pero no inventa fotografías ni datos personales.</p>
+            <p className="clinic-material-helper">Máximo 8 recursos por ficha. Alterna tablas, matrices, imágenes consentidas, gráficos, calendarios y secuencias según la función diana. Usa imágenes sin información identificativa; revisa estímulos y respuestas antes del envío.</p>
           </section>
           <label>Contexto para personalizar <span>(sin nombres ni datos identificativos; solo profesional, no se envía al paciente)</span><textarea id="clinic-exercise-rationale" rows={2} /></label>
           <label>Correo destinatario<input id="clinic-exercise-email" type="email" required /></label>
@@ -641,7 +654,7 @@ export default function AdminClinicaPage() {
         </form>
       </dialog>
 
-      <Script src="/clinic-neuro-materials.js?v=20261009-weekly-2" strategy="afterInteractive" />
+      <Script src="/clinic-neuro-materials.js?v=20261010-2" strategy="afterInteractive" />
       <Script src="/admin-clinica.js?v=20261009-weekly-2" strategy="afterInteractive" />
       <Script src="/clinical-smart-intake.js?v=20261005-smart-state-5" strategy="afterInteractive" />
       <Script src="/clinical-diagnostic-assistant.js?v=20261007-dx-2" strategy="afterInteractive" />
