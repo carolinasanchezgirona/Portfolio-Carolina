@@ -281,6 +281,8 @@
         covered_domains:[...coveredDomains],
         intervention: $("clinic-neuro-intervention")?.value || "",
         level: $("clinic-neuro-level")?.value || "",
+        support: $("clinic-neuro-support")?.value || "moderado",
+        format: $("clinic-neuro-format")?.value || "mixto",
         theme: $("clinic-neuro-theme")?.value?.trim() || "",
         functional_goal: $("clinic-neuro-functional-goal")?.value?.trim() || "",
         week_number: Math.max(1, Math.min(52, Number($("clinic-neuro-week-number")?.value) || 1)),
@@ -301,7 +303,8 @@
     if ($("clinic-neuro-week-number")) $("clinic-neuro-week-number").value = String(Math.max(1,Math.min(52,Number(neuro.week_number)||1)));
     for (const [name, id] of Object.entries({
       domain: "clinic-neuro-domain", intervention: "clinic-neuro-intervention",
-      level: "clinic-neuro-level", theme: "clinic-neuro-theme",
+      level: "clinic-neuro-level", support: "clinic-neuro-support",
+      format: "clinic-neuro-format", theme: "clinic-neuro-theme",
       functional_goal: "clinic-neuro-functional-goal", response_mode: "clinic-neuro-response-mode", accessibility: "clinic-neuro-accessibility"
     })) {
       if ($(id)) $(id).value = neuro[name] || "";
