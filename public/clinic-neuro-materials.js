@@ -184,7 +184,9 @@
         level: $("clinic-neuro-level")?.value || "",
         theme: $("clinic-neuro-theme")?.value?.trim() || "",
         functional_goal: $("clinic-neuro-functional-goal")?.value?.trim() || "",
-        week_number: Math.max(1, Math.min(52, Number($("clinic-neuro-week-number")?.value) || 1))
+        week_number: Math.max(1, Math.min(52, Number($("clinic-neuro-week-number")?.value) || 1)),
+        response_mode: $("clinic-neuro-response-mode")?.value || "flexible",
+        accessibility: $("clinic-neuro-accessibility")?.value?.trim() || ""
       } : null,
       visual_blocks: blocks.map(b => ({ ...b }))
     };
@@ -199,7 +201,7 @@
     for (const [name, id] of Object.entries({
       domain: "clinic-neuro-domain", intervention: "clinic-neuro-intervention",
       level: "clinic-neuro-level", theme: "clinic-neuro-theme",
-      functional_goal: "clinic-neuro-functional-goal"
+      functional_goal: "clinic-neuro-functional-goal", response_mode: "clinic-neuro-response-mode", accessibility: "clinic-neuro-accessibility"
     })) {
       if ($(id)) $(id).value = neuro[name] || "";
     }
@@ -215,56 +217,157 @@
     cognicion_funcional: "Cognición funcional"
   };
   let starterEntries = [];
+  // Biblioteca de borradores originales: ejercicios distintos y parámetros de adaptación.
+  // Los campos observacionales pertenecen al profesional; el documento al paciente no es una prueba.
+  const DOMAIN_PRACTICE = {
+    orientacion_temporal: {
+      process:"orientación temporal con claves externas",
+      simplify:"mantener el calendario visible y trabajar una sola referencia temporal",
+      extend:"relacionar una segunda referencia verificada con una rutina real",
+      access:"utilizar calendario grande y lectura asistida si es necesaria"
+    },
+    orientacion_espacial: {
+      process:"referencias espaciales y orientación funcional",
+      simplify:"mostrar dos referencias familiares y señalar una de ellas",
+      extend:"añadir una referencia verificada sin exigir desplazamientos autónomos",
+      access:"usar imágenes o planos ampliados y evitar recorridos no supervisados"
+    },
+    orientacion_personal: {
+      process:"identidad, preferencias y reconocimiento personal no confrontativo",
+      simplify:"ofrecer dos opciones de preferencias presentes sin forzar recuerdos",
+      extend:"vincular la elección a una actividad agradable actual",
+      access:"aceptar señalamiento, silencio o rechazo, sin imponer datos biográficos"
+    },
+    atencion: {
+      process:"atención selectiva y mantenimiento de la consigna",
+      simplify:"reducir estímulos y distractores y utilizar una sola consigna",
+      extend:"añadir distractores en una matriz más amplia conservando la legibilidad",
+      access:"controlar visión, audición, barrido espacial y fatiga"
+    },
+    memoria: {
+      process:"aprendizaje funcional, codificación y recuperación apoyada",
+      simplify:"reducir elementos y mantener claves externas disponibles",
+      extend:"variar una sola condición de recuperación sin imponer velocidad",
+      access:"priorizar reconocimiento o uso de ayudas si la evocación resulta inaccesible"
+    },
+    funciones_ejecutivas: {
+      process:"planificación, secuenciación y flexibilidad funcional",
+      simplify:"usar dos pasos visibles y una única regla",
+      extend:"introducir una alternativa previsible o cambio explícito de criterio",
+      access:"usar tarjetas grandes y evitar tareas que impliquen riesgos reales"
+    },
+    lenguaje: {
+      process:"comprensión, acceso léxico y comunicación funcional",
+      simplify:"ofrecer dos opciones y claves semánticas antes de fonológicas cuando proceda",
+      extend:"ampliar vocabulario funcional o añadir un segundo componente de consigna",
+      access:"aceptar habla, gesto, escritura o señalamiento según las capacidades"
+    },
+    visuoespacial: {
+      process:"discriminación y organización visuoespacial",
+      simplify:"reducir el tamaño de la matriz y aumentar el contraste",
+      extend:"añadir una posición o relación espacial manteniendo el mismo soporte",
+      access:"comprobar visión y demandas motoras; no interpretar errores como exclusivamente espaciales"
+    },
+    praxias_gnosias: {
+      process:"reconocimiento funcional, secuenciación y gestos",
+      simplify:"ofrecer el objeto real y modelar una acción conocida",
+      extend:"añadir un paso de secuencia sin aumentar exigencia motora",
+      access:"adaptar para limitaciones motoras y no inferir apraxia a partir de una sola tarea"
+    },
+    cognicion_funcional: {
+      process:"uso de apoyos en una actividad cotidiana",
+      simplify:"trabajar con dos elementos y lista visible",
+      extend:"añadir un elemento pertinente y comprobar uso autónomo del apoyo",
+      access:"trasladar a la vida real solo si la actividad es segura y acordada"
+    }
+  };
   function starterToDocument(item) {
-    const tasks=Array.isArray(item.steps)?item.steps.slice(0,4):[];
-    const week=Math.max(1,Math.min(52,Number($("clinic-neuro-week-number")?.value)||1));
-    const domain=DOMAIN_LABELS[item.domain]||"funciones cognitivas";
-    const visual=Array.isArray(item.visual_blocks)?item.visual_blocks[0]:null;
-    const visualName=visual?.title||"material de apoyo seleccionado por la profesional";
-    const visualSample=(visual?.content||"").split(/\r?\n/).slice(1,3).join("; ")||"un ejemplo previamente modelado";
-    const support=item.level==="apoyo_alto"
-      ?"Mostrar primero la respuesta mediante modelado, ofrecer dos opciones y permitir señalamiento o respuesta no verbal. Evitar corregir confrontando."
-      :item.level==="apoyo_moderado"
-      ?"Comenzar con una pista contextual o visual; si no basta, dividir la consigna y ofrecer dos alternativas. Anotar qué pista ayudó."
-      :"Permitir intento autónomo con apoyos a la vista; proporcionar una pista por vez y favorecer la autocorrección sin presionar.";
-    const phases=[
-      ["Familiarización y ejemplo guiado","Leer la consigna y presentar un modelo resuelto antes de solicitar la primera respuesta.","Comprobar que entiende la tarea sin usar la velocidad como criterio."],
-      ["Práctica dirigida con apoyo graduado","Repetir con uno o dos estímulos diferentes, según tolerancia, y aplicar una pista solo cuando sea necesaria.","Comparar respuesta espontánea y respuesta con ayuda."],
-      ["Variación contextual","Modificar un solo elemento de la actividad para comprobar que la estrategia sigue siendo comprensible.","Observar si mantiene la consigna o necesita volver al modelo."],
-      ["Aplicación cotidiana y revisión (opcional)","Intentar la habilidad en una situación real y segura, con acompañamiento cuando corresponda.","Registrar utilidad funcional, iniciativa, fatiga y preferencias."]
+    const tasks = Array.isArray(item.steps) ? item.steps.slice(0,4) : [];
+    const week = Math.max(1,Math.min(52,Number($("clinic-neuro-week-number")?.value)||1));
+    const domain = DOMAIN_LABELS[item.domain] || "funciones cognitivas";
+    const profile = DOMAIN_PRACTICE[item.domain] || DOMAIN_PRACTICE.cognicion_funcional;
+    const visuals = Array.isArray(item.visual_blocks) ? item.visual_blocks.filter(b => b && b.title && b.content) : [];
+    const responseMode = $("clinic-neuro-response-mode")?.value || "flexible";
+    const sensoryNotes = $("clinic-neuro-accessibility")?.value?.trim() || "";
+    const responseText = ({
+      verbal:"aceptar respuesta verbal sin exigir escritura",
+      escrita:"permitir respuesta escrita siempre que sea accesible",
+      senalamiento:"permitir señalar o elegir sin exigir denominación",
+      flexible:"aceptar respuesta oral, escrita, mediante gesto o señalamiento"
+    })[responseMode] || "aceptar respuestas accesibles";
+    const support = item.level === "apoyo_alto"
+      ? "Modelar primero, ofrecer como máximo dos alternativas, retirar ayudas solo si mejora la participación y no confrontar respuestas."
+      : item.level === "apoyo_moderado"
+      ? "Primero clave contextual o visual; después dividir la tarea; por último ofrecer dos alternativas, anotando la pista eficaz."
+      : "Dar tiempo autónomo, ofrecer una pista de cada vez y utilizar autocorrección si es bien tolerada.";
+    const formats = [
+      {
+        prefix:"Reconocer y comprender",
+        cue:"Mostrar un ejemplo resuelto, explicar exactamente qué se hará y comprobar la consigna con una práctica.",
+        change:"Trabajar con una cantidad pequeña de estímulos, manteniendo los apoyos a la vista.",
+        observe:"Comprensión de la instrucción y respuesta con o sin modelado."
+      },
+      {
+        prefix:"Practicar con material visual",
+        cue:"Presentar el soporte principal; permitir señalar, nombrar, escribir o manipular según capacidad.",
+        change:"Introducir solo los elementos necesarios para practicar la consigna; evitar presión por tiempo.",
+        observe:"Precisión cualitativa, omisiones, perseveraciones y tipo de ayuda necesaria."
+      },
+      {
+        prefix:"Variar una sola condición",
+        cue:"Recordar el ejemplo y explicar qué único aspecto cambia antes del nuevo intento.",
+        change:"Modificar un estímulo, una clave o una regla sin cambiar simultáneamente el resto.",
+        observe:"Mantenimiento de la estrategia y respuesta al cambio con apoyos graduados."
+      },
+      {
+        prefix:"Usarlo en la vida cotidiana (opcional)",
+        cue:"Elegir una aplicación real segura, acordada y significativa, o simularla si no procede hacerla.",
+        change:"Practicar el uso de una ayuda externa sin evaluar autonomía más allá de lo comprobado.",
+        observe:"Aceptación, utilidad percibida, transferencia y seguridad de la tarea."
+      }
     ];
-    const exercises=tasks.map((task,i)=>{
-      const [phase,guide,observed]=phases[i];
+    const materialName = visuals.map(v => "«"+v.title+"»").join(" y ") || "un soporte real seleccionado y revisado";
+    const examples = visuals.map(v => {
+      const text = String(v.content || "").split(/\r?\n/).slice(0,3).map(row => row.split("|").map(cell=>cell.trim()).join(" / ")).join("; ");
+      return v.title + ": " + text;
+    }).join(". ");
+    const exercises = tasks.map((task,i) => {
+      const variation = formats[i];
+      const title = task.replace(/[.\s]+$/,"");
+      const supportName = visuals.length ? "«"+visuals[i % visuals.length].title+"»" : materialName;
+      const option = i===0 ? profile.simplify : i===2 ? profile.extend : i===3 ? "mantener el apoyo que haya resultado útil" : profile.simplify;
+      const specificExample = Array.isArray(item.examples) && item.examples[i] ? item.examples[i] :
+        "Usa " + supportName + " con un ejemplo de la propia ficha previamente comprobado; no completes con nombres, fechas o respuestas ficticias que puedan confundirse con hechos personales.";
       return [
-        "Ejercicio "+(i+1)+": "+phase,
-        "Objetivo: "+item.objective+". En esta actividad: "+task+".",
-        "Materiales: "+visualName+". Preparar el estímulo en tamaño legible y comprobar que es correcto, familiar y culturalmente apropiado.",
-        "Preparación: Trabajar en un lugar tranquilo, con iluminación adecuada y sin distractores innecesarios. Explicar que se puede pedir ayuda o detener la actividad. Revisar las adaptaciones sensoriales y motoras.",
-        "Pasos: 1) "+task+". 2) "+guide+" 3) Mostrar el recurso, dar una única consigna clara y permitir tiempo suficiente para responder. 4) Comprobar con la persona qué estrategia ha resultado útil y cerrar sin examen final.",
-        "Ejemplo: En el recurso «"+visualName+"», trabajar con "+visualSample+". El profesional verificará el ejemplo y decidirá qué respuesta se considera adecuada para este caso.",
-        "Ayudas: "+support,
-        "Adaptación: Si resulta difícil, reducir el número de elementos, mantener a la vista una clave y pasar de evocación a reconocimiento. Si resulta fácil y es pertinente, retirar una pista, no aumentar la velocidad automáticamente.",
-        "Duración y frecuencia: Propuesta de 10–15 minutos, una ocasión durante esta semana; la cuarta actividad es opcional. Interrumpir antes si surge fatiga o frustración. La pauta definitiva la acordará la profesional.",
-        "Qué observar: "+observed+" Registrar participación, respuesta espontánea, errores cualitativos, ayudas, cansancio y posibilidad de transferencia."
+        "Ejercicio "+(i+1)+": "+variation.prefix+" — "+title,
+        "Objetivo: "+item.objective+". Tarea concreta: "+task+". Proceso principal: "+profile.process+".",
+        "Materiales: "+supportName+". Preparar material impreso legible o el equivalente en pantalla, comprobando contraste, exactitud, contenido y pertinencia cultural.",
+        "Preparación: Disponer de una superficie despejada, luz adecuada y una única consigna. Preguntar si desea participar; permitir pausas. "+profile.access+".",
+        "Pasos: 1) "+variation.cue+" 2) "+task+". 3) "+variation.change+" 4) Revisar con la persona qué apoyo facilitó la actividad y cerrar sin convertirla en un examen.",
+        "Ejemplo: "+specificExample+" Estímulos disponibles: "+examples.slice(0,250)+".",
+        "Ayudas: "+support+" Para responder, "+responseText+".",
+        "Adaptación: Si aumenta la dificultad, "+profile.simplify+". Si la tarea resulta cómoda, "+option+". No incrementar velocidad por defecto.",
+        "Duración y frecuencia: 8–15 minutos ajustables, una práctica esta semana, con pausa antes si hay fatiga o frustración. La cuarta práctica es opcional; ajustar la pauta al caso.",
+        "Qué observar: ¿Necesitaste alguna pista?, ¿qué parte resultó más cómoda?, ¿cuándo preferiste descansar? Puedes comentarlo sin contar aciertos."
       ].join("\n");
     });
     return {
-      version:2,clinical_area:"neuropsychology",material_type:"exercise",duration_minutes:12,
-      frequency:"Semana "+week+": elegir tres prácticas breves y, si resulta apropiado, una cuarta opcional. Ajustar días, duración y ayudas a la tolerancia.",
-      introduction:"Semana "+week+" de intervención en "+domain.toLowerCase()+". Encontrarás ejercicios diferenciados, ejemplos y apoyos; no necesitas terminarlos todos ni responder sin ayuda.",
-      why:"Esta propuesta trabaja «"+item.objective+"» mediante tareas concretas, apoyos graduados y una posible aplicación cotidiana. Su finalidad es favorecer la participación y las estrategias funcionales, no obtener una puntuación diagnóstica.",
+      version:3,clinical_area:"neuropsychology",material_type:"exercise",duration_minutes:12,
+      frequency:"Semana "+week+": tres actividades breves y una cuarta opcional. Repartir según tolerancia; revisar la siguiente semana tras la sesión.",
+      introduction:"Cuaderno de la semana "+week+" sobre "+domain.toLowerCase()+". Trabaja con calma, utiliza los apoyos acordados y no necesitas completar todas las actividades.",
+      why:"Estas propuestas practican "+profile.process+" a través de tareas concretas. Lo importante es la participación, la estrategia y su posible utilidad cotidiana; no obtener una puntuación diagnóstica.",
       objective:item.objective,
-      instructions:["Semana "+week, ...exercises].join("\n\n"),
-      example:"Esquema: Preparar material → Modelar consigna → Practicar con apoyo → Revisar en consulta\nEjemplo específico: revisar «"+visualName+"» con el estímulo «"+visualSample+"» antes de comenzar. La profesional debe confirmar la exactitud y pertinencia.",
-      record_prompt:tasks.map((task,i)=>
-        "Ejercicio "+(i+1)+": "+task+"\nRespuesta o participación: ______________________\nAyuda utilizada: _______________________________\nFatiga, interés o dudas: _________________________"
+      instructions:["Semana "+week,...exercises].join("\n\n"),
+      example:"Esquema: Comprender la consigna → Probar con apoyo → Ajustar dificultad → Aplicar cuando sea seguro\nLa profesional revisará los estímulos y las posibles respuestas antes de entregar el material.",
+      record_prompt:tasks.map((task,i) =>
+        "Ejercicio "+(i+1)+": "+task+"\n¿Pudiste hacerlo o participar? ____________________\n¿Qué ayuda te sirvió? ____________________________\n¿Te cansaste o quisiste parar? _____________________"
       ).join("\n\n")+
-        "\n\nDudas para comentar en consulta: ¿qué resultó más fácil?, ¿qué ayuda funcionó?, ¿qué habría que modificar?, ¿se utilizó algo en la vida diaria?",
-      safety_note:"Respeta las pausas y la comodidad de la persona. Detén la tarea si aparecen frustración, cansancio o malestar. No fuerces recuerdos ni prácticas que impliquen riesgos.",
-      remember:"Al finalizar esta semana revisaremos participación, ayudas y utilidad cotidiana. La profesional decidirá si conviene mantener, modificar o sustituir las actividades para la semana siguiente.",
-      session_questions:["¿Qué facilitó la participación?","¿Cuáles fueron las ayudas necesarias?","¿Qué se pudo trasladar a una situación real?","¿Qué dudas o ajustes deben abordarse?"],
-      neuro_profile:{domain:item.domain,intervention:item.intervention,level:item.level,theme:item.theme||"",functional_goal:item.objective,week_number:week},
-      visual_blocks:Array.isArray(item.visual_blocks)?item.visual_blocks.map(block=>({...block})):[]
+        "\n\nDudas para comentar en consulta: qué no entendí, qué me ayudó y qué me gustaría cambiar.",
+      safety_note:"Las actividades se pueden adaptar o detener. Evita forzar recuerdos, corregir de manera confrontativa o realizar prácticas funcionales de riesgo sin acompañamiento adecuado.",
+      remember:"Al terminar esta semana revisaremos contigo las ayudas, la participación y su utilidad. Solo después ajustaremos la siguiente semana.",
+      session_questions:["¿Qué recurso ayudó más?","¿Qué actividad preferiste y por qué?","¿Hubo fatiga o alguna dificultad sensorial?","¿Qué podría ser útil en el día a día?"],
+      neuro_profile:{domain:item.domain,intervention:item.intervention,level:item.level,theme:item.theme||"",functional_goal:item.objective,week_number:week,response_mode:responseMode,accessibility:sensoryNotes},
+      visual_blocks:visuals.map(block => ({...block}))
     };
   }
 
