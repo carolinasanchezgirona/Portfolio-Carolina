@@ -49,6 +49,50 @@
       ? ($("clinic-neuro-mode")?.value==="weekly" ? "Cuaderno: 7 días orientativos, dos actividades por día y cobertura cognitiva." : "Ficha focal: tres actividades desarrolladas y adaptables.")
       : "Psicología: cuaderno para dos semanas con psicoeducación, actividades y espacio para dudas.";
   }
+
+  function renderStructuredPreview(block, container) {
+    container.replaceChildren();
+    const lines=String(block.content||"").split(/\r?\n/).map(s=>s.trim()).filter(Boolean);
+    if(!lines.length)return;
+    if(block.type==="table"){
+      const rows=lines.map(row=>row.split("|").map(x=>x.trim())).slice(0,13);
+      if(rows[0].length<2||rows[0].length>6||rows.some(row=>row.length!==rows[0].length)) {
+        container.append(el("p","Revisa que todas las filas contengan las mismas columnas."));return;
+      }
+      const table=el("table");const head=el("thead");const row=el("tr");
+      rows[0].forEach(value=>row.append(el("th",value)));
+      head.append(row);table.append(head);
+      const body=el("tbody");
+      rows.slice(1).forEach(values=>{const r=el("tr");values.forEach(value=>r.append(el("td",value)));body.append(r);});
+      table.append(body);container.append(table);
+    }else if(block.type==="chart"){
+      const parsed=lines.map(row=>row.split("|").map(x=>x.trim())).filter(row=>row.length===2&&row[0]&&Number.isFinite(Number(row[1]))&&Number(row[1])>=0&&Number(row[1])<=10000).slice(0,8);
+      if(parsed.length<2){container.append(el("p","Escribe dos o más pares «categoría | valor» para visualizar el gráfico."));return;}
+      const max=Math.max(1,...parsed.map(r=>Number(r[1])));
+      parsed.forEach(([name,value])=>{
+        const item=el("div",undefined,"clinic-visual-bar-row");
+        item.append(el("span",name));
+        const track=el("div",undefined,"clinic-visual-bar-track");
+        const bar=el("div",undefined,"clinic-visual-bar-fill");
+        bar.style.width=Math.max(0,Math.min(100,Number(value)/max*100))+"%";
+        track.append(bar);item.append(track,el("strong",value));container.append(item);
+      });
+      container.append(el("p","Los gráficos representan exclusivamente los valores introducidos. No son resultados clínicos."));
+    }else if(block.type==="diagram"){
+      const list=el("ol");
+      lines.slice(0,8).forEach(row=>list.append(el("li",row)));
+      container.append(list);
+    }else if(block.type==="calendar"){
+      const month=lines[0]||"";
+      if(!/^\d{4}-(0[1-9]|1[0-2])$/.test(month)){container.append(el("p","Formato necesario: AAAA-MM en la primera línea."));return;}
+      const [year,m]=month.split("-").map(Number);
+      const count=new Date(Date.UTC(year,m,0)).getUTCDate();
+      container.append(el("strong","Calendario de "+month+" · "+count+" días"));
+      const note=el("p","Los acontecimientos se mostrarán en su día correspondiente en el PDF.");
+      container.append(note);
+    }
+  }
+
   function redraw() {
     panelVisible();
     const list = $("clinic-visual-block-list");
@@ -171,7 +215,10 @@
         }
       } else {
         card.append(el("p", descriptors[block.type], "clinic-material-helper"));
-        card.append(field(block.type === "calendar" ? "Mes / acontecimientos" : "Contenido estructurado", block.content || "", v => { block.content = v; }, true));
+        const preview=el("div",undefined,"clinic-visual-block-preview");
+        card.append(field(block.type === "calendar" ? "Mes / acontecimientos" : "Contenido estructurado", block.content || "", v => { block.content = v; renderStructuredPreview(block,preview); }, true));
+        card.append(preview);
+        renderStructuredPreview(block,preview);
       }
       list.append(card);
     });
@@ -240,7 +287,7 @@
         response_mode: $("clinic-neuro-response-mode")?.value || "flexible",
         accessibility: $("clinic-neuro-accessibility")?.value?.trim() || ""
       } : null,
-      visual_blocks: blocks.map(b => ({ ...b }))
+      visual_blocks: blocks.map(({prompt,...b}) => ({ ...b }))
     };
     return result;
   }
@@ -469,7 +516,7 @@
     $("clinic-visual-add")?.addEventListener("click", () => {
       const type = $("clinic-visual-type")?.value;
       if (!types[type] || blocks.length >= LIMIT) return;
-      blocks.push({ type, title: "", content: type === "calendar" ? new Date().toISOString().slice(0, 7) : "", alt: "", data: "" });
+      blocks.push({ type, title: type==="chart" ? "Gráfico de ejemplo (datos ficticios)" : "", content: type === "calendar" ? new Date().toISOString().slice(0, 7) : type==="chart" ? "Actividad A (ficticia)|3\nActividad B (ficticia)|6\nActividad C (ficticia)|4" : "", alt: "", data: "" });
       if($("clinic-visual-details"))$("clinic-visual-details").open=true;
       redraw();
     });
