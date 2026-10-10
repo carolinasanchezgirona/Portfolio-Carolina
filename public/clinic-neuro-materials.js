@@ -3,6 +3,7 @@
   const $ = (id) => document.getElementById(id);
   const area = () => $("clinic-clinical-area")?.value || "psychology";
   let blocks = [];
+  let coveredDomains = [];
   const LIMIT = 8;
   const types = {
     image: "Fotografía o imagen",
@@ -37,13 +38,15 @@
     const visible = area() === "neuropsychology";
     const section = $("clinic-neuro-settings");
     if (section) section.hidden = !visible;
+    const review=$("clinic-neuro-review-wrapper");
+    if(review) review.hidden=!visible;
     const hint = $("clinic-clinical-area-hint");
     if (hint) hint.textContent = visible
-      ? "Un cuaderno por semana: ejercicios desarrollados, con ayudas y recursos visuales revisados."
+      ? "Crea fichas por función o cuadernos de 7 días con ejercicios, ayudas y recursos visuales revisados."
       : "Se conserva íntegramente el generador de materiales psicológicos.";
     const period = $("clinic-material-period-help");
     if (period) period.textContent = visible
-      ? "Neuropsicología: programa de 7 días con 3–4 ejercicios completos. La semana siguiente se genera después de revisar la evolución."
+      ? ($("clinic-neuro-mode")?.value==="weekly" ? "Cuaderno: 7 días orientativos, dos actividades por día y cobertura cognitiva." : "Ficha focal: tres actividades desarrolladas y adaptables.")
       : "Psicología: cuaderno para dos semanas con psicoeducación, actividades y espacio para dudas.";
   }
   function redraw() {
@@ -141,9 +144,15 @@
       if (!String(doc.objective || "").trim()) issues.push("definir objetivo observable");
       const expectedWeek = Math.max(1,Math.min(52,Number(doc.neuro_profile?.week_number)||1));
       const headings = (doc.instructions || "").match(/(?:^|\n)\s*Semana\s+\d+\b/gi) || [];
-      const exercises = (doc.instructions || "").match(/(?:^|\n)\s*Ejercicio\s+\d+\s*:/gi) || [];
-      if (headings.length !== 1 || !new RegExp("(?:^|\\n)\\s*Semana\\s+" + expectedWeek + "\\b","i").test(doc.instructions || "")) issues.push("un único apartado Semana " + expectedWeek + " por cuaderno");
-      if (exercises.length < 3 || exercises.length > 4) issues.push("entre tres y cuatro ejercicios desarrollados en esta semana");
+      const instructions=doc.instructions||"";
+      const exercises=instructions.match(/(?:^|\n)\s*Ejercicio\s+\d+\s*:/gi)||[];
+      const weekly=doc.neuro_profile?.mode==="weekly";
+      if(headings.length!==1||!new RegExp("(?:^|\\n)\\s*Semana\\s+"+expectedWeek+"\\b","i").test(instructions))issues.push("un único apartado Semana "+expectedWeek+" por cuaderno");
+      if(weekly){
+        if(exercises.length!==14)issues.push("14 ejercicios, dos por cada uno de los siete días");
+        for(let day=1;day<=7;day++)if((instructions.match(new RegExp("Día "+day+"\\s*[·:]","g"))||[]).length!==2)issues.push("dos ejercicios de Día "+day);
+        for(const name of Object.values(DOMAIN_LABELS).filter(x=>x!=="Todas las funciones"))if(!instructions.toLowerCase().includes(name.toLowerCase()))issues.push("cobertura de "+name);
+      }else if(exercises.length<3||exercises.length>4)issues.push("entre tres y cuatro ejercicios desarrollados en la ficha");
     }
     (doc.visual_blocks || []).forEach((b, i) => {
       if (!b.title?.trim()) issues.push("titular recurso " + (i + 1));
@@ -179,7 +188,9 @@
     const result = {
       clinical_area: area(),
       neuro_profile: area() === "neuropsychology" ? {
+        mode:$("clinic-neuro-mode")?.value||"single",
         domain: $("clinic-neuro-domain")?.value || "",
+        covered_domains:[...coveredDomains],
         intervention: $("clinic-neuro-intervention")?.value || "",
         level: $("clinic-neuro-level")?.value || "",
         theme: $("clinic-neuro-theme")?.value?.trim() || "",
@@ -197,6 +208,8 @@
     if ($("clinic-neuro-reviewed")) $("clinic-neuro-reviewed").checked = false;
     if ($("clinic-clinical-area")) $("clinic-clinical-area").value = clinicalArea;
     const neuro = doc?.neuro_profile || {};
+    coveredDomains=Array.isArray(neuro.covered_domains)?neuro.covered_domains.slice(0,15):[];
+    if($("clinic-neuro-mode"))$("clinic-neuro-mode").value=neuro.mode==="weekly"||neuro.domain==="multidominio"?"weekly":"single";
     if ($("clinic-neuro-week-number")) $("clinic-neuro-week-number").value = String(Math.max(1,Math.min(52,Number(neuro.week_number)||1)));
     for (const [name, id] of Object.entries({
       domain: "clinic-neuro-domain", intervention: "clinic-neuro-intervention",
@@ -207,14 +220,17 @@
     }
     blocks = Array.isArray(doc?.visual_blocks) ? doc.visual_blocks.filter(b => types[b.type]).slice(0, LIMIT).map(b => ({ ...b })) : [];
     redraw();
+    $("clinic-neuro-mode")?.dispatchEvent(new Event("change"));
+    if(blocks.length&&$("clinic-visual-details"))$("clinic-visual-details").open=true;
   }
 
   const DOMAIN_LABELS = {
     orientacion_temporal: "Orientación temporal", orientacion_espacial: "Orientación espacial",
     orientacion_personal: "Orientación personal", atencion: "Atención", memoria: "Memoria",
     funciones_ejecutivas: "Funciones ejecutivas", lenguaje: "Lenguaje",
-    visuoespacial: "Visuoespacial", praxias_gnosias: "Praxias y gnosias",
-    cognicion_funcional: "Cognición funcional"
+    visuoespacial: "Procesamiento visuoespacial", praxias_gnosias: "Praxias y gnosias",
+    calculo:"Cálculo funcional",cognicion_social:"Cognición social",velocidad_procesamiento:"Velocidad de procesamiento",
+    cognicion_funcional: "Cognición funcional",multidominio:"Todas las funciones"
   };
   let starterEntries = [];
   // Biblioteca de borradores originales: ejercicios distintos y parámetros de adaptación.
@@ -413,6 +429,7 @@
       const type = $("clinic-visual-type")?.value;
       if (!types[type] || blocks.length >= LIMIT) return;
       blocks.push({ type, title: "", content: type === "calendar" ? new Date().toISOString().slice(0, 7) : "", alt: "", data: "" });
+      if($("clinic-visual-details"))$("clinic-visual-details").open=true;
       redraw();
     });
     redraw();
