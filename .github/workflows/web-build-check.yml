@@ -47,7 +47,8 @@ jobs:
       - name: Validar recursos visuales neuropsicológicos y editor
         run: |
           node --check public/clinic-neuro-materials.js
-          node --experimental-strip-types --test tests/clinical-neuro-visual.test.mjs tests/clinical-neuro-library.test.mjs tests/clinical-neuro-weekly.test.mjs tests/clinical-neuro-progress.test.mjs
+          node --check public/clinic-neuro-weekly-composer.js
+          node --experimental-strip-types --test tests/clinical-neuro-visual.test.mjs tests/clinical-neuro-library.test.mjs tests/clinical-neuro-weekly.test.mjs tests/clinical-neuro-progress.test.mjs tests/clinical-neuro-composer.test.mjs
 
       - name: Validar editor clínico, guardado automático y navegación
         run: |

@@ -3,6 +3,7 @@
   const $ = (id) => document.getElementById(id);
   const area = () => $("clinic-clinical-area")?.value || "psychology";
   let blocks = [];
+  let coveredDomains = [];
   const LIMIT = 8;
   const types = {
     image: "Fotografía o imagen",
@@ -37,15 +38,61 @@
     const visible = area() === "neuropsychology";
     const section = $("clinic-neuro-settings");
     if (section) section.hidden = !visible;
+    const review=$("clinic-neuro-review-wrapper");
+    if(review) review.hidden=!visible;
     const hint = $("clinic-clinical-area-hint");
     if (hint) hint.textContent = visible
-      ? "Un cuaderno por semana: ejercicios desarrollados, con ayudas y recursos visuales revisados."
+      ? "Crea fichas por función o cuadernos de 7 días con ejercicios, ayudas y recursos visuales revisados."
       : "Se conserva íntegramente el generador de materiales psicológicos.";
     const period = $("clinic-material-period-help");
     if (period) period.textContent = visible
-      ? "Neuropsicología: programa de 7 días con 3–4 ejercicios completos. La semana siguiente se genera después de revisar la evolución."
+      ? ($("clinic-neuro-mode")?.value==="weekly" ? "Cuaderno: 7 días orientativos, dos actividades por día y cobertura cognitiva." : "Ficha focal: tres actividades desarrolladas y adaptables.")
       : "Psicología: cuaderno para dos semanas con psicoeducación, actividades y espacio para dudas.";
   }
+
+  function renderStructuredPreview(block, container) {
+    container.replaceChildren();
+    const lines=String(block.content||"").split(/\r?\n/).map(s=>s.trim()).filter(Boolean);
+    if(!lines.length)return;
+    if(block.type==="table"){
+      const rows=lines.map(row=>row.split("|").map(x=>x.trim())).slice(0,13);
+      if(rows[0].length<2||rows[0].length>6||rows.some(row=>row.length!==rows[0].length)) {
+        container.append(el("p","Revisa que todas las filas contengan las mismas columnas."));return;
+      }
+      const table=el("table");const head=el("thead");const row=el("tr");
+      rows[0].forEach(value=>row.append(el("th",value)));
+      head.append(row);table.append(head);
+      const body=el("tbody");
+      rows.slice(1).forEach(values=>{const r=el("tr");values.forEach(value=>r.append(el("td",value)));body.append(r);});
+      table.append(body);container.append(table);
+    }else if(block.type==="chart"){
+      const parsed=lines.map(row=>row.split("|").map(x=>x.trim())).filter(row=>row.length===2&&row[0]&&Number.isFinite(Number(row[1]))&&Number(row[1])>=0&&Number(row[1])<=10000).slice(0,8);
+      if(parsed.length<2){container.append(el("p","Escribe dos o más pares «categoría | valor» para visualizar el gráfico."));return;}
+      const max=Math.max(1,...parsed.map(r=>Number(r[1])));
+      parsed.forEach(([name,value])=>{
+        const item=el("div",undefined,"clinic-visual-bar-row");
+        item.append(el("span",name));
+        const track=el("div",undefined,"clinic-visual-bar-track");
+        const bar=el("div",undefined,"clinic-visual-bar-fill");
+        bar.style.width=Math.max(0,Math.min(100,Number(value)/max*100))+"%";
+        track.append(bar);item.append(track,el("strong",value));container.append(item);
+      });
+      container.append(el("p","Los gráficos representan exclusivamente los valores introducidos. No son resultados clínicos."));
+    }else if(block.type==="diagram"){
+      const list=el("ol");
+      lines.slice(0,8).forEach(row=>list.append(el("li",row)));
+      container.append(list);
+    }else if(block.type==="calendar"){
+      const month=lines[0]||"";
+      if(!/^\d{4}-(0[1-9]|1[0-2])$/.test(month)){container.append(el("p","Formato necesario: AAAA-MM en la primera línea."));return;}
+      const [year,m]=month.split("-").map(Number);
+      const count=new Date(Date.UTC(year,m,0)).getUTCDate();
+      container.append(el("strong","Calendario de "+month+" · "+count+" días"));
+      const note=el("p","Los acontecimientos se mostrarán en su día correspondiente en el PDF.");
+      container.append(note);
+    }
+  }
+
   function redraw() {
     panelVisible();
     const list = $("clinic-visual-block-list");
@@ -117,6 +164,47 @@
         });
         label.append(input);
         card.append(label);
+        const prompt = field("Describe la ilustración que necesitas (sin datos personales)",block.prompt||"",v=>{block.prompt=v;},true);
+        const generate = el("button","Generar ilustración con IA","clinic-secondary");
+        generate.type="button";
+        generate.addEventListener("click",async()=>{
+          const message=$("clinic-exercise-message");
+          const brief=(block.prompt||"").trim();
+          if(brief.length<12){if(message)message.textContent="Describe el contenido de la imagen con al menos 12 caracteres.";return;}
+          let token="";
+          try{token=JSON.parse(sessionStorage.getItem("dememoria_admin_session")||"null")?.access_token||"";}catch{}
+          if(!token){if(message)message.textContent="Necesitas iniciar sesión profesional.";return;}
+          generate.disabled=true;generate.textContent="Generando ilustración…";
+          if(message)message.textContent="Generando ilustración genérica sin datos del paciente…";
+          try{
+            const response=await fetch("/api/clinical/visual-image",{
+              method:"POST",headers:{Authorization:"Bearer "+token,"Content-Type":"application/json"},
+              body:JSON.stringify({brief})
+            });
+            const json=await response.json().catch(()=>({}));
+            if(!response.ok||!json.data_url)throw new Error(json.error||"No se ha generado la ilustración.");
+            const blob=await fetch(json.data_url).then(x=>x.blob());
+            const bitmap=await createImageBitmap(blob);
+            const factor=Math.min(1,1000/Math.max(bitmap.width,bitmap.height));
+            const canvas=document.createElement("canvas");
+            canvas.width=Math.max(1,Math.round(bitmap.width*factor));
+            canvas.height=Math.max(1,Math.round(bitmap.height*factor));
+            const ctx=canvas.getContext("2d");
+            if(!ctx)throw new Error("No se ha podido preparar la imagen.");
+            ctx.fillStyle="#ffffff";ctx.fillRect(0,0,canvas.width,canvas.height);
+            ctx.drawImage(bitmap,0,0,canvas.width,canvas.height);bitmap.close?.();
+            let encoded=canvas.toDataURL("image/jpeg",.74);
+            if(encoded.length>650000)encoded=canvas.toDataURL("image/jpeg",.54);
+            const others=blocks.filter(x=>x!==block&&x.type==="image"&&x.data);
+            if(encoded.length>650000||others.length>=2||others.reduce((sum,x)=>sum+(x.data?.length||0),0)+encoded.length>1600000)
+              throw new Error("Límite de tres imágenes y 1,6 MB entre ellas. Elimina imágenes o usa otras más pequeñas.");
+            block.data=encoded;block.alt||=brief.slice(0,180);
+            redraw();
+            if(message)message.textContent="Ilustración añadida. Antes de enviar verifica cada elemento, cantidad y relación espacial.";
+          }catch(error){if(message)message.textContent=error?.message||"No se ha podido crear la ilustración.";}
+          finally{generate.disabled=false;generate.textContent="Generar ilustración con IA";}
+        });
+        card.append(prompt,generate);
         card.append(field("Descripción accesible de la imagen", block.alt || "", v => { block.alt = v; }));
         if (block.data) {
           const img = el("img");
@@ -127,7 +215,10 @@
         }
       } else {
         card.append(el("p", descriptors[block.type], "clinic-material-helper"));
-        card.append(field(block.type === "calendar" ? "Mes / acontecimientos" : "Contenido estructurado", block.content || "", v => { block.content = v; }, true));
+        const preview=el("div",undefined,"clinic-visual-block-preview");
+        card.append(field(block.type === "calendar" ? "Mes / acontecimientos" : "Contenido estructurado", block.content || "", v => { block.content = v; renderStructuredPreview(block,preview); }, true));
+        card.append(preview);
+        renderStructuredPreview(block,preview);
       }
       list.append(card);
     });
@@ -141,9 +232,15 @@
       if (!String(doc.objective || "").trim()) issues.push("definir objetivo observable");
       const expectedWeek = Math.max(1,Math.min(52,Number(doc.neuro_profile?.week_number)||1));
       const headings = (doc.instructions || "").match(/(?:^|\n)\s*Semana\s+\d+\b/gi) || [];
-      const exercises = (doc.instructions || "").match(/(?:^|\n)\s*Ejercicio\s+\d+\s*:/gi) || [];
-      if (headings.length !== 1 || !new RegExp("(?:^|\\n)\\s*Semana\\s+" + expectedWeek + "\\b","i").test(doc.instructions || "")) issues.push("un único apartado Semana " + expectedWeek + " por cuaderno");
-      if (exercises.length < 3 || exercises.length > 4) issues.push("entre tres y cuatro ejercicios desarrollados en esta semana");
+      const instructions=doc.instructions||"";
+      const exercises=instructions.match(/(?:^|\n)\s*Ejercicio\s+\d+\s*:/gi)||[];
+      const weekly=doc.neuro_profile?.mode==="weekly";
+      if(headings.length!==1||!new RegExp("(?:^|\\n)\\s*Semana\\s+"+expectedWeek+"\\b","i").test(instructions))issues.push("un único apartado Semana "+expectedWeek+" por cuaderno");
+      if(weekly){
+        if(exercises.length!==14)issues.push("14 ejercicios, dos por cada uno de los siete días");
+        for(let day=1;day<=7;day++)if((instructions.match(new RegExp("Día "+day+"\\s*[·:]","g"))||[]).length!==2)issues.push("dos ejercicios de Día "+day);
+        for(const name of Object.values(DOMAIN_LABELS).filter(x=>x!=="Todas las funciones"))if(!instructions.toLowerCase().includes(name.toLowerCase()))issues.push("cobertura de "+name);
+      }else if(exercises.length<3||exercises.length>4)issues.push("entre tres y cuatro ejercicios desarrollados en la ficha");
     }
     (doc.visual_blocks || []).forEach((b, i) => {
       if (!b.title?.trim()) issues.push("titular recurso " + (i + 1));
@@ -179,7 +276,9 @@
     const result = {
       clinical_area: area(),
       neuro_profile: area() === "neuropsychology" ? {
-        domain: $("clinic-neuro-domain")?.value || "",
+        mode:$("clinic-neuro-mode")?.value||"single",
+        domain: $("clinic-neuro-mode")?.value === "weekly" ? "multidominio" : ($("clinic-neuro-domain")?.value || ""),
+        covered_domains:[...coveredDomains],
         intervention: $("clinic-neuro-intervention")?.value || "",
         level: $("clinic-neuro-level")?.value || "",
         theme: $("clinic-neuro-theme")?.value?.trim() || "",
@@ -188,7 +287,7 @@
         response_mode: $("clinic-neuro-response-mode")?.value || "flexible",
         accessibility: $("clinic-neuro-accessibility")?.value?.trim() || ""
       } : null,
-      visual_blocks: blocks.map(b => ({ ...b }))
+      visual_blocks: blocks.map(({prompt,...b}) => ({ ...b }))
     };
     return result;
   }
@@ -197,6 +296,8 @@
     if ($("clinic-neuro-reviewed")) $("clinic-neuro-reviewed").checked = false;
     if ($("clinic-clinical-area")) $("clinic-clinical-area").value = clinicalArea;
     const neuro = doc?.neuro_profile || {};
+    coveredDomains=Array.isArray(neuro.covered_domains)?neuro.covered_domains.slice(0,15):[];
+    if($("clinic-neuro-mode"))$("clinic-neuro-mode").value=neuro.mode==="weekly"||neuro.domain==="multidominio"?"weekly":"single";
     if ($("clinic-neuro-week-number")) $("clinic-neuro-week-number").value = String(Math.max(1,Math.min(52,Number(neuro.week_number)||1)));
     for (const [name, id] of Object.entries({
       domain: "clinic-neuro-domain", intervention: "clinic-neuro-intervention",
@@ -207,14 +308,17 @@
     }
     blocks = Array.isArray(doc?.visual_blocks) ? doc.visual_blocks.filter(b => types[b.type]).slice(0, LIMIT).map(b => ({ ...b })) : [];
     redraw();
+    $("clinic-neuro-mode")?.dispatchEvent(new Event("change"));
+    if(blocks.length&&$("clinic-visual-details"))$("clinic-visual-details").open=true;
   }
 
   const DOMAIN_LABELS = {
     orientacion_temporal: "Orientación temporal", orientacion_espacial: "Orientación espacial",
     orientacion_personal: "Orientación personal", atencion: "Atención", memoria: "Memoria",
     funciones_ejecutivas: "Funciones ejecutivas", lenguaje: "Lenguaje",
-    visuoespacial: "Visuoespacial", praxias_gnosias: "Praxias y gnosias",
-    cognicion_funcional: "Cognición funcional"
+    visuoespacial: "Procesamiento visuoespacial", praxias_gnosias: "Praxias y gnosias",
+    calculo:"Cálculo funcional",cognicion_social:"Cognición social",velocidad_procesamiento:"Velocidad de procesamiento",
+    cognicion_funcional: "Cognición funcional",multidominio:"Todas las funciones"
   };
   let starterEntries = [];
   // Biblioteca de borradores originales: ejercicios distintos y parámetros de adaptación.
@@ -409,10 +513,16 @@
   function init() {
     if (!$("clinic-clinical-area")) return;
     $("clinic-clinical-area").addEventListener("change", panelVisible);
+    $("clinic-neuro-mode")?.addEventListener("change",panelVisible);
+    $("clinic-exercise-form")?.addEventListener("input",event=>{
+      if(area()!=="neuropsychology"||event.target?.id==="clinic-neuro-reviewed")return;
+      const check=$("clinic-neuro-reviewed");if(check)check.checked=false;
+    });
     $("clinic-visual-add")?.addEventListener("click", () => {
       const type = $("clinic-visual-type")?.value;
       if (!types[type] || blocks.length >= LIMIT) return;
-      blocks.push({ type, title: "", content: type === "calendar" ? new Date().toISOString().slice(0, 7) : "", alt: "", data: "" });
+      blocks.push({ type, title: type==="chart" ? "Gráfico de ejemplo (datos ficticios)" : "", content: type === "calendar" ? new Date().toISOString().slice(0, 7) : type==="chart" ? "Actividad A (ficticia)|3\nActividad B (ficticia)|6\nActividad C (ficticia)|4" : "", alt: "", data: "" });
+      if($("clinic-visual-details"))$("clinic-visual-details").open=true;
       redraw();
     });
     redraw();

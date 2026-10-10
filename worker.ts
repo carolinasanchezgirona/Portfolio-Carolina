@@ -1605,6 +1605,40 @@ async function clinicalDiagnosticSuggestionRequest(request: Request, env: Env): 
   }
 }
 
+async function clinicalNeuroVisualImageRequest(request:Request,env:Env):Promise<Response>{
+ if(request.method!=="POST")return editorialJson({error:"Método no permitido."},405);
+ if(!await verifyEditorialOwner(request))return editorialJson({error:"Sesión profesional no autorizada."},401);
+ if(!env.OPENAI_API_KEY)return editorialJson({error:"Generación visual no configurada."},503);
+ if(Number(request.headers.get("content-length")||"0")>4000)return editorialJson({error:"Descripción demasiado larga."},413);
+ let data:Record<string,unknown>;
+ try{data=await request.json() as Record<string,unknown>;}catch{return editorialJson({error:"Solicitud no válida."},400);}
+ const brief=editorialText(data.brief,650);
+ if(brief.length<12)return editorialJson({error:"Describe el estímulo con al menos 12 caracteres."},400);
+ if(containsDirectPatientIdentifiers(brief))return editorialJson({error:CLINICAL_IDENTIFIERS_ERROR},422);
+ const prompt=[
+  "One original simple educational illustration for an adult neuropsychological activity worksheet.",
+  "Adult-respectful, clean editorial style, neutral white background, high contrast, large isolated objects, uncluttered A4-printable composition.",
+  "No writing, labels, numbers, letterforms, logos, watermark, real patient faces, or medical diagnostic implications.",
+  "This is illustrative material, not a standardized test. The clinician will verify correctness of the scene.",
+  "Brief: "+brief
+ ].join(" ");
+ try{
+  const response=await fetch("https://api.openai.com/v1/images/generations",{
+   method:"POST",headers:{Authorization:"Bearer "+env.OPENAI_API_KEY,"Content-Type":"application/json"},
+   body:JSON.stringify({model:env.OPENAI_IMAGE_MODEL||"gpt-image-1",prompt,size:"1024x1024",quality:"low",output_format:"jpeg",output_compression:70,n:1})
+  });
+  const result=await response.json() as {data?:Array<{b64_json?:string}>};
+  if(!response.ok||!result.data?.[0]?.b64_json){
+   console.error("Neuro image generation failure",response.status);
+   return editorialJson({error:response.status===429?"Se alcanzó el límite de generación.":"No se ha podido crear la ilustración."},response.status===429?429:502);
+  }
+  return editorialJson({data_url:"data:image/jpeg;base64,"+result.data[0].b64_json});
+ }catch(error){
+  console.error("Neuro image generation unavailable",error instanceof Error?error.name:"Unknown");
+  return editorialJson({error:"Servicio de ilustraciones no disponible."},502);
+ }
+}
+
 const NEURO_MATERIAL_GUIDELINES = [
   "Intervención NEUROPSICOLÓGICA individualizada. Distingue estimulación, entrenamiento, rehabilitación funcional y compensación; no diagnostiques ni atribuyas validez psicométrica a ejercicios caseros.",
   "Adapta carga y ayudas a capacidades preservadas, escolaridad, idioma, alteraciones sensoriales y motoras, fatiga, participación y autonomía.",
@@ -1623,6 +1657,17 @@ function normalizeNeuroVisualBlocks(raw: unknown) {
     return { type: editorialText(row.type, 32), title: editorialText(row.title, 140), content: editorialText(row.content, 2500) };
   }).filter(b => ["table","chart","diagram","calendar"].includes(b.type) && b.title && b.content);
 }
+
+const MULTIDOMAIN_WEEKLY_NEURO_MATERIAL_GUIDELINES=[
+ "Crea un cuaderno de 7 días orientativos con exactamente 14 ejercicios: dos ejercicios distintos de cada Día 1 a Día 7. Titula cada uno 'Ejercicio N: Día D · título (dominio)'.",
+ "La semana cubre 13 dominios: Orientación temporal, Orientación espacial, Orientación personal, Atención, Memoria, Funciones ejecutivas, Lenguaje, Procesamiento visuoespacial, Praxias y gnosias, Cálculo funcional, Cognición social, Velocidad de procesamiento y Cognición funcional.",
+ "La práctica es flexible. No imponer todas las actividades si aparecen fatiga o limitaciones. Seleccionar ficha focal si la cobertura completa no es apropiada.",
+ "Usa estímulos originales concretos, ejemplos con solución verificable, y tareas de distintos formatos y modalidades. Alterna rastreo, clasificación, memoria, planificación, reconocimiento, cálculo funcional, lenguaje y escenarios de la vida diaria.",
+ "No repitas ejercicios sustituyendo solo palabras. Los días son orientativos, no una dosis clínica obligatoria.",
+ "Cada actividad debe incluir en líneas independientes: Objetivo:, Materiales:, Preparación:, Pasos:, Ejemplo:, Ayudas:, Adaptación:, Duración y frecuencia:, Qué observar:.",
+ "No uses estímulos comerciales protegidos, baremos o puntuaciones diagnósticas. No inventes familiares ni biografía. Usa solo calendarios reales y datos ficticios rotulados como tales.",
+ "Máximo ocho recursos visuales originales en visual_blocks de tipo table, chart, diagram o calendar. No cites imágenes que no hayas creado o que no consten en la ficha."
+].join("\n");
 
 const WEEKLY_NEURO_MATERIAL_GUIDELINES=[
  "En NEUROPSICOLOGÍA preparar UNA SOLA SEMANA de intervención (7 días). Encabeza instructions con 'Semana N', donde N es neuro_profile.week_number. Jamás incluyas Semana N+1 dentro del mismo cuaderno.",
@@ -1643,16 +1688,22 @@ const WEEKLY_NEURO_MATERIAL_GUIDELINES=[
 ].join("\n");
 
 function completeWeeklyNeuroMaterial(doc:{instructions:string;record_prompt:string;frequency:string;neuro_profile?:Record<string,unknown>|null}):boolean{
- const text=doc.instructions||"";
- const weeks=text.match(/(?:^|\n)\s*Semana\s+\d+\b/gi)||[];
- const exercises=text.split(/(?:^|\n)\s*Ejercicio\s+\d+\s*:/gi).slice(1);
+ const value=doc.instructions||"";
+ const weeks=value.match(/(?:^|\n)\s*Semana\s+\d+\b/gi)||[];
+ const exercises=value.split(/(?:^|\n)\s*Ejercicio\s+\d+\s*:/gi).slice(1);
  const week=Math.max(1,Math.min(52,Number(doc.neuro_profile?.week_number)||1));
  const labels=["Objetivo:","Materiales:","Preparación:","Pasos:","Ejemplo:","Ayudas:","Adaptación:","Duración y frecuencia:","Qué observar:"];
- return weeks.length===1 && new RegExp("(?:^|\\n)\\s*Semana\\s+"+week+"\\b","i").test(text)
-  && exercises.length>=3 && exercises.length<=4
-  && exercises.every(part=>part.trim().length>=350 && labels.every(label=>part.toLowerCase().includes(label.toLowerCase())))
-  && /dudas/i.test(doc.record_prompt||"") && Boolean(doc.frequency);
+ const multidomain=doc.neuro_profile?.mode==="weekly";
+ const countOk=multidomain?exercises.length===14:exercises.length>=3&&exercises.length<=4;
+ const daysOk=!multidomain||Array.from({length:7},(_,i)=>(value.match(new RegExp("Día "+(i+1)+"\\s*[·:]","g"))||[]).length===2).every(Boolean);
+ const domains=["Orientación temporal","Orientación espacial","Orientación personal","Atención","Memoria","Funciones ejecutivas","Lenguaje","Procesamiento visuoespacial","Praxias y gnosias","Cálculo funcional","Cognición social","Velocidad de procesamiento","Cognición funcional"];
+ const domainsOk=!multidomain||domains.every(d=>value.toLowerCase().includes(d.toLowerCase()));
+ return weeks.length===1&&new RegExp("(?:^|\\n)\\s*Semana\\s+"+week+"\\b","i").test(value)
+   &&countOk&&daysOk&&domainsOk
+   &&exercises.every(part=>part.trim().length>=350&&labels.every(label=>part.toLowerCase().includes(label.toLowerCase())))
+   &&/dudas/i.test(doc.record_prompt||"")&&Boolean(doc.frequency);
 }
+
 function validGeneratedMaterial(doc:{instructions:string;example:string;record_prompt:string;frequency:string;clinical_area?:string;neuro_profile?:Record<string,unknown>|null}):boolean{
  return doc.clinical_area==="neuropsychology"?completeWeeklyNeuroMaterial(doc):completeTwoWeekMaterial(doc);
 }
@@ -1727,7 +1778,7 @@ async function clinicalMaterialDraftRequest(request: Request, env: Env): Promise
     "En adicciones no indiques retirada brusca de sustancias con posible dependencia física.",
     "En alimentación evita restricciones, conteos o instrucciones que puedan reforzar un TCA.",
     "En TEA usa un enfoque neuroafirmativo y evita normalización forzada o entrenamiento de enmascaramiento.",
-    ...(clinicalArea === "neuropsychology" ? [WEEKLY_NEURO_MATERIAL_GUIDELINES, NEURO_MATERIAL_GUIDELINES] : [TWO_WEEK_MATERIAL_GUIDELINES]),
+    ...(clinicalArea === "neuropsychology" ? [neuroProfile.mode==="weekly" ? MULTIDOMAIN_WEEKLY_NEURO_MATERIAL_GUIDELINES : WEEKLY_NEURO_MATERIAL_GUIDELINES, NEURO_MATERIAL_GUIDELINES] : [TWO_WEEK_MATERIAL_GUIDELINES]),
     "Devuelve SOLO JSON válido.",
     "Si existe: {status:'existing',existing_id:string,reason:string}.",
     "Si falta: {status:'new',reason:string,material:{title:string,summary:string,instructions:string,process_tags:string[],material_type:'exercise'|'psychoeducation',phase:string,duration_minutes:number|null,burden:'low'|'medium'|'high',objectives:string[],cautions:string[],sequence_rank:number,patient_document:{duration_minutes:number|null,frequency:string,introduction:string,why:string,objective:string,instructions:string,example:string,record_prompt:string,safety_note:string,remember:string,session_questions:string[],visual_blocks?:{type:string,title:string,content:string}[]}}}.",
@@ -1771,7 +1822,7 @@ async function clinicalMaterialDraftRequest(request: Request, env: Env): Promise
 
     const raw = JSON.parse(result.choices[0].message.content) as Record<string, unknown>;
     if (raw.status === "existing") {
-      return editorialJson({ error: "La IA ha propuesto una ficha existente sin adaptarla a dos semanas. Vuelve a generar el cuaderno personalizado." }, 502);
+      return editorialJson({ error: "La IA ha propuesto una ficha existente sin adaptarla a la modalidad seleccionada. Vuelve a generar el cuaderno personalizado." }, 502);
     }
 
     const materialRaw = raw.material && typeof raw.material === "object" && !Array.isArray(raw.material)
@@ -1902,7 +1953,7 @@ async function clinicalMaterialEnrichRequest(request: Request, env: Env): Promis
     "La nota de seguridad solo debe incluirse cuando resulte clínicamente útil. Si se incluye, debe recordar que no es necesario forzarse y que el material puede revisarse en sesión.",
     "En trauma prioriza estabilización. En TOC evita reaseguro. En adicciones no aconsejes retirada brusca. En alimentación evita restricciones o conteos. En TEA usa enfoque neuroafirmativo.",
     "No añadas datos identificativos del paciente.",
-    ...(clinicalArea === "neuropsychology" ? [WEEKLY_NEURO_MATERIAL_GUIDELINES, NEURO_MATERIAL_GUIDELINES] : [TWO_WEEK_MATERIAL_GUIDELINES]),
+    ...(clinicalArea === "neuropsychology" ? [neuroProfile.mode==="weekly" ? MULTIDOMAIN_WEEKLY_NEURO_MATERIAL_GUIDELINES : WEEKLY_NEURO_MATERIAL_GUIDELINES, NEURO_MATERIAL_GUIDELINES] : [TWO_WEEK_MATERIAL_GUIDELINES]),
     "Devuelve SOLO JSON válido con esta forma: {patient_document:{duration_minutes:number|null,frequency:string,introduction:string,why:string,objective:string,instructions:string,example:string,record_prompt:string,safety_note:string,remember:string,session_questions:string[],visual_blocks?:{type:string,title:string,content:string}[]}}."
   ].join("\n");
 
@@ -2028,6 +2079,7 @@ export default {
     if (url.pathname === "/api/editorial/image" || url.pathname === "/api/editorial/image/") return editorialRequest(request, env, "image");
     if (url.pathname === "/api/clinical/structure" || url.pathname === "/api/clinical/structure/") return clinicalStructureRequest(request, env);
     if (url.pathname === "/api/clinical/diagnostic-suggestion" || url.pathname === "/api/clinical/diagnostic-suggestion/") return clinicalDiagnosticSuggestionRequest(request, env);
+    if (url.pathname === "/api/clinical/visual-image" || url.pathname === "/api/clinical/visual-image/") return clinicalNeuroVisualImageRequest(request, env);
     if (url.pathname === "/api/clinical/material-draft" || url.pathname === "/api/clinical/material-draft/") return clinicalMaterialDraftRequest(request, env);
     if (url.pathname === "/api/clinical/material-enrich" || url.pathname === "/api/clinical/material-enrich/") return clinicalMaterialEnrichRequest(request, env);
     return env.ASSETS.fetch(request);

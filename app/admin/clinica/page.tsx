@@ -405,7 +405,7 @@ export default function AdminClinicaPage() {
         <form id="clinic-exercise-form" className="clinic-dialog-content">
           <input id="clinic-exercise-template-id" type="hidden" />
           <div className="clinic-dialog-heading">
-            <div><p className="clinic-eyebrow">Entre Sesiones</p><h2>Preparar material</h2></div>
+            <div><p className="clinic-eyebrow">Entre Sesiones</p><h2>Crear material para el paciente</h2><p className="clinic-muted">Elige cómo empezar, revisa la ficha y después guárdala o envíala. Las opciones avanzadas quedan disponibles cuando las necesites.</p></div>
             <button id="clinic-exercise-close" className="clinic-close" type="button" aria-label="Cerrar">×</button>
           </div>
           <p id="clinic-exercise-patient-code" className="clinic-note" />
@@ -419,8 +419,17 @@ export default function AdminClinicaPage() {
             <p id="clinic-clinical-area-hint" className="clinic-material-helper">Se conserva íntegramente el generador de materiales psicológicos.</p>
           </div>
           <fieldset id="clinic-neuro-settings" className="clinic-neuro-settings" hidden>
-            <legend>Planificación neuropsicológica</legend>
-            <div className="clinic-neuro-library-picker">
+            <legend>1 · Planifica el trabajo neuropsicológico</legend>
+            <div className="clinic-neuro-grid clinic-neuro-mode-grid">
+              <label>¿Qué quieres preparar?
+                <select id="clinic-neuro-mode" defaultValue="weekly">
+                  <option value="weekly">Cuaderno completo · 7 días</option>
+                  <option value="single">Ficha por función cognitiva</option>
+                </select>
+              </label>
+              <div className="clinic-neuro-mode-action"><p id="clinic-neuro-mode-note">7 días orientativos, 14 ejercicios distintos y cobertura de 13 dominios.</p><button id="clinic-neuro-generate" className="clinic-primary" type="button">Crear borrador del material</button></div>
+            </div>
+            <details className="clinic-neuro-starter-advanced"><summary>Usar una ficha de la biblioteca neuropsicológica</summary><div className="clinic-neuro-library-picker">
               <label>Biblioteca inicial de actividades (borradores pendientes de revisión clínica)
                 <select id="clinic-neuro-starter" defaultValue="">
                   <option value="">Elegir actividad neuropsicológica...</option>
@@ -428,8 +437,8 @@ export default function AdminClinicaPage() {
               </label>
               <button id="clinic-neuro-starter-load" className="clinic-secondary" type="button">Cargar propuesta</button>
             </div>
-            <p className="clinic-material-helper">24 propuestas originales revisables: ejercicios variados, materiales visuales, ayudas graduadas y objetivos cotidianos. La revisión profesional sigue siendo obligatoria.</p>
-            <p className="clinic-neuro-week-note"><strong>Una semana por cuaderno.</strong> Tras revisar la evolución podrás crear la siguiente semana ajustando los ejercicios.</p>
+            <p className="clinic-material-helper">Puedes partir de una de las 24 fichas existentes o crear un material nuevo con una colección ampliada de actividades y estímulos originales. Todo borrador requiere revisión clínica.</p></details>
+            <p className="clinic-neuro-week-note"><strong>Plan semanal individualizado.</strong> La cobertura es multicomponente y flexible: no implica completar tareas inadecuadas o mantener una práctica diaria si hay fatiga. Revisa la evolución antes de generar la semana siguiente.</p>
             <div className="clinic-neuro-grid">
               <label>Semana del programa
                 <input id="clinic-neuro-week-number" type="number" min={1} max={52} defaultValue={1} inputMode="numeric" aria-label="Número de semana del programa neuropsicológico" />
@@ -437,6 +446,7 @@ export default function AdminClinicaPage() {
               <label>Dominio cognitivo
                 <select id="clinic-neuro-domain" defaultValue="">
                   <option value="">Seleccionar...</option>
+                  <option value="multidominio">Todas las funciones (cuaderno semanal)</option>
                   <option value="orientacion_temporal">Orientación temporal</option>
                   <option value="orientacion_espacial">Orientación espacial</option>
                   <option value="orientacion_personal">Orientación personal</option>
@@ -447,6 +457,9 @@ export default function AdminClinicaPage() {
                   <option value="praxias_gnosias">Praxias y gnosias</option>
                   <option value="visuoespacial">Funciones visuoespaciales</option>
                   <option value="cognicion_funcional">Cognición funcional</option>
+                  <option value="calculo">Cálculo funcional</option>
+                  <option value="cognicion_social">Cognición social</option>
+                  <option value="velocidad_procesamiento">Velocidad de procesamiento</option>
                 </select>
               </label>
               <label>Tipo de intervención
@@ -487,7 +500,9 @@ export default function AdminClinicaPage() {
             </label>
             <p className="clinic-material-helper">Evita tareas infantilizantes y el uso de ítems protegidos de pruebas estandarizadas. No interpreta resultados como puntuaciones diagnósticas.</p>
           </fieldset>
+          <label className="clinic-material-context">Objetivo o contexto para personalizar <span>(sin nombres ni datos identificativos, solo profesional)</span><textarea id="clinic-exercise-rationale" rows={2} placeholder="¿Qué se busca trabajar? ¿Qué apoyos, límites o preferencias hay que contemplar?" /></label>
           <div className="clinic-material-picker">
+            <div className="clinic-material-picker-heading"><strong>2 · Empieza por una ficha de la biblioteca o por la IA</strong><p>Buscar no modifica los materiales existentes hasta que decidas guardarlos.</p></div>
             <label>Buscar en la biblioteca
               <input id="clinic-material-search" type="search" placeholder="Buscar por título, proceso o tipo…" autoComplete="off" />
             </label>
@@ -502,12 +517,12 @@ export default function AdminClinicaPage() {
                 <p>La IA puede comprobar equivalencias y, si realmente falta, preparar una nueva ficha compatible con el material actual.</p>
               </div>
               <div className="clinic-material-not-found-actions">
-                <button id="clinic-material-ai-create" className="clinic-primary" type="button">Comprobar y crear con IA</button>
                 <button id="clinic-material-use-search" className="clinic-secondary" type="button">Usar búsqueda como título</button>
               </div>
             </div>
+            <button id="clinic-material-ai-create" className="clinic-secondary clinic-material-generate-action" type="button">Crear nueva ficha con IA a partir de la búsqueda</button>
           </div>
-          <div className="clinic-material-create-row">
+          <details className="clinic-material-advanced"><summary>Opciones de biblioteca y categoría</summary><div className="clinic-material-create-row">
             <label>Tipo
               <select id="clinic-material-type">
                 <option value="exercise">Ejercicio</option>
@@ -520,9 +535,10 @@ export default function AdminClinicaPage() {
               </select>
             </label>
             <button id="clinic-add-material-library" className="clinic-secondary" type="button">Añadir a la biblioteca</button>
-          </div>
+          </div></details>
           <label>Título<input id="clinic-exercise-title" required /></label>
           <section className="clinic-patient-document">
+            <h3 className="clinic-material-section-title">3 · Contenido que recibirá el paciente</h3>
             <div className="clinic-patient-document-heading">
               <div>
                 <p className="clinic-eyebrow">Documento para el paciente</p>
@@ -542,7 +558,7 @@ export default function AdminClinicaPage() {
             </div>
             <label>Introducción breve<textarea id="clinic-exercise-introduction" rows={2} required /></label>
             <label>Por qué hacemos este ejercicio<textarea id="clinic-exercise-why" rows={4} required /></label>
-            <p id="clinic-material-period-help">Psicología: material para dos semanas. Neuropsicología: una semana por cuaderno, 3–4 actividades desarrolladas, recursos visuales, ayudas, registro y dudas. Revisa antes de enviar.</p>
+            <p id="clinic-material-period-help">Psicología: materiales para dos semanas. Neuropsicología: ficha por función o cuaderno semanal multicomponente. Revisa el contenido y los apoyos antes de enviarlo.</p>
             <label>Cómo hacerlo / contenido<textarea id="clinic-exercise-content" rows={10} required /></label>
             <details className="clinic-material-details">
               <summary>Completar objetivo, ejemplo, registro, seguridad y cierre</summary>
@@ -556,8 +572,8 @@ export default function AdminClinicaPage() {
               </div>
             </details>
           </section>
-          <section className="clinic-neuro-visual-section" aria-label="Recursos multimodales">
-            <h3>Recursos visuales del material</h3>
+          <details id="clinic-visual-details" className="clinic-neuro-visual-section" aria-label="Recursos multimodales">
+            <summary>4 · Recursos visuales: imágenes, tablas, calendarios y gráficos</summary>
             <p className="clinic-material-helper">Añade estímulos únicamente cuando aporten valor a la tarea. Se mostrarán en la vista online y en el PDF. Revisa la precisión de todos los datos y fotografías.</p>
             <div className="clinic-visual-toolbar">
               <label>Recurso
@@ -572,21 +588,19 @@ export default function AdminClinicaPage() {
               <button id="clinic-visual-add" className="clinic-secondary" type="button">Añadir recurso</button>
             </div>
             <div id="clinic-visual-block-list" />
-            <label className="clinic-neuro-review">
-              <input id="clinic-neuro-reviewed" type="checkbox" />
-              He comprobado consignas, estímulos, respuestas, accesibilidad y adecuación individual antes de prescribir este material.
-            </label>
-            <p className="clinic-material-helper">Máximo 8 recursos por ficha. Alterna tablas, matrices, imágenes consentidas, gráficos, calendarios y secuencias según la función diana. Usa imágenes sin información identificativa; revisa estímulos y respuestas antes del envío.</p>
-          </section>
-          <label>Contexto para personalizar <span>(sin nombres ni datos identificativos; solo profesional, no se envía al paciente)</span><textarea id="clinic-exercise-rationale" rows={2} /></label>
+            <p className="clinic-material-helper">Máximo 8 recursos por ficha. Los gráficos deben tener datos correctos; las imágenes generadas se revisan antes del envío. No incluyas datos identificativos.</p>
+          </details>
+          <label id="clinic-neuro-review-wrapper" className="clinic-neuro-review" hidden>
+            <input id="clinic-neuro-reviewed" type="checkbox" />
+            He comprobado consignas, estímulos, respuestas, accesibilidad y adecuación individual antes de prescribir este material.
+          </label>
           <label>Correo destinatario<input id="clinic-exercise-email" type="email" required /></label>
           <p className="clinic-note">El correo será neutro. El paciente podrá leer el material online y descargar un PDF profesional. El enlace personal caduca en 7 días.</p>
           <p id="clinic-exercise-message" className="clinic-message" role="status" />
+          <div className="clinic-material-review-actions"><details><summary>Comprobar vista previa y PDF</summary><div className="clinic-material-review-buttons"><button id="clinic-preview-material" className="clinic-secondary" type="button">Vista del paciente</button><button id="clinic-preview-pdf" className="clinic-secondary" type="button">PDF de prueba</button></div></details></div>
           <div className="clinic-dialog-actions clinic-material-actions">
-            <button id="clinic-preview-material" className="clinic-text" type="button">Vista del paciente</button>
-            <button id="clinic-preview-pdf" className="clinic-text" type="button">PDF de prueba</button>
-            <button id="clinic-save-exercise" className="clinic-secondary" type="button">Guardar sin enviar</button>
-            <button className="clinic-primary" type="submit">Guardar y enviar enlace</button>
+            <button id="clinic-save-exercise" className="clinic-secondary" type="button">Guardar borrador</button>
+            <button className="clinic-primary" type="submit">Guardar y enviar al paciente</button>
           </div>
         </form>
       </dialog>
@@ -656,8 +670,9 @@ export default function AdminClinicaPage() {
         </form>
       </dialog>
 
-      <Script src="/clinic-neuro-materials.js?v=20261010-3" strategy="afterInteractive" />
-      <Script src="/admin-clinica.js?v=20261009-weekly-2" strategy="afterInteractive" />
+      <Script src="/clinic-neuro-materials.js?v=20261010-ux-1" strategy="afterInteractive" />
+      <Script src="/clinic-neuro-weekly-composer.js?v=20261010-1" strategy="afterInteractive" />
+      <Script src="/admin-clinica.js?v=20261010-ux-1" strategy="afterInteractive" />
       <Script src="/clinical-smart-intake.js?v=20261005-smart-state-5" strategy="afterInteractive" />
       <Script src="/clinical-diagnostic-assistant.js?v=20261007-dx-2" strategy="afterInteractive" />
       <Script src="/admin-clinica-audit-fixes.js?v=20260915-1" strategy="afterInteractive" />
