@@ -595,7 +595,7 @@
     els.materialQuality.classList.toggle("is-complete", quality.complete);
     els.materialQualityLabel.textContent = quality.complete ? "Ficha completa" : "Ficha básica";
     els.materialQualityNote.textContent = quality.complete
-      ? "Lista para enviar. Puedes revisarla o mejorarla si lo deseas."
+      ? "Contenido completado. Revisa su adecuación y la vista del paciente antes de enviarlo."
       : `Recomendable completar antes de enviar · falta ${quality.missing.slice(0, 4).join(", ")}${quality.missing.length > 4 ? "…" : ""}.`;
     if (els.materialAiEnrich) els.materialAiEnrich.textContent = quality.complete ? "Mejorar ficha con IA" : "Completar ficha con IA";
   }
@@ -657,6 +657,7 @@
   function openExercise(template = null, rationale = "") {
     if (!currentPatient) return;
     if (els.materialSearch) els.materialSearch.value = "";
+    if(els.materialAiCreate)els.materialAiCreate.disabled=true;
     populateExerciseLibrary(template?.id || "");
     populateMaterialProcessOptions((template?.process_tags || [])[0] || "");
     if (els.materialType) els.materialType.value = template?.material_type || "exercise";
@@ -2411,6 +2412,7 @@
 
   els.materialSearch?.addEventListener("input", () => {
     populateExerciseLibrary("", els.materialSearch.value);
+    if(els.materialAiCreate)els.materialAiCreate.disabled=!els.materialSearch.value.trim();
   });
   els.materialUseSearch?.addEventListener("click", () => {
     const value = els.materialSearch?.value?.trim() || "";
