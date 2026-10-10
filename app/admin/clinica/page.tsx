@@ -473,9 +473,25 @@ export default function AdminClinicaPage() {
               <label>Demanda de la tarea
                 <select id="clinic-neuro-level" defaultValue="">
                   <option value="">Seleccionar...</option>
-                  <option value="apoyo_alto">Apoyo alto</option>
-                  <option value="apoyo_moderado">Apoyo moderado</option>
-                  <option value="autonomo">Mayor autonomía</option>
+                  <option value="apoyo_alto">Inicial: baja carga de estímulos y un paso</option>
+                  <option value="apoyo_moderado">Intermedio: varias operaciones y distractores</option>
+                  <option value="autonomo">Avanzado: reglas, interferencia y planificación</option>
+                </select>
+              </label>
+              <label>Variedad de ejercicios
+                <select id="clinic-neuro-format" defaultValue="mixto">
+                  <option value="mixto">Variados: alternar formatos</option>
+                  <option value="visual">Visuales y espaciales</option>
+                  <option value="verbal">Lenguaje y material verbal</option>
+                  <option value="funcional">Situaciones cotidianas</option>
+                  <option value="logico">Razonamiento y reglas</option>
+                </select>
+              </label>
+              <label>Ayudas previstas (independientes de la dificultad)
+                <select id="clinic-neuro-support" defaultValue="moderado">
+                  <option value="alto">Intensivas: modelado y elección</option>
+                  <option value="moderado">Moderadas: pistas graduadas</option>
+                  <option value="minimo">Mínimas: iniciativa autónoma</option>
                 </select>
               </label>
               <label>Tema estacional o autobiográfico (opcional)
@@ -671,7 +687,8 @@ export default function AdminClinicaPage() {
       </dialog>
 
       <Script src="/clinic-neuro-materials.js?v=20261010-ux-1" strategy="afterInteractive" />
-      <Script src="/clinic-neuro-weekly-composer.js?v=20261010-1" strategy="afterInteractive" />
+      <Script src="/clinic-neuro-graded-recipes.js?v=20261010-1" strategy="afterInteractive" />
+      <Script src="/clinic-neuro-weekly-composer.js?v=20261010-graded-2" strategy="afterInteractive" />
       <Script src="/admin-clinica.js?v=20261010-ux-1" strategy="afterInteractive" />
       <Script src="/clinical-smart-intake.js?v=20261005-smart-state-5" strategy="afterInteractive" />
       <Script src="/clinical-diagnostic-assistant.js?v=20261007-dx-2" strategy="afterInteractive" />
