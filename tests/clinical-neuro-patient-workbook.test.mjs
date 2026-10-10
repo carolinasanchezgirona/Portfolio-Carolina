@@ -70,3 +70,12 @@ test("el generador de psicología conserva el comportamiento anterior",()=>{
  assert.match(portal,/documentData\.clinical_area!=="neuropsychology"/);
  assert.match(read("worker.ts"),/TWO_WEEK_MATERIAL_GUIDELINES/);
 });
+
+test("la portada y el portal hablan al paciente y evitan autorregistros psicológicos en neuro",()=>{
+ const composer=read("public/clinic-neuro-weekly-composer.js"),portal=read("public/mi-espacio.js");
+ assert.match(composer,/Tu cuaderno de actividades · Semana/);
+ assert.doesNotMatch(composer,/Cuaderno neuropsicológico multicomponente · Semana/);
+ assert.match(portal,/Notas generales y dudas del cuaderno/);
+ assert.match(portal,/Para qué sirven estas actividades/);
+ assert.match(portal,/if\(documentData\.clinical_area!=="neuropsychology"\)form\.append\(createGuidedRecord\(record\)\)/);
+});
