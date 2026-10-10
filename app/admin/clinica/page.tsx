@@ -654,7 +654,7 @@ export default function AdminClinicaPage() {
         </form>
       </dialog>
 
-      <Script src="/clinic-neuro-materials.js?v=20261010-2" strategy="afterInteractive" />
+      <Script src="/clinic-neuro-materials.js?v=20261010-3" strategy="afterInteractive" />
       <Script src="/admin-clinica.js?v=20261009-weekly-2" strategy="afterInteractive" />
       <Script src="/clinical-smart-intake.js?v=20261005-smart-state-5" strategy="afterInteractive" />
       <Script src="/clinical-diagnostic-assistant.js?v=20261007-dx-2" strategy="afterInteractive" />
