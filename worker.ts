@@ -1605,6 +1605,40 @@ async function clinicalDiagnosticSuggestionRequest(request: Request, env: Env): 
   }
 }
 
+async function clinicalNeuroVisualImageRequest(request:Request,env:Env):Promise<Response>{
+ if(request.method!=="POST")return editorialJson({error:"Método no permitido."},405);
+ if(!await verifyEditorialOwner(request))return editorialJson({error:"Sesión profesional no autorizada."},401);
+ if(!env.OPENAI_API_KEY)return editorialJson({error:"Generación visual no configurada."},503);
+ if(Number(request.headers.get("content-length")||"0")>4000)return editorialJson({error:"Descripción demasiado larga."},413);
+ let data:Record<string,unknown>;
+ try{data=await request.json() as Record<string,unknown>;}catch{return editorialJson({error:"Solicitud no válida."},400);}
+ const brief=editorialText(data.brief,650);
+ if(brief.length<12)return editorialJson({error:"Describe el estímulo con al menos 12 caracteres."},400);
+ if(containsDirectPatientIdentifiers(brief))return editorialJson({error:CLINICAL_IDENTIFIERS_ERROR},422);
+ const prompt=[
+  "One original simple educational illustration for an adult neuropsychological activity worksheet.",
+  "Adult-respectful, clean editorial style, neutral white background, high contrast, large isolated objects, uncluttered A4-printable composition.",
+  "No writing, labels, numbers, letterforms, logos, watermark, real patient faces, or medical diagnostic implications.",
+  "This is illustrative material, not a standardized test. The clinician will verify correctness of the scene.",
+  "Brief: "+brief
+ ].join(" ");
+ try{
+  const response=await fetch("https://api.openai.com/v1/images/generations",{
+   method:"POST",headers:{Authorization:"Bearer "+env.OPENAI_API_KEY,"Content-Type":"application/json"},
+   body:JSON.stringify({model:env.OPENAI_IMAGE_MODEL||"gpt-image-1",prompt,size:"1024x1024",quality:"low",output_format:"jpeg",output_compression:70,n:1})
+  });
+  const result=await response.json() as {data?:Array<{b64_json?:string}>};
+  if(!response.ok||!result.data?.[0]?.b64_json){
+   console.error("Neuro image generation failure",response.status);
+   return editorialJson({error:response.status===429?"Se alcanzó el límite de generación.":"No se ha podido crear la ilustración."},response.status===429?429:502);
+  }
+  return editorialJson({data_url:"data:image/jpeg;base64,"+result.data[0].b64_json});
+ }catch(error){
+  console.error("Neuro image generation unavailable",error instanceof Error?error.name:"Unknown");
+  return editorialJson({error:"Servicio de ilustraciones no disponible."},502);
+ }
+}
+
 const NEURO_MATERIAL_GUIDELINES = [
   "Intervención NEUROPSICOLÓGICA individualizada. Distingue estimulación, entrenamiento, rehabilitación funcional y compensación; no diagnostiques ni atribuyas validez psicométrica a ejercicios caseros.",
   "Adapta carga y ayudas a capacidades preservadas, escolaridad, idioma, alteraciones sensoriales y motoras, fatiga, participación y autonomía.",
@@ -2045,6 +2079,7 @@ export default {
     if (url.pathname === "/api/editorial/image" || url.pathname === "/api/editorial/image/") return editorialRequest(request, env, "image");
     if (url.pathname === "/api/clinical/structure" || url.pathname === "/api/clinical/structure/") return clinicalStructureRequest(request, env);
     if (url.pathname === "/api/clinical/diagnostic-suggestion" || url.pathname === "/api/clinical/diagnostic-suggestion/") return clinicalDiagnosticSuggestionRequest(request, env);
+    if (url.pathname === "/api/clinical/visual-image" || url.pathname === "/api/clinical/visual-image/") return clinicalNeuroVisualImageRequest(request, env);
     if (url.pathname === "/api/clinical/material-draft" || url.pathname === "/api/clinical/material-draft/") return clinicalMaterialDraftRequest(request, env);
     if (url.pathname === "/api/clinical/material-enrich" || url.pathname === "/api/clinical/material-enrich/") return clinicalMaterialEnrichRequest(request, env);
     return env.ASSETS.fetch(request);
