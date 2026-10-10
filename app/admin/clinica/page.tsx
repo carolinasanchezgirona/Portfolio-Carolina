@@ -542,7 +542,7 @@ export default function AdminClinicaPage() {
                 <label>Objetivo funcional
               <textarea id="clinic-neuro-functional-goal" rows={2} placeholder="Conducta observable o aplicación cotidiana..." />
             </label>
-                <p className="clinic-material-helper">La ayuda se modifica por separado de la dificultad. Revisa la pertinencia del cuaderno y los estímulos antes de enviarlo.</p>
+                <p className="clinic-material-helper">La ayuda se modifica por separado de la dificultad. Revisa la pertinencia del cuaderno y los estímulos antes de enviarlo. Los juegos interactivos con autocorrección todavía no están disponibles en este generador.</p>
                 <details className="clinic-neuro-starter-advanced"><summary>Usar una ficha de la biblioteca neuropsicológica</summary><div className="clinic-neuro-library-picker">
               <label>Biblioteca inicial de actividades (borradores pendientes de revisión clínica)
                 <select id="clinic-neuro-starter" defaultValue="">
