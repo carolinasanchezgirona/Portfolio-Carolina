@@ -220,7 +220,7 @@
   function patientFormSnapshot() {
     if (!els.patientForm) return "";
     return JSON.stringify([...els.patientForm.querySelectorAll("input, textarea, select")]
-      .filter((node) => !["button","submit","reset","file"].includes(String(node.type || "").toLowerCase()) && !node.closest("#clinic-consent-grid,.clinic-goals-manager,.clinic-task-box,.clinic-scale-trends"))
+      .filter((node) => !["button","submit","reset","file"].includes(String(node.type || "").toLowerCase()) && !node.closest("#clinic-consent-grid,.clinic-goals-manager,.clinic-task-box,.clinic-scale-trends,.neuro-followup"))
       .map((node) => ({
         id: node.id || "",
         value: node.type === "checkbox" || node.type === "radio" ? Boolean(node.checked) : String(node.value || "")
