@@ -1,6 +1,7 @@
 import Script from "next/script";
 import type { Metadata } from "next";
 import PatientBulkImport from "./patient-bulk-import";
+import NeuroFollowup from "./neuro-followup";
 import "./clinica.css";
 import "./clinic-navigation.css";
 
@@ -308,6 +309,7 @@ export default function AdminClinicaPage() {
             <div className="clinic-goals-heading"><div><p className="clinic-eyebrow">Continuidad terapéutica</p><h3>Material entre sesiones</h3></div><button id="clinic-new-exercise" className="clinic-secondary" type="button">Asignar material</button></div>
             <div id="clinic-exercise-suggestions" className="clinic-exercise-suggestions" />
             <div id="clinic-patient-exercises" className="clinic-history" />
+            <NeuroFollowup />
           </section>
 
           <section className="clinic-patient-tools-grid">
