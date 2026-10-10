@@ -85,6 +85,7 @@ export default function NeuroFollowup(){
   const [status,setStatus]=useState("");
   const [saving,setSaving]=useState(false);
   const [ocrBusy,setOcrBusy]=useState(false);
+  const [photoBusy,setPhotoBusy]=useState(false);
   const [expanded,setExpanded]=useState(false);
   const [series,setSeries]=useState("");
   const operation=useRef(0);
@@ -149,17 +150,62 @@ export default function NeuroFollowup(){
       setOcrBusy(false);
     }
   }
-  function selectPhotos(files:FileList|null){
+  async function sanitizeImage(file:File,index:number):Promise<File>{
+    const imageType=file.type.toLowerCase();
+    if(!["image/jpeg","image/png","image/webp","image/heic","image/heif",""].includes(imageType)){
+      throw new Error("Formato de fotografía no reconocido.");
+    }
+    if(file.size===0||file.size>20*1024*1024)throw new Error("La fotografía supera el límite de 20 MB de entrada.");
+    let bitmap:ImageBitmap|null=null;
+    let fallback:HTMLImageElement|null=null;
+    try{bitmap=await createImageBitmap(file);}
+    catch{
+      const url=URL.createObjectURL(file);
+      try{
+        const image=new Image();
+        await new Promise<void>((resolve,reject)=>{
+          image.onload=()=>resolve();
+          image.onerror=()=>reject(new Error("Este formato de fotografía no se puede leer en tu navegador. Convierte HEIC a JPEG o PNG antes de continuar."));
+          image.src=url;
+        });
+        fallback=image;
+      }finally{URL.revokeObjectURL(url);}
+    }
+    const width=bitmap?.width||fallback?.naturalWidth||0;
+    const height=bitmap?.height||fallback?.naturalHeight||0;
+    if(width<50||height<50||width*height>90000000)throw new Error("Resolución de fotografía no válida.");
+    const scale=Math.min(1,3200/Math.max(width,height));
+    const canvas=document.createElement("canvas");
+    canvas.width=Math.round(width*scale);canvas.height=Math.round(height*scale);
+    const ctx=canvas.getContext("2d",{alpha:false});
+    if(!ctx)throw new Error("No es posible preparar la imagen en este dispositivo.");
+    ctx.fillStyle="#fff";ctx.fillRect(0,0,canvas.width,canvas.height);
+    if(bitmap){ctx.drawImage(bitmap,0,0,canvas.width,canvas.height);bitmap.close();}
+    else if(fallback)ctx.drawImage(fallback,0,0,canvas.width,canvas.height);
+    for(const quality of [0.91,0.8,0.68]){
+      const blob=await new Promise<Blob|null>(resolve=>canvas.toBlob(resolve,"image/jpeg",quality));
+      if(blob&&blob.size<=8388608)return new File([blob],"ficha-manuscrita-"+(index+1)+".jpg",{type:"image/jpeg"});
+    }
+    throw new Error("La fotografía sigue siendo demasiado grande. Reduce su resolución.");
+  }
+  async function selectPhotos(files:FileList|null){
     if(!files)return;
     const selected=Array.from(files);
     if(selected.length>4){setStatus("Puedes adjuntar hasta cuatro fotografías por observación.");return;}
-    if(selected.some(f=>!["image/jpeg","image/png","image/webp"].includes(f.type)||f.size>8388608||f.size===0)){
-      setStatus("Selecciona fotografías JPG, PNG o WebP, de máximo 8 MB cada una.");return;
-    }
-    setPhotos(selected);setDraft(p=>({...p,ocr_transcript:"",transcript_reviewed:false}));setStatus("");
+    setPhotoBusy(true);setStatus("Preparando fotos y eliminando metadatos de cámara y ubicación…");
+    try{
+      const cleaned:File[]=[];
+      for(const [i,file] of selected.entries())cleaned.push(await sanitizeImage(file,i));
+      setPhotos(cleaned);
+      setDraft(p=>({...p,ocr_transcript:"",transcript_reviewed:false}));
+      setStatus("Fotografías listas para revisar: convertidas a JPEG y sin metadatos EXIF/GPS. Comprueba que el texto sea legible.");
+    }catch(error){
+      setPhotos([]);if(uploadInput.current)uploadInput.current.value="";
+      setStatus(error instanceof Error?error.message:"No se pudo preparar la fotografía.");
+    }finally{setPhotoBusy(false);}
   }
   async function save(){
-    if(!patientId||saving)return;
+    if(!patientId||saving||ocrBusy||photoBusy)return;
     const task=clean(draft.task_name);
     const week=Number(draft.week_number);
     const n=draft.opportunities===""?null:Number(draft.opportunities);
@@ -281,16 +327,16 @@ export default function NeuroFollowup(){
         </fieldset>
         <fieldset className="neuro-photos">
           <legend>Actividades manuscritas y fotografías</legend>
-          <p>Adjunta hasta cuatro fotos realizadas por el paciente. El OCR se procesa en este navegador, sin enviar las fotos a un servicio de IA. La escritura manuscrita puede no reconocerse correctamente.</p>
-          <input ref={uploadInput} type="file" accept="image/jpeg,image/png,image/webp" capture={undefined} multiple onChange={e=>selectPhotos(e.target.files)} aria-label="Adjuntar fotografías de los ejercicios"/>
+          <p>Adjunta hasta cuatro fotos realizadas por el paciente (JPG, PNG, WebP o HEIC si el navegador puede leerlo). Eliminamos metadatos de cámara/ubicación y almacenamos una copia JPEG privada. El OCR se procesa en este navegador, sin enviar las fotos a un servicio de IA. La escritura manuscrita puede no reconocerse correctamente.</p>
+          <input ref={uploadInput} type="file" accept="image/*,.heic,.heif" multiple onChange={e=>{void selectPhotos(e.target.files);}} aria-label="Adjuntar fotografías de los ejercicios"/>
           {photos.length>0&&<p>{photos.map(f=>f.name).join(" · ")}</p>}
-          <button className="clinic-secondary" type="button" disabled={ocrBusy||!photos.length} onClick={localOcr}>{ocrBusy?"Reconociendo texto…":"Extraer texto orientativo (OCR)"}</button>
+          <button className="clinic-secondary" type="button" disabled={ocrBusy||photoBusy||!photos.length} onClick={localOcr}>{ocrBusy?"Reconociendo texto…":"Extraer texto orientativo (OCR)"}</button>
           <label className="neuro-block">Transcripción corregida por la profesional
             <textarea rows={5} maxLength={6000} value={draft.ocr_transcript} onChange={e=>{setField("ocr_transcript",e.target.value);setField("transcript_reviewed",false);}} placeholder="Corrige las respuestas extraídas o transcríbelas manualmente. No introduzcas puntuaciones automáticas."/>
           </label>
           <label className="neuro-check"><input type="checkbox" checked={draft.transcript_reviewed} onChange={e=>setField("transcript_reviewed",e.target.checked)}/>He contrastado personalmente la transcripción con la fotografía original y he corregido errores de lectura.</label>
         </fieldset>
-        <div className="neuro-followup-actions"><button type="button" className="clinic-primary" disabled={saving||ocrBusy||!patientId} onClick={save}>{saving?"Guardando…":draft.supersedes_id?"Guardar corrección como nuevo registro":"Guardar registro y fotos"}</button></div>
+        <div className="neuro-followup-actions"><button type="button" className="clinic-primary" disabled={saving||ocrBusy||photoBusy||!patientId} onClick={save}>{saving?"Guardando…":draft.supersedes_id?"Guardar corrección como nuevo registro":"Guardar registro y fotos"}</button></div>
       </div>}
       <div className="neuro-followup-results">
         <div className="neuro-followup-heading"><h4>Historial descriptivo</h4><span>{visible.length} observaciones</span></div>
