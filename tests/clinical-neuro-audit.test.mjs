@@ -28,7 +28,7 @@ test("auditoría 52 semanas por cada nivel sin redundancias consecutivas",()=>{
       assert.equal(tasks.length,14);
       assert.equal(new Set(tasks.map(t=>t.domain)).size,13);
       assert.equal(new Set(tasks.map(t=>t.title)).size,14);
-      assert.equal(material.visual_blocks.length,8);
+      assert.equal(material.visual_blocks.length,14);
       const current=new Set(tasks.map(t=>t.domain+"|"+t.stimuli));
       for(const entry of current)assert.ok(!previous.has(entry),level+" semana "+week+" repetida: "+entry);
       for(const [domain] of composer.GROUPS){
@@ -36,7 +36,8 @@ test("auditoría 52 semanas por cada nivel sin redundancias consecutivas",()=>{
       }
       for(const block of material.visual_blocks){
         assert.match(block.title,/^Ejercicio \d+ · /);
-        assert.ok(material.instructions.includes("«"+block.title+"»"));
+        assert.ok(material.instructions.includes("Ejercicio "+Number(/^Ejercicio (\d+)/.exec(block.title)?.[1])+":"));
+        assert.ok(material.instructions.includes("Material: Observa el cuadro"));
         if(block.type==="table"){
           const rows=block.content.split("\n").map(row=>row.split("|"));
           assert.ok(rows.length>=2&&rows.length<=13);
