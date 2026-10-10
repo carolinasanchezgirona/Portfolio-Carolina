@@ -103,7 +103,9 @@
       const candidates=eligibleRecipes(extraDomain,opts);
       const base=candidates.find(r=>!selection.some(p=>p.title===r.title&&p.domain===r.domain))||candidates[0];
       if(base){
-        const alternate=variedRecipe(base,opts,50);
+        const seed=week*97+variation*31+GROUPS.findIndex(row=>row[0]===extraDomain)*11;
+        const alternate=(week<=2&&variation<2&&typeof window.NeuroVariantFactory?.create==="function")?
+          window.NeuroVariantFactory.create(extraDomain,base.level,seed):variedRecipe(base,opts,50);
         selection.push({...alternate,title:"Actividad complementaria: "+alternate.title});
       }
       return selection;
