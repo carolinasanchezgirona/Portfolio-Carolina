@@ -124,7 +124,7 @@
     for (const item of shown) {
       const card = make("article", "admin-notice-card" + (seen.has(item.id) ? "" : " unread"));
       const info = make("div", "admin-notice-card-info");
-      const label = { agenda:"Agenda", patients:"Pacientes", clinical:"Gestión clínica", portal:"Mi espacio", economy:"Gestión económica", security:"Seguridad", system:"Sistema" }[item.category] || "Dememoria";
+      const label = { agenda:"Agenda", patients:"Pacientes", clinical:"Gestión clínica", portal:"Mi espacio", economy:"Contabilidad", security:"Seguridad", system:"Sistema" }[item.category] || "Dememoria";
       info.append(make("small", "", label));
       info.append(make("h3", "", item.title));
       info.append(make("p", "", item.description));
@@ -290,15 +290,18 @@
       storeSeen();
       render();
     });
-    document.querySelectorAll("[data-notice-filter]").forEach(button => {
-      button.addEventListener("click", () => {
-        filter = button.dataset.noticeFilter;
-        document.querySelectorAll("[data-notice-filter]").forEach(el => {
-          el.setAttribute("aria-pressed", String(el === button));
-        });
-        render();
+    function chooseFilter(key) {
+      filter = key;
+      $("#admin-notice-filter-select").value = key;
+      document.querySelectorAll("[data-notice-filter]").forEach(button => {
+        button.setAttribute("aria-pressed", String(button.dataset.noticeFilter === key));
       });
+      render();
+    }
+    document.querySelectorAll("[data-notice-filter]").forEach(button => {
+      button.addEventListener("click", () => chooseFilter(button.dataset.noticeFilter));
     });
+    $("#admin-notice-filter-select").addEventListener("change", event => chooseFilter(event.target.value));
     await Promise.allSettled([load(), initPush()]);
   }
   init();
