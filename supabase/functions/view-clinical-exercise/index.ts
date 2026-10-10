@@ -582,6 +582,26 @@ async function buildPdf(titleValue: string, patientDocument: PatientDocument, ma
     const blocks = normalizeVisualBlocks(raw);
     if (!blocks.length) return;
     if(!inline)drawSection("Recursos visuales", "Observa los estímulos que acompañan a las actividades.");
+    function drawShapeGlyph(symbol:string,cx:number,cy:number,size:number){
+      const radius=size/2,solid=["●","■","▲","◆"].includes(symbol);
+      const thick=solid?2.7:1.5;
+      if(["○","●"].includes(symbol)){
+        current.drawEllipse({x:cx,y:cy,xScale:radius,yScale:radius,borderColor:navy,borderWidth:thick,...(solid?{color:navy}:{})});return;
+      }
+      if(["□","■"].includes(symbol)){
+        current.drawRectangle({x:cx-radius,y:cy-radius,width:size,height:size,borderColor:navy,borderWidth:thick,...(solid?{color:navy}:{})});return;
+      }
+      const points=symbol==="△"||symbol==="▲"?[[cx,cy+radius],[cx-radius,cy-radius],[cx+radius,cy-radius]]:
+        symbol==="◇"||symbol==="◆"?[[cx,cy+radius],[cx+radius,cy],[cx,cy-radius],[cx-radius,cy]]:
+        Array.from({length:10},(_,i)=>{
+          const angle=Math.PI/2+i*Math.PI/5,r=i%2===0?radius:radius*.45;
+          return [cx+r*Math.cos(angle),cy+r*Math.sin(angle)];
+        });
+      points.forEach((point,i)=>{
+        const next=points[(i+1)%points.length];
+        current.drawLine({start:{x:point[0],y:point[1]},end:{x:next[0],y:next[1]},thickness:thick,color:navy});
+      });
+    }
     function rowCells(values: string[], count: number, header = false, height = 33) {
       // Celdas con legibilidad adaptada al número de columnas, también en A4.
       const cellHeight = Math.max(height, count <= 3 ? 46 : count <= 5 ? 41 : 34);
@@ -591,9 +611,17 @@ async function buildPdf(titleValue: string, patientDocument: PatientDocument, ma
       values.forEach((value, i) => {
         const x = marginX + i * width;
         current.drawRectangle({ x, y: y - cellHeight + 7, width, height: cellHeight, borderColor: lineColor, borderWidth: .7, ...(header ? { color: sky } : {}) });
-        wrap(header ? boldFont : bodyFont, value, fontSize, width - 14).slice(0, 3).forEach((line, j) => {
-          current.drawText(line, { x: x + 7, y: y - 11 - j * (fontSize + 3), size: fontSize, font: header ? boldFont : bodyFont, color: ink });
-        });
+        const shapes=String(value||"").trim().split(/\s+/).filter(Boolean);
+        const shapeSet=["○","●","□","■","△","▲","◇","◆","★","☆"];
+        if(shapes.length>0&&shapes.length<=9&&shapes.every(s=>shapeSet.includes(s))){
+          const gap=Math.min(18,(width-16)/shapes.length);
+          const symbolSize=Math.min(13,gap-4);
+          shapes.forEach((symbol,j)=>drawShapeGlyph(symbol,x+width/2+(j-(shapes.length-1)/2)*gap,y-cellHeight/2+3,symbolSize));
+        }else{
+          wrap(header ? boldFont : bodyFont, value, fontSize, width - 14).slice(0, 3).forEach((line, j) => {
+            current.drawText(line, { x: x + 7, y: y - 11 - j * (fontSize + 3), size: fontSize, font: header ? boldFont : bodyFont, color: ink });
+          });
+        }
       });
       y -= cellHeight;
     }
