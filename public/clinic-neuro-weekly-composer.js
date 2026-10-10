@@ -39,7 +39,15 @@
     ["velocidad_procesamiento","Emparejar signos","Encuentra pares idénticos entre estos símbolos: círculo, triángulo, estrella, círculo, rombo, triángulo.","○ | △ | ★ | ○ | ◇ | △","Dos círculos y dos triángulos; ajustar número de estímulos y permitir descansos.","table","Emparejamiento visual"],
     ["cognicion_funcional","Preparar una lista de salida","Selecciona los objetos que corresponden a un paseo ficticio con lluvia: abrigo, paraguas, pelota, libro y llaves.","Abrigo | Paraguas | Pelota | Libro | Llaves","Una selección posible: abrigo, paraguas y llaves; adaptar a contexto real cuando se conozca.","table","Lista de objetos"],
     ["cognicion_funcional","Recordatorio externo","Relaciona tres tareas ficticias con una ayuda externa: cita, compra y tomar nota de una llamada.","Actividad | Apoyo\nCita | Calendario\nCompra | Lista\nLlamada | Bloc de notas","Cita-calendario; compra-lista; llamada-notas. No administrar medicación real.","table","Ayudas externas"]
-  ].map(([domain,title,task,stimuli,solution,visualType,visualTitle])=>({domain,title,task,stimuli,solution,visualType,visualTitle}));
+  ].map(([domain,title,task,stimuli,solution,visualType,visualTitle])=>({
+    domain,title,task,stimuli,solution,visualType,visualTitle,
+    level:"apoyo_moderado",
+    format:["lenguaje","cognicion_social"].includes(domain)?"verbal":
+      ["cognicion_funcional","orientacion_personal"].includes(domain)?"funcional":"visual"
+  }));
+  const catalog=()=>RECIPES.concat(Array.isArray(window.NeuroGradedRecipes)?window.NeuroGradedRecipes:[]);
+  const LEVEL_NAMES={apoyo_alto:"Inicial",apoyo_moderado:"Intermedio",autonomo:"Avanzado"};
+  const FORMAT_NAMES={mixto:"Variado",visual:"Visual",verbal:"Verbal",funcional:"Funcional",logico:"Razonamiento"};
   const label = value => GROUPS.find(row=>row[0]===value)?.[1] || value;
   const weekNumber = () => Math.max(1,Math.min(52,Number($("clinic-neuro-week-number")?.value)||1));
   function currentMonth() {
@@ -52,6 +60,8 @@
       domain:$("clinic-neuro-domain")?.value||"atencion",
       week:weekNumber(),
       level:$("clinic-neuro-level")?.value||"apoyo_moderado",
+      support:$("clinic-neuro-support")?.value||"moderado",
+      format:$("clinic-neuro-format")?.value||"mixto",
       intervention:$("clinic-neuro-intervention")?.value||"estimulacion",
       response:$("clinic-neuro-response-mode")?.value||"flexible",
       accessibility:$("clinic-neuro-accessibility")?.value?.trim()||"",
@@ -59,24 +69,34 @@
       theme:$("clinic-neuro-theme")?.value?.trim()||""
     };
   }
+  function eligibleRecipes(domain,opts) {
+    const level=LEVEL_NAMES[opts.level]?opts.level:"apoyo_moderado";
+    const choices=catalog().filter(recipe=>recipe.domain===domain&&recipe.level===level);
+    const byFormat=opts.format&&opts.format!=="mixto"?choices.filter(recipe=>recipe.format===opts.format):[];
+    // Si el formato deseado limita la variedad, se priorizan dos ejercicios distintos.
+    return byFormat.length>=2?byFormat:choices;
+  }
   function selectRecipes(opts) {
+    const week=Math.max(1,Math.min(52,Number(opts.week)||1));
     if(opts.mode==="weekly"){
       const selection=GROUPS.map(([domain],index)=>{
-        const matches=RECIPES.filter(x=>x.domain===domain);
-        return matches[(opts.week+index)%matches.length];
+        const matches=eligibleRecipes(domain,opts);
+        return matches[(week-1+index)%matches.length];
       });
-      const extra=RECIPES.filter(x=>x.domain===["atencion","memoria","funciones_ejecutivas"][opts.week%3]);
-      selection.push(extra[(opts.week+1)%extra.length]);
+      const extraDomain=["atencion","memoria","funciones_ejecutivas"][(week-1)%3];
+      const alternate=eligibleRecipes(extraDomain,opts).find(r=>!selection.some(p=>p.title===r.title&&p.domain===r.domain));
+      if(alternate)selection.push(alternate);
       return selection;
     }
-    const entries=RECIPES.filter(r=>r.domain===opts.domain);
-    const chosen=entries.length?entries:RECIPES.filter(r=>r.domain==="atencion");
-    return [chosen[opts.week%chosen.length],chosen[(opts.week+1)%chosen.length],{
-      ...chosen[opts.week%chosen.length],title:"Transferencia funcional: "+label(opts.domain),
-      task:"En una situación cotidiana segura y simulada, aplica la misma regla o estrategia practicada. Explica qué ayuda externa o pista permitiría completar la actividad sin exigir autonomía no comprobada.",
-      stimuli:"Apoyo visual disponible | Ejemplo de uso | Alternativa accesible",
-      solution:"La respuesta se contrasta con la tarea concreta acordada por la profesional; no se presupone una situación biográfica real.",
-      visualType:"diagram",visualTitle:"Transferencia de estrategia"
+    const domain=GROUPS.some(row=>row[0]===opts.domain)?opts.domain:"atencion";
+    const chosen=eligibleRecipes(domain,opts);
+    const first=chosen[(week-1)%chosen.length],second=chosen[week%chosen.length];
+    return [first,second,{
+      ...first,title:"Transferencia funcional: "+label(domain),
+      task:"En una situación cotidiana segura y simulada, aplica la estrategia practicada en la tarea anterior. Elige una clave o ayuda externa y explica cómo comprobarías el resultado sin presuponer autonomía.",
+      stimuli:"Identificar la estrategia | Elegir una ayuda | Practicar sin riesgo | Revisar",
+      solution:"La solución depende del objetivo funcional acordado; no se presupone información autobiográfica real.",
+      visualType:"diagram",visualTitle:"Generalización de la estrategia",format:"funcional"
     }];
   }
   function visualFor(recipe, opts) {
@@ -86,28 +106,30 @@
       const raw=recipe.stimuli.split("\n");
       const candidate=raw.map(x=>x.split("|").map(v=>v.trim()));
       const valid=raw.length>1&&candidate[0].length>=2&&candidate[0].length<=6&&candidate.every(r=>r.length===candidate[0].length);
-      const rows=valid?candidate.map(r=>r.join("|")):["Estímulo|Dato","1|"+recipe.stimuli.replaceAll("|"," / ").replaceAll("\n","; ").slice(0,160)];
+      const items=recipe.stimuli.split(/[|\n]/).map(x=>x.trim()).filter(Boolean).slice(0,12);
+      const rows=valid?candidate.map(r=>r.join("|")):["Posición|Estímulo",...items.map((item,index)=>(index+1)+"|"+item.slice(0,90))];
       return {type:"table",title:recipe.visualTitle,content:rows.join("\n")};
     }
-    return {type:"diagram",title:recipe.visualTitle,content:recipe.stimuli.split("|").map(x=>x.trim()).filter(Boolean).slice(0,8).join("\n")||"Leer consigna\nRevisar solución"};
+    return {type:"diagram",title:recipe.visualTitle,content:recipe.stimuli.split(/[|\n]/).map(x=>x.trim()).filter(Boolean).slice(0,8).join("\n")||"Leer consigna\nRevisar solución"};
   }
   function exercise(recipe, index, opts) {
     const day=opts.mode==="weekly"?Math.floor(index/2)+1:null;
-    const supports=opts.level==="apoyo_alto"
+    const supports=opts.support==="alto"
       ?"Modelar una respuesta, presentar dos opciones, facilitar reconocimiento y detener si hay frustración."
-      :opts.level==="autonomo"
+      :opts.support==="minimo"
       ?"Dar tiempo para una estrategia propia, ofrecer una pista tras petición y comprobar la solución sin cronómetro."
       :"Dividir la consigna, dar una clave visual o semántica y comprobar comprensión antes de repetir.";
     const response={flexible:"oral, escrita, señalada o mediante gesto",verbal:"oral",escrita:"escrita",senalamiento:"señalada o con tarjetas"}[opts.response]||"flexible";
     return [
       "Ejercicio "+(index+1)+": "+(day?"Día "+day+" · ":"")+recipe.title+" ("+label(recipe.domain)+")",
       "Objetivo: Practicar "+label(recipe.domain).toLowerCase()+" mediante una tarea concreta y observable. "+(opts.goal?"Objetivo funcional priorizado: "+opts.goal+".":"Registrar estrategias útiles sin equiparar el resultado a una puntuación diagnóstica."),
+      "Demanda y modalidad: "+(LEVEL_NAMES[opts.level]||"Intermedio")+" · "+(FORMAT_NAMES[recipe.format]||"Variado")+". La dificultad describe la tarea, no la gravedad clínica ni el grado de autonomía.",
       "Materiales: Utilizar el estímulo de la ficha y el recurso visual «"+recipe.visualTitle+"» cuando aparezca en el cuaderno. Contenido: "+recipe.stimuli,
       "Preparación: Leer o escuchar la consigna, mostrar un ejemplo sin resolver el resto, comprobar acceso sensorial y ofrecer una pausa. "+(opts.accessibility?"Adaptación individual: "+opts.accessibility+".":"Elegir tamaño de letra legible y espacio despejado."),
       "Pasos: 1) Observa o escucha el material. 2) "+recipe.task+" 3) Responde de forma "+response+" con el apoyo acordado. 4) Revisa junto con la profesional o acompañante la estrategia y las dificultades.",
-      "Ejemplo: "+recipe.solution+" Este ejemplo es una solución de referencia de una tarea ficticia, no una respuesta biográfica del paciente.",
+      "Ejemplo: La profesional modela un estímulo distinto al de la actividad sin anticipar su solución. La corrección se revisa después de responder; no se comparan resultados con baremos.",
       "Ayudas: "+supports+" No facilitar soluciones antes de dar oportunidad a participar.",
-      "Adaptación: Simplificar reduciendo el número de estímulos o manteniendo pistas visibles; incrementar la demanda solo mediante un cambio cada vez. Considerar problemas visuales, motores y de comprensión.",
+      "Adaptación: Mantener el nivel seleccionado y ajustar los apoyos por separado. Para reducir la demanda, disminuir elementos o pasos y conservar claves; para incrementarla, añadir una regla o distractor sin cambiar simultáneamente otras variables. Considerar barreras visuales, motoras y de comprensión.",
       "Duración y frecuencia: Aproximadamente 5–12 minutos según tolerancia. "+(day?"Propuesta de día "+day+"; los días son orientativos y no obligatorios.":"Una práctica breve esta semana, ajustable en sesión."),
       "Qué observar: Registrar participación, tipo e intensidad de ayuda, errores cualitativos, fatiga, dudas y posible transferencia; detener si la actividad no resulta adecuada."
     ].join("\n");
@@ -123,7 +145,7 @@
     }
     const weekly=opts.mode==="weekly";
     return {
-      version:4,clinical_area:"neuropsychology",material_type:"exercise",duration_minutes:12,
+      version:5,clinical_area:"neuropsychology",material_type:"exercise",duration_minutes:12,
       frequency:weekly?"Semana "+opts.week+": hasta dos actividades breves por día durante siete días orientativos; descanso y adaptación según tolerancia.":"Semana "+opts.week+": tres propuestas breves adaptables; no es obligatorio completar todas.",
       introduction:weekly?"Cuaderno neuropsicológico multicomponente · Semana "+opts.week+". Encontrarás 7 jornadas orientativas con 2 tareas diferentes cada una. Puedes distribuirlas, descansar o hacer menos según el acuerdo terapéutico.":"Ficha de "+label(opts.domain).toLowerCase()+" · Semana "+opts.week+". Trabaja a tu ritmo y pide ayudas cuando las necesites.",
       why:"Estas actividades permiten practicar distintas habilidades cognitivas, identificar estrategias útiles y explorar su aplicación cotidiana. No son pruebas psicométricas y los resultados no indican por sí mismos una mejoría clínica.",
@@ -134,7 +156,7 @@
       safety_note:"Realiza las actividades de manera flexible. No fuerces recuerdos, no corrijas confrontativamente y evita practicar situaciones funcionales de riesgo sin supervisión adecuada.",
       remember:"La semana siguiente se diseña tras revisar juntos qué actividades y apoyos fueron útiles. Este material no constituye una evaluación diagnóstica.",
       session_questions:["¿Qué ejercicios resultaron más accesibles?","¿Qué apoyos se necesitaron?","¿Se observó transferencia funcional?","¿Qué conviene adaptar la semana siguiente?"],
-      neuro_profile:{mode:opts.mode,domain:weekly?"multidominio":opts.domain,intervention:opts.intervention,level:opts.level,theme:opts.theme,functional_goal:opts.goal,week_number:opts.week,response_mode:opts.response,accessibility:opts.accessibility,covered_domains:Array.from(covered)},
+      neuro_profile:{mode:opts.mode,domain:weekly?"multidominio":opts.domain,intervention:opts.intervention,level:opts.level,support:opts.support||"moderado",format:opts.format||"mixto",theme:opts.theme,functional_goal:opts.goal,week_number:opts.week,response_mode:opts.response,accessibility:opts.accessibility,covered_domains:Array.from(covered)},
       visual_blocks:visuals
     };
   }
@@ -142,6 +164,10 @@
     const opts=options();
     if(opts.mode==="single"&&!GROUPS.some(row=>row[0]===opts.domain)){
       $("clinic-exercise-message").textContent="Selecciona una función cognitiva para crear su ficha.";
+      return;
+    }
+    if(catalog().length<78){
+      $("clinic-exercise-message").textContent="La biblioteca graduada no está disponible. Recarga la página antes de generar el material.";
       return;
     }
     const patientDocument=build(opts);
@@ -161,10 +187,10 @@
       const label=$("clinic-neuro-domain")?.closest("label");
       if(label)label.hidden=weekly;
       const note=$("clinic-neuro-mode-note");
-      if(note)note.textContent=weekly?"7 días orientativos, 14 ejercicios distintos y cobertura de 13 dominios.":"3 ejercicios centrados en una función, con variaciones y transferencia.";
+      if(note)note.textContent=weekly?"7 días orientativos, 14 ejercicios y cobertura de 13 dominios, con demanda y apoyos ajustables.":"Dos ejercicios de una función y una tarea de transferencia; demanda, apoyos y formato a elegir.";
     });
     $("clinic-neuro-mode")?.dispatchEvent(new Event("change"));
   }
-  window.NeuroWeeklyComposer={GROUPS,RECIPES,build,selectRecipes,visualFor};
+  window.NeuroWeeklyComposer={GROUPS,RECIPES,catalog,build,selectRecipes,visualFor};
   if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",init);else init();
 })();
