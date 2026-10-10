@@ -125,7 +125,7 @@
       task:"En una situación cotidiana segura y simulada, aplica la estrategia practicada en la tarea anterior. Elige una clave o ayuda externa y explica cómo comprobarías el resultado sin presuponer autonomía.",
       stimuli:"Identificar la estrategia | Elegir una ayuda | Practicar sin riesgo | Revisar",
       solution:"La solución depende del objetivo funcional acordado; no se presupone información autobiográfica real.",
-      visualType:"diagram",visualTitle:"Generalización de la estrategia",format:"funcional"
+      visualType:"diagram",visualTitle:"Generalización de la estrategia",format:"funcional",generated:false
     }];
   }
   function visualFor(recipe, opts) {
