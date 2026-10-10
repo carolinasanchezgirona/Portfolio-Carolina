@@ -27,25 +27,53 @@ function create(domain,level,variation) {
       format="funcional";visualTitle="Agenda y cambios";break;
     }
     case "orientacion_espacial": {
-      const n=depth+2;
+      const n=depth===2?5:depth+2;
       const destination=s%2===0?"Mercado":"Biblioteca";
-      const rows=[["Fila/col",...key.slice(0,n)]];
       const district=pick(["Norte","Sur","Este","Oeste","Central","Mar","Bosque","Río","Puerto","Parque","Sol","Luna","Tren"],s);
       const landmark=pick(["Plaza","Jardín","Quiosco","Centro cultural","Farmacia","Panadería","Taller","Fuente","Mercado antiguo","Galería","Estación"],Math.floor(s/13));
+      // Cinco columnas de mapa más una de encabezados: tablas imprimibles y accesibles.
+      // Nivel avanzado: verdadero problema de navegación con parada obligatoria y obras.
+      const blocked=depth===2?new Set(["1,1","3,2","1,3",...(s%2===0?["3,3"]:["1,2"])]):depth===1?new Set(["1,1"]):new Set();
+      const rows=[["Fila/col",...key.slice(0,n)]];
       for(let y=0;y<n;y++){
         const row=[String(y+1)];
-        for(let x=0;x<n;x++)row.push(x===0&&y===0?"Salida":x===n-1&&y===n-1?destination:
-          x===1&&y===1?"Obras":x===0&&y===n-1?landmark:y===0&&x===n-1?"Calle "+district:"Calle");
+        for(let x=0;x<n;x++){
+          const id=x+","+y;
+          row.push(x===0&&y===0?"Salida":x===n-1&&y===n-1?destination:
+            depth===2&&x===2&&y===2?"Centro cultural":
+            blocked.has(id)?"Obras":
+            x===0&&y===n-1?landmark:
+            y===0&&x===n-1?"Calle "+district:"Calle");
+        }
         rows.push(row);
       }
-      let path=["A1"];
-      for(let x=1;x<n;x++)path.push(key[x]+"1");
-      for(let y=1;y<n;y++)path.push(key[n-1]+(y+1));
-      title="Ruta urbana con un desvío";
-      task="En este plano ficticio el norte está arriba. Parte de A1 y llega a "+destination+(n>2?" evitando las obras":"")+". Puedes desplazarte solo a casillas contiguas horizontal o verticalmente.";
+      // BFS sobre la matriz real, sin atravesar obras, con continuidad garantizada.
+      function shortest(start,end) {
+        const queue=[[start]],seen=new Set([start.join(",")]);
+        while(queue.length){
+          const path=queue.shift(),point=path[path.length-1];
+          if(point[0]===end[0]&&point[1]===end[1])return path;
+          for(const [dx,dy] of [[1,0],[0,1],[-1,0],[0,-1]]){
+            const next=[point[0]+dx,point[1]+dy],id=next.join(",");
+            if(next[0]<0||next[1]<0||next[0]>=n||next[1]>=n||blocked.has(id)||seen.has(id))continue;
+            seen.add(id);queue.push([...path,next]);
+          }
+        }
+        return null;
+      }
+      const start=[0,0],finish=[n-1,n-1],via=[2,2];
+      const leg1=depth===2?shortest(start,via):null;
+      const leg2=depth===2?shortest(via,finish):null;
+      const fullPath=leg1&&leg2?[...leg1,...leg2.slice(1)]:shortest(start,finish);
+      if(!fullPath)return null;
+      const pathText=fullPath.map(([x,y])=>key[x]+(y+1)).join(" → ");
+      title=depth===2?"Plano urbano: parada obligatoria y calles cortadas":"Ruta urbana con un desvío";
+      task=depth===2?
+        "En este plano ficticio, con norte arriba, comienza en A1, visita el Centro cultural en C3 y termina en "+destination+" en E5. Evita las casillas de obras, usa solo movimientos horizontales o verticales e indica una ruta con el menor número de movimientos posible. Señala el recorrido en el mapa y comprueba cada tramo.":
+        "En este plano ficticio el norte está arriba. Parte de A1 y llega a "+destination+" en "+key[n-1]+n+" sin cruzar las obras. Puedes desplazarte solo a casillas contiguas horizontal o verticalmente.";
       stimuli=asTable(rows);
-      solution="Una ruta válida: "+path.join(" → ")+(n>2?"; no atraviesa la casilla B2.":".");
-      format="visual";visualTitle="Mapa con obstáculos";break;
+      solution="Una ruta válida: "+pathText+"; "+(depth===2?"pasa por C3, evita todas las obras y minimiza los desplazamientos entre los puntos obligatorios.":"no atraviesa las casillas con obras.");
+      format="visual";visualTitle=depth===2?"Mapa urbano de cinco por cinco con desvíos":"Mapa con obstáculos";break;
     }
     case "orientacion_personal": {
       const prefs=["escuchar música","hacer un dibujo","regar plantas","mirar un libro","descansar","escuchar un relato","ordenar fotografías no personales","salir al jardín","cuidar una maceta","realizar estiramientos suaves"];

@@ -60,7 +60,8 @@
       mode:["single","individual"].includes($("clinic-neuro-mode")?.value)?$("clinic-neuro-mode").value:"weekly",
       domain:$("clinic-neuro-domain")?.value||"atencion",
       week:weekNumber(),
-      level:$("clinic-neuro-level")?.value||"apoyo_moderado",
+      level:$("clinic-neuro-level")?.value||"",
+      activity_type:$("clinic-neuro-activity-type")?.value||"mixto",
       support:$("clinic-neuro-support")?.value||"moderado",
       format:$("clinic-neuro-format")?.value||"mixto",
       intervention:$("clinic-neuro-intervention")?.value||"estimulacion",
@@ -82,7 +83,8 @@
   // Tras las dos primeras semanas se cambian operaciones y estímulos verificables;
   // la rotación de únicamente dos recetas no constituye variedad longitudinal.
   function variedRecipe(recipe,opts,slot=0) {
-    if((Number(opts.week)||1)<=2&&(Number(opts.variant)||0)<2)return recipe;
+    if(opts.activity_type==="ficha")return recipe;
+    if(opts.activity_type!=="generador"&&(Number(opts.week)||1)<=2&&(Number(opts.variant)||0)<2)return recipe;
     const builder=window.NeuroVariantFactory?.create;
     if(typeof builder!=="function")return recipe;
     const index=GROUPS.findIndex(row=>row[0]===recipe.domain);
@@ -104,7 +106,8 @@
       const base=candidates.find(r=>!selection.some(p=>p.title===r.title&&p.domain===r.domain))||candidates[0];
       if(base){
         const seed=week*97+variation*31+GROUPS.findIndex(row=>row[0]===extraDomain)*11;
-        const alternate=(week<=2&&variation<2&&typeof window.NeuroVariantFactory?.create==="function")?
+        const alternate=opts.activity_type==="ficha"?base:
+          (week<=2&&variation<2&&typeof window.NeuroVariantFactory?.create==="function")?
           window.NeuroVariantFactory.create(extraDomain,base.level,seed):variedRecipe(base,opts,50);
         selection.push({...alternate,title:"Actividad complementaria: "+alternate.title});
       }
@@ -112,14 +115,17 @@
     }
     const domain=GROUPS.some(row=>row[0]===opts.domain)?opts.domain:"atencion";
     const chosen=eligibleRecipes(domain,opts);
-    const first=variedRecipe(chosen[(week-1+variation)%chosen.length],opts,0),second=chosen[(week+variation)%chosen.length];
+    const first=variedRecipe(chosen[(week-1+variation)%chosen.length],opts,0);
+    const second=opts.activity_type==="generador"?
+      variedRecipe(chosen[(week+variation)%chosen.length],opts,1):
+      chosen[(week+variation)%chosen.length];
     if(opts.mode==="individual")return [first];
     return [first,second,{
       ...first,title:"Transferencia funcional: "+label(domain),
       task:"En una situación cotidiana segura y simulada, aplica la estrategia practicada en la tarea anterior. Elige una clave o ayuda externa y explica cómo comprobarías el resultado sin presuponer autonomía.",
       stimuli:"Identificar la estrategia | Elegir una ayuda | Practicar sin riesgo | Revisar",
       solution:"La solución depende del objetivo funcional acordado; no se presupone información autobiográfica real.",
-      visualType:"diagram",visualTitle:"Generalización de la estrategia",format:"funcional"
+      visualType:"diagram",visualTitle:"Generalización de la estrategia",format:"funcional",generated:false
     }];
   }
   function visualFor(recipe, opts) {
@@ -206,12 +212,17 @@
       safety_note:"Realiza las actividades de manera flexible. No fuerces recuerdos, no corrijas confrontativamente y evita practicar situaciones funcionales de riesgo sin supervisión adecuada.",
       remember:"La semana siguiente se diseña tras revisar juntos qué actividades y apoyos fueron útiles. Este material no constituye una evaluación diagnóstica.",
       session_questions:["¿Qué ejercicios resultaron más accesibles?","¿Qué apoyos se necesitaron?","¿Se observó transferencia funcional?","¿Qué conviene adaptar la semana siguiente?"],
-      neuro_profile:{mode:opts.mode,domain:weekly?"multidominio":opts.domain,intervention:opts.intervention,level:opts.level,support:opts.support||"moderado",format:opts.format||"mixto",theme:opts.theme,functional_goal:opts.goal,week_number:opts.week,response_mode:opts.response,accessibility:opts.accessibility,covered_domains:Array.from(covered)},
+      neuro_profile:{mode:opts.mode,domain:weekly?"multidominio":opts.domain,intervention:opts.intervention,level:opts.level,support:opts.support||"moderado",format:opts.format||"mixto",activity_type:opts.activity_type||"mixto",theme:opts.theme,functional_goal:opts.goal,week_number:opts.week,response_mode:opts.response,accessibility:opts.accessibility,covered_domains:Array.from(covered)},
       visual_blocks:visuals
     };
   }
   function generate() {
     const opts=options();
+    if(!LEVEL_NAMES[opts.level]){
+      $("clinic-exercise-message").textContent="Selecciona la demanda cognitiva: inicial, intermedia o avanzada. No se asignará automáticamente un nivel.";
+      $("clinic-neuro-level")?.focus();
+      return;
+    }
     if(opts.mode!=="weekly"&&!GROUPS.some(row=>row[0]===opts.domain)){
       $("clinic-exercise-message").textContent="Selecciona una función cognitiva para crear su ficha.";
       return;
