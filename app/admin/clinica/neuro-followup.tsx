@@ -33,7 +33,7 @@ const cues=[["visual","Visual"],["verbal","Verbal"],["semantic","Semántica"],["
 const errors=[["omission","Omisión"],["intrusion","Intrusión"],["perseveration","Perseveración"],["substitution","Sustitución"],["spatial","Espacial"],["sequencing","Secuenciación"],["comprehension","Comprensión"],["other","Otro"]];
 const cueLabels:Record<string,string>={none:"Sin ayudas",light:"Pistas leves",moderate:"Ayudas moderadas",intensive:"Ayudas intensivas",not_recorded:"Sin registrar"};
 const transferLabels:Record<string,string>={not_assessed:"No valorada",not_observed:"No observada",with_support:"Con ayuda",independent:"Autónoma"};
-const today=()=>new Intl.DateTimeFormat("en-CA",{timeZone:"Europe/Madrid",year:"numeric",month:"2-digit",day:"2-digit"}).format(new Date());
+const today=()=>{const p=new Intl.DateTimeFormat("en-CA",{timeZone:"Europe/Madrid",year:"numeric",month:"2-digit",day:"2-digit"}).formatToParts(new Date());const v=Object.fromEntries(p.map(x=>[x.type,x.value]));return v.year+"-"+v.month+"-"+v.day;};
 const clean=(v:string)=>v.trim();
 const validUuid=(v:string)=>/^[a-f0-9]{8}-(?:[a-f0-9]{4}-){3}[a-f0-9]{12}$/i.test(v);
 function sessionToken():string {
@@ -166,7 +166,7 @@ export default function NeuroFollowup(){
     const correct=draft.independent_successes===""?null:Number(draft.independent_successes);
     if(task.length<3||task.length>180){setStatus("Describe la tarea (entre 3 y 180 caracteres).");return;}
     if(!Number.isInteger(week)||week<1||week>52){setStatus("La semana debe estar entre 1 y 52.");return;}
-    if((n===null)!==(correct===null)||n!==null&&(!Number.isInteger(n)||n<1||n>100||!Number.isInteger(correct)||correct!<0||correct!>n)){
+    if((n===null)!==(correct===null)||n!==null&&(!Number.isInteger(n)||n<1||n>100||!Number.isInteger(correct)||correct===null||correct<0||correct>n)){
       setStatus("Indica tanto oportunidades como respuestas autónomas, de 0 a las oportunidades totales, o deja ambas vacías.");return;
     }
     if(draft.comparable_conditions&&(clean(draft.protocol_key).length<3||clean(draft.conditions_description).length<10)){
