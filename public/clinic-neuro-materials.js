@@ -286,7 +286,12 @@
     const week = Math.max(1,Math.min(52,Number($("clinic-neuro-week-number")?.value)||1));
     const domain = DOMAIN_LABELS[item.domain] || "funciones cognitivas";
     const profile = DOMAIN_PRACTICE[item.domain] || DOMAIN_PRACTICE.cognicion_funcional;
-    const visuals = Array.isArray(item.visual_blocks) ? item.visual_blocks.filter(b => b && b.title && b.content) : [];
+    // Orientación temporal: generar el calendario real del mes de la consulta, nunca reutilizar fechas fijas de la biblioteca.
+    const todayParts = new Intl.DateTimeFormat("en-GB",{timeZone:"Europe/Madrid",year:"numeric",month:"2-digit"}).formatToParts(new Date());
+    const currentMonth = todayParts.find(p=>p.type==="year")?.value+"-"+todayParts.find(p=>p.type==="month")?.value;
+    const visuals = Array.isArray(item.visual_blocks) ? item.visual_blocks
+      .filter(b => b && b.title && b.content)
+      .map(b => b.type==="calendar" ? {...b,content:currentMonth} : {...b}) : [];
     const responseMode = $("clinic-neuro-response-mode")?.value || "flexible";
     const sensoryNotes = $("clinic-neuro-accessibility")?.value?.trim() || "";
     const responseText = ({
