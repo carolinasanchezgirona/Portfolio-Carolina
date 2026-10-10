@@ -698,8 +698,9 @@
     const source = item.patient_response && typeof item.patient_response === "object" ? item.patient_response : {};
     const record = String(source.record || "").trim();
     const answers = Array.isArray(source.answers) ? source.answers.map((value) => String(value || "").trim()) : [];
-    if (!record && !answers.some(Boolean)) return null;
-    return { record, answers };
+    const neuro_answers = Array.isArray(source.neuro_answers) ? source.neuro_answers.slice(0,14).map(value => String(value || "").trim()) : [];
+    if (!record && !answers.some(Boolean) && !neuro_answers.some(Boolean)) return null;
+    return { record, answers, neuro_answers };
   }
 
   function previewFileName(title) {
@@ -845,6 +846,12 @@
           if (!answer) return;
           const block = create("article");
           block.append(create("strong", "", questions[index] || `Respuesta ${index + 1}`), create("p", "", answer));
+          body.append(block);
+        });
+        patientResponse.neuro_answers.forEach((answer, index) => {
+          if (!answer) return;
+          const block = create("article");
+          block.append(create("strong", "", "Ejercicio " + (index + 1)), create("p", "", answer));
           body.append(block);
         });
         if (item.patient_response_shared_at) {
