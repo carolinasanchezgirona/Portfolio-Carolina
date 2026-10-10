@@ -49,7 +49,8 @@ jobs:
           node --check public/clinic-neuro-materials.js
           node --check public/clinic-neuro-weekly-composer.js
           node --check public/clinic-neuro-variant-factory.js
-          node --experimental-strip-types --test tests/clinical-neuro-visual.test.mjs tests/clinical-neuro-library.test.mjs tests/clinical-neuro-weekly.test.mjs tests/clinical-neuro-progress.test.mjs tests/clinical-neuro-composer.test.mjs tests/clinical-neuro-audit.test.mjs
+          node --check public/clinic-neuro-catalog-browser.js
+          node --experimental-strip-types --test tests/clinical-neuro-visual.test.mjs tests/clinical-neuro-library.test.mjs tests/clinical-neuro-weekly.test.mjs tests/clinical-neuro-progress.test.mjs tests/clinical-neuro-composer.test.mjs tests/clinical-neuro-audit.test.mjs tests/clinical-neuro-catalog.test.mjs
 
       - name: Validar editor clínico, guardado automático y navegación
         run: |
