@@ -418,26 +418,132 @@ export default function AdminClinicaPage() {
             </label>
             <p id="clinic-clinical-area-hint" className="clinic-material-helper">Se conserva íntegramente el generador de materiales psicológicos.</p>
           </div>
-          <fieldset id="clinic-neuro-settings" className="clinic-neuro-settings" hidden>
-            <legend>1 · Planifica el trabajo neuropsicológico</legend>
-            <div className="clinic-neuro-grid clinic-neuro-mode-grid">
-              <label>¿Qué quieres preparar?
-                <select id="clinic-neuro-mode" defaultValue="weekly">
-                  <option value="weekly">Cuaderno completo · 7 días</option>
-                  <option value="single">Ficha por función cognitiva · 3 ejercicios</option>
-                  <option value="individual">Ejercicio individual · 1 actividad</option>
-                </select>
-              </label>
-              <label>Tipo de actividad
-                <select id="clinic-neuro-activity-type" defaultValue="mixto">
-                  <option value="mixto">Combinado · fichas y variantes</option>
-                  <option value="ficha">Ficha · estímulos definidos y editables</option>
-                  <option value="generador">Generador · nuevos estímulos paramétricos</option>
-                </select>
-              </label>
-              <div className="clinic-neuro-mode-action"><p id="clinic-neuro-mode-note">7 días orientativos, 14 ejercicios distintos y cobertura de 13 dominios.</p><button id="clinic-neuro-generate" className="clinic-primary" type="button">Crear borrador del material</button></div>
+          <fieldset id="clinic-neuro-settings" className="clinic-neuro-simple" hidden>
+            <legend>Cuaderno neuropsicológico</legend>
+            <div className="clinic-neuro-simple-intro">
+              <p className="clinic-eyebrow">Generador de actividades · Entre Sesiones</p>
+              <h3>Prepara el material en tres decisiones</h3>
+              <p>Partimos de un cuaderno para una semana. No necesitas escoger ejercicios, tablas ni recursos uno a uno.</p>
             </div>
-            <details className="clinic-neuro-starter-advanced"><summary>Usar una ficha de la biblioteca neuropsicológica</summary><div className="clinic-neuro-library-picker">
+            <div className="clinic-neuro-simple-grid">
+              <label>1 · Qué necesitas
+                <select id="clinic-neuro-mode" defaultValue="weekly">
+                  <option value="weekly">Cuaderno semanal · 7 días</option>
+                  <option value="single">Ficha específica · 3 ejercicios</option>
+                  <option value="individual">Ejercicio individual</option>
+                </select>
+              </label>
+              <label>2 · Qué quieres priorizar
+                <select id="clinic-neuro-focus" defaultValue="equilibrado">
+                  <option value="equilibrado">Variado · todas las funciones</option>
+                  <option value="atencion">Atención</option>
+                  <option value="memoria">Memoria</option>
+                  <option value="funciones_ejecutivas">Funciones ejecutivas</option>
+                  <option value="orientacion_temporal">Orientación temporal</option>
+                  <option value="orientacion_espacial">Orientación espacial</option>
+                  <option value="orientacion_personal">Orientación personal</option>
+                  <option value="lenguaje">Lenguaje</option>
+                  <option value="visuoespacial">Procesamiento visuoespacial</option>
+                  <option value="praxias_gnosias">Praxias y gnosias</option>
+                  <option value="calculo">Cálculo funcional</option>
+                  <option value="cognicion_social">Cognición social</option>
+                  <option value="velocidad_procesamiento">Velocidad de procesamiento</option>
+                  <option value="cognicion_funcional">Cognición funcional</option>
+                </select>
+              </label>
+              <label>3 · Demanda cognitiva
+                <select id="clinic-neuro-level" defaultValue="">
+                  <option value="">Elegir nivel…</option>
+                  <option value="apoyo_alto">Inicial · baja complejidad</option>
+                  <option value="apoyo_moderado">Intermedio · varias operaciones</option>
+                  <option value="autonomo">Avanzado · reglas e interferencia</option>
+                </select>
+              </label>
+            </div>
+            <div className="clinic-neuro-simple-actions">
+              <div><strong id="clinic-neuro-mode-note">Una semana, 14 ejercicios originales con todas las funciones.</strong>
+              <p>El nivel se refiere a la demanda de la tarea, no al diagnóstico.</p></div>
+              <button id="clinic-neuro-generate" className="clinic-primary" type="button">Generar cuaderno</button>
+            </div>
+            <div id="clinic-neuro-draft-summary" className="clinic-neuro-draft-summary" hidden role="status" aria-live="polite" />
+            <details className="clinic-neuro-advanced">
+              <summary>Personalizar más <span>(opcional)</span></summary>
+              <div className="clinic-neuro-advanced-body">
+                <p>Solo necesitas estos ajustes en situaciones concretas. Las opciones predeterminadas ya producen materiales variados y accesibles.</p>
+                <div className="clinic-neuro-grid">
+                  <label>Tipo de actividad
+                    <select id="clinic-neuro-activity-type" defaultValue="mixto">
+                      <option value="mixto">Combinado · fichas y variantes</option>
+                      <option value="ficha">Ficha · estímulos definidos y editables</option>
+                      <option value="generador">Generador · nuevos estímulos paramétricos</option>
+                    </select>
+                  </label>
+                  <label>Semana del programa
+                <input id="clinic-neuro-week-number" type="number" min={1} max={52} defaultValue={1} inputMode="numeric" aria-label="Número de semana del programa neuropsicológico" />
+              </label>
+                  <label>Dominio cognitivo
+                <select id="clinic-neuro-domain" defaultValue="">
+                  <option value="">Seleccionar...</option>
+                  <option value="multidominio">Todas las funciones (cuaderno semanal)</option>
+                  <option value="orientacion_temporal">Orientación temporal</option>
+                  <option value="orientacion_espacial">Orientación espacial</option>
+                  <option value="orientacion_personal">Orientación personal</option>
+                  <option value="atencion">Atención</option>
+                  <option value="memoria">Memoria</option>
+                  <option value="funciones_ejecutivas">Funciones ejecutivas</option>
+                  <option value="lenguaje">Lenguaje</option>
+                  <option value="praxias_gnosias">Praxias y gnosias</option>
+                  <option value="visuoespacial">Funciones visuoespaciales</option>
+                  <option value="cognicion_funcional">Cognición funcional</option>
+                  <option value="calculo">Cálculo funcional</option>
+                  <option value="cognicion_social">Cognición social</option>
+                  <option value="velocidad_procesamiento">Velocidad de procesamiento</option>
+                </select>
+              </label>
+                  <label>Tipo de intervención
+                <select id="clinic-neuro-intervention" defaultValue="estimulacion">
+                  <option value="estimulacion">Estimulación cognitiva</option>
+                  <option value="entrenamiento">Entrenamiento específico</option>
+                  <option value="rehabilitacion">Rehabilitación funcional</option>
+                  <option value="compensacion">Estrategias compensatorias</option>
+                </select>
+              </label>
+                  <label>Variedad de ejercicios
+                <select id="clinic-neuro-format" defaultValue="mixto">
+                  <option value="mixto">Variados: alternar formatos</option>
+                  <option value="visual">Visuales y espaciales</option>
+                  <option value="verbal">Lenguaje y material verbal</option>
+                  <option value="funcional">Situaciones cotidianas</option>
+                  <option value="logico">Razonamiento y reglas</option>
+                </select>
+              </label>
+                  <label>Ayudas previstas (independientes de la dificultad)
+                <select id="clinic-neuro-support" defaultValue="moderado">
+                  <option value="alto">Intensivas: modelado y elección</option>
+                  <option value="moderado">Moderadas: pistas graduadas</option>
+                  <option value="minimo">Mínimas: iniciativa autónoma</option>
+                </select>
+              </label>
+                  <label>Tema estacional o autobiográfico (opcional)
+                <input id="clinic-neuro-theme" placeholder="Ej. La Castanyada, el barrio, mi calendario..." />
+              </label>
+                  <label>Modalidad de respuesta preferida
+                <select id="clinic-neuro-response-mode" defaultValue="flexible">
+                  <option value="flexible">Flexible, según capacidad</option>
+                  <option value="verbal">Oral</option>
+                  <option value="escrita">Escrita</option>
+                  <option value="senalamiento">Señalamiento o elección</option>
+                </select>
+              </label>
+                  <label>Adaptaciones de accesibilidad
+                <input id="clinic-neuro-accessibility" maxLength={220} placeholder="Ej. letra grande, contraste alto, claves auditivas..." />
+              </label>
+                </div>
+                <label>Objetivo funcional
+              <textarea id="clinic-neuro-functional-goal" rows={2} placeholder="Conducta observable o aplicación cotidiana..." />
+            </label>
+                <p className="clinic-material-helper">La ayuda se modifica por separado de la dificultad. Revisa la pertinencia del cuaderno y los estímulos antes de enviarlo.</p>
+                <details className="clinic-neuro-starter-advanced"><summary>Usar una ficha de la biblioteca neuropsicológica</summary><div className="clinic-neuro-library-picker">
               <label>Biblioteca inicial de actividades (borradores pendientes de revisión clínica)
                 <select id="clinic-neuro-starter" defaultValue="">
                   <option value="">Elegir actividad neuropsicológica...</option>
@@ -446,7 +552,7 @@ export default function AdminClinicaPage() {
               <button id="clinic-neuro-starter-load" className="clinic-secondary" type="button">Cargar propuesta</button>
             </div>
             <p className="clinic-material-helper">Puedes partir de una de las 24 fichas existentes o crear un material nuevo con una colección ampliada de actividades y estímulos originales. Todo borrador requiere revisión clínica.</p></details>
-            <details className="clinic-neuro-catalog" id="clinic-neuro-catalog">
+                <details className="clinic-neuro-catalog" id="clinic-neuro-catalog">
               <summary>Explorar catálogo clínico · 78 actividades originales graduadas</summary>
               <p className="clinic-material-helper">Busca por función, estímulos o tipo de tarea. La selección prepara una ficha individual editable, sin asignarla ni enviarla automáticamente. Los criterios de corrección son exclusivamente para revisión profesional.</p>
               <div className="clinic-neuro-catalog-filters">
@@ -479,84 +585,10 @@ export default function AdminClinicaPage() {
               <button id="clinic-neuro-catalog-more" type="button" className="clinic-secondary" hidden>Mostrar más actividades</button>
               <p className="clinic-material-helper">Biblioteca propia en revisión clínica. No reproduce pruebas psicométricas ni actividades protegidas de terceros.</p>
             </details>
-            <p className="clinic-neuro-week-note"><strong>Plan semanal individualizado.</strong> La cobertura es multicomponente y flexible: no implica completar tareas inadecuadas o mantener una práctica diaria si hay fatiga. Revisa la evolución antes de generar la semana siguiente.</p>
-            <div className="clinic-neuro-grid">
-              <label>Semana del programa
-                <input id="clinic-neuro-week-number" type="number" min={1} max={52} defaultValue={1} inputMode="numeric" aria-label="Número de semana del programa neuropsicológico" />
-              </label>
-              <label>Dominio cognitivo
-                <select id="clinic-neuro-domain" defaultValue="">
-                  <option value="">Seleccionar...</option>
-                  <option value="multidominio">Todas las funciones (cuaderno semanal)</option>
-                  <option value="orientacion_temporal">Orientación temporal</option>
-                  <option value="orientacion_espacial">Orientación espacial</option>
-                  <option value="orientacion_personal">Orientación personal</option>
-                  <option value="atencion">Atención</option>
-                  <option value="memoria">Memoria</option>
-                  <option value="funciones_ejecutivas">Funciones ejecutivas</option>
-                  <option value="lenguaje">Lenguaje</option>
-                  <option value="praxias_gnosias">Praxias y gnosias</option>
-                  <option value="visuoespacial">Funciones visuoespaciales</option>
-                  <option value="cognicion_funcional">Cognición funcional</option>
-                  <option value="calculo">Cálculo funcional</option>
-                  <option value="cognicion_social">Cognición social</option>
-                  <option value="velocidad_procesamiento">Velocidad de procesamiento</option>
-                </select>
-              </label>
-              <label>Tipo de intervención
-                <select id="clinic-neuro-intervention" defaultValue="estimulacion">
-                  <option value="estimulacion">Estimulación cognitiva</option>
-                  <option value="entrenamiento">Entrenamiento específico</option>
-                  <option value="rehabilitacion">Rehabilitación funcional</option>
-                  <option value="compensacion">Estrategias compensatorias</option>
-                </select>
-              </label>
-              <label>Demanda de la tarea
-                <select id="clinic-neuro-level" defaultValue="">
-                  <option value="">Seleccionar...</option>
-                  <option value="apoyo_alto">Inicial: baja carga de estímulos y un paso</option>
-                  <option value="apoyo_moderado">Intermedio: varias operaciones y distractores</option>
-                  <option value="autonomo">Avanzado: reglas, interferencia y planificación</option>
-                </select>
-              </label>
-              <label>Variedad de ejercicios
-                <select id="clinic-neuro-format" defaultValue="mixto">
-                  <option value="mixto">Variados: alternar formatos</option>
-                  <option value="visual">Visuales y espaciales</option>
-                  <option value="verbal">Lenguaje y material verbal</option>
-                  <option value="funcional">Situaciones cotidianas</option>
-                  <option value="logico">Razonamiento y reglas</option>
-                </select>
-              </label>
-              <label>Ayudas previstas (independientes de la dificultad)
-                <select id="clinic-neuro-support" defaultValue="moderado">
-                  <option value="alto">Intensivas: modelado y elección</option>
-                  <option value="moderado">Moderadas: pistas graduadas</option>
-                  <option value="minimo">Mínimas: iniciativa autónoma</option>
-                </select>
-              </label>
-              <label>Tema estacional o autobiográfico (opcional)
-                <input id="clinic-neuro-theme" placeholder="Ej. La Castanyada, el barrio, mi calendario..." />
-              </label>
-            </div>
-            <div className="clinic-neuro-grid">
-              <label>Modalidad de respuesta preferida
-                <select id="clinic-neuro-response-mode" defaultValue="flexible">
-                  <option value="flexible">Flexible, según capacidad</option>
-                  <option value="verbal">Oral</option>
-                  <option value="escrita">Escrita</option>
-                  <option value="senalamiento">Señalamiento o elección</option>
-                </select>
-              </label>
-              <label>Adaptaciones de accesibilidad
-                <input id="clinic-neuro-accessibility" maxLength={220} placeholder="Ej. letra grande, contraste alto, claves auditivas..." />
-              </label>
-            </div>
-            <label>Objetivo funcional
-              <textarea id="clinic-neuro-functional-goal" rows={2} placeholder="Conducta observable o aplicación cotidiana..." />
-            </label>
-            <p className="clinic-material-helper">Selecciona explícitamente la demanda antes de crear la ficha. Las fichas contienen estímulos cerrados; los generadores producen variantes originales. La modalidad interactiva con juegos y autocorrección todavía no está disponible. Evita tareas infantilizantes y pruebas estandarizadas protegidas: estos ejercicios no son puntuaciones diagnósticas.</p>
+              </div>
+            </details>
           </fieldset>
+          <div id="clinic-material-editor-stage" className="clinic-material-editor-stage">
           <label className="clinic-material-context">Objetivo o contexto para personalizar <span>(sin nombres ni datos identificativos, solo profesional)</span><textarea id="clinic-exercise-rationale" rows={2} placeholder="¿Qué se busca trabajar? ¿Qué apoyos, límites o preferencias hay que contemplar?" /></label>
           <div className="clinic-material-picker">
             <div className="clinic-material-picker-heading"><strong>2 · Empieza por una ficha de la biblioteca o por la IA</strong><p>Buscar no modifica los materiales existentes hasta que decidas guardarlos.</p></div>
@@ -658,6 +690,7 @@ export default function AdminClinicaPage() {
           <div className="clinic-dialog-actions clinic-material-actions">
             <button id="clinic-save-exercise" className="clinic-secondary" type="button">Guardar borrador</button>
             <button className="clinic-primary" type="submit">Guardar y enviar al paciente</button>
+          </div>
           </div>
         </form>
       </dialog>
