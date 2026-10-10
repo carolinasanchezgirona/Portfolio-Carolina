@@ -293,7 +293,7 @@ export default function NeuroFollowup(){
         <button className="clinic-secondary" type="button" onClick={()=>setExpanded(v=>!v)}>{expanded?"Ocultar editor":"Registrar observación"}</button>
       </div>
       {status&&<p className="clinic-message" role="status">{status}</p>}
-      {expanded&&<div className="neuro-followup-editor">
+      {expanded&&<div className="neuro-followup-editor" onKeyDown={event=>{if(event.key==="Enter"&&event.target instanceof HTMLInputElement&&event.target.type!=="checkbox"&&event.target.type!=="file")event.preventDefault();}}>
         <div className="neuro-followup-grid">
           <label>Fecha de observación<input type="date" value={draft.observed_on} max={today()} onChange={e=>setField("observed_on",e.target.value)} /></label>
           <label>Semana<input type="number" min="1" max="52" value={draft.week_number} onChange={e=>setField("week_number",e.target.value)}/></label>
