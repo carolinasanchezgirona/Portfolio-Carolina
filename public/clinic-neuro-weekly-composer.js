@@ -77,13 +77,27 @@
     // Si el formato deseado limita la variedad, se priorizan dos ejercicios distintos.
     return byFormat.length>=(opts.mode==="individual"?1:2)?byFormat:choices;
   }
+  const PRIORITY_DOMAINS=["orientacion_espacial","atencion","visuoespacial","velocidad_procesamiento","calculo","memoria","praxias_gnosias","funciones_ejecutivas","orientacion_temporal","lenguaje","cognicion_funcional","cognicion_social","orientacion_personal"];
+  const domainPriority=domain=>PRIORITY_DOMAINS.indexOf(domain);
+  // Tras las dos primeras semanas se cambian operaciones y estímulos verificables;
+  // la rotación de únicamente dos recetas no constituye variedad longitudinal.
+  function variedRecipe(recipe,opts,slot=0) {
+    if((Number(opts.week)||1)<=2&&(Number(opts.variant)||0)<2)return recipe;
+    const builder=window.NeuroVariantFactory?.create;
+    if(typeof builder!=="function")return recipe;
+    const index=GROUPS.findIndex(row=>row[0]===recipe.domain);
+    const level={apoyo_alto:0,apoyo_moderado:1,autonomo:2}[recipe.level]??1;
+    const seed=((Number(opts.week)||1)-1)*41+index*13+level*7+(Number(opts.variant)||0)*29+slot*17;
+    const result=builder(recipe.domain,recipe.level,seed);
+    return result?.task&&result?.stimuli&&result?.solution?result:recipe;
+  }
   function selectRecipes(opts) {
     const week=Math.max(1,Math.min(52,Number(opts.week)||1));
     const variation=Math.max(0,Math.floor(Number(opts.variant)||0));
     if(opts.mode==="weekly"){
       const selection=GROUPS.map(([domain],index)=>{
         const matches=eligibleRecipes(domain,opts);
-        return matches[(week-1+index+variation)%matches.length];
+        return variedRecipe(matches[(week-1+index+variation)%matches.length],opts,index);
       });
       const extraDomain=["atencion","memoria","funciones_ejecutivas"][(week-1)%3];
       const alternate=eligibleRecipes(extraDomain,opts).find(r=>!selection.some(p=>p.title===r.title&&p.domain===r.domain));
@@ -92,7 +106,7 @@
     }
     const domain=GROUPS.some(row=>row[0]===opts.domain)?opts.domain:"atencion";
     const chosen=eligibleRecipes(domain,opts);
-    const first=chosen[(week-1+variation)%chosen.length],second=chosen[(week+variation)%chosen.length];
+    const first=variedRecipe(chosen[(week-1+variation)%chosen.length],opts,0),second=chosen[(week+variation)%chosen.length];
     if(opts.mode==="individual")return [first];
     return [first,second,{
       ...first,title:"Transferencia funcional: "+label(domain),
@@ -115,7 +129,7 @@
     }
     return {type:"diagram",title:recipe.visualTitle,content:recipe.stimuli.split(/[|\n]/).map(x=>x.trim()).filter(Boolean).slice(0,8).join("\n")||"Leer consigna\nRevisar solución"};
   }
-  function exercise(recipe, index, opts) {
+  function exercise(recipe, index, opts, selectedVisuals) {
     const day=opts.mode==="weekly"?Math.floor(index/2)+1:null;
     const supports=opts.support==="alto"
       ?"Modelar una respuesta, presentar dos opciones, facilitar reconocimiento y detener si hay frustración."
@@ -127,10 +141,24 @@
       "Ejercicio "+(index+1)+": "+(day?"Día "+day+" · ":"")+recipe.title+" ("+label(recipe.domain)+")",
       "Objetivo: Practicar "+label(recipe.domain).toLowerCase()+" mediante una tarea concreta y observable. "+(opts.goal?"Objetivo funcional priorizado: "+opts.goal+".":"Registrar estrategias útiles sin equiparar el resultado a una puntuación diagnóstica."),
       "Demanda y modalidad: "+(LEVEL_NAMES[opts.level]||"Intermedio")+" · "+(FORMAT_NAMES[recipe.format]||"Variado")+". La dificultad describe la tarea, no la gravedad clínica ni el grado de autonomía.",
-      "Materiales: Utilizar el estímulo de la ficha y el recurso visual «"+recipe.visualTitle+"» cuando aparezca en el cuaderno. Contenido: "+recipe.stimuli,
+      "Materiales: "+(selectedVisuals.has(index)?"Además del enunciado, consulta el recurso «Ejercicio "+(index+1)+" · "+recipe.visualTitle+"» incluido al final.":"Utiliza los estímulos presentados a continuación.")+" Estímulos: "+recipe.stimuli,
       "Preparación: Leer o escuchar la consigna, mostrar un ejemplo sin resolver el resto, comprobar acceso sensorial y ofrecer una pausa. "+(opts.accessibility?"Adaptación individual: "+opts.accessibility+".":"Elegir tamaño de letra legible y espacio despejado."),
       "Pasos: 1) Observa o escucha el material. 2) "+recipe.task+" 3) Responde de forma "+response+" con el apoyo acordado. 4) Revisa junto con la profesional o acompañante la estrategia y las dificultades.",
-      "Ejemplo: La profesional modela un estímulo distinto al de la actividad sin anticipar su solución. La corrección se revisa después de responder; no se comparan resultados con baremos.",
+      "Ejemplo: "+({
+        orientacion_temporal:"Si una actividad del domingo se cambia al lunes siguiente, se ha trasladado un día.",
+        orientacion_espacial:"En una cuadrícula ajena a este ejercicio, B1 queda a la derecha de A1.",
+        orientacion_personal:"Una respuesta válida a «¿qué prefieres?» es elegir una actividad o ninguna.",
+        atencion:"Si hay que buscar cuadrados, un círculo aislado no debe marcarse.",
+        memoria:"Primero se lee un conjunto de palabras de práctica; después se tapa antes de responder.",
+        funciones_ejecutivas:"En una planificación de ejemplo, elegir materiales precede a revisarlos.",
+        lenguaje:"«Pera» es una fruta y «silla» es un mueble en un ejemplo independiente.",
+        visuoespacial:"De A1 a B1 se avanza una casilla a la derecha.",
+        praxias_gnosias:"Para ordenar una acción ficticia, se distingue qué paso debe preceder a otro.",
+        calculo:"Dos artículos ficticios de 1 € cada uno cuestan en total 2 €.",
+        cognicion_social:"Observar que alguien mira al suelo no permite conocer por sí solo su intención.",
+        velocidad_procesamiento:"Con una clave de práctica X=1, el código de X sería 1.",
+        cognicion_funcional:"Para anotar una compra futura podría elegirse una lista externa."
+      }[recipe.domain]||"Comienza con un ejemplo distinto de los estímulos y resuélvelo antes de iniciar.")+" Este ejemplo no resuelve los ítems de la actividad.",
       "Ayudas: "+supports+" No facilitar soluciones antes de dar oportunidad a participar.",
       "Adaptación: Mantener el nivel seleccionado y ajustar los apoyos por separado. Para reducir la demanda, disminuir elementos o pasos y conservar claves; para incrementarla, añadir una regla o distractor sin cambiar simultáneamente otras variables. Considerar barreras visuales, motoras y de comprensión.",
       "Duración y frecuencia: Aproximadamente 5–12 minutos según tolerancia. "+(day?"Propuesta de día "+day+"; los días son orientativos y no obligatorios.":"Una práctica breve esta semana, ajustable en sesión."),
@@ -140,12 +168,24 @@
   function build(opts) {
     const tasks=selectRecipes(opts);
     const covered=new Set(tasks.map(x=>x.domain));
-    const visuals=[];
-    for(const recipe of tasks){
-      if(visuals.length>=8)break;
-      const block=visualFor(recipe,opts);
-      if(!visuals.some(x=>x.type===block.type&&x.content===block.content))visuals.push(block);
-    }
+    // Un soporte por jornada (7) y uno adicional para el dominio más visuodependiente.
+    // Antes solo los ocho primeros ejercicios recibían material visual.
+    const allIndexes=tasks.map((_,index)=>index);
+    const chosenIndexes=[];
+    if(opts.mode==="weekly"){
+      for(let day=0;day<7;day++){
+        const pair=[day*2,day*2+1];
+        pair.sort((a,b)=>domainPriority(tasks[a].domain)-domainPriority(tasks[b].domain));
+        chosenIndexes.push(pair[0]);
+      }
+      const remaining=allIndexes.filter(x=>!chosenIndexes.includes(x))
+        .sort((a,b)=>domainPriority(tasks[a].domain)-domainPriority(tasks[b].domain));
+      if(remaining.length)chosenIndexes.push(remaining[0]);
+    }else chosenIndexes.push(...allIndexes);
+    const selectedVisuals=new Set(chosenIndexes);
+    const visuals=chosenIndexes.sort((a,b)=>a-b).map(index=>({
+      ...visualFor(tasks[index],opts),title:"Ejercicio "+(index+1)+" · "+tasks[index].visualTitle
+    }));
     const weekly=opts.mode==="weekly";
     const individual=opts.mode==="individual";
     return {
@@ -154,8 +194,8 @@
       introduction:weekly?"Cuaderno neuropsicológico multicomponente · Semana "+opts.week+". Encontrarás 7 jornadas orientativas con 2 tareas diferentes cada una. Puedes distribuirlas, descansar o hacer menos según el acuerdo terapéutico.":individual?"Ejercicio individual de "+label(opts.domain).toLowerCase()+". Adapta la actividad a tu ritmo y utiliza las ayudas previstas.":"Ficha de "+label(opts.domain).toLowerCase()+" · Semana "+opts.week+". Trabaja a tu ritmo y pide ayudas cuando las necesites.",
       why:"Estas actividades permiten practicar distintas habilidades cognitivas, identificar estrategias útiles y explorar su aplicación cotidiana. No son pruebas psicométricas y los resultados no indican por sí mismos una mejoría clínica.",
       objective:opts.goal||(weekly?"Estimulación multicomponente con cobertura semanal y adaptación individual.":"Trabajar "+label(opts.domain).toLowerCase()+" con apoyos graduados."),
-      instructions:["Semana "+opts.week,...tasks.map((task,i)=>exercise(task,i,opts))].join("\n\n"),
-      example:"Cada tarea aporta estímulos y una respuesta de referencia. Las soluciones sirven a la profesional o persona de apoyo para comprobar los ejemplos; no se utilizan para juzgar al paciente.",
+      instructions:["Semana "+opts.week,...tasks.map((task,i)=>exercise(task,i,opts,selectedVisuals))].join("\n\n"),
+      example:"Los ejemplos de cada ejercicio utilizan situaciones diferentes. No contienen las respuestas de las actividades. Puedes anotar dudas para revisarlas en consulta.",
       record_prompt:tasks.map((r,i)=>"Ejercicio "+(i+1)+" · "+r.title+": participación ___  ayuda ___  fatiga ___  observaciones ___").join("\n")+"\n\nDudas para comentar en consulta: ¿qué ayuda sirvió?, ¿qué actividad fue más llevadera?, ¿qué quieres cambiar?",
       safety_note:"Realiza las actividades de manera flexible. No fuerces recuerdos, no corrijas confrontativamente y evita practicar situaciones funcionales de riesgo sin supervisión adecuada.",
       remember:"La semana siguiente se diseña tras revisar juntos qué actividades y apoyos fueron útiles. Este material no constituye una evaluación diagnóstica.",
