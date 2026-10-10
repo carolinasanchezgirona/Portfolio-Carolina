@@ -277,7 +277,7 @@
       clinical_area: area(),
       neuro_profile: area() === "neuropsychology" ? {
         mode:$("clinic-neuro-mode")?.value||"single",
-        domain: $("clinic-neuro-domain")?.value || "",
+        domain: $("clinic-neuro-mode")?.value === "weekly" ? "multidominio" : ($("clinic-neuro-domain")?.value || ""),
         covered_domains:[...coveredDomains],
         intervention: $("clinic-neuro-intervention")?.value || "",
         level: $("clinic-neuro-level")?.value || "",
@@ -513,6 +513,11 @@
   function init() {
     if (!$("clinic-clinical-area")) return;
     $("clinic-clinical-area").addEventListener("change", panelVisible);
+    $("clinic-neuro-mode")?.addEventListener("change",panelVisible);
+    $("clinic-exercise-form")?.addEventListener("input",event=>{
+      if(area()!=="neuropsychology"||event.target?.id==="clinic-neuro-reviewed")return;
+      const check=$("clinic-neuro-reviewed");if(check)check.checked=false;
+    });
     $("clinic-visual-add")?.addEventListener("click", () => {
       const type = $("clinic-visual-type")?.value;
       if (!types[type] || blocks.length >= LIMIT) return;
