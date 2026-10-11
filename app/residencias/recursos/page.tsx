@@ -44,7 +44,7 @@ export default function RecursosResidenciasPage(){
         <p className="res-eyebrow">Recursos gratuitos · Equipos técnicos</p>
         <h1>Cómo programar actividades que tengan sentido en una residencia.</h1>
         <p className="res-lead">Ideas y herramientas para revisar el calendario, adaptar propuestas y diferenciar ocio, participación significativa e intervención clínica.</p>
-        <div className="res-actions"><a className="editorial-btn editorial-btn-primary" href="/residencias/semana-01/">Abrir programa Semana 1</a></div>
+        <div className="res-actions"><a className="editorial-btn editorial-btn-primary" href="/residencias/muestra/">Ver una actividad de muestra</a></div>
       </div>
     </section>
     <section className="res-section">
@@ -72,9 +72,9 @@ export default function RecursosResidenciasPage(){
       <div className="editorial-wrap res-split">
         <div>
           <p className="res-eyebrow">Muestra de Vida Activa</p>
-          <h2>De la teoría al material listo para imprimir.</h2>
-          <p>Consulta la nueva Semana 1 con 20 propuestas, cinco actividades desarrolladas y cinco fichas originales. El equipo deberá adaptar los materiales antes de utilizarlos.</p>
-          <a className="editorial-btn editorial-btn-primary" href="/residencias/semana-01/">Ver y guardar el programa completo</a>
+          <h2>Una muestra para valorar el material profesional.</h2>
+          <p>Consulta una actividad de demostración con instrucciones, materiales y alternativas de participación. Las programaciones completas, fichas y orientaciones profesionales están reservadas a las colaboraciones con centros.</p>
+          <a className="editorial-btn editorial-btn-primary" href="/residencias/muestra/">Consultar la actividad de muestra</a>
         </div>
         <aside className="res-note"><strong>Uso responsable</strong><p>La programación compartida aquí no sustituye la valoración individual, la planificación asistencial ni las competencias propias de cada disciplina.</p><a href="/residencias/vida-activa/" className="res-text-link">Conocer Vida Activa →</a></aside>
       </div>
