@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import PodcastArtwork from "./podcast-artwork";
 import EpisodePlayer from "./episode-player";
 import { episodes, podcastName, podcastSubtitle } from "./episodes";
@@ -57,7 +58,7 @@ export default function PodcastPage() {
               <div><h3><a href={"/podcast/" + first.slug + "/"}>{first.title}</a></h3><p>{first.summary}</p>
                 <div className="podcast-tags">{first.topics.map((topic) => <span key={topic}>{topic}</span>)}</div>
                 <a className="podcast-text-link" href={"/podcast/" + first.slug + "/"}>Leer la ficha del episodio ↗</a></div>
-              <div><p className="podcast-duration">{first.duration} minutos</p><EpisodePlayer title={first.title} audioSrc={first.audioSrc} spotifyUrl={first.spotifyUrl} /></div>
+              <div><Image className="podcast-episode-cover" src={first.coverSrc} alt={"Portada oficial del episodio 01: " + first.title} width={320} height={320} sizes="(max-width: 840px) 70vw, 320px" unoptimized /><p className="podcast-duration">{first.duration} minutos</p><EpisodePlayer title={first.title} audioSrc={first.audioSrc} spotifyUrl={first.spotifyUrl} /></div>
             </div>
           </article>
         </section>

@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import { notFound } from "next/navigation";
 import EpisodePlayer from "../episode-player";
-import PodcastArtwork from "../podcast-artwork";
 import { episodes, getEpisode } from "../episodes";
 
 type Props = { params: Promise<{ slug: string }> };
@@ -21,6 +21,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       description: episode.description,
       url: "https://carolinasanchezgirona.com/podcast/" + episode.slug + "/",
       type: "article",
+      images: [{ url: episode.coverSrc, width: 320, height: 320, alt: "Portada oficial de " + episode.title }],
     },
   };
 }
@@ -46,7 +47,7 @@ export default async function EpisodePage({ params }: Props) {
         <nav className="podcast-breadcrumb" aria-label="Ruta de navegación"><a href="/">Inicio</a><span>/</span><a href="/recursos/">Recursos</a><span>/</span><a href="/podcast/">Podcast</a><span>/</span><span>Episodio {episode.number}</span></nav>
         <header className="podcast-single-heading"><p className="podcast-eyebrow">Psicología Incómoda · Episodio {String(episode.number).padStart(2, "0")}</p><h1>{episode.title}</h1><p className="podcast-lead">{episode.description}</p></header>
         <div className="podcast-single-grid">
-          <div><PodcastArtwork compact /><EpisodePlayer title={episode.title} audioSrc={episode.audioSrc} spotifyUrl={episode.spotifyUrl} /><p className="podcast-duration">Duración: {episode.duration} min · En español</p></div>
+          <div><Image className="podcast-episode-cover" src={episode.coverSrc} alt={"Portada oficial: " + episode.title} width={320} height={320} sizes="(max-width: 840px) 70vw, 320px" unoptimized /><EpisodePlayer title={episode.title} audioSrc={episode.audioSrc} spotifyUrl={episode.spotifyUrl} /><p className="podcast-duration">Duración: {episode.duration} min · En español</p></div>
           <article className="podcast-article">
             <h2>Sobre este episodio</h2><p>{episode.summary}</p>
             {episode.sections.map((section) => <section key={section.heading}><h2>{section.heading}</h2>{section.paragraphs.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}</section>)}

@@ -64,3 +64,6 @@
 .podcast-page :is(a,button,audio):focus-visible{outline:3px solid #087a8f;outline-offset:4px}
 @media(max-width:840px){.podcast-hero,.podcast-feature-grid,.podcast-single-grid{grid-template-columns:1fr;gap:30px}.podcast-hero{padding-bottom:55px}.podcast-hero>.podcast-artwork{max-width:520px}.podcast-introduction,.podcast-bottom{grid-template-columns:1fr;gap:22px}.podcast-single-grid>.podcast-artwork{max-width:360px}}
 @media(max-width:500px){.podcast-page{padding-bottom:50px}.podcast-breadcrumb{margin-bottom:30px}.podcast-episode-feature{padding:20px}.podcast-artwork-headline span{font-size:6.1vw}.podcast-artwork-headline strong{font-size:7.3vw}.podcast-hero h1{font-size:clamp(3rem,14vw,4.4rem)}.podcast-introduction{padding:35px 0}.podcast-episodes{padding:35px 0}.podcast-feature-grid h3{font-size:2.2rem}}
+
+/* Portada oficial del episodio: imagen íntegra, sin recortes ni elementos superpuestos. */
+.podcast-episode-cover{display:block;width:min(100%,320px);height:auto;aspect-ratio:1 / 1;object-fit:contain;border-radius:12px;border:1px solid #ebded8;box-shadow:0 12px 26px rgba(23,58,94,.08);margin:16px 0 20px}
