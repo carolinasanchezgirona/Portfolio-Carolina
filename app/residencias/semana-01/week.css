@@ -221,3 +221,21 @@ body:has(.vaweek) .mobile-booking-shortcut{display:none!important}
 .vaweek .vaweek-cover h2 em{color:#d8766e!important}
 .vaweek .vaweek-document{border:0!important;border-radius:0!important}
 }
+
+/* Índice rápido: pensado para navegación web sin convertir el dossier en un menú de botones. */
+.vaweek .vaweek-chapter-nav{width:min(880px,calc(100% - 32px));margin:20px auto 0;padding:19px 23px;border:1px solid #e5e3dd;border-radius:8px;background:#fff;display:grid;grid-template-columns:.75fr 1.35fr;gap:21px;align-items:center}
+.vaweek .vaweek-chapter-nav>div:first-child>span{display:block;color:#47689a;font-weight:850;letter-spacing:.07em;font-size:.7rem}
+.vaweek .vaweek-chapter-nav>div:first-child>strong{display:block;color:#223750;font-family:var(--font-newsreader),Georgia,serif;font-size:1.42rem;line-height:1.18;font-weight:600;margin-top:5px}
+.vaweek .vaweek-chapter-links{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}
+.vaweek .vaweek-chapter-links a{padding:11px 12px;border:1px solid #e3e5e8;border-radius:6px;background:#faf9f6;display:flex;align-items:center;justify-content:space-between;gap:8px;color:#2f4665;font-size:.82rem;font-weight:750;text-decoration:none}
+.vaweek .vaweek-chapter-links a:hover{border-color:#8ca4cb;background:#f1f5fa}
+.vaweek .vaweek-chapter-links a:focus-visible{outline:3px solid #2c659b;outline-offset:2px}
+.vaweek .vaweek-chapter-links a span{color:#ca796f}
+.vaweek .vaweek-part[id]{scroll-margin-top:120px}
+@media screen and (max-width:750px){
+.vaweek .vaweek-chapter-nav{width:calc(100% - 24px);grid-template-columns:1fr;gap:13px;padding:16px;margin-top:15px}
+.vaweek .vaweek-chapter-nav>div:first-child>strong{font-size:1.35rem}
+.vaweek .vaweek-chapter-links{grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}
+.vaweek .vaweek-chapter-links a{padding:11px 9px;font-size:.73rem;line-height:1.25;min-height:47px}
+}
+@media screen and (max-width:355px){.vaweek .vaweek-chapter-links{grid-template-columns:1fr}}
