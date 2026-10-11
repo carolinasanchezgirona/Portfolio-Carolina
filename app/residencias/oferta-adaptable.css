@@ -58,3 +58,8 @@
 @media(max-width:820px){
  .editorial-site:has(.res-page) .site-global-header{background:#fffdf8!important;backdrop-filter:none!important}
 }
+
+/* Las páginas B2B disponen de CTA específicos; evita que la reserva clínica flotante tape texto o botones. */
+@media(max-width:820px){
+ body:has(.res-page) .mobile-booking-shortcut{display:none!important}
+}
