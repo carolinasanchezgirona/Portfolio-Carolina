@@ -49,3 +49,112 @@
   .res-map-sheet{break-inside:auto}
   .res-doc-section .res-map-sheet .res-task{font-size:10pt}
 }
+
+
+/* Vida Activa · experiencia comercial B2B y dossier imprimible */
+.res-inline-link{color:#075e68;text-underline-offset:3px;font-weight:700}
+.res-benefits{background:#fff}
+.res-audience-grid,.res-formats-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin-top:30px}
+.res-audience-card,.res-format-card{padding:27px;border-radius:14px;border:1px solid #d4e4e6;background:#f9fcfc;min-width:0}
+.res-audience-card{border-top:4px solid #18818a}
+.res-audience-card h3,.res-format-card h3{font-size:1.6rem;line-height:1.23;margin:0 0 12px}
+.res-audience-card p:last-child,.res-format-card p{margin:0;color:#4b626c;font-size:.94rem;line-height:1.66}
+.res-audience-card .res-eyebrow{font-size:.76rem;margin-bottom:18px}
+.res-format-card{display:flex;flex-direction:column;align-items:start;background:#fff}
+.res-format-tag{background:#e6f2f2;color:#155868;font-size:.76rem;font-weight:800;padding:7px 11px;border-radius:30px;margin-bottom:20px}
+.res-format-card p{flex:1;margin-bottom:24px}
+.res-pilot-list{list-style:none;counter-reset:none;padding:12px 27px;margin:0;background:#fff;border:1px solid #d4e4e6;border-radius:14px}
+.res-pilot-list li{display:grid;gap:6px;grid-template-columns:1fr;border-bottom:1px solid #d4e4e6;padding:17px 0}
+.res-pilot-list li:last-child{border:0}
+.res-pilot-list strong{font-family:var(--font-newsreader),Georgia,serif;font-weight:600;font-size:1.43rem;color:#173a5e}
+.res-pilot-list span{font-size:.92rem;color:#536972}
+.res-pilot-product{background:#fff}
+.res-pilot-deliverables{padding:29px;border:1px solid #cce1e2;background:#f3fafa;border-radius:15px}
+.res-pilot-deliverables h3{font-size:1.75rem;margin:0 0 16px}
+.res-pilot-deliverables ul{padding-left:20px;margin:0;line-height:1.7;color:#355562}
+.res-pilot-deliverables li{padding:5px 0}
+.res-pilot-deliverables p{font-size:.82rem;margin:20px 0 0!important}
+
+/* Dossier profesional para direcciones: lectura web e impresión A4 */
+.res-dossier-page{background:#f4f7f7;padding-bottom:64px}
+.res-dossier-toolbar{padding:20px 0 12px}
+.res-dossier-toolbar .res-breadcrumb{margin:0 0 14px}
+.res-dossier-actions{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px}
+.res-dossier-actions .editorial-btn{cursor:pointer;font:inherit;font-size:.91rem;font-weight:700}
+.res-dossier-sheet{width:min(900px,calc(100% - 48px));margin:20px auto 0;border:1px solid #d2dfe2;border-radius:14px;background:#fff;box-shadow:0 15px 40px rgba(25,53,69,.06);overflow:hidden}
+.res-dossier-cover{background:linear-gradient(130deg,#e8f4f5,#f8fbfb);padding:46px 54px 38px;border-bottom:1px solid #cfe0e2}
+.res-dossier-headerline{display:flex;justify-content:space-between;align-items:center;gap:18px;flex-wrap:wrap;border-bottom:1px solid #c4d8db;padding:0 0 20px;margin-bottom:46px;font-size:.78rem;letter-spacing:.09em;color:#285461}
+.res-dossier-headerline strong{font-size:1rem;letter-spacing:.04em;color:#173a5e}
+.res-dossier-cover h1{font-size:clamp(3rem,6vw,5.2rem);max-width:15ch;line-height:1.05;margin:0 0 23px;letter-spacing:-.04em}
+.res-dossier-subtitle{font-size:1.18rem;max-width:57ch;line-height:1.65;color:#3b5966;margin:0 0 39px}
+.res-dossier-signature{display:flex;flex-direction:column;gap:5px;border-left:3px solid #0e858b;padding-left:18px;font-size:.92rem;color:#4d6571}
+.res-dossier-signature strong{color:#173a5e}
+.res-dossier-section{padding:37px 54px 18px}
+.res-dossier-section h2{font-size:clamp(1.9rem,3.5vw,2.55rem);line-height:1.15;max-width:27ch;margin:0 0 18px}
+.res-dossier-section>p:not(.res-eyebrow){font-size:.96rem;line-height:1.76;color:#455e69;margin:0 0 18px}
+.res-dossier-values,.res-dossier-models{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:25px 0 0}
+.res-dossier-values>div,.res-dossier-models>div{padding:19px;background:#eff7f7;border-radius:10px;display:flex;flex-direction:column;gap:10px}
+.res-dossier-values strong,.res-dossier-models h3{font-size:1.25rem;font-family:var(--font-newsreader),Georgia,serif;color:#173a5e;font-weight:650;margin:0}
+.res-dossier-values span,.res-dossier-models p{margin:0;color:#526b73;font-size:.86rem;line-height:1.55}
+.res-dossier-deliverables{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:11px}
+.res-dossier-deliverables>div{padding:17px 20px;border:1px solid #d7e6e8;border-radius:10px}
+.res-dossier-deliverables h3{font-size:1.25rem;margin:0 0 8px}
+.res-dossier-deliverables p{font-size:.86rem;color:#516871;line-height:1.65;margin:0}
+.res-dossier-pilot{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.res-dossier-pilot>div{display:flex;gap:14px;padding:17px;background:#f4f9f9;border:1px solid #d9e6e7;border-radius:9px}
+.res-dossier-pilot>div>span{color:#0a6976;font-size:.82rem;font-weight:800}
+.res-dossier-pilot strong{color:#173a5e}
+.res-dossier-pilot p{font-size:.87rem;color:#526a73;line-height:1.55;margin:7px 0 0}
+.res-dossier-contact{display:flex;justify-content:space-between;gap:20px;padding:40px 54px;background:#e7f3f4;margin-top:25px;align-items:end}
+.res-dossier-contact h2{font-size:2.1rem;margin:0 0 12px}
+.res-dossier-contact p{font-size:.9rem;color:#526971;margin:0 0 11px}
+.res-dossier-contact a:not(.editorial-btn){color:#0a6471;overflow-wrap:anywhere;font-weight:700}
+.res-dossier-legal{padding:15px 54px 25px;margin:0;font-size:.73rem;color:#637980}
+@media(max-width:850px){
+  .res-audience-grid,.res-formats-grid{grid-template-columns:1fr}
+  .res-audience-card,.res-format-card{padding:22px}
+  .res-dossier-cover{padding:34px}
+  .res-dossier-section{padding:27px 34px 12px}
+  .res-dossier-contact{padding:30px 34px}
+}
+@media(max-width:570px){
+  .res-dossier-sheet{width:calc(100% - 24px);margin-top:10px}
+  .res-dossier-cover{padding:27px 23px}
+  .res-dossier-headerline{margin-bottom:30px}
+  .res-dossier-cover h1{font-size:3rem}
+  .res-dossier-section{padding:24px 23px 10px}
+  .res-dossier-values,.res-dossier-models,.res-dossier-deliverables,.res-dossier-pilot{grid-template-columns:1fr}
+  .res-dossier-contact{padding:28px 23px;display:block}
+  .res-dossier-legal{padding:15px 23px}
+  .res-dossier-contact h2{font-size:1.9rem}
+}
+@media print{
+  @page{size:A4;margin:15mm}
+  .res-dossier-page{padding:0;background:#fff!important}
+  .res-dossier-toolbar{display:none!important}
+  .res-dossier-sheet{width:100%;max-width:none;border:0;margin:0;box-shadow:none;border-radius:0;overflow:visible}
+  .res-dossier-cover{padding:16pt 0 23pt;background:#e8f4f5!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .res-dossier-headerline{margin-bottom:19pt;padding-bottom:10pt;font-size:8pt}
+  .res-dossier-cover h1{font-size:35pt;margin-bottom:9pt}
+  .res-dossier-subtitle{font-size:12pt;line-height:1.5;margin-bottom:16pt}
+  .res-dossier-signature{font-size:10pt}
+  .res-dossier-section{padding:14pt 0 8pt}
+  .res-dossier-section h2{font-size:18pt;margin-bottom:8pt}
+  .res-dossier-section>p:not(.res-eyebrow){font-size:10.5pt;line-height:1.5;margin-bottom:10pt}
+  .res-dossier-values,.res-dossier-models{margin-top:10pt;gap:7pt}
+  .res-dossier-values>div,.res-dossier-models>div{padding:10pt}
+  .res-dossier-values span,.res-dossier-models p{font-size:9.5pt}
+  .res-dossier-deliverables{gap:7pt}
+  .res-dossier-deliverables>div{padding:9pt}
+  .res-dossier-deliverables h3{font-size:12pt;margin-bottom:4pt}
+  .res-dossier-deliverables p{font-size:9pt}
+  .res-dossier-pilot{gap:8pt}
+  .res-dossier-pilot>div{padding:9pt}
+  .res-dossier-pilot p{font-size:9pt}
+  .res-dossier-contact{padding:18pt 0;margin-top:14pt;background:#e7f3f4!important}
+  .res-dossier-contact h2{font-size:17pt}
+  .res-dossier-contact p{font-size:10pt}
+  .res-dossier-legal{padding:10pt 0;font-size:8pt}
+  .res-dossier-break{break-before:page;page-break-before:always}
+  .res-dossier-values>div,.res-dossier-models>div,.res-dossier-deliverables>div,.res-dossier-pilot>div{break-inside:avoid;page-break-inside:avoid}
+}
