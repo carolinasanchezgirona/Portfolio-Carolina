@@ -52,6 +52,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${base}/articulos/`, lastModified: staticLastModified, changeFrequency: "weekly", priority: 0.88 },
     { url: `${base}/pregunta-a-carolina/`, lastModified: new Date(questionsLastModified), changeFrequency: "weekly", priority: 0.88 },
     { url: `${base}/recursos/`, lastModified: staticLastModified, changeFrequency: "weekly", priority: 0.78 },
+    { url: `${base}/recursos/cuadernos-estimulacion-cognitiva/`, lastModified: new Date("2026-10-11T12:00:00+02:00"), changeFrequency: "monthly", priority: 0.8 },
+    { url: `${base}/recursos/cuadernos-estimulacion-cognitiva/muestra/`, lastModified: new Date("2026-10-11T12:00:00+02:00"), changeFrequency: "monthly", priority: 0.74 },
     { url: `${base}/cita/`, lastModified: staticLastModified, changeFrequency: "daily", priority: 0.9 },
   ];
 
