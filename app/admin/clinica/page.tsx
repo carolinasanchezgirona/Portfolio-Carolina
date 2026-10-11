@@ -593,6 +593,7 @@ export default function AdminClinicaPage() {
           <label className="clinic-material-context">Objetivo o contexto para personalizar <span>(sin nombres ni datos identificativos, solo profesional)</span><textarea id="clinic-exercise-rationale" rows={2} placeholder="¿Qué se busca trabajar? ¿Qué apoyos, límites o preferencias hay que contemplar?" /></label>
           <div className="clinic-material-picker">
             <div className="clinic-material-picker-heading"><strong>2 · Empieza por una ficha de la biblioteca o por la IA</strong><p>Buscar no modifica los materiales existentes hasta que decidas guardarlos.</p></div>
+            <a className="clinic-secondary" href="/admin/clinica/materiales-externos/" style={{ display: "inline-flex", alignItems: "center", textDecoration: "none", marginBottom: 12 }}>¿Ya tienes un cuaderno o ficha? Subir material externo →</a>
             <label>Buscar en la biblioteca
               <input id="clinic-material-search" type="search" placeholder="Buscar por título, proceso o tipo…" autoComplete="off" />
             </label>
