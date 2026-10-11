@@ -25,20 +25,36 @@ function usesGlobalChrome(pathname: string) {
   return pathname !== "/entre-sesiones" && pathname !== "/entre-sesiones/";
 }
 
-const mainNavigation = [
+const serviceNavigation = [
   { href: "/psicologia/", label: "Psicología" },
   { href: "/neuropsicologia/", label: "Neuropsicología" },
-  { href: "/residencias/", label: "Para residencias" },
-  { href: "/sobre-mi/", label: "Sobre mí" },
-  { href: "/articulos/", label: "Artículos" },
-  { href: "/pregunta-a-carolina/", label: "Tu Consulta" },
-  { href: "/recursos/", label: "Recursos" },
-  { href: "/mi-espacio/", label: "Mi espacio" },
+  { href: "/residencias/", label: "Para centros y residencias" },
 ] as const;
+
+const resourceNavigation = [
+  { href: "/recursos/", label: "Materiales y cuadernos" },
+  { href: "/articulos/", label: "Artículos" },
+] as const;
+
+const servicePaths = [
+  "/psicologia/", "/neuropsicologia/", "/residencias/", "/ansiedad/",
+  "/duelo/", "/evaluacion-neuropsicologica/", "/deterioro-cognitivo/",
+  "/problemas-de-memoria/", "/psicologa-arenys-de-mar/",
+];
+
+function ChevronIcon() {
+  return <svg className="site-nav-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true"><path d="m6 9 6 6 6-6" /></svg>;
+}
+
+function PatientIcon() {
+  return <svg className="site-patient-icon" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4" /><path d="M4.5 21v-2a7.5 7.5 0 0 1 15 0v2" /></svg>;
+}
 
 function SiteHeader({ pathname }: { pathname: string }) {
   const currentPath = pathname === "/" || pathname.endsWith("/") ? pathname : pathname + "/";
-  const currentPage = (href: string) => (currentPath === href || (href === "/residencias/" && currentPath.startsWith("/residencias/"))) ? "page" as const : undefined;
+  const currentPage = (href: string) => currentPath === href ? "page" as const : undefined;
+  const servicesActive = servicePaths.some(href => currentPath === href || (href === "/residencias/" && currentPath.startsWith(href)));
+  const resourcesActive = currentPath.startsWith("/recursos/") || currentPath.startsWith("/articulos/");
 
   return (
     <header className="site-header site-global-header">
@@ -48,27 +64,59 @@ function SiteHeader({ pathname }: { pathname: string }) {
       </a>
 
       <nav className="nav site-global-nav" aria-label="Navegación principal">
-        {mainNavigation.map(({ href, label }) => (
-          <a key={href} href={href} aria-current={currentPage(href)}>{label}</a>
-        ))}
-        <a className="nav-cta" href="/cita/">Pedir cita</a>
+        <details className={"site-nav-group" + (servicesActive ? " is-current" : "")}>
+          <summary>Servicios <ChevronIcon /></summary>
+          <div className="site-nav-submenu">
+            {serviceNavigation.map(({ href, label }) =>
+              <a key={href} href={href} aria-current={currentPage(href)}>{label}</a>
+            )}
+          </div>
+        </details>
+        <a className="site-nav-feature" href="/pregunta-a-carolina/" aria-current={currentPage("/pregunta-a-carolina/")}>Tu Consulta</a>
+        <details className={"site-nav-group site-nav-resources" + (resourcesActive ? " is-current" : "")}>
+          <summary>Recursos <ChevronIcon /></summary>
+          <div className="site-nav-submenu">
+            {resourceNavigation.map(({ href, label }) =>
+              <a key={href} href={href} aria-current={currentPage(href)}>{label}</a>
+            )}
+          </div>
+        </details>
+        <a href="/sobre-mi/" aria-current={currentPage("/sobre-mi/")}>Sobre mí</a>
       </nav>
 
-      <details className="site-mobile-nav">
-        <summary>Menú</summary>
-        <nav className="site-mobile-nav-panel" aria-label="Navegación móvil">
-          <a href="/" aria-current={currentPage("/")}>Inicio</a>
-          {mainNavigation.map(({ href, label }) => (
-            <a key={href} href={href} aria-current={currentPage(href)}>{label}</a>
-          ))}
-          <a href="/psicologa-arenys-de-mar/" aria-current={currentPage("/psicologa-arenys-de-mar/")}>Consulta en Arenys de Mar</a>
-          <a href="/ansiedad/">Ansiedad</a>
-          <a href="/duelo/">Duelo</a>
-          <a href="/evaluacion-neuropsicologica/">Evaluación neuropsicológica</a>
-          <a href="/deterioro-cognitivo/">Deterioro cognitivo</a>
-          <a href="/cita/">Pedir cita</a>
-        </nav>
-      </details>
+      <div className="site-header-actions">
+        <a className="site-patient-link" href="/mi-espacio/" aria-label="Acceder a Mi espacio" aria-current={currentPage("/mi-espacio/")}>
+          <PatientIcon /><span>Mi espacio</span>
+        </a>
+        <a className="nav-cta site-booking-cta" href="/cita/">Pedir cita</a>
+
+        <details className="site-mobile-nav">
+          <summary>Menú</summary>
+          <nav className="site-mobile-nav-panel" aria-label="Navegación móvil">
+            <a href="/" aria-current={currentPage("/")}>Inicio</a>
+            <details className="site-mobile-nav-section">
+              <summary>Servicios <ChevronIcon /></summary>
+              <div className="site-mobile-nav-items">
+                {serviceNavigation.map(({ href, label }) =>
+                  <a key={href} href={href} aria-current={currentPage(href)}>{label}</a>
+                )}
+              </div>
+            </details>
+            <a className="site-mobile-feature" href="/pregunta-a-carolina/" aria-current={currentPage("/pregunta-a-carolina/")}>Tu Consulta</a>
+            <details className="site-mobile-nav-section">
+              <summary>Recursos <ChevronIcon /></summary>
+              <div className="site-mobile-nav-items">
+                {resourceNavigation.map(({ href, label }) =>
+                  <a key={href} href={href} aria-current={currentPage(href)}>{label}</a>
+                )}
+              </div>
+            </details>
+            <a href="/sobre-mi/" aria-current={currentPage("/sobre-mi/")}>Sobre mí</a>
+            <a className="site-mobile-patient" href="/mi-espacio/">Mi espacio · Acceso de pacientes</a>
+            <a className="site-mobile-booking" href="/cita/">Pedir cita</a>
+          </nav>
+        </details>
+      </div>
     </header>
   );
 }

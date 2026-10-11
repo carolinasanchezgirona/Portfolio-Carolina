@@ -442,3 +442,61 @@
 
 .editorial-local-photo{display:block;width:min(100%,480px);margin:0 0 24px;border-radius:16px;overflow:hidden;border:1px solid var(--e-line)}
 .editorial-local-photo img{display:block;width:100%;height:auto;aspect-ratio:4/3;object-fit:cover}
+
+
+/* Navegación pública agrupada. Mantener las URL existentes por continuidad y SEO. */
+.editorial-site .site-global-header{gap:20px}
+.editorial-site .site-global-nav{flex:1;justify-content:flex-end;gap:18px;margin-left:auto;min-width:0}
+.editorial-site .site-global-nav > a{display:inline-flex;align-items:center;min-height:44px;white-space:nowrap;font-size:.86rem;text-decoration:none}
+.editorial-site .site-global-nav .site-nav-feature{color:var(--e-teal);font-weight:700}
+.editorial-site .site-global-nav .site-nav-group{position:relative;flex:0 0 auto}
+.editorial-site .site-nav-group > summary{list-style:none;display:inline-flex;align-items:center;gap:6px;min-height:44px;padding:8px 2px;font-size:.86rem;font-weight:550;color:var(--e-ink-soft);cursor:pointer}
+.editorial-site .site-nav-group > summary::-webkit-details-marker{display:none}
+.editorial-site .site-nav-group > summary::marker{content:""}
+.editorial-site .site-nav-group.is-current > summary,
+.editorial-site .site-nav-group > summary:hover,
+.editorial-site .site-nav-group[open] > summary{color:var(--e-teal)}
+.editorial-site .site-nav-chevron{flex:none;transition:transform .18s ease}
+.editorial-site details[open] > summary .site-nav-chevron{transform:rotate(180deg)}
+.editorial-site .site-nav-submenu{position:absolute;z-index:60;top:calc(100% + 7px);left:-14px;width:260px;padding:9px;background:#fff;border:1px solid var(--e-line);border-radius:12px;box-shadow:0 18px 42px rgba(28,35,32,.12)}
+.editorial-site .site-nav-resources .site-nav-submenu{right:-12px;left:auto}
+.editorial-site .site-nav-submenu a{display:flex;align-items:center;min-height:44px;padding:10px 13px;border-radius:8px;text-decoration:none;line-height:1.4;font-size:.88rem;color:var(--e-ink-soft)}
+.editorial-site .site-nav-submenu a:hover,
+.editorial-site .site-nav-submenu a[aria-current="page"]{background:var(--e-teal-tint);color:var(--e-teal)}
+.editorial-site .site-header-actions{display:flex;align-items:center;gap:10px;flex:none}
+.editorial-site .site-patient-link{display:inline-flex;align-items:center;justify-content:center;gap:7px;min-height:44px;padding:9px 8px;border-radius:9px;color:var(--e-ink-soft);font-size:.84rem;font-weight:600;text-decoration:none;white-space:nowrap}
+.editorial-site .site-patient-link:hover,
+.editorial-site .site-patient-link[aria-current="page"]{background:var(--e-teal-tint);color:var(--e-teal)}
+.editorial-site .site-patient-icon{flex:none}
+.editorial-site .site-header-actions .site-booking-cta{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:10px 16px;border:0;border-radius:999px;background:#087A8F;color:#fff;font-size:.86rem;font-weight:700;white-space:nowrap;text-decoration:none}
+.editorial-site .site-header-actions .site-booking-cta:hover{background:#066B7D;color:#fff}
+.editorial-site .site-global-header :is(a,summary):focus-visible{outline:3px solid #087A8F;outline-offset:3px}
+.editorial-site .site-mobile-nav-panel{width:min(330px,calc(100vw - 36px));max-height:min(76vh,650px);max-height:min(76dvh,650px)}
+.editorial-site .site-mobile-nav .site-mobile-nav-section > summary{display:flex;justify-content:space-between;width:100%;min-height:48px;border:0;border-radius:8px;background:transparent;padding:11px 12px;color:var(--e-ink-soft);font-size:.95rem;font-weight:600}
+.editorial-site .site-mobile-nav-section > summary:hover{background:var(--e-teal-tint);color:var(--e-teal)}
+.editorial-site .site-mobile-nav-items{padding-left:13px;border-left:2px solid var(--e-teal-tint);margin:2px 0 6px 12px}
+.editorial-site .site-mobile-nav-items a{font-size:.9rem;min-height:46px}
+.editorial-site .site-mobile-nav-panel > a{font-size:.95rem}
+.editorial-site .site-mobile-nav-panel .site-mobile-feature{color:var(--e-teal);font-weight:700}
+.editorial-site .site-mobile-nav-panel .site-mobile-patient{margin-top:10px;border-top:1px solid var(--e-line);border-radius:0}
+.editorial-site .site-mobile-nav-panel .site-mobile-booking{justify-content:center;margin-top:6px;border-radius:9px;background:#087A8F;color:#fff;font-weight:700}
+.editorial-site .site-mobile-nav-panel .site-mobile-booking:hover{background:#066B7D;color:#fff}
+@media(max-width:1150px){
+  .editorial-site .site-global-header .site-global-nav{display:none}
+  .editorial-site .site-global-header .site-mobile-nav{display:block}
+}
+@media(max-width:680px){
+  .editorial-site .site-header-actions{gap:6px}
+  .editorial-site .site-patient-link{width:44px;padding:9px}
+  .editorial-site .site-patient-link span{display:none}
+  .editorial-site .site-header-actions .site-booking-cta{padding:10px 12px;font-size:.82rem}
+}
+@media(max-width:420px){
+  .editorial-site .site-global-header{gap:8px}
+  .editorial-site .site-patient-link{display:none}
+  .editorial-site .site-mobile-nav summary{padding-left:10px;padding-right:10px}
+}
+@media(max-width:350px){
+  .editorial-site .site-header-actions .site-booking-cta{display:none}
+  .editorial-site .site-global-header .brand-name{font-size:1rem}
+}
