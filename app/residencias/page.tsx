@@ -70,7 +70,7 @@ export default function ResidenciasPage() {
             <p className="res-lead">Diseño de programas de estimulación cognitiva, participación ocupacional y bienestar para residencias y centros de día. Una estructura clara para el equipo, con opciones adaptadas a las capacidades e intereses de los residentes.</p>
             <div className="res-actions">
               <a className="editorial-btn editorial-btn-primary" href="/residencias/vida-activa/">Conocer Vida Activa <span aria-hidden="true">↗</span></a>
-              <a className="editorial-btn editorial-btn-secondary" href="/residencias/muestra/">Ver una semana de ejemplo</a>
+              <a className="editorial-btn editorial-btn-secondary" href="/residencias/muestra/">Ver una actividad de muestra</a>
             </div>
             <p className="res-small">Propuesta para centros del Maresme, Barcelona y otros territorios mediante recursos digitales.</p>
           </div>
@@ -101,7 +101,7 @@ export default function ResidenciasPage() {
             <h2>Una semana organizada, pero no rígida.</h2>
             <p>La programación considera acogidas, tiempos de descanso, actividades grupales e individuales, y alternativas para quienes no desean participar en una propuesta concreta.</p>
             <p>En una residencia con varias unidades, el modelo permite planificar actividades paralelas y no depender de una sesión masiva para todos los residentes.</p>
-            <a className="res-text-link" href="/residencias/muestra/">Explorar la programación de ejemplo →</a>
+            <a className="res-text-link" href="/residencias/muestra/">Conocer una actividad de muestra →</a>
           </div>
           <div className="res-schedule-preview" aria-label="Ejemplos de franjas de actividad">
             <div className="res-schedule-head"><span>Hora</span><span>Propuesta</span></div>
@@ -130,7 +130,7 @@ export default function ResidenciasPage() {
           <div>
             <p className="res-eyebrow">Programa en desarrollo</p>
             <h2>Vida Activa, el sistema de programación de Dememoria.</h2>
-            <p>Una propuesta modular con calendarios, guías para el equipo, materiales para los participantes y adaptaciones por niveles. Estamos definiendo el formato comercial y las condiciones de las primeras colaboraciones.</p>
+            <p>Una propuesta modular con calendarios, guías para el equipo, materiales para los participantes y adaptaciones por niveles. Las modalidades y condiciones se definen en una propuesta específica para cada centro.</p>
             <a className="editorial-btn editorial-btn-primary" href="/residencias/vida-activa/">Ver el programa</a>
           </div>
           <div className="res-quote">«No se trata de ocupar todas las horas. Se trata de abrir oportunidades para participar, elegir y seguir siendo uno mismo».</div>
