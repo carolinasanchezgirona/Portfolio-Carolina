@@ -16,13 +16,22 @@ export default function Semana01(){
   <section className="vaweek-webhero vaweek-no-print">
    <div className="editorial-wrap">
     <nav aria-label="Ruta de navegación" className="res-breadcrumb"><Link href="/">Inicio</Link><span>/</span><Link href="/residencias/">Residencias</Link><span>/</span><Link href="/residencias/vida-activa/">Vida Activa</Link><span>/</span><span>Semana 1</span></nav>
-    <p className="vaweek-kicker">Vida Activa · Colección 02</p>
-    <h1>Semana 1. Más vida en cada día.</h1>
-    <p>Programa de muestra para residencias y centros de día. Consulta la programación, las cinco guías completas y el resto de las actividades. También puedes imprimirlo o guardarlo como PDF.</p>
+    <p className="vaweek-kicker">Vida Activa · Dossier profesional / 01</p>
+    <h1>Semana 01. Actividades con sentido, día a día.</h1>
+    <p>Una edición completa para explorar: 20 propuestas, cinco guías detalladas y cinco fichas originales para participantes. Consulta cada apartado en la web o imprime el material cuando lo necesites.</p>
     <div className="vaweek-actions"><PrintWeekButton/><Link href="/residencias/semana-01/fichas/" className="vaweek-btn-alt">Ver fichas para participantes</Link></div>
     <p className="vaweek-hint">La versión web es imprimible y complementa los PDF editoriales originales. Los contenidos son propuestas orientativas sujetas a valoración y adaptación por el equipo del centro.</p>
    </div>
   </section>
+  <nav className="vaweek-chapter-nav vaweek-no-print" aria-label="Índice del programa semanal">
+   <div><span>GUÍA DE LECTURA</span><strong>Ve directamente a lo que necesitas.</strong></div>
+   <div className="vaweek-chapter-links">
+    <a href="#calendario-vida-activa">Calendario <span aria-hidden="true">↗</span></a>
+    <a href="#actividades-principales">Guías profesionales <span aria-hidden="true">↗</span></a>
+    <a href="#actividades-complementarias">Otras actividades <span aria-hidden="true">↗</span></a>
+    <Link href="/residencias/semana-01/fichas/">Fichas imprimibles <span aria-hidden="true">↗</span></Link>
+   </div>
+  </nav>
   <article className="vaweek-document" aria-label="Programa profesional de actividades, Semana 1">
    <header className="vaweek-cover">
     <div className="vaweek-top"><span>DEMEmÒRIA</span><span>PROGRAMACIÓN PARA RESIDENCIAS · 2026</span></div>
