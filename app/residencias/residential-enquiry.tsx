@@ -16,7 +16,7 @@ export default function ResidentialEnquiry() {
   const [copied, setCopied] = useState(false);
 
   const message = useMemo(() => [
-    "Hola, me gustaría recibir información sobre Vida Activa para nuestra residencia o centro de día.",
+    "Hola, nos gustaría solicitar una propuesta de Vida Activa para nuestra residencia o centro de día.",
     "",
     "Centro: " + (centre.trim() || "No indicado"),
     "Localidad: " + (location.trim() || "No indicada"),
@@ -24,16 +24,16 @@ export default function ResidentialEnquiry() {
     "Interés principal: " + (need || "No indicado"),
     "Comentario sobre la programación: " + (note.trim() || "Sin comentarios adicionales"),
     "",
-    "Me gustaría conocer las posibilidades de colaboración.",
+    "Nos gustaría conocer las opciones de colaboración y las condiciones de una propuesta para nuestro centro.",
   ].join("\n"), [centre, location, size, need, note]);
 
   const mailto = "mailto:" + contactEmail +
-    "?subject=" + encodeURIComponent("Consulta de residencia | Vida Activa") +
+    "?subject=" + encodeURIComponent("Propuesta para centro | Vida Activa") +
     "&body=" + encodeURIComponent(message);
 
   async function copyMessage() {
     try {
-      await navigator.clipboard.writeText("Para: " + contactEmail + "\nAsunto: Consulta de residencia | Vida Activa\n\n" + message);
+      await navigator.clipboard.writeText("Para: " + contactEmail + "\nAsunto: Propuesta para centro | Vida Activa\n\n" + message);
       setCopied(true);
     } catch {
       setCopied(false);
@@ -44,7 +44,7 @@ export default function ResidentialEnquiry() {
     <div className="res-contact-panel" id="contacto-profesional">
       <div className="res-contact-copy">
         <p className="res-eyebrow">Primer contacto profesional</p>
-        <h2>Cuéntame cómo es tu centro.</h2>
+        <h2>Solicita una propuesta para tu centro.</h2>
         <p>Con unos pocos datos generales podemos valorar qué formato de programación sería útil. No necesitas preparar un informe ni compartir información de las personas residentes.</p>
         <p className="res-contact-emphasis">Sin registro, sin llamada comercial automática y sin compromiso.</p>
         <a className="res-contact-email" href={"mailto:" + contactEmail}>{contactEmail}</a>
