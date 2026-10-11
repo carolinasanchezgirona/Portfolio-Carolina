@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 const total = 6;
 const photo = {
@@ -161,15 +161,43 @@ function Slide({ page }: { page: number }) {
 export default function VidaActivaPresentacion() {
   const [index, setIndex] = useState(0);
   const startX = useRef<number | null>(null);
-  const advance = (direction: number) => setIndex(previous => Math.min(total - 1, Math.max(0, previous + direction)));
+  const stageRef = useRef<HTMLDivElement>(null);
+  const wrapperRef = useRef<HTMLDivElement>(null);
+
+  const keepSlideVisible = () => {
+    if (window.matchMedia("(max-width: 750px)").matches) {
+      window.requestAnimationFrame(() => stageRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }));
+    }
+  };
+  const goToSlide = (target: number) => {
+    setIndex(Math.max(0, Math.min(total - 1, target)));
+    keepSlideVisible();
+  };
+  const advance = (direction: number) => {
+    setIndex(previous => Math.min(total - 1, Math.max(0, previous + direction)));
+    keepSlideVisible();
+  };
+
+  useEffect(() => {
+    const node = wrapperRef.current;
+    if (!node || !("IntersectionObserver" in window)) return;
+    const observer = new IntersectionObserver(([entry]) => {
+      document.body.classList.toggle("va-presentacion-en-viewport", entry.isIntersecting);
+    }, { threshold: 0.05 });
+    observer.observe(node);
+    return () => {
+      observer.disconnect();
+      document.body.classList.remove("va-presentacion-en-viewport");
+    };
+  }, []);
 
   return (
-    <div className="va-presentacion" id="presentacion-vida-activa">
+    <div ref={wrapperRef} className="va-presentacion" id="presentacion-vida-activa">
       <div className="va-presentation-heading">
         <div><p className="res-eyebrow">Dossier interactivo · Vida Activa</p><h2>Conoce el programa en seis diapositivas.</h2><p>Explora la propuesta sin descargar archivos. Puedes navegar con las flechas del teclado, los controles o deslizando en el móvil.</p></div>
         <button type="button" className="va-print-button" onClick={() => window.print()}>Imprimir / guardar como PDF</button>
       </div>
-      <div className="va-stage" tabIndex={0} aria-label="Presentación de Vida Activa. Utiliza las flechas izquierda y derecha para cambiar de diapositiva." onKeyDown={(event) => {
+      <div ref={stageRef} className="va-stage" tabIndex={0} aria-label="Presentación de Vida Activa. Utiliza las flechas izquierda y derecha para cambiar de diapositiva." onKeyDown={(event) => {
         if (event.key === "ArrowLeft") { event.preventDefault(); advance(-1); }
         if (event.key === "ArrowRight") { event.preventDefault(); advance(1); }
       }} onTouchStart={event => { startX.current = event.changedTouches[0].clientX; }} onTouchEnd={event => {
@@ -185,7 +213,7 @@ export default function VidaActivaPresentacion() {
       <div className="va-controls res-no-print">
         <button type="button" className="va-nav-button" onClick={() => advance(-1)} disabled={index === 0} aria-label="Diapositiva anterior">← <span>Anterior</span></button>
         <div className="va-dots" aria-label="Elegir diapositiva">
-          {titles.map((title, i) => <button type="button" key={title} className={"va-dot" + (i === index ? " is-active" : "")} onClick={() => setIndex(i)} aria-label={"Ir a diapositiva " + (i + 1) + ": " + title} aria-current={i === index ? "step" : undefined}><span className="sr-only">{title}</span></button>)}
+          {titles.map((title, i) => <button type="button" key={title} className={"va-dot" + (i === index ? " is-active" : "")} onClick={() => goToSlide(i)} aria-label={"Ir a diapositiva " + (i + 1) + ": " + title} aria-current={i === index ? "step" : undefined} />)}
         </div>
         <button type="button" className="va-nav-button" onClick={() => advance(1)} disabled={index === total - 1}><span>Siguiente</span> →</button>
       </div>
