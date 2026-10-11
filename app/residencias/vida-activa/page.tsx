@@ -55,7 +55,7 @@ export default function VidaActivaPage() {
             <p className="res-lead">Vida Activa nace para facilitar el trabajo de los equipos técnicos: propuestas variadas, instrucciones completas y materiales para los participantes, sin convertir la actividad diaria en una sucesión de fichas.</p>
             <div className="res-actions">
               <a href="#presentacion-vida-activa" className="editorial-btn editorial-btn-primary">Ver presentación del programa</a>
-              <a href="/residencias/#contacto-profesional" className="editorial-btn editorial-btn-secondary">Solicitar información</a>
+              <a href="/residencias/#contacto-profesional" className="editorial-btn editorial-btn-secondary">Solicitar propuesta para mi centro</a>
             </div>
           </div>
           <div className="res-product-display" aria-label="Estructura de ejemplo del programa">
@@ -141,14 +141,14 @@ export default function VidaActivaPage() {
         <div className="editorial-wrap res-split">
           <div>
             <p className="res-eyebrow">Muestra gratuita</p>
-            <h2>Abre la programación de ejemplo antes de decidir.</h2>
-            <p>Incluye una propuesta de horario semanal y tres actividades desarrolladas con indicaciones para el equipo, adaptaciones y material de trabajo. Puedes imprimirla o guardarla como PDF.</p>
-            <a className="editorial-btn editorial-btn-primary" href="/residencias/semana-01/">Consultar la nueva Semana 1</a>
+            <h2>Una actividad de muestra para evaluar el enfoque.</h2>
+            <p>Una demostración completa y cuidada permite valorar el enfoque profesional y la calidad editorial. La programación semanal completa, las guías y los solucionarios se facilitan únicamente dentro de la colaboración acordada con el centro.</p>
+            <a className="editorial-btn editorial-btn-primary" href="/residencias/muestra/">Explorar una actividad de muestra</a>
           </div>
           <aside className="res-note">
             <strong>Estado del proyecto</strong>
-            <p>Esta es la presentación inicial de Vida Activa. El catálogo mensual, la suscripción y las licencias corporativas todavía no están a la venta.</p>
-            <p>Se pueden solicitar conversaciones exploratorias con direcciones y equipos técnicos.</p>
+            <p>Esta es la presentación inicial de Vida Activa. El alcance, la entrega de materiales y las condiciones económicas se concretan individualmente con cada centro.</p>
+            <p>Puedes solicitar una propuesta inicial sin facilitar datos clínicos de residentes.</p>
           </aside>
         </div>
       </section>
@@ -167,7 +167,7 @@ export default function VidaActivaPage() {
           <p className="res-eyebrow">Colaboraciones piloto</p>
           <h2>¿Tu centro quiere explorar Vida Activa?</h2>
           <p>Podemos valorar qué dificultades tiene actualmente la programación y qué formato sería viable. Sin datos personales de residentes en el primer contacto.</p>
-          <a className="editorial-btn editorial-btn-primary" href="/residencias/#contacto-profesional">Contactar para un piloto</a>
+          <a className="editorial-btn editorial-btn-primary" href="/residencias/#contacto-profesional">Solicitar propuesta para mi centro</a>
         </div>
       </section>
       <script type="application/ld+json" dangerouslySetInnerHTML={{__html:JSON.stringify(schema)}} />
