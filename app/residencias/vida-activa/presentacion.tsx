@@ -13,7 +13,7 @@ const photo = {
 const titles = [
   "Vida Activa",
   "Una programación con sentido",
-  "Una semana con variedad",
+  "Un programa con variedad",
   "Una propuesta paso a paso",
   "Materiales pensados para utilizarse",
   "Distintos centros. Distintas necesidades",
@@ -54,7 +54,7 @@ function Slide({ page }: { page: number }) {
             <strong className="va-cover-tagline">Más vida en cada día.</strong>
             <p>Programas de actividades significativas para residencias y centros de día.</p>
           </div>
-          <div className="va-cover-bottom"><span>PENSAR · CREAR · COMPARTIR</span><span>01 / 06</span></div>
+          <div className="va-cover-bottom"><span>ELEGIR · CREAR · COMPARTIR</span><span>01 / 06</span></div>
         </div>
         <Picture src={photo.artist} alt="Mujer mayor realizando una actividad artística en una mesa de trabajo" className="va-cover-photo" />
       </div>;
@@ -64,8 +64,8 @@ function Slide({ page }: { page: number }) {
         <div className="va-slide-two-col va-intro-grid">
           <div>
             <h3>Una programación <em>con sentido.</em></h3>
-            <p>Las personas que viven en una residencia no son un grupo homogéneo. Tienen historias, intereses, capacidades y necesidades de apoyo distintas.</p>
-            <p>Una buena programación abre oportunidades para participar, elegir, crear, conversar, moverse o descansar.</p>
+            <p>La Atención Centrada en la Persona (ACP) parte de que cada residente tiene historia, intereses, capacidades y necesidades de apoyo propias.</p>
+            <p>Cada propuesta debe ofrecer oportunidades para participar, elegir, crear, conversar, moverse o descansar, con el equipo como aliado.</p>
           </div>
           <div className="va-photo-stack">
             <Picture src={photo.group} alt="Personas mayores compartiendo una actividad creativa en grupo" />
@@ -75,7 +75,7 @@ function Slide({ page }: { page: number }) {
         <div className="va-benefits">
           <div><span className="va-tile-icon va-lilac" aria-hidden="true">✳</span><strong>PARA LAS PERSONAS</strong><p>Propuestas variadas, participación voluntaria y alternativas significativas.</p></div>
           <div><span className="va-tile-icon va-blue" aria-hidden="true">✦</span><strong>PARA LOS EQUIPOS</strong><p>Herramientas claras para preparar, adaptar y facilitar actividades.</p></div>
-          <div><span className="va-tile-icon va-salmon" aria-hidden="true">♡</span><strong>PARA EL CENTRO</strong><p>Una programación flexible, ajustada a la realidad cotidiana.</p></div>
+          <div><span className="va-tile-icon va-salmon" aria-hidden="true">♡</span><strong>PARA EL CENTRO</strong><p>Diseño flexible y coherente con la ACP y la vida cotidiana.</p></div>
         </div>
         <SlideFooter page={2} />
       </div>;
@@ -84,8 +84,8 @@ function Slide({ page }: { page: number }) {
         <SlideHeader section="QUÉ INCLUYE" number={2} />
         <div className="va-slide-two-col va-areas-head">
           <div>
-            <h3>Una semana <em>con variedad.</em></h3>
-            <p>Cognición, vida cotidiana, creatividad, cultura, movimiento y vínculo. La programación se adapta a los recursos disponibles y a las características de cada centro.</p>
+            <h3>Un programa <em>con variedad.</em></h3>
+            <p>Cognición, vida cotidiana, creatividad, cultura, movimiento y vínculo. Se combinan actividades, formatos y apoyos según las personas y la realidad del centro.</p>
           </div>
           <Picture src={photo.workshop} alt="Personas mayores participando en un taller artístico compartido" />
         </div>
@@ -99,11 +99,11 @@ function Slide({ page }: { page: number }) {
       </div>;
     case 4:
       return <div className="va-slide-layout va-interior">
-        <SlideHeader section="PILOTO DE CUATRO SEMANAS" number={3} />
+        <SlideHeader section="DISEÑO A MEDIDA" number={3} />
         <div className="va-slide-two-col va-pilot-head">
           <div>
             <h3>Una propuesta <em>paso a paso.</em></h3>
-            <p>Podemos estudiar un piloto dimensionado según las unidades, horarios, espacios y recursos del centro. Antes de iniciar la colaboración, se acuerdan alcance, disponibilidad, precio y condiciones.</p>
+            <p>Cada centro define sus tiempos y recursos con el equipo de referencia. Podemos plantear una colaboración piloto adaptada y acordar previamente alcance, disponibilidad y condiciones.</p>
           </div>
           <Picture src={photo.detail} alt="Detalle de una persona mayor pintando con pinceles durante una actividad creativa" />
         </div>
@@ -111,7 +111,7 @@ function Slide({ page }: { page: number }) {
           <ol className="va-pilot-steps">
             <li><b className="va-yellow">01</b><div><strong>CONOCER</strong><p>Organización, prioridades e intereses generales, sin solicitar datos clínicos individuales.</p></div></li>
             <li><b className="va-lilac">02</b><div><strong>PROPONER</strong><p>Programación piloto, materiales y alternativas de participación.</p></div></li>
-            <li><b className="va-salmon">03</b><div><strong>APLICAR Y AJUSTAR</strong><p>El equipo prueba las actividades y registra observaciones útiles.</p></div></li>
+            <li><b className="va-salmon">03</b><div><strong>APLICAR Y AJUSTAR</strong><p>El equipo aplica y adapta; puede contar con formación y orientación si se acuerda.</p></div></li>
             <li><b className="va-blue">04</b><div><strong>REVISAR</strong><p>Viabilidad, utilidad percibida, participación y posibles ajustes.</p></div></li>
           </ol>
           <aside className="va-pilot-note"><strong>UN PILOTO REALISTA</strong><p>La elección y el descanso también son parte del programa.</p><p>No toda actividad es una intervención clínica.</p></aside>
@@ -127,11 +127,11 @@ function Slide({ page }: { page: number }) {
             <h3>Materiales pensados <em>para utilizarse.</em></h3>
             <p>Cada propuesta aporta la información necesaria para que el equipo valore su adecuación, prepare la actividad y pueda adaptarla.</p>
             <ul>
-              <li><b className="va-yellow">01</b><div><strong>PROGRAMACIÓN SEMANAL</strong><span>Actividades por días, franjas, grupos y descansos.</span></div></li>
+              <li><b className="va-yellow">01</b><div><strong>PROGRAMACIÓN FLEXIBLE</strong><span>Diseño ajustado al horario y la organización reales del centro.</span></div></li>
               <li><b className="va-lilac">02</b><div><strong>GUÍA PROFESIONAL</strong><span>Objetivo, preparación, instrucciones, apoyos y precauciones.</span></div></li>
               <li><b className="va-salmon">03</b><div><strong>MATERIAL PARA PARTICIPANTES</strong><span>Fichas claras y recursos gráficos o manipulativos.</span></div></li>
               <li><b className="va-pale-blue">04</b><div><strong>ADAPTACIONES</strong><span>Opciones según intereses y necesidades de apoyo.</span></div></li>
-              <li><b className="va-yellow">05</b><div><strong>REGISTRO BREVE</strong><span>Participación, preferencias y aspectos que revisar.</span></div></li>
+              <li><b className="va-yellow">05</b><div><strong>APOYO AL EQUIPO</strong><span>Formación opcional, orientación al personal de referencia y seguimiento.</span></div></li>
             </ul>
           </div>
         </div>
@@ -149,7 +149,7 @@ function Slide({ page }: { page: number }) {
         </div>
         <div className="va-last-options">
           <div><b className="va-yellow">01</b><strong>MATERIALES</strong><p>Programación y recursos para equipos que trabajan con autonomía.</p></div>
-          <div><b className="va-lilac">02</b><strong>ACOMPAÑAMIENTO</strong><p>Materiales, orientación profesional y revisión de la implantación.</p></div>
+          <div><b className="va-lilac">02</b><strong>FORMACIÓN Y APOYO</strong><p>Orientación al personal de referencia, formación y revisión de la aplicación.</p></div>
           <div><b className="va-salmon">03</b><strong>A MEDIDA</strong><p>Diseño específico para centros con varias unidades o necesidades particulares.</p></div>
         </div>
         <div className="va-contact-banner"><div><small>¿HABLAMOS DE VUESTRO CENTRO?</small><strong>Empecemos conversando.</strong></div><div><a href="mailto:contact@carolinasanchezgirona.com?subject=Vida%20Activa%20-%20Consulta%20profesional">contact@carolinasanchezgirona.com</a><span>carolinasanchezgirona.com/residencias/</span></div></div>
