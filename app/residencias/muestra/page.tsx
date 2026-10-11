@@ -56,6 +56,7 @@ export default function MuestraVidaActivaPage(){
         <p className="res-lead">Ejemplo educativo para equipos profesionales. Incluye el marco horario y tres actividades desarrolladas. Puedes imprimir estas páginas o guardarlas como PDF desde el navegador.</p>
         <PrintSampleButton />
         <p className="res-small">En el diálogo de impresión elige «Guardar como PDF». El contenido está preparado para impresión A4.</p>
+        <div className="res-note" style={{marginTop:22}}><strong>Nueva edición · Vida Activa Semana 1</strong><p>Hemos preparado una versión completa, con 20 actividades, cinco guías, soluciones y cinco fichas de participantes en un espacio propio de la web.</p><a className="editorial-btn editorial-btn-primary" href="/residencias/semana-01/">Abrir el programa completo</a></div>
       </div>
     </section>
 

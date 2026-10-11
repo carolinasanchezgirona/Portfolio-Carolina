@@ -1,0 +1,180 @@
+
+/* Vida Activa: Semana 01. Identidad editorial independiente, sin afectar a la consulta. */
+.vaweek{--vw-salmon:#F08A7E;--vw-blue:#4C6FB3;--vw-yellow:#F5C94B;--vw-lilac:#C3A7E5;--vw-cream:#FFF8EC;--vw-paper:#fff;--vw-ink:#282B31;--vw-muted:#58616A;--vw-line:#e0ded8;color:var(--vw-ink);background:#f7f5f0;line-height:1.54}
+.vaweek *{box-sizing:border-box}
+.vaweek a{text-underline-offset:3px}
+.vaweek-webhero{background:var(--vw-cream);padding:50px 0 46px;border-bottom:1px solid #e2d8ce}
+.vaweek-kicker{font-size:.79rem;font-weight:850;letter-spacing:.09em;text-transform:uppercase;color:#3b5896;margin:0 0 11px}
+.vaweek-webhero h1{font-family:var(--font-newsreader),Georgia,serif;font-size:clamp(2.7rem,5vw,4.8rem);font-weight:550;color:#232c3a;line-height:1.04;letter-spacing:-.035em;max-width:22ch;margin:0 0 18px}
+.vaweek-webhero .editorial-wrap>p:not(.vaweek-kicker){max-width:71ch;font-size:1.04rem;line-height:1.7}
+.vaweek-actions{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin:24px 0 12px}
+.vaweek-btn-primary,.vaweek-print,.vaweek-btn-alt{display:inline-flex;justify-content:center;align-items:center;min-height:46px;font:inherit;font-weight:750;font-size:.93rem;padding:11px 18px;border-radius:9px;cursor:pointer;text-align:center}
+.vaweek-print,.vaweek-btn-primary{background:var(--vw-blue);color:#fff!important;border:1px solid var(--vw-blue)}
+.vaweek-btn-alt{background:#fff;color:#243c6b;border:1px solid #aab8d7}
+.vaweek-print:hover,.vaweek-btn-primary:hover{background:#354f90}
+.vaweek-btn-alt:hover{background:#f0f2f8}
+.vaweek .vaweek-hint{font-size:.84rem!important;color:#5c6570;margin:12px 0 0;line-height:1.58}
+.vaweek-document,.vaweek-worksheet-stack{width:min(880px,calc(100% - 32px));margin:30px auto 70px}
+.vaweek-document{background:#fff;box-shadow:0 12px 37px rgba(40,50,59,.065)}
+.vaweek-cover{min-height:580px;display:flex;flex-direction:column;justify-content:space-between;padding:51px 58px 43px;background:linear-gradient(115deg,var(--vw-salmon) 0%,var(--vw-salmon) 62%,#fff6eb 62%,#fff6eb 100%);color:#17263f;break-after:page}
+.vaweek-top{display:flex;justify-content:space-between;align-items:start;gap:22px;font-size:.8rem;font-weight:800;letter-spacing:.05em}
+.vaweek-cover>p:first-of-type{font-weight:850;font-size:.83rem;letter-spacing:.1em;margin:48px 0 0}
+.vaweek-cover h2{font-family:var(--font-newsreader),Georgia,serif;font-size:clamp(5rem,10vw,8.6rem);font-weight:550;line-height:.89;letter-spacing:-.05em;margin:0 0 0;max-width:8ch}
+.vaweek-cover h2 em{display:block;color:#fff9ee;font-style:normal}
+.vaweek-cover>strong{font-family:var(--font-newsreader),Georgia,serif;font-size:clamp(1.6rem,3vw,2.4rem);font-weight:650}
+.vaweek-cover>p:last-of-type{font-size:1.14rem;max-width:30ch}
+.vaweek-cover-foot{display:flex;gap:10px;justify-content:space-between;border-top:1px solid #395166;padding-top:20px;font-weight:750;font-size:.8rem}
+.vaweek-part{padding:52px 58px;border-bottom:1px solid #ece9e4;break-inside:auto}
+.vaweek-part>h2,.vaweek-final h2{font-family:var(--font-newsreader),Georgia,serif;line-height:1.14;font-weight:570;letter-spacing:-.025em;font-size:clamp(2rem,4vw,3rem);color:#1e2d43;margin:0 0 16px}
+.vaweek-part>p:not(.vaweek-kicker),.vaweek-guide p{font-size:1rem;line-height:1.67;color:#3b4755}
+.vaweek-part>h3{font-family:var(--font-newsreader),Georgia,serif;font-size:1.75rem;color:#20324c;margin:24px 0 11px}
+.vaweek-note{background:#edf1fb;border-left:6px solid var(--vw-blue);padding:20px 23px;margin:26px 0;border-radius:8px}
+.vaweek-note-salmon{background:#fff1ee;border-color:var(--vw-salmon)}
+.vaweek-note p{margin:7px 0 0!important}
+.vaweek-three{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-top:28px}
+.vaweek-three>div{background:#fffaed;border-top:5px solid var(--vw-yellow);padding:20px;border-radius:6px}
+.vaweek-three>div:nth-child(2){border-top-color:var(--vw-lilac)}
+.vaweek-three>div:nth-child(3){border-top-color:var(--vw-salmon)}
+.vaweek-three b{color:#273a56}
+.vaweek-three p{font-size:.9rem;line-height:1.58;margin:10px 0 0}
+.vaweek-schedule{display:grid;gap:10px;margin:24px 0}
+.vaweek-day{display:grid;grid-template-columns:155px minmax(0,1fr);border:1px solid #e2e5e9;border-radius:10px;overflow:hidden;break-inside:avoid}
+.vaweek-day-name{display:flex;flex-direction:column;justify-content:space-between;background:#e9effa;padding:16px 18px;color:#223e70}
+.vaweek-day:nth-child(2) .vaweek-day-name{background:#ffe1dc}
+.vaweek-day:nth-child(3) .vaweek-day-name{background:#fff0bb}
+.vaweek-day:nth-child(4) .vaweek-day-name{background:#eee0fb}
+.vaweek-day:nth-child(5) .vaweek-day-name{background:#dce7fa}
+.vaweek-day-name strong{font-size:1.17rem}
+.vaweek-day-name small{font-family:var(--font-newsreader),Georgia,serif;font-size:2.1rem;font-weight:600;opacity:.6}
+.vaweek-day-items{padding:12px 16px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px}
+.vaweek-day-items p{margin:0!important;display:flex;align-items:baseline;gap:9px;font-size:.87rem!important;line-height:1.45}
+.vaweek-day-items b{color:#2a5caa;font-variant-numeric:tabular-nums}
+.vaweek-footnote{font-size:.8rem!important;color:#626e78!important;margin:13px 0 25px}
+.vaweek-table{width:100%;border-collapse:collapse;margin:21px 0;font-size:.91rem;break-inside:avoid}
+.vaweek-table th,.vaweek-table td{padding:9px 12px;text-align:left;border-bottom:1px solid #dfe3e7;vertical-align:top}
+.vaweek-table thead th{background:#e7edf8;color:#1d3c6f;font-weight:800}
+.vaweek-table tbody tr:nth-child(even){background:#fcfbf8}
+.vaweek-table tbody th{white-space:nowrap;color:#2d4361}
+.vaweek-checks{display:grid;gap:13px;padding:0;margin:22px 0;list-style:none}
+.vaweek-checks li{padding-left:32px;position:relative}
+.vaweek-checks li::before{content:"✓";position:absolute;left:0;top:2px;font-weight:850;color:#3b5c9b}
+.vaweek-guide{padding:26px 0 20px;border-bottom:2px solid #ece8df;break-inside:auto}
+.vaweek-guide:first-of-type{margin-top:18px}
+.vaweek-guide-head{display:flex;gap:16px;align-items:start;break-after:avoid}
+.vaweek-guide-head>span{background:var(--vw-salmon);border-radius:9px;min-width:66px;min-height:56px;display:grid;place-items:center;font-size:1.06rem;font-weight:850}
+.vaweek-guide-head h3{font-family:var(--font-newsreader),Georgia,serif;font-size:2.05rem;color:#1f304b;line-height:1.15;font-weight:570;margin:0 0 8px}
+.vaweek-guide-head p:last-child{font-size:.88rem;margin:0}
+.vaweek-tags{display:flex;gap:8px;margin:22px 0;flex-wrap:wrap}
+.vaweek-tags span{border-radius:99px;background:#f5efdf;color:#313b49;padding:7px 11px;font-size:.8rem;font-weight:650}
+.vaweek-guide-cards{display:grid;grid-template-columns:1.3fr 1fr;gap:12px}
+.vaweek-guide-cards>div{padding:15px 19px;background:#fff5e9;border-radius:8px;break-inside:avoid}
+.vaweek-guide-cards>div:last-child{background:#edf1f9}
+.vaweek-guide h4{font-weight:800;text-transform:uppercase;font-size:.87rem;color:#2d4b83;letter-spacing:.025em;margin:20px 0 7px}
+.vaweek-guide h4+p{margin:0;font-size:.92rem;line-height:1.55}
+.vaweek-procedure{padding:0;margin:14px 0 20px;display:grid;gap:9px;list-style:none}
+.vaweek-procedure li{display:grid;grid-template-columns:40px 1fr;gap:12px;align-items:center;padding:10px 12px;border:1px solid #e6e5e1;border-radius:8px;break-inside:avoid}
+.vaweek-procedure li>span{display:grid;place-items:center;background:var(--vw-yellow);border-radius:9px;width:35px;height:35px;font-weight:800}
+.vaweek-procedure li:nth-child(2)>span{background:var(--vw-lilac)}
+.vaweek-procedure li:nth-child(3)>span{background:var(--vw-salmon)}
+.vaweek-procedure li:nth-child(4)>span{background:#dce9ff}
+.vaweek-procedure p{margin:0!important;font-size:.89rem;line-height:1.48!important}
+.vaweek-guide-end{background:#f8f8f6;padding:17px;border-radius:9px;break-inside:avoid}
+.vaweek-guide-end h4:first-child{margin-top:0}
+.vaweek-worksheet-link{font-weight:800;margin-top:12px}
+.vaweek-worksheet-link a{color:#2c5eaa;text-decoration:underline}
+.vaweek-capsules{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:15px;margin:26px 0}
+.vaweek-capsule{padding:17px 20px;border:1px solid #e2e5e5;border-top:5px solid var(--vw-yellow);border-radius:9px;background:#fff;break-inside:avoid}
+.vaweek-capsule:nth-child(3n){border-top-color:var(--vw-lilac)}
+.vaweek-capsule:nth-child(3n+1){border-top-color:var(--vw-salmon)}
+.vaweek-capsule>div{display:flex;justify-content:space-between;gap:6px;align-items:start}
+.vaweek-capsule>div>span{font-weight:850;color:#2d5590}
+.vaweek-capsule>div>small{font-size:.78rem;color:#647381}
+.vaweek-capsule h3{font-family:var(--font-newsreader),Georgia,serif;font-size:1.48rem;line-height:1.12;margin:11px 0 6px;color:#25344c}
+.vaweek-capsule p{font-size:.86rem;line-height:1.58;margin:7px 0}
+.vaweek-capsule .vaweek-area{color:#2e5ca7;font-weight:750;font-size:.77rem}
+.vaweek-solutions dt{font-weight:800;color:#26559b;margin:22px 0 7px}
+.vaweek-solutions dd{margin:0 0 16px;font-size:.94rem;line-height:1.66}
+.vaweek-record{display:grid;gap:18px;margin-top:25px}
+.vaweek-record>div{display:grid;gap:16px;break-inside:avoid}
+.vaweek-record>div>span{height:2px;background:#9aa8af;display:block}
+.vaweek-final{background:var(--vw-cream)}
+.vaweek-final>p:last-of-type{font-size:.8rem;color:#596676}
+/* Participants' sheets: full pages with writing space */
+.vaweek-worksheet-stack{display:grid;gap:22px}
+.vaweek-worksheet{padding:39px 51px;background:#fff;border:1px solid #e3dfd7;box-shadow:0 9px 26px rgba(40,50,59,.05);break-after:page}
+.vaweek-worksheet>header{display:flex;justify-content:space-between;gap:10px;font-weight:850;font-size:.77rem;border-bottom:2px solid var(--vw-salmon);padding-bottom:12px;color:#2c4670;margin-bottom:28px}
+.vaweek-worksheet h2{font-family:var(--font-newsreader),Georgia,serif;font-size:clamp(2rem,3.2vw,2.75rem);color:#243854;line-height:1.12;font-weight:560;margin:0 0 12px}
+.vaweek-worksheet-lead{font-size:1.03rem;line-height:1.62;margin:0 0 24px}
+.vaweek-sheet-info{background:#ffedcc;border-radius:7px;padding:12px 16px;font-size:.91rem;margin:18px 0}
+.vaweek-answer-lines{display:grid;gap:17px;margin:18px 0 23px}
+.vaweek-answer-lines span{display:block;border-bottom:1px solid #aeb6bb;height:13px}
+.vaweek-question{margin:18px 0;break-inside:avoid}
+.vaweek-question p{font-size:1rem;line-height:1.52}
+.vaweek-question p strong{color:#2d5eaa}
+.vaweek-worksheet>footer{display:flex;justify-content:space-between;border-top:1px solid #d5dadc;padding-top:14px;margin-top:27px;font-size:.75rem;color:#63727c;font-weight:700}
+.vaweek-maps{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:20px 0}
+.vaweek-map{background:#f9f8f5;border:1px solid #dce1e4;border-radius:9px;overflow:hidden}
+.vaweek-map>strong{display:block;background:#dbe7fa;padding:10px;text-align:center;color:#2d518c}
+.vaweek-map-row{display:grid;grid-template-columns:1fr 1fr;text-align:center;gap:8px;min-height:53px;align-items:center;padding:7px;border-bottom:1px dashed #c9d1da;font-size:.85rem}
+.vaweek-map-row span{padding:8px;background:#fff;border-radius:4px}
+.vaweek-map-row.vaweek-map-street{background:#f9e2cb;grid-template-columns:1fr;min-height:38px;font-weight:700}
+.vaweek-map-row.vaweek-map-street span{background:transparent}
+.vaweek-room-map{width:100%;height:auto;max-height:320px;margin:22px 0;background:#fffbf5}
+.vaweek-headline{display:grid;grid-template-columns:42px 1fr;align-items:center;gap:14px;border:1px solid #d8e2ec;border-radius:9px;margin:15px 0;padding:13px 16px;break-inside:avoid}
+.vaweek-headline>span{display:grid;place-items:center;background:#f6d3cc;border-radius:8px;width:38px;height:38px;font-weight:850}
+.vaweek-headline p{margin:0 0 9px;font-size:.98rem}
+.vaweek-headline strong{color:#2c5495;font-size:.88rem}
+.vaweek-choice-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:20px 0}
+.vaweek-choice-grid>div{display:grid;grid-template-columns:32px 1fr;gap:2px 10px;padding:12px;background:#f7f5ef;border:1px solid #e0e0dd;border-radius:9px;break-inside:avoid}
+.vaweek-choice-grid b{grid-row:span 3;display:grid;place-items:center;background:#f8d87c;border-radius:6px;height:33px}
+.vaweek-choice-grid strong{font-size:.92rem}
+.vaweek-choice-grid span,.vaweek-choice-grid small{font-size:.81rem;color:#53606c}
+@media(max-width:750px){
+ .vaweek-cover{padding:28px 24px;min-height:480px}
+ .vaweek-cover h2{font-size:5rem}
+ .vaweek-top{font-size:.63rem}
+ .vaweek-part{padding:30px 24px}
+ .vaweek-three,.vaweek-guide-cards,.vaweek-capsules,.vaweek-day-items{grid-template-columns:1fr}
+ .vaweek-day{grid-template-columns:1fr}
+ .vaweek-day-name{flex-direction:row;align-items:center;padding:11px 15px}
+ .vaweek-day-name small{font-size:1.3rem}
+ .vaweek-day-items{gap:9px}
+ .vaweek-table{font-size:.78rem}
+ .vaweek-table td,.vaweek-table th{padding:8px 6px}
+ .vaweek-webhero{padding-top:31px}
+ .vaweek-actions>*{width:100%}
+ .vaweek-worksheet{padding:24px 19px}
+ .vaweek-worksheet>header{font-size:.58rem}
+ .vaweek-maps{grid-template-columns:1fr}
+ .vaweek-worksheet-lead{font-size:.95rem}
+ .vaweek-choice-grid{grid-template-columns:1fr}
+ .vaweek-worksheet-stack{width:calc(100% - 22px)}
+}
+@media print{
+ @page{size:A4 portrait;margin:13mm 12mm}
+ .site-header,.site-global-header,.site-global-footer,.site-crisis-note,.mobile-booking-shortcut,.cookie-preferences-button,.vaweek-no-print{display:none!important}
+ html,body{background:#fff!important}
+ .vaweek{background:#fff!important;overflow:visible!important}
+ .vaweek main,.vaweek-document,.vaweek-worksheet-stack{margin:0!important;padding:0!important;width:100%!important;max-width:none!important;box-shadow:none!important;background:#fff!important;overflow:visible!important}
+ .vaweek-cover{min-height:265mm!important;page-break-after:always!important;break-after:page!important}
+ .vaweek-part{padding:10mm 0 9mm!important;page-break-inside:auto!important;break-inside:auto!important}
+ .vaweek-part>h2{font-size:24pt!important}
+ .vaweek-three{grid-template-columns:repeat(3,1fr)!important}
+ .vaweek-capsules{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+ .vaweek-day{grid-template-columns:155px 1fr!important}
+ .vaweek-day-items{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+ .vaweek-guide{break-before:page!important;page-break-before:always!important;padding-top:10mm!important}
+ .vaweek-capsule,.vaweek-day,.vaweek-note,.vaweek-worksheet,.vaweek-headline,.vaweek-question{break-inside:avoid!important;page-break-inside:avoid!important}
+ .vaweek-worksheet-stack{display:block!important}
+ .vaweek-worksheet{min-height:266mm!important;height:auto!important;margin:0!important;padding:7mm 3mm!important;border:0!important;box-shadow:none!important;break-after:page!important;page-break-after:always!important}
+ .vaweek-worksheet:last-child{break-after:auto!important;page-break-after:auto!important}
+ .vaweek-worksheet h2{font-size:27pt!important}
+ .vaweek-worksheet-lead{font-size:10pt!important;line-height:1.42!important}
+ .vaweek-worksheet .vaweek-question p{font-size:10pt!important}
+ .vaweek-worksheet .vaweek-answer-lines{gap:11px!important;margin:10px 0 14px!important}
+ .vaweek-worksheet .vaweek-answer-lines span{height:9px!important}
+ .vaweek-worksheet .vaweek-table{font-size:8.5pt!important}
+ .vaweek-worksheet .vaweek-maps{grid-template-columns:1fr 1fr!important}
+ .vaweek-worksheet .vaweek-choice-grid{grid-template-columns:repeat(2,1fr)!important;gap:8px}
+ .vaweek *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}
+}
