@@ -65,7 +65,7 @@ export default function EpisodePlayer({
   return (
     <div className="podcast-player podcast-player-pending">
       <p className="podcast-player-label">Episodio 01 · Audio</p>
-      <p>La ficha está preparada. Activaremos el reproductor cuando se incorpore el enlace público del episodio o se aloje el archivo MP3 en la web.</p>
+      <p>Muy pronto podrás escuchar el episodio completo desde esta página. Mientras tanto, descubre las preguntas y lecturas que acompañan a esta entrega.</p>
     </div>
   );
 }
