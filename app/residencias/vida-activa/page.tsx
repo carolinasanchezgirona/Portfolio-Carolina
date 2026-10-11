@@ -1,10 +1,12 @@
 import type { Metadata } from "next";
+import VidaActivaPresentacion from "./presentacion";
+import "./presentacion.css";
 
 const url = "https://carolinasanchezgirona.com/residencias/vida-activa/";
 
 export const metadata: Metadata = {
   title: "Vida Activa: programa de actividades para residencias",
-  description: "Vida Activa es una propuesta de programación semanal para residencias y centros de día: actividades cognitivas, ocupacionales, sociales y creativas con adaptaciones por niveles.",
+  description: "Conoce Vida Activa en una presentación interactiva de seis diapositivas. Programas de actividades significativas, recursos y apoyo para residencias y centros de día.",
   alternates: { canonical: "/residencias/vida-activa/" },
   openGraph: {
     title: "Vida Activa | Programa de actividades para residencias",
@@ -52,7 +54,7 @@ export default function VidaActivaPage() {
             <h1>Una programación bien pensada, lista para adaptar a tu residencia.</h1>
             <p className="res-lead">Vida Activa nace para facilitar el trabajo de los equipos técnicos: propuestas variadas, instrucciones completas y materiales para los participantes, sin convertir la actividad diaria en una sucesión de fichas.</p>
             <div className="res-actions">
-              <a href="/residencias/muestra/" className="editorial-btn editorial-btn-primary">Ver una muestra real</a>
+              <a href="#presentacion-vida-activa" className="editorial-btn editorial-btn-primary">Ver presentación del programa</a>
               <a href="/residencias/#contacto-profesional" className="editorial-btn editorial-btn-secondary">Solicitar información</a>
             </div>
           </div>
@@ -66,6 +68,12 @@ export default function VidaActivaPage() {
             <div><strong>Viernes</strong><span>Música y proyectos compartidos</span></div>
             <small>Ejemplo editorial, no prescripción para todos los residentes.</small>
           </div>
+        </div>
+      </section>
+
+      <section className="res-section va-presentation-section" aria-label="Presentación interactiva del programa Vida Activa">
+        <div className="editorial-wrap">
+          <VidaActivaPresentacion />
         </div>
       </section>
 
