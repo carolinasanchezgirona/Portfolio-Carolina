@@ -134,7 +134,7 @@ export default function VidaActivaPage() {
           <div>
             <p className="res-eyebrow">Muestra gratuita</p>
             <h2>Abre la programación de ejemplo antes de decidir.</h2>
-            <p>Incluye una propuesta de horario semanal y dos actividades desarrolladas con indicaciones para el equipo, adaptaciones y material de trabajo. Puedes imprimirla o guardarla como PDF.</p>
+            <p>Incluye una propuesta de horario semanal y tres actividades desarrolladas con indicaciones para el equipo, adaptaciones y material de trabajo. Puedes imprimirla o guardarla como PDF.</p>
             <a className="editorial-btn editorial-btn-primary" href="/residencias/muestra/">Consultar la muestra imprimible</a>
           </div>
           <aside className="res-note">
