@@ -5,7 +5,7 @@ const url = "https://carolinasanchezgirona.com/residencias/";
 
 export const metadata: Metadata = {
   title: "Servicios de neuropsicología y actividades para residencias",
-  description: "Programas de estimulación cognitiva, actividades significativas y apoyo técnico para residencias y centros de día en Maresme y Barcelona. Conoce Vida Activa de Dememoria.",
+  description: "Diseño de actividades significativas para residencias y centros de día en Maresme y Barcelona, adaptadas a cada centro, con ACP y formación opcional al equipo.",
   alternates: { canonical: "/residencias/" },
   openGraph: {
     title: "Programas de actividades para residencias | Dememoria",
@@ -16,23 +16,27 @@ export const metadata: Metadata = {
 };
 
 const activities = [
-  { number: "01", title: "Estimulación cognitiva", text: "Atención, lenguaje, memoria, funciones ejecutivas y orientación, con tareas graduadas y objetivos definidos." },
-  { number: "02", title: "Participación y ocupación", text: "Talleres creativos, proyectos compartidos, actividades cotidianas y oportunidades de elección." },
-  { number: "03", title: "Bienestar emocional", text: "Espacios de expresión, reminiscencia, comunicación, vínculo y acompañamiento, respetando el contexto de cada persona." },
-  { number: "04", title: "Movimiento y autonomía", text: "Propuestas de actividad física y funcional para coordinar con fisioterapia, terapia ocupacional y el equipo responsable." },
+  { number: "01", title: "Estimulación cognitiva", text: "Memoria, atención, lenguaje, orientación y funciones ejecutivas mediante propuestas adultas, funcionales y graduables." },
+  { number: "02", title: "Arte y expresión", text: "Talleres creativos, música, expresión plástica y proyectos culturales con diferentes maneras de participar." },
+  { number: "03", title: "Vida cotidiana", text: "Actividades significativas relacionadas con las rutinas, la autonomía, la planificación y la toma de decisiones." },
+  { number: "04", title: "Bienestar y vínculos", text: "Conversación, identidad, reminiscencia voluntaria, comunicación y oportunidades de relación social." },
+  { number: "05", title: "Movimiento y funcionalidad", text: "Propuestas coordinadas con los profesionales competentes, atendiendo a seguridad, movilidad y capacidades funcionales." },
+  { number: "06", title: "Ocio y comunidad", text: "Cinefórum, juegos adaptados, lectura, proyectos compartidos y actividades relacionadas con el entorno." },
 ];
 
 const steps = [
-  { label: "Conocer el centro", text: "Organización por unidades, dotación del equipo, intereses y características de las personas residentes." },
-  { label: "Diseñar la semana", text: "Distribuir actividades por franjas y grupos, incorporando descanso, alternativas y actividades de libre elección." },
-  { label: "Facilitar la ejecución", text: "Ofrecer instrucciones, materiales para participantes y adaptaciones que reduzcan el tiempo de preparación." },
-  { label: "Revisar y ajustar", text: "Registrar participación, utilidad percibida e incidencias, evitando atribuir resultados clínicos a un simple calendario." },
+  { label: "Conocer el centro", text: "Escuchar a dirección y personal de referencia, identificar recursos, organización e intereses de los residentes." },
+  { label: "Diseñar con el equipo", text: "Seleccionar propuestas, formatos y materiales que encajen con la vida cotidiana de cada unidad." },
+  { label: "Formar y acompañar", text: "Ofrecer, si se acuerda, formación práctica en la preparación, facilitación y adaptación de las actividades." },
+  { label: "Revisar y ajustar", text: "Recoger la experiencia de las personas residentes y del equipo para mejorar la utilidad y viabilidad." },
 ];
 
 const questions = [
   { q: "¿El programa sustituye a terapia ocupacional, fisioterapia o psicología?", a: "No. Es una herramienta de planificación y apoyo. La valoración, indicación y ejecución de actos sanitarios corresponden a los profesionales cualificados del centro o colaboradores acreditados." },
   { q: "¿Sirve para centros grandes?", a: "Se plantea para poder organizar propuestas por unidades de convivencia y grupos de necesidades distintas, sin imponer una actividad idéntica a toda la residencia." },
   { q: "¿Todas las actividades son terapéuticas?", a: "No. Se diferencian el ocio elegido, las oportunidades de participación y las intervenciones con objetivos clínicos específicos. Disfrutar de una actividad también es un objetivo legítimo." },
+  { q: "¿Cómo se incorpora la Atención Centrada en la Persona?", a: "El programa se alinea con la ACP: parte de la biografía, las preferencias y las decisiones de cada residente, respeta el derecho a no participar y se coordina con el personal de referencia. No sustituye el modelo de cuidados ni los planes individuales del centro." },
+  { q: "¿Se puede formar al equipo?", a: "Sí. La propuesta puede incluir formación inicial, orientación de aplicación y acompañamiento al personal de referencia, según las necesidades y el alcance contratado." },
 ];
 
 const structuredData = {
@@ -87,30 +91,29 @@ export default function ResidenciasPage() {
         <div className="editorial-wrap">
           <p className="res-eyebrow">Áreas del programa</p>
           <h2>Mucho más que rellenar el horario.</h2>
-          <p className="res-intro">Un calendario puede estar lleno y, aun así, ofrecer pocas oportunidades de participación significativa. La variedad se organiza en torno a intereses reales, necesidades de apoyo y elección personal.</p>
+          <p className="res-intro">El programa combina áreas cognitivas, creativas, sociales, funcionales y culturales. La variedad no consiste en acumular fichas, sino en proponer experiencias adultas con sentido, elección y diferentes formas de implicación.</p>
           <div className="res-card-grid">
             {activities.map(({number, title, text}) => <article key={number} className="res-card"><span className="res-index">{number}</span><h3>{title}</h3><p>{text}</p></article>)}
           </div>
         </div>
       </section>
 
-      <section className="res-section res-section-tint">
+      <section className="res-section res-section-tint res-tailored-section">
         <div className="editorial-wrap res-split">
           <div>
-            <p className="res-eyebrow">De 10 a 13 h · De 15 a 18 h</p>
-            <h2>Una semana organizada, pero no rígida.</h2>
-            <p>La programación considera acogidas, tiempos de descanso, actividades grupales e individuales, y alternativas para quienes no desean participar en una propuesta concreta.</p>
-            <p>En una residencia con varias unidades, el modelo permite planificar actividades paralelas y no depender de una sesión masiva para todos los residentes.</p>
-            <a className="res-text-link" href="/residencias/muestra/">Conocer una actividad de muestra →</a>
+            <p className="res-eyebrow">Diseñado con cada centro</p>
+            <h2>Vuestra organización marca el ritmo.</h2>
+            <p>Vida Activa no impone franjas horarias ni un calendario idéntico a todas las residencias. La propuesta se adapta a los recursos, a las unidades de convivencia y a la disponibilidad del equipo.</p>
+            <p>Podemos combinar actividades en grupo, pequeños grupos, intervenciones individuales y proyectos compartidos, tanto con fichas como con materiales manipulativos, conversación o recursos visuales.</p>
+            <a className="res-text-link" href="/residencias/vida-activa/">Descubrir cómo se adapta Vida Activa →</a>
           </div>
-          <div className="res-schedule-preview" aria-label="Ejemplos de franjas de actividad">
-            <div className="res-schedule-head"><span>Hora</span><span>Propuesta</span></div>
-            <div><time>10:00</time><span>Acogida y orientación</span></div>
-            <div><time>10:20</time><span>Actividad física o cognitiva adaptada</span></div>
-            <div><time>11:10</time><span>Descanso y elección personal</span></div>
-            <div><time>11:40</time><span>Taller o proyecto significativo</span></div>
-            <div><time>15:30</time><span>Actividad creativa, social o funcional</span></div>
-            <div><time>16:40</time><span>Ocio elegido o participación comunitaria</span></div>
+          <div className="res-tailored-panel">
+            <p className="res-panel-eyebrow">FORMATOS POSIBLES</p>
+            <div className="res-format-grid">
+              <span>Pequeños grupos</span><span>Atención individual</span><span>Por unidades</span>
+              <span>Proyectos colectivos</span><span>Recursos visuales</span><span>Materiales manipulativos</span>
+            </div>
+            <p className="res-panel-note">La elección del formato depende de las preferencias, necesidades de apoyo y condiciones reales del centro.</p>
           </div>
         </div>
       </section>
@@ -125,15 +128,20 @@ export default function ResidenciasPage() {
         </div>
       </section>
 
-      <section className="res-section res-section-tint">
+      <section className="res-section res-section-tint res-care-section">
         <div className="editorial-wrap res-split">
           <div>
-            <p className="res-eyebrow">Programa en desarrollo</p>
-            <h2>Vida Activa, el sistema de programación de Dememoria.</h2>
-            <p>Una propuesta modular con calendarios, guías para el equipo, materiales para los participantes y adaptaciones por niveles. Las modalidades y condiciones se definen en una propuesta específica para cada centro.</p>
-            <a className="editorial-btn editorial-btn-primary" href="/residencias/vida-activa/">Ver el programa</a>
+            <p className="res-eyebrow">Atención Centrada en la Persona · ACP</p>
+            <h2>Primero la persona. Después, la actividad.</h2>
+            <p>El enfoque se alinea con la Atención Centrada en la Persona: conocer historias de vida, intereses, decisiones y preferencias, respetando la dignidad, la voluntad y el derecho a no participar.</p>
+            <p>La participación puede expresarse de muchas maneras: crear, conversar, elegir, observar o disfrutar de una alternativa. No todas las personas necesitan hacer lo mismo.</p>
           </div>
-          <div className="res-quote">«No se trata de ocupar todas las horas. Se trata de abrir oportunidades para participar, elegir y seguir siendo uno mismo».</div>
+          <aside className="res-care-note">
+            <p className="res-panel-eyebrow">FORMACIÓN Y APOYO AL EQUIPO</p>
+            <h3>Para que el programa funcione en el día a día.</h3>
+            <p>Podemos incorporar formación inicial, orientación práctica y acompañamiento al personal de referencia, coordinándonos con los profesionales responsables de cada área.</p>
+            <a className="editorial-btn editorial-btn-primary" href="/residencias/#contacto-profesional">Solicitar propuesta para mi centro</a>
+          </aside>
         </div>
       </section>
 
