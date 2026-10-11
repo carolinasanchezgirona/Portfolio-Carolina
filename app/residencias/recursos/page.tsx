@@ -44,7 +44,7 @@ export default function RecursosResidenciasPage(){
         <p className="res-eyebrow">Recursos gratuitos · Equipos técnicos</p>
         <h1>Cómo programar actividades que tengan sentido en una residencia.</h1>
         <p className="res-lead">Ideas y herramientas para revisar el calendario, adaptar propuestas y diferenciar ocio, participación significativa e intervención clínica.</p>
-        <div className="res-actions"><a className="editorial-btn editorial-btn-primary" href="/residencias/muestra/">Abrir muestra semanal imprimible</a></div>
+        <div className="res-actions"><a className="editorial-btn editorial-btn-primary" href="/residencias/semana-01/">Abrir programa Semana 1</a></div>
       </div>
     </section>
     <section className="res-section">
@@ -73,8 +73,8 @@ export default function RecursosResidenciasPage(){
         <div>
           <p className="res-eyebrow">Muestra de Vida Activa</p>
           <h2>De la teoría al material listo para imprimir.</h2>
-          <p>Consulta un calendario de lunes a viernes y tres actividades desarrolladas. La muestra es ilustrativa y requiere ajuste por el equipo antes de utilizarse con residentes.</p>
-          <a className="editorial-btn editorial-btn-primary" href="/residencias/muestra/">Ver y guardar la muestra</a>
+          <p>Consulta la nueva Semana 1 con 20 propuestas, cinco actividades desarrolladas y cinco fichas originales. El equipo deberá adaptar los materiales antes de utilizarlos.</p>
+          <a className="editorial-btn editorial-btn-primary" href="/residencias/semana-01/">Ver y guardar el programa completo</a>
         </div>
         <aside className="res-note"><strong>Uso responsable</strong><p>La programación compartida aquí no sustituye la valoración individual, la planificación asistencial ni las competencias propias de cada disciplina.</p><a href="/residencias/vida-activa/" className="res-text-link">Conocer Vida Activa →</a></aside>
       </div>
