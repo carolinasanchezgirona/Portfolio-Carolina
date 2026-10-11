@@ -8,6 +8,7 @@ export type PodcastEpisode = {
   summary: string;
   duration: string;
   date: string;
+  coverSrc: string;
   topics: string[];
   audioSrc?: string;
   spotifyUrl?: string;
@@ -28,6 +29,7 @@ export const episodes: PodcastEpisode[] = [
     summary: "No quieres volver con tu ex. Pero ¿por qué duele que no te busque? Exploramos qué hay detrás de esa contradicción y cómo recuperar la capacidad de elegir sin esperar la confirmación de otra persona.",
     duration: "9:46",
     date: "2026-10-11",
+    coverSrc: "/podcast/episodio-01.avif",
     topics: ["Rupturas", "Autoestima", "Relaciones", "Psicología incómoda"],
     // Al disponer del enlace del episodio ya publicado, pegar aquí su URL completa de Spotify.
     // Alternativamente, alojar el MP3 en public/podcast/audio/ y utilizar audioSrc.

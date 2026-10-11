@@ -19,3 +19,5 @@ La ficha editorial del episodio no es una transcripción literal; solo publicar 
 - Verificar compilación, enlaces y pruebas antes de publicación.
 - Confirmar indexabilidad de /podcast/ y del episodio en Search Console.
 - Mantener CTA de cita discreto; podcast como recurso divulgativo, no diagnóstico ni orientación individual.
+
+Portada del episodio 1: /public/podcast/episodio-01.avif, versión web optimizada de la imagen proporcionada por Carolina. Mantener sin recortar. La portada general del podcast continúa independiente.
