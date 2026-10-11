@@ -22,7 +22,7 @@ const titles = [
 function SlideHeader({ section, number }: { section: string; number: number }) {
   return (
     <div className="va-slide-top">
-      <div className="va-slide-brand">DEMEmÒRIA</div>
+      <div className="va-slide-brand">DEMEMÒRIA</div>
       <p>VIDA ACTIVA <span aria-hidden="true">·</span> PROGRAMAS PARA CENTROS</p>
       <div className="va-slide-ribbon"><span>{String(number).padStart(2, "0")}</span> / {section}</div>
     </div>
@@ -37,7 +37,7 @@ function Picture({ src, alt, className = "" }: { src: string; alt: string; class
   return (
     <figure className={"va-slide-picture " + className}>
       {/* Las fotografías proceden de un banco de imágenes y son ilustrativas. */}
-      <img loading="lazy" decoding="async" src={src} alt={alt} />
+      <img loading="eager" decoding="async" src={src} alt={alt} />
     </figure>
   );
 }
@@ -47,7 +47,7 @@ function Slide({ page }: { page: number }) {
     case 1:
       return <div className="va-slide-layout va-cover">
         <div className="va-cover-copy">
-          <div className="va-cover-meta"><strong>DEMEmÒRIA</strong><span>DOSSIER PROFESIONAL / 2026</span></div>
+          <div className="va-cover-meta"><strong>DEMEMÒRIA</strong><span>DOSSIER PROFESIONAL / 2026</span></div>
           <div className="va-cover-main">
             <h3><span>Vida</span><span>Activa.</span></h3>
             <div className="va-cover-rule" />
