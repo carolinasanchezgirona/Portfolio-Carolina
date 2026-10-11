@@ -53,6 +53,20 @@ export default function RecursosPage() {
         </div>
       </section>
 
+      <section className="editorial-section resources-free" aria-labelledby="cuadernos-dememoria-title">
+        <div className="editorial-wrap resources-free-grid">
+          <div>
+            <p className="editorial-section-eyebrow">Nueva colección · Neuropsicología</p>
+            <h2 id="cuadernos-dememoria-title">Cuadernos Dememòria: estimulación cognitiva para adultos.</h2>
+          </div>
+          <div>
+            <p>Una colección original de actividades de atención, memoria y funciones ejecutivas, pensada para personas adultas, profesionales y centros. Los volúmenes comerciales están en preparación; ya puedes consultar una muestra gratuita, imprimible y con soluciones.</p>
+            <a className="editorial-btn editorial-btn-primary" href="/recursos/cuadernos-estimulacion-cognitiva/">Conocer la colección</a>
+            <a className="editorial-btn editorial-btn-secondary" href="/recursos/cuadernos-estimulacion-cognitiva/muestra/">Ver muestra gratuita</a>
+          </div>
+        </div>
+      </section>
+
       <section className="resources-audiences" aria-labelledby="audiences-title">
         <div className="editorial-wrap">
           <div className="editorial-section-head resources-heading">
