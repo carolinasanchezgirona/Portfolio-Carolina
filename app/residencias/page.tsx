@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import ResidentialEnquiry from "./residential-enquiry";
 
 const url = "https://carolinasanchezgirona.com/residencias/";
 
@@ -144,15 +145,9 @@ export default function ResidenciasPage() {
         </div>
       </section>
 
-      <section className="res-section res-end-cta">
+      <section className="res-section res-end-cta" aria-label="Contacto para residencias">
         <div className="editorial-wrap">
-          <p className="res-eyebrow">Para direcciones y equipos técnicos</p>
-          <h2>¿Quieres estudiar la programación de tu centro?</h2>
-          <p>Cuéntame el tamaño de la residencia, las unidades y el tipo de apoyo que estáis valorando. No es necesario enviar información identificativa ni clínica de residentes.</p>
-          <div className="res-actions">
-            <a className="editorial-btn editorial-btn-primary" href="mailto:contact@carolinasanchezgirona.com?subject=Consulta%20profesional%20-%20Programa%20para%20residencias">Solicitar información</a>
-            <a className="editorial-btn editorial-btn-secondary" href="/sobre-mi/">Conocer mi trayectoria</a>
-          </div>
+          <ResidentialEnquiry />
         </div>
       </section>
       <script type="application/ld+json" dangerouslySetInnerHTML={{__html:JSON.stringify(structuredData)}} />

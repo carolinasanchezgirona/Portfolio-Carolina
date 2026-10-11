@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import PrintSampleButton from "./print-button";
+import ItineraryMap from "./itinerary-map";
 
 const url = "https://carolinasanchezgirona.com/residencias/muestra/";
 
@@ -52,7 +53,7 @@ export default function MuestraVidaActivaPage(){
         <nav className="res-breadcrumb" aria-label="Ruta de navegación"><a href="/">Inicio</a><span>/</span><a href="/residencias/">Residencias</a><span>/</span><span>Muestra semanal</span></nav>
         <p className="res-eyebrow">Vida Activa · Material de demostración</p>
         <h1>Una semana de actividades, con las instrucciones para llevarlas a cabo.</h1>
-        <p className="res-lead">Ejemplo educativo para equipos profesionales. Incluye el marco horario y dos actividades desarrolladas. Puedes imprimir estas páginas o guardarlas como PDF desde el navegador.</p>
+        <p className="res-lead">Ejemplo educativo para equipos profesionales. Incluye el marco horario y tres actividades desarrolladas. Puedes imprimir estas páginas o guardarlas como PDF desde el navegador.</p>
         <PrintSampleButton />
         <p className="res-small">En el diálogo de impresión elige «Guardar como PDF». El contenido está preparado para impresión A4.</p>
       </div>
@@ -150,8 +151,41 @@ export default function MuestraVidaActivaPage(){
         <p className="res-facilitator-note"><strong>Precaución:</strong> no exigir recuerdos, no interpretar silencios como fallos y detener o redirigir la propuesta si aparecen malestar o emociones difíciles.</p>
       </section>
 
+      <section className="res-doc-section res-break-before">
+        <p className="res-doc-kicker">FICHA 03 · PLANIFICACIÓN, ORIENTACIÓN ESPACIAL Y TOMA DE DECISIONES</p>
+        <h3>5. Diseñamos una ruta por el barrio</h3>
+        <div className="res-chip-row"><span>40–50 minutos</span><span>4–6 participantes orientativos</span><span>Mapa visual original</span></div>
+        <p><strong>Finalidad:</strong> favorecer el razonamiento espacial aplicado, la búsqueda de alternativas y la planificación de una secuencia funcional. Se plantea como tarea de participación y estimulación, no como prueba estandarizada ni medida de navegación real.</p>
+        <p><strong>Materiales:</strong> plano impreso en A4 con buen contraste, rotuladores de colores y espacio para anotar un recorrido. Se puede ampliar a A3 para personas con necesidades visuales.</p>
+        <ol className="res-procedure">
+          <li>Presentar el barrio ficticio y señalar el centro de día, la farmacia y la biblioteca. Confirmar comprensión de la leyenda.</li>
+          <li>Proponer una salida: primero recoger un encargo en la farmacia y después llegar a la biblioteca, evitando el tramo cortado por obras.</li>
+          <li>Invitar a dibujar un itinerario sobre el plano o explicarlo verbalmente. Comparar distintas rutas sin reducir la tarea a una sola respuesta.</li>
+          <li>Conversar sobre lo que habría que comprobar antes de una salida real: distancias, accesibilidad, descanso, tiempo, compañía y preferencias.</li>
+        </ol>
+        <div className="res-sheet res-map-sheet">
+          <p className="res-sheet-label">MATERIAL PARA PARTICIPANTES · PLANIFICAMOS UNA SALIDA</p>
+          <p><strong>Situación:</strong> salimos del centro de día. Tenemos que pasar por la farmacia y terminar en la biblioteca. Una calle está cerrada por obras. Elige un recorrido posible usando las vías abiertas.</p>
+          <ItineraryMap />
+          <p className="res-task"><strong>1.</strong> Marca sobre el plano una ruta que pase por la farmacia y termine en la biblioteca. Puedes usar un lápiz o describirla en voz alta.</p>
+          <div className="res-answer-lines" aria-hidden="true"><span/><span/></div>
+          <p className="res-task"><strong>2.</strong> ¿Qué calle no podemos atravesar? ¿Cómo lo sabemos?</p>
+          <div className="res-answer-lines" aria-hidden="true"><span/><span/></div>
+          <p className="res-task"><strong>3.</strong> Si además alguien quiere pasar por la plaza, ¿habría que cambiar el trayecto? Explica una alternativa.</p>
+          <div className="res-answer-lines" aria-hidden="true"><span/><span/><span/></div>
+          <p className="res-task"><strong>4.</strong> Antes de salir con un grupo real, ¿qué datos necesitaríamos comprobar para que la actividad fuese viable y segura?</p>
+          <div className="res-answer-lines" aria-hidden="true"><span/><span/><span/></div>
+        </div>
+        <div className="res-adapt-grid">
+          <div><strong>Con autonomía</strong><p>Comparar recorridos, justificar elecciones y proponer cómo coordinar a un pequeño grupo.</p></div>
+          <div><strong>Con apoyos</strong><p>Presentar únicamente tres lugares, usar flechas de color y dividir el recorrido en dos pasos.</p></div>
+          <div><strong>Alta dependencia</strong><p>Explorar el plano o imágenes significativas y facilitar decisiones sencillas sin exigir trazado ni respuesta escrita.</p></div>
+        </div>
+        <p className="res-facilitator-note"><strong>Orientación para el equipo:</strong> una ruta posible consiste en bajar desde el centro de día hasta la cafetería, continuar hacia la farmacia, seguir por la calle inferior hacia la izquierda y después subir hasta la biblioteca. La plaza se puede incorporar subiendo desde otra intersección sin cruzar el tramo en obras. Hay más de un itinerario válido.</p>
+      </section>
+
       <section className="res-doc-section res-final-doc">
-        <h3>5. Registro mínimo tras la actividad</h3>
+        <h3>6. Registro mínimo tras la actividad</h3>
         <div className="res-register">
           <div><strong>Actividad / fecha</strong><span/></div>
           <div><strong>Personas que eligieron participar</strong><span/></div>

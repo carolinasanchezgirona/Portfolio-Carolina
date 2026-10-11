@@ -53,7 +53,7 @@ export default function VidaActivaPage() {
             <p className="res-lead">Vida Activa nace para facilitar el trabajo de los equipos técnicos: propuestas variadas, instrucciones completas y materiales para los participantes, sin convertir la actividad diaria en una sucesión de fichas.</p>
             <div className="res-actions">
               <a href="/residencias/muestra/" className="editorial-btn editorial-btn-primary">Ver una muestra real</a>
-              <a href="mailto:contact@carolinasanchezgirona.com?subject=Inter%C3%A9s%20en%20Vida%20Activa" className="editorial-btn editorial-btn-secondary">Solicitar información</a>
+              <a href="/residencias/#contacto-profesional" className="editorial-btn editorial-btn-secondary">Solicitar información</a>
             </div>
           </div>
           <div className="res-product-display" aria-label="Estructura de ejemplo del programa">
@@ -96,6 +96,29 @@ export default function VidaActivaPage() {
         </div>
       </section>
 
+      <section className="res-section res-centre-scenario" aria-labelledby="escenario-title">
+        <div className="editorial-wrap">
+          <p className="res-eyebrow">Ejemplo de organización · Centro de 120 plazas</p>
+          <h2 id="escenario-title">Seis unidades. Una coordinación común.</h2>
+          <p className="res-intro">En un centro grande, el mismo calendario no tiene por qué implicar la misma actividad para todo el mundo. Este ejemplo muestra cómo distribuir propuestas simultáneas sin asignar profesionales ni niveles a personas concretas.</p>
+          <div className="res-unit-grid">
+            {[
+              {unit:"Unidad 1",activity:"Club de actualidad",mode:"Grupo de conversación"},
+              {unit:"Unidad 2",activity:"Taller de reminiscencia",mode:"Propuesta con apoyos"},
+              {unit:"Unidad 3",activity:"Arte y expresión",mode:"Proyecto creativo"},
+              {unit:"Unidad 4",activity:"Actividad significativa individual",mode:"Sesiones breves"},
+              {unit:"Unidad 5",activity:"Juegos de estrategia",mode:"Ocio elegido"},
+              {unit:"Unidad 6",activity:"Música y participación",mode:"Grupo adaptable"},
+            ].map(item=><article className="res-unit-card" key={item.unit}>
+              <p>{item.unit} <span>10:20–11:10</span></p>
+              <h3>{item.activity}</h3>
+              <small>{item.mode}</small>
+            </article>)}
+          </div>
+          <p className="res-scenario-note">Escenario ilustrativo. Las actividades simultáneas requieren disponibilidad real de profesionales y espacios. No sustituye el cálculo de ratios ni la valoración del centro.</p>
+        </div>
+      </section>
+
       <section className="res-section">
         <div className="editorial-wrap">
           <p className="res-eyebrow">Cómo se usaría</p>
@@ -111,7 +134,7 @@ export default function VidaActivaPage() {
           <div>
             <p className="res-eyebrow">Muestra gratuita</p>
             <h2>Abre la programación de ejemplo antes de decidir.</h2>
-            <p>Incluye una propuesta de horario semanal y dos actividades desarrolladas con indicaciones para el equipo, adaptaciones y material de trabajo. Puedes imprimirla o guardarla como PDF.</p>
+            <p>Incluye una propuesta de horario semanal y tres actividades desarrolladas con indicaciones para el equipo, adaptaciones y material de trabajo. Puedes imprimirla o guardarla como PDF.</p>
             <a className="editorial-btn editorial-btn-primary" href="/residencias/muestra/">Consultar la muestra imprimible</a>
           </div>
           <aside className="res-note">
@@ -136,7 +159,7 @@ export default function VidaActivaPage() {
           <p className="res-eyebrow">Colaboraciones piloto</p>
           <h2>¿Tu centro quiere explorar Vida Activa?</h2>
           <p>Podemos valorar qué dificultades tiene actualmente la programación y qué formato sería viable. Sin datos personales de residentes en el primer contacto.</p>
-          <a className="editorial-btn editorial-btn-primary" href="mailto:contact@carolinasanchezgirona.com?subject=Residencia%20-%20Piloto%20Vida%20Activa">Contactar para un piloto</a>
+          <a className="editorial-btn editorial-btn-primary" href="/residencias/#contacto-profesional">Contactar para un piloto</a>
         </div>
       </section>
       <script type="application/ld+json" dangerouslySetInnerHTML={{__html:JSON.stringify(schema)}} />

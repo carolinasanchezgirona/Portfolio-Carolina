@@ -73,7 +73,7 @@ export default function RecursosResidenciasPage(){
         <div>
           <p className="res-eyebrow">Muestra de Vida Activa</p>
           <h2>De la teoría al material listo para imprimir.</h2>
-          <p>Consulta un calendario de lunes a viernes y dos actividades desarrolladas. La muestra es ilustrativa y requiere ajuste por el equipo antes de utilizarse con residentes.</p>
+          <p>Consulta un calendario de lunes a viernes y tres actividades desarrolladas. La muestra es ilustrativa y requiere ajuste por el equipo antes de utilizarse con residentes.</p>
           <a className="editorial-btn editorial-btn-primary" href="/residencias/muestra/">Ver y guardar la muestra</a>
         </div>
         <aside className="res-note"><strong>Uso responsable</strong><p>La programación compartida aquí no sustituye la valoración individual, la planificación asistencial ni las competencias propias de cada disciplina.</p><a href="/residencias/vida-activa/" className="res-text-link">Conocer Vida Activa →</a></aside>

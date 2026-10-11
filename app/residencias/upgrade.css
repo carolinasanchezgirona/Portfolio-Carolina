@@ -1,0 +1,51 @@
+
+/* Vida Activa: consultation, units and visual worksheets */
+.res-centre-scenario{background:#fff}
+.res-unit-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px;margin-top:25px}
+.res-unit-card{background:#f7fbfb;padding:22px;border:1px solid #d5e5e6;border-radius:13px;min-height:163px}
+.res-unit-card>p{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px;margin:0 0 16px;font-size:.76rem;font-weight:800;color:#16717c;letter-spacing:.015em}
+.res-unit-card>p span{color:#687e85;font-variant-numeric:tabular-nums;font-weight:500}
+.res-unit-card h3{font-size:1.4rem;line-height:1.18;margin:0 0 11px}
+.res-unit-card small{font-size:.8rem;color:#526872}
+.res-scenario-note{max-width:85ch;margin:21px 0 0;font-size:.82rem;color:#637780;line-height:1.6}
+.res-contact-panel{display:grid;grid-template-columns:minmax(0,.88fr) minmax(0,1.12fr);gap:40px;scroll-margin-top:95px}
+.res-contact-copy h2{max-width:16ch}
+.res-contact-copy>p:not(.res-eyebrow){color:#4d6770;max-width:46ch}
+.res-contact-copy .res-contact-emphasis{font-weight:700;color:#174f59!important}
+.res-contact-email{display:inline-block;margin-top:8px;text-decoration:underline;text-underline-offset:3px;font-size:.95rem;font-weight:650;color:#0e6671;overflow-wrap:anywhere}
+.res-contact-form{display:flex;flex-direction:column;gap:9px;background:#fff;border:1px solid #c9dddf;border-radius:16px;padding:26px;box-shadow:0 14px 34px rgba(21,64,73,.04)}
+.res-contact-form label{font-size:.85rem;color:#214752;font-weight:700}
+.res-optional{font-weight:400;color:#647782}
+.res-contact-form input,.res-contact-form select,.res-contact-form textarea{width:100%;max-width:100%;min-height:45px;border:1px solid #a9c1c5;background:#fff;border-radius:8px;padding:11px 12px;font:inherit;font-size:.9rem;line-height:1.45;color:#203e46;margin-bottom:6px}
+.res-contact-form textarea{resize:vertical;min-height:100px}
+.res-contact-form input::placeholder,.res-contact-form textarea::placeholder{color:#647983}
+.res-contact-form :is(input,select,textarea):focus-visible{outline:3px solid #d18a41;outline-offset:2px}
+.res-contact-2col{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.res-contact-2col>div{display:flex;flex-direction:column;gap:8px}
+.res-form-privacy{font-size:.8rem;color:#5e717a;line-height:1.6!important;margin:2px 0 10px!important}
+.res-contact-actions{display:flex;flex-wrap:wrap;gap:11px}
+.res-contact-actions button{font:inherit;cursor:pointer;text-align:center;border-radius:9px}
+.res-contact-actions .editorial-btn-primary{color:#fff}
+.res-contact-actions button:hover{filter:brightness(.96)}
+.res-copied{font-size:.82rem!important;font-weight:700;color:#087881!important;margin:5px 0 0!important}
+.res-map-wrap{width:100%;max-width:100%;margin:18px 0 12px;break-inside:avoid}
+.res-map{display:block;width:100%;height:auto;max-width:100%;overflow:visible;filter:drop-shadow(0 2px 3px rgba(10,66,72,.08))}
+.res-map-caption{font-size:.75rem!important;line-height:1.5;color:#516773!important;margin:8px 0 0!important}
+.res-map-sheet{break-inside:auto}
+@media(max-width:950px){
+  .res-contact-panel{grid-template-columns:1fr;gap:20px}
+  .res-unit-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(max-width:570px){
+  .res-unit-grid{grid-template-columns:1fr}
+  .res-contact-form{padding:18px}
+  .res-contact-2col{grid-template-columns:1fr}
+  .res-contact-actions button{width:100%}
+}
+@media print{
+  .res-map-wrap{page-break-inside:avoid;break-inside:avoid}
+  .res-map{filter:none}
+  .res-map-caption{font-size:8pt!important}
+  .res-map-sheet{break-inside:auto}
+  .res-doc-section .res-map-sheet .res-task{font-size:10pt}
+}
