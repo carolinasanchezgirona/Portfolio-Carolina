@@ -114,10 +114,10 @@ export default function MuestraPage() {
               <li>Fila 7: U4 (rodear), O2 (rodear), I6 (tachar).</li>
               <li>Fila 8: E8 (rodear), A6 (tachar), U4 (rodear).</li>
             </ul>
-            <p><strong>Total:</strong> 18 respuestas correctas, 12 números rodeados y 6 tachados.</p>
+            <p><strong>Total:</strong> 21 respuestas correctas, 15 números rodeados y 6 tachados.</p>
             <h3>Ejercicio 2 · Una solución posible</h3>
             <p>Casa 09:30 → banco 09:40–10:00 → biblioteca 10:10–10:30 → centro cívico (llegada 10:40, espera hasta 10:50; cita 10:50–11:20) → farmacia 11:30–11:45 → casa 11:55.</p>
-            <p>Si la biblioteca durara 35 minutos, con ese orden terminaría a las 10:45 y se llegaría al centro a las 10:55, cinco minutos tarde. Puede reordenarse, por ejemplo, visitando la biblioteca después de la cita: banco 09:40–10:00, centro cívico (llegada 10:10, cita 10:50–11:20), biblioteca 11:30–12:05 <strong>no sería válido</strong> porque cierra a las 12:00. Por tanto, para este cambio haría falta otro orden o aceptar que no todas las gestiones pueden completarse según las condiciones iniciales.</p>
+            <p>Si la biblioteca durara 35 minutos, con ese orden terminaría a las 10:45 y se llegaría al centro a las 10:55, cinco minutos tarde. Puede reordenarse, por ejemplo, visitando la biblioteca después de la cita: banco 09:40–10:00, centro cívico (llegada 10:10, cita 10:50–11:20), biblioteca 11:30–12:05 <strong>no sería válido</strong> porque cierra a las 12:00. Por tanto, con la duración modificada no existe un itinerario que permita completar las cuatro gestiones respetando todos los horarios.</p>
             <p>Para corregir, comprueba que se incluyen los traslados y que todas las gestiones empiezan y terminan dentro de su horario; considera también el razonamiento, las autorrectificaciones y la gestión de la espera.</p>
           </details>
           <p className="cog-print-note">La muestra se imprime sin las soluciones. Material de práctica cognitiva, no instrumento diagnóstico ni medida estandarizada.</p>
