@@ -28,6 +28,7 @@ function usesGlobalChrome(pathname: string) {
 const mainNavigation = [
   { href: "/psicologia/", label: "Psicología" },
   { href: "/neuropsicologia/", label: "Neuropsicología" },
+  { href: "/residencias/", label: "Para residencias" },
   { href: "/sobre-mi/", label: "Sobre mí" },
   { href: "/articulos/", label: "Artículos" },
   { href: "/pregunta-a-carolina/", label: "Tu Consulta" },
@@ -37,7 +38,7 @@ const mainNavigation = [
 
 function SiteHeader({ pathname }: { pathname: string }) {
   const currentPath = pathname === "/" || pathname.endsWith("/") ? pathname : pathname + "/";
-  const currentPage = (href: string) => currentPath === href ? "page" as const : undefined;
+  const currentPage = (href: string) => (currentPath === href || (href === "/residencias/" && currentPath.startsWith("/residencias/"))) ? "page" as const : undefined;
 
   return (
     <header className="site-header site-global-header">
@@ -110,6 +111,7 @@ function SiteFooter() {
           <a href="/neuropsicologia/">Neuropsicología</a>
           <a href="/evaluacion-neuropsicologica/">Evaluación neuropsicológica</a>
           <a href="/deterioro-cognitivo/">Deterioro cognitivo y memoria</a>
+          <a href="/residencias/">Programas para residencias</a>
         </nav>
 
         <nav className="site-footer-column" aria-label="Consulta">
