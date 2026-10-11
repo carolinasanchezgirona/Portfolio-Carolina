@@ -178,3 +178,46 @@
  .vaweek-worksheet .vaweek-choice-grid{grid-template-columns:repeat(2,1fr)!important;gap:8px}
  .vaweek *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}
 }
+
+/* Portada de lectura web: composición editorial con fotografía, sin bloque diagonal. */
+@media screen{
+.vaweek .vaweek-document{border:1px solid #ebe5dc;border-radius:7px;overflow:hidden;margin-top:24px}
+.vaweek .vaweek-cover{display:grid;grid-template-columns:1.14fr .86fr;grid-template-rows:auto auto auto auto minmax(80px,1fr) auto;min-height:520px;padding:0;background:#fff9f0;color:#233247}
+.vaweek .vaweek-cover::before{content:"";grid-column:2;grid-row:1/6;display:block;background:#e9d9cb url("https://images.pexels.com/photos/6023595/pexels-photo-6023595.jpeg?auto=compress&cs=tinysrgb&w=1200") center 43%/cover no-repeat;min-width:0}
+.vaweek .vaweek-top{grid-column:1;grid-row:1;display:flex;flex-wrap:wrap;align-items:center;padding:31px 32px 10px;font-size:.68rem;letter-spacing:.04em;color:#566175;gap:9px}
+.vaweek .vaweek-cover>p:first-of-type{grid-column:1;grid-row:2;margin:45px 0 13px;padding:0 32px;font-size:.77rem;letter-spacing:.07em;color:#44669b}
+.vaweek .vaweek-cover h2{grid-column:1;grid-row:3;padding:0 32px;font-size:clamp(4rem,6.6vw,6rem);line-height:.97;max-width:none;letter-spacing:-.055em;margin:0 0 18px;color:#233247}
+.vaweek .vaweek-cover h2 em{display:block;color:#d8766e}
+.vaweek .vaweek-cover>strong{grid-column:1;grid-row:4;padding:0 32px;font-size:clamp(1.4rem,2.6vw,2rem);line-height:1.18;color:#253852}
+.vaweek .vaweek-cover>p:last-of-type{grid-column:1;grid-row:5;padding:0 32px;margin:14px 0 35px;font-size:1.08rem;line-height:1.45;color:#465163;max-width:34ch}
+.vaweek .vaweek-cover-foot{grid-column:1/-1;grid-row:6;display:flex;align-items:center;justify-content:space-between;gap:12px;border-top:1px solid #e2e0da;margin:0;padding:22px 32px;background:#fff;font-size:.85rem;color:#365073}
+.vaweek .vaweek-cover-foot span:first-child{max-width:38ch}
+.vaweek .vaweek-webhero{background:#fffaf4;padding-top:32px;padding-bottom:30px}
+.vaweek .vaweek-webhero h1{font-size:clamp(2.3rem,4.3vw,3.7rem)}
+}
+@media screen and (max-width:750px){
+.vaweek .vaweek-cover{display:grid;grid-template-columns:1fr;grid-template-rows:auto auto auto auto auto 210px auto;min-height:0}
+.vaweek .vaweek-top{grid-column:1;grid-row:1;padding:24px 23px 0;font-size:.62rem;line-height:1.35}
+.vaweek .vaweek-cover>p:first-of-type{grid-column:1;grid-row:2;margin:30px 0 10px;padding:0 23px;font-size:.71rem}
+.vaweek .vaweek-cover h2{grid-column:1;grid-row:3;font-size:clamp(3.4rem,14vw,5rem);padding:0 23px;line-height:.96;margin-bottom:16px}
+.vaweek .vaweek-cover h2 em{display:inline}
+.vaweek .vaweek-cover>strong{grid-column:1;grid-row:4;font-size:1.6rem;line-height:1.12;padding:0 23px}
+.vaweek .vaweek-cover>p:last-of-type{grid-column:1;grid-row:5;font-size:1rem;padding:0 23px;margin:15px 0 25px;max-width:none}
+.vaweek .vaweek-cover::before{grid-column:1;grid-row:6;min-height:210px;background-position:center 42%}
+.vaweek .vaweek-cover-foot{grid-column:1;grid-row:7;padding:16px 22px;font-size:.73rem;line-height:1.35;align-items:flex-start}
+.vaweek .vaweek-cover-foot span:first-child{max-width:23ch}
+.vaweek .vaweek-document{width:calc(100% - 24px);margin-top:18px}
+.vaweek .vaweek-webhero{padding-top:25px}
+body:has(.vaweek) .site-global-header{background:rgba(255,251,245,.98)!important;backdrop-filter:none!important}
+body:has(.vaweek) .mobile-booking-shortcut{display:none!important}
+}
+@media screen and (max-width:360px){
+.vaweek .vaweek-cover h2{font-size:3.1rem}
+.vaweek .vaweek-cover-foot{font-size:.65rem}
+}
+@media print{
+.vaweek .vaweek-cover{background:#fff9f0!important}
+.vaweek .vaweek-cover h2{font-size:53pt!important}
+.vaweek .vaweek-cover h2 em{color:#d8766e!important}
+.vaweek .vaweek-document{border:0!important;border-radius:0!important}
+}
