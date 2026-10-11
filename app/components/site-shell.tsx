@@ -34,6 +34,7 @@ const serviceNavigation = [
 const resourceNavigation = [
   { href: "/recursos/", label: "Materiales y cuadernos" },
   { href: "/articulos/", label: "Artículos" },
+  { href: "/podcast/", label: "Psicología Incómoda · Podcast" },
 ] as const;
 
 const servicePaths = [
@@ -54,7 +55,7 @@ function SiteHeader({ pathname }: { pathname: string }) {
   const currentPath = pathname === "/" || pathname.endsWith("/") ? pathname : pathname + "/";
   const currentPage = (href: string) => currentPath === href ? "page" as const : undefined;
   const servicesActive = servicePaths.some(href => currentPath === href || (href === "/residencias/" && currentPath.startsWith(href)));
-  const resourcesActive = currentPath.startsWith("/recursos/") || currentPath.startsWith("/articulos/");
+  const resourcesActive = currentPath.startsWith("/recursos/") || currentPath.startsWith("/articulos/") || currentPath.startsWith("/podcast/");
 
   return (
     <header className="site-header site-global-header">
@@ -168,6 +169,7 @@ function SiteFooter() {
           <a href="/articulos/">Artículos</a>
           <a href="/pregunta-a-carolina/">Tu Consulta</a>
           <a href="/recursos/">Recursos</a>
+          <a href="/podcast/">Psicología Incómoda · Podcast</a>
           <a href="/mi-espacio/">Mi espacio</a>
           <a href="/psicologa-arenys-de-mar/">Psicóloga en Arenys de Mar</a>
           <a href="/cita/">Pedir cita</a>

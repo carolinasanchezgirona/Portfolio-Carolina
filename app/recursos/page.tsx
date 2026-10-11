@@ -67,6 +67,16 @@ export default function RecursosPage() {
         </div>
       </section>
 
+      <section className="editorial-section" aria-labelledby="podcast-resources-title">
+        <div className="editorial-wrap resources-free-grid">
+          <div><p className="editorial-section-eyebrow">Escuchar · Podcast</p><h2 id="podcast-resources-title">Psicología Incómoda.</h2></div>
+          <div>
+            <p>Psicología, historias y preguntas que no siempre tienen respuestas cómodas. Escucha los episodios, explora los temas y encuentra lecturas relacionadas sin salir de la web.</p>
+            <a className="editorial-btn editorial-btn-secondary" href="/podcast/">Explorar el podcast ↗</a>
+          </div>
+        </div>
+      </section>
+
       <section className="resources-audiences" aria-labelledby="audiences-title">
         <div className="editorial-wrap">
           <div className="editorial-section-head resources-heading">
