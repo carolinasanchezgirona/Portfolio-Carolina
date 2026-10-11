@@ -220,7 +220,7 @@ export default function VidaActivaPresentacion() {
       <p className="va-current res-no-print" role="status" aria-live="polite">Diapositiva {index + 1} de {total}: {titles[index]}</p>
       <div className="va-after res-no-print">
         <p>Presentación orientativa. Vida Activa está en fase de validación y las modalidades descritas no constituyen una oferta cerrada. Las fotografías son ilustrativas.</p>
-        <div className="va-after-actions"><a className="editorial-btn editorial-btn-primary" href="/residencias/#contacto-profesional">Solicitar información profesional</a><a className="editorial-btn editorial-btn-secondary" href="/residencias/muestra/">Ver una semana de ejemplo</a></div>
+        <div className="va-after-actions"><a className="editorial-btn editorial-btn-primary" href="/residencias/#contacto-profesional">Solicitar propuesta para mi centro</a><a className="editorial-btn editorial-btn-secondary" href="/residencias/muestra/">Ver una actividad de muestra</a></div>
       </div>
     </div>
   );
