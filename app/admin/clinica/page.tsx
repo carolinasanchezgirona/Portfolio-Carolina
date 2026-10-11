@@ -50,6 +50,7 @@ export default function AdminClinicaPage() {
             <summary><ClinicIcon name="more" /><span className="clinic-nav-label">Más</span></summary>
             <div className="clinic-more-panel">
               <p className="clinic-more-heading">Herramientas</p>
+              <a className="clinic-more-item" href="/admin/clinica/materiales-externos/">Biblioteca de cuadernos y fichas</a>
               <a className="clinic-more-item" href="/admin/recursos/">Recursos</a>
               <a className="clinic-more-item" href="/admin/preguntas/">Preguntas</a>
               <a className="clinic-more-item" href="/admin/articulos/">Artículos</a>
