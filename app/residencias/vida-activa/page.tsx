@@ -4,7 +4,7 @@ const url = "https://carolinasanchezgirona.com/residencias/vida-activa/";
 
 export const metadata: Metadata = {
   title: "Vida Activa: programa de actividades para residencias",
-  description: "Vida Activa es una propuesta de programación semanal para residencias y centros de día: actividades cognitivas, ocupacionales, sociales y creativas con adaptaciones por niveles.",
+  description: "Vida Activa: programación de actividades para residencias y centros de día, con guías profesionales, materiales adaptables y propuesta de piloto de cuatro semanas.",
   alternates: { canonical: "/residencias/vida-activa/" },
   openGraph: {
     title: "Vida Activa | Programa de actividades para residencias",
@@ -48,13 +48,14 @@ export default function VidaActivaPage() {
         <div className="editorial-wrap res-hero-grid">
           <div>
             <nav className="res-breadcrumb" aria-label="Ruta de navegación"><a href="/">Inicio</a><span>/</span><a href="/residencias/">Residencias</a><span>/</span><span>Vida Activa</span></nav>
-            <p className="res-eyebrow">Dememoria · Vida Activa · Programa en desarrollo</p>
-            <h1>Una programación bien pensada, lista para adaptar a tu residencia.</h1>
-            <p className="res-lead">Vida Activa nace para facilitar el trabajo de los equipos técnicos: propuestas variadas, instrucciones completas y materiales para los participantes, sin convertir la actividad diaria en una sucesión de fichas.</p>
+            <p className="res-eyebrow">Dememoria · Programa Vida Activa</p>
+            <h1>Más vida en cada día.</h1>
+            <p className="res-lead">Vida Activa es nuestra propuesta de programación de actividades para residencias y centros de día: semanas variadas, guías claras y materiales para participar, crear y compartir. Una herramienta para acompañar a las personas, no para limitarse a completar horarios.</p>
             <div className="res-actions">
-              <a href="/residencias/muestra/" className="editorial-btn editorial-btn-primary">Ver una muestra real</a>
-              <a href="/residencias/#contacto-profesional" className="editorial-btn editorial-btn-secondary">Solicitar información</a>
+              <a href="/residencias/muestra/" className="editorial-btn editorial-btn-primary">Explorar muestra gratuita</a>
+              <a href="/residencias/#contacto-profesional" className="editorial-btn editorial-btn-secondary">Hablar de un piloto</a>
             </div>
+            <p className="res-small">En fase de validación profesional · <a className="res-inline-link" href="/residencias/dossier/">Ver presentación para direcciones</a></p>
           </div>
           <div className="res-product-display" aria-label="Estructura de ejemplo del programa">
             <div className="res-product-top"><span>VIDA ACTIVA</span><span>SEMANA 01</span></div>
@@ -129,17 +130,39 @@ export default function VidaActivaPage() {
         </div>
       </section>
 
+      <section className="res-section res-pilot-product" aria-labelledby="va-piloto">
+        <div className="editorial-wrap res-split">
+          <div>
+            <p className="res-eyebrow">Colaboración inicial</p>
+            <h2 id="va-piloto">Cuatro semanas para comprobar si encaja en tu centro.</h2>
+            <p>El piloto se diseña después de escuchar al equipo: número de unidades, horario de actividades, apoyos disponibles e intereses generales. No es necesario compartir historias clínicas ni información identificativa para solicitarlo.</p>
+            <p>El alcance, la disponibilidad, el precio y las condiciones se acuerdan previamente. Todavía no se comercializa como un producto de suscripción.</p>
+            <div className="res-actions"><a className="editorial-btn editorial-btn-primary" href="/residencias/#contacto-profesional">Consultar colaboración piloto</a><a className="editorial-btn editorial-btn-secondary" href="/residencias/dossier/">Dossier para direcciones</a></div>
+          </div>
+          <div className="res-pilot-deliverables">
+            <h3>Qué se plantearía incluir</h3>
+            <ul>
+              <li>Calendario semanal organizado según los recursos reales del centro.</li>
+              <li>Guías de actividades para el equipo y materiales originales para participantes.</li>
+              <li>Alternativas por necesidades de apoyo, preferencias y accesibilidad.</li>
+              <li>Registro breve de participación y conversación de revisión.</li>
+            </ul>
+            <p>La intervención sanitaria especializada queda reservada a los profesionales competentes.</p>
+          </div>
+        </div>
+      </section>
+
       <section className="res-section res-section-tint">
         <div className="editorial-wrap res-split">
           <div>
             <p className="res-eyebrow">Muestra gratuita</p>
             <h2>Abre la programación de ejemplo antes de decidir.</h2>
-            <p>Incluye una propuesta de horario semanal y tres actividades desarrolladas con indicaciones para el equipo, adaptaciones y material de trabajo. Puedes imprimirla o guardarla como PDF.</p>
+            <p>Incluye una propuesta de horario semanal y tres actividades desarrolladas con indicaciones para el equipo, adaptaciones y material de trabajo. Puedes imprimirla o guardarla como PDF antes de contactar.</p>
             <a className="editorial-btn editorial-btn-primary" href="/residencias/muestra/">Consultar la muestra imprimible</a>
           </div>
           <aside className="res-note">
             <strong>Estado del proyecto</strong>
-            <p>Esta es la presentación inicial de Vida Activa. El catálogo mensual, la suscripción y las licencias corporativas todavía no están a la venta.</p>
+            <p>Vida Activa se encuentra en fase de validación. El catálogo mensual, la suscripción y las licencias corporativas todavía no están a la venta.</p>
             <p>Se pueden solicitar conversaciones exploratorias con direcciones y equipos técnicos.</p>
           </aside>
         </div>
@@ -157,7 +180,7 @@ export default function VidaActivaPage() {
       <section className="res-section res-end-cta">
         <div className="editorial-wrap">
           <p className="res-eyebrow">Colaboraciones piloto</p>
-          <h2>¿Tu centro quiere explorar Vida Activa?</h2>
+          <h2>Hablemos de las personas y de lo que necesita tu equipo.</h2>
           <p>Podemos valorar qué dificultades tiene actualmente la programación y qué formato sería viable. Sin datos personales de residentes en el primer contacto.</p>
           <a className="editorial-btn editorial-btn-primary" href="/residencias/#contacto-profesional">Contactar para un piloto</a>
         </div>
