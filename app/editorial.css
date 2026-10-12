@@ -500,3 +500,54 @@
   .editorial-site .site-header-actions .site-booking-cta{display:none}
   .editorial-site .site-global-header .brand-name{font-size:1rem}
 }
+
+
+/* Portada 2026: jerarquía editorial, servicios y conversión, sin alterar reservas */
+.editorial-hero-statement{
+  max-width:29ch;
+  margin:18px 0 0;
+  color:var(--e-ink);
+  font-family:var(--font-newsreader),Georgia,"Times New Roman",serif;
+  font-size:clamp(1.4rem,2.2vw,1.9rem);
+  font-weight:500;
+  line-height:1.22;
+}
+.editorial-hero-statement + .editorial-lead{margin-top:18px;}
+.editorial-service-card .editorial-card-hook{
+  max-width:30ch;
+  margin:0 0 14px;
+  color:var(--e-ink);
+  font-family:var(--font-newsreader),Georgia,"Times New Roman",serif;
+  font-size:clamp(1.35rem,2.1vw,1.7rem);
+  font-weight:500;
+  line-height:1.23;
+}
+.editorial-service-card .editorial-card-price{
+  margin:18px 0 0;
+  color:var(--e-ink);
+  font-size:.92rem;
+  font-weight:700;
+}
+.editorial-service-card .editorial-card-note{
+  margin:6px 0 0;
+  color:var(--e-ink-soft);
+  font-size:.82rem;
+  line-height:1.48;
+}
+.editorial-method-intro{
+  max-width:66ch;
+  margin:17px 0 0;
+  color:var(--e-ink-soft);
+  font-size:1rem;
+  line-height:1.7;
+}
+.editorial-closing-prices{
+  margin:15px 0 0;
+  color:var(--e-ink-soft);
+  font-size:.91rem;
+  line-height:1.6;
+}
+@media(max-width:680px){
+  .editorial-hero-statement{max-width:28ch;font-size:1.5rem;}
+  .editorial-service-card .editorial-card-hook{font-size:1.5rem;}
+}
