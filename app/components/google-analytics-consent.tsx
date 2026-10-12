@@ -6,7 +6,7 @@ import { usePathname } from "next/navigation";
 
 const GA_ID = "G-DMEDMEHMCJ";
 const STORAGE_KEY = "carolina_analytics_consent_v1";
-const BOOKING_SOURCE_KEY = "carolina_booking_source_v1";
+const BOOKING_SOURCE_KEY = "carolina_booking_source_v2";
 const CONSENT_MAX_AGE = 1000 * 60 * 60 * 24 * 180;
 
 type ConsentChoice = "accepted" | "rejected";
@@ -16,9 +16,8 @@ type StoredConsent = {
 };
 
 type BookingSource = {
-  sourcePath: string;
-  sourceTitle: string;
-  linkText: string;
+  // Categoría amplia: nunca se almacenan motivos de consulta, rutas clínicas ni títulos.
+  sourceSection: "inicio" | "servicios" | "contenidos" | "recursos" | "otras";
 };
 
 declare global {
@@ -83,6 +82,14 @@ function sendEvent(name: string, parameters: Record<string, string | number> = {
   window.gtag?.("event", name, parameters);
 }
 
+function sectionForPath(path: string): BookingSource["sourceSection"] {
+  if (path === "/") return "inicio";
+  if (["/psicologia/", "/neuropsicologia/", "/psicologa-arenys-de-mar/", "/evaluacion-neuropsicologica/"].includes(path)) return "servicios";
+  if (path.startsWith("/articulos/") || path.startsWith("/podcast/") || path.startsWith("/pregunta-a-carolina/")) return "contenidos";
+  if (path.startsWith("/recursos/")) return "recursos";
+  return "otras";
+}
+
 function saveBookingSource(source: BookingSource) {
   try {
     window.sessionStorage.setItem(BOOKING_SOURCE_KEY, JSON.stringify(source));
@@ -94,7 +101,12 @@ function saveBookingSource(source: BookingSource) {
 function readBookingSource(): BookingSource | null {
   try {
     const raw = window.sessionStorage.getItem(BOOKING_SOURCE_KEY);
-    return raw ? (JSON.parse(raw) as BookingSource) : null;
+    if (!raw) return null;
+    const parsed = JSON.parse(raw) as Partial<BookingSource>;
+    const allowed = ["inicio", "servicios", "contenidos", "recursos", "otras"];
+    return parsed.sourceSection && allowed.includes(parsed.sourceSection)
+      ? { sourceSection: parsed.sourceSection }
+      : null;
   } catch {
     return null;
   }
@@ -128,31 +140,18 @@ function PublicAnalyticsConsent() {
       const target = event.target instanceof Element ? event.target.closest("a,button") : null;
       if (!target) return;
 
-      const sourcePath = window.location.pathname;
-      const sourceTitle = document.title;
-      const linkText = (target.textContent || "").replace(/\s+/g, " ").trim().slice(0, 120);
-
       if (target instanceof HTMLAnchorElement) {
         const href = target.getAttribute("href") || "";
         if (href.startsWith("tel:")) {
-          sendEvent("contact_phone_click", { source_path: sourcePath, source_title: sourceTitle });
+          sendEvent("contact_phone_click");
         } else if (href.startsWith("mailto:")) {
-          sendEvent("contact_email_click", { source_path: sourcePath, source_title: sourceTitle });
+          sendEvent("contact_email_click");
         } else if (href === "/cita" || href === "/cita/" || href.startsWith("/cita/?")) {
-          saveBookingSource({ sourcePath, sourceTitle, linkText });
-          sendEvent("booking_click", {
-            source_path: sourcePath,
-            source_title: sourceTitle,
-            link_text: linkText,
-            destination: href,
-          });
-        } else if (href.startsWith("/") && sourcePath.startsWith("/articulos/")) {
-          sendEvent("article_internal_click", {
-            source_path: sourcePath,
-            source_title: sourceTitle,
-            destination: href,
-            link_text: linkText,
-          });
+          const sourceSection = sectionForPath(window.location.pathname);
+          saveBookingSource({ sourceSection });
+          sendEvent("booking_click", { source_section: sourceSection });
+        } else if (href.startsWith("/") && window.location.pathname.startsWith("/articulos/")) {
+          sendEvent("article_internal_click");
         }
       }
     };
@@ -166,10 +165,13 @@ function PublicAnalyticsConsent() {
         bookingTracked = true;
         const source = readBookingSource();
         sendEvent("booking_complete", {
-          source_path: source?.sourcePath || "direct_or_unknown",
-          source_title: source?.sourceTitle || "direct_or_unknown",
-          link_text: source?.linkText || "direct_or_unknown",
+          source_section: source?.sourceSection || "otras",
         });
+        try {
+          window.sessionStorage.removeItem(BOOKING_SOURCE_KEY);
+        } catch {
+          // El seguimiento nunca debe interferir con la reserva.
+        }
       }
     });
     observer.observe(document.body, { subtree: true, childList: true, characterData: true, attributes: true });
