@@ -137,6 +137,9 @@ jobs:
       - name: Verificar acceso a videoconsulta de prueba
         run: node --experimental-strip-types --test tests/daily-test.test.mjs tests/appointment-video.test.mjs
 
+      - name: Validar publicación de preguntas y propuestas con IA
+        run: node --experimental-strip-types --test tests/expert-questions.test.mjs
+
       - name: Compilar y exportar web
         run: npm run build
 
