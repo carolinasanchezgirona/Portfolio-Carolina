@@ -6,6 +6,7 @@ import { episodes } from "./podcast/episodes";
 const base = "https://carolinasanchezgirona.com";
 const staticLastModified = new Date("2026-10-02T09:45:00+02:00");
 const refreshedLastModified = new Date("2026-10-08T00:00:00+02:00");
+const homepageLastModified = new Date("2026-10-12T00:00:00+02:00");
 
 export const dynamic = "force-static";
 
@@ -16,8 +17,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     staticLastModified.getTime(),
   );
   const staticPages: MetadataRoute.Sitemap = [
-    { url: `${base}/`, lastModified: refreshedLastModified, changeFrequency: "weekly", priority: 1 },
-    { url: `${base}/psicologa-arenys-de-mar/`, lastModified: refreshedLastModified, changeFrequency: "monthly", priority: 0.95 },
+    { url: `${base}/`, lastModified: homepageLastModified, changeFrequency: "weekly", priority: 1 },
+    { url: `${base}/psicologa-arenys-de-mar/`, lastModified: homepageLastModified, changeFrequency: "monthly", priority: 0.95 },
     { url: `${base}/psicologia/`, lastModified: refreshedLastModified, changeFrequency: "monthly", priority: 0.9 },
     { url: `${base}/neuropsicologia/`, lastModified: refreshedLastModified, changeFrequency: "monthly", priority: 0.9 },
     { url: `${base}/residencias/`, lastModified: new Date("2026-10-11T10:00:00+02:00"), changeFrequency: "monthly", priority: 0.84 },
