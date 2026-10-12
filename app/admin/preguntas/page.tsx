@@ -4,6 +4,7 @@ import { FormEvent, useCallback, useEffect, useMemo, useState } from "react";
 import { SUPABASE_PUBLISHABLE_KEY, SUPABASE_URL } from "../../lib/supabase-public";
 import "./questions-admin.css";
 import AdminWorkspaceNav from "../workspace-nav";
+import { slugifyQuestion as slugify } from "../../lib/question-slug";
 
 const ADMIN_USER_ID = "9d2cfdb1-fed6-4f76-b47a-d58507eb14f2";
 const SESSION_KEY = "dememoria_admin_session";
@@ -47,9 +48,6 @@ const statusLabels: Record<Status, string> = {
   rejected: "Descartada",
 };
 
-function slugify(value: string) {
-  return value.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 150);
-}
 function storedSession(): Session | null {
   try { return JSON.parse(sessionStorage.getItem(SESSION_KEY) || "null"); } catch { return null; }
 }
