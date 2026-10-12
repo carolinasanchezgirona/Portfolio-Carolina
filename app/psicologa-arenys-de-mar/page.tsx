@@ -48,7 +48,7 @@ export default function LocalPsychologistPage() {
           <p className="editorial-eyebrow">Consulta en Arenys de Mar · Maresme</p>
           <h1>Psicóloga General Sanitaria y Neuropsicóloga en Arenys de Mar</h1>
           <p className="seo-lead">
-            Atención psicológica para adultos y evaluación e intervención neuropsicológica desde una práctica clínica individualizada, basada en evidencia y adaptada a la persona, su contexto y sus objetivos.
+            Soy Carolina Sánchez Girona, psicóloga sanitaria y neuropsicóloga. Atiendo a personas adultas con dificultades emocionales y a quienes consultan por cambios de memoria, atención o funcionamiento cognitivo. La consulta está en Arenys de Mar, con atención online cuando es adecuada.
           </p>
           <div className="seo-actions">
             <a className="editorial-btn editorial-btn-primary" href="/cita/">Pedir cita</a>
@@ -119,6 +119,12 @@ export default function LocalPsychologistPage() {
               <li>Seguimiento de cambios cognitivos a lo largo del tiempo.</li>
               <li>Orientación a la persona y a la familia tras la evaluación.</li>
             </ul>
+            <p>
+              Si te preocupa un cambio cognitivo propio o de un familiar, puedes consultar
+              <a href="/problemas-de-memoria/"> cuándo conviene valorar los olvidos</a>,
+              <a href="/evaluacion-neuropsicologica/"> cómo es una evaluación neuropsicológica</a> y
+              <a href="/familiares-y-cuidadores-de-personas-con-demencia/"> qué apoyo pueden recibir las familias</a>.
+            </p>
           </section>
 
           <section>
