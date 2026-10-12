@@ -744,25 +744,42 @@ async function handleQuestionDraft(request: Request, env: Env): Promise<Response
       method: "POST",
       headers: { Authorization: `Bearer ${env.OPENAI_API_KEY}`, "Content-Type": "application/json" },
       body: JSON.stringify({
-        model: env.OPENAI_TEXT_MODEL || env.OPENAI_CLINICAL_MODEL || "gpt-5.6-sol",
-        temperature: 0.2,
+        model: env.OPENAI_TEXT_MODEL || "gpt-4.1-mini",
+        store: false,
         response_format: { type: "json_object" },
         messages: [{ role: "system", content: system }, { role: "user", content: question }],
       }),
     });
     const body = await response.json() as any;
-    if (!response.ok) return editorialJson({ error: "No se ha podido generar la propuesta con IA." }, 502);
+    if (!response.ok) {
+      const apiError = body?.error && typeof body.error === "object" ? body.error : {};
+      const code = editorialText(apiError.code, 120);
+      // Never log or expose consultation content; retain only status and a short provider error code.
+      console.error("Question draft provider rejected request", response.status, code);
+      if (response.status === 401) return editorialJson({ error: "La clave de la IA no es válida. Revisa la configuración de Cloudflare." }, 502);
+      if (response.status === 429) return editorialJson({ error: "La API de IA ha alcanzado su límite de uso o crédito. Revisa la facturación o inténtalo más tarde." }, 429);
+      if (response.status === 403 || response.status === 404) return editorialJson({ error: "El proyecto de IA no tiene acceso al modelo editorial configurado." }, 502);
+      if (response.status === 400) return editorialJson({ error: "La API ha rechazado la solicitud. Revisa el modelo editorial configurado." }, 502);
+      if (response.status >= 500) return editorialJson({ error: "El proveedor de IA no está disponible ahora. Inténtalo más tarde." }, 503);
+      return editorialJson({ error: "No se ha podido generar la propuesta con IA. Puedes editarla manualmente." }, 502);
+    }
     const content = body?.choices?.[0]?.message?.content;
     const parsed = JSON.parse(typeof content === "string" ? content : "{}") as Record<string, unknown>;
+    const publicQuestion = editorialText(parsed.question_public, 1200);
+    const answer = editorialText(parsed.answer, 8000);
+    if (publicQuestion.length < 20 || answer.length < 80) {
+      return editorialJson({ error: "La IA ha devuelto una propuesta incompleta. Puedes volver a intentarlo o escribirla manualmente." }, 502);
+    }
     const categories = new Set(["psicologia","ansiedad-animo","relaciones-duelo","neuropsicologia","memoria-deterioro","familiares-cuidadores","otra"]);
     return editorialJson({
-      question_public: editorialText(parsed.question_public, 1200),
-      answer: editorialText(parsed.answer, 8000),
+      question_public: publicQuestion,
+      answer,
       category: categories.has(String(parsed.category)) ? String(parsed.category) : "otra",
       review_note: editorialText(parsed.review_note, 1200),
     });
-  } catch {
-    return editorialJson({ error: "No se ha podido generar la propuesta con IA." }, 502);
+  } catch (error) {
+    console.error("Question draft generation failed", error instanceof Error ? error.name : "Unknown");
+    return editorialJson({ error: "No se ha podido completar la propuesta. Puedes editarla manualmente." }, 502);
   }
 }
 
