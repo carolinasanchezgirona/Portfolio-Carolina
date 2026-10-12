@@ -150,7 +150,7 @@
     updateSelectionSummary();
     if (els.submit) els.submit.disabled = false;
     showMessage("");
-    window.gtag?.("event", "booking_slot_selected", { service: serviceCodeValue() });
+    window.gtag?.("event", "booking_slot_selected");
     document.querySelectorAll(".time-option, .first-slot-button").forEach((button) => {
       const selected = button.dataset.startsAt === slot.starts_at;
       button.classList.toggle("is-selected", selected);
