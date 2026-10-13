@@ -1471,6 +1471,41 @@
     else els.patientMessage.textContent = "Acceso retirado de Mi espacio. Las copias descargadas anteriormente no pueden revocarse.";
   }
 
+  async function deletePatientDocument(doc) {
+    if (!currentPatient || currentPatient.id !== doc.patient_id) throw new Error("Paciente no válido.");
+    const label = doc.title || doc.file_name || "este documento";
+    if (!window.confirm(`¿Eliminar «${label}» de la ficha clínica y de Mi espacio? Esta acción no se puede deshacer. Conserva cualquier documentación cuya custodia sea obligatoria.`)) return false;
+    const filePath = String(doc.file_path || "");
+    if (!filePath || !filePath.startsWith(doc.patient_id + "/")) throw new Error("Ruta de archivo no válida. No se ha eliminado nada.");
+    // Remove the private object before its database metadata. If storage rejects deletion,
+    // preserve the clinical record and report the error instead of hiding it in the UI.
+    const storageResponse = await fetch(`${SUPABASE_URL}/storage/v1/object/clinical-documents/${filePath.split("/").map(encodeURIComponent).join("/")}`, {
+      method: "DELETE",
+      headers: authHeaders()
+    });
+    if (!storageResponse.ok && storageResponse.status !== 404) {
+      const payload = await storageResponse.json().catch(() => ({}));
+      throw new Error(payload.message || payload.error || "No se ha podido eliminar el archivo del almacenamiento. No se ha modificado su ficha.");
+    }
+    let removed;
+    try {
+      removed = await rest("clinical_documents?id=eq." + encodeURIComponent(doc.id) +
+        "&patient_id=eq." + encodeURIComponent(doc.patient_id) + "&select=id", {
+        method: "DELETE",
+        headers: { Prefer: "return=representation" }
+      });
+    } catch (error) {
+      throw new Error("El archivo se ha retirado del almacenamiento, pero no se pudo borrar su registro clínico. Contacta con soporte para completar la operación. " + (error.message || ""));
+    }
+    if (!Array.isArray(removed) || removed.length !== 1) {
+      throw new Error("El archivo se ha retirado del almacenamiento, pero no se confirmó el borrado del registro. Actualiza la ficha y verifica su estado.");
+    }
+    clinicalDocuments = clinicalDocuments.filter(item => item.id !== doc.id);
+    renderDocuments(currentPatient);
+    els.patientMessage.textContent = "Documento eliminado de la ficha y del almacenamiento.";
+    return true;
+  }
+
   function renderDocuments(patient) {
     els.patientDocuments.replaceChildren();
     const docs = clinicalDocuments.filter((item) => item.patient_id === patient.id);
@@ -1518,6 +1553,15 @@
         });
         actions.append(notify);
       }
+      const deleteButton = create("button", "clinic-secondary clinic-document-delete", "Eliminar documento");
+      deleteButton.type = "button";
+      deleteButton.addEventListener("click", async () => {
+        deleteButton.disabled = true;
+        try { await deletePatientDocument(doc); }
+        catch (error) { els.patientMessage.textContent = error.message || "No se ha podido eliminar el documento."; }
+        finally { deleteButton.disabled = false; }
+      });
+      actions.append(deleteButton);
       row.append(info, actions);
       els.patientDocuments.append(row);
     });
