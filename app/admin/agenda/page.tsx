@@ -71,6 +71,7 @@ export default function AdminAgendaPage() {
             <option value="view-today">Hoy</option>
             <option value="view-tomorrow">Mañana</option>
             <option value="view-week">Semana</option>
+            <option value="view-month">Mes</option>
             <option value="view-patients">Por paciente</option>
           </select>
         </div>
@@ -78,6 +79,7 @@ export default function AdminAgendaPage() {
           <button id="view-today" className="active" type="button">Hoy</button>
           <button id="view-tomorrow" type="button">Mañana</button>
           <button id="view-week" type="button">Semana</button>
+          <button id="view-month" type="button">Mes</button>
           <button id="view-patients" type="button">Por paciente</button>
         </nav>
 
@@ -125,6 +127,19 @@ export default function AdminAgendaPage() {
 
           <p id="admin-status" className="admin-message" role="status" aria-live="polite" />
           <section id="week-calendar" className="week-calendar" aria-label="Calendario semanal" />
+        </section>
+
+        <section id="month-view" className="admin-view" hidden>
+          <section className="admin-toolbar agenda-month-toolbar" aria-label="Navegación del calendario mensual">
+            <div className="admin-week-nav">
+              <button id="month-prev" type="button" aria-label="Mes anterior">←</button>
+              <button id="month-today" type="button">Hoy</button>
+              <button id="month-next" type="button" aria-label="Mes siguiente">→</button>
+            </div>
+            <div><h2 id="month-title">Calendario mensual</h2><p className="admin-muted">Ocupación y horas disponibles para reservar</p></div>
+          </section>
+          <p id="month-status" className="admin-muted" role="status" />
+          <div id="month-calendar" className="agenda-month-calendar" aria-label="Ocupación mensual" />
         </section>
 
         <section id="patients-view" className="admin-view" hidden>
@@ -208,7 +223,8 @@ export default function AdminAgendaPage() {
         </form>
       </dialog>
 
-      <Script src="/admin-agenda-v3.js?v=20261009-no-login-flicker-1" strategy="afterInteractive" />
+      <Script src="/admin-agenda-v3.js?v=20261013-calendar-availability-1" strategy="afterInteractive" />
+      <Script src="/admin-agenda-enhancement.js?v=20261013-calendar-availability-1" strategy="afterInteractive" />
       <Script src="/pwa.js?v=20260915-admin-2" strategy="afterInteractive" />
     </main>
   );
