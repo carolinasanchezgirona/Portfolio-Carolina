@@ -1316,3 +1316,16 @@ body.clinic-report-page-open{overflow:auto!important}
 /* File visibility is an explicit opt-in, never inferred from file category. */
 .clinic-dialog .clinic-document-share-option { display: flex; align-items: flex-start; gap: .7rem; }
 .clinic-dialog .clinic-document-share-option input { width: 1.1rem; min-width: 1.1rem; height: 1.1rem; margin: .15rem 0 0; }
+
+
+/* Patient documents: responsive layout, readable metadata and contained actions. */
+#clinic-patient-documents{min-width:0;width:100%}
+#clinic-patient-documents article{display:grid;grid-template-columns:minmax(0,1fr);gap:12px;align-items:start}
+#clinic-patient-documents article>div:first-child{min-width:0;display:grid;gap:7px}
+#clinic-patient-documents article>div:first-child strong{overflow-wrap:anywhere;line-height:1.35}
+#clinic-patient-documents article>div:first-child span{overflow-wrap:anywhere;word-break:break-word;line-height:1.5}
+#clinic-patient-documents .clinic-material-row-actions{display:flex;min-width:0;gap:8px;justify-content:flex-start;flex-wrap:wrap}
+#clinic-patient-documents .clinic-material-row-actions button{flex:0 1 auto;width:auto;max-width:100%;min-height:38px;white-space:normal;overflow-wrap:normal;padding:8px 12px;text-align:center;line-height:1.25}
+#clinic-patient-documents .clinic-document-delete{color:#a13c38;border-color:#e5b3ad;background:#fff9f7}
+#clinic-patient-documents .clinic-document-delete:hover{background:#fff0ec}
+@media(max-width:620px){#clinic-patient-documents .clinic-material-row-actions button{flex:1 1 140px}}
