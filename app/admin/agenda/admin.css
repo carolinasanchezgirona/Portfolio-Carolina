@@ -72,3 +72,24 @@
 .admin-agenda-spinner { display: block; width: 30px; height: 30px; border: 3px solid #d9e8ee; border-top-color: #08a6a0; border-radius: 50%; animation: adminAgendaSpin .85s linear infinite; }
 @keyframes adminAgendaSpin { to { transform: rotate(360deg); } }
 @media (prefers-reduced-motion: reduce) { .admin-agenda-spinner { animation: none; border-top-color: #173a5e; } }
+
+
+/* Availability and monthly occupancy overview */
+.agenda-free-panel{margin:10px 0;padding:12px;border:1px solid #b6dfcb;border-radius:12px;background:#eef8f1;color:#20543c}
+.agenda-free-panel>strong{display:block;margin-bottom:7px;font-size:.81rem}
+.agenda-free-buttons,.agenda-month-hours{display:flex;flex-wrap:wrap;gap:5px}
+.agenda-free-buttons button,.agenda-month-hours button{border:1px solid #80b399;border-radius:7px;padding:6px 9px;background:#fff;color:#20543c;cursor:pointer;font:inherit;font-size:.76rem;font-weight:700}
+.agenda-free-buttons button:hover,.agenda-month-hours button:hover{background:#d1eddd}
+.agenda-free-panel.compact{padding:9px;margin:5px 0}
+.agenda-month-calendar{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:7px}
+.agenda-month-dayname{padding:10px;text-align:center;font-weight:750;color:#52615a}
+.agenda-month-cell{display:flex;flex-direction:column;gap:5px;min-height:116px;padding:10px;background:#fffdf9;border:1px solid #e4dcd2;border-radius:11px;overflow:hidden}
+.agenda-month-cell.today{border:2px solid #2f5f78}
+.agenda-month-cell>strong{font-size:1rem}
+.agenda-month-cell>span,.agenda-month-cell>em{font-size:.73rem;font-style:normal;color:#52615a}
+.agenda-month-cell>em{color:#20543c;font-weight:700}
+.agenda-month-hours{max-height:92px;overflow-y:auto}
+.agenda-month-hours button{font-size:.68rem;padding:4px 6px}
+.agenda-month-toolbar{margin-bottom:12px}
+@media(max-width:800px){.agenda-month-calendar{gap:3px}.agenda-month-cell{min-height:90px;padding:5px}.agenda-month-cell>span,.agenda-month-cell>em{font-size:.62rem}.agenda-month-hours button{font-size:.61rem;padding:3px}.agenda-month-dayname{padding:6px}}
+@media(max-width:480px){.agenda-month-calendar{grid-template-columns:repeat(7,minmax(0,1fr))}.agenda-month-cell{min-height:75px}.agenda-month-cell>span,.agenda-month-cell>em{font-size:.56rem;overflow-wrap:anywhere}.agenda-month-cell>strong{font-size:.85rem}.agenda-month-hours{max-height:60px}}
