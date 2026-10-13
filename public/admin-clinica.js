@@ -1479,9 +1479,10 @@
     if (!filePath || !filePath.startsWith(doc.patient_id + "/")) throw new Error("Ruta de archivo no válida. No se ha eliminado nada.");
     // Remove the private object before its database metadata. If storage rejects deletion,
     // preserve the clinical record and report the error instead of hiding it in the UI.
-    const storageResponse = await fetch(`${SUPABASE_URL}/storage/v1/object/clinical-documents/${filePath.split("/").map(encodeURIComponent).join("/")}`, {
+    const storageResponse = await fetch(`${SUPABASE_URL}/storage/v1/object/clinical-documents`, {
       method: "DELETE",
-      headers: authHeaders()
+      headers: authHeaders(),
+      body: JSON.stringify({ prefixes: [filePath] })
     });
     if (!storageResponse.ok && storageResponse.status !== 404) {
       const payload = await storageResponse.json().catch(() => ({}));
@@ -1557,8 +1558,18 @@
       deleteButton.type = "button";
       deleteButton.addEventListener("click", async () => {
         deleteButton.disabled = true;
+        let status = row.querySelector(".clinic-document-delete-status");
+        if (!status) {
+          status = create("p", "clinic-document-delete-status");
+          status.setAttribute("role", "status");
+          row.append(status);
+        }
+        status.textContent = "";
         try { await deletePatientDocument(doc); }
-        catch (error) { els.patientMessage.textContent = error.message || "No se ha podido eliminar el documento."; }
+        catch (error) {
+          status.textContent = error.message || "No se ha podido eliminar el documento.";
+          els.patientMessage.textContent = status.textContent;
+        }
         finally { deleteButton.disabled = false; }
       });
       actions.append(deleteButton);
