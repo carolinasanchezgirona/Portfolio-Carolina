@@ -160,8 +160,8 @@ export default function EntreSesionesApp() {
 
   return <main className="esapp">
     <header className="esapp-top">
-      <div className="esapp-logo"><Image src="/entre-sesiones-icon-editorial.svg" alt="Entre Sesiones" width={48} height={48} priority /></div>
-      <div className="esapp-brand"><strong>Entre Sesiones</strong><span>Carolina Sánchez · Psicología y Neuropsicología</span></div>
+      <div className="esapp-logo"><Image src="/entre-sesiones-icon-es.svg" alt="Entre Sesiones" width={48} height={48} priority /></div>
+      <div className="esapp-brand"><strong>Entre Sesiones</strong><span>Carolina Sánchez · Psicología y neuropsicología</span></div>
       <div className="esapp-head-actions">
         {status === "ready" && <button className="esapp-light" type="button" disabled={loggingOut} onClick={logout}>{loggingOut ? "Saliendo…" : "Cerrar sesión"}</button>}
         {!isStandalone && <button type="button" className="esapp-install" onClick={install}><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true" strokeLinecap="round" strokeLinejoin="round"><path d="M12 3v12m-4-4 4 4 4-4M5 17v3h14v-3"/></svg><span>Instalar</span></button>}
@@ -169,19 +169,21 @@ export default function EntreSesionesApp() {
     </header>
 
     <div className="esapp-container">
-      <section className="esapp-hero">
-        <p className="esapp-overline">TU ESPACIO ENTRE SESIONES</p>
-        <h1>{status === "ready" && data?.patient?.first_name
-          ? `Hola, ${data.patient.first_name}.`
-          : "Un lugar para seguir avanzando."}</h1>
-        <p className="esapp-hero-description">Tus ejercicios, los avances compartidos y un espacio para continuar lo trabajado en consulta, a tu ritmo.</p>
-        <div className="esapp-hero-actions">
-          <a href={workspace} className="esapp-primary">{status === "ready" ? "Ver mis ejercicios" : "Acceder a mis ejercicios"} <span aria-hidden="true">↗</span></a>
-          {status === "ready" && <button type="button" className="esapp-hero-quiet" onClick={reload} aria-label="Actualizar mis materiales">
-            <svg width="17" height="17" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M20 7v5h-5M4 17v-5h5"/><path d="M5.4 9A7.5 7.5 0 0 1 19 7l1 5M4 12l1 5a7.5 7.5 0 0 0 13.6-2"/></svg>
-            Actualizar
-          </button>}
+      <section className="esapp-welcome" aria-labelledby="esapp-welcome-title">
+        <div className="esapp-welcome-copy">
+          <p className="esapp-overline">{status === "ready" ? "TU ESPACIO PERSONAL" : "CONTINÚA A TU RITMO"}</p>
+          <h1 id="esapp-welcome-title">{status === "ready" && data?.patient?.first_name
+            ? `Hola, ${data.patient.first_name}.`
+            : "Tu espacio entre sesiones"}</h1>
+          <p>Ejercicios, avances y seguimiento entre consulta y consulta.</p>
         </div>
+        {status === "ready" && <div className="esapp-welcome-actions">
+          <a href={workspace} className="esapp-primary">Abrir mis ejercicios <span aria-hidden="true">↗</span></a>
+          <button type="button" className="esapp-quiet-action" onClick={reload} aria-label="Actualizar mis actividades">
+            <svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round"><path d="M20 7v5h-5M4 17v-5h5"/><path d="M5.4 9A7.5 7.5 0 0 1 19 7M18.6 15A7.5 7.5 0 0 1 5 17"/></svg>
+            Actualizar
+          </button>
+        </div>}
       </section>
 
       {installHint && !isStandalone && <aside className="esapp-hint" role="status">
@@ -189,17 +191,26 @@ export default function EntreSesionesApp() {
         <button aria-label="Cerrar indicaciones" type="button" onClick={() => setInstallHint(false)}>×</button>
       </aside>}
 
-      {status === "checking" && <section className="esapp-state" role="status"><h2>Comprobando tu acceso…</h2><p>Estamos verificando tu sesión actual. La app no conserva datos clínicos sin conexión.</p></section>}
-      {status === "logged-out" && <section className="esapp-state">
-        <div className="esapp-state-icon" aria-hidden="true"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"><rect x="5" y="10" width="14" height="11" rx="2.5"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/><circle cx="12" cy="15" r="1"/></svg></div>
-        <h2>Accede con tu cuenta habitual</h2>
-        <p>Utiliza el mismo correo y contraseña que ya tienes en «Mi espacio». No necesitas crear otra cuenta.</p>
-        <a href="/mi-espacio/?vista=terapia" className="esapp-primary">Entrar en Mi espacio</a>
+      {status === "checking" && <section className="esapp-access esapp-access-loading" role="status" aria-live="polite">
+        <span className="esapp-loader" aria-hidden="true" />
+        <div><h2>Comprobando el acceso</h2><p>Un momento, estamos verificando tu sesión.</p></div>
       </section>}
-      {status === "error" && <section className="esapp-state" role="alert">
-        <h2>No se ha podido comprobar la conexión</h2>
-        <p>No hemos cargado información clínica. Revisa tu conexión e inténtalo otra vez.</p>
-        <button type="button" onClick={reload} className="esapp-primary">Reintentar</button>
+      {status === "logged-out" && <section className="esapp-access" aria-labelledby="esapp-login-title">
+        <span className="esapp-access-icon" aria-hidden="true">
+          <svg width="27" height="27" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
+            <rect x="5" y="10" width="14" height="11" rx="2.5" /><path d="M8 10V7a4 4 0 0 1 8 0v3" /><path d="M12 14.5v2.5"/>
+          </svg>
+        </span>
+        <div className="esapp-access-copy">
+          <h2 id="esapp-login-title">Accede con tu cuenta</h2>
+          <p>El mismo correo y contraseña que utilizas en «Mi espacio». Sin registros nuevos.</p>
+        </div>
+        <a href={workspace} className="esapp-primary esapp-login-button">Entrar <span aria-hidden="true">→</span></a>
+      </section>}
+      {status === "error" && <section className="esapp-access" role="alert">
+        <span className="esapp-access-icon" aria-hidden="true">!</span>
+        <div className="esapp-access-copy"><h2>No se ha podido conectar</h2><p>No hemos cargado ninguna información clínica. Comprueba tu conexión.</p></div>
+        <button type="button" className="esapp-primary esapp-login-button" onClick={reload}>Reintentar</button>
       </section>}
 
       {status === "ready" && <div className="esapp-columns">
