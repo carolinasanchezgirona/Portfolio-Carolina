@@ -111,6 +111,53 @@ export default function MiEspacioPage() {
               <button type="button" className="space-primary" data-go-therapy>Ir a mis ejercicios →</button>
             </div>
 
+            <section id="space-session-prep" className="space-session-prep" aria-labelledby="space-session-prep-title" tabIndex={-1}>
+              <div className="space-session-prep-head">
+                <div>
+                  <p className="space-eyebrow">ANTES DE NUESTRA PRÓXIMA SESIÓN</p>
+                  <h3 id="space-session-prep-title">Hay cosas que merece la pena traer a consulta.</h3>
+                  <p>Tres preguntas para ordenar lo que quieras comentar. Puedes dejar cualquiera en blanco.</p>
+                </div>
+                <span className="space-session-prep-icon" aria-hidden="true">✎</span>
+              </div>
+              <form id="space-session-prep-form" className="space-session-prep-form" autoComplete="off">
+                <label htmlFor="space-prep-difficult">
+                  <strong>01 · ¿Qué me ha costado?</strong>
+                  <span>Algo que haya sido difícil, aunque parezca pequeño.</span>
+                </label>
+                <textarea id="space-prep-difficult" rows={3} maxLength={900} placeholder="Si quieres, anótalo aquí…" />
+                <label htmlFor="space-prep-helped">
+                  <strong>02 · ¿Qué me ha ayudado?</strong>
+                  <span>Una estrategia, un momento o un apoyo que hayas notado.</span>
+                </label>
+                <textarea id="space-prep-helped" rows={3} maxLength={900} placeholder="Puedes escribir unas pocas palabras…" />
+                <label htmlFor="space-prep-talk">
+                  <strong>03 · ¿De qué me gustaría hablar?</strong>
+                  <span>Una duda o algo que prefieras abordar en la siguiente sesión.</span>
+                </label>
+                <textarea id="space-prep-talk" rows={3} maxLength={900} placeholder="Una pregunta, una preocupación, un tema…" />
+                <div className="space-session-prep-actions">
+                  <button id="space-prep-preview-button" type="button" className="space-primary">Ver mi resumen</button>
+                  <button id="space-prep-clear" type="button" className="space-secondary">Descartar notas</button>
+                </div>
+              </form>
+              <div id="space-session-prep-preview" className="space-session-prep-preview" hidden aria-live="polite">
+                <h4>Lo que quiero recordar</h4>
+                <div id="space-session-prep-summary" className="space-session-prep-summary" />
+                <div className="space-session-prep-transfer">
+                  <label htmlFor="space-session-prep-target">Si quieres guardarlo o compartirlo desde un ejercicio:</label>
+                  <select id="space-session-prep-target">
+                    <option value="">Selecciona un ejercicio disponible</option>
+                  </select>
+                  <button id="space-session-prep-insert" type="button" className="space-primary">Incorporar al ejercicio</button>
+                  <button id="space-session-prep-copy" type="button" className="space-secondary">Copiar resumen</button>
+                  <p className="space-small">Incorporar el resumen no lo guarda ni lo comparte. Después tendrás que elegir expresamente «Guardar borrador» o «Compartir respuestas» en Mi terapia. Copiar utiliza el portapapeles de tu dispositivo.</p>
+                </div>
+              </div>
+              <p id="space-session-prep-message" className="space-session-prep-message" role="status" aria-live="polite" />
+              <p className="space-session-prep-privacy"><strong>Solo tú decides.</strong> Estas notas se mantienen únicamente en esta pantalla mientras la usas. No se guardan automáticamente ni se envían a Carolina; se descartan al cerrar la página o salir de tu cuenta.</p>
+            </section>
+
             <aside className="space-membership-note">
               <strong>Acceso incluido durante la terapia</strong>
               <p>Mientras estés en tratamiento, Wellness y tus materiales están incluidos. Al finalizar, podrás continuar con las herramientas digitales mediante una suscripción voluntaria cuando esté disponible.</p>
@@ -394,7 +441,8 @@ export default function MiEspacioPage() {
       </aside>
 
       <Script src="/patient-video.js?v=20261009-1" strategy="afterInteractive" />
-      <Script src="/mi-espacio.js?v=20261017-pwa-tabs-2" strategy="afterInteractive" />
+      <Script src="/mi-espacio.js?v=20261017-weekly-session-1" strategy="afterInteractive" />
+      <Script src="/session-prep.js?v=20261017-1" strategy="afterInteractive" />
       <Script src="/wellness-interactive.js?v=20261017-visual-2" strategy="afterInteractive" />
     </main>
   );
