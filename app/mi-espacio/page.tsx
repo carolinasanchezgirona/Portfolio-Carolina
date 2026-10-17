@@ -295,11 +295,16 @@ export default function MiEspacioPage() {
                 <button type="button" data-need="rumiacion"><span aria-hidden="true">↻</span><strong>Menos vueltas</strong><small>Soltar la rumiación</small></button>
                 <button type="button" data-need="energia"><span aria-hidden="true">◔</span><strong>Poca energía</strong><small>Hacerlo más sencillo</small></button>
                 <button type="button" data-need="entender"><span aria-hidden="true">◇</span><strong>Entenderme</strong><small>Poner nombre a lo que siento</small></button>
-                <button type="button" data-need="concentrarme"><span aria-hidden="true">◎</span><strong>Recuperar foco</strong><small>Una cosa cada vez</small></button>
+              </div>
+              <details className="wellness-more-needs">
+                <summary>Ver otras necesidades</summary>
+                <div className="wellness-needs" aria-label="Otras necesidades">
+                  <button type="button" data-need="concentrarme"><span aria-hidden="true">◎</span><strong>Recuperar foco</strong><small>Una cosa cada vez</small></button>
                 <button type="button" data-need="limites"><span aria-hidden="true">⊣</span><strong>Poner límites</strong><small>Expresarme con claridad</small></button>
                 <button type="button" data-need="desconectar"><span aria-hidden="true">☾</span><strong>Desconectar</strong><small>Descanso y transición</small></button>
-                <button type="button" data-need="orden"><span aria-hidden="true">☷</span><strong>Ordenar ideas</strong><small>Menos carga mental</small></button>
-              </div>
+                  <button type="button" data-need="orden"><span aria-hidden="true">☷</span><strong>Ordenar ideas</strong><small>Menos carga mental</small></button>
+                </div>
+              </details>
             </section>
 
             <section className="wellness-quick-section" aria-labelledby="wellness-quick-heading">
