@@ -110,7 +110,10 @@ export default function MiEspacioPage() {
               <p>Tu recorrido, paso a paso y recursos para continuar lo trabajado en consulta, a tu ritmo.</p>
             </div>
 
-            <MoodTracker />
+            <div className="space-moment-shortcut">
+              <div><p className="space-eyebrow">MI MOMENTO</p><h3>¿Cómo te sientes hoy?</h3><p>Tu personaje, tu ánimo y tu energía están ahora juntos en Wellness, con tus registros anteriores.</p></div>
+              <button type="button" className="space-primary" data-space-view="wellness">Ver mi momento →</button>
+            </div>
 
             <div className="space-quick-start">
               <div>
@@ -289,6 +292,7 @@ export default function MiEspacioPage() {
               <div className="wellness-section-title">
                 <div><p className="space-eyebrow">EMPIEZA POR AQUÍ</p><h3 id="wellness-need-heading">¿Qué necesitas ahora?</h3></div>
                 <p>Puedes cambiar de opción cuando quieras.</p>
+                <a className="wellness-moment-link" href="#wellness-mi-momento">Ver mi personaje, ánimo y energía <span aria-hidden="true">↓</span></a>
               </div>
               <div className="wellness-needs wellness-needs-editorial" aria-label="Elegir una necesidad">
                 <button type="button" data-need="calmarme" className="wellness-need-1">
@@ -333,6 +337,10 @@ export default function MiEspacioPage() {
                 </button>
               </div>
             </section>
+
+            <div id="wellness-mi-momento" className="wellness-moment-section">
+              <MoodTracker />
+            </div>
 
             <section className="wellness-quick-section" aria-labelledby="wellness-quick-heading">
               <div className="wellness-section-title">
