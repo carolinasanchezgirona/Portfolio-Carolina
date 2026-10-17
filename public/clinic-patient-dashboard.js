@@ -135,6 +135,7 @@
   });
   observer.observe(dialog, { attributes: true, attributeFilter: ["hidden"] });
   refresh.addEventListener("click", loadDashboard);
+  window.addEventListener("clinic-assignment-plan-updated", () => { void loadDashboard(); });
 
   const patientIdObserver = new MutationObserver(() => {
     if (!dialog.hidden && patientIdField.value) loadDashboard();
