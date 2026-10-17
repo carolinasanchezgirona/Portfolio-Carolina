@@ -1556,7 +1556,10 @@
     "wi-decision": "¿Problema o posibilidad?",
     "wi-energy": "Mi energía, mi margen",
     "wi-priorities": "Ordenar la cabeza",
-    "wi-focus": "Cambiar de criterio"
+    "wi-focus": "Cambiar de criterio",
+    "wi-sequence": "Pon las ideas en orden",
+    "wi-visual": "Encuentra la figura",
+    "wi-moment": "Ordenar un momento"
   });
   document.addEventListener("wellness:interactive-completed", event => {
     const detail = event.detail;
