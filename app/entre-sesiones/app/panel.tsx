@@ -24,6 +24,7 @@ type InstallEvent = Event & { prompt(): Promise<void>; userChoice: Promise<{ out
 const workspace = "/entre-sesiones/app/espacio/?vista=terapia";
 const wellness = "/entre-sesiones/app/espacio/?vista=wellness";
 const progress = "/entre-sesiones/app/espacio/?vista=progreso";
+const prepareSession = "/entre-sesiones/app/espacio/?vista=panel#space-session-prep";
 const sessionEndpoint = "/api/patient-portal/session";
 
 function readableDate(value?: string | null) {
@@ -159,6 +160,17 @@ export default function EntreSesionesApp() {
   const reviewed = materials.filter(item => item.status === "reviewed");
   const shared = materials.filter(item => item.patient_response_status === "shared").length;
   const appointment = appointmentLabel(data?.next_appointment);
+  // Only actual patient-assigned materials appear as clinical actions.
+  // Drafts come first, followed by the earliest valid review date.
+  const weeklyMaterials = [...active].sort((a, b) => {
+    const draftA = a.patient_response_status === "draft" ? 0 : 1;
+    const draftB = b.patient_response_status === "draft" ? 0 : 1;
+    if (draftA !== draftB) return draftA - draftB;
+    const da = a.review_due_at ? Date.parse(a.review_due_at) : NaN;
+    const db = b.review_due_at ? Date.parse(b.review_due_at) : NaN;
+    return (Number.isFinite(da) ? da : Number.POSITIVE_INFINITY) -
+      (Number.isFinite(db) ? db : Number.POSITIVE_INFINITY);
+  }).slice(0, 2);
 
   return <main className="esapp">
     <header className="esapp-top">
@@ -201,6 +213,45 @@ export default function EntreSesionesApp() {
           <span>Pequeños pasos, cambios reales. Trabaja lo que hemos acordado en consulta.</span>
         </div>
         <a className="esapp-feature-link" href={workspace}>Ver mis ejercicios <span aria-hidden="true">→</span></a>
+      </section>}
+
+      {status === "ready" && <section className="esapp-weekly-plan" aria-labelledby="esapp-weekly-plan-title">
+        <div className="esapp-weekly-head">
+          <div>
+            <p className="esapp-overline">UNA PROPUESTA SIN OBLIGACIONES</p>
+            <h2 id="esapp-weekly-plan-title">Tu semana, a tu ritmo.</h2>
+            <p>Accede a tus materiales y elige una pausa. Las actividades de consulta son las que te ha asignado Carolina; Wellness es opcional.</p>
+          </div>
+          <span className="esapp-weekly-count">{weeklyMaterials.length} {weeklyMaterials.length === 1 ? "material disponible" : "materiales para empezar"}</span>
+        </div>
+        <div className="esapp-weekly-grid">
+          <div className="esapp-weekly-tasks">
+            <p className="esapp-weekly-category">MIS EJERCICIOS</p>
+            {weeklyMaterials.length ? weeklyMaterials.map(item => <a key={item.id} className="esapp-weekly-task" href={workspace}>
+              <span className="esapp-weekly-task-mark" aria-hidden="true">▤</span>
+              <span className="esapp-weekly-task-copy">
+                <strong>{item.title || "Actividad de consulta"}</strong>
+                <small>{item.patient_response_status === "draft" ? "Borrador guardado · puedes retomarlo" :
+                  item.patient_response_status === "shared" ? "Ya compartida · disponible para consultar" :
+                  item.review_due_at ? `Revisión prevista: ${readableDate(item.review_due_at)}` : "Material asignado en consulta"}</small>
+              </span>
+              <span aria-hidden="true" className="esapp-weekly-arrow">↗</span>
+            </a>) : <div className="esapp-weekly-empty">No tienes ejercicios pendientes. Puedes consultar Wellness cuando te apetezca.</div>}
+            <a className="esapp-weekly-text-link" href={workspace}>Ver todos mis materiales <span aria-hidden="true">→</span></a>
+          </div>
+          <a className="esapp-weekly-care" href={wellness}>
+            <span className="esapp-weekly-category">WELLNESS · SI TE APETECE</span>
+            <span className="esapp-weekly-care-glyph" aria-hidden="true">◉</span>
+            <strong>Una pausa para ti</strong>
+            <span>Elige una práctica breve de atención o autocuidado. No es una tarea prescrita.</span>
+            <small>Explorar mis herramientas ↗</small>
+          </a>
+        </div>
+        <a className="esapp-weekly-prepare" href={prepareSession}>
+          <span className="esapp-weekly-prepare-symbol" aria-hidden="true">✎</span>
+          <span><strong>Antes de tu próxima sesión</strong><small>Tres preguntas para pensar qué quieres comentar. El texto es privado hasta que decidas compartirlo.</small></span>
+          <span aria-hidden="true" className="esapp-weekly-arrow">↗</span>
+        </a>
       </section>}
 
       {status === "ready" && <section className="esapp-wellness-entry" aria-labelledby="esapp-wellness-entry-title">
