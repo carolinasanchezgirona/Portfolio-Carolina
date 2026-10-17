@@ -63,8 +63,10 @@ with sync_playwright() as p:
             window.confirm = () => true;
         }""")
         page.add_script_tag(content=MODULE)
-        page.locator("#space-prep-talk").fill("Solo datos inventados")
-        page.locator("#space-prep-preview-button").tap()
+        page.evaluate("""() => {
+            document.getElementById('space-prep-talk').value = 'Solo datos inventados';
+            document.getElementById('space-prep-preview-button').click();
+        }""")
         assert_check(page.locator("#space-session-prep-preview").is_hidden(), "Unauthorized preview visible")
         page.evaluate("""() => {
           document.querySelector('#space-access').hidden = true;
