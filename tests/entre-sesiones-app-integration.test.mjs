@@ -42,7 +42,7 @@ test("existing public login keeps separate-tab behavior but installed app stays 
   assert.match(portal, /if \(newTab && !newTab\.closed\) \{\s*newTab\.location\.replace\(url\)/);
   assert.match(portal, /const requestedPanels = \{ terapia: "therapy", wellness: "wellness", progreso: "progress"/);
   assert.match(portal, /if \(name !== "wellness"\) document\.dispatchEvent\(new Event\("wellness:interactive-reset"\)\)/);
-  assert.match(portalPage, /src="\/mi-espacio\.js\?v=20261017-pwa-integrated-1"/);
+  assert.match(portalPage, /src="\/mi-espacio\.js\?v=20261017-pwa-[a-z0-9-]+"/);
 });
 
 test("patient confidentiality and underlying portal features remain unchanged", () => {
@@ -54,4 +54,18 @@ test("patient confidentiality and underlying portal features remain unchanged", 
   assert.match(portalPage, /data-space-panel="therapy"/);
   assert.match(portalPage, /data-space-panel="wellness"/);
   assert.match(portalPage, /data-space-panel="progress"/);
+});
+
+
+test("installed app tabs navigate in place, preserve history and guard protected controls", () => {
+  assert.match(portal, /function navigateToView\(name\)/);
+  assert.match(portal, /window\.history\.pushState/);
+  assert.match(portal, /window\.addEventListener\("popstate"/);
+  assert.match(portal, /event\.preventDefault\(\);\s*navigateToView\(name\)/);
+  assert.match(portal, /if \(!state\.portalAuthenticated/);
+  assert.match(portal, /button\.setAttribute\("aria-pressed", String\(active\)\)/);
+  assert.match(portal, /tabs\.hidden = true/);
+  assert.match(portal, /tabs\.hidden = false/);
+  assert.match(route, /className="esapp-bottom-nav"[^>]+hidden/);
+  assert.match(css, /\.esapp-bottom-nav\[hidden\]\{display:none!important\}/);
 });
