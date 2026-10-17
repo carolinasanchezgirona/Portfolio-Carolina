@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="t d">
+<title id="t">Entre Sesiones · Monograma</title><desc id="d">Letras e y s enlazadas, sobre fondo azul marino.</desc>
+<rect width="512" height="512" rx="116" fill="#173A5E"/>
+<path d="M118 273c2-67 42-108 102-108 53 0 91 40 91 93 0 11-1 21-4 30H158c6 31 29 48 63 48 19 0 39-7 55-20" fill="none" stroke="#FFF9F2" stroke-width="27" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M377 212c-14-14-33-21-52-21-25 0-43 12-43 29 0 18 18 26 46 33 32 9 51 21 51 46 0 27-24 46-60 46-26 0-48-10-66-27" fill="none" stroke="#BCEBE1" stroke-width="25" stroke-linecap="round" stroke-linejoin="round"/>
+<circle cx="382" cy="184" r="10" fill="#F2766B"/>
+</svg>
