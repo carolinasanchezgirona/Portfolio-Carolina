@@ -1096,3 +1096,11 @@
   .wellness-experience .wellness-subnav button{min-height:45px;padding:8px 5px;font-size:.79rem}
   .wellness-experience .wellness-needs button{min-height:90px;padding:14px}
 }
+
+.wellness-experience .wellness-more-needs{margin:13px 0 0}
+.wellness-experience .wellness-more-needs summary{
+  display:inline-flex;align-items:center;min-height:43px;
+  padding:9px 15px;border:1px solid #cbdfea;border-radius:12px;
+  background:#fff;color:#234c67;font-size:.85rem;font-weight:760;cursor:pointer;
+}
+.wellness-experience .wellness-more-needs[open] summary{margin-bottom:13px;background:#edf7fa}
