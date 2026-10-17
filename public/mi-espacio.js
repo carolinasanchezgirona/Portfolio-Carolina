@@ -603,6 +603,7 @@
   }
 
   function showAccessGate() {
+    document.dispatchEvent(new Event("patient-portal-locked"));
     document.dispatchEvent(new Event("wellness:interactive-reset"));
     if (insideEntreSesionesApp) {
       const tabs = document.querySelector(".esapp-bottom-nav");
@@ -943,6 +944,7 @@
     const documentData = item?.patient_document && typeof item.patient_document === "object" ? item.patient_document : {};
     const details = document.createElement("details");
     details.className = "space-patient-material";
+    details.dataset.patientMaterialId = String(item.id || "");
     if (index === 0) details.open = true;
 
     const summary = document.createElement("summary");
@@ -1179,6 +1181,7 @@
     const requestedView = new URLSearchParams(window.location.search).get("vista");
     const requestedPanels = { terapia: "therapy", wellness: "wellness", progreso: "progress", configuracion: "account" };
     openPortal(requestedPanels[requestedView] || "today");
+    window.dispatchEvent(new Event("patient-portal-view-ready"));
   }
 
   async function loadPatientSession() {
