@@ -124,6 +124,15 @@ def test_authenticated(page, width):
     page.unroute("**/api/patient-portal/material-pdf?*", serve_test_pdf)
     page.evaluate("window.__printCalls = 0; window.print = () => { window.__printCalls++; };")
     material.locator(".space-material-print-button").click()
+    print("PRINT-DIAG", page.evaluate("""() => ({
+      callCount: window.__printCalls,
+      location: location.pathname,
+      shellVisible: !document.querySelector('#space-shell').hidden,
+      hint: document.querySelector('.space-material-download-status')?.textContent,
+      connected: Boolean(document.querySelector('.space-patient-material')?.isConnected),
+      materialWithin: Boolean(document.querySelector('#space-patient-materials')?.contains(document.querySelector('.space-patient-material'))),
+      printFlag: document.body.classList.contains('space-print-patient-material')
+    })"""))
     assert_true(page.evaluate("window.__printCalls") == 1, "Print PDF alternative did not invoke the native print dialog")
     assert_true(material.get_attribute("data-print-material") == "true", "Printable worksheet not selected")
     assert_true(page.evaluate("document.body.classList.contains('space-print-patient-material')"),
