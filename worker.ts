@@ -720,13 +720,23 @@ async function handlePatientPortalLogout(request: Request, env: Env): Promise<Re
   if (request.method !== "POST") return patientPortalJson({ error: "Método no permitido." }, 405);
   if (!patientPortalSameOrigin(request)) return patientPortalJson({ error: "Origen no permitido." }, 403);
   const raw = cookieValue(request, PATIENT_PORTAL_COOKIE);
-  if (env.SUPABASE_SERVICE_ROLE_KEY && /^[A-Za-z0-9_-]{40,}$/.test(raw)) {
+  if (/^[A-Za-z0-9_-]{40,}$/.test(raw)) {
+    if (!env.SUPABASE_SERVICE_ROLE_KEY) {
+      return patientPortalJson({ error: "No se ha podido confirmar el cierre de sesión. Inténtalo de nuevo." }, 503);
+    }
     const hash = await sha256Hex(raw);
-    await fetch(RESOURCE_SUPABASE + "/rest/v1/patient_portal_sessions?token_hash=eq." + encodeURIComponent(hash), {
-      method: "PATCH",
-      headers: serviceHeaders(env, { Prefer: "return=minimal" }),
-      body: JSON.stringify({ revoked_at: new Date().toISOString() }),
-    }).catch(() => null);
+    const revocation = await fetch(
+      RESOURCE_SUPABASE + "/rest/v1/patient_portal_sessions?token_hash=eq." + encodeURIComponent(hash),
+      {
+        method: "PATCH",
+        headers: serviceHeaders(env, { Prefer: "return=minimal" }),
+        body: JSON.stringify({ revoked_at: new Date().toISOString() }),
+      },
+    ).catch(() => null);
+    if (!revocation?.ok) {
+      // No afirmar que se revocó una sesión clínica si la base de datos no lo confirmó.
+      return patientPortalJson({ error: "No se ha podido confirmar el cierre de sesión. Inténtalo de nuevo." }, 503);
+    }
   }
   return patientPortalJson({ ok: true }, 200, { "Set-Cookie": patientPortalCookie("", 0) });
 }
