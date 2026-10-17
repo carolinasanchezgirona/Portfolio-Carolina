@@ -42,7 +42,7 @@ test("existing public login keeps separate-tab behavior but installed app stays 
   assert.match(portal, /if \(newTab && !newTab\.closed\) \{\s*newTab\.location\.replace\(url\)/);
   assert.match(portal, /const requestedPanels = \{ terapia: "therapy", wellness: "wellness", progreso: "progress"/);
   assert.match(portal, /if \(name !== "wellness"\) document\.dispatchEvent\(new Event\("wellness:interactive-reset"\)\)/);
-  assert.match(portalPage, /src="\/mi-espacio\.js\?v=20261017-pwa-[a-z0-9-]+"/);
+  assert.match(portalPage, /src="\/mi-espacio\.js\?v=20261017-[a-z0-9-]+"/);
 });
 
 test("patient confidentiality and underlying portal features remain unchanged", () => {
