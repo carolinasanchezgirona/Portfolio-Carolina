@@ -28,7 +28,7 @@ export default function EntreSesionesEspacio() {
       <span className="esapp-portal-subtitle">Mi espacio personal</span>
     </div>
     <MiEspacioPage />
-    <nav className="esapp-bottom-nav" aria-label="Navegación de Entre Sesiones">
+    <nav className="esapp-bottom-nav" aria-label="Navegación de Entre Sesiones" hidden>
       <a href="/entre-sesiones/app/"><span aria-hidden="true">⌂</span>Inicio</a>
       <a href={base + "terapia"}><span aria-hidden="true">▤</span>Mi terapia</a>
       <a href={base + "wellness"}><span aria-hidden="true">◉</span>Wellness</a>
