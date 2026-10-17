@@ -532,3 +532,60 @@
 .space-neuro-task-answer textarea{width:100%;min-height:112px;padding:14px;border:1px solid #bacfd9;border-radius:10px;font:inherit;line-height:1.7;resize:vertical;background:white;color:#173a5e}
 .space-neuro-task-answer textarea:focus-visible{outline:3px solid #08a6a0;outline-offset:2px}
 @media(max-width:650px){.space-neuro-workbook{gap:17px}.space-neuro-task{padding:17px;gap:14px}.space-neuro-visual{padding:10px}.space-neuro-table-scroll th,.space-neuro-table-scroll td{padding:12px 9px}}
+
+
+/* Entre Sesiones · Mi terapia comparte identidad con la aplicación instalada.
+   Sólo se aplican estas reglas en el panel de terapia. */
+.space-page [data-space-panel="therapy"]{--space-ink:#153858;--space-muted:#536b7d;--space-line:#dbe8ef;--space-accent:#bc6258;--space-accent-soft:#e4f5fa;color:#153858}
+.space-page [data-space-panel="therapy"] .space-hero{position:relative;isolation:isolate;overflow:hidden;max-width:none;min-height:230px;margin:0 0 22px;border:1px solid #d2e6ee;border-radius:26px;padding:clamp(24px,4vw,43px);background:radial-gradient(ellipse 56% 97% at 112% 15%,rgba(255,245,233,.94) 0 48%,transparent 49%),radial-gradient(ellipse 62% 112% at 108% 100%,rgba(84,149,180,.22) 0 55%,transparent 56%),linear-gradient(126deg,#e1f3f9,#f1fafd 66%,#fffaf7)}
+.space-page [data-space-panel="therapy"] .space-hero::before{content:"";position:absolute;z-index:-1;width:220px;height:280px;right:-105px;top:12px;transform:rotate(26deg);background:rgba(43,98,134,.15);border-radius:45% 54% 38% 54%}
+.space-page [data-space-panel="therapy"] .space-hero::after{content:"";position:absolute;z-index:-1;width:160px;height:160px;right:7%;top:-96px;border-radius:42%;transform:rotate(23deg);background:rgba(240,128,114,.21)}
+.space-page [data-space-panel="therapy"] .space-hero .space-eyebrow{font-size:.73rem;letter-spacing:.18em;color:#24516e;margin-bottom:14px}
+.space-page [data-space-panel="therapy"] .space-hero h2{max-width:520px;font-size:clamp(2.3rem,4.4vw,4.3rem);letter-spacing:-.05em;line-height:1.02;color:#153858}
+.space-page [data-space-panel="therapy"] .space-hero>p:last-child{max-width:570px;font-size:clamp(.91rem,1.8vw,1.02rem);color:#4c687b;line-height:1.65;margin-top:17px}
+.space-page [data-space-panel="therapy"] .space-materials-section{margin-top:20px;margin-bottom:32px}
+.space-page [data-space-panel="therapy"] .space-section-heading{align-items:center;gap:12px}
+.space-page [data-space-panel="therapy"] .space-section-heading h3{font-family:var(--font-newsreader),Georgia,serif;font-size:clamp(1.6rem,3vw,2.1rem);font-weight:560;letter-spacing:-.035em;line-height:1.12}
+.space-page [data-space-panel="therapy"] .space-eyebrow{color:#bc6258;letter-spacing:.12em}
+.space-page [data-space-panel="therapy"] .space-materials-section .space-pill{background:#dfeff6;color:#245773;padding:8px 12px;border-radius:999px;font-size:.76rem}
+.space-page [data-space-panel="therapy"] .space-patient-materials{counter-reset:es-material;gap:13px}
+.space-page [data-space-panel="therapy"] .space-patient-material{counter-increment:es-material;border:1px solid #e1e9ed;border-radius:21px;box-shadow:0 9px 28px rgba(18,59,86,.045);background:#fff}
+.space-page [data-space-panel="therapy"] .space-patient-material>summary{padding:20px 21px;gap:12px;min-height:86px}
+.space-page [data-space-panel="therapy"] .space-patient-material>summary::before{content:counter(es-material,decimal-leading-zero);width:44px;height:44px;border-radius:14px;flex:0 0 44px;display:grid;place-items:center;background:#ffebe4;color:#ad5a4a;font-weight:850;font-size:.85rem}
+.space-page [data-space-panel="therapy"] .space-patient-material-title{flex:1;min-width:0;gap:5px}
+.space-page [data-space-panel="therapy"] .space-patient-material-title strong{font-size:clamp(.96rem,1.8vw,1.08rem);font-weight:780;color:#183858;line-height:1.35}
+.space-page [data-space-panel="therapy"] .space-patient-material-title span{font-size:.78rem;color:#708396}
+.space-page [data-space-panel="therapy"] .space-patient-material-chevron{color:#244f6b;font-size:1.1rem}
+.space-page [data-space-panel="therapy"] .space-patient-material-body{padding:1px 21px 23px;border-top:1px solid #e6eef2}
+.space-page [data-space-panel="therapy"] .space-patient-section{padding:21px 0;border-color:#e9eef1}
+.space-page [data-space-panel="therapy"] .space-patient-section h4{font-size:.76rem;letter-spacing:.10em;color:#254b6a;margin-bottom:9px}
+.space-page [data-space-panel="therapy"] .space-patient-section p{color:#536d80;font-size:.93rem;line-height:1.75}
+.space-page [data-space-panel="therapy"] .space-patient-downloads{display:flex;align-items:center;flex-wrap:wrap;min-height:0;height:auto;padding:14px;margin:17px 0 20px;border:1px solid #d4e8f0;border-radius:17px;background:linear-gradient(105deg,#e4f3fa,#f4fafb)}
+.space-page [data-space-panel="therapy"] .space-material-download-button{display:inline-flex;justify-content:center;align-items:center;min-height:49px;border:0;border-radius:13px;padding:12px 20px;background:#173a5e;color:#fff;font-size:.9rem;font-weight:800}
+.space-page [data-space-panel="therapy"] .space-material-download-button:hover{background:#275579}
+.space-page [data-space-panel="therapy"] .space-material-download-status{font-size:.78rem;color:#3e6177}
+.space-page [data-space-panel="therapy"] .space-patient-response{margin-top:19px;padding:clamp(17px,3vw,27px);border:1px solid #e3eaf0;border-radius:20px;background:#fff}
+.space-page [data-space-panel="therapy"] .space-patient-response h4{font:560 clamp(1.55rem,2.7vw,2rem)/1.17 var(--font-newsreader),Georgia,serif;color:#153858;letter-spacing:-.03em;margin:0 0 10px}
+.space-page [data-space-panel="therapy"] .space-patient-response>p{color:#566f7f;font-size:.88rem;line-height:1.7;margin:0 0 18px}
+.space-page [data-space-panel="therapy"] .space-guided-record{padding:17px 18px;margin:15px 0;border:1px solid #d0e7ef;border-radius:16px;background:linear-gradient(110deg,#e7f5f8,#f4fafb)}
+.space-page [data-space-panel="therapy"] .space-guided-record>summary{color:#245776;font-size:.91rem;line-height:1.5;font-weight:800}
+.space-page [data-space-panel="therapy"] .space-patient-response label{color:#193d5b;font-size:.88rem;line-height:1.6;gap:9px;margin-top:17px}
+.space-page [data-space-panel="therapy"] .space-patient-response textarea{width:100%;min-height:117px;border:1px solid #c9dce5;border-radius:14px;padding:14px;color:#1d415b;font-size:1rem;line-height:1.6;resize:vertical}
+.space-page [data-space-panel="therapy"] .space-patient-response-actions{gap:10px;margin-top:19px}
+.space-page [data-space-panel="therapy"] .space-patient-response-actions .space-primary{background:#e8786b;color:#fff;border-color:#e8786b;font-weight:800;min-height:47px;padding:11px 20px;border-radius:13px}
+.space-page [data-space-panel="therapy"] .space-patient-response-actions .space-secondary{min-height:47px;padding:11px 20px;border:1px solid #c4d7e2;border-radius:13px}
+.space-page [data-space-panel="therapy"] .space-card-guide{background:#e6f4fa;border-color:#d1e8f1}
+.space-page [data-space-panel="therapy"] .space-info-note{border:1px solid #cfe2ec;border-left:4px solid #f08072;border-radius:16px;background:#f0f8fc}
+@media(max-width:700px){
+ .space-page [data-space-panel="therapy"] .space-hero{padding:26px 22px 29px;min-height:0;border-radius:21px}
+ .space-page [data-space-panel="therapy"] .space-hero h2{font-size:clamp(2.3rem,9vw,3.1rem);max-width:320px}
+ .space-page [data-space-panel="therapy"] .space-hero>p:last-child{font-size:.92rem;max-width:390px}
+ .space-page [data-space-panel="therapy"] .space-section-heading{align-items:flex-start;flex-wrap:wrap}
+ .space-page [data-space-panel="therapy"] .space-patient-material>summary{padding:16px 14px}
+ .space-page [data-space-panel="therapy"] .space-patient-material-body{padding:1px 15px 17px}
+ .space-page [data-space-panel="therapy"] .space-patient-material>summary::before{width:40px;height:40px;flex-basis:40px}
+ .space-page [data-space-panel="therapy"] .space-patient-downloads{flex-direction:column;align-items:stretch}
+ .space-page [data-space-panel="therapy"] .space-material-download-button{width:100%}
+ .space-page [data-space-panel="therapy"] .space-patient-response-actions{display:grid;grid-template-columns:minmax(0,1fr)}
+ .space-page [data-space-panel="therapy"] .space-patient-response-actions button{width:100%}
+}
