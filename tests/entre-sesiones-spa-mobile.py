@@ -143,6 +143,8 @@ with sync_playwright() as p:
             elif "/api/patient-portal/preferences" in path:
                 route.fulfill(status=200,content_type="application/json",
                     body='{"storage_scope":"0123456789abcdef01234567"}')
+            elif "/api/patient-portal/logout" in path:
+                route.fulfill(status=200,content_type="application/json", body='{"ok":true}')
             else:
                 route.fulfill(status=404,body="Not found")
         page.route("**/*",handle)
