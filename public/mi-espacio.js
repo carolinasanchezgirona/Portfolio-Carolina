@@ -450,9 +450,23 @@
 
   // Una sola navegación dentro de Wellness: entrar, explorar o volver a guardados.
   let wellnessActiveTab = "inicio";
-  function setWellnessTab(tab, { preserveFilters = false, scroll = false } = {}) {
+  function setWellnessTab(tab, { preserveFilters = false, scroll = false, historyMode = null } = {}) {
     const next = ["inicio", "explorar", "guardadas"].includes(tab) ? tab : "inicio";
     wellnessActiveTab = next;
+    // En la app, cada apartado es una entrada real en el historial de Android.
+    // La necesidad elegida no se incorpora a la URL por privacidad.
+    if (insideEntreSesionesApp && state.portalAuthenticated &&
+        currentViewFromUrl() === "wellness" && ["push", "replace"].includes(historyMode)) {
+      const url = new URL(window.location.href);
+      if (next === "inicio") url.searchParams.delete("seccion");
+      else url.searchParams.set("seccion", next);
+      const destination = url.pathname + url.search + url.hash;
+      const current = window.location.pathname + window.location.search + window.location.hash;
+      if (destination !== current) {
+        const method = historyMode === "replace" ? "replaceState" : "pushState";
+        window.history[method]({ entreSesionesTab: "wellness", wellnessSection: next }, "", destination);
+      }
+    }
     const view = document.querySelector('[data-space-panel="wellness"]');
     if (view) view.dataset.wellnessActive = next;
     document.querySelectorAll("[data-wellness-tab]").forEach(button => {
@@ -699,9 +713,13 @@
       });
     }
     if (name === "wellness") {
-      // Cada entrada nueva por la navegación principal comienza en un lugar predecible.
-      // Los accesos desde una necesidad conservan su selección y abrirán Explorar.
-      if (previousView !== "wellness" && !state.need) setWellnessTab("inicio");
+      // Restaurar la sección solicitada al volver con Atrás/Adelante en Android.
+      // El acceso por necesidad la conserva hasta mostrar resultados.
+      const section = insideEntreSesionesApp
+        ? new URLSearchParams(window.location.search).get("seccion") : null;
+      const requestedTab = ["explorar", "guardadas"].includes(section) ? section : "inicio";
+      if (state.need) renderWellness();
+      else if (previousView !== "wellness" || wellnessActiveTab !== requestedTab) setWellnessTab(requestedTab);
       else renderWellness();
     }
     if (name === "progress") renderProgress();
@@ -720,10 +738,13 @@
     if (insideEntreSesionesApp) {
       const nextSlug = viewSlug[name];
       const url = new URL(window.location.href);
-      if (url.searchParams.get("vista") !== nextSlug || url.hash) {
-        url.searchParams.set("vista", nextSlug);
-        url.hash = ""; // The previous activity link must not refocus on a different tab.
-        window.history.pushState({ entreSesionesTab: name }, "", url.pathname + url.search + url.hash);
+      const current = url.pathname + url.search + url.hash;
+      url.searchParams.set("vista", nextSlug);
+      url.searchParams.delete("seccion"); // Entrar por navegación principal siempre empieza en Para hoy.
+      url.hash = ""; // La actividad previa no debe enfocar otra sección.
+      const destination = url.pathname + url.search + url.hash;
+      if (destination !== current) {
+        window.history.pushState({ entreSesionesTab: name }, "", destination);
       }
     }
     showView(name);
@@ -1937,10 +1958,12 @@
   });
 
   document.querySelectorAll("[data-wellness-tab]").forEach(button => {
-    button.addEventListener("click", () => setWellnessTab(button.dataset.wellnessTab, { scroll: true }));
+    button.addEventListener("click", () => setWellnessTab(button.dataset.wellnessTab, {
+      scroll: true, historyMode: "push"
+    }));
   });
   document.querySelector("[data-wellness-go-explore]")?.addEventListener("click", () => {
-    setWellnessTab("explorar", { scroll: true });
+    setWellnessTab("explorar", { scroll: true, historyMode: "push" });
   });
 
   document.querySelectorAll("[data-need]").forEach(button => {
@@ -1951,7 +1974,7 @@
       const search = document.getElementById("wellness-search");
       if (search) search.value = "";
       navigateToView("wellness");
-      setWellnessTab("explorar", { preserveFilters: true, scroll: true });
+      setWellnessTab("explorar", { preserveFilters: true, scroll: true, historyMode: "replace" });
     });
   });
 
@@ -2111,7 +2134,10 @@
       });
     });
     window.addEventListener("popstate", () => {
-      if (state.portalAuthenticated) showView(currentViewFromUrl());
+      if (!state.portalAuthenticated) return;
+      // Los filtros de una visita anterior no deben contaminar la sección restaurada.
+      state.need = null;
+      showView(currentViewFromUrl());
     });
   }
 
