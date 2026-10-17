@@ -19,17 +19,36 @@ test("download is only available for authenticated patient and owned, non-revoke
   assert.ok(!handler.includes("patient_response"), "Patient answers must not be sent into a downloaded prescription PDF");
 });
 
-test("PDF renderer is accessible only with a server-side service key", () => {
+test("PDF renderer requires project-verified service role even after key rotation", () => {
+  const auth = edge.split("async function verifyPortalPdfService(")[1]?.split("async function renderAuthenticatedPortalPdf(")[0];
   const handler = edge.split("async function renderAuthenticatedPortalPdf(")[1]?.split("Deno.serve(")[0];
-  assert.ok(handler);
-  assert.match(handler, /req\.headers\.get\("Authorization"\) !== "Bearer " \+ SERVICE_ROLE_KEY/);
+  assert.ok(auth && handler);
+  assert.match(auth, /authorization === "Bearer " \+ SERVICE_ROLE_KEY/);
+  assert.match(auth, /\/auth\/v1\/admin\/users\?page=1&per_page=1/);
+  assert.match(auth, /headers: \{ apikey: ANON_KEY, Authorization: authorization \}/);
+  assert.match(auth, /return verification\.status === 200/);
+  assert.match(handler, /if \(!await verifyPortalPdfService\(req\)\)/);
+  assert.doesNotMatch(auth, /atob\(|JSON\.parse\(.*jwt|verify_jwt: false/);
   assert.match(edge, /Legacy bearer links are retired/);
   assert.match(edge, /req\.headers\.get\("x-portal-pdf"\) === "1"/);
 });
 
-test("portal UI offers per-material download without sharing written responses", () => {
-  assert.match(portal, /downloadPatientMaterial\(item, downloadButton, downloadStatus\)/);
+test("patient PDF downloads use a protected first-party native link, not a synthetic blob click", () => {
+  assert.match(portal, /function patientMaterialDownloadUrl\(item\)/);
   assert.match(portal, /\/api\/patient-portal\/material-pdf\?material_id=/);
-  assert.match(portal, /downloadButton\.textContent = "↓ Descargar PDF"/);
-  assert.match(portal, /URL\.revokeObjectURL/);
+  assert.match(portal, /downloadLink\.href = patientMaterialDownloadUrl\(item\)/);
+  assert.match(portal, /downloadLink\.download = "entre-sesiones\.pdf"/);
+  assert.match(portal, /downloadLink\.rel = "noopener noreferrer"/);
+  assert.doesNotMatch(portal, /URL\.createObjectURL\(blob\)/);
+  assert.doesNotMatch(portal, /downloadPatientMaterial\(item, downloadButton, downloadStatus\)/);
+});
+
+test("patient portal does not show password form during initial session check", () => {
+  const page = readFileSync(new URL("../app/mi-espacio/page.tsx", import.meta.url), "utf8");
+  const style = readFileSync(new URL("../app/mi-espacio/mi-espacio.css", import.meta.url), "utf8");
+  assert.match(page, /id="space-session-check"/);
+  assert.match(page, /id="space-access" className="space-access" hidden/);
+  assert.match(portal, /const sessionCheck = document\.getElementById\("space-session-check"\)/);
+  assert.match(portal, /if \(sessionCheck\) sessionCheck\.hidden = true/);
+  assert.match(style, /\.space-page \.space-session-check\[hidden\]\{display:none!important\}/);
 });
