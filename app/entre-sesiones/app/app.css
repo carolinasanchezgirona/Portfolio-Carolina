@@ -319,3 +319,47 @@
  .esapp .esapp-quicknav{display:none}
 }
 @media(max-width:390px){.esapp .esapp-home-bottom-nav a{font-size:.61rem}}
+
+
+/* Entre Sesiones · plan semanal de materiales reales + preparación voluntaria */
+.esapp .esapp-weekly-plan{margin-top:20px;padding:clamp(19px,3.2vw,32px);border:1px solid #dcebf0;border-radius:26px;background:#fff;box-shadow:0 10px 34px rgba(19,53,84,.045)}
+.esapp .esapp-weekly-head{display:flex;justify-content:space-between;align-items:flex-start;gap:18px;margin-bottom:22px}
+.esapp .esapp-weekly-head h2{color:#173a5e;font-size:clamp(27px,3.5vw,41px);line-height:1.08;margin:0 0 9px;letter-spacing:-.055em}
+.esapp .esapp-weekly-head p:not(.esapp-overline){color:#5a7483;font-size:13px;line-height:1.65;max-width:640px;margin:0}
+.esapp .esapp-weekly-count{display:inline-flex;white-space:nowrap;border-radius:999px;background:#e3f1f8;color:#285d7a;padding:8px 12px;font-size:11px;font-weight:750}
+.esapp .esapp-weekly-grid{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(230px,.75fr);gap:13px}
+.esapp .esapp-weekly-tasks{display:flex;flex-direction:column;gap:8px;min-width:0;padding:20px;background:linear-gradient(145deg,#eef8fb,#f9fcfd);border:1px solid #dcebf0;border-radius:20px}
+.esapp .esapp-weekly-category{display:block;margin:0 0 9px;font-size:10px;font-weight:850;letter-spacing:.15em;color:#456c80}
+.esapp .esapp-weekly-task{display:flex;align-items:center;gap:12px;min-width:0;min-height:73px;padding:13px 14px;border:1px solid #e1ebef;background:#fff;border-radius:13px;color:#173a5e}
+.esapp .esapp-weekly-task:hover{border-color:#8fb8c9;background:#fcfeff}
+.esapp .esapp-weekly-task-mark{display:grid;place-items:center;width:39px;height:39px;border-radius:12px;background:#e1f1f6;color:#225e7b;flex-shrink:0;font-size:21px}
+.esapp .esapp-weekly-task-copy{min-width:0;display:grid;gap:4px;flex:1}
+.esapp .esapp-weekly-task-copy strong{font-size:13px;line-height:1.35;overflow-wrap:anywhere}
+.esapp .esapp-weekly-task-copy small{font-size:11px;line-height:1.5;color:#607a8b}
+.esapp .esapp-weekly-arrow{font-size:22px;line-height:1;color:#1c6180;flex-shrink:0}
+.esapp .esapp-weekly-text-link{align-self:flex-start;margin-top:7px;color:#1f5977;font-size:12px;font-weight:800;padding:8px 1px}
+.esapp .esapp-weekly-empty{font-size:13px;color:#587387;line-height:1.7;padding:8px 0}
+.esapp .esapp-weekly-care{display:flex;align-items:flex-start;flex-direction:column;gap:9px;text-decoration:none;min-width:0;padding:23px;border:1px solid #f1ded8;border-radius:20px;background:radial-gradient(ellipse at 98% 110%,rgba(239,143,125,.26),transparent 64%),linear-gradient(140deg,#fff7f3,#ffebe4);color:#173a5e}
+.esapp .esapp-weekly-care .esapp-weekly-category{color:#a25e55;margin-bottom:3px}
+.esapp .esapp-weekly-care-glyph{width:44px;height:44px;background:#f9dbd2;display:grid;place-items:center;border-radius:14px;color:#a75b50;font-size:22px;margin:4px 0 10px}
+.esapp .esapp-weekly-care>strong{font:550 clamp(22px,2.6vw,30px)/1.15 var(--esapp-font-editorial),Georgia,serif;letter-spacing:-.03em}
+.esapp .esapp-weekly-care>span:not(.esapp-weekly-category):not(.esapp-weekly-care-glyph){font-size:12px;line-height:1.65;color:#65717c}
+.esapp .esapp-weekly-care>small{margin-top:auto;padding-top:11px;color:#99564d;font-size:12px;font-weight:800}
+.esapp .esapp-weekly-prepare{margin-top:12px;display:flex;align-items:center;gap:12px;padding:15px 18px;border:1px solid #d7e9f0;background:linear-gradient(120deg,#e5f4fa,#f7fbfc);color:#173a5e;border-radius:15px}
+.esapp .esapp-weekly-prepare-symbol{display:grid;place-items:center;width:39px;height:39px;border-radius:12px;flex-shrink:0;background:#fff;color:#ae6d60;font-size:23px}
+.esapp .esapp-weekly-prepare>span:nth-child(2){flex:1;min-width:0;display:grid;gap:4px}
+.esapp .esapp-weekly-prepare strong{font-size:14px;line-height:1.35}
+.esapp .esapp-weekly-prepare small{font-size:11px;line-height:1.5;color:#527085}
+@media(max-width:760px){
+ .esapp .esapp-weekly-plan{padding:19px 16px;border-radius:21px}
+ .esapp .esapp-weekly-head{flex-direction:column;gap:11px;margin-bottom:16px}
+ .esapp .esapp-weekly-head h2{font-size:32px}
+ .esapp .esapp-weekly-count{align-self:flex-start}
+ .esapp .esapp-weekly-grid{grid-template-columns:minmax(0,1fr)}
+ .esapp .esapp-weekly-tasks{padding:16px;border-radius:16px}
+ .esapp .esapp-weekly-care{min-height:0;padding:19px;border-radius:16px}
+ .esapp .esapp-weekly-care-glyph{margin:0 0 3px}
+ .esapp .esapp-weekly-prepare{padding:14px;align-items:flex-start}
+ .esapp .esapp-weekly-prepare strong{font-size:13px}
+ .esapp .esapp-weekly-prepare .esapp-weekly-arrow{margin-top:6px}
+}
