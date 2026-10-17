@@ -704,7 +704,7 @@
     if (which === "setup") setupEmail?.focus();
   }
 
-  function showAccessGate() {
+  function showAccessGate(checking = false) {
     portalSessionEpoch++;
     // El contenido clínico debe salir también del DOM, no solo quedar oculto.
     // Así no puede reutilizarse al cambiar de paciente en el mismo navegador.
@@ -726,10 +726,10 @@
       const tabs = document.querySelector(".esapp-bottom-nav");
       if (tabs) tabs.hidden = true;
     }
-    if (sessionCheck) sessionCheck.hidden = true;
-    if (accessGate) accessGate.hidden = false;
+    if (sessionCheck) sessionCheck.hidden = !checking;
+    if (accessGate) accessGate.hidden = checking;
     if (shell) shell.hidden = true;
-    if (!passwordTokenHash) showAccessForm("login");
+    if (!checking && !passwordTokenHash) showAccessForm("login");
   }
 
   function openPortal(view = "today") {
@@ -2047,7 +2047,7 @@
     // contenidos clínicos de una sesión que podría haberse cerrado.
     window.addEventListener("pageshow", event => {
       if (!event.persisted) return;
-      showAccessGate();
+      showAccessGate(true);
       void loadPatientSession();
     });
   }
