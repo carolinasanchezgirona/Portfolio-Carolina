@@ -50,7 +50,7 @@ test("renderer authenticates service credentials using restricted project admin 
 
 test("patient can print one authorised worksheet as PDF without exporting clinical responses", () => {
   assert.match(portal, /printButton\.textContent = "Imprimir \/ Guardar como PDF"/);
-  assert.match(portal, /if \(!state\.portalAuthenticated \|\| !details\.isConnected \|\| !patientMaterials\?\.contains\(details\)\) return/);
+  assert.match(portal, /if \(!state\.portalAuthenticated \|\| !details\.isConnected \|\| !patientMaterials\?\.contains\(details\) \|\| openingPrintDialog\) return/);
   assert.match(portal, /details\.setAttribute\("data-print-material", "true"\)/);
   assert.match(portal, /document\.body\.classList\.add\("space-print-patient-material"\)/);
   assert.match(portal, /window\.print\(\)/);
