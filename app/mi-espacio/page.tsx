@@ -394,7 +394,7 @@ export default function MiEspacioPage() {
       </aside>
 
       <Script src="/patient-video.js?v=20261009-1" strategy="afterInteractive" />
-      <Script src="/mi-espacio.js?v=20261017-wellness-visual-2" strategy="afterInteractive" />
+      <Script src="/mi-espacio.js?v=20261017-pwa-integrated-1" strategy="afterInteractive" />
       <Script src="/wellness-interactive.js?v=20261017-visual-2" strategy="afterInteractive" />
     </main>
   );
