@@ -97,6 +97,19 @@ def test_authenticated(page, width):
     assert_true(link.get_attribute("href") == "/api/patient-portal/material-pdf?material_id=" + FAKE_ID,
                 "PDF does not use authenticated native URL")
     assert_true(link.get_attribute("download") is not None, "PDF link does not request a native download")
+    # The browser receives a synthetic private PDF response. This checks a real
+    # browser download event, not merely that the anchor looks correct.
+    def serve_test_pdf(route):
+        route.fulfill(status=200, headers={
+            "Content-Type": "application/pdf",
+            "Content-Disposition": 'attachment; filename="entre-sesiones-prueba.pdf"',
+            "Cache-Control": "private, no-store"
+        }, body=b"%PDF-1.4\\n1 0 obj <<>> endobj\\n%%EOF")
+    page.route("**/api/patient-portal/material-pdf?*", serve_test_pdf)
+    with page.expect_download(timeout=12000) as completed:
+        link.click()
+    assert_true(completed.value.suggested_filename.endswith(".pdf"), "The mobile browser did not download a PDF")
+    page.unroute("**/api/patient-portal/material-pdf?*", serve_test_pdf)
     page.evaluate("""(id) => {
       history.replaceState(null, "", location.pathname + location.search + "#space-material-" + id);
       window.dispatchEvent(new Event("hashchange"));
