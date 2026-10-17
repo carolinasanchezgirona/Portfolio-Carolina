@@ -276,8 +276,7 @@
         "Elige una acción que responda al problema real, no al insulto."
       ],
       note: "El objetivo no es convencerte de que todo está bien, sino sustituir castigo global por información más precisa."
-    }
-
+    },
     {
       id: "descanso-sin-culpa",
       title: "Descansar sin negociar",
