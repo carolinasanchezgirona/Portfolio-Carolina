@@ -534,16 +534,31 @@
     }
   }
 
+  const viewSlug = Object.freeze({
+    today: "panel", therapy: "terapia", wellness: "wellness",
+    progress: "progreso", account: "configuracion"
+  });
+  const slugView = Object.freeze({
+    panel: "today", terapia: "therapy", wellness: "wellness",
+    progreso: "progress", configuracion: "account"
+  });
+
+  function currentViewFromUrl() {
+    return slugView[new URLSearchParams(window.location.search).get("vista")] || "today";
+  }
+
   function showView(name) {
     if (name !== "wellness") document.dispatchEvent(new Event("wellness:interactive-reset"));
     panels.forEach(panel => {
       panel.hidden = panel.dataset.spacePanel !== name;
     });
     navButtons.forEach(button => {
-      button.classList.toggle("is-active", button.dataset.spaceView === name);
+      const active = button.dataset.spaceView === name;
+      button.classList.toggle("is-active", active);
+      button.setAttribute("aria-pressed", String(active));
     });
     if (insideEntreSesionesApp) {
-      const destination = { therapy: "terapia", wellness: "wellness", progress: "progreso", account: "configuracion" }[name] || "";
+      const destination = viewSlug[name] || "";
       document.querySelectorAll(".esapp-bottom-nav a").forEach(link => {
         const active = destination && new URL(link.href, window.location.origin).searchParams.get("vista") === destination;
         if (active) link.setAttribute("aria-current", "page");
@@ -553,6 +568,21 @@
     if (name === "wellness") renderWellness();
     if (name === "progress") renderProgress();
     window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+
+  // PWA-only navigation: reuse the authenticated portal, keep in-progress
+  // therapy form fields in the DOM, and allow Android Back to restore a tab.
+  function navigateToView(name) {
+    if (!state.portalAuthenticated || !Object.prototype.hasOwnProperty.call(viewSlug, name)) return;
+    if (insideEntreSesionesApp) {
+      const nextSlug = viewSlug[name];
+      const url = new URL(window.location.href);
+      if (url.searchParams.get("vista") !== nextSlug) {
+        url.searchParams.set("vista", nextSlug);
+        window.history.pushState({ entreSesionesTab: name }, "", url.pathname + url.search + url.hash);
+      }
+    }
+    showView(name);
   }
 
   function setAccessMessage(message, isError = false) {
@@ -1654,7 +1684,7 @@
         return;
       }
       state.need = null;
-      showView(view);
+      navigateToView(view);
     });
   });
 
@@ -1665,7 +1695,7 @@
       state.search = "";
       const search = document.getElementById("wellness-search");
       if (search) search.value = "";
-      showView("wellness");
+      navigateToView("wellness");
     });
   });
 
@@ -1791,7 +1821,7 @@
 
   document.querySelectorAll("[data-go-therapy]").forEach((button) => {
     button.addEventListener("click", () => {
-      if (state.portalAuthenticated) showView("therapy");
+      if (state.portalAuthenticated) navigateToView("therapy");
       else {
         showAccessGate();
         setAccessMessage("Para ver tu terapia, inicia sesión con tu contraseña.");
@@ -1799,6 +1829,25 @@
     });
   });
   document.getElementById("space-logout")?.addEventListener("click", logoutPatientPortal);
+
+  if (insideEntreSesionesApp) {
+    document.querySelectorAll(".esapp-bottom-nav a").forEach(link => {
+      const destination = new URL(link.href, window.location.origin);
+      if (destination.origin !== window.location.origin ||
+          destination.pathname !== window.location.pathname) return;
+      const name = slugView[destination.searchParams.get("vista")];
+      if (!name) return;
+      link.addEventListener("click", event => {
+        if (!state.portalAuthenticated || event.defaultPrevented || event.button !== 0 ||
+            event.ctrlKey || event.metaKey || event.altKey || event.shiftKey) return;
+        event.preventDefault();
+        navigateToView(name);
+      });
+    });
+    window.addEventListener("popstate", () => {
+      if (state.portalAuthenticated) showView(currentViewFromUrl());
+    });
+  }
 
   clearLegacyAccessToken();
   renderWellness();
