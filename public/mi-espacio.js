@@ -2039,13 +2039,9 @@
   renderWellness();
   renderProgress();
   const configuringPassword = verifySetupLinkFromUrl();
-  if (!configuringPassword) {
-    if (["panel", "terapia", "wellness", "progreso", "configuracion"].includes(new URLSearchParams(window.location.search).get("vista"))) {
-      void loadPatientSession();
-    } else {
-      showAccessGate();
-    }
-  }
+  // Even /mi-espacio/ and /entre-sesiones/app/espacio/ without a vista
+  // must validate an existing session before rendering the login screen.
+  if (!configuringPassword) void loadPatientSession();
   if (insideEntreSesionesApp) {
     // Restauración desde la caché de navegación: revalidar antes de mostrar
     // contenidos clínicos de una sesión que podría haberse cerrado.
