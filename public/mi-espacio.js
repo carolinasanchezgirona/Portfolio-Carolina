@@ -1234,7 +1234,9 @@
       if (!response.ok || !session.authenticated) throw new Error("No se ha podido confirmar la sesión.");
       const requestedView = new URLSearchParams(window.location.search).get("vista");
       const allowedViews = ["terapia", "wellness", "progreso", "configuracion"];
-      const url = "/mi-espacio/?vista=" + (allowedViews.includes(requestedView) ? requestedView : "panel");
+      const url = allowedViews.includes(requestedView)
+        ? "/mi-espacio/?vista=" + requestedView
+        : "/mi-espacio/?vista=panel";
       if (newTab && !newTab.closed) {
         newTab.location.replace(url);
         setAccessMessage("Sesión iniciada. Mi espacio se ha abierto en otra pestaña.");
@@ -1739,7 +1741,9 @@
   openPanelButton?.addEventListener("click", () => {
     const requestedView = new URLSearchParams(window.location.search).get("vista");
     const allowedViews = ["terapia", "wellness", "progreso", "configuracion"];
-    const url = "/mi-espacio/?vista=" + (allowedViews.includes(requestedView) ? requestedView : "panel");
+    const url = allowedViews.includes(requestedView)
+        ? "/mi-espacio/?vista=" + requestedView
+        : "/mi-espacio/?vista=panel";
     window.open(url, "_blank", "noopener,noreferrer");
   });
 
