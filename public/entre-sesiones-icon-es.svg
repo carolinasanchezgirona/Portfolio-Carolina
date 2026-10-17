@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title desc">
+<title id="title">Entre Sesiones</title>
+<desc id="desc">Monograma ES de líneas sencillas, marfil sobre azul profundo.</desc>
+<rect width="512" height="512" rx="114" fill="#173A5E"/>
+<g fill="none" stroke="#FFFCF7" stroke-width="37" stroke-linecap="round" stroke-linejoin="round">
+  <path d="M213 150H126V363H213M126 255H203"/>
+  <path d="M390 176C365 154 333 148 305 160C273 174 263 213 296 233C315 245 345 251 366 266C402 291 394 335 362 353C335 369 299 363 271 343"/>
+</g>
+<path d="M275 389H387" fill="none" stroke="#79D6CE" stroke-width="12" stroke-linecap="round"/>
+</svg>
