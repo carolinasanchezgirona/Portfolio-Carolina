@@ -843,8 +843,36 @@ async function updatePatientSubmission(req: Request) {
 
 
 /** Internal renderer: no bearer URLs, no patients query, no client-side service keys. */
+/**
+ * Authenticate a trusted service-to-service PDF request.
+ * Legacy service-role JWTs match the runtime key directly. A separately
+ * rotated role key is accepted only after Supabase Auth independently verifies
+ * it against this project through its admin-only API. Never trust an
+ * unverified JWT payload or a client-supplied "role" string.
+ */
+async function verifyPortalPdfService(req: Request): Promise<boolean> {
+  const authorization = req.headers.get("Authorization") || "";
+  if (!/^Bearer [A-Za-z0-9._~-]{40,4096}$/.test(authorization)) return false;
+  if (SERVICE_ROLE_KEY && authorization === "Bearer " + SERVICE_ROLE_KEY) return true;
+  if (!SUPABASE_URL || !ANON_KEY) return false;
+  try {
+    const verification = await fetch(SUPABASE_URL + "/auth/v1/admin/users?page=1&per_page=1", {
+      method: "GET",
+      cache: "no-store",
+      redirect: "manual",
+      headers: { apikey: ANON_KEY, Authorization: authorization },
+      signal: AbortSignal.timeout(5000),
+    });
+    // This endpoint is restricted to project-specific service-role tokens.
+    // Its response is discarded; no user details are returned or logged.
+    return verification.status === 200;
+  } catch {
+    return false;
+  }
+}
+
 async function renderAuthenticatedPortalPdf(req: Request): Promise<Response> {
-  if (!SERVICE_ROLE_KEY || req.headers.get("Authorization") !== "Bearer " + SERVICE_ROLE_KEY) {
+  if (!await verifyPortalPdfService(req)) {
     return new Response(JSON.stringify({ error: "No autorizado." }), {
       status: 403, headers: { "Content-Type": "application/json", "Cache-Control": "no-store" }
     });
