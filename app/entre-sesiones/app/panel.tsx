@@ -30,7 +30,7 @@ function readableDate(value?: string | null) {
   return new Intl.DateTimeFormat("es-ES", { day: "numeric", month: "long", year: "numeric" }).format(date);
 }
 
-function appointmentLabel(next: Appointment) {
+function appointmentLabel(next: Appointment | undefined) {
   if (!next?.starts_at) return null;
   const date = new Date(next.starts_at);
   if (Number.isNaN(date.getTime())) return null;
