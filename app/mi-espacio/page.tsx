@@ -260,6 +260,19 @@ export default function MiEspacioPage() {
               </div>
             </section>
 
+            <section className="wellness-interactive-section" aria-labelledby="wellness-interactive-heading">
+              <div className="wellness-section-title">
+                <div>
+                  <p className="space-eyebrow">PRÁCTICAS INTERACTIVAS</p>
+                  <h3 id="wellness-interactive-heading">Hazlo aquí, no solo lo leas.</h3>
+                </div>
+                <p>Cuatro experiencias guiadas que puedes repetir sin puntuaciones ni comparaciones.</p>
+              </div>
+              <div id="wellness-interactive" aria-label="Herramientas interactivas de bienestar">
+                <p className="wellness-interactive-loading" role="status">Preparando tus prácticas interactivas…</p>
+              </div>
+            </section>
+
             <section className="wellness-library" aria-labelledby="wellness-library-heading">
               <div className="wellness-section-title">
                 <div><p className="space-eyebrow">TU BIBLIOTECA</p><h3 id="wellness-library-heading">Herramientas para distintos momentos</h3></div>
@@ -299,7 +312,7 @@ export default function MiEspacioPage() {
             </details>
             <aside className="wellness-privacy">
               <strong>Un espacio personal, no una evaluación clínica.</strong>
-              <p>Estas prácticas son recursos generales de autocuidado. Tus favoritos, objetivos y actividades se guardan en este dispositivo, separados por cuenta; no se envían automáticamente a Carolina ni sustituyen las indicaciones acordadas en sesión.</p>
+              <p>Estas prácticas son recursos generales de autocuidado. Tus notas y decisiones interactivas no se guardan. Solo se registra la fecha y el nombre de una práctica cuando decides terminarla. Los favoritos, objetivos y registros se mantienen en este dispositivo, separados por cuenta, y no se comparten automáticamente con Carolina.</p>
             </aside>
           </section>
 
@@ -381,7 +394,8 @@ export default function MiEspacioPage() {
       </aside>
 
       <Script src="/patient-video.js?v=20261009-1" strategy="afterInteractive" />
-      <Script src="/mi-espacio.js?v=20261017-wellness-experience-1" strategy="afterInteractive" />
+      <Script src="/mi-espacio.js?v=20261017-wellness-interactive-1" strategy="afterInteractive" />
+      <Script src="/wellness-interactive.js?v=20261017-1" strategy="afterInteractive" />
     </main>
   );
 }
