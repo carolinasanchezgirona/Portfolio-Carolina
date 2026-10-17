@@ -447,6 +447,42 @@
   const navButtons = [...document.querySelectorAll("[data-space-view]")];
   const wellnessList = document.getElementById("wellness-list");
   const wellnessContext = document.getElementById("wellness-context");
+
+  // Una sola navegación dentro de Wellness: entrar, explorar o volver a guardados.
+  let wellnessActiveTab = "inicio";
+  function setWellnessTab(tab, { preserveFilters = false, scroll = false } = {}) {
+    const next = ["inicio", "explorar", "guardadas"].includes(tab) ? tab : "inicio";
+    wellnessActiveTab = next;
+    const view = document.querySelector('[data-space-panel="wellness"]');
+    if (view) view.dataset.wellnessActive = next;
+    document.querySelectorAll("[data-wellness-tab]").forEach(button => {
+      const active = button.dataset.wellnessTab === next;
+      button.classList.toggle("is-active", active);
+      button.setAttribute("aria-pressed", String(active));
+    });
+    document.querySelectorAll("[data-wellness-section]").forEach(panel => {
+      panel.hidden = panel.dataset.wellnessSection !== (next === "inicio" ? "inicio" : "explorar");
+    });
+    if (next === "guardadas" || (next === "explorar" && !preserveFilters)) {
+      state.need = null;
+      state.filter = next === "guardadas" ? "favoritos" : "all";
+      state.search = "";
+      const search = document.getElementById("wellness-search");
+      if (search) {
+        search.value = "";
+        search.placeholder = next === "guardadas" ? "Buscar entre mis guardadas…" : "Buscar una herramienta…";
+      }
+    }
+    const heading = document.getElementById("wellness-library-heading");
+    if (heading) heading.textContent = next === "guardadas" ? "Mis herramientas guardadas" : "Herramientas para distintos momentos";
+    const goExplore = document.querySelector("[data-wellness-go-explore]");
+    if (goExplore) goExplore.hidden = next !== "guardadas";
+    renderWellness();
+    if (scroll && view && !view.hidden) {
+      document.querySelector(".wellness-subnav")?.scrollIntoView({ block: "start", behavior: "auto" });
+    }
+  }
+
   const dialog = document.getElementById("wellness-dialog");
   const dialogType = document.getElementById("wellness-dialog-type");
   const dialogTitle = document.getElementById("wellness-dialog-title");
@@ -1892,6 +1928,13 @@
     });
   });
 
+  document.querySelectorAll("[data-wellness-tab]").forEach(button => {
+    button.addEventListener("click", () => setWellnessTab(button.dataset.wellnessTab, { scroll: true }));
+  });
+  document.querySelector("[data-wellness-go-explore]")?.addEventListener("click", () => {
+    setWellnessTab("explorar", { scroll: true });
+  });
+
   document.querySelectorAll("[data-need]").forEach(button => {
     button.addEventListener("click", () => {
       state.need = button.dataset.need;
@@ -1900,6 +1943,7 @@
       const search = document.getElementById("wellness-search");
       if (search) search.value = "";
       navigateToView("wellness");
+      setWellnessTab("explorar", { preserveFilters: true, scroll: true });
     });
   });
 
