@@ -247,7 +247,7 @@ export default function EntreSesionesApp() {
         <div className="esapp-weekly-grid">
           <div className="esapp-weekly-tasks">
             <p className="esapp-weekly-category">MIS EJERCICIOS</p>
-            {weeklyMaterials.length ? weeklyMaterials.map(item => <a key={item.id} className="esapp-weekly-task" href={workspace}>
+            {weeklyMaterials.length ? weeklyMaterials.map(item => <a key={item.id} className="esapp-weekly-task" href={workspace + (/^[0-9a-f-]{36}$/i.test(item.id) ? "#space-material-" + item.id : "")}>
               <span className="esapp-weekly-task-mark" aria-hidden="true">▤</span>
               <span className="esapp-weekly-task-copy">
                 <strong>{item.title || "Actividad de consulta"}</strong>
