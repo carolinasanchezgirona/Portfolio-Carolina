@@ -191,3 +191,83 @@
   .esapp .esapp-loader{animation:none}
   .esapp *{transition:none!important;scroll-behavior:auto!important}
 }
+
+
+/* Entre Sesiones · identidad aprobada, composición editorial azul hielo y coral.
+   Alcance exclusivo de /entre-sesiones/app/. */
+.esapp{--es-ink:#153858;--es-teal:#245c77;--es-coral:#f08072;--es-bg:#f5f9fb;--es-line:#dce9ef;--es-muted:#536b7d;background:linear-gradient(155deg,#fbfdfd,#eff8fc 48%,#fffaf6)}
+.esapp .esapp-top{background:rgba(255,255,255,.97);border-bottom-color:#e0e9ed;box-shadow:0 8px 28px rgba(13,49,78,.04)}
+.esapp .esapp-logo,.esapp .esapp-logo img{width:50px;height:50px}
+.esapp .esapp-brand strong{font-size:clamp(22px,2.2vw,30px);letter-spacing:-.045em}
+.esapp .esapp-brand span{color:#658091}
+.esapp .esapp-container{padding-top:20px}
+.esapp .esapp-quicknav{display:flex;gap:9px;align-items:center;overflow-x:auto;scrollbar-width:thin;margin:0 0 17px;padding:2px 1px 9px}
+.esapp .esapp-quicknav a{display:inline-flex;align-items:center;justify-content:center;white-space:nowrap;min-height:43px;padding:10px 19px;background:#fff;color:#37536a;border:1px solid #dbe7ed;border-radius:13px;font-size:13px;font-weight:750;box-shadow:0 2px 9px rgba(17,52,77,.025)}
+.esapp .esapp-quicknav a.is-current{background:#153858;color:#fff;border-color:#153858}
+.esapp .esapp-quicknav a:hover{border-color:#9abec9}
+.esapp .esapp-welcome{min-height:300px;align-items:flex-end;padding:clamp(28px,4vw,51px);border:1px solid #d6e8f0;border-radius:27px;background:radial-gradient(ellipse 72% 90% at 108% 13%,rgba(240,128,114,.21) 0 33%,transparent 34%),radial-gradient(ellipse 83% 120% at 104% 91%,rgba(98,162,194,.28) 0 40%,transparent 41%),linear-gradient(123deg,#e0f4fa,#eaf7fb 49%,#fcf8f4);box-shadow:0 20px 45px rgba(17,57,82,.055)}
+.esapp .esapp-welcome::before{content:"";position:absolute;pointer-events:none;right:5%;top:-40%;width:250px;height:310px;transform:rotate(-31deg);border-radius:43% 49% 31% 64%;background:rgba(255,255,255,.50)}
+.esapp .esapp-welcome::after{content:"";position:absolute;pointer-events:none;width:260px;height:320px;right:-132px;top:68px;z-index:-1;border:0;transform:rotate(29deg);border-radius:48% 26% 46% 40%;background:rgba(36,98,136,.13)}
+.esapp .esapp-welcome-copy,.esapp .esapp-welcome-actions{position:relative;z-index:1}
+.esapp .esapp-welcome-copy{max-width:640px}
+.esapp .esapp-welcome h1{font-size:clamp(39px,5.5vw,66px);line-height:1.03;font-weight:550;letter-spacing:-.05em;margin:0 0 19px}
+.esapp .esapp-overline{letter-spacing:.16em;color:#24516e;font-weight:800}
+.esapp .esapp-welcome-copy>p:last-child{font-size:clamp(14px,1.3vw,16px);line-height:1.7;max-width:445px;color:#405e72}
+.esapp .esapp-welcome-actions{align-items:flex-end}
+.esapp .esapp-primary{min-height:46px;background:#153858;border-color:#153858;border-radius:14px;box-shadow:0 8px 20px rgba(21,56,88,.14)}
+.esapp .esapp-feature{min-width:0;margin-top:17px;position:relative;overflow:hidden;border:1px solid #eaded7;border-radius:24px;padding:23px clamp(20px,3vw,34px);display:flex;align-items:center;justify-content:space-between;gap:18px;background:radial-gradient(ellipse at 85% 122%,rgba(246,146,129,.37) 0 25%,transparent 26%),linear-gradient(112deg,#fff8f2,#ffede7 70%,#f8d7ca)}
+.esapp .esapp-feature::after{content:"";position:absolute;pointer-events:none;width:124px;height:149px;right:13%;bottom:-72px;transform:rotate(-25deg);border-radius:47% 47% 33% 55%;background:rgba(23,58,94,.14)}
+.esapp .esapp-feature-copy{position:relative;z-index:1;display:grid;gap:5px;max-width:520px}
+.esapp .esapp-feature-copy .esapp-overline{color:#a15a51;margin:0;font-size:10px}
+.esapp .esapp-feature-copy strong{font-family:var(--esapp-font-editorial),Georgia,serif;font-size:clamp(26px,3vw,35px);letter-spacing:-.045em;line-height:1.12;color:#183958;font-weight:600}
+.esapp .esapp-feature-copy>span{color:#546c77;font-size:13px;line-height:1.55}
+.esapp .esapp-feature-link{flex-shrink:0;position:relative;z-index:1;display:inline-flex;align-items:center;gap:12px;background:#fff;color:#173a5e;border:1px solid rgba(23,58,94,.1);border-radius:999px;padding:10px 14px 10px 19px;font-size:13px;font-weight:800}
+.esapp .esapp-feature-link span{display:grid;place-items:center;background:#f08072;color:white;border-radius:50%;width:35px;height:35px;font-size:19px}
+.esapp .esapp-columns{margin-top:21px;gap:19px}
+.esapp .esapp-stats>div{background:#fff;border-color:#e5ebef;border-radius:18px;box-shadow:0 6px 21px rgba(19,53,84,.025)}
+.esapp .esapp-stats strong{color:#173a5e}
+.esapp :is(.esapp-panel,.esapp-smallcard){background:#fff;border:1px solid #e2eaf0;border-radius:23px;box-shadow:0 9px 32px rgba(17,52,77,.045)}
+.esapp .esapp-panel{padding:clamp(20px,2.8vw,29px)}
+.esapp .esapp-sectionhead h2{font-size:clamp(26px,3vw,34px);letter-spacing:-.045em}
+.esapp .esapp-sectionhead>span{background:#dceff6;color:#245674;font-weight:800}
+.esapp .esapp-material{align-items:center;padding:18px 0;gap:12px;border-top-color:#e5edf0}
+.esapp .esapp-material-icon{width:47px;height:47px;border-radius:16px;flex-shrink:0;background:#e2f4f7;color:#185e77}
+.esapp .esapp-material h3{font-size:14px;line-height:1.45}
+.esapp .esapp-material p{font-size:12px;color:#60768a}
+.esapp .esapp-status{background:#fff0e9;color:#925448}
+.esapp .esapp-status.shared{background:#e3f1e9;color:#277255}
+.esapp .esapp-status.draft{background:#e6f1fa;color:#285d80}
+.esapp .esapp-inline-link{margin-top:4px;padding:15px 18px;border:0;border-radius:14px;background:#e6f4fa;color:#174566;line-height:1.55}
+.esapp .esapp-inline-link:hover{background:#d6eefa}
+.esapp .esapp-note{background:linear-gradient(140deg,#e5f5fa,#f5fafc);border-color:#cee6f0;border-radius:23px}
+.esapp .esapp-smallcard:nth-of-type(2){border-top:3px solid #f08072}
+.esapp .esapp-smallcard h3{font-size:24px}
+.esapp .esapp-footer{border-top-color:#dce9ee}
+@media(max-width:900px){
+ .esapp .esapp-welcome{min-height:0;align-items:flex-start;flex-direction:column}
+ .esapp .esapp-welcome-actions{justify-content:flex-start}
+}
+@media(max-width:620px){
+ .esapp .esapp-top{padding:12px 15px;min-height:71px}
+ .esapp .esapp-logo,.esapp .esapp-logo img{width:39px;height:39px}
+ .esapp .esapp-brand strong{font-size:21px}
+ .esapp .esapp-brand span{display:none}
+ .esapp .esapp-container{padding:13px 14px 25px}
+ .esapp .esapp-quicknav{gap:6px;margin:0 0 11px}
+ .esapp .esapp-quicknav a{font-size:12px;min-height:39px;padding:8px 13px;border-radius:11px}
+ .esapp .esapp-welcome{padding:29px 24px 34px;border-radius:24px}
+ .esapp .esapp-welcome h1{font-size:clamp(35px,10vw,45px);margin-bottom:12px}
+ .esapp .esapp-welcome-copy>p:last-child{font-size:13px;max-width:320px}
+ .esapp .esapp-welcome::before{right:-82px;top:-146px;width:160px;height:260px}
+ .esapp .esapp-welcome::after{right:-165px;top:110px}
+ .esapp .esapp-welcome-actions{margin-top:18px;gap:9px}
+ .esapp .esapp-feature{align-items:stretch;flex-direction:column;padding:23px 21px;border-radius:21px;gap:13px}
+ .esapp .esapp-feature::after{right:-22px;bottom:-122px}
+ .esapp .esapp-feature-link{align-self:flex-start}
+ .esapp .esapp-stats{gap:8px}
+ .esapp .esapp-stats>div{padding:14px 10px;border-radius:15px}
+ .esapp .esapp-stats small{font-size:10px}
+ .esapp .esapp-material{flex-direction:column;align-items:stretch}
+ .esapp .esapp-material-left{gap:11px}
+ .esapp .esapp-status{margin-left:58px;align-self:flex-start}
+}
