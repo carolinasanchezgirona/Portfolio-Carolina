@@ -391,6 +391,32 @@ export default function MiEspacioPage() {
               <p>La separación entre Wellness y terapia es intencionada. La elección del personaje se guarda en tu cuenta y tus registros libres de bienestar permanecen en este dispositivo, separados por paciente.</p>
             </div>
 
+            <section className="space-reading-preferences" aria-labelledby="space-reading-title">
+              <div>
+                <p className="space-eyebrow">Accesibilidad · A tu manera</p>
+                <h3 id="space-reading-title">Una lectura más cómoda</h3>
+                <p>Adapta el texto y la presentación a lo que te resulte más sencillo. Los ajustes se guardan solo en este dispositivo y se separan por cuenta.</p>
+              </div>
+              <div className="space-reading-fields">
+                <label htmlFor="space-reading-size">Tamaño del texto
+                  <select id="space-reading-size" defaultValue="normal">
+                    <option value="normal">Normal</option>
+                    <option value="large">Grande</option>
+                    <option value="extra">Muy grande</option>
+                  </select>
+                </label>
+                <label className="space-reading-checkbox" htmlFor="space-reading-simple">
+                  <input id="space-reading-simple" type="checkbox" />
+                  <span><strong>Lectura tranquila</strong><small>Más espacio entre líneas y bloques de texto más despejados.</small></span>
+                </label>
+                <label className="space-reading-checkbox" htmlFor="space-reading-motion">
+                  <input id="space-reading-motion" type="checkbox" />
+                  <span><strong>Reducir movimiento</strong><small>Evita movimientos y transiciones decorativas dentro del espacio personal.</small></span>
+                </label>
+              </div>
+              <p id="space-reading-feedback" role="status" aria-live="polite" className="space-small" />
+            </section>
+
             <MoodAvatarSettings />
 
             <div className="space-grid space-feature-grid">
@@ -412,7 +438,7 @@ export default function MiEspacioPage() {
             </div>
 
             <div className="space-account-actions">
-              <button id="space-clear-local" className="space-danger-link" type="button">Borrar mis favoritos y progreso de este dispositivo</button>
+              <button id="space-clear-local" className="space-danger-link" type="button">Borrar registros locales de Wellness y preferencias de lectura</button>
               <button id="space-logout" className="space-danger-link" type="button">Cerrar sesión de Mi espacio</button>
             </div>
             <p id="space-clear-message" className="space-small" role="status" />
