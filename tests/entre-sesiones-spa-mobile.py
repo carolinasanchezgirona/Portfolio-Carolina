@@ -18,7 +18,7 @@ HTML = """<!doctype html><html lang="es"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
 [hidden] { display: none !important; }
-body { margin:0; font-family:system-ui,sans-serif; }
+body { margin:0; padding-bottom:100px; font-family:system-ui,sans-serif; }
 .esapp-bottom-nav {display:flex;gap:8px;position:fixed;bottom:0;padding:10px;background:#fff;width:100%}
 .esapp-bottom-nav a {display:block;padding:8px;font-size:14px}
 .space-view {padding:18px}
