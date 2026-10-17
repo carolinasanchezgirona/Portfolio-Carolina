@@ -425,6 +425,9 @@
 
   // Clinical drafts never enter localStorage: compare in-memory snapshots only.
   const materialSavedSnapshots = new WeakMap();
+  // Descarta respuestas de peticiones antiguas tras cerrar sesión o cambiar de cuenta.
+  // Ningún texto clínico se copia a almacenamiento persistente.
+  let portalSessionEpoch = 0;
   const state = {
     currentActivity: null,
     filter: "all",
@@ -701,6 +704,7 @@
   }
 
   function showAccessGate() {
+    portalSessionEpoch++;
     // El contenido clínico debe salir también del DOM, no solo quedar oculto.
     // Así no puede reutilizarse al cambiar de paciente en el mismo navegador.
     state.portalAuthenticated = false;
@@ -780,6 +784,8 @@
   }
 
   async function savePatientMaterialResponse(item, form, action, status) {
+    const responseEpoch = portalSessionEpoch;
+    if (!state.portalAuthenticated) return;
     const details = form.closest(".space-patient-material");
     const submittedSnapshot = details ? snapshotPatientMaterial(details) : "";
     const button = form.querySelector(`button[value="${action}"]`);
@@ -797,6 +803,7 @@
         body: JSON.stringify({ material_id: item.id, action, record, answers, ...(neuroAnswers.length ? { neuro_answers: neuroAnswers } : {}) })
       });
       const body = await response.json().catch(() => ({}));
+      if (responseEpoch !== portalSessionEpoch || !state.portalAuthenticated || !details?.isConnected) return;
       if (response.status === 401) {
         state.portalAuthenticated = false;
         state.portalData = null;
@@ -820,10 +827,14 @@
             : "Borrador guardado. Carolina todavía no ve estas respuestas.";
       }
     } catch (error) {
-      if (status) status.textContent = error?.message || "No se ha podido guardar.";
+      if (responseEpoch === portalSessionEpoch && state.portalAuthenticated && details?.isConnected && status) {
+        status.textContent = error?.message || "No se ha podido guardar.";
+      }
     } finally {
-      buttons.forEach((node) => { node.disabled = false; });
-      if (button) button.blur();
+      if (responseEpoch === portalSessionEpoch && state.portalAuthenticated && details?.isConnected) {
+        buttons.forEach((node) => { node.disabled = false; });
+        if (button) button.blur();
+      }
     }
   }
 
@@ -1326,11 +1337,13 @@
   }
 
   async function loadPatientSession() {
+    const requestEpoch = ++portalSessionEpoch;
     try {
       const response = await fetch("/api/patient-portal/session", {
         cache: "no-store",
         credentials: "include"
       });
+      if (requestEpoch !== portalSessionEpoch) return false;
       if (!response.ok) {
         showAccessGate();
         if (response.status !== 401) {
@@ -1339,6 +1352,7 @@
         return false;
       }
       const data = await response.json();
+      if (requestEpoch !== portalSessionEpoch) return false;
       if (!data?.authenticated) {
         showAccessGate();
         return false;
@@ -1346,6 +1360,7 @@
       renderPatientPortal(data);
       return true;
     } catch {
+      if (requestEpoch !== portalSessionEpoch) return false;
       showAccessGate();
       setAccessMessage("No se ha podido comprobar el acceso. Puedes volver a intentarlo.", true);
       return false;
@@ -1417,6 +1432,7 @@
 
   async function loginWithPassword(event) {
     event.preventDefault();
+    const loginEpoch = ++portalSessionEpoch;
     const email = String(loginEmail?.value || "").trim().toLowerCase();
     const password = String(loginPassword?.value || "");
     if (!email || !password) return;
@@ -1427,9 +1443,11 @@
     setAccessMessage("Comprobando tus datos de acceso…");
     try {
       await patientAuthRequest("password-login", { email, password });
+      if (loginEpoch !== portalSessionEpoch) return;
       if (loginPassword) loginPassword.value = "";
       const response = await fetch("/api/patient-portal/session", { credentials: "include", cache: "no-store" });
       const session = await response.json().catch(() => ({}));
+      if (loginEpoch !== portalSessionEpoch) return;
       if (!response.ok || !session.authenticated) throw new Error("No se ha podido confirmar la sesión.");
       if (insideEntreSesionesApp) {
         renderPatientPortal(session);
@@ -1450,7 +1468,9 @@
       }
     } catch (error) {
       if (newTab && !newTab.closed) newTab.close();
-      setAccessMessage(error?.message || "Correo o contraseña incorrectos.", true);
+      if (loginEpoch === portalSessionEpoch) {
+        setAccessMessage(error?.message || "Correo o contraseña incorrectos.", true);
+      }
     } finally {
       setBusy(loginForm, false);
     }
@@ -1488,12 +1508,14 @@
   async function logoutPatientPortal() {
     if ((patientMaterialHasUnsavedChanges() || sessionPreparationHasUnsavedNotes()) &&
         !window.confirm("Hay notas sin guardar. Si cierras sesión, se descartarán. ¿Quieres continuar?")) return;
+    const logoutEpoch = ++portalSessionEpoch;
     const message = document.getElementById("space-clear-message");
     if (message) message.textContent = "Cerrando tu sesión…";
     try {
       const response = await fetch("/api/patient-portal/logout", {
         method: "POST", credentials: "include", cache: "no-store"
       });
+      if (logoutEpoch !== portalSessionEpoch) return;
       if (response.status === 401) {
         // La sesión ya ha caducado: retirar igualmente toda la información del navegador.
         resetPatientAccess();
@@ -1502,7 +1524,7 @@
       }
       if (!response.ok) throw new Error("logout_not_confirmed");
     } catch {
-      if (message) {
+      if (logoutEpoch === portalSessionEpoch && message) {
         message.textContent = "No hemos podido cerrar la sesión en el servidor. Comprueba tu conexión y vuelve a intentarlo.";
       }
       return;
