@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import Image from "next/image";
 
 type Appointment = { starts_at?: string; service_code?: string } | null;
 type Material = {
@@ -159,11 +160,11 @@ export default function EntreSesionesApp() {
 
   return <main className="esapp">
     <header className="esapp-top">
-      <div className="esapp-logo" aria-hidden="true"><span>e</span><b>s</b></div>
+      <div className="esapp-logo"><Image src="/entre-sesiones-icon-editorial.svg" alt="Entre Sesiones" width={48} height={48} priority /></div>
       <div className="esapp-brand"><strong>Entre Sesiones</strong><span>Carolina Sánchez · Psicología y Neuropsicología</span></div>
       <div className="esapp-head-actions">
         {status === "ready" && <button className="esapp-light" type="button" disabled={loggingOut} onClick={logout}>{loggingOut ? "Saliendo…" : "Cerrar sesión"}</button>}
-        {!isStandalone && <button type="button" className="esapp-install" onClick={install}>Instalar app</button>}
+        {!isStandalone && <button type="button" className="esapp-install" onClick={install}><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true" strokeLinecap="round" strokeLinejoin="round"><path d="M12 3v12m-4-4 4 4 4-4M5 17v3h14v-3"/></svg><span>Instalar</span></button>}
       </div>
     </header>
 
@@ -173,21 +174,24 @@ export default function EntreSesionesApp() {
         <h1>{status === "ready" && data?.patient?.first_name
           ? `Hola, ${data.patient.first_name}.`
           : "Un lugar para seguir avanzando."}</h1>
-        <p>Consulta los materiales que se han acordado en sesión, trabaja a tu ritmo y comparte tus respuestas cuando decidas hacerlo.</p>
+        <p className="esapp-hero-description">Tus ejercicios, los avances compartidos y un espacio para continuar lo trabajado en consulta, a tu ritmo.</p>
         <div className="esapp-hero-actions">
-          <a href={workspace} className="esapp-primary">Ir a mis ejercicios <span aria-hidden="true">↗</span></a>
-          <button type="button" className="esapp-hero-quiet" onClick={reload}>Actualizar mi espacio</button>
+          <a href={workspace} className="esapp-primary">{status === "ready" ? "Ver mis ejercicios" : "Acceder a mis ejercicios"} <span aria-hidden="true">↗</span></a>
+          {status === "ready" && <button type="button" className="esapp-hero-quiet" onClick={reload} aria-label="Actualizar mis materiales">
+            <svg width="17" height="17" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M20 7v5h-5M4 17v-5h5"/><path d="M5.4 9A7.5 7.5 0 0 1 19 7l1 5M4 12l1 5a7.5 7.5 0 0 0 13.6-2"/></svg>
+            Actualizar
+          </button>}
         </div>
       </section>
 
       {installHint && !isStandalone && <aside className="esapp-hint" role="status">
-        <strong>Instalación en el móvil:</strong> abre el menú de tu navegador y elige «Instalar aplicación» o «Añadir a pantalla de inicio». En iPhone: Compartir → «Añadir a pantalla de inicio».
+        <strong>Instalación en el móvil:</strong> abre este enlace en Chrome (no dentro del navegador de otra aplicación). En el menú del navegador elige «Instalar aplicación» o «Añadir a pantalla de inicio». En iPhone, usa Compartir → «Añadir a pantalla de inicio».
         <button aria-label="Cerrar indicaciones" type="button" onClick={() => setInstallHint(false)}>×</button>
       </aside>}
 
       {status === "checking" && <section className="esapp-state" role="status"><h2>Comprobando tu acceso…</h2><p>Estamos verificando tu sesión actual. La app no conserva datos clínicos sin conexión.</p></section>}
       {status === "logged-out" && <section className="esapp-state">
-        <div className="esapp-state-icon" aria-hidden="true">🔒</div>
+        <div className="esapp-state-icon" aria-hidden="true"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"><rect x="5" y="10" width="14" height="11" rx="2.5"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/><circle cx="12" cy="15" r="1"/></svg></div>
         <h2>Accede con tu cuenta habitual</h2>
         <p>Utiliza el mismo correo y contraseña que ya tienes en «Mi espacio». No necesitas crear otra cuenta.</p>
         <a href="/mi-espacio/?vista=terapia" className="esapp-primary">Entrar en Mi espacio</a>
