@@ -46,3 +46,18 @@ test("renderer authenticates service credentials using restricted project admin 
   assert.match(renderer, /await pdfResponse\(input\.title\.trim\(\), doc/);
   assert.doesNotMatch(renderer, /JSON\.parse\(atob\(/);
 });
+
+
+test("patient can print one authorised worksheet as PDF without exporting clinical responses", () => {
+  assert.match(portal, /printButton\.textContent = "Imprimir \/ Guardar como PDF"/);
+  assert.match(portal, /if \(!state\.portalAuthenticated \|\| !details\.isConnected \|\| !patientMaterials\?\.contains\(details\)\) return/);
+  assert.match(portal, /details\.setAttribute\("data-print-material", "true"\)/);
+  assert.match(portal, /document\.body\.classList\.add\("space-print-patient-material"\)/);
+  assert.match(portal, /window\.print\(\)/);
+  assert.match(css, /@media print/);
+  assert.match(css, /body\.space-print-patient-material #space-patient-materials>\.space-patient-material:not\(\[data-print-material\]\)/);
+  assert.match(css, /body\.space-print-patient-material \.space-patient-material\[data-print-material\] :is\(/);
+  assert.match(css, /\.space-patient-response/);
+  assert.match(css, /\[data-neuro-answer\]/);
+  assert.match(page, /data-portal-phase="checking"/);
+});
