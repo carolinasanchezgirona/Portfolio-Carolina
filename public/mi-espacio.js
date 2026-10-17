@@ -277,6 +277,92 @@
       ],
       note: "El objetivo no es convencerte de que todo está bien, sino sustituir castigo global por información más precisa."
     }
+
+    {
+      id: "descanso-sin-culpa",
+      title: "Descansar sin negociar",
+      type: "autocuidado",
+      duration: "4 min",
+      needs: ["energia", "desconectar"],
+      summary: "Reservar una pausa sin convertirla en otra tarea que cumplir.",
+      intro: "Descansar no requiere haber agotado antes toda tu lista. Puedes elegir una pausa deliberada y breve.",
+      steps: [
+        "Observa si estás cansada, saturada o simplemente necesitas cambiar de actividad. No hace falta justificarlo.",
+        "Escoge una pausa sencilla que esté a tu alcance: levantarte, beber agua, sentarte o mirar por la ventana.",
+        "Decide cuánto tiempo dedicarás sin revisar tareas pendientes durante ese rato.",
+        "Cuando aparezca el pensamiento «debería estar haciendo algo», reconócelo sin empezar una negociación con él.",
+        "Al terminar, comprueba qué necesitas a continuación, sin evaluar la pausa como buena o mala."
+      ],
+      note: "Si necesitas descansar más, esta práctica no te exige volver a producir ni sustituye un descanso suficiente."
+    },
+    {
+      id: "decision-suficiente",
+      title: "Una decisión suficientemente buena",
+      type: "cognitivo",
+      duration: "5 min",
+      needs: ["orden", "rumiacion", "concentrarme"],
+      summary: "Reducir las vueltas a decisiones cotidianas de bajo riesgo.",
+      intro: "No todas las decisiones necesitan el mismo nivel de análisis. A veces seguir buscando certeza añade carga sin mejorar la elección.",
+      steps: [
+        "Elige una decisión cotidiana, reversible y de poca importancia.",
+        "Escribe las dos o tres condiciones que realmente importan para elegir.",
+        "Limita las opciones a un máximo de tres.",
+        "Escoge la opción que cumpla lo suficiente, aunque no sea perfecta.",
+        "Continúa con la acción elegida. Si aparece una nueva duda, anótala solo si cambia algo relevante."
+      ],
+      note: "No utilices este ejercicio para decisiones clínicas, legales, económicas o vitales de alto impacto."
+    },
+    {
+      id: "pausa-pantalla",
+      title: "Una pausa de pantalla",
+      type: "autocuidado",
+      duration: "3 min",
+      needs: ["desconectar", "concentrarme"],
+      summary: "Interrumpir el desplazamiento automático y recuperar una elección.",
+      intro: "No se trata de prohibirte el móvil. Se trata de comprobar si quieres seguir utilizándolo.",
+      steps: [
+        "Deja el dispositivo unos segundos sobre una superficie, sin desbloquearlo de nuevo.",
+        "Observa qué ibas a hacer y si llegaste a hacerlo.",
+        "Pregunta: «¿Quiero seguir aquí, o estoy intentando evitar otra cosa?»",
+        "Decide conscientemente si continúas, cierras una aplicación o haces una pausa breve.",
+        "Si eliges seguir, hazlo sin reprocharte la decisión."
+      ],
+      note: "La utilidad está en recuperar margen para elegir, no en contar minutos de pantalla."
+    },
+    {
+      id: "conexion-pequena",
+      title: "Un gesto de conexión",
+      type: "emocional",
+      duration: "5 min",
+      needs: ["entender", "energia", "limites"],
+      summary: "Buscar cercanía de un modo pequeño y compatible con tu energía.",
+      intro: "Conectar no siempre significa mantener una conversación larga o explicar todo lo que sientes.",
+      steps: [
+        "Piensa en una persona con quien te resulte seguro y agradable contactar.",
+        "Elige qué te gustaría: un saludo, compartir algo cotidiano o pedir una conversación.",
+        "Redacta un mensaje sencillo que no exija respuesta inmediata.",
+        "Comprueba que enviarlo es una elección, no una obligación.",
+        "Si hoy prefieres no contactar, considera otra forma amable de acompañarte."
+      ],
+      note: "No necesitas acercarte a personas con quienes no te sientas segura. No todas las relaciones son reparadoras."
+    },
+    {
+      id: "soltar-comparacion",
+      title: "Salir de la comparación",
+      type: "emocional",
+      duration: "4 min",
+      needs: ["rumiacion", "entender"],
+      summary: "Reconocer cuándo una comparación te está alejando de tus prioridades.",
+      intro: "La comparación puede ofrecer información, pero también convertirse en una medida injusta de tu propio valor.",
+      steps: [
+        "Identifica con quién o con qué te estás comparando.",
+        "Distingue qué información conoces realmente y qué parte estás suponiendo.",
+        "Pregunta qué aspecto concreto te importa en el fondo: descanso, reconocimiento, tiempo, seguridad o una meta.",
+        "Convierte esa necesidad en un paso realista que dependa de ti.",
+        "Vuelve a tu criterio, aunque sigas notando la comparación."
+      ],
+      note: "No se trata de prohibir compararte, sino de no convertir un fragmento de la vida ajena en una sentencia sobre la tuya."
+    },
   ];
 
   const routines = {
@@ -338,6 +424,7 @@
     currentActivity: null,
     filter: "all",
     need: null,
+    search: "",
     favorites: [],
     completed: [],
     storageScope: null,
@@ -1146,8 +1233,9 @@
       const response = await fetch("/api/patient-portal/session", { credentials: "include", cache: "no-store" });
       const session = await response.json().catch(() => ({}));
       if (!response.ok || !session.authenticated) throw new Error("No se ha podido confirmar la sesión.");
-      const url = new URLSearchParams(window.location.search).get("vista") === "terapia"
-        ? "/mi-espacio/?vista=terapia" : "/mi-espacio/?vista=panel";
+      const requestedView = new URLSearchParams(window.location.search).get("vista");
+      const allowedViews = ["terapia", "wellness", "progreso", "configuracion"];
+      const url = "/mi-espacio/?vista=" + (allowedViews.includes(requestedView) ? requestedView : "panel");
       if (newTab && !newTab.closed) {
         newTab.location.replace(url);
         setAccessMessage("Sesión iniciada. Mi espacio se ha abierto en otra pestaña.");
@@ -1325,10 +1413,13 @@
   }
 
   function filteredActivities() {
+    const query = state.search.trim().toLocaleLowerCase("es");
     return activities.filter(activity => {
       if (state.filter === "favoritos" && !isFavorite(activity.id)) return false;
       if (!["all", "favoritos"].includes(state.filter) && activity.type !== state.filter) return false;
       if (state.need && !activity.needs.includes(state.need)) return false;
+      if (query && ![activity.title, activity.summary, activity.intro, typeLabel(activity.type)]
+        .some(value => String(value).toLocaleLowerCase("es").includes(query))) return false;
       return true;
     });
   }
@@ -1336,10 +1427,28 @@
   function renderWellness() {
     if (!wellnessList) return;
     renderJourney();
-    const items = filteredActivities().filter(item => journey && !journeyDraft && (journey.step >= 4 ? journey.seen.includes(item.id) : item.id === currentJourneyActivity() || journey.seen.includes(item.id)));
+    const items = filteredActivities();
     wellnessList.replaceChildren();
-    if (!journey || journeyDraft || !state.storageScope) {
+    const resetButton = document.querySelector("[data-wellness-reset]");
+    if (resetButton) resetButton.hidden = !state.need;
+    const count = document.getElementById("wellness-count");
+    if (count) count.textContent = items.length === 1 ? "1 herramienta" : items.length + " herramientas";
+    document.querySelectorAll("[data-wellness-filter]").forEach(button => {
+      const selected = button.dataset.wellnessFilter === state.filter;
+      button.classList.toggle("is-active", selected);
+      button.setAttribute("aria-pressed", String(selected));
+    });
+    document.querySelectorAll(".wellness-needs [data-need]").forEach(button => {
+      const selected = button.dataset.need === state.need;
+      button.classList.toggle("is-active", selected);
+      button.setAttribute("aria-pressed", String(selected));
+    });
+    if (!state.storageScope) {
       if (wellnessContext) wellnessContext.hidden = true;
+      const unavailable = document.createElement("div");
+      unavailable.className = "space-empty";
+      unavailable.textContent = "Preparando tu biblioteca privada. Si no se carga, vuelve a entrar en Mi espacio.";
+      wellnessList.append(unavailable);
       return;
     }
 
@@ -1363,16 +1472,16 @@
     if (!items.length) {
       const empty = document.createElement("div");
       empty.className = "space-empty";
-      empty.textContent = state.filter === "favoritos"
-        ? "Todavía no has guardado herramientas favoritas en este dispositivo."
-        : "No hay herramientas en este filtro. Prueba otra categoría.";
+      empty.textContent = state.filter === "favoritos" && !state.search && !state.need
+        ? "Todavía no tienes favoritas. Guarda cualquiera de las herramientas con el corazón."
+        : "No hay resultados con estos filtros. Prueba otra necesidad, categoría o búsqueda.";
       wellnessList.append(empty);
       return;
     }
 
     items.forEach(activity => {
       const card = document.createElement("article");
-      card.className = "wellness-card";
+      card.className = "wellness-card wellness-card--" + activity.type;
       card.innerHTML = `
         <div class="wellness-card-top">
           <span class="wellness-card-type">${typeLabel(activity.type)}</span>
@@ -1510,9 +1619,9 @@
     button.addEventListener("click", () => {
       state.need = button.dataset.need;
       state.filter = "all";
-      document.querySelectorAll("[data-wellness-filter]").forEach(filter => {
-        filter.classList.toggle("is-active", filter.dataset.wellnessFilter === "all");
-      });
+      state.search = "";
+      const search = document.getElementById("wellness-search");
+      if (search) search.value = "";
       showView("wellness");
     });
   });
@@ -1521,10 +1630,27 @@
     button.addEventListener("click", () => {
       state.filter = button.dataset.wellnessFilter;
       state.need = null;
-      document.querySelectorAll("[data-wellness-filter]").forEach(other => {
-        other.classList.toggle("is-active", other === button);
-      });
       renderWellness();
+    });
+  });
+
+  document.querySelector("[data-wellness-reset]")?.addEventListener("click", () => {
+    state.need = null;
+    state.filter = "all";
+    state.search = "";
+    const search = document.getElementById("wellness-search");
+    if (search) search.value = "";
+    renderWellness();
+  });
+  document.getElementById("wellness-search")?.addEventListener("input", event => {
+    state.search = String(event.target.value || "").slice(0,120);
+    renderWellness();
+  });
+  document.querySelectorAll("[data-wellness-start]").forEach(button => {
+    button.addEventListener("click", () => {
+      if (!state.storageScope) return;
+      const activity = activities.find(item => item.id === button.dataset.wellnessStart);
+      if (activity) openActivity(activity);
     });
   });
 
@@ -1573,8 +1699,13 @@
     state.completed = [];
     const favoritesKey = scopedWellnessKey(FAVORITES_KEY);
     const completedKey = scopedWellnessKey(COMPLETED_KEY);
+    const journeyKey = scopedWellnessKey(JOURNEY_KEY);
     if (favoritesKey) localStorage.removeItem(favoritesKey);
     if (completedKey) localStorage.removeItem(completedKey);
+    if (journeyKey) localStorage.removeItem(journeyKey);
+    journey = null;
+    journeyDraft = null;
+    question = 0;
     renderProgress();
     renderWellness();
     const message = document.getElementById("space-clear-message");
@@ -1607,8 +1738,9 @@
     showAccessForm("login");
   }));
   openPanelButton?.addEventListener("click", () => {
-    const url = new URLSearchParams(window.location.search).get("vista") === "terapia"
-      ? "/mi-espacio/?vista=terapia" : "/mi-espacio/?vista=panel";
+    const requestedView = new URLSearchParams(window.location.search).get("vista");
+    const allowedViews = ["terapia", "wellness", "progreso", "configuracion"];
+    const url = "/mi-espacio/?vista=" + (allowedViews.includes(requestedView) ? requestedView : "panel");
     window.open(url, "_blank", "noopener,noreferrer");
   });
 
@@ -1628,7 +1760,7 @@
   renderProgress();
   const configuringPassword = verifySetupLinkFromUrl();
   if (!configuringPassword) {
-    if (["panel", "terapia"].includes(new URLSearchParams(window.location.search).get("vista"))) {
+    if (["panel", "terapia", "wellness", "progreso", "configuracion"].includes(new URLSearchParams(window.location.search).get("vista"))) {
       loadPatientSession();
     } else {
       showAccessGate();
