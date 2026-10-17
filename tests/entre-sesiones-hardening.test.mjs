@@ -62,6 +62,9 @@ test("partial clinic backend outages are explicit failures and never mistaken fo
   assert.match(worker,/No se ha podido cargar Mi espacio/);
   assert.match(worker,/return patientPortalJson\(\{ error: "La información no se ha recibido correctamente\." \}, 503\)/);
   assert.match(worker,/Cache-Control": "private, no-store"/);
+  assert.match(worker,/const revocation = await fetch\(/);
+  assert.match(worker,/if \(!revocation\?\.ok\)/);
+  assert.match(worker,/No se ha podido confirmar el cierre de sesión/);
 });
 
 test("logout is only reported successful when server acknowledges; offline status is visible", () => {
