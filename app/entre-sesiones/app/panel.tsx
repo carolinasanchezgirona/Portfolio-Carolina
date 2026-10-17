@@ -49,6 +49,8 @@ export default function EntreSesionesApp() {
   const [installHint, setInstallHint] = useState(false);
   const [isStandalone, setIsStandalone] = useState(false);
   const [loggingOut, setLoggingOut] = useState(false);
+  const [logoutError, setLogoutError] = useState("");
+  const [isOffline, setIsOffline] = useState(false);
 
   const reload = useCallback(() => setReloadCount(n => n + 1), []);
 
@@ -121,8 +123,17 @@ export default function EntreSesionesApp() {
     const visible = () => {
       if (document.visibilityState === "visible") reload();
     };
+    const offline = () => setIsOffline(true);
+    const online = () => { setIsOffline(false); reload(); };
+    setIsOffline(!navigator.onLine);
     document.addEventListener("visibilitychange", visible);
-    return () => document.removeEventListener("visibilitychange", visible);
+    window.addEventListener("offline", offline);
+    window.addEventListener("online", online);
+    return () => {
+      document.removeEventListener("visibilitychange", visible);
+      window.removeEventListener("offline", offline);
+      window.removeEventListener("online", online);
+    };
   }, [reload]);
 
   async function install() {
@@ -142,15 +153,20 @@ export default function EntreSesionesApp() {
 
   async function logout() {
     setLoggingOut(true);
+    setLogoutError("");
     try {
-      await fetch("/api/patient-portal/logout", {
+      const response = await fetch("/api/patient-portal/logout", {
         method: "POST",
         credentials: "include",
         cache: "no-store",
       });
-    } finally {
+      if (!response.ok) throw new Error("logout_failed");
       setData(null);
       setStatus("logged-out");
+    } catch {
+      // Nunca anunciar que se ha revocado la sesión sin confirmación del servidor.
+      setLogoutError("No se ha podido cerrar la sesión en el servidor. Comprueba la conexión y vuelve a intentarlo.");
+    } finally {
       setLoggingOut(false);
     }
   }
@@ -183,6 +199,10 @@ export default function EntreSesionesApp() {
     </header>
 
     <div className="esapp-container">
+      {isOffline && <div className="esapp-connectivity" role="status">
+        <strong>Sin conexión a internet.</strong> Necesitas conexión para cargar tus materiales y guardar o compartir respuestas.
+      </div>}
+      {logoutError && <div className="esapp-connectivity esapp-connectivity-error" role="alert">{logoutError}</div>}
       <nav className="esapp-quicknav" aria-label="Secciones del espacio personal">
         <a href="/entre-sesiones/app/" className="is-current" aria-current="page">Inicio</a>
         <a href={workspace}>Ejercicios</a>
