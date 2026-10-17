@@ -21,7 +21,9 @@ type PortalData = {
 type AppStatus = "checking" | "ready" | "logged-out" | "error";
 type InstallEvent = Event & { prompt(): Promise<void>; userChoice: Promise<{ outcome: string }> };
 
-const workspace = "/mi-espacio/?vista=terapia";
+const workspace = "/entre-sesiones/app/espacio/?vista=terapia";
+const wellness = "/entre-sesiones/app/espacio/?vista=wellness";
+const progress = "/entre-sesiones/app/espacio/?vista=progreso";
 const sessionEndpoint = "/api/patient-portal/session";
 
 function readableDate(value?: string | null) {
@@ -171,9 +173,9 @@ export default function EntreSesionesApp() {
     <div className="esapp-container">
       <nav className="esapp-quicknav" aria-label="Secciones del espacio personal">
         <a href="/entre-sesiones/app/" className="is-current" aria-current="page">Inicio</a>
-        <a href="/mi-espacio/?vista=terapia">Ejercicios</a>
-        <a href="/mi-espacio/?vista=wellness">Wellness</a>
-        <a href="/mi-espacio/?vista=progreso">Progreso</a>
+        <a href={workspace}>Ejercicios</a>
+        <a href={wellness}>Wellness</a>
+        <a href={progress}>Progreso</a>
       </nav>
       <section className="esapp-welcome" aria-labelledby="esapp-welcome-title">
         <div className="esapp-welcome-copy">
@@ -199,6 +201,15 @@ export default function EntreSesionesApp() {
           <span>Pequeños pasos, cambios reales. Trabaja lo que hemos acordado en consulta.</span>
         </div>
         <a className="esapp-feature-link" href={workspace}>Ver mis ejercicios <span aria-hidden="true">→</span></a>
+      </section>}
+
+      {status === "ready" && <section className="esapp-wellness-entry" aria-labelledby="esapp-wellness-entry-title">
+        <span className="esapp-wellness-entry-symbol" aria-hidden="true">◌</span>
+        <div><p className="esapp-overline">WELLNESS · A TU RITMO</p>
+          <h2 id="esapp-wellness-entry-title">¿Qué necesitas hoy?</h2>
+          <p>Regulación emocional, atención, autocuidado y actividades breves. Tus respuestas no se comparten automáticamente con tu profesional.</p>
+        </div>
+        <a href={wellness} className="esapp-wellness-entry-link">Explorar Wellness <span aria-hidden="true">↗</span></a>
       </section>}
 
       {installHint && !isStandalone && <aside className="esapp-hint" role="status">
@@ -263,12 +274,20 @@ export default function EntreSesionesApp() {
             <p className="esapp-overline">TU PRÓXIMO ENCUENTRO</p>
             <h2>{appointment ? "Próxima sesión" : "Tu agenda"}</h2>
             <p>{appointment || "Cuando haya una cita confirmada, podrás consultar aquí su fecha."}</p>
-            <a href="/mi-espacio/?vista=panel">Ver mi espacio →</a>
+            <a href="/entre-sesiones/app/espacio/?vista=panel">Ver mi espacio →</a>
           </section>
           <section className="esapp-smallcard"><h3>A tu ritmo</h3><p>Puedes guardar tus respuestas como borrador. Solo se comparten con tu profesional cuando eliges la opción de compartir.</p></section>
           <section className="esapp-smallcard"><h3>Privacidad</h3><p>Los datos se consultan mediante el portal seguro de tu consulta. No se guardan expedientes clínicos en la memoria sin conexión de esta aplicación.</p></section>
         </aside>
       </div>}
+
+      <nav className="esapp-home-bottom-nav" aria-label="Navegación de Entre Sesiones">
+        <a href="/entre-sesiones/app/" aria-current="page"><span aria-hidden="true">⌂</span>Inicio</a>
+        <a href={workspace}><span aria-hidden="true">▤</span>Mi terapia</a>
+        <a href={wellness}><span aria-hidden="true">◉</span>Wellness</a>
+        <a href={progress}><span aria-hidden="true">↗</span>Progreso</a>
+        <a href="/entre-sesiones/app/espacio/?vista=configuracion"><span aria-hidden="true">☷</span>Cuenta</a>
+      </nav>
 
       <footer className="esapp-footer"><p>Entre Sesiones es una herramienta complementaria a la atención profesional. No es un canal de urgencias.</p><a href="/admin/clinica/">Acceso profesional</a></footer>
     </div>
