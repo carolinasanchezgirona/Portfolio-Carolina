@@ -399,6 +399,7 @@ async function handlePatientPortalSession(request: Request, env: Env): Promise<R
     RESOURCE_SUPABASE + "/rest/v1/clinical_patients?select=id,full_name,status&id=eq." + encodeURIComponent(session.patient_id) + "&status=neq.archived&limit=1",
     { headers: serviceHeaders(env), cache: "no-store" },
   );
+  if (!patientResponse.ok) return patientPortalJson({ error: "No se ha podido comprobar el acceso al expediente. Vuelve a intentarlo." }, 503);
   const patientRows = await patientResponse.json().catch(() => []) as Record<string, unknown>[];
   const patient = Array.isArray(patientRows) ? patientRows[0] : null;
   if (!patient) return patientPortalJson({ authenticated: false }, 401, { "Set-Cookie": patientPortalCookie("", 0) });
@@ -424,9 +425,22 @@ async function handlePatientPortalSession(request: Request, env: Env): Promise<R
     ),
   ]);
 
-  const appointments = appointmentResponse.ok ? await appointmentResponse.json().catch(() => []) : [];
-  const materials = materialsResponse.ok ? await materialsResponse.json().catch(() => []) : [];
-  const files = filesResponse.ok ? await filesResponse.json().catch(() => []) : [];
+  // Nunca mostrar una lista vacía como si significara «no tienes ejercicios»
+  // cuando la base de datos no ha podido responder. No invalidamos la cookie.
+  if (!appointmentResponse.ok || !materialsResponse.ok || !filesResponse.ok) {
+    return patientPortalJson({ error: "No se ha podido cargar Mi espacio. Inténtalo de nuevo más tarde." }, 503);
+  }
+  let appointments: unknown, materials: unknown, files: unknown;
+  try {
+    [appointments, materials, files] = await Promise.all([
+      appointmentResponse.json(), materialsResponse.json(), filesResponse.json()
+    ]);
+  } catch {
+    return patientPortalJson({ error: "La información no se ha recibido correctamente." }, 503);
+  }
+  if (!Array.isArray(appointments) || !Array.isArray(materials) || !Array.isArray(files)) {
+    return patientPortalJson({ error: "La información no se ha recibido correctamente." }, 503);
+  }
 
   return patientPortalJson({
     authenticated: true,
