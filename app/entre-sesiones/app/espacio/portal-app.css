@@ -54,3 +54,9 @@
 
 /* The installed app must not show account tabs before the session has been checked. */
 .esapp-portal-app .esapp-bottom-nav[hidden]{display:none!important}
+
+/* Refined accessible navigation iconography for the installed app. */
+.esapp-portal-app .esapp-bottom-nav a>span{display:grid;place-items:center;width:26px;height:26px}
+.esapp-portal-app .esapp-bottom-nav a>span svg{display:block;width:23px;height:23px}
+.esapp-portal-app .esapp-bottom-nav a:not([aria-current="page"]) .esapp-nav-heart{opacity:.65}
+.esapp-portal-app .esapp-bottom-nav a[aria-current="page"] .esapp-nav-heart{color:#173a5e}
