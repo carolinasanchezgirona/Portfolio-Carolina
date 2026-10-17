@@ -1421,6 +1421,12 @@
       const response = await fetch("/api/patient-portal/logout", {
         method: "POST", credentials: "include", cache: "no-store"
       });
+      if (response.status === 401) {
+        // La sesión ya ha caducado: retirar igualmente toda la información del navegador.
+        resetPatientAccess();
+        showAccessGate();
+        return;
+      }
       if (!response.ok) throw new Error("logout_not_confirmed");
     } catch {
       if (message) {
