@@ -83,6 +83,17 @@ def test_authenticated(page, width):
     page.locator("#space-shell:not([hidden])").wait_for()
     assert_true(page.locator("#space-access").is_hidden(), "Password prompt visible for an authenticated patient")
     assert_true(page.locator("#space-session-check").is_hidden(), "Session check still covering the authenticated app")
+    # BFCache restore must show an unobtrusive session check, never a password form.
+    restored = page.evaluate("""() => {
+      window.dispatchEvent(new PageTransitionEvent('pageshow', { persisted: true }));
+      return {
+        checking: !document.querySelector('#space-session-check').hidden,
+        password: !document.querySelector('#space-access').hidden
+      };
+    }""")
+    assert_true(restored["checking"] and not restored["password"], "BFCache restore flashes the password form")
+    page.locator("#space-shell:not([hidden])").wait_for()
+    assert_true(page.locator("#space-session-check").is_hidden(), "BFCache verification not completed")
     assert_true(not page.locator(".esapp-bottom-nav").get_attribute("hidden"), "Authenticated bottom nav remains hidden")
     assert_true(page.locator('[data-space-panel="wellness"]').is_visible(), "Initial Wellness deep link failed")
     assert_true(page.locator(".esapp-bottom-nav a[aria-current='page']").inner_text() == "Wellness", "Wellness not active")
