@@ -7,6 +7,7 @@ on:
       - "public/wellness-interactive.js"
       - "app/mi-espacio/mi-espacio.css"
       - "tests/wellness-mobile-browser.py"
+      - "tests/wellness-cards-responsive.py"
       - "tests/entre-sesiones-spa-mobile.py"
       - "tests/entre-sesiones-stale-session-mobile.py"
       - "public/mi-espacio.js"
@@ -46,6 +47,8 @@ jobs:
           if ! command -v google-chrome >/dev/null && ! command -v google-chrome-stable >/dev/null && ! command -v chromium >/dev/null; then
             python -m playwright install chromium
           fi
+      - name: Comprobar tarjetas e ilustraciones de Wellness en 320-1024 px
+        run: python tests/wellness-cards-responsive.py
       - name: Simular navegación táctil a 390 y 360 píxeles con datos ficticios
         run: python tests/wellness-mobile-browser.py
       - name: Verificar navegación interna Android y borradores con sesión ficticia
