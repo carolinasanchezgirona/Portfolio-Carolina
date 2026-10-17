@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import EntreSesionesApp from "./panel";
+import "./app.css";
 
 export const metadata: Metadata = {
   title: "Entre Sesiones · App",
