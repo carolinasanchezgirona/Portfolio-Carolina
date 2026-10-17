@@ -8,6 +8,7 @@ on:
       - "app/mi-espacio/mi-espacio.css"
       - "tests/wellness-mobile-browser.py"
       - "tests/entre-sesiones-spa-mobile.py"
+      - "tests/entre-sesiones-stale-session-mobile.py"
       - "public/mi-espacio.js"
       - "app/entre-sesiones/app/espacio/portal-app.css"
       - "app/entre-sesiones/app/espacio/page.tsx"
@@ -51,6 +52,8 @@ jobs:
         run: python tests/entre-sesiones-spa-mobile.py
       - name: Comprobar preparación de sesiones y privacidad con datos ficticios
         run: python tests/session-prep-mobile.py
+      - name: Comprobar sesiones antiguas y guardados retrasados sin tocar datos reales
+        run: python tests/entre-sesiones-stale-session-mobile.py
       - name: Conservar capturas de las pruebas
         if: always()
         uses: actions/upload-artifact@v4
