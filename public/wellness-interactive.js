@@ -6,6 +6,7 @@
 
   const host = document.getElementById("wellness-interactive");
   if (!host) return;
+  host.replaceChildren();
 
   const tools = [
     { id: "wi-decision", number: "01", label: "Decisión guiada", title: "¿Problema o posibilidad?", duration: "4 min", info: "Distingue una acción posible de algo que estás anticipando." },
