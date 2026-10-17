@@ -32,7 +32,8 @@ body { margin:0; font-family:system-ui,sans-serif; }
 <section id="space-access"><form id="space-login-form">
 <input id="space-login-email" type="email"><input id="space-login-password" type="password">
 </form><p id="space-access-message"></p></section>
-<div id="space-shell" hidden>
+<div id="space-shell" class="space-page" hidden>
+<div id="space-patient-materials"></div><div id="space-shared-files"></div>
 <nav class="space-nav">
 <button type="button" data-space-view="today">Hoy</button>
 <button type="button" data-space-view="therapy">Mi terapia</button>
@@ -50,7 +51,13 @@ body { margin:0; font-family:system-ui,sans-serif; }
 <section class="space-view" data-space-panel="progress" hidden><h1>Mi progreso</h1>
 <span id="progress-total"></span><span id="progress-week"></span><span id="progress-favorites"></span>
 <div id="progress-history"></div></section>
-<section class="space-view" data-space-panel="account" hidden><h1>Cuenta</h1></section>
+<section class="space-view" data-space-panel="account" hidden><h1>Cuenta</h1>
+<label for="space-reading-size">Tamaño
+<select id="space-reading-size"><option value="normal">Normal</option><option value="large">Grande</option><option value="extra">Muy grande</option></select></label>
+<label for="space-reading-simple"><input id="space-reading-simple" type="checkbox">Lectura tranquila</label>
+<label for="space-reading-motion"><input id="space-reading-motion" type="checkbox">Menos movimiento</label>
+<button id="space-logout" type="button">Cerrar sesión</button>
+</section>
 </div>
 <dialog id="wellness-dialog"><button id="wellness-dialog-close">Cerrar</button>
 <p id="wellness-dialog-type"></p><h2 id="wellness-dialog-title"></h2>
@@ -92,6 +99,23 @@ def test_authenticated(page, width):
     page.locator(".esapp-bottom-nav a", has_text="Cuenta").click()
     assert_true(page.locator('[data-space-panel="account"]').is_visible(), "Account navigation failed")
     assert_true(page.locator(".esapp-bottom-nav a[aria-current='page']").inner_text() == "Cuenta", "Account tab state incorrect")
+    page.locator("#space-reading-size").wait_for(state="visible")
+    page.locator("#space-reading-size").select_option("extra")
+    page.locator("#space-reading-simple").check()
+    page.locator("#space-reading-motion").check()
+    assert_true(page.locator("#space-shell").get_attribute("data-reading-size") == "extra", "Reading size not applied")
+    assert_true(page.locator("#space-shell").evaluate("(el) => el.classList.contains('space-reading-simple')"), "Simple reading mode missing")
+    assert_true(page.locator("#space-shell").evaluate("(el) => el.classList.contains('space-reading-quiet')"), "Quiet mode missing")
+    page.evaluate("""() => {
+      document.querySelector('#space-patient-materials').textContent = 'EXPEDIENTE DE PRUEBA 123';
+      document.querySelector('#space-shared-files').textContent = 'ARCHIVO FICTICIO 123';
+    }""")
+    page.get_by_role("button", name="Cerrar sesión").click()
+    page.locator("#space-access:not([hidden])").wait_for()
+    assert_true(not page.locator("#space-patient-materials").inner_text(), "Clinical DOM not cleared after logout")
+    assert_true(not page.locator("#space-shared-files").inner_text(), "Shared files not cleared after logout")
+    assert_true(page.locator(".esapp-bottom-nav").get_attribute("hidden") is not None, "Locked account tabs visible")
+    assert_true(page.locator("#space-shell").get_attribute("data-reading-size") == "normal", "Previous patient's reading preferences retained")
     assert_true(page.evaluate("document.documentElement.scrollWidth <= innerWidth + 1"), "Horizontal overflow")
     print(f"PASS SPA {width}px: protected navigation, URL, Android Back, preserved draft, reset, active tabs")
 
