@@ -169,13 +169,19 @@ export default function EntreSesionesApp() {
     </header>
 
     <div className="esapp-container">
+      <nav className="esapp-quicknav" aria-label="Secciones del espacio personal">
+        <a href="/entre-sesiones/app/" className="is-current" aria-current="page">Inicio</a>
+        <a href="/mi-espacio/?vista=terapia">Ejercicios</a>
+        <a href="/mi-espacio/?vista=wellness">Wellness</a>
+        <a href="/mi-espacio/?vista=progreso">Progreso</a>
+      </nav>
       <section className="esapp-welcome" aria-labelledby="esapp-welcome-title">
         <div className="esapp-welcome-copy">
-          <p className="esapp-overline">{status === "ready" ? "TU ESPACIO PERSONAL" : "CONTINÚA A TU RITMO"}</p>
-          <h1 id="esapp-welcome-title">{status === "ready" && data?.patient?.first_name
-            ? `Hola, ${data.patient.first_name}.`
-            : "Tu espacio entre sesiones"}</h1>
-          <p>Ejercicios, avances y seguimiento entre consulta y consulta.</p>
+          <p className="esapp-overline">{status === "ready" && data?.patient?.first_name
+            ? `TU ESPACIO · HOLA, ${data.patient.first_name}`
+            : "MI TERAPIA · ENTRE SESIONES"}</p>
+          <h1 id="esapp-welcome-title">Tu trabajo<br />entre sesiones</h1>
+          <p>Ejercicios, herramientas y materiales para aplicar en tu día a día, a tu ritmo.</p>
         </div>
         {status === "ready" && <div className="esapp-welcome-actions">
           <a href={workspace} className="esapp-primary">Abrir mis ejercicios <span aria-hidden="true">↗</span></a>
@@ -185,6 +191,15 @@ export default function EntreSesionesApp() {
           </button>
         </div>}
       </section>
+
+      {status === "ready" && <section className="esapp-feature" aria-label="Materiales disponibles">
+        <div className="esapp-feature-copy">
+          <p className="esapp-overline">TU MATERIAL DISPONIBLE</p>
+          <strong>{active.length} {active.length === 1 ? "ejercicio activo" : "ejercicios activos"}</strong>
+          <span>Pequeños pasos, cambios reales. Trabaja lo que hemos acordado en consulta.</span>
+        </div>
+        <a className="esapp-feature-link" href={workspace}>Ver mis ejercicios <span aria-hidden="true">→</span></a>
+      </section>}
 
       {installHint && !isStandalone && <aside className="esapp-hint" role="status">
         <strong>Instalación en el móvil:</strong> abre este enlace en Chrome (no dentro del navegador de otra aplicación). En el menú del navegador elige «Instalar aplicación» o «Añadir a pantalla de inicio». En iPhone, usa Compartir → «Añadir a pantalla de inicio».
@@ -225,7 +240,7 @@ export default function EntreSesionesApp() {
             <div className="esapp-sectionhead"><div><p className="esapp-overline">TRABAJO TERAPÉUTICO</p><h2>Mis materiales</h2></div><span>{active.length} activos</span></div>
             {!active.length && <div className="esapp-empty">Ahora mismo no tienes actividades pendientes. Si tu profesional te asigna nuevas tareas, aparecerán aquí.</div>}
             {active.map(item => <article className="esapp-material" key={item.id}>
-              <div className="esapp-material-left"><span className="esapp-material-icon" aria-hidden="true">✓</span>
+              <div className="esapp-material-left"><span className="esapp-material-icon" aria-hidden="true"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M7 3.5h8l4 4V21H5V3.5h2Z"/><path d="M15 3.5V8h4M8.5 12h7M8.5 16h7"/></svg></span>
                 <div><h3>{item.title || "Actividad"}</h3>
                 <p>{item.patient_document?.objective || item.patient_document?.introduction || "Actividad acordada en sesión"}</p>
                 {item.review_due_at && <small>Revisión prevista: {readableDate(item.review_due_at)}</small>}</div>
