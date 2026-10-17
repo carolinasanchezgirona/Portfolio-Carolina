@@ -290,21 +290,48 @@ export default function MiEspacioPage() {
                 <div><p className="space-eyebrow">EMPIEZA POR AQUÍ</p><h3 id="wellness-need-heading">¿Qué necesitas ahora?</h3></div>
                 <p>Puedes cambiar de opción cuando quieras.</p>
               </div>
-              <div className="wellness-needs" aria-label="Elegir una necesidad">
-                <button type="button" data-need="calmarme"><span aria-hidden="true">◉</span><strong>Bajar revoluciones</strong><small>Volver al presente</small></button>
-                <button type="button" data-need="rumiacion"><span aria-hidden="true">↻</span><strong>Menos vueltas</strong><small>Soltar la rumiación</small></button>
-                <button type="button" data-need="energia"><span aria-hidden="true">◔</span><strong>Poca energía</strong><small>Hacerlo más sencillo</small></button>
-                <button type="button" data-need="entender"><span aria-hidden="true">◇</span><strong>Entenderme</strong><small>Poner nombre a lo que siento</small></button>
+              <div className="wellness-needs wellness-needs-editorial" aria-label="Elegir una necesidad">
+                <button type="button" data-need="calmarme" className="wellness-need-1">
+                  <span className="wellness-art" aria-hidden="true" />
+                  <span className="wellness-need-copy"><strong>Bajar revoluciones</strong><small>Volver al presente</small></span>
+                  <span className="wellness-arrow" aria-hidden="true">›</span>
+                </button>
+                <button type="button" data-need="rumiacion" className="wellness-need-2">
+                  <span className="wellness-art" aria-hidden="true" />
+                  <span className="wellness-need-copy"><strong>Menos vueltas</strong><small>Soltar la rumiación</small></span>
+                  <span className="wellness-arrow" aria-hidden="true">›</span>
+                </button>
+                <button type="button" data-need="energia" className="wellness-need-3">
+                  <span className="wellness-art" aria-hidden="true" />
+                  <span className="wellness-need-copy"><strong>Poca energía</strong><small>Hacerlo más sencillo</small></span>
+                  <span className="wellness-arrow" aria-hidden="true">›</span>
+                </button>
+                <button type="button" data-need="entender" className="wellness-need-4">
+                  <span className="wellness-art" aria-hidden="true" />
+                  <span className="wellness-need-copy"><strong>Entenderme</strong><small>Poner nombre a lo que siento</small></span>
+                  <span className="wellness-arrow" aria-hidden="true">›</span>
+                </button>
+                <button type="button" data-need="concentrarme" className="wellness-need-5">
+                  <span className="wellness-art" aria-hidden="true" />
+                  <span className="wellness-need-copy"><strong>Recuperar foco</strong><small>Una cosa cada vez</small></span>
+                  <span className="wellness-arrow" aria-hidden="true">›</span>
+                </button>
+                <button type="button" data-need="limites" className="wellness-need-6">
+                  <span className="wellness-art" aria-hidden="true" />
+                  <span className="wellness-need-copy"><strong>Poner límites</strong><small>Expresarme con claridad</small></span>
+                  <span className="wellness-arrow" aria-hidden="true">›</span>
+                </button>
+                <button type="button" data-need="desconectar" className="wellness-need-7">
+                  <span className="wellness-art" aria-hidden="true" />
+                  <span className="wellness-need-copy"><strong>Desconectar</strong><small>Descanso y transición</small></span>
+                  <span className="wellness-arrow" aria-hidden="true">›</span>
+                </button>
+                <button type="button" data-need="orden" className="wellness-need-8">
+                  <span className="wellness-art" aria-hidden="true" />
+                  <span className="wellness-need-copy"><strong>Ordenar ideas</strong><small>Menos carga mental</small></span>
+                  <span className="wellness-arrow" aria-hidden="true">›</span>
+                </button>
               </div>
-              <details className="wellness-more-needs">
-                <summary>Ver otras necesidades</summary>
-                <div className="wellness-needs" aria-label="Otras necesidades">
-                  <button type="button" data-need="concentrarme"><span aria-hidden="true">◎</span><strong>Recuperar foco</strong><small>Una cosa cada vez</small></button>
-                <button type="button" data-need="limites"><span aria-hidden="true">⊣</span><strong>Poner límites</strong><small>Expresarme con claridad</small></button>
-                <button type="button" data-need="desconectar"><span aria-hidden="true">☾</span><strong>Desconectar</strong><small>Descanso y transición</small></button>
-                  <button type="button" data-need="orden"><span aria-hidden="true">☷</span><strong>Ordenar ideas</strong><small>Menos carga mental</small></button>
-                </div>
-              </details>
             </section>
 
             <section className="wellness-quick-section" aria-labelledby="wellness-quick-heading">
