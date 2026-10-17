@@ -726,6 +726,7 @@
       const tabs = document.querySelector(".esapp-bottom-nav");
       if (tabs) tabs.hidden = true;
     }
+    if (readingPage) readingPage.dataset.portalPhase = checking ? "checking" : "signed-out";
     if (sessionCheck) sessionCheck.hidden = !checking;
     if (accessGate) accessGate.hidden = checking;
     if (shell) shell.hidden = true;
@@ -733,6 +734,7 @@
   }
 
   function openPortal(view = "today") {
+    if (readingPage) readingPage.dataset.portalPhase = "authenticated";
     if (sessionCheck) sessionCheck.hidden = true;
     if (accessGate) accessGate.hidden = true;
     if (shell) shell.hidden = false;
@@ -1077,13 +1079,13 @@
     downloadLink.className = "space-secondary space-material-download-button";
     downloadLink.textContent = "↓ Descargar PDF";
     downloadLink.href = patientMaterialDownloadUrl(item);
+    // Content-Disposition on the authenticated endpoint supplies the filename.
+    // A new tab is often blocked or detached from the installed Android app.
     downloadLink.download = "entre-sesiones.pdf";
-    downloadLink.target = "_blank";
-    downloadLink.rel = "noopener noreferrer";
     downloadLink.setAttribute("aria-label", "Descargar PDF: " + String(item.title || "Material"));
     const downloadHint = document.createElement("span");
     downloadHint.className = "space-material-download-status";
-    downloadHint.textContent = "Se descargará con el gestor de archivos del navegador. Si no aparece, comprueba Descargas.";
+    downloadHint.textContent = "La descarga se abre desde esta aplicación. Si no aparece, revisa la carpeta Descargas del dispositivo.";
     downloadArea.append(downloadLink, downloadHint);
     body.append(downloadArea);
 
