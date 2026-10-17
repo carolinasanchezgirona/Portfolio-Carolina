@@ -39,7 +39,7 @@ test("only permitted activity identifiers and dates enter account-scoped progres
 
 test("visual and manipulation tools have touch and keyboard alternatives without clinical scoring", () => {
   assert.match(ui, /function sequence\(root\)/);
-  assert.match(ui, /data\.sequenceId = id/);
+  assert.match(ui, /dataset\.sequenceId = id/);
   assert.match(ui, /Toca una tarjeta y después otra/);
   assert.match(ui, /Subir /);
   assert.match(ui, /Bajar /);
