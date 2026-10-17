@@ -659,6 +659,20 @@
   }
 
   function showAccessGate() {
+    // El contenido clínico debe salir también del DOM, no solo quedar oculto.
+    // Así no puede reutilizarse al cambiar de paciente en el mismo navegador.
+    state.portalAuthenticated = false;
+    state.portalData = null;
+    state.storageScopeVersion++;
+    useWellnessStorage(null);
+    patientMaterials?.replaceChildren();
+    patientFiles?.replaceChildren();
+    const quickCount = document.getElementById("space-quick-material-count");
+    if (quickCount) quickCount.textContent = "Inicia sesión para ver los materiales de tu cuenta.";
+    const privateCount = document.getElementById("space-material-count");
+    if (privateCount) privateCount.textContent = "Acceso privado";
+    if (dialog?.open) dialog.close();
+    state.currentActivity = null;
     document.dispatchEvent(new Event("patient-portal-locked"));
     document.dispatchEvent(new Event("wellness:interactive-reset"));
     if (insideEntreSesionesApp) {
@@ -1247,8 +1261,10 @@
         credentials: "include"
       });
       if (!response.ok) {
-        state.portalAuthenticated = false;
         showAccessGate();
+        if (response.status !== 401) {
+          setAccessMessage("No hemos podido cargar tus datos de manera segura. No necesitas cambiar la contraseña; prueba a recargar la página.", true);
+        }
         return false;
       }
       const data = await response.json();
@@ -1925,9 +1941,18 @@
   const configuringPassword = verifySetupLinkFromUrl();
   if (!configuringPassword) {
     if (["panel", "terapia", "wellness", "progreso", "configuracion"].includes(new URLSearchParams(window.location.search).get("vista"))) {
-      loadPatientSession();
+      void loadPatientSession();
     } else {
       showAccessGate();
     }
+  }
+  if (insideEntreSesionesApp) {
+    // Restauración desde la caché de navegación: revalidar antes de mostrar
+    // contenidos clínicos de una sesión que podría haberse cerrado.
+    window.addEventListener("pageshow", event => {
+      if (!event.persisted) return;
+      showAccessGate();
+      void loadPatientSession();
+    });
   }
 })();
