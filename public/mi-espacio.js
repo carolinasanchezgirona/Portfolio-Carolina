@@ -7,6 +7,7 @@
   const LEGACY_BETWEEN_KEY = "between_sessions_access_token";
   const FAVORITES_KEY = "wellness_favorites_v1";
   const COMPLETED_KEY = "wellness_completed_v1";
+  const READING_KEY = "patient_reading_preferences_v1";
 
   const activities = [
     {
@@ -481,8 +482,62 @@
     return state.storageScope ? base + ":" + state.storageScope : null;
   }
 
+  const readingSize = document.getElementById("space-reading-size");
+  const readingSimple = document.getElementById("space-reading-simple");
+  const readingMotion = document.getElementById("space-reading-motion");
+  const readingFeedback = document.getElementById("space-reading-feedback");
+  const readingPage = document.querySelector(".space-page");
+  let readingSettings = { size: "normal", simple: false, quiet: false };
+
+  function applyReadingSettings() {
+    if (!readingPage) return;
+    readingPage.dataset.readingSize = readingSettings.size;
+    readingPage.classList.toggle("space-reading-simple", readingSettings.simple);
+    readingPage.classList.toggle("space-reading-quiet", readingSettings.quiet);
+    if (readingSize) readingSize.value = readingSettings.size;
+    if (readingSimple) readingSimple.checked = readingSettings.simple;
+    if (readingMotion) readingMotion.checked = readingSettings.quiet;
+    const allowed = Boolean(state.storageScope && state.portalAuthenticated);
+    for (const control of [readingSize, readingSimple, readingMotion]) if (control) control.disabled = !allowed;
+  }
+
+  function loadReadingSettings() {
+    readingSettings = { size: "normal", simple: false, quiet: false };
+    if (!state.storageScope) { applyReadingSettings(); return; }
+    try {
+      const value = JSON.parse(localStorage.getItem(scopedWellnessKey(READING_KEY)) || "{}");
+      if (value && typeof value === "object") {
+        readingSettings.size = ["normal", "large", "extra"].includes(value.size) ? value.size : "normal";
+        readingSettings.simple = value.simple === true;
+        readingSettings.quiet = value.quiet === true;
+      }
+    } catch { /* Sin compartir ajustes entre cuentas ni salir del dispositivo. */ }
+    applyReadingSettings();
+  }
+
+  function saveReadingSettings() {
+    if (!state.portalAuthenticated || !state.storageScope) return;
+    readingSettings = {
+      size: ["normal", "large", "extra"].includes(readingSize?.value) ? readingSize.value : "normal",
+      simple: Boolean(readingSimple?.checked),
+      quiet: Boolean(readingMotion?.checked),
+    };
+    applyReadingSettings();
+    try {
+      localStorage.setItem(scopedWellnessKey(READING_KEY), JSON.stringify(readingSettings));
+      if (readingFeedback) readingFeedback.textContent = "Preferencias guardadas solo en este dispositivo.";
+    } catch {
+      if (readingFeedback) readingFeedback.textContent = "Se ha aplicado el ajuste, pero este navegador no permite guardarlo.";
+    }
+  }
+
+  [readingSize, readingSimple, readingMotion].forEach(control => {
+    control?.addEventListener("change", saveReadingSettings);
+  });
+
   function useWellnessStorage(scope) {
     state.storageScope = scope || null;
+    loadReadingSettings();
     const legacyGuest = scope === "guest";
     state.favorites = scope ? loadJson(scopedWellnessKey(FAVORITES_KEY), legacyGuest ? loadJson(FAVORITES_KEY, []) : []) : [];
     state.completed = scope ? loadJson(scopedWellnessKey(COMPLETED_KEY), legacyGuest ? loadJson(COMPLETED_KEY, []) : []) : [];
@@ -567,7 +622,8 @@
     }
     if (name === "wellness") renderWellness();
     if (name === "progress") renderProgress();
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    window.scrollTo({ top: 0, behavior: readingSettings.quiet ||
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
   }
 
   // PWA-only navigation: reuse the authenticated portal, keep in-progress
@@ -1777,23 +1833,26 @@
   });
 
   document.getElementById("space-clear-local")?.addEventListener("click", () => {
-    const ok = window.confirm("¿Quieres borrar de este dispositivo tus objetivos, dudas, favoritos y el registro de actividades realizadas?");
+    const ok = window.confirm("¿Borrar de este dispositivo tus registros de ánimo, objetivos de Wellness, favoritos, actividades realizadas y preferencias de lectura? No se borrarán los ejercicios clínicos ni tu cuenta.");
     if (!ok) return;
     state.favorites = [];
     state.completed = [];
     const favoritesKey = scopedWellnessKey(FAVORITES_KEY);
     const completedKey = scopedWellnessKey(COMPLETED_KEY);
     const journeyKey = scopedWellnessKey(JOURNEY_KEY);
-    if (favoritesKey) localStorage.removeItem(favoritesKey);
-    if (completedKey) localStorage.removeItem(completedKey);
-    if (journeyKey) localStorage.removeItem(journeyKey);
+    const readingKey = scopedWellnessKey(READING_KEY);
+    for (const key of [favoritesKey, completedKey, journeyKey, readingKey]) {
+      if (key) try { localStorage.removeItem(key); } catch { /* El navegador puede bloquear los datos locales. */ }
+    }
+    document.dispatchEvent(new Event("patient-local-wellness-cleared"));
+    loadReadingSettings();
     journey = null;
     journeyDraft = null;
     question = 0;
     renderProgress();
     renderWellness();
     const message = document.getElementById("space-clear-message");
-    if (message) message.textContent = "Datos locales borrados.";
+    if (message) message.textContent = "Se han solicitado el borrado de tus datos locales de Wellness y el restablecimiento de la lectura. Comprueba este navegador si bloquea el almacenamiento.";
   });
 
   emailForm?.addEventListener("submit", requestPatientLink);
