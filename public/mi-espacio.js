@@ -1415,14 +1415,20 @@
   }
 
   async function logoutPatientPortal() {
+    const message = document.getElementById("space-clear-message");
+    if (message) message.textContent = "Cerrando tu sesión…";
     try {
-      await fetch("/api/patient-portal/logout", { method: "POST", credentials: "include" });
-    } catch {}
-    state.portalAuthenticated = false;
-    state.portalData = null;
+      const response = await fetch("/api/patient-portal/logout", {
+        method: "POST", credentials: "include", cache: "no-store"
+      });
+      if (!response.ok) throw new Error("logout_not_confirmed");
+    } catch {
+      if (message) {
+        message.textContent = "No hemos podido cerrar la sesión en el servidor. Comprueba tu conexión y vuelve a intentarlo.";
+      }
+      return;
+    }
     state.guestMode = false;
-    state.storageScopeVersion++;
-    useWellnessStorage(null);
     resetPatientAccess();
     showAccessGate();
   }
