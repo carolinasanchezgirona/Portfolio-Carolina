@@ -5,16 +5,22 @@
   "description": "App de materiales y seguimiento entre sesiones integrada con Mi espacio.",
   "lang": "es",
   "start_url": "/entre-sesiones/app/",
-  "scope": "/",
+  "scope": "/entre-sesiones/app/",
   "display": "standalone",
-  "background_color": "#f7fafc",
-  "theme_color": "#173a5e",
+  "background_color": "#F7FAFC",
+  "theme_color": "#173A5E",
   "icons": [
     {
-      "src": "/clinic-pwa-icon.svg",
+      "src": "/entre-sesiones-icon-editorial.svg",
       "sizes": "any",
       "type": "image/svg+xml",
-      "purpose": "any maskable"
+      "purpose": "any"
+    },
+    {
+      "src": "/entre-sesiones-icon-editorial.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "maskable"
     }
   ]
 }
