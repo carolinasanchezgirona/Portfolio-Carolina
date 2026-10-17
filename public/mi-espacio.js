@@ -463,7 +463,7 @@
     document.querySelectorAll("[data-wellness-section]").forEach(panel => {
       panel.hidden = panel.dataset.wellnessSection !== (next === "inicio" ? "inicio" : "explorar");
     });
-    if (next === "guardadas" || (next === "explorar" && !preserveFilters)) {
+    if (!preserveFilters) {
       state.need = null;
       state.filter = next === "guardadas" ? "favoritos" : "all";
       state.search = "";
@@ -680,6 +680,7 @@
   }
 
   function showView(name) {
+    const previousView = panels.find(panel => !panel.hidden)?.dataset.spacePanel;
     if (name !== "wellness") document.dispatchEvent(new Event("wellness:interactive-reset"));
     panels.forEach(panel => {
       panel.hidden = panel.dataset.spacePanel !== name;
@@ -697,7 +698,12 @@
         else link.removeAttribute("aria-current");
       });
     }
-    if (name === "wellness") renderWellness();
+    if (name === "wellness") {
+      // Cada entrada nueva por la navegación principal comienza en un lugar predecible.
+      // Los accesos desde una necesidad conservan su selección y abrirán Explorar.
+      if (previousView !== "wellness" && !state.need) setWellnessTab("inicio");
+      else renderWellness();
+    }
     if (name === "progress") renderProgress();
     if (name === "therapy" && window.location.hash.startsWith("#space-material-")) {
       focusPatientMaterialFromHash();
@@ -1720,6 +1726,8 @@
     renderJourney();
     const items = filteredActivities();
     wellnessList.replaceChildren();
+    const wellnessView = document.querySelector('[data-space-panel="wellness"]');
+    if (wellnessView) wellnessView.dataset.wellnessFocused = state.need ? "true" : "false";
     const resetButton = document.querySelector("[data-wellness-reset]");
     if (resetButton) resetButton.hidden = !state.need;
     const count = document.getElementById("wellness-count");
