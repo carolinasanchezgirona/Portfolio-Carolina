@@ -51,3 +51,6 @@
  .esapp-portal-app .esapp-portal-subtitle{display:none}
  .esapp-portal-app .esapp-bottom-nav a{font-size:.61rem}
 }
+
+/* The installed app must not show account tabs before the session has been checked. */
+.esapp-portal-app .esapp-bottom-nav[hidden]{display:none!important}
