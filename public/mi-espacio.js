@@ -423,6 +423,8 @@
     }
   };
 
+  // Clinical drafts never enter localStorage: compare in-memory snapshots only.
+  const materialSavedSnapshots = new WeakMap();
   const state = {
     currentActivity: null,
     filter: "all",
@@ -602,6 +604,41 @@
     return slugView[new URLSearchParams(window.location.search).get("vista")] || "today";
   }
 
+  function focusPatientMaterialFromHash() {
+    if (!state.portalAuthenticated || currentViewFromUrl() !== "therapy") return;
+    const hash = window.location.hash;
+    if (!/^#space-material-[0-9a-f-]{36}$/i.test(hash)) return;
+    const item = document.getElementById(hash.slice(1));
+    if (!item || !patientMaterials?.contains(item)) return;
+    item.open = true;
+    const heading = item.querySelector("summary");
+    if (heading) {
+      heading.setAttribute("tabindex", "-1");
+      heading.focus({ preventScroll: true });
+    }
+    item.scrollIntoView({ block: "start", behavior: "auto" });
+  }
+
+  function snapshotPatientMaterial(details) {
+    return JSON.stringify([...details.querySelectorAll("[data-response-record],[data-response-answer],[data-neuro-answer]")]
+      .map(field => String(field.value || "")));
+  }
+
+  function patientMaterialHasUnsavedChanges() {
+    if (!state.portalAuthenticated || !patientMaterials) return false;
+    return [...patientMaterials.querySelectorAll(".space-patient-material")].some(details => {
+      const baseline = materialSavedSnapshots.get(details);
+      return baseline !== undefined && snapshotPatientMaterial(details) !== baseline;
+    });
+  }
+
+  function sessionPreparationHasUnsavedNotes() {
+    if (!state.portalAuthenticated) return false;
+    return ["space-prep-difficult", "space-prep-helped", "space-prep-talk"].some(id =>
+      Boolean(document.getElementById(id)?.value?.trim())
+    );
+  }
+
   function showView(name) {
     if (name !== "wellness") document.dispatchEvent(new Event("wellness:interactive-reset"));
     panels.forEach(panel => {
@@ -622,6 +659,10 @@
     }
     if (name === "wellness") renderWellness();
     if (name === "progress") renderProgress();
+    if (name === "therapy" && window.location.hash.startsWith("#space-material-")) {
+      focusPatientMaterialFromHash();
+      return;
+    }
     window.scrollTo({ top: 0, behavior: readingSettings.quiet ||
       window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
   }
@@ -633,8 +674,9 @@
     if (insideEntreSesionesApp) {
       const nextSlug = viewSlug[name];
       const url = new URL(window.location.href);
-      if (url.searchParams.get("vista") !== nextSlug) {
+      if (url.searchParams.get("vista") !== nextSlug || url.hash) {
         url.searchParams.set("vista", nextSlug);
+        url.hash = ""; // The previous activity link must not refocus on a different tab.
         window.history.pushState({ entreSesionesTab: name }, "", url.pathname + url.search + url.hash);
       }
     }
@@ -738,6 +780,8 @@
   }
 
   async function savePatientMaterialResponse(item, form, action, status) {
+    const details = form.closest(".space-patient-material");
+    const submittedSnapshot = details ? snapshotPatientMaterial(details) : "";
     const button = form.querySelector(`button[value="${action}"]`);
     const buttons = [...form.querySelectorAll("button")];
     buttons.forEach((node) => { node.disabled = true; });
@@ -765,11 +809,15 @@
       item.patient_response_status = body.status;
       item.patient_response_updated_at = body.saved_at;
       item.patient_response_shared_at = body.status === "shared" ? body.saved_at : null;
+      if (details) materialSavedSnapshots.set(details, submittedSnapshot);
+      const editedAgain = details && snapshotPatientMaterial(details) !== submittedSnapshot;
       if (status) {
         status.classList.toggle("shared", body.status === "shared");
-        status.textContent = body.status === "shared"
-          ? "Respuestas compartidas con Carolina."
-          : "Borrador guardado. Carolina todavía no ve estas respuestas.";
+        status.textContent = editedAgain
+          ? "Se ha guardado la versión anterior. Hay cambios nuevos SIN guardar."
+          : body.status === "shared"
+            ? "Respuestas compartidas con Carolina."
+            : "Borrador guardado. Carolina todavía no ve estas respuestas.";
       }
     } catch (error) {
       if (status) status.textContent = error?.message || "No se ha podido guardar.";
@@ -1015,6 +1063,9 @@
     const details = document.createElement("details");
     details.className = "space-patient-material";
     details.dataset.patientMaterialId = String(item.id || "");
+    if (/^[0-9a-f-]{36}$/i.test(String(item.id || ""))) {
+      details.id = "space-material-" + item.id;
+    }
     if (index === 0) details.open = true;
 
     const summary = document.createElement("summary");
@@ -1127,6 +1178,25 @@
     }
 
     details.append(summary, body);
+    materialSavedSnapshots.set(details, snapshotPatientMaterial(details));
+    details.addEventListener("input", event => {
+      const field = event.target;
+      if (!(field instanceof HTMLTextAreaElement) ||
+          !field.matches("[data-response-record],[data-response-answer],[data-neuro-answer]")) return;
+      const status = details.querySelector(".space-patient-response-status");
+      if (!status) return;
+      const dirty = patientMaterialHasUnsavedChanges();
+      if (dirty && snapshotPatientMaterial(details) !== materialSavedSnapshots.get(details)) {
+        status.classList.remove("shared");
+        status.textContent = "Cambios SIN guardar. Pulsa «Guardar borrador» o «Compartir respuestas» para conservarlos.";
+      } else if (!dirty) {
+        status.textContent = item.patient_response_status === "shared"
+          ? "Respuestas compartidas con Carolina."
+          : item.patient_response_status === "draft"
+            ? "Borrador guardado. Carolina todavía no ve estas respuestas."
+            : "Todavía no has guardado respuestas.";
+      }
+    });
     return details;
   }
 
@@ -1251,6 +1321,7 @@
     const requestedView = new URLSearchParams(window.location.search).get("vista");
     const requestedPanels = { terapia: "therapy", wellness: "wellness", progreso: "progress", configuracion: "account" };
     openPortal(requestedPanels[requestedView] || "today");
+    focusPatientMaterialFromHash();
     window.dispatchEvent(new Event("patient-portal-view-ready"));
   }
 
@@ -1415,6 +1486,8 @@
   }
 
   async function logoutPatientPortal() {
+    if ((patientMaterialHasUnsavedChanges() || sessionPreparationHasUnsavedNotes()) &&
+        !window.confirm("Hay notas sin guardar. Si cierras sesión, se descartarán. ¿Quieres continuar?")) return;
     const message = document.getElementById("space-clear-message");
     if (message) message.textContent = "Cerrando tu sesión…";
     try {
@@ -1928,7 +2001,14 @@
   });
   document.getElementById("space-logout")?.addEventListener("click", logoutPatientPortal);
 
+  window.addEventListener("beforeunload", event => {
+    if (!patientMaterialHasUnsavedChanges() && !sessionPreparationHasUnsavedNotes()) return;
+    event.preventDefault();
+    event.returnValue = ""; // The browser decides whether to show the native warning.
+  });
+
   if (insideEntreSesionesApp) {
+    window.addEventListener("hashchange", focusPatientMaterialFromHash);
     document.querySelectorAll(".esapp-bottom-nav a").forEach(link => {
       const destination = new URL(link.href, window.location.origin);
       if (destination.origin !== window.location.origin ||
