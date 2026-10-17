@@ -456,6 +456,7 @@
   const favoriteButton = document.getElementById("wellness-favorite");
   const completeButton = document.getElementById("wellness-complete");
   const accessGate = document.getElementById("space-access");
+  const sessionCheck = document.getElementById("space-session-check");
   const shell = document.getElementById("space-shell");
   const emailForm = document.getElementById("space-email-form");
   const loginForm = document.getElementById("space-login-form");
@@ -725,12 +726,14 @@
       const tabs = document.querySelector(".esapp-bottom-nav");
       if (tabs) tabs.hidden = true;
     }
+    if (sessionCheck) sessionCheck.hidden = true;
     if (accessGate) accessGate.hidden = false;
     if (shell) shell.hidden = true;
     if (!passwordTokenHash) showAccessForm("login");
   }
 
   function openPortal(view = "today") {
+    if (sessionCheck) sessionCheck.hidden = true;
     if (accessGate) accessGate.hidden = true;
     if (shell) shell.hidden = false;
     if (insideEntreSesionesApp && state.portalAuthenticated) {
@@ -937,49 +940,12 @@
   }
 
 
-  async function downloadPatientMaterial(item, button, status) {
-    const originalLabel = button.textContent;
-    button.disabled = true;
-    button.textContent = "Preparando PDF…";
-    status.textContent = "";
-    try {
-      const response = await fetch("/api/patient-portal/material-pdf?material_id=" + encodeURIComponent(item.id), {
-        method: "GET",
-        credentials: "include",
-        cache: "no-store"
-      });
-      if (response.status === 401) {
-        state.portalAuthenticated = false;
-        state.portalData = null;
-        showAccessGate();
-        setAccessMessage("Tu sesión ha caducado o tu acceso ha finalizado. Vuelve a identificarte.", true);
-        return;
-      }
-      if (!response.ok) {
-        const body = await response.json().catch(() => ({}));
-        throw new Error(body.error || "No se ha podido descargar el material.");
-      }
-      const blob = await response.blob();
-      if (!blob.size || !blob.type.startsWith("application/pdf")) {
-        throw new Error("El archivo recibido no es un PDF válido.");
-      }
-      const basename = String(item.title || "material").normalize("NFD").replace(/[\u0300-\u036f]/g, "")
-        .toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 70) || "material";
-      const objectUrl = URL.createObjectURL(blob);
-      const link = document.createElement("a");
-      link.href = objectUrl;
-      link.download = "entre-sesiones-" + basename + ".pdf";
-      document.body.append(link);
-      link.click();
-      link.remove();
-      window.setTimeout(() => URL.revokeObjectURL(objectUrl), 15000);
-      status.textContent = "Descarga iniciada. Guarda el documento en un lugar privado.";
-    } catch (error) {
-      status.textContent = error?.message || "No se ha podido descargar el PDF.";
-    } finally {
-      button.disabled = false;
-      button.textContent = originalLabel;
-    }
+  // Los PDF se descargan mediante un enlace HTTPS autenticado. El servidor
+  // verifica cada solicitud y responde con Content-Disposition: attachment.
+  // Evita URL.createObjectURL y los clics sintéticos, que fallan en algunos
+  // navegadores móviles y aplicaciones instaladas.
+  function patientMaterialDownloadUrl(item) {
+    return "/api/patient-portal/material-pdf?material_id=" + encodeURIComponent(item.id);
   }
 
   // El cuaderno se presenta a quien lo realiza; no se envían al navegador las soluciones.
@@ -1107,16 +1073,18 @@
 
     const downloadArea = document.createElement("div");
     downloadArea.className = "space-patient-downloads";
-    const downloadButton = document.createElement("button");
-    downloadButton.type = "button";
-    downloadButton.className = "space-secondary space-material-download-button";
-    downloadButton.textContent = "↓ Descargar PDF";
-    const downloadStatus = document.createElement("span");
-    downloadStatus.className = "space-material-download-status";
-    downloadStatus.setAttribute("role", "status");
-    downloadStatus.setAttribute("aria-live", "polite");
-    downloadButton.addEventListener("click", () => downloadPatientMaterial(item, downloadButton, downloadStatus));
-    downloadArea.append(downloadButton, downloadStatus);
+    const downloadLink = document.createElement("a");
+    downloadLink.className = "space-secondary space-material-download-button";
+    downloadLink.textContent = "↓ Descargar PDF";
+    downloadLink.href = patientMaterialDownloadUrl(item);
+    downloadLink.download = "entre-sesiones.pdf";
+    downloadLink.target = "_blank";
+    downloadLink.rel = "noopener noreferrer";
+    downloadLink.setAttribute("aria-label", "Descargar PDF: " + String(item.title || "Material"));
+    const downloadHint = document.createElement("span");
+    downloadHint.className = "space-material-download-status";
+    downloadHint.textContent = "Se descargará con el gestor de archivos del navegador. Si no aparece, comprueba Descargas.";
+    downloadArea.append(downloadLink, downloadHint);
     body.append(downloadArea);
 
 
