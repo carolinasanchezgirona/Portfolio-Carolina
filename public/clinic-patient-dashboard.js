@@ -92,7 +92,7 @@
         get(`appointment_bookings?select=id,starts_at,status,service_code&clinical_patient_id=eq.${encodeURIComponent(patientId)}&starts_at=gte.${encodeURIComponent(now)}&status=not.in.(cancelled,canceled)&order=starts_at.asc&limit=1`),
         get(`clinical_sessions?select=id,session_date,session_number,status,approved_at&patient_id=eq.${encodeURIComponent(patientId)}&status=eq.approved&order=session_date.desc&limit=1`),
         get(`clinical_goals?select=id,title,status,priority,last_reviewed_at&patient_id=eq.${encodeURIComponent(patientId)}&order=created_at.asc`),
-        get(`clinical_exercise_assignments?select=id,title,status,email_status,review_due_at,reviewed_at,assigned_at,patient_response_status,patient_response_shared_at&patient_id=eq.${encodeURIComponent(patientId)}&order=assigned_at.desc`),
+        get(`clinical_exercise_assignments?select=id,title,status,email_status,review_due_at,reviewed_at,assigned_at,revoked_at,patient_response_status,patient_response_shared_at&patient_id=eq.${encodeURIComponent(patientId)}&order=assigned_at.desc`),
         get(`clinical_scale_measurements?select=id,instrument,measured_at,total_score,interpretation&patient_id=eq.${encodeURIComponent(patientId)}&order=measured_at.desc&limit=1`),
         get(`clinical_reports?select=id,title,status,updated_at&patient_id=eq.${encodeURIComponent(patientId)}&status=eq.draft&order=updated_at.desc`),
       ]);
@@ -106,7 +106,7 @@
       const activeGoals = goals.filter(g => !["completed","achieved","closed","paused","cancelled","canceled"].includes(String(g.status || "").toLowerCase()));
       setCard("goals", String(activeGoals.length), activeGoals[0]?.title || (activeGoals.length ? "Objetivos en curso" : "Sin objetivos activos"));
 
-      const pendingExercises = exercises.filter(e => !e.reviewed_at && !["completed","reviewed","revoked","cancelled","canceled"].includes(String(e.status || "").toLowerCase()));
+      const pendingExercises = exercises.filter(e => !e.revoked_at && !e.reviewed_at && !["completed","reviewed","revoked","cancelled","canceled"].includes(String(e.status || "").toLowerCase()));
       const overdueExercises = pendingExercises.filter(e => e.review_due_at && new Date(e.review_due_at).getTime() < Date.now());
       setCard("exercises", String(pendingExercises.length), overdueExercises.length ? `${overdueExercises.length} pendientes de revisión` : (pendingExercises[0]?.title || "Sin pendientes"), overdueExercises.length > 0);
 
