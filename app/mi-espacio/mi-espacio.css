@@ -979,3 +979,63 @@
 }
 .space-page[data-portal-phase="authenticated"] .space-shell:not([hidden]){display:grid}
 @media(max-width:760px){.space-page[data-portal-phase="authenticated"] .space-shell:not([hidden]){display:block}}
+
+
+/* Vista de impresión voluntaria como alternativa a la descarga remota de PDF.
+   Nunca imprime respuestas, registros escritos ni la ficha de otros ejercicios. */
+@media print {
+  @page { size: A4; margin: 16mm 14mm; }
+  body.space-print-patient-material,
+  body.space-print-patient-material .space-page {
+    background:#fff!important;color:#172f42!important;margin:0!important;padding:0!important;
+  }
+  body.space-print-patient-material :is(
+    .esapp-portal-identity,.esapp-bottom-nav,.space-topbar,.space-sidebar,
+    .space-session-check,.space-access,.space-hero,.space-section-heading,
+    .space-material-download-button,.space-material-print-button,
+    .space-patient-downloads,.space-patient-response,.space-guided-record,
+    .space-safety,.space-info-note,.space-view[data-space-panel="therapy"]>.space-grid,
+    .space-view[data-space-panel="therapy"]>.space-card,
+    .space-view[data-space-panel="therapy"]>aside,
+    .space-view[data-space-panel="therapy"]>.space-section[aria-labelledby="space-shared-files-title"]
+  ) { display:none!important; }
+  body.space-print-patient-material .space-shell,
+  body.space-print-patient-material .space-content,
+  body.space-print-patient-material .space-view[data-space-panel="therapy"],
+  body.space-print-patient-material #space-patient-materials {
+    display:block!important;max-width:none!important;min-height:0!important;
+    width:100%!important;padding:0!important;margin:0!important;
+    border:0!important;box-shadow:none!important;background:#fff!important;
+  }
+  body.space-print-patient-material .space-view[data-space-panel="therapy"]>.space-section {
+    margin:0!important;padding:0!important;
+  }
+  body.space-print-patient-material #space-patient-materials>.space-patient-material:not([data-print-material]) {
+    display:none!important;
+  }
+  body.space-print-patient-material #space-patient-materials>.space-patient-material[data-print-material]{
+    display:block!important;background:#fff!important;color:#203b50!important;
+    border:0!important;border-radius:0!important;box-shadow:none!important;
+    padding:0!important;margin:0!important;break-inside:auto!important;
+  }
+  body.space-print-patient-material .space-patient-material[data-print-material] :is(
+    textarea,input,button,[data-neuro-answer],.space-neuro-answer,
+    .space-neuro-response,.space-patient-response-status
+  ) {display:none!important}
+  body.space-print-patient-material .space-patient-material[data-print-material]>summary {
+    display:block!important;padding:0 0 14px!important;margin:0 0 18px!important;
+    border-bottom:2px solid #173a5e!important;list-style:none!important;
+  }
+  body.space-print-patient-material .space-patient-material[data-print-material]>summary::before,
+  body.space-print-patient-material .space-patient-material[data-print-material]>summary::marker,
+  body.space-print-patient-material .space-patient-material-chevron {display:none!important}
+  body.space-print-patient-material .space-patient-material[data-print-material] .space-patient-material-body {
+    padding:0!important;display:block!important;
+  }
+  body.space-print-patient-material .space-patient-material[data-print-material] :is(
+    h1,h2,h3,h4,h5,h6,p,li,td,th
+  ) {color:#203b50!important}
+  body.space-print-patient-material .space-patient-material[data-print-material] :is(
+    table,figure,.space-neuro-visual
+  ){break-inside:avoid-page}
+}
