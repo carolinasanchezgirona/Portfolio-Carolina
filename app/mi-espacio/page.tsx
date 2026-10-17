@@ -11,7 +11,7 @@ export const metadata: Metadata = {
 
 export default function MiEspacioPage() {
   return (
-    <main className="space-page">
+    <main className="space-page" data-portal-phase="checking">
       <header className="space-topbar">
         <a className="space-brand" href="/" aria-label="Carolina Sánchez, inicio">
           <span className="space-brand-name">Carolina Sánchez</span>
@@ -477,7 +477,7 @@ export default function MiEspacioPage() {
       </aside>
 
       <Script src="/patient-video.js?v=20261009-1" strategy="afterInteractive" />
-      <Script src="/mi-espacio.js?v=20261017-pdf-loginfix-8" strategy="afterInteractive" />
+      <Script src="/mi-espacio.js?v=20261017-pdf-auth-mobile-9" strategy="afterInteractive" />
       <Script src="/session-prep.js?v=20261017-1" strategy="afterInteractive" />
       <Script src="/wellness-interactive.js?v=20261017-visual-2" strategy="afterInteractive" />
     </main>
