@@ -283,6 +283,19 @@ export default function MoodTracker() {
 
   const scopedMoodKey = scope ? STORAGE_KEY + ":" + scope : null;
   useEffect(() => {
+    const clearWithWellness = () => {
+      if (!scopedMoodKey) return;
+      try { localStorage.removeItem(scopedMoodKey); } catch { /* Almacenamiento bloqueado. */ }
+      setEntries([]);
+      setSelected(null);
+      setEnergy(2);
+      setMessage("Se ha solicitado borrar el historial de ánimo de este dispositivo.");
+    };
+    document.addEventListener("patient-local-wellness-cleared", clearWithWellness);
+    return () => document.removeEventListener("patient-local-wellness-cleared", clearWithWellness);
+  }, [scopedMoodKey]);
+
+  useEffect(() => {
     setLoaded(false);
     setEntries([]);
     setSelected(null);
