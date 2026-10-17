@@ -156,13 +156,21 @@ function useAvatar() {
         if (mounted && currentRevision === revision) setReady(true);
       }
     };
+    const locked = () => {
+      revision++;
+      setProfile({ avatar: null, scope: null });
+      setReady(false);
+    };
     void refresh();
     window.addEventListener(AVATAR_CHANGE_EVENT, refresh);
     window.addEventListener(SESSION_READY_EVENT, refresh);
+    document.addEventListener("patient-portal-locked", locked);
     return () => {
       mounted = false;
+      revision++;
       window.removeEventListener(AVATAR_CHANGE_EVENT, refresh);
       window.removeEventListener(SESSION_READY_EVENT, refresh);
+      document.removeEventListener("patient-portal-locked", locked);
     };
   }, []);
   return { ...profile, ready };
