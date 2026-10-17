@@ -363,3 +363,10 @@
  .esapp .esapp-weekly-prepare strong{font-size:13px}
  .esapp .esapp-weekly-prepare .esapp-weekly-arrow{margin-top:6px}
 }
+
+
+/* Estado de conectividad: no ocultar errores de guardado ni simular cierre de sesión. */
+.esapp .esapp-connectivity{margin:0 0 17px;padding:14px 18px;border:1px solid #e3c9a7;border-radius:14px;background:#fff5e8;color:#6d4f2c;font-size:.86rem;line-height:1.6}
+.esapp .esapp-connectivity strong{font-weight:850;color:#634727}
+.esapp .esapp-connectivity-error{border-color:#e5bbb6;background:#fff0ee;color:#853f3b}
+@media(max-width:700px){.esapp .esapp-connectivity{padding:13px 14px;font-size:.82rem}}
