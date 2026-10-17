@@ -1,0 +1,42 @@
+name: Verificar interacciones móviles de Wellness
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "public/wellness-interactive.js"
+      - "app/mi-espacio/mi-espacio.css"
+      - "tests/wellness-mobile-browser.py"
+      - ".github/workflows/wellness-mobile-browser.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  touch-regression:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Descargar código de la aplicación
+        uses: actions/checkout@v4
+      - name: Preparar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Instalar motor de pruebas de navegador
+        run: |
+          python -m pip install --disable-pip-version-check playwright==1.56.0
+          if ! command -v google-chrome >/dev/null && ! command -v google-chrome-stable >/dev/null && ! command -v chromium >/dev/null; then
+            python -m playwright install chromium
+          fi
+      - name: Simular navegación táctil a 390 y 360 píxeles con datos ficticios
+        run: python tests/wellness-mobile-browser.py
+      - name: Conservar capturas de las pruebas
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: wellness-mobile-touch-screenshots
+          path: test-results/wellness-mobile/
+          if-no-files-found: ignore
+          retention-days: 7
