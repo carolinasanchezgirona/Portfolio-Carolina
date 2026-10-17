@@ -604,6 +604,10 @@
 
   function showAccessGate() {
     document.dispatchEvent(new Event("wellness:interactive-reset"));
+    if (insideEntreSesionesApp) {
+      const tabs = document.querySelector(".esapp-bottom-nav");
+      if (tabs) tabs.hidden = true;
+    }
     if (accessGate) accessGate.hidden = false;
     if (shell) shell.hidden = true;
     if (!passwordTokenHash) showAccessForm("login");
@@ -612,6 +616,10 @@
   function openPortal(view = "today") {
     if (accessGate) accessGate.hidden = true;
     if (shell) shell.hidden = false;
+    if (insideEntreSesionesApp && state.portalAuthenticated) {
+      const tabs = document.querySelector(".esapp-bottom-nav");
+      if (tabs) tabs.hidden = false;
+    }
     showView(view);
   }
 
