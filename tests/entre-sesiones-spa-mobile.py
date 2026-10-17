@@ -30,7 +30,8 @@ body { margin:0; padding-bottom:100px; font-family:system-ui,sans-serif; }
 <a href="/entre-sesiones/app/espacio/?vista=progreso">Progreso</a>
 <a href="/entre-sesiones/app/espacio/?vista=configuracion">Cuenta</a>
 </nav>
-<section id="space-access"><form id="space-login-form">
+<section id="space-session-check">Comprobando acceso seguro…</section>
+<section id="space-access" hidden><form id="space-login-form">
 <input id="space-login-email" type="email"><input id="space-login-password" type="password">
 </form><p id="space-access-message"></p></section>
 <div id="space-shell" class="space-page" hidden>
@@ -75,9 +76,13 @@ def assert_true(value, why):
 
 def test_authenticated(page, width):
     page.goto(BASE + APP + "?vista=wellness")
+    assert_true(page.locator("#space-access").is_hidden(), "Login form flashes before verifying the session")
+    assert_true(page.locator("#space-session-check").is_visible(), "Neutral verification screen missing")
     page.evaluate("window.__wellnessResets = 0; document.addEventListener('wellness:interactive-reset', () => window.__wellnessResets++);")
     page.add_script_tag(content=JS)
     page.locator("#space-shell:not([hidden])").wait_for()
+    assert_true(page.locator("#space-access").is_hidden(), "Password prompt visible for an authenticated patient")
+    assert_true(page.locator("#space-session-check").is_hidden(), "Session check still covering the authenticated app")
     assert_true(not page.locator(".esapp-bottom-nav").get_attribute("hidden"), "Authenticated bottom nav remains hidden")
     assert_true(page.locator('[data-space-panel="wellness"]').is_visible(), "Initial Wellness deep link failed")
     assert_true(page.locator(".esapp-bottom-nav a[aria-current='page']").inner_text() == "Wellness", "Wellness not active")
@@ -88,6 +93,10 @@ def test_authenticated(page, width):
     material = page.locator(".space-patient-material")
     assert_true(material.count() == 1, "Assigned synthetic exercise was not rendered")
     assert_true(material.get_attribute("id") == "space-material-" + FAKE_ID, "Material anchor mismatch")
+    link = material.locator("a.space-material-download-button")
+    assert_true(link.get_attribute("href") == "/api/patient-portal/material-pdf?material_id=" + FAKE_ID,
+                "PDF does not use authenticated native URL")
+    assert_true(link.get_attribute("download") is not None, "PDF link does not request a native download")
     page.evaluate("""(id) => {
       history.replaceState(null, "", location.pathname + location.search + "#space-material-" + id);
       window.dispatchEvent(new Event("hashchange"));
@@ -144,6 +153,7 @@ def test_authenticated(page, width):
     page.unroute("**/api/patient-portal/logout", fail_logout)
     page.get_by_role("button", name="Cerrar sesión").click()
     page.locator("#space-access:not([hidden])").wait_for()
+    assert_true(page.locator("#space-session-check").is_hidden(), "Loading screen remained when password is required")
     assert_true(not page.locator("#space-patient-materials").inner_text(), "Clinical DOM not cleared after logout")
     assert_true(not page.locator("#space-shared-files").inner_text(), "Shared files not cleared after logout")
     assert_true(page.locator(".esapp-bottom-nav").get_attribute("hidden") is not None, "Locked account tabs visible")
