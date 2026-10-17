@@ -520,12 +520,14 @@
   function saveState() {
     const favoritesKey = scopedWellnessKey(FAVORITES_KEY);
     const completedKey = scopedWellnessKey(COMPLETED_KEY);
-    if (!favoritesKey || !completedKey) return;
+    if (!favoritesKey || !completedKey) return false;
     try {
       localStorage.setItem(favoritesKey, JSON.stringify(state.favorites));
       localStorage.setItem(completedKey, JSON.stringify(state.completed.slice(-100)));
+      return true;
     } catch {
-      // La experiencia sigue funcionando aunque el navegador bloquee almacenamiento local.
+      // No confirmamos persistencia si el navegador bloquea el almacenamiento local.
+      return false;
     }
   }
 
@@ -1561,9 +1563,9 @@
     if (!detail || !state.portalAuthenticated || !state.storageScope ||
         !Object.prototype.hasOwnProperty.call(interactiveActivityLabels, detail.id)) return;
     state.completed.push({ id: detail.id, at: new Date().toISOString() });
-    saveState();
+    const saved = saveState();
     renderProgress();
-    detail.saved = true;
+    detail.saved = saved;
   });
 
   function renderProgress() {
