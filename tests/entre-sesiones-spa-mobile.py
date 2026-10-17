@@ -108,6 +108,7 @@ def test_authenticated(page, width):
     assert_true(link.get_attribute("href") == "/api/patient-portal/material-pdf?material_id=" + FAKE_ID,
                 "PDF does not use authenticated native URL")
     assert_true(link.get_attribute("download") is not None, "PDF link does not request a native download")
+    assert_true(link.get_attribute("target") is None, "PDF download must not open a new PWA tab")
     # The browser receives a synthetic private PDF response. This checks a real
     # browser download event, not merely that the anchor looks correct.
     def serve_test_pdf(route):
