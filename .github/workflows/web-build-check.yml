@@ -135,6 +135,7 @@ jobs:
           node --check public/admin-clinica.js
           node --check public/clinic-patient-dashboard.js
           node --test tests/entre-sesiones-hardening.test.mjs
+          node --test tests/patient-pdf-login.test.mjs
           node --test tests/wellness-interactive.test.mjs
           node --test tests/session-prep.test.mjs
           node --test tests/entre-sesiones-app-integration.test.mjs
