@@ -805,3 +805,54 @@
   .wellness-experience .wi-actions>.wi-button{width:100%}
   .wellness-experience .wi-entry-actions{flex-direction:column}
 }
+
+
+/* Segunda tanda de Wellness: manipulativos táctiles con alternativa por teclado. */
+.wellness-experience .wi-card:nth-child(7n+5){background:linear-gradient(137deg,#edf5fd,#fff)}
+.wellness-experience .wi-card:nth-child(7n+6){background:linear-gradient(137deg,#eaf5f2,#fff)}
+.wellness-experience .wi-card:nth-child(7n+7){background:linear-gradient(137deg,#fff0ea,#fff)}
+.wellness-experience .wi-card:nth-child(7n+5) .wi-index{background:#d8eafa;color:#24547c}
+.wellness-experience .wi-card:nth-child(7n+6) .wi-index{background:#d7eee6;color:#366e64}
+.wellness-experience .wi-card:nth-child(7n+7) .wi-index{background:#f8dace;color:#a05549}
+.wellness-experience .wi-sequence-list{list-style:none;display:grid;gap:10px;margin:19px 0;padding:0}
+.wellness-experience .wi-sequence-item{display:flex;align-items:center;gap:12px;padding:11px;border:1px solid #d4e6ee;border-radius:16px;background:#fff;box-shadow:0 4px 14px rgba(23,58,94,.035);min-width:0}
+.wellness-experience .wi-sequence-item.is-selected{background:#e1f3fa;border-color:#3985a4;box-shadow:inset 0 0 0 1px #3985a4}
+.wellness-experience .wi-sequence-select{flex:1 1 0;min-width:0;min-height:52px;padding:9px 12px;border:0;border-radius:10px;background:transparent;text-align:left;font:inherit;font-weight:750;font-size:.94rem;line-height:1.5;color:#173a5e;cursor:pointer}
+.wellness-experience .wi-sequence-select[aria-pressed="true"]{color:#1c627a}
+.wellness-experience .wi-move-actions{display:flex;gap:6px;flex-shrink:0}
+.wellness-experience .wi-move{display:grid;place-items:center;width:45px;height:45px;border:1px solid #bad2df;border-radius:11px;background:#f1f8fb;color:#275875;font:inherit;font-size:1.22rem;font-weight:850;cursor:pointer}
+.wellness-experience .wi-move:disabled{opacity:.30;cursor:default}
+.wellness-experience .wi-sequence-conclusion{margin-top:16px}
+.wellness-experience .wi-visual-stage{margin-top:17px}
+.wellness-experience .wi-visual-board{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:16px 0}
+.wellness-experience .wi-visual-piece{min-width:0;min-height:89px;padding:10px 6px;border:1px solid #cee1e9;border-radius:16px;background:#fff;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:9px;cursor:pointer}
+.wellness-experience .wi-visual-piece:hover:not(:disabled){background:#eef8fc;border-color:#74a8c2}
+.wellness-experience .wi-visual-piece[aria-pressed="true"]{background:#e0f4f1;border-color:#458c7c;opacity:.66}
+.wellness-experience .wi-visual-piece:disabled{cursor:default}
+.wellness-experience .wi-visual-piece small{font-size:.75rem;font-weight:740;color:#4d677a}
+.wellness-experience .wi-shape{display:block;width:30px;height:30px;flex:none}
+.wellness-experience .wi-shape--circle{border-radius:50%}
+.wellness-experience .wi-shape--square{border-radius:5px}
+.wellness-experience .wi-shape--triangle{clip-path:polygon(50% 3%,100% 97%,0 97%)}
+.wellness-experience .wi-shape--blue{background:#377da9}
+.wellness-experience .wi-shape--coral{background:#dc796b}
+.wellness-experience .wi-shape--green{background:#4b8c78}
+.wellness-experience .wi-moment-stage{margin-top:20px}
+.wellness-experience .wi-moment-preview{display:grid;gap:10px}
+.wellness-experience .wi-moment-preview-item{padding:16px 18px;border:1px solid #dbe8ef;border-radius:13px;background:#fff}
+.wellness-experience .wi-moment-preview-item strong{font-size:.87rem;color:#1d4b67}
+.wellness-experience .wi-moment-preview-item p{margin:8px 0 0;color:#4d6575;white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.6}
+@media(max-width:700px){
+  .wellness-experience .wi-visual-board{gap:7px}
+  .wellness-experience .wi-visual-piece{min-height:75px;padding:9px 2px;border-radius:11px}
+  .wellness-experience .wi-shape{width:26px;height:26px}
+  .wellness-experience .wi-sequence-item{gap:5px;padding:7px}
+  .wellness-experience .wi-sequence-select{font-size:.84rem;padding:8px}
+  .wellness-experience .wi-move-actions{gap:4px}
+  .wellness-experience .wi-move{width:42px;height:45px}
+}
+@media(max-width:390px){
+  .wellness-experience .wi-sequence-select{font-size:.79rem}
+  .wellness-experience .wi-visual-piece small{font-size:.67rem}
+  .wellness-experience .wi-visual-board{gap:5px}
+}
