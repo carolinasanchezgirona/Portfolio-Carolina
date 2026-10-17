@@ -26,3 +26,187 @@
 .esapp-hint{display:flex;gap:12px;justify-content:space-between;align-items:flex-start;border:1px solid #b7e6e1;border-radius:14px;background:#eaf9f6;font-size:12px;line-height:1.6;color:#24635d;padding:17px;margin-top:20px}.esapp-hint button{background:none;border:0;color:#24635d;font-size:20px}
 @media(max-width:900px){.esapp-columns{grid-template-columns:1fr}.esapp-aside{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}.esapp-aside .esapp-note{grid-column:1/-1}.esapp-top{min-height:75px}}
 @media(max-width:620px){.esapp-top{align-items:start;padding:15px;gap:9px}.esapp-logo{height:37px;width:37px;border-radius:11px}.esapp-brand strong{font-size:18px}.esapp-brand span{font-size:9px;max-width:160px;line-height:1.4}.esapp-head-actions{gap:5px;justify-content:flex-end}.esapp-head-actions button{font-size:10px;padding:7px 9px}.esapp-container{padding:16px 13px 34px}.esapp-hero{border-radius:18px;padding:29px 22px}.esapp-hero h1{font-size:35px}.esapp-stats{gap:8px}.esapp-stats>div{padding:15px 10px}.esapp-stats small{font-size:10px}.esapp-stats strong{font-size:30px}.esapp-panel{padding:19px}.esapp-material{flex-direction:column}.esapp-status{margin-left:48px}.esapp-aside{grid-template-columns:1fr}.esapp-aside .esapp-note{grid-column:auto}.esapp-footer{line-height:1.7}}
+
+
+/* v0.3 · Dirección editorial propia y correcciones verificadas en móvil.
+   Las reglas se limitan a .esapp; la consulta y el portal no cambian. */
+.esapp{
+  --e-blue:#173A5E;
+  --e-teal:#087F82;
+  --e-coral:#F28D7F;
+  --e-text:#27465F;
+  font-family:var(--esapp-font-interfaz),var(--font-inter),system-ui,sans-serif;
+  background:linear-gradient(180deg,#FBFCFC 0%,#F3F8FA 54%,#F8FAFC 100%);
+  color:var(--e-text);
+  line-height:1.55;
+  min-height:100dvh;
+}
+.esapp h1,.esapp h2,.esapp h3,.esapp p {max-width:none;}
+.esapp .esapp-top{
+  min-height:86px;
+  padding:17px clamp(16px,4vw,56px);
+  background:#fff;
+  border-bottom:1px solid #E8EFF1;
+  gap:14px;
+  box-shadow:0 4px 21px rgba(23,58,94,.025);
+}
+.esapp .esapp-logo{
+  width:48px;height:48px;
+  padding:0;border:0;border-radius:14px;
+  background:transparent;
+  display:grid;place-items:center;
+  overflow:hidden;
+}
+.esapp .esapp-logo img{display:block;width:48px;height:48px;object-fit:contain;}
+.esapp .esapp-brand{gap:1px}
+.esapp .esapp-brand strong{
+  color:#173A5E;
+  font-family:var(--esapp-font-editorial),Georgia,serif;
+  font-size:clamp(20px,2.4vw,25px);
+  font-weight:550;
+  letter-spacing:-.7px;
+  line-height:1.12;
+}
+.esapp .esapp-brand span{font-size:11px;color:#718998;line-height:1.4;letter-spacing:0}
+.esapp .esapp-head-actions{gap:10px;}
+.esapp .esapp-install{
+  display:inline-flex;align-items:center;justify-content:center;gap:7px;
+  border:1px solid #D7EAE8;border-radius:999px;
+  background:#EBF7F5;color:#146B70;
+  font-size:12px;font-weight:750;
+  min-height:41px;padding:9px 15px;
+  transition:background .15s ease,transform .15s ease;
+}
+.esapp .esapp-install:hover{background:#DAF0EC;transform:translateY(-1px)}
+.esapp .esapp-light{border-radius:999px;color:#586F7F;padding:10px 14px;font-size:12px;}
+.esapp .esapp-container{max-width:1140px;padding:clamp(20px,3vw,36px) clamp(16px,3.2vw,30px) 36px}
+.esapp .esapp-hero{
+  border-radius:24px;
+  background:linear-gradient(108deg,#173A5E 0%,#1E4867 80%,#21536C 100%);
+  min-height:0;
+  padding:clamp(30px,4.2vw,56px) clamp(25px,5vw,60px);
+  isolation:isolate;
+  box-shadow:0 17px 40px rgba(23,58,94,.085);
+}
+.esapp .esapp-hero::after{
+  width:300px;height:300px;
+  right:-156px;top:-108px;
+  border:38px solid rgba(137,209,210,.23);
+  border-radius:50%;
+  opacity:.48;z-index:0;
+}
+.esapp .esapp-hero>*{position:relative;z-index:1}
+.esapp .esapp-hero .esapp-overline{
+  color:#B9E7E2;
+  font-size:11px;
+  font-weight:800;
+  letter-spacing:2.4px;
+  margin:0 0 17px;
+}
+.esapp .esapp-hero h1{
+  font-family:var(--esapp-font-editorial),Georgia,serif!important;
+  font-optical-sizing:auto;
+  font-weight:520!important;
+  font-size:clamp(34px,4.7vw,54px)!important;
+  line-height:1.13!important;
+  letter-spacing:-1.4px;
+  color:#FFFDFC!important;
+  -webkit-text-fill-color:#FFFDFC!important;
+  opacity:1!important;
+  margin:0 0 17px;
+  max-width:710px;
+}
+.esapp .esapp-hero .esapp-hero-description{
+  font-family:var(--esapp-font-interfaz),system-ui,sans-serif;
+  color:#E1EDF1!important;
+  opacity:1!important;
+  font-size:clamp(13px,1.6vw,15px);
+  line-height:1.7;
+  max-width:565px;
+  margin:0 0 25px;
+}
+.esapp .esapp-hero-actions{gap:19px;}
+.esapp .esapp-primary{
+  min-height:48px;
+  border-radius:11px;
+  background:#F28D7F;
+  color:#173A5E!important;
+  font-size:13px;
+  font-weight:850;
+  padding:13px 19px;
+  box-shadow:0 5px 14px rgba(13,37,57,.11);
+}
+.esapp .esapp-hero-quiet{
+  display:inline-flex;align-items:center;gap:8px;
+  min-height:42px;
+  padding:8px 4px;
+  border:0;background:transparent;
+  color:#DCECEB;
+  font-size:12px;font-weight:600;
+  box-shadow:none;
+}
+.esapp .esapp-hero-quiet:hover{color:#FFF;}
+.esapp .esapp-state{
+  margin:22px auto 28px;
+  padding:clamp(26px,4vw,44px) 24px;
+  border:1px solid #E6EEEF;
+  border-radius:20px;
+  box-shadow:0 10px 34px rgba(23,58,94,.04);
+}
+.esapp .esapp-state-icon{
+  display:inline-flex;
+  justify-content:center;
+  align-items:center;
+  width:60px;height:60px;
+  border-radius:18px;
+  margin-bottom:14px;
+  background:#EAF6F2;
+  color:#187C78;
+}
+.esapp .esapp-state h2,
+.esapp .esapp-sectionhead h2,
+.esapp .esapp-note h2,
+.esapp .esapp-smallcard h3{
+  color:#173A5E;
+  font-family:var(--esapp-font-editorial),Georgia,serif;
+  font-weight:520;
+}
+.esapp .esapp-state p{max-width:420px}
+.esapp .esapp-columns{margin-top:22px;gap:17px}
+.esapp .esapp-panel,
+.esapp .esapp-smallcard{
+  border:1px solid #E7EEF1;
+  box-shadow:0 4px 22px rgba(23,58,94,.038);
+  border-radius:17px;
+}
+.esapp .esapp-stats>div{box-shadow:0 3px 13px rgba(23,58,94,.025);border-radius:15px}
+.esapp .esapp-stats strong{font-family:var(--esapp-font-editorial),Georgia,serif}
+.esapp .esapp-note{background:#E8F5F5;border-color:#D7ECEB;border-radius:18px}
+.esapp .esapp-sectionhead>span{font-size:11px}
+.esapp .esapp-footer{max-width:100%;align-items:center}
+@media(max-width:620px){
+  .esapp .esapp-top{padding:14px 16px;min-height:78px;gap:10px}
+  .esapp .esapp-logo,.esapp .esapp-logo img{width:42px;height:42px;flex-shrink:0}
+  .esapp .esapp-brand{min-width:0}
+  .esapp .esapp-brand strong{font-size:20px;letter-spacing:-.45px}
+  .esapp .esapp-brand span{font-size:9px;max-width:195px;line-height:1.5}
+  .esapp .esapp-head-actions{margin-left:auto;gap:7px}
+  .esapp .esapp-install{min-height:37px;font-size:11px;padding:7px 10px}
+  .esapp .esapp-light{font-size:11px;padding:8px}
+  .esapp .esapp-container{padding:18px 13px 30px}
+  .esapp .esapp-hero{border-radius:20px;padding:30px 25px 32px}
+  .esapp .esapp-hero::after{right:-195px;top:-75px;border-width:31px;opacity:.25}
+  .esapp .esapp-hero .esapp-overline{font-size:10px;letter-spacing:1.8px;margin:0 0 15px}
+  .esapp .esapp-hero h1{font-size:clamp(31px,8.2vw,40px)!important;line-height:1.15!important;letter-spacing:-.95px;max-width:100%}
+  .esapp .esapp-hero .esapp-hero-description{font-size:13px;line-height:1.7;margin:0 0 20px}
+  .esapp .esapp-hero-actions{align-items:flex-start;gap:11px;flex-direction:column}
+  .esapp .esapp-primary{font-size:13px;min-height:47px;padding:12px 17px}
+  .esapp .esapp-hero-quiet{min-height:30px;padding:3px 4px}
+  .esapp .esapp-state{margin-top:18px;padding:27px 20px}
+  .esapp .esapp-state h2{font-size:27px}
+  .esapp .esapp-state p{font-size:13px}
+  .esapp .esapp-note{padding:22px}
+}
+@media(prefers-reduced-motion:reduce){
+  .esapp *{transition:none!important;scroll-behavior:auto!important}
+}
