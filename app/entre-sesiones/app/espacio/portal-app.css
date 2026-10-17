@@ -1,7 +1,7 @@
 
 /* Ruta protegida de Mi espacio dentro del alcance de la PWA Entre Sesiones.
    La fuente de los ejercicios, Wellness y respuestas sigue siendo MiEspacioPage. */
-.esapp-portal-app{--space-ink:#173a5e;--space-accent:#245c77;--space-accent-soft:#e8f4f9;background:linear-gradient(140deg,#f8fcfe,#eef7fb 55%,#fffaf7);min-height:100dvh;padding-bottom:80px}
+.esapp-portal-app{--font-newsreader:var(--esapp-font-editorial);--space-ink:#173a5e;--space-accent:#245c77;--space-accent-soft:#e8f4f9;background:linear-gradient(140deg,#f8fcfe,#eef7fb 55%,#fffaf7);min-height:100dvh;padding-bottom:80px}
 .esapp-portal-app .esapp-portal-identity{
   min-height:74px;padding:13px clamp(16px,4vw,50px);display:flex;align-items:center;justify-content:space-between;gap:16px;
   background:#fff;border-bottom:1px solid #deebf0;
