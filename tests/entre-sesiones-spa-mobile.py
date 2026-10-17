@@ -123,7 +123,7 @@ def test_authenticated(page, width):
     assert_true(completed.value.suggested_filename.endswith(".pdf"), "The mobile browser did not download a PDF")
     page.unroute("**/api/patient-portal/material-pdf?*", serve_test_pdf)
     page.evaluate("window.__printCalls = 0; window.print = () => { window.__printCalls++; };")
-    material.get_by_role("button", name="Imprimir / Guardar como PDF").click()
+    material.locator(".space-material-print-button").click()
     assert_true(page.evaluate("window.__printCalls") == 1, "Print PDF alternative did not invoke the native print dialog")
     assert_true(material.get_attribute("data-print-material") == "true", "Printable worksheet not selected")
     assert_true(page.evaluate("document.body.classList.contains('space-print-patient-material')"),
