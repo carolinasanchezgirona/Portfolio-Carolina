@@ -7,7 +7,7 @@ export const metadata: Metadata = {
   description: "Acceso a las actividades terapéuticas asignadas desde tu consulta.",
   robots: { index: false, follow: false, nocache: true },
   manifest: "/entre-sesiones-app.webmanifest",
-  icons: { icon: "/clinic-pwa-icon.svg", apple: "/clinic-pwa-icon.svg" },
+  icons: { icon: [{ url: "/entre-sesiones-icon-editorial.svg", type: "image/svg+xml" }], apple: "/entre-sesiones-icon-editorial.svg" },
   appleWebApp: { capable: true, statusBarStyle: "default", title: "Entre Sesiones" },
 };
 
