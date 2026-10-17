@@ -646,15 +646,28 @@
 .wellness-experience .wellness-filter-context{margin-top:15px;padding:12px 17px;border-radius:13px;background:#e9f5fa;color:#174967;font-weight:750;font-size:.88rem}
 .wellness-experience .wellness-reset{display:inline-flex;margin-top:10px;padding:9px 0;gap:8px;background:transparent;border:0;color:#17536e;font-size:.82rem;font-weight:800;cursor:pointer}
 .wellness-experience .wellness-reset[hidden]{display:none!important}
+.wellness-experience .wellness-quick-intro{max-width:720px;margin:10px 0 0;color:#5a7183;font-size:.92rem;line-height:1.55;letter-spacing:normal}
 .wellness-experience .wellness-quick-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px}
-.wellness-experience .wellness-quick-grid button{position:relative;min-width:0;min-height:168px;display:flex;align-items:flex-start;flex-direction:column;gap:7px;text-align:left;padding:20px 21px;border:1px solid #e7e6e2;border-radius:22px;background:linear-gradient(137deg,#fffaf6,#f6fbfd);color:#173a5e;cursor:pointer;box-shadow:0 9px 25px rgba(19,57,81,.035)}
+.wellness-experience .wellness-quick-grid button{
+  position:relative;min-width:0;min-height:233px;display:flex;align-items:flex-start;flex-direction:column;
+  gap:10px;text-align:left;padding:22px 21px;border:1px solid #e3e7e9;border-radius:22px;
+  background:linear-gradient(137deg,#fffaf6,#f6fbfd);color:#173a5e;cursor:pointer;
+  font:inherit;box-shadow:0 9px 25px rgba(19,57,81,.035);
+  transition:border-color .16s,box-shadow .16s,transform .16s
+}
 .wellness-experience .wellness-quick-grid button:nth-child(2){background:linear-gradient(137deg,#eaf7fa,#fff)}
 .wellness-experience .wellness-quick-grid button:nth-child(3){background:linear-gradient(137deg,#ffede7,#fffaf5)}
-.wellness-experience .wellness-quick-icon{display:grid;place-items:center;width:33px;height:33px;border-radius:50%;background:#e6eff3;color:#285b76;font-size:.77rem;font-weight:850;margin-bottom:15px}
+.wellness-experience .wellness-quick-grid button:hover{border-color:#a5c7d6;box-shadow:0 12px 30px rgba(19,57,81,.085);transform:translateY(-2px)}
+.wellness-experience .wellness-quick-grid button:focus-visible{outline:3px solid #267b9c;outline-offset:3px}
+.wellness-experience .wellness-quick-icon{display:grid;place-items:center;width:33px;height:33px;border-radius:50%;background:#e6eff3;color:#285b76;font-size:.77rem;font-weight:850;margin-bottom:4px}
 .wellness-experience .wellness-quick-grid button:nth-child(3) .wellness-quick-icon{background:#f7cfc3;color:#914a3c}
 .wellness-experience .wellness-quick-grid strong{font:570 clamp(1.23rem,2.1vw,1.48rem)/1.13 var(--font-newsreader),Georgia,serif;letter-spacing:-.025em}
-.wellness-experience .wellness-quick-grid small{font-size:.79rem;color:#667d8b;line-height:1.45}
-.wellness-experience .wellness-quick-arrow{position:absolute;right:19px;top:20px;font-size:1.15rem;color:#255a76}
+.wellness-experience .wellness-quick-description{font-size:.85rem;color:#526d7c;line-height:1.48}
+.wellness-experience .wellness-quick-footer{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:7px 14px;width:100%;margin-top:auto;padding-top:12px;border-top:1px solid rgba(47,94,118,.13)}
+.wellness-experience .wellness-quick-footer small{font-size:.74rem;color:#647d8c;line-height:1.4}
+.wellness-experience .wellness-quick-go{font-size:.76rem;font-weight:800;color:#255a76;white-space:nowrap}
+.wellness-experience .wellness-quick-go span{margin-left:2px}
+.wellness-experience .wellness-quick-note{margin:13px 0 0;font-size:.79rem;line-height:1.55;color:#688092}
 .wellness-experience .wellness-library{padding:clamp(19px,3vw,31px);border:1px solid #dfebf0;background:#fbfdfd;border-radius:25px}
 .wellness-experience .wellness-count{background:#e5f3f8;border-radius:999px;padding:9px 12px;color:#285c76;font-size:.75rem;white-space:nowrap;font-weight:750}
 .wellness-experience .wellness-library-controls{display:flex;align-items:center;justify-content:space-between;gap:13px;margin:19px 0 21px;flex-wrap:wrap}
@@ -727,8 +740,10 @@
   .wellness-experience .wellness-routine-grid button strong{font-size:.84rem}
 }
 @media(prefers-reduced-motion:reduce){
-  .wellness-experience .wellness-needs button{transition:none}
-  .wellness-experience .wellness-needs button:hover{transform:none}
+  .wellness-experience .wellness-needs button,
+  .wellness-experience .wellness-quick-grid button{transition:none}
+  .wellness-experience .wellness-needs button:hover,
+  .wellness-experience .wellness-quick-grid button:hover{transform:none}
 }
 
 
