@@ -7,6 +7,10 @@ on:
       - "public/wellness-interactive.js"
       - "app/mi-espacio/mi-espacio.css"
       - "tests/wellness-mobile-browser.py"
+      - "tests/entre-sesiones-spa-mobile.py"
+      - "public/mi-espacio.js"
+      - "app/entre-sesiones/app/espacio/portal-app.css"
+      - "app/entre-sesiones/app/espacio/page.tsx"
       - ".github/workflows/wellness-mobile-browser.yml"
   workflow_dispatch:
 
@@ -32,6 +36,8 @@ jobs:
           fi
       - name: Simular navegación táctil a 390 y 360 píxeles con datos ficticios
         run: python tests/wellness-mobile-browser.py
+      - name: Verificar navegación interna Android y borradores con sesión ficticia
+        run: python tests/entre-sesiones-spa-mobile.py
       - name: Conservar capturas de las pruebas
         if: always()
         uses: actions/upload-artifact@v4
