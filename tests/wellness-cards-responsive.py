@@ -4,6 +4,7 @@ Ejecutar: python tests/wellness-cards-responsive.py
 """
 import html
 import re
+import shutil
 from pathlib import Path
 from playwright.sync_api import sync_playwright
 
@@ -110,7 +111,12 @@ def verify(page, width):
     print(f"PASS {width}px: iconos, flechas, textos completos, columnas y ausencia de solapamientos")
 
 with sync_playwright() as p:
-    browser = p.chromium.launch(headless=True,args=["--no-sandbox","--disable-dev-shm-usage"])
+    launch_options={"headless":True,"args":["--no-sandbox","--disable-dev-shm-usage"]}
+    executable=(shutil.which("google-chrome") or shutil.which("google-chrome-stable")
+                or shutil.which("chromium") or shutil.which("chromium-browser"))
+    if executable:
+        launch_options["executable_path"]=executable
+    browser = p.chromium.launch(**launch_options)
     for width in (320,360,390,430,750,1024):
         context=browser.new_context(viewport={"width":width,"height":850},
             device_scale_factor=1,is_mobile=width < 800,has_touch=width < 800,locale="es-ES")
