@@ -1329,3 +1329,14 @@ body.clinic-report-page-open{overflow:auto!important}
 #clinic-patient-documents .clinic-document-delete{color:#a13c38;border-color:#e5b3ad;background:#fff9f7}
 #clinic-patient-documents .clinic-document-delete:hover{background:#fff0ec}
 @media(max-width:620px){#clinic-patient-documents .clinic-material-row-actions button{flex:1 1 140px}}
+
+
+/* Entre Sesiones: fecha de revisión individual en material ya asignado. */
+.clinic-material-row-actions .clinic-material-planning{width:100%;max-width:330px;margin-top:9px;padding:9px 11px;border:1px solid #d9e8ef;border-radius:12px;background:#f6fafc}
+.clinic-material-planning summary{cursor:pointer;color:#285b78;font-size:.82rem;font-weight:800;min-height:30px;padding:5px 2px}
+.clinic-material-planning-controls{display:flex;flex-wrap:wrap;gap:9px;align-items:end;padding:9px 1px 4px}
+.clinic-material-planning-controls label{display:grid;gap:6px;flex-basis:100%;color:#3b5d70;font-size:.79rem;font-weight:750}
+.clinic-material-plan-date{min-height:44px;padding:9px 12px;border:1px solid #c4d9e3;border-radius:11px;background:#fff;color:#173a5e;font:inherit;font-size:1rem;max-width:100%}
+.clinic-material-planning-controls button{min-height:42px}
+.clinic-material-plan-feedback{flex-basis:100%;margin:4px 0 0;color:#426c80;line-height:1.6;font-size:.79rem}
+@media(max-width:760px){.clinic-material-row-actions .clinic-material-planning{max-width:100%;width:100%}}
