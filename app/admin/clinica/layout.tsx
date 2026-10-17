@@ -23,7 +23,7 @@ export default function ClinicaLayout({ children }: Readonly<{ children: React.R
       <script src="/clinic-word-export.js?v=20261009-legal-1" defer />
       <script src="/clinic-report-options.js?v=20261009-legal-1" defer />
       <script src="/clinic-ux-guards.js?v=20260915-1" defer />
-      <script src="/clinic-patient-dashboard.js?v=20261009-visibility-1" defer />
+      <script src="/clinic-patient-dashboard.js?v=20261017-shared-review-1" defer />
       <script src="/clinic-goals-manager.js?v=20261009-visibility-1" defer />
       <script src="/clinic-scale-trends.js?v=20261009-visibility-1" defer />
       <script src="/clinic-template-library.js?v=20260915-3" defer />
