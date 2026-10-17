@@ -1549,6 +1549,23 @@
     renderProgress();
   }
 
+  // Registro local: solo identificador de práctica y fecha; nunca respuestas personales.
+  const interactiveActivityLabels = Object.freeze({
+    "wi-decision": "¿Problema o posibilidad?",
+    "wi-energy": "Mi energía, mi margen",
+    "wi-priorities": "Ordenar la cabeza",
+    "wi-focus": "Cambiar de criterio"
+  });
+  document.addEventListener("wellness:interactive-completed", event => {
+    const detail = event.detail;
+    if (!detail || !state.portalAuthenticated || !state.storageScope ||
+        !Object.prototype.hasOwnProperty.call(interactiveActivityLabels, detail.id)) return;
+    state.completed.push({ id: detail.id, at: new Date().toISOString() });
+    saveState();
+    renderProgress();
+    detail.saved = true;
+  });
+
   function renderProgress() {
     const now = Date.now();
     const sevenDays = 7 * 24 * 60 * 60 * 1000;
@@ -1574,14 +1591,16 @@
 
     recent.forEach(item => {
       const activity = activities.find(entry => entry.id === item.id);
-      if (!activity) return;
+      const interactiveTitle = Object.prototype.hasOwnProperty.call(interactiveActivityLabels, item.id)
+        ? interactiveActivityLabels[item.id] : null;
+      if (!activity && !interactiveTitle) return;
       const row = document.createElement("div");
       row.className = "space-history-item";
       const left = document.createElement("div");
       const title = document.createElement("strong");
-      title.textContent = activity.title;
+      title.textContent = activity ? activity.title : interactiveTitle;
       const type = document.createElement("span");
-      type.textContent = typeLabel(activity.type);
+      type.textContent = activity ? typeLabel(activity.type) : "Práctica interactiva · solo actividad registrada";
       left.append(title, type);
       const time = document.createElement("time");
       const date = new Date(item.at);
