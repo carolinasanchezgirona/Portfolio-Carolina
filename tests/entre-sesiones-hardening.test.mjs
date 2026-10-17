@@ -82,7 +82,7 @@ test("old authenticated sessions cannot reappear after a newer session or logout
   assert.match(portal, /const requestEpoch = \+\+portalSessionEpoch/);
   assert.match(portal, /if \(requestEpoch !== portalSessionEpoch\) return false/);
   assert.match(portal, /const loginEpoch = \+\+portalSessionEpoch/);
-  assert.match(portal, /if \(loginEpoch !== portalSessionEpoch\) return/);
+  assert.match(portal, /if \(loginEpoch !== portalSessionEpoch\) \{\s*if \(newTab && !newTab\.closed\) newTab\.close\(\)/);
   assert.match(portal, /const logoutEpoch = \+\+portalSessionEpoch/);
   assert.match(portal, /if \(logoutEpoch !== portalSessionEpoch\) return/);
   assert.match(portal, /portalSessionEpoch\+\+;\s*\/\/ El contenido clínico/);
