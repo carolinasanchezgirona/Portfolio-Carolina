@@ -12,6 +12,7 @@ const administrativeRoutes = [
   "/consentimiento-psicologico",
   "/consentimiento-neuropsicologico",
   "/mi-espacio",
+  "/entre-sesiones/app", // App propia: sin cabecera pública, CTAs flotantes ni pie general.
 ];
 
 function isAdministrativeRoute(pathname: string) {
