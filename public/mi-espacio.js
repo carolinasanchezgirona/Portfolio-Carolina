@@ -1,6 +1,9 @@
 (() => {
   "use strict";
 
+  // Only the installable app's internal route uses in-place authentication and app navigation.
+  // The existing public Mi espacio login continues opening a separate tab.
+  const insideEntreSesionesApp = window.location.pathname.startsWith("/entre-sesiones/app/espacio");
   const LEGACY_BETWEEN_KEY = "between_sessions_access_token";
   const FAVORITES_KEY = "wellness_favorites_v1";
   const COMPLETED_KEY = "wellness_completed_v1";
@@ -539,6 +542,14 @@
     navButtons.forEach(button => {
       button.classList.toggle("is-active", button.dataset.spaceView === name);
     });
+    if (insideEntreSesionesApp) {
+      const destination = { therapy: "terapia", wellness: "wellness", progress: "progreso", account: "configuracion" }[name] || "";
+      document.querySelectorAll(".esapp-bottom-nav a").forEach(link => {
+        const active = destination && new URL(link.href, window.location.origin).searchParams.get("vista") === destination;
+        if (active) link.setAttribute("aria-current", "page");
+        else link.removeAttribute("aria-current");
+      });
+    }
     if (name === "wellness") renderWellness();
     if (name === "progress") renderProgress();
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -1225,8 +1236,8 @@
     const email = String(loginEmail?.value || "").trim().toLowerCase();
     const password = String(loginPassword?.value || "");
     if (!email || !password) return;
-    // Reserve a tab from a direct user gesture so popup blockers don't suppress it.
-    const newTab = window.open("about:blank", "_blank");
+    // Preserve the portal's separate-tab behavior, except inside the installed app.
+    const newTab = insideEntreSesionesApp ? null : window.open("about:blank", "_blank");
     if (newTab) newTab.opener = null;
     setBusy(loginForm, true);
     setAccessMessage("Comprobando tus datos de acceso…");
@@ -1236,6 +1247,11 @@
       const response = await fetch("/api/patient-portal/session", { credentials: "include", cache: "no-store" });
       const session = await response.json().catch(() => ({}));
       if (!response.ok || !session.authenticated) throw new Error("No se ha podido confirmar la sesión.");
+      if (insideEntreSesionesApp) {
+        renderPatientPortal(session);
+        setAccessMessage("");
+        return;
+      }
       const requestedView = new URLSearchParams(window.location.search).get("vista");
       const allowedViews = ["terapia", "wellness", "progreso", "configuracion"];
       const url = allowedViews.includes(requestedView)
