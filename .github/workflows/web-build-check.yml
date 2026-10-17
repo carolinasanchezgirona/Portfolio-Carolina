@@ -130,6 +130,8 @@ jobs:
         run: |
           node --check public/mi-espacio.js
           node --check public/mi-espacio-prueba.js
+          node --check public/wellness-interactive.js
+          node --test tests/wellness-interactive.test.mjs
           grep -q 'id="space-login-form"' app/mi-espacio/page.tsx
           grep -q '/mi-espacio/?vista=panel' public/mi-espacio.js
           ! grep -q 'id="space-code-form"' app/mi-espacio/page.tsx
