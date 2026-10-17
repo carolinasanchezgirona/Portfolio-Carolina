@@ -853,22 +853,34 @@ async function updatePatientSubmission(req: Request) {
 async function verifyPortalPdfService(req: Request): Promise<boolean> {
   const authorization = req.headers.get("Authorization") || "";
   if (!/^Bearer [A-Za-z0-9._~-]{40,4096}$/.test(authorization)) return false;
+  const credential = authorization.slice("Bearer ".length);
+  // Legacy service role JWT issued for this project: exact, timing-safe-enough
+  // server-side comparison. The credential is never returned to the client.
   if (SERVICE_ROLE_KEY && authorization === "Bearer " + SERVICE_ROLE_KEY) return true;
-  if (!SUPABASE_URL || !ANON_KEY) return false;
-  try {
-    const verification = await fetch(SUPABASE_URL + "/auth/v1/admin/users?page=1&per_page=1", {
-      method: "GET",
-      cache: "no-store",
-      redirect: "manual",
-      headers: { apikey: ANON_KEY, Authorization: authorization },
-      signal: AbortSignal.timeout(5000),
-    });
-    // This endpoint is restricted to project-specific service-role tokens.
-    // Its response is discarded; no user details are returned or logged.
-    return verification.status === 200;
-  } catch {
-    return false;
+  if (!SUPABASE_URL) return false;
+
+  // Supabase's newer service keys and legacy JWTs are accepted by different
+  // API gateway configurations. Authenticate the credential independently
+  // against the restricted Auth Admin API, using the credential itself as
+  // the API key first; never trust an unverified JWT "role" claim.
+  const candidates = [credential, ...(ANON_KEY && ANON_KEY !== credential ? [ANON_KEY] : [])];
+  for (const apiKey of candidates) {
+    try {
+      const verification = await fetch(SUPABASE_URL + "/auth/v1/admin/users?page=1&per_page=1", {
+        method: "GET",
+        cache: "no-store",
+        redirect: "manual",
+        headers: { apikey: apiKey, Authorization: authorization },
+        signal: AbortSignal.timeout(5000),
+      });
+      // Only a verified project service-role credential can list Auth users.
+      // The body is never read, returned, logged or persisted.
+      if (verification.status === 200) return true;
+    } catch {
+      // Failure is never permission: try the other gateway configuration.
+    }
   }
+  return false;
 }
 
 async function renderAuthenticatedPortalPdf(req: Request): Promise<Response> {
