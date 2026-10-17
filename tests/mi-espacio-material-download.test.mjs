@@ -25,8 +25,10 @@ test("PDF renderer requires project-verified service role even after key rotatio
   assert.ok(auth && handler);
   assert.match(auth, /authorization === "Bearer " \+ SERVICE_ROLE_KEY/);
   assert.match(auth, /\/auth\/v1\/admin\/users\?page=1&per_page=1/);
-  assert.match(auth, /headers: \{ apikey: ANON_KEY, Authorization: authorization \}/);
-  assert.match(auth, /return verification\.status === 200/);
+  assert.match(auth, /const candidates = \[credential/);
+  assert.match(auth, /headers: \{ apikey: apiKey, Authorization: authorization \}/);
+  assert.match(auth, /if \(verification\.status === 200\) return true/);
+  assert.match(auth, /return false/);
   assert.match(handler, /if \(!await verifyPortalPdfService\(req\)\)/);
   assert.doesNotMatch(auth, /atob\(|JSON\.parse\(.*jwt|verify_jwt: false/);
   assert.match(edge, /Legacy bearer links are retired/);
@@ -38,7 +40,8 @@ test("patient PDF downloads use a protected first-party native link, not a synth
   assert.match(portal, /\/api\/patient-portal\/material-pdf\?material_id=/);
   assert.match(portal, /downloadLink\.href = patientMaterialDownloadUrl\(item\)/);
   assert.match(portal, /downloadLink\.download = "entre-sesiones\.pdf"/);
-  assert.match(portal, /downloadLink\.rel = "noopener noreferrer"/);
+  assert.doesNotMatch(portal, /downloadLink\.target = "_blank"/);
+  assert.match(portal, /downloadLink\.download = "entre-sesiones\.pdf"/);
   assert.doesNotMatch(portal, /URL\.createObjectURL\(blob\)/);
   assert.doesNotMatch(portal, /downloadPatientMaterial\(item, downloadButton, downloadStatus\)/);
 });
