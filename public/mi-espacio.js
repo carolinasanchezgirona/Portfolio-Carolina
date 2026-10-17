@@ -831,7 +831,9 @@
         status.textContent = error?.message || "No se ha podido guardar.";
       }
     } finally {
-      if (responseEpoch === portalSessionEpoch && state.portalAuthenticated && details?.isConnected) {
+      // Si falló un cierre de sesión, el formulario sigue perteneciendo a esta
+      // pantalla: debe poder reintentarse sin mostrar «guardado» por error.
+      if (state.portalAuthenticated && details?.isConnected && patientMaterials?.contains(details)) {
         buttons.forEach((node) => { node.disabled = false; });
         if (button) button.blur();
       }
@@ -1524,8 +1526,13 @@
       }
       if (!response.ok) throw new Error("logout_not_confirmed");
     } catch {
-      if (logoutEpoch === portalSessionEpoch && message) {
-        message.textContent = "No hemos podido cerrar la sesión en el servidor. Comprueba tu conexión y vuelve a intentarlo.";
+      if (logoutEpoch === portalSessionEpoch) {
+        if (message) message.textContent = "No hemos podido cerrar la sesión en el servidor. Comprueba tu conexión y vuelve a intentarlo.";
+        patientMaterials?.querySelectorAll(".space-patient-response-status").forEach(status => {
+          if (/^(Guardando|Compartiendo)/.test(status.textContent || "")) {
+            status.textContent = "El guardado no se ha podido confirmar en pantalla. Comprueba tus respuestas antes de intentarlo de nuevo.";
+          }
+        });
       }
       return;
     }
