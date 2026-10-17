@@ -56,5 +56,7 @@ test("existing clinical response save/share remains the only server sharing path
   assert.match(portalScript, /new Event\("patient-portal-view-ready"\)/);
   assert.match(portalScript, /fetch\("\/api\/patient-portal\/response"/);
   assert.match(portalScript, /draft\.addEventListener\("click", \(\) => savePatientMaterialResponse\(item, form, "draft"/);
-  assert.match(portalScript, /share\.addEventListener\("click", \(\) => savePatientMaterialResponse\(item, form, "share"/);
+  assert.match(portalScript, /share\.addEventListener\("click", \(\) => \{/);
+  assert.match(portalScript, /window\.confirm\("¿Compartir estas respuestas con Carolina\?/);
+  assert.match(portalScript, /void savePatientMaterialResponse\(item, form, "share"/);
 });
