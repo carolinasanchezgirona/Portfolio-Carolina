@@ -7,7 +7,7 @@
   "start_url": "/entre-sesiones/app/",
   "scope": "/entre-sesiones/app/",
   "display": "standalone",
-  "background_color": "#F7FAFC",
+  "background_color": "#FCFBF7",
   "theme_color": "#173A5E",
   "icons": [
     {
@@ -17,7 +17,7 @@
       "purpose": "any"
     },
     {
-      "src": "/entre-sesiones-icon-es.svg",
+      "src": "/entre-sesiones-icon-maskable.svg",
       "sizes": "any",
       "type": "image/svg+xml",
       "purpose": "maskable"
