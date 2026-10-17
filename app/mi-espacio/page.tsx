@@ -299,22 +299,33 @@ export default function MiEspacioPage() {
 
             <section className="wellness-quick-section" aria-labelledby="wellness-quick-heading">
               <div className="wellness-section-title">
-                <div><p className="space-eyebrow">SIN COMPLICARTE</p><h3 id="wellness-quick-heading">Un comienzo de cinco minutos</h3></div>
+                <div>
+                  <p className="space-eyebrow">SIN COMPLICARTE</p>
+                  <h3 id="wellness-quick-heading">Empieza con algo pequeño</h3>
+                  <p className="wellness-quick-intro">Elige solo una práctica según lo que necesites hoy. Son ejercicios guiados de 3 o 4 minutos que puedes hacer aquí, a tu ritmo y sin tener que conseguir ningún resultado concreto.</p>
+                </div>
               </div>
               <div className="wellness-quick-grid">
                 <button type="button" data-wellness-start="aterrizar-presente">
                   <span className="wellness-quick-icon" aria-hidden="true">01</span>
-                  <strong>Volver al presente</strong><small>3 min · atención y entorno</small><span className="wellness-quick-arrow" aria-hidden="true">↗</span>
+                  <strong>Volver al presente</strong>
+                  <span className="wellness-quick-description">Si tienes demasiadas cosas en la cabeza, dirige la atención a lo que ves, oyes y notas a tu alrededor.</span>
+                  <span className="wellness-quick-footer"><small>3 min · Atención al entorno</small><span className="wellness-quick-go">Empezar <span aria-hidden="true">↗</span></span></span>
                 </button>
                 <button type="button" data-wellness-start="primer-paso">
                   <span className="wellness-quick-icon" aria-hidden="true">02</span>
-                  <strong>Solo el primer paso</strong><small>3 min · desbloquear una tarea</small><span className="wellness-quick-arrow" aria-hidden="true">↗</span>
+                  <strong>Solo el primer paso</strong>
+                  <span className="wellness-quick-description">Si una tarea te bloquea, descubre cómo reducirla a una primera acción pequeña y concreta.</span>
+                  <span className="wellness-quick-footer"><small>3 min · Empezar una tarea</small><span className="wellness-quick-go">Empezar <span aria-hidden="true">↗</span></span></span>
                 </button>
                 <button type="button" data-wellness-start="descanso-sin-culpa">
                   <span className="wellness-quick-icon" aria-hidden="true">03</span>
-                  <strong>Descansar sin negociar</strong><small>4 min · pausa sin culpa</small><span className="wellness-quick-arrow" aria-hidden="true">↗</span>
+                  <strong>Descansar sin negociar</strong>
+                  <span className="wellness-quick-description">Si te cuesta parar sin sentir culpa, prueba a elegir una pausa sin tener que justificarla ni aprovecharla.</span>
+                  <span className="wellness-quick-footer"><small>4 min · Descanso sin exigencia</small><span className="wellness-quick-go">Empezar <span aria-hidden="true">↗</span></span></span>
                 </button>
               </div>
+              <p className="wellness-quick-note">No hace falta hacerlas todas. Puedes detenerte o cambiar de práctica cuando quieras.</p>
             </section>
 
             <section className="wellness-interactive-section" aria-labelledby="wellness-interactive-heading">
