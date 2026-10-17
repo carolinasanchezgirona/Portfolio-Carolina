@@ -1973,8 +1973,13 @@
       state.search = "";
       const search = document.getElementById("wellness-search");
       if (search) search.value = "";
+      const previousView = panels.find(panel => !panel.hidden)?.dataset.spacePanel;
       navigateToView("wellness");
-      setWellnessTab("explorar", { preserveFilters: true, scroll: true, historyMode: "replace" });
+      // Desde Hoy se vuelve a Hoy; dentro de Wellness, Atrás regresa a Para hoy.
+      setWellnessTab("explorar", {
+        preserveFilters: true, scroll: true,
+        historyMode: previousView === "wellness" ? "push" : "replace"
+      });
     });
   });
 
