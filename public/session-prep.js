@@ -29,10 +29,6 @@
   const limit = 12000;
   let exportedSummary = "";
 
-  function portalAvailable() {
-    return !shell.hidden && !document.getElementById("space-access")?.hidden;
-  }
-
   // Authentication is not inferred from a URL or the existence of DOM nodes.
   // The portal only exposes the shell after authenticating its server session.
   function patientIsInPortal() {
@@ -190,5 +186,11 @@
     refreshTargets();
   });
 
-  if (patientIsInPortal()) refreshTargets();
+  if (patientIsInPortal()) {
+    refreshTargets();
+    if (window.location.hash === "#space-session-prep") {
+      root.scrollIntoView({ block: "start", behavior: "auto" });
+      root.focus({ preventScroll: true });
+    }
+  }
 })();
