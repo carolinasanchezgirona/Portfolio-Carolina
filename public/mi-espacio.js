@@ -1174,6 +1174,8 @@
 
       const responseStatus = document.createElement("div");
       responseStatus.className = "space-patient-response-status";
+      responseStatus.setAttribute("role", "status");
+      responseStatus.setAttribute("aria-live", "polite");
       if (item.patient_response_status === "shared") {
         responseStatus.classList.add("shared");
         responseStatus.textContent = "Respuestas compartidas con Carolina.";
@@ -1184,7 +1186,10 @@
       }
 
       draft.addEventListener("click", () => savePatientMaterialResponse(item, form, "draft", responseStatus));
-      share.addEventListener("click", () => savePatientMaterialResponse(item, form, "share", responseStatus));
+      share.addEventListener("click", () => {
+        if (!window.confirm("¿Compartir estas respuestas con Carolina? Si prefieres conservarlas solo para ti, puedes guardar un borrador.")) return;
+        void savePatientMaterialResponse(item, form, "share", responseStatus);
+      });
       form.append(actions, responseStatus);
       responseBox.append(heading, explainer, form);
       body.append(responseBox);
