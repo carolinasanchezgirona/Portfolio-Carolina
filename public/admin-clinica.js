@@ -903,7 +903,7 @@
         dateInput.type = "date";
         dateInput.className = "clinic-material-plan-date";
         dateInput.setAttribute("aria-label", "Fecha prevista de revisión de " + (item.title || "actividad"));
-        dateInput.value = typeof item.review_due_at === "string" && /^\\d{4}-\\d{2}-\\d{2}/.test(item.review_due_at)
+        dateInput.value = typeof item.review_due_at === "string" && /^\d{4}-\d{2}-\d{2}/.test(item.review_due_at)
           ? item.review_due_at.slice(0, 10) : "";
         label.append(dateInput);
         const savePlan = create("button", "clinic-secondary", "Guardar fecha");
@@ -917,7 +917,7 @@
             feedback.textContent = "Abre la ficha de este paciente para actualizar su planificación.";
             return;
           }
-          if (value && (!/^\\d{4}-\\d{2}-\\d{2}$/.test(value) || Number.isNaN(new Date(value + "T12:00:00Z").getTime()))) {
+          if (value && (!/^\d{4}-\d{2}-\d{2}$/.test(value) || Number.isNaN(new Date(value + "T12:00:00Z").getTime()))) {
             feedback.textContent = "Introduce una fecha válida.";
             return;
           }
