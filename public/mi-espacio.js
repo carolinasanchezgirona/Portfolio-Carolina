@@ -1450,11 +1450,17 @@
     setAccessMessage("Comprobando tus datos de acceso…");
     try {
       await patientAuthRequest("password-login", { email, password });
-      if (loginEpoch !== portalSessionEpoch) return;
+      if (loginEpoch !== portalSessionEpoch) {
+        if (newTab && !newTab.closed) newTab.close();
+        return;
+      }
       if (loginPassword) loginPassword.value = "";
       const response = await fetch("/api/patient-portal/session", { credentials: "include", cache: "no-store" });
       const session = await response.json().catch(() => ({}));
-      if (loginEpoch !== portalSessionEpoch) return;
+      if (loginEpoch !== portalSessionEpoch) {
+        if (newTab && !newTab.closed) newTab.close();
+        return;
+      }
       if (!response.ok || !session.authenticated) throw new Error("No se ha podido confirmar la sesión.");
       if (insideEntreSesionesApp) {
         renderPatientPortal(session);
