@@ -1091,8 +1091,13 @@
     printButton.className = "space-secondary space-material-print-button";
     printButton.textContent = "Imprimir / Guardar como PDF";
     printButton.setAttribute("aria-label", "Imprimir o guardar como PDF: " + String(item.title || "Material"));
+    let openingPrintDialog = false;
     printButton.addEventListener("click", () => {
-      if (!state.portalAuthenticated || !details.isConnected || !patientMaterials?.contains(details)) return;
+      if (!state.portalAuthenticated || !details.isConnected || !patientMaterials?.contains(details) || openingPrintDialog) return;
+      // Algunos navegadores y pruebas móviles repiten el evento click.
+      // Evitamos abrir dos cuadros de impresión por una sola pulsación.
+      openingPrintDialog = true;
+      window.setTimeout(() => { openingPrintDialog = false; }, 1400);
       // La persona realiza la acción; no se almacenan nuevas respuestas ni se envían a otro servicio.
       document.querySelectorAll(".space-patient-material[data-print-material]").forEach(node => {
         node.removeAttribute("data-print-material");
