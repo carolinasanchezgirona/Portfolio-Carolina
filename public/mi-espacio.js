@@ -532,6 +532,7 @@
   }
 
   function showView(name) {
+    if (name !== "wellness") document.dispatchEvent(new Event("wellness:interactive-reset"));
     panels.forEach(panel => {
       panel.hidden = panel.dataset.spacePanel !== name;
     });
@@ -561,6 +562,7 @@
   }
 
   function showAccessGate() {
+    document.dispatchEvent(new Event("wellness:interactive-reset"));
     if (accessGate) accessGate.hidden = false;
     if (shell) shell.hidden = true;
     if (!passwordTokenHash) showAccessForm("login");
