@@ -1037,7 +1037,8 @@
 
     window.dispatchEvent(new Event("patient-portal-session-ready"));
     void loadPatientWellnessStorage();
-    openPortal("today");
+    const requestedView = new URLSearchParams(window.location.search).get("vista");
+    openPortal(requestedView === "terapia" ? "therapy" : "today");
   }
 
   async function loadPatientSession() {
@@ -1144,7 +1145,8 @@
       const response = await fetch("/api/patient-portal/session", { credentials: "include", cache: "no-store" });
       const session = await response.json().catch(() => ({}));
       if (!response.ok || !session.authenticated) throw new Error("No se ha podido confirmar la sesión.");
-      const url = "/mi-espacio/?vista=panel";
+      const url = new URLSearchParams(window.location.search).get("vista") === "terapia"
+        ? "/mi-espacio/?vista=terapia" : "/mi-espacio/?vista=panel";
       if (newTab && !newTab.closed) {
         newTab.location.replace(url);
         setAccessMessage("Sesión iniciada. Mi espacio se ha abierto en otra pestaña.");
@@ -1604,7 +1606,9 @@
     showAccessForm("login");
   }));
   openPanelButton?.addEventListener("click", () => {
-    window.open("/mi-espacio/?vista=panel", "_blank", "noopener,noreferrer");
+    const url = new URLSearchParams(window.location.search).get("vista") === "terapia"
+      ? "/mi-espacio/?vista=terapia" : "/mi-espacio/?vista=panel";
+    window.open(url, "_blank", "noopener,noreferrer");
   });
 
   document.querySelectorAll("[data-go-therapy]").forEach((button) => {
@@ -1623,7 +1627,7 @@
   renderProgress();
   const configuringPassword = verifySetupLinkFromUrl();
   if (!configuringPassword) {
-    if (new URLSearchParams(window.location.search).get("vista") === "panel") {
+    if (["panel", "terapia"].includes(new URLSearchParams(window.location.search).get("vista"))) {
       loadPatientSession();
     } else {
       showAccessGate();
