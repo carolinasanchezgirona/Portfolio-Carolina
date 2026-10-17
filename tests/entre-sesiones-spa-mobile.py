@@ -57,6 +57,7 @@ body { margin:0; font-family:system-ui,sans-serif; }
 <label for="space-reading-simple"><input id="space-reading-simple" type="checkbox">Lectura tranquila</label>
 <label for="space-reading-motion"><input id="space-reading-motion" type="checkbox">Menos movimiento</label>
 <button id="space-logout" type="button">Cerrar sesión</button>
+<p id="space-clear-message" role="status"></p>
 </section>
 </div>
 <dialog id="wellness-dialog"><button id="wellness-dialog-close">Cerrar</button>
@@ -110,6 +111,13 @@ def test_authenticated(page, width):
       document.querySelector('#space-patient-materials').textContent = 'EXPEDIENTE DE PRUEBA 123';
       document.querySelector('#space-shared-files').textContent = 'ARCHIVO FICTICIO 123';
     }""")
+    def fail_logout(route):
+        route.fulfill(status=503,content_type="application/json",body='{"error":"temporal"}')
+    page.route("**/api/patient-portal/logout", fail_logout)
+    page.get_by_role("button", name="Cerrar sesión").click()
+    page.get_by_text("No hemos podido cerrar la sesión en el servidor").wait_for()
+    assert_true(page.locator("#space-shell").is_visible(), "Failed logout falsely locked or claimed success")
+    page.unroute("**/api/patient-portal/logout", fail_logout)
     page.get_by_role("button", name="Cerrar sesión").click()
     page.locator("#space-access:not([hidden])").wait_for()
     assert_true(not page.locator("#space-patient-materials").inner_text(), "Clinical DOM not cleared after logout")
