@@ -6,6 +6,7 @@ real credentials or production API requests are used.
 """
 from __future__ import annotations
 from pathlib import Path
+import shutil
 from playwright.sync_api import sync_playwright
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -71,7 +72,6 @@ def test_authenticated(page, width):
     assert_true(not page.locator(".esapp-bottom-nav").get_attribute("hidden"), "Authenticated bottom nav remains hidden")
     assert_true(page.locator('[data-space-panel="wellness"]').is_visible(), "Initial Wellness deep link failed")
     assert_true(page.locator(".esapp-bottom-nav a[aria-current='page']").inner_text() == "Wellness", "Wellness not active")
-    doc = page.evaluate("document")
     page.locator(".esapp-bottom-nav a", has_text="Mi terapia").click()
     assert_true(page.locator('[data-space-panel="therapy"]').is_visible(), "Therapy did not open")
     assert_true(page.url.endswith("?vista=terapia"), "PWA URL not updated")
@@ -96,7 +96,12 @@ def test_authenticated(page, width):
     print(f"PASS SPA {width}px: protected navigation, URL, Android Back, preserved draft, reset, active tabs")
 
 with sync_playwright() as p:
-    browser = p.chromium.launch(headless=True,args=["--no-sandbox","--disable-dev-shm-usage"])
+    options = {"headless": True, "args": ["--no-sandbox","--disable-dev-shm-usage"]}
+    installed = (shutil.which("google-chrome") or shutil.which("google-chrome-stable")
+                 or shutil.which("chromium") or shutil.which("chromium-browser"))
+    if installed:
+        options["executable_path"] = installed
+    browser = p.chromium.launch(**options)
     for width in (360,390):
         context = browser.new_context(
             viewport={"width":width,"height":780},is_mobile=True,has_touch=True,
