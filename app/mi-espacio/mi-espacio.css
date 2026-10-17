@@ -904,3 +904,33 @@
  .space-page .space-session-prep-preview{padding:15px;border-radius:15px}
  .space-page .space-session-prep-transfer>button{width:100%}
 }
+
+
+/* Entre Sesiones · accesibilidad cognitiva y tipográfica, sin tocar datos clínicos. */
+.space-page .space-reading-preferences{margin:0 0 25px;padding:clamp(19px,3vw,28px);background:linear-gradient(125deg,#eaf6fc,#fff 72%);border:1px solid #cfe5f0;border-radius:23px;box-shadow:0 10px 26px rgba(16,56,87,.035)}
+.space-page .space-reading-preferences h3{font:550 clamp(1.65rem,3vw,2.2rem)/1.15 var(--font-newsreader),Georgia,serif;letter-spacing:-.035em;color:#173a5e;margin:7px 0 8px}
+.space-page .space-reading-preferences p:not(.space-eyebrow){font-size:.87rem;line-height:1.65;color:#4d7084;max-width:770px;margin:0 0 18px}
+.space-page .space-reading-fields{display:grid;gap:12px;grid-template-columns:repeat(2,minmax(0,1fr))}
+.space-page .space-reading-fields>label:first-child{grid-column:1/-1;display:grid;gap:9px;max-width:350px;font-size:.88rem;font-weight:800;color:#2f5874}
+.space-page .space-reading-fields select{min-height:46px;width:100%;border:1px solid #bcd5e3;border-radius:12px;padding:10px 14px;background:#fff;color:#1b4c6a;font:inherit;font-size:1rem}
+.space-page .space-reading-checkbox{display:flex;gap:12px;align-items:start;background:#fff;border:1px solid #d8e8ef;border-radius:15px;padding:15px;cursor:pointer}
+.space-page .space-reading-checkbox input{width:21px;height:21px;flex-shrink:0;accent-color:#245c77;margin:1px 0 0}
+.space-page .space-reading-checkbox span{display:grid;gap:5px}
+.space-page .space-reading-checkbox strong{font-size:.88rem;color:#173a5e}
+.space-page .space-reading-checkbox small{font-size:.77rem;line-height:1.55;color:#5e798b}
+.space-page .space-reading-preferences #space-reading-feedback{margin:12px 0 0}
+.space-page[data-reading-size="large"] :is(.space-view>*, .space-patient-material-body, .wellness-dialog-inner){line-height:1.8}
+.space-page[data-reading-size="large"] :is(.space-view p,.space-view li,.space-view label,.space-view button,.space-view textarea,.space-view input,.space-view select,.wellness-dialog-inner p,.wellness-dialog-inner li){font-size:max(1rem,1.05em)}
+.space-page[data-reading-size="extra"] :is(.space-view>*, .space-patient-material-body, .wellness-dialog-inner){line-height:1.95}
+.space-page[data-reading-size="extra"] :is(.space-view p,.space-view li,.space-view label,.space-view button,.space-view textarea,.space-view input,.space-view select,.wellness-dialog-inner p,.wellness-dialog-inner li){font-size:max(1.12rem,1.13em)}
+.space-page.space-reading-simple :is(.space-view p,.space-view li,.space-patient-material-body,.wellness-dialog-inner){line-height:1.85}
+.space-page.space-reading-simple :is(.space-hero,.space-session-prep-head,.space-patient-response){max-width:70ch}
+.space-page.space-reading-simple :is(.space-needs,.space-wellness-list){grid-template-columns:repeat(2,minmax(0,1fr))}
+.space-page.space-reading-quiet *, .space-page.space-reading-quiet *::before, .space-page.space-reading-quiet *::after{animation-duration:0.01ms!important;animation-iteration-count:1!important;transition-duration:0.01ms!important;scroll-behavior:auto!important}
+@media(max-width:720px){
+ .space-page .space-reading-fields{grid-template-columns:minmax(0,1fr)}
+ .space-page.space-reading-simple :is(.space-needs,.space-wellness-list){grid-template-columns:minmax(0,1fr)}
+}
+@media(prefers-reduced-motion:reduce){
+ .space-page :is(.space-reading-preferences,.space-needs button){animation:none!important;transition:none!important}
+}
