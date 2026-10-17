@@ -381,7 +381,7 @@ export default function MiEspacioPage() {
       </aside>
 
       <Script src="/patient-video.js?v=20261009-1" strategy="afterInteractive" />
-      <Script src="/mi-espacio.js?v=20261017-entre-sesiones-1" strategy="afterInteractive" />
+      <Script src="/mi-espacio.js?v=20261017-wellness-experience-1" strategy="afterInteractive" />
     </main>
   );
 }
