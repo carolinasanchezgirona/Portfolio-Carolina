@@ -964,3 +964,18 @@
 .space-page .space-session-check-help a{color:#1d617e;text-decoration:underline;text-underline-offset:3px}
 @keyframes space-access-wait{to{transform:rotate(360deg)}}
 @media(prefers-reduced-motion:reduce){.space-page .space-session-check-icon{animation:none;border-top-color:#2b6681}}
+
+
+/* Authentication phases are server-neutral: no login flicker while cookie validation runs. */
+.space-page[data-portal-phase="checking"] .space-access,
+.space-page[data-portal-phase="checking"] .space-shell,
+.space-page[data-portal-phase="signed-out"] .space-shell{
+  display:none!important;
+}
+.space-page[data-portal-phase="authenticated"] .space-session-check,
+.space-page[data-portal-phase="authenticated"] .space-access,
+.space-page[data-portal-phase="signed-out"] .space-session-check{
+  display:none!important;
+}
+.space-page[data-portal-phase="authenticated"] .space-shell:not([hidden]){display:grid}
+@media(max-width:760px){.esapp-portal-app .space-page[data-portal-phase="authenticated"] .space-shell:not([hidden]){display:block}}
