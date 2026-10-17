@@ -26,6 +26,7 @@
       <article data-dashboard-card="last-session"><span>Última sesión</span><strong>—</strong><small></small></article>
       <article data-dashboard-card="goals"><span>Objetivos activos</span><strong>0</strong><small></small></article>
       <article data-dashboard-card="exercises"><span>Ejercicios pendientes</span><strong>0</strong><small></small></article>
+      <article data-dashboard-card="shared"><span>Respuestas compartidas</span><strong>0</strong><small></small></article>
       <article data-dashboard-card="scale"><span>Última escala</span><strong>—</strong><small></small></article>
       <article data-dashboard-card="reports"><span>Informes en borrador</span><strong>0</strong><small></small></article>
     </div>
@@ -91,7 +92,7 @@
         get(`appointment_bookings?select=id,starts_at,status,service_code&clinical_patient_id=eq.${encodeURIComponent(patientId)}&starts_at=gte.${encodeURIComponent(now)}&status=not.in.(cancelled,canceled)&order=starts_at.asc&limit=1`),
         get(`clinical_sessions?select=id,session_date,session_number,status,approved_at&patient_id=eq.${encodeURIComponent(patientId)}&status=eq.approved&order=session_date.desc&limit=1`),
         get(`clinical_goals?select=id,title,status,priority,last_reviewed_at&patient_id=eq.${encodeURIComponent(patientId)}&order=created_at.asc`),
-        get(`clinical_exercise_assignments?select=id,title,status,email_status,review_due_at,reviewed_at,assigned_at&patient_id=eq.${encodeURIComponent(patientId)}&order=assigned_at.desc`),
+        get(`clinical_exercise_assignments?select=id,title,status,email_status,review_due_at,reviewed_at,assigned_at,patient_response_status,patient_response_shared_at&patient_id=eq.${encodeURIComponent(patientId)}&order=assigned_at.desc`),
         get(`clinical_scale_measurements?select=id,instrument,measured_at,total_score,interpretation&patient_id=eq.${encodeURIComponent(patientId)}&order=measured_at.desc&limit=1`),
         get(`clinical_reports?select=id,title,status,updated_at&patient_id=eq.${encodeURIComponent(patientId)}&status=eq.draft&order=updated_at.desc`),
       ]);
@@ -109,6 +110,12 @@
       const overdueExercises = pendingExercises.filter(e => e.review_due_at && new Date(e.review_due_at).getTime() < Date.now());
       setCard("exercises", String(pendingExercises.length), overdueExercises.length ? `${overdueExercises.length} pendientes de revisión` : (pendingExercises[0]?.title || "Sin pendientes"), overdueExercises.length > 0);
 
+      // Solo se cuentan respuestas que el paciente decidió compartir.
+      // Los borradores y el contenido de sus respuestas no se solicitan ni muestran aquí.
+      const sharedResponses = exercises.filter(e => e.patient_response_status === "shared" && !e.revoked_at);
+      setCard("shared", String(sharedResponses.length),
+        sharedResponses.length ? "Abrir materiales para revisar" : "Sin respuestas nuevas", sharedResponses.length > 0);
+
       const scale = scales[0];
       const scaleValue = scale ? `${scale.instrument}${scale.total_score !== null && scale.total_score !== undefined ? ` · ${scale.total_score}` : ""}` : "Sin mediciones";
       setCard("scale", scaleValue, scale ? dateOnly(scale.measured_at) : "");
@@ -118,6 +125,7 @@
       const notices = [];
       if (!next) notices.push("No hay próxima cita programada.");
       if (overdueExercises.length) notices.push(`${overdueExercises.length} ejercicio(s) tienen revisión pendiente.`);
+      if (sharedResponses.length) notices.push(`${sharedResponses.length} ejercicio(s) tienen respuestas compartidas para revisar.`);
       if (reports.length) notices.push(`${reports.length} informe(s) siguen en borrador.`);
       if (!activeGoals.length) notices.push("No hay objetivos terapéuticos activos registrados.");
       if (notices.length) {
