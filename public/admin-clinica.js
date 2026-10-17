@@ -892,6 +892,74 @@
         actions.append(revoke);
       }
 
+      // Reutiliza la fecha de revisión existente; no crea una nueva copia clínica.
+      // Solo personal autenticado a través de RLS puede modificar esta asignación.
+      if (!item.revoked_at && ["sent", "assigned"].includes(item.status)) {
+        const planning = create("details", "clinic-material-planning");
+        const planningTitle = create("summary", "", "Planificar revisión");
+        const controls = create("div", "clinic-material-planning-controls");
+        const label = create("label", "", "Fecha prevista de revisión");
+        const dateInput = document.createElement("input");
+        dateInput.type = "date";
+        dateInput.className = "clinic-material-plan-date";
+        dateInput.setAttribute("aria-label", "Fecha prevista de revisión de " + (item.title || "actividad"));
+        dateInput.value = typeof item.review_due_at === "string" && /^\\d{4}-\\d{2}-\\d{2}/.test(item.review_due_at)
+          ? item.review_due_at.slice(0, 10) : "";
+        label.append(dateInput);
+        const savePlan = create("button", "clinic-secondary", "Guardar fecha");
+        savePlan.type = "button";
+        const clearPlan = create("button", "clinic-text", "Sin fecha");
+        clearPlan.type = "button";
+        const feedback = create("p", "clinic-material-plan-feedback");
+        feedback.setAttribute("role", "status");
+        const persistPlan = async (value) => {
+          if (!currentPatient || currentPatient.id !== item.patient_id || !item.id) {
+            feedback.textContent = "Abre la ficha de este paciente para actualizar su planificación.";
+            return;
+          }
+          if (value && (!/^\\d{4}-\\d{2}-\\d{2}$/.test(value) || Number.isNaN(new Date(value + "T12:00:00Z").getTime()))) {
+            feedback.textContent = "Introduce una fecha válida.";
+            return;
+          }
+          savePlan.disabled = true;
+          clearPlan.disabled = true;
+          dateInput.disabled = true;
+          feedback.textContent = "Guardando revisión…";
+          try {
+            const nextDate = value ? value + "T12:00:00.000Z" : null;
+            const rows = await rest("clinical_exercise_assignments?id=eq." +
+              encodeURIComponent(item.id) + "&patient_id=eq." +
+              encodeURIComponent(currentPatient.id) + "&select=id,patient_id,review_due_at", {
+              method: "PATCH",
+              headers: { Prefer: "return=representation" },
+              body: JSON.stringify({ review_due_at: nextDate, updated_at: new Date().toISOString() })
+            });
+            const updated = Array.isArray(rows) ? rows[0] : null;
+            if (!updated || updated.id !== item.id || updated.patient_id !== currentPatient.id) {
+              throw new Error("La fecha no se ha actualizado. Vuelve a comprobar el ejercicio.");
+            }
+            exerciseAssignments = exerciseAssignments.map(entry => entry.id === item.id
+              ? { ...entry, review_due_at: updated.review_due_at } : entry);
+            renderExercises(currentPatient);
+            renderPending();
+            window.dispatchEvent(new Event("clinic-assignment-plan-updated"));
+            els.patientMessage.textContent = value
+              ? "Fecha de revisión guardada. Aparecerá en el material del paciente."
+              : "Fecha de revisión retirada.";
+          } catch (error) {
+            feedback.textContent = error?.message || "No se pudo guardar la fecha.";
+            savePlan.disabled = false;
+            clearPlan.disabled = false;
+            dateInput.disabled = false;
+          }
+        };
+        savePlan.addEventListener("click", () => { void persistPlan(dateInput.value); });
+        clearPlan.addEventListener("click", () => { void persistPlan(""); });
+        controls.append(label, savePlan, clearPlan, feedback);
+        planning.append(planningTitle, controls);
+        actions.append(planning);
+      }
+
       if (["sent", "assigned"].includes(item.status)) {
         const reviewed = create("button", "clinic-text", "Marcar revisado");
         reviewed.type = "button";
