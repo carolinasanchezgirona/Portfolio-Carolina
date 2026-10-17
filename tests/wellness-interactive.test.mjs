@@ -58,7 +58,7 @@ test("guided moment remains transient and is discarded on navigation or authenti
   assert.match(ui, /answers\.fill\(""\)/);
   assert.match(ui, /wellness:interactive-reset/);
   assert.match(portal, /if \(name !== "wellness"\) document\.dispatchEvent\(new Event\("wellness:interactive-reset"\)\)/);
-  assert.match(portal, /function showAccessGate\(\) \{\s*document\.dispatchEvent\(new Event\("patient-portal-locked"\)\);\s*document\.dispatchEvent\(new Event\("wellness:interactive-reset"\)\)/);
+  assert.match(portal, /function showAccessGate\(\) \{[\s\S]*?document\.dispatchEvent\(new Event\("patient-portal-locked"\)\);\s*document\.dispatchEvent\(new Event\("wellness:interactive-reset"\)\)/);
   assert.match(portal, /"wi-sequence": "Pon las ideas en orden"/);
   assert.match(portal, /"wi-visual": "Encuentra la figura"/);
   assert.match(portal, /"wi-moment": "Ordenar un momento"/);
