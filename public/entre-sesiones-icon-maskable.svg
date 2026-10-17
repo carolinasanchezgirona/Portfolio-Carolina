@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title desc">
+<title id="title">Entre Sesiones</title>
+<desc id="desc">Dos figuras geométricas redondeadas superpuestas en azul profundo y coral, con intersección marfil.</desc>
+<defs>
+<linearGradient id="azul" x1="0" y1="0" x2=".85" y2="1" objectBoundingBox="true"><stop offset="0" stop-color="#204D70"/><stop offset="1" stop-color="#10304E"/></linearGradient>
+<linearGradient id="coral" x1=".15" y1="0" x2=".85" y2="1" objectBoundingBox="true"><stop offset="0" stop-color="#F7A68E"/><stop offset="1" stop-color="#E78368"/></linearGradient>
+<linearGradient id="marfil" x1="0" y1="0" x2="1" y2="1" objectBoundingBox="true"><stop offset="0" stop-color="#FEF8EF"/><stop offset="1" stop-color="#F2DBC9"/></linearGradient>
+</defs>
+<rect width="512" height="512" fill="#FCFBF7"/>
+<g transform="translate(85 85) scale(.667)">
+<path d="M157 62H254c54 0 96 41 96 97v9c-110 0-195 74-195 171h-34c-34 0-61-28-61-62V161c0-55 42-99 97-99Z" fill="url(#azul)"/>
+<path d="M350 168h4c55 0 98 44 98 98v88c0 54-43 97-97 97h-89c-38 0-59-22-62-54-4-38 15-65 57-85 58-28 90-66 89-144Z" fill="url(#coral)"/>
+<path d="M350 168c-109-1-195 73-195 171 38-3 75-15 106-27 54-22 90-66 89-144Z" fill="url(#marfil)"/>
+<path d="M155 339c29-2 76-16 106-27-40 24-61 51-57 85 3 28 20 45 62 54-65-1-111-51-111-112Z" fill="#F6E8DA"/>
+</g>
+</svg>
