@@ -49,7 +49,7 @@ test("logout clears data from DOM and bfcache cannot restore stale clinical view
   assert.match(portal,/state\.portalData = null/);
   assert.match(portal,/state\.storageScopeVersion\+\+/);
   assert.match(portal,/window\.addEventListener\("pageshow"/);
-  assert.match(portal,/if \(!event\.persisted\) return;\s*showAccessGate\(\);\s*void loadPatientSession\(\)/);
+  assert.match(portal,/if \(!event\.persisted\) return;\s*showAccessGate\(true\);\s*void loadPatientSession\(\)/);
   assert.match(mood,/document\.addEventListener\("patient-portal-locked", locked\)/);
   assert.match(mood,/document\.removeEventListener\("patient-portal-locked", locked\)/);
   assert.match(portal,/new Event\("patient-local-wellness-cleared"\)/);
