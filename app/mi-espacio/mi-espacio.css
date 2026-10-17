@@ -978,4 +978,4 @@
   display:none!important;
 }
 .space-page[data-portal-phase="authenticated"] .space-shell:not([hidden]){display:grid}
-@media(max-width:760px){.esapp-portal-app .space-page[data-portal-phase="authenticated"] .space-shell:not([hidden]){display:block}}
+@media(max-width:760px){.space-page[data-portal-phase="authenticated"] .space-shell:not([hidden]){display:block}}
