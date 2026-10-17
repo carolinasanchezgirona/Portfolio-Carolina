@@ -453,6 +453,13 @@
     node("p", "wi-data-note", "Las anotaciones y elecciones se descartan al cerrar esta práctica. Solo se registra su nombre y fecha si pulsas «Terminar y registrar».", workspace);
     workspace.scrollIntoView({ behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "nearest" });
   }
+  document.addEventListener("wellness:interactive-reset", () => {
+    selected = null;
+    workspace.replaceChildren();
+    workspace.hidden = true;
+    toolButtons.forEach(item => item.setAttribute("aria-pressed", "false"));
+  });
+
   tools.forEach(tool => {
     const card = node("article", "wi-card", null, cards);
     node("span", "wi-index", tool.number, card);
