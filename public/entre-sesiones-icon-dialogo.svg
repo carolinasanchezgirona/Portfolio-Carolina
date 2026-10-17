@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="t d">
+<title id="t">Entre Sesiones · Diálogo</title><desc id="d">Dos bocadillos de conversación simbolizan continuidad entre encuentros.</desc>
+<rect width="512" height="512" rx="116" fill="#173A5E"/>
+<path d="M145 161h188c27 0 49 22 49 49v102c0 27-22 49-49 49h-95l-68 43v-43h-25c-27 0-49-22-49-49V210c0-27 22-49 49-49z" fill="#FAF9F5"/>
+<path d="M181 236h131M181 286h83" stroke="#173A5E" stroke-width="22" stroke-linecap="round"/>
+<circle cx="361" cy="340" r="40" fill="#08A6A0"/><path d="m344 340 12 12 25-27" fill="none" stroke="#FFFFFF" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
