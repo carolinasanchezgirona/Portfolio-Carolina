@@ -12,6 +12,7 @@ from playwright.sync_api import sync_playwright
 ROOT = Path(__file__).resolve().parents[1]
 JS = (ROOT / "public/mi-espacio.js").read_text(encoding="utf-8")
 BASE = "https://entre-sesiones-navigation.test"
+FAKE_ID = "aabbccdd-0011-4222-8333-445566778899"
 APP = "/entre-sesiones/app/espacio/"
 HTML = """<!doctype html><html lang="es"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
@@ -84,6 +85,24 @@ def test_authenticated(page, width):
     assert_true(page.locator('[data-space-panel="therapy"]').is_visible(), "Therapy did not open")
     assert_true(page.url.endswith("?vista=terapia"), "PWA URL not updated")
     assert_true(page.evaluate("window.__wellnessResets") >= 1, "Wellness ephemeral data not reset")
+    material = page.locator(".space-patient-material")
+    assert_true(material.count() == 1, "Assigned synthetic exercise was not rendered")
+    assert_true(material.get_attribute("id") == "space-material-" + FAKE_ID, "Material anchor mismatch")
+    page.evaluate("""(id) => {
+      history.replaceState(null, "", location.pathname + location.search + "#space-material-" + id);
+      window.dispatchEvent(new Event("hashchange"));
+    }""", FAKE_ID)
+    assert_true(material.get_attribute("open") is not None, "Deep link failed to expand assigned exercise")
+    assert_true(page.evaluate("document.activeElement.tagName === 'SUMMARY'"), "Deep link did not focus its exercise")
+    response = material.locator("[data-response-record]")
+    response.fill("Borrador de prueba, todavía sin guardar")
+    assert_true("SIN guardar" in material.locator(".space-patient-response-status").inner_text(), "Missing dirty indicator")
+    prevented = page.evaluate("""() => {
+      const event = new Event('beforeunload', { cancelable: true });
+      window.dispatchEvent(event);
+      return event.defaultPrevented;
+    }""")
+    assert_true(prevented, "Unsaved clinical response does not warn before exit")
     page.locator("#draft-clinical-answer").fill("EXCLUSIVAMENTE FICTICIO")
     page.locator(".esapp-bottom-nav a", has_text="Progreso").click()
     assert_true(page.locator('[data-space-panel="progress"]').is_visible(), "Progress not opened")
@@ -91,6 +110,7 @@ def test_authenticated(page, width):
     page.go_back(wait_until="domcontentloaded")
     assert_true(page.locator('[data-space-panel="therapy"]').is_visible(), "Android Back did not restore therapy")
     assert_true(page.locator("#draft-clinical-answer").input_value() == "EXCLUSIVAMENTE FICTICIO", "Therapy field lost on tab switch")
+    assert_true(response.input_value() == "Borrador de prueba, todavía sin guardar", "Draft in exercise was lost on tab switch")
     assert_true(page.evaluate("performance.getEntriesByType('navigation').length") == 1, "Navigation reloaded the document")
     page.locator('.space-nav button[data-space-view="today"]').click()
     assert_true(page.url.endswith("?vista=panel"), "Sidebar not synced with URL")
@@ -107,6 +127,10 @@ def test_authenticated(page, width):
     assert_true(page.locator("#space-shell").get_attribute("data-reading-size") == "extra", "Reading size not applied")
     assert_true(page.locator("#space-shell").evaluate("(el) => el.classList.contains('space-reading-simple')"), "Simple reading mode missing")
     assert_true(page.locator("#space-shell").evaluate("(el) => el.classList.contains('space-reading-quiet')"), "Quiet mode missing")
+    page.evaluate("window.confirm = () => false")
+    page.get_by_role("button", name="Cerrar sesión").click()
+    assert_true(page.locator("#space-shell").is_visible(), "Logout did not respect unsaved-notes cancellation")
+    page.evaluate("window.confirm = () => true")
     page.evaluate("""() => {
       document.querySelector('#space-patient-materials').textContent = 'EXPEDIENTE DE PRUEBA 123';
       document.querySelector('#space-shared-files').textContent = 'ARCHIVO FICTICIO 123';
@@ -147,7 +171,7 @@ with sync_playwright() as p:
                 route.fulfill(status=200,content_type="text/html",body=HTML)
             elif "/api/patient-portal/session" in path:
                 route.fulfill(status=200,content_type="application/json",
-                    body='{"authenticated":true,"patient":{"first_name":"PRUEBA"},"materials":[],"files":[]}')
+                    body='{"authenticated":true,"patient":{"first_name":"PRUEBA"},"materials":[{"id":"'+FAKE_ID+'","title":"Ejercicio inventado","status":"sent","patient_response_status":"empty","patient_document":{"material_type":"exercise","introduction":"Actividad solo de prueba","instructions":"Anota una frase ficticia","session_questions":["¿Qué puedes practicar?"]}}],"files":[]}')
             elif "/api/patient-portal/preferences" in path:
                 route.fulfill(status=200,content_type="application/json",
                     body='{"storage_scope":"0123456789abcdef01234567"}')
