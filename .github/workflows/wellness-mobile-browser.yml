@@ -17,6 +17,11 @@ on:
       - "app/entre-sesiones/app/panel.tsx"
       - "app/entre-sesiones/app/app.css"
       - "app/mi-espacio/page.tsx"
+      - "tests/entre-sesiones-hardening.test.mjs"
+      - "app/mi-espacio/mood-tracker.tsx"
+      - "public/admin-clinica.js"
+      - "public/clinic-patient-dashboard.js"
+      - "worker.ts"
       - ".github/workflows/wellness-mobile-browser.yml"
   workflow_dispatch:
 
