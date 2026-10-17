@@ -75,3 +75,19 @@ test("logout is only reported successful when server acknowledges; offline statu
   assert.match(portal,/if \(!response\.ok\) throw new Error\("logout_not_confirmed"\)/);
   assert.match(portal,/No hemos podido cerrar la sesión en el servidor/);
 });
+
+
+test("old authenticated sessions cannot reappear after a newer session or logout", () => {
+  assert.match(portal, /let portalSessionEpoch = 0/);
+  assert.match(portal, /const requestEpoch = \+\+portalSessionEpoch/);
+  assert.match(portal, /if \(requestEpoch !== portalSessionEpoch\) return false/);
+  assert.match(portal, /const loginEpoch = \+\+portalSessionEpoch/);
+  assert.match(portal, /if \(loginEpoch !== portalSessionEpoch\) return/);
+  assert.match(portal, /const logoutEpoch = \+\+portalSessionEpoch/);
+  assert.match(portal, /if \(logoutEpoch !== portalSessionEpoch\) return/);
+  assert.match(portal, /portalSessionEpoch\+\+;\s*\/\/ El contenido clínico/);
+  assert.match(portal, /const responseEpoch = portalSessionEpoch/);
+  assert.match(portal, /responseEpoch !== portalSessionEpoch \|\| !state\.portalAuthenticated \|\| !details\?\.isConnected/);
+  assert.match(portal, /status\.setAttribute\("aria-live", "polite"\)|responseStatus\.setAttribute\("aria-live", "polite"\)/);
+  assert.match(portal, /if \(!window\.confirm\("¿Compartir estas respuestas con Carolina\?/);
+});
