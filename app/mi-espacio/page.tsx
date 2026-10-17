@@ -266,7 +266,7 @@ export default function MiEspacioPage() {
                   <p className="space-eyebrow">PRÁCTICAS INTERACTIVAS</p>
                   <h3 id="wellness-interactive-heading">Hazlo aquí, no solo lo leas.</h3>
                 </div>
-                <p>Cuatro experiencias guiadas que puedes repetir sin puntuaciones ni comparaciones.</p>
+                <p>Siete prácticas guiadas: decisiones cotidianas, tarjetas para ordenar, atención visual y registros descriptivos sin puntuaciones.</p>
               </div>
               <div id="wellness-interactive" aria-label="Herramientas interactivas de bienestar">
                 <p className="wellness-interactive-loading" role="status">Preparando tus prácticas interactivas…</p>
@@ -394,8 +394,8 @@ export default function MiEspacioPage() {
       </aside>
 
       <Script src="/patient-video.js?v=20261009-1" strategy="afterInteractive" />
-      <Script src="/mi-espacio.js?v=20261017-wellness-interactive-1" strategy="afterInteractive" />
-      <Script src="/wellness-interactive.js?v=20261017-1" strategy="afterInteractive" />
+      <Script src="/mi-espacio.js?v=20261017-wellness-visual-2" strategy="afterInteractive" />
+      <Script src="/wellness-interactive.js?v=20261017-visual-2" strategy="afterInteractive" />
     </main>
   );
 }
