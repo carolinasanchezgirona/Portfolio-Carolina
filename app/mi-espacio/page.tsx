@@ -23,7 +23,17 @@ export default function MiEspacioPage() {
         </div>
       </header>
 
-      <section id="space-access" className="space-access">
+      <section id="space-session-check" className="space-session-check" aria-live="polite">
+        <div className="space-session-check-card" role="status">
+          <span className="space-session-check-icon" aria-hidden="true" />
+          <h1>Comprobando tu acceso seguro</h1>
+          <p>Estamos verificando si tu sesión sigue activa. No necesitas volver a escribir la contraseña mientras se comprueba.</p>
+          <p className="space-session-check-help">¿Tarda demasiado? <a href="">Actualizar la página</a></p>
+          <noscript>Para entrar en Mi espacio necesitas activar JavaScript en el navegador.</noscript>
+        </div>
+      </section>
+
+      <section id="space-access" className="space-access" hidden>
         <div className="space-access-card">
           <div>
             <p className="space-eyebrow">Acceso seguro</p>
@@ -467,7 +477,7 @@ export default function MiEspacioPage() {
       </aside>
 
       <Script src="/patient-video.js?v=20261009-1" strategy="afterInteractive" />
-      <Script src="/mi-espacio.js?v=20261017-async-session-5" strategy="afterInteractive" />
+      <Script src="/mi-espacio.js?v=20261017-pdf-loginfix-6" strategy="afterInteractive" />
       <Script src="/session-prep.js?v=20261017-1" strategy="afterInteractive" />
       <Script src="/wellness-interactive.js?v=20261017-visual-2" strategy="afterInteractive" />
     </main>
