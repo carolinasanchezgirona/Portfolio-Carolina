@@ -1085,8 +1085,29 @@
     downloadLink.setAttribute("aria-label", "Descargar PDF: " + String(item.title || "Material"));
     const downloadHint = document.createElement("span");
     downloadHint.className = "space-material-download-status";
-    downloadHint.textContent = "La descarga se abre desde esta aplicación. Si no aparece, revisa la carpeta Descargas del dispositivo.";
-    downloadArea.append(downloadLink, downloadHint);
+    downloadHint.textContent = "El PDF se descarga desde el servidor. Si tu móvil no lo permite, utiliza la opción de imprimir y elige «Guardar como PDF».";
+    const printButton = document.createElement("button");
+    printButton.type = "button";
+    printButton.className = "space-secondary space-material-print-button";
+    printButton.textContent = "Imprimir / Guardar como PDF";
+    printButton.setAttribute("aria-label", "Imprimir o guardar como PDF: " + String(item.title || "Material"));
+    printButton.addEventListener("click", () => {
+      if (!state.portalAuthenticated || !details.isConnected || !patientMaterials?.contains(details)) return;
+      // La persona realiza la acción; no se almacenan nuevas respuestas ni se envían a otro servicio.
+      document.querySelectorAll(".space-patient-material[data-print-material]").forEach(node => {
+        node.removeAttribute("data-print-material");
+      });
+      details.setAttribute("data-print-material", "true");
+      details.open = true;
+      document.body.classList.add("space-print-patient-material");
+      try {
+        window.print();
+        downloadHint.textContent = "En Android, elige «Guardar como PDF» en las opciones de impresión. Si no aparece, abre esta página en Chrome.";
+      } catch {
+        downloadHint.textContent = "El navegador no admite impresión desde la aplicación. Prueba a abrir Entre Sesiones en Chrome.";
+      }
+    });
+    downloadArea.append(downloadLink, printButton, downloadHint);
     body.append(downloadArea);
 
 
