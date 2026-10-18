@@ -399,7 +399,9 @@
       byId("ext-filter").addEventListener("change",render);
       byId("ext-assign-form").addEventListener("submit",assign);
       byId("ext-assign-cancel").addEventListener("click",()=>byId("ext-assign-dialog").close());
-      await loadMaterials();
+      byId("ext-internal-search").addEventListener("input",renderInternal);
+      byId("ext-internal-filter").addEventListener("change",renderInternal);
+      await Promise.all([loadMaterials(),loadInternal()]);
     }catch(e){
       byId("ext-loading").textContent=e.message||"Error al comprobar el acceso.";
       byId("ext-app").hidden=true;
