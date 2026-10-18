@@ -1397,7 +1397,7 @@
     void loadPatientWellnessStorage();
     const requestedView = new URLSearchParams(window.location.search).get("vista");
     const requestedPanels = { terapia: "therapy", wellness: "wellness", progreso: "progress", configuracion: "account" };
-    openPortal(requestedPanels[requestedView] || "today");
+    openPortal(requestedPanels[requestedView] || "wellness");
     focusPatientMaterialFromHash();
     window.dispatchEvent(new Event("patient-portal-view-ready"));
   }
