@@ -164,21 +164,24 @@
       }
     }catch(e){body.replaceChildren(el("p","ext-muted","No se pudo abrir la vista previa: "+(e.message||"error de acceso")));}
   }
+  const MATERIAL_LABELS={exercise:"Ejercicio",psychoeducation:"Psicoeducación",worksheet:"Ficha práctica",workbook:"Cuaderno",activity:"Actividad",homework:"Tarea entre sesiones",audio:"Audio",other:"Otro"};
+  function materialLabel(value){return MATERIAL_LABELS[value] || (typeof value==="string" ? value.replaceAll("_"," ") : "Sin especificar");}
   function libraryTable(items, host, internal) {
     host.replaceChildren();
     if (!items.length) { host.append(el("p","ext-muted","No hay materiales en esta vista."));return; }
     const scroll=el("div","ext-table-scroll");
     const table=el("table","ext-library-table");
-    const thead=el("thead");const titles=["Código / material","Tipo / categoría","Estado","Vista previa","Cambiar nombre","Editar","Archivar","Eliminar"];
+    const thead=el("thead");const titles=["Código / material","Tipo de material","Categoría clínica","Estado","Vista previa","Cambiar nombre","Editar","Archivar","Eliminar"];
     const header=el("tr");titles.forEach(t=>{const th=el("th",null,t);th.scope="col";header.append(th);});thead.append(header);table.append(thead);
     const tbody=el("tbody");
     items.forEach(m=>{
       const row=el("tr");
       const title=el("td","ext-library-name",m.title||"Sin título");title.title=m.summary||m.description||"";
-      const type=el("td",null,internal?([m.material_type,(m.process_tags||[]).join(", ")].filter(Boolean).join(" · ")):(AREA[m.clinical_area]||"Clínica")+" · "+(DOMAIN[m.cognitive_domain]||"Multidominio"));
+      const type=el("td",null,materialLabel(internal?m.material_type:m.material_type));
+      const category=el("td",null,internal?((m.process_tags||[]).join(", ")||m.patient_document?.clinical_area||"Sin categoría"):(DOMAIN[m.cognitive_domain]||AREA[m.clinical_area]||"Sin categoría"));
       const archived=internal?m.status!=="active":!!m.archived;
       const status=el("td",null,archived?"Archivado":"Activo");
-      row.append(title,type,status);
+      row.append(title,type,category,status);
       function choice(label,handler,enabled=true){
         const td=el("td","ext-table-choice");const box=el("input");box.type="checkbox";box.setAttribute("aria-label",label+" "+m.title);
         box.disabled=!enabled;
