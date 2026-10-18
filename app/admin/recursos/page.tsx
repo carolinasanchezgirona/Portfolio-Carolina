@@ -46,19 +46,6 @@ export default function AdminRecursosPage() {
         </header>
         <AdminWorkspaceNav active="recursos" />
 
-        <section id="marketing-suscriptores" style={{margin:"24px 0",padding:"24px",border:"1px solid #d6e6eb",borderRadius:18,background:"#fff"}}>
-          <p style={{color:"#08A6A0",fontSize:12,fontWeight:700,letterSpacing:".12em"}}>MARKETING · BREVO</p>
-          <h2 style={{color:"#173A5E",fontSize:28,margin:"8px 0"}}>Suscriptores y captación</h2>
-          <p style={{color:"#36556c",lineHeight:1.65}}>Gestiona tus suscripciones comerciales desde Brevo. Las cifras de este panel se mostrarán cuando se configure una conexión segura con la API de Brevo; no se contabilizan descargas como suscripciones.</p>
-          <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(180px,1fr))",gap:12,margin:"20px 0"}}>
-            {["Suscriptores confirmados","Nuevas altas","Bajas","Descargas gratuitas"].map((title)=><div key={title} style={{padding:18,borderRadius:12,background:"#eaf6fb"}}><p style={{color:"#173A5E",fontWeight:700,margin:"0 0 8px"}}>{title}</p><strong style={{color:"#35516C",fontSize:22}} id={title === "Suscriptores confirmados" ? "brevo-subscribers-total" : undefined}>Sin conexión</strong></div>)}
-          </div>
-          <div style={{display:"flex",gap:12,flexWrap:"wrap"}}>
-            <a href="https://app.brevo.com/" target="_blank" rel="noopener noreferrer" className="resources-primary" style={{textDecoration:"none"}}>Ver contactos en Brevo ↗</a>
-            <a href="/recursos/mi-cuerpo-mis-criterios/" target="_blank" rel="noopener noreferrer" className="resources-back">Ver cuaderno gratuito ↗</a>
-          </div>
-          <p style={{fontSize:13,color:"#5f7080",marginTop:16}}>El contador se consulta en Brevo mediante una conexión privada. Los demás indicadores estarán disponibles cuando implementemos su medición.</p>
-        </section>
         <div className="resources-workspace">
           <aside className="resources-list-panel">
             <div className="resources-list-heading"><strong>Biblioteca</strong><span id="resources-count">0</span></div>
