@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Script from "next/script";
 import "./booking.css";
+import "./booking-quick.css";
 
 export const metadata: Metadata = {
   title: { absolute: "Pedir cita | Carolina Sánchez Girona" },
