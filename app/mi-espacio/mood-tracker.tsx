@@ -244,7 +244,7 @@ function MoodEvolution({ entries }: { entries: MoodEntry[] }) {
     {recorded.length ? <>
       <p className="mood-chart-hint">Cada registro aparece como un punto de ánimo y un cuadrado de energía. Las líneas solo unen días consecutivos.{period > 14 ? " Desliza el gráfico para ver fechas anteriores." : ""}</p>
       <div ref={chartScroll} className="mood-evolution-scroll" tabIndex={period > 14 ? 0 : -1} role="region" aria-label="Gráfico de ánimo y energía por fechas">
-        <svg width={width} height="290" viewBox={`0 0 ${width} 290`} role="img" aria-label={`Gráfico con ${recorded.length} registros de los últimos ${period} días. Animo y energía se muestran por separado.`}>
+        <svg width={width} height="290" viewBox={`0 0 ${width} 290`} data-chart-compact={compact ? "true" : undefined} role="img" aria-label={`Gráfico con ${recorded.length} registros de los últimos ${period} días. Ánimo y energía se muestran por separado.`}>
           <defs><linearGradient id={gradient} x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stopColor="#08a6a0" stopOpacity=".23"/><stop offset="100%" stopColor="#08a6a0" stopOpacity=".02"/></linearGradient></defs>
           {[1,2,3,4,5].map(value => <g key={value}>
             <line x1={compact ? 29 : 106} y1={y(value)} x2={width-(compact ? 15 : 106)} y2={y(value)} stroke="#d8e7ee" strokeDasharray="4 5" />
