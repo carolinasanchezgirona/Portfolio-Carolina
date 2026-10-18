@@ -102,24 +102,46 @@
       renderInternal();
     } catch(e) { message("ext-internal-count","No disponible");message("ext-internal-list","No se pudo cargar el catálogo interno: "+(e.message||"error de acceso")); }
   }
+  function libraryTable(items, host, internal) {
+    host.replaceChildren();
+    if (!items.length) { host.append(el("p","ext-muted","No hay materiales en esta vista."));return; }
+    const scroll=el("div","ext-table-scroll");
+    const table=el("table","ext-library-table");
+    const thead=el("thead");const titles=["Código / material","Tipo / categoría","Estado","Editar","Archivar","Eliminar"];
+    const header=el("tr");titles.forEach(t=>{const th=el("th",null,t);th.scope="col";header.append(th);});thead.append(header);table.append(thead);
+    const tbody=el("tbody");
+    items.forEach(m=>{
+      const row=el("tr");
+      const title=el("td","ext-library-name",m.title||"Sin título");title.title=m.summary||m.description||"";
+      const type=el("td",null,internal?([m.material_type,(m.process_tags||[]).join(", ")].filter(Boolean).join(" · ")):(AREA[m.clinical_area]||"Clínica")+" · "+(DOMAIN[m.cognitive_domain]||"Multidominio"));
+      const archived=internal?m.status!=="active":!!m.archived;
+      const status=el("td",null,archived?"Archivado":"Activo");
+      row.append(title,type,status);
+      function choice(label,handler,enabled=true){
+        const td=el("td","ext-table-choice");const box=el("input");box.type="checkbox";box.setAttribute("aria-label",label+" "+m.title);
+        box.disabled=!enabled;
+        box.addEventListener("change",async()=>{
+          if(!box.checked)return;
+          box.disabled=true;
+          try{await handler();}catch(e){message("ext-status",e.message||"No se pudo completar la operación.");}
+          finally{box.checked=false;box.disabled=false;}
+        });
+        td.append(box);return td;
+      }
+      row.append(choice("Editar",()=>internal?editInternal(m):startEdit(m)));
+      row.append(choice(archived?"Recuperar":"Archivar",()=>internal?setInternalStatus(m,archived?"active":"archived"):setArchive(m,!archived)));
+      row.append(choice("Eliminar",()=>{message("ext-status","La eliminación definitiva está deshabilitada para proteger materiales ya asignados. Utiliza Archivar.");},false));
+      tbody.append(row);
+    });
+    table.append(tbody);scroll.append(table);host.append(scroll);
+  }
   function renderInternal() {
     const search=byId("ext-internal-search").value.toLocaleLowerCase("es").trim();
     const filter=byId("ext-internal-filter").value;
     const items=state.internal.filter(m=>(filter==="all" || (filter==="active" ? m.status==="active" : m.status!=="active")) &&
       (!search || [m.title,m.summary,m.instructions,m.material_type,...(m.process_tags||[])].filter(Boolean).join(" ").toLocaleLowerCase("es").includes(search)));
     message("ext-internal-count",state.internal.filter(m=>m.status==="active").length+" materiales activos");
-    const host=byId("ext-internal-list");host.replaceChildren();
-    if(!items.length){host.append(el("p","ext-muted","No se encontraron materiales internos."));return;}
-    items.forEach(m=>{
-      const card=el("article","ext-item");
-      const head=el("div","ext-material-select");const check=el("input");check.type="checkbox";check.setAttribute("aria-label","Seleccionar "+(m.title||"material"));check.addEventListener("change",()=>{card.classList.toggle("ext-selected",check.checked);actions.hidden=!check.checked;});head.append(check,el("h3",null,m.title||"Sin título"));card.append(head);
-      card.append(el("p","ext-muted",[m.material_type,(m.process_tags||[]).join(", "),m.status==="active"?"Activo":"Archivado"].filter(Boolean).join(" · ")));
-      if(m.summary)card.append(el("p","ext-muted",m.summary));
-      const actions=el("div","ext-actions");actions.hidden=true;
-      actions.append(action("Editar ficha",()=>editInternal(m)));
-      actions.append(action(m.status==="active"?"Archivar":"Recuperar",()=>setInternalStatus(m,m.status==="active"?"archived":"active")));
-      card.append(actions);host.append(card);
-    });
+    libraryTable(items,byId("ext-internal-list"),true);
   }
   async function editInternal(m) {
     const title=window.prompt("Nombre del material",m.title||"");
@@ -276,32 +298,7 @@
         .join(" ").toLocaleLowerCase("es").includes(search);
     });
     message("ext-count",state.materials.filter(m=>!m.archived).length + " materiales activos");
-    const host=byId("ext-items");host.replaceChildren();
-    if(!items.length){host.append(el("p","ext-muted",search?"No hay coincidencias.":"Aún no hay materiales en esta vista. Pulsa «Añadir material» para empezar."));return;}
-    for(const material of items) {
-      const card=el("article","ext-item");
-      const meta=el("div","ext-meta");
-      meta.append(
-        badge(material.material_type==="workbook"?"Cuaderno":"Ficha"),
-        badge(AREA[material.clinical_area]||"Clínica"),
-        badge(LEVEL[material.level]||"Sin nivel")
-      );
-      if (material.solution_file_path) meta.append(badge("Con solucionario","ext-pill-pro"));
-      if (material.archived) meta.append(badge("Archivado"));
-      const head=el("div","ext-material-select");const check=el("input");check.type="checkbox";check.setAttribute("aria-label","Seleccionar "+material.title);head.append(check,el("h3",null,material.title));card.append(meta,head);
-      card.append(el("p","ext-muted",(DOMAIN[material.cognitive_domain]||"Varias funciones")+" · "+new Date(material.created_at).toLocaleDateString("es-ES")));
-      if(material.description)card.append(el("p","ext-muted",material.description));
-      const actions=el("div","ext-actions");actions.hidden=true;check.addEventListener("change",()=>{card.classList.toggle("ext-selected",check.checked);actions.hidden=!check.checked;});
-      actions.append(action("Editar ficha",()=>startEdit(material)));
-      actions.append(action("Descargar paciente",()=>download(material.patient_file_path,material.patient_file_name)));
-      if(material.solution_file_path)actions.append(action("Solucionario · solo profesional",()=>download(material.solution_file_path,material.solution_file_name)));
-      if (!material.archived)actions.append(action("Asignar a paciente",()=>openAssign(material),true));
-      const archive=el("button","ext-link-button",material.archived?"Recuperar":"Archivar");
-      archive.type="button";
-      archive.addEventListener("click",()=>setArchive(material,!material.archived));
-      actions.append(archive);
-      card.append(actions);host.append(card);
-    }
+    libraryTable(items,byId("ext-items"),false);
   }
   async function download(path,name) {
     message("ext-status","Preparando descarga privada…");
