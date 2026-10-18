@@ -39,7 +39,17 @@
     if(body.user?.id!==ALLOWED_USER_ID)throw new Error("Esta cuenta no tiene acceso.");
     saveSession(body);
   }
-  function showApp(){document.querySelector("#resources-auth-loading")?.setAttribute("hidden","");els.login.hidden=true;els.app.hidden=false;}
+  async function loadBrevoSubscribers(){
+    const node=document.querySelector("#brevo-subscribers-total");
+    if(!node || !session?.access_token)return;
+    node.textContent="Consultando…";
+    try{
+      const response=await fetch("/api/marketing/brevo-stats",{headers:{Authorization:`Bearer ${session.access_token}`},cache:"no-store"});
+      const result=await response.json();
+      node.textContent=response.ok && result.list_found && typeof result.subscriber_count==="number" ? new Intl.NumberFormat("es-ES").format(result.subscriber_count) : (result.error || "Lista no localizada");
+    }catch{node.textContent="Sin conexión";}
+  }
+  function showApp(){document.querySelector("#resources-auth-loading")?.setAttribute("hidden","");els.login.hidden=true;els.app.hidden=false;void loadBrevoSubscribers();}
   function showLogin(){document.querySelector("#resources-auth-loading")?.setAttribute("hidden","");els.app.hidden=true;els.login.hidden=false;}
   function euro(cents){return new Intl.NumberFormat("es-ES",{style:"currency",currency:"EUR"}).format((Number(cents)||0)/100);}
   function statusText(status){return status==="published"?"Publicado":status==="archived"?"Archivado":"Borrador";}
