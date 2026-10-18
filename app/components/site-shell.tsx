@@ -34,6 +34,7 @@ const serviceNavigation = [
 
 const resourceNavigation = [
   { href: "/recursos/", label: "Materiales y cuadernos" },
+  { href: "/suscribete/", label: "Recibir recursos gratis" },
   { href: "/articulos/", label: "Artículos" },
   { href: "/podcast/", label: "Psicología Incómoda · Podcast" },
 ] as const;
@@ -170,6 +171,7 @@ function SiteFooter() {
           <a href="/articulos/">Artículos</a>
           <a href="/pregunta-a-carolina/">Tu Consulta</a>
           <a href="/recursos/">Recursos</a>
+          <a href="/suscribete/">Suscribirse a recursos gratuitos</a>
           <a href="/podcast/">Psicología Incómoda · Podcast</a>
           <a href="/mi-espacio/">Mi espacio</a>
           <a href="/psicologa-arenys-de-mar/">Psicóloga en Arenys de Mar</a>
