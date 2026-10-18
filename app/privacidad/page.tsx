@@ -50,7 +50,7 @@ export default function PrivacyPage() {
           <p>En Dememoria recogemos y tratamos datos personales con las siguientes finalidades específicas:</p>
           <h3>2.1. Prestación de servicios neuropsicológicos y psicológicos</h3>
           <ul>
-            <li>Gestión de citas y agenda: Nombre, apellidos, DNI/NIE, teléfono, correo electrónico.</li>
+            <li>Gestión de citas y agenda pública: nombre y apellidos, teléfono y correo electrónico. Otros datos identificativos solo se solicitarán posteriormente cuando resulten necesarios para la asistencia o facturación.</li>
             <li>Historia clínica y evaluación neuropsicológica: Antecedentes médicos, datos de salud, resultados de pruebas y evaluaciones.</li>
             <li>Planes de tratamiento y seguimiento: Notas clínicas, evolución terapéutica, registros de intervenciones.</li>
           </ul>
@@ -90,9 +90,9 @@ export default function PrivacyPage() {
           <ul>
             <li>Ejecución de un contrato de prestación de servicios (art. 6.1.b RGPD).</li>
             <li>Cumplimiento de obligaciones legales en materia sanitaria y fiscal (art. 6.1.c RGPD).</li>
-            <li>Consentimiento expreso del paciente para el tratamiento de datos de salud (art. 9.2.a RGPD).</li>
+            <li>Prestación de asistencia psicológica y neuropsicológica y gestión de la historia clínica por profesional sujeto a secreto profesional (art. 9.2.h RGPD, junto con la base del art. 6 que corresponda). No se exige consentimiento de protección de datos para la asistencia sanitaria cuando concurre dicha habilitación legal.</li>
           </ul>
-          <p>Para cualquier uso adicional, se solicitará un consentimiento específico, informado y revocable.</p>
+          <p>Para tratamientos opcionales que dependan del consentimiento, se solicitará de forma separada, específica y revocable. Este consentimiento de protección de datos es distinto del consentimiento informado clínico, que se obtiene antes de la actuación sanitaria correspondiente.</p>
         </section>
 
         <section>
@@ -193,15 +193,6 @@ export default function PrivacyPage() {
           <p>Esta política puede actualizarse según cambios normativos, tecnológicos o mejoras en la gestión de protección de datos. La última versión estará siempre disponible en la consulta y, en su caso, en la web de Dememoria.</p>
         </section>
 
-        <section>
-          <h2>Anexo: formulario de consentimiento para el tratamiento de datos de salud</h2>
-          <p>Yo, [__________________________], con DNI/NIE [______________], declaro haber sido informado/a sobre la política de protección de datos de Dememoria y otorgo mi consentimiento expreso para el tratamiento de mis datos de salud con la finalidad de recibir atención psicológica/neuropsicológica.</p>
-          <p>Entiendo que mis datos serán tratados con estricta confidencialidad.</p>
-          <p>Soy consciente de mis derechos sobre mis datos personales.</p>
-          <p>Doy o no doy mi consentimiento para recibir comunicaciones sobre mi tratamiento y recordatorios de citas por [correo electrónico/SMS].</p>
-          <p>Fecha: _____________</p>
-          <p>Firma del paciente: ____________________________</p>
-        </section>
       </article>
 
       <footer className="legal-footer">
