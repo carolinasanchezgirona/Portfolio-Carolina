@@ -9,7 +9,7 @@ return <main style={{background:"#fff",padding:"64px 20px",minHeight:"80vh"}}>
 <div style={{background:"#EAF6FB",padding:"28px",borderRadius:20,margin:"30px 0"}}>
 <h2 style={{fontSize:24,color:"#173A5E"}}>Dentro del cuaderno</h2>
 <p style={{lineHeight:1.8,color:"#35516C"}}>Nueve actividades: semáforo de comentarios, pensamiento crítico, identidad personal, señales corporales, respuestas asertivas, redes sociales y plan de actuación.</p>
-<p style={{fontWeight:700,color:"#173A5E"}}>Próximamente disponible para descarga directa.</p>
+<p style={{fontWeight:700,color:"#173A5E"}}>Descarga gratuita, sin registro obligatorio.</p><a href="/api/resources/free-download?slug=mi-cuerpo-mis-criterios" style={{display:"inline-block",padding:"15px 24px",background:"#08A6A0",color:"white",borderRadius:50,textDecoration:"none",fontWeight:700,marginTop:14}}>Descargar cuaderno PDF gratis ↓</a>
 </div>
 <p style={{lineHeight:1.7,color:"#587087"}}>Material psicoeducativo. No sustituye la valoración o intervención individual cuando sea necesaria.</p>
 <section style={{borderTop:"1px solid #d7e8ed",marginTop:42,paddingTop:30}}>
