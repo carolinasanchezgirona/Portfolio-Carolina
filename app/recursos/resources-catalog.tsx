@@ -22,15 +22,6 @@ type Resource = {
 
 const plannedResources = [
   {
-    eyebrow: "Ansiedad y rumiación",
-    title: "Salir del bucle",
-    description:
-      "Cuaderno práctico para identificar patrones de rumiación, reducir el enganche con los pensamientos y recuperar margen de acción.",
-    meta: "Cuaderno descargable",
-    price: "14,90 €",
-    tone: "teal",
-  },
-  {
     eyebrow: "Psicología",
     title: "Ansiedad: comprender y regular",
     description:
