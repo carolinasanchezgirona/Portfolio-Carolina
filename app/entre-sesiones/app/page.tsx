@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import EntreSesionesApp from "./panel";
+import { redirect } from "next/navigation";
 import "./app.css";
 
 export const metadata: Metadata = {
@@ -18,5 +18,5 @@ export const viewport: Viewport = {
 };
 
 export default function EntreSesionesAppPage() {
-  return <EntreSesionesApp />;
+  redirect("/entre-sesiones/app/espacio/?vista=wellness&seccion=inicio#wellness-mi-momento");
 }
