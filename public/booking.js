@@ -16,14 +16,10 @@
     psicologia_general_sanitaria: {
       label: "Psicología General Sanitaria",
       price: 60,
-      consentHref: "/consentimiento-psicologico/",
-      consentText: "consentimiento informado para intervención psicológica",
     },
     neuropsicologia: {
       label: "Neuropsicología",
       price: 75,
-      consentHref: "/consentimiento-neuropsicologico/",
-      consentText: "consentimiento informado para intervención neuropsicológica",
     },
   };
 
@@ -42,14 +38,8 @@
     summary: $("#selection-summary"),
     submit: $("#booking-submit"),
     message: $("#form-message"),
-    newDocuments: $("#new-patient-documents"),
-    newSignature: $("#new-patient-signature"),
-    newInformation: $("#new-patient-information"),
-    firstVisitNote: $(".first-visit-note"),
     selectedServiceName: $("#selected-service-name"),
     selectedServicePrice: $("#selected-service-price"),
-    consentLink: $("#consent-link"),
-    consentDescription: $("#consent-description"),
   };
 
   const dateFmt = new Intl.DateTimeFormat("es-ES", {
@@ -119,29 +109,7 @@
     const service = SERVICES[serviceCodeValue()];
     if (els.selectedServiceName) els.selectedServiceName.textContent = service.label;
     if (els.selectedServicePrice) els.selectedServicePrice.textContent = `${service.price} €`;
-    if (els.consentLink) {
-      els.consentLink.href = service.consentHref;
-      els.consentLink.textContent = service.consentText;
-    }
-    if (els.consentDescription) {
-      els.consentDescription.innerHTML = `Consulta el <a href="${service.consentHref}" target="_blank" rel="noopener">${service.consentText}</a>.`;
-    }
     updateSelectionSummary();
-  }
-
-  function updatePatientType() {
-    const existing = patientTypeValue() === "existing";
-    if (els.newDocuments) els.newDocuments.hidden = false;
-    if (els.newSignature) els.newSignature.hidden = false;
-    if (els.newInformation) els.newInformation.hidden = false;
-    if (els.firstVisitNote) els.firstVisitNote.hidden = existing;
-
-    const privacy = form.elements.namedItem("privacy_acknowledged");
-    const consent = form.elements.namedItem("informed_consent_accepted");
-    const signer = form.elements.namedItem("signer_name");
-    if (privacy) privacy.required = true;
-    if (consent) consent.required = true;
-    if (signer) signer.required = true;
   }
 
   function selectSlot(slot) {
@@ -303,7 +271,6 @@
     state.month = new Date(Date.UTC(state.month.getUTCFullYear(), state.month.getUTCMonth() + 1, 1));
     renderCalendar();
   });
-  document.querySelectorAll('input[name="patient_type"]').forEach((input) => input.addEventListener("change", updatePatientType));
   document.querySelectorAll('input[name="service_code"]').forEach((input) => input.addEventListener("change", updateServiceChoice));
 
   form.addEventListener("submit", async (event) => {
@@ -312,7 +279,6 @@
     const name = String(data.get("patient_name") || "").trim();
     const email = String(data.get("patient_email") || "").trim();
     const phone = String(data.get("patient_phone") || "").trim();
-    const signer = String(data.get("signer_name") || "").trim();
     const patientType = String(data.get("patient_type") || "new");
     const serviceCode = serviceCodeValue();
     const isExisting = patientType === "existing";
@@ -322,29 +288,16 @@
     if (!email) return showMessage("Escribe tu correo electrónico.", "error");
     if (!form.elements.patient_email.checkValidity()) return showMessage("Comprueba que el correo electrónico sea válido.", "error");
     if (!phone) return showMessage("Escribe tu número de teléfono.", "error");
-    if (!data.get("privacy_acknowledged") || !data.get("informed_consent_accepted")) {
-      return showMessage("Debes leer y aceptar la privacidad y el consentimiento informado.", "error");
-    }
-    if (!data.get("cancellation_accepted")) return showMessage("Debes leer y aceptar la política de cancelación.", "error");
-    if (!signer) return showMessage("Escribe tu nombre y apellidos en el campo de firma electrónica.", "error");
-    if (signer.toLocaleLowerCase("es") !== name.toLocaleLowerCase("es")) {
-      return showMessage("La firma debe coincidir con el nombre y apellidos indicados.", "error");
-    }
-
     els.submit.disabled = true;
     els.submit.textContent = "Registrando…";
     try {
-      const response = await rpc("create_public_booking_v2", {
+      const response = await rpc("create_public_booking_quick", {
         p_starts_at: state.selected.starts_at,
         p_duration_minutes: state.duration,
         p_patient_name: name,
         p_patient_email: email,
         p_patient_phone: phone,
         p_patient_type: patientType,
-        p_privacy_acknowledged: true,
-        p_cancellation_accepted: true,
-        p_informed_consent_accepted: true,
-        p_signer_name: signer,
         p_service_code: serviceCode,
       });
       if (!response.ok) {
@@ -361,7 +314,6 @@
       form.reset();
       state.duration = 60;
       showMessage(isExisting ? existingMessage : newMessage, "success");
-      updatePatientType();
       updateServiceChoice();
       await loadSlots();
     } catch (error) {
@@ -374,7 +326,6 @@
   });
 
   try {
-    updatePatientType();
     updateServiceChoice();
     loadSlots();
   } catch (error) {
