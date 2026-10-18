@@ -40,6 +40,25 @@
       if (!response.ok) return;
       const rows = await response.json();
       if (current !== lookup || dialog.hidden || idField.value !== patientId || !rows.length) return;
+      // Si el consentimiento ya figura archivado en la historia, no mostrarlo como pendiente.
+      const documentsQuery = new URLSearchParams({
+        select: "id",
+        patient_id: "eq." + patientId,
+        category: "eq.consent",
+        limit: "1",
+      });
+      const documentsResponse = await fetch("https://grgyvdxkjdstdyumdfyg.supabase.co/rest/v1/clinical_documents?" + documentsQuery, {
+        headers: {
+          apikey: "sb_publishable_b2MRfP0bPti87V2FXCzHGw_Y9vvcbii",
+          Authorization: "Bearer " + accessToken,
+        },
+        cache: "no-store",
+      });
+      if (documentsResponse.ok) {
+        const recorded = await documentsResponse.json();
+        if (Array.isArray(recorded) && recorded.length) return;
+      }
+      if (current !== lookup || dialog.hidden || idField.value !== patientId) return;
       const link = rows[0].service_code === "neuropsicologia" ? "/consentimiento-neuropsicologico/" : "/consentimiento-psicologico/";
       notice.replaceChildren();
       const title = document.createElement("strong");
