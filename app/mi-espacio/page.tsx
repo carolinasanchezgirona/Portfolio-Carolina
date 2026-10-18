@@ -89,9 +89,9 @@ export default function MiEspacioPage() {
           </div>
 
           <nav className="space-nav" aria-label="Secciones">
-            <button className="is-active" type="button" data-space-view="today">Hoy</button>
+            <button type="button" data-space-view="today">Hoy</button>
             <button type="button" data-space-view="therapy">Mi terapia</button>
-            <button type="button" data-space-view="wellness">Wellness</button>
+            <button className="is-active" type="button" data-space-view="wellness">Wellness</button>
             <button type="button" data-space-view="progress">Mi progreso</button>
             <button type="button" data-space-view="account">Configuración</button>
           </nav>
@@ -103,7 +103,7 @@ export default function MiEspacioPage() {
         </aside>
 
         <section className="space-content">
-          <section className="space-view" data-space-panel="today">
+          <section className="space-view" data-space-panel="today" hidden>
             <div className="space-hero">
               <p className="space-eyebrow">Hoy</p>
               <h2 id="space-today-title">Un espacio para ti</h2>
@@ -273,14 +273,7 @@ export default function MiEspacioPage() {
             </aside>
           </section>
 
-          <section className="space-view wellness-experience" data-space-panel="wellness" hidden>
-            <div className="space-hero wellness-hero">
-              <p className="space-eyebrow">WELLNESS · TU ESPACIO PERSONAL</p>
-              <h2>Un momento para ti.</h2>
-              <p>Elige qué te vendría bien ahora. Puedes empezar con algo breve o explorar con calma. Sin exigencias ni puntuaciones.</p>
-              <span className="wellness-hero-decoration" aria-hidden="true" />
-            </div>
-
+          <section className="space-view wellness-experience" data-space-panel="wellness">
             <nav className="wellness-subnav" aria-label="Elegir una sección de Wellness">
               <button className="is-active" type="button" data-wellness-tab="inicio" aria-pressed="true">Para hoy</button>
               <button type="button" data-wellness-tab="explorar" aria-pressed="false">Explorar</button>
