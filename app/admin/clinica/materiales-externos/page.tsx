@@ -91,9 +91,11 @@ export default function ClinicalExternalMaterialsPage() {
         </form>
       </section>
 
+      <section className="ext-catalog" aria-labelledby="ext-internal-heading"><div className="ext-section-heading"><div><p className="ext-eyebrow">Catálogo integrado</p><h2 id="ext-internal-heading">Materiales internos de Entre Sesiones</h2></div><span id="ext-internal-count" className="ext-counter">Cargando…</span></div><p className="ext-muted">Materiales creados desde el generador y guardados previamente en la aplicación. Puedes revisar, editar su ficha, archivar y recuperar sin afectar a las asignaciones ya realizadas.</p><div className="ext-filters"><label>Buscar material interno <input id="ext-internal-search" type="search" placeholder="Título, instrucciones, categoría…" /></label><label>Estado <select id="ext-internal-filter"><option value="active">Activos</option><option value="archived">Archivados</option><option value="all">Todos</option></select></label></div><div id="ext-internal-list" className="ext-items"><p className="ext-muted">Cargando catálogo interno…</p></div></section>
+
       <section className="ext-catalog" aria-labelledby="ext-catalog-heading">
         <div className="ext-section-heading">
-          <div><p className="ext-eyebrow">Tus recursos</p><h2 id="ext-catalog-heading">Biblioteca clínica</h2></div>
+          <div><p className="ext-eyebrow">Tus recursos</p><h2 id="ext-catalog-heading">Archivos y materiales importados</h2></div>
           <span id="ext-count" className="ext-counter">0 materiales</span>
         </div>
         <div className="ext-filters">
