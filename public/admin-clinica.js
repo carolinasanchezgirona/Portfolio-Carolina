@@ -67,7 +67,7 @@
     exerciseObjective: $("#clinic-exercise-objective"), exerciseExample: $("#clinic-exercise-example"),
     exerciseRecord: $("#clinic-exercise-record"), exerciseSafety: $("#clinic-exercise-safety"), exerciseRemember: $("#clinic-exercise-remember"),
     exerciseSessionQuestions: $("#clinic-exercise-session-questions"),
-    exerciseRationale: $("#clinic-exercise-rationale"), exerciseEmail: $("#clinic-exercise-email"),
+    exerciseRationale: $("#clinic-exercise-rationale"), exerciseEmail: $("#clinic-exercise-email"), exerciseEmailSecondary: $("#clinic-exercise-email-secondary"),
     exerciseMessage: $("#clinic-exercise-message"), saveExercise: $("#clinic-save-exercise"),
     materialQuality: $("#clinic-material-quality"), materialQualityLabel: $("#clinic-material-quality-label"), materialQualityNote: $("#clinic-material-quality-note"),
     previewMaterial: $("#clinic-preview-material"), previewPdf: $("#clinic-preview-pdf"),
@@ -687,6 +687,7 @@
     els.exercisePatientCode.textContent = `Paciente ${currentPatient.public_code} · La identidad no aparecerá en el correo.`;
     els.exerciseRationale.value = rationale;
     els.exerciseEmail.value = currentPatient.email || "";
+    if (els.exerciseEmailSecondary) els.exerciseEmailSecondary.value = "";
     els.exerciseMessage.textContent = "";
     els.exerciseDialog.showModal();
   }
@@ -1013,30 +1014,40 @@
     const selectedTemplate = exerciseTemplates.find((item) => item.id === els.exerciseTemplateId.value) || null;
     const materialType = selectedTemplate?.material_type || els.materialType?.value || "exercise";
     els.exerciseMessage.textContent = sendAfterSave ? "Preparando enlace seguro…" : "Guardando…";
-    const rows = await rest("clinical_exercise_assignments?select=*", {
-      method: "POST", headers: { Prefer: "return=representation" },
-      body: JSON.stringify({
-        patient_id: currentPatient.id,
-        template_id: els.exerciseTemplateId.value || null,
-        title: els.exerciseTitle.value.trim(),
-        content: els.exerciseContent.value.trim(),
-        rationale: els.exerciseRationale.value.trim() || null,
-        patient_document: patientDocumentFromForm(materialType),
-        recipient_email: els.exerciseEmail.value.trim() || null,
-        status: "prepared",
-      }),
-    });
-    const saved = rows?.[0];
-    if (!saved) throw new Error("No se ha podido guardar el ejercicio.");
-    exerciseAssignments.unshift(saved);
-    if (sendAfterSave) {
-      const response = await fetch(`${SUPABASE_URL}/functions/v1/send-clinical-exercise`, {
-        method: "POST", headers: authHeaders(), body: JSON.stringify({ assignment_id: saved.id }),
-      });
-      const body = await response.json().catch(() => ({}));
-      if (!response.ok) throw new Error(body.error || "No se ha podido enviar el enlace.");
-      await loadData();
+    const primaryEmail = els.exerciseEmail.value.trim().toLowerCase();
+    const secondaryEmail = els.exerciseEmailSecondary?.value.trim().toLowerCase() || "";
+    if (secondaryEmail && secondaryEmail === primaryEmail) throw new Error("El segundo correo debe ser diferente del principal.");
+    if (secondaryEmail && !window.confirm("Vas a compartir el material clínico con un segundo destinatario: " + secondaryEmail + ". ¿Confirmas que está autorizado a recibirlo?")) {
+      els.exerciseMessage.textContent = "Envío al segundo correo cancelado.";
+      return;
     }
+    const baseAssignment = {
+      patient_id: currentPatient.id,
+      template_id: els.exerciseTemplateId.value || null,
+      title: els.exerciseTitle.value.trim(),
+      content: els.exerciseContent.value.trim(),
+      rationale: els.exerciseRationale.value.trim() || null,
+      patient_document: patientDocumentFromForm(materialType),
+      status: "prepared",
+    };
+    const recipients = [primaryEmail, ...(secondaryEmail ? [secondaryEmail] : [])];
+    for (const [index, recipient] of recipients.entries()) {
+      const rows = await rest("clinical_exercise_assignments?select=*", {
+        method: "POST", headers: { Prefer: "return=representation" },
+        body: JSON.stringify({ ...baseAssignment, recipient_email: recipient || null }),
+      });
+      const saved = rows?.[0];
+      if (!saved) throw new Error("No se ha podido guardar la entrega destinada a " + recipient + ".");
+      exerciseAssignments.unshift(saved);
+      if (sendAfterSave) {
+        const response = await fetch(`${SUPABASE_URL}/functions/v1/send-clinical-exercise`, {
+          method: "POST", headers: authHeaders(), body: JSON.stringify({ assignment_id: saved.id }),
+        });
+        const body = await response.json().catch(() => ({}));
+        if (!response.ok) throw new Error("La entrega a " + recipient + " no se ha podido enviar: " + (body.error || "Error de correo") + ". Comprueba los envíos antes de reintentarlo.");
+      }
+    }
+    if (sendAfterSave) await loadData();
     renderExercises(currentPatient);
     els.exerciseDialog.close();
   }
