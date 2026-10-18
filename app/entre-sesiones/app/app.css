@@ -370,3 +370,8 @@
 .esapp .esapp-connectivity strong{font-weight:850;color:#634727}
 .esapp .esapp-connectivity-error{border-color:#e5bbb6;background:#fff0ee;color:#853f3b}
 @media(max-width:700px){.esapp .esapp-connectivity{padding:13px 14px;font-size:.82rem}}
+
+/* Menú de Inicio: mismos iconos SVG que la navegación de Mi espacio. */
+.esapp .esapp-home-bottom-nav a>span{display:grid;place-items:center;width:26px;height:26px;line-height:1}
+.esapp .esapp-home-bottom-nav a>span svg{display:block;width:23px;height:23px}
+.esapp .esapp-home-bottom-nav a:not([aria-current="page"]) .esapp-nav-heart{opacity:.65}

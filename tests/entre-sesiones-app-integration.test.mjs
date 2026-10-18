@@ -69,3 +69,18 @@ test("installed app tabs navigate in place, preserve history and guard protected
   assert.match(route, /className="esapp-bottom-nav"[^>]+hidden/);
   assert.match(css, /\.esapp-bottom-nav\[hidden\]\{display:none!important\}/);
 });
+
+
+test("Home and protected portal use consistent SVG navigation", () => {
+  const homeNav = app.match(/<nav className="esapp-home-bottom-nav"[\s\S]*?<\/nav>/)?.[0];
+  const portalNav = route.match(/<nav className="esapp-bottom-nav"[\s\S]*?<\/nav>/)?.[0];
+  assert.ok(homeNav && portalNav, "Both navigation bars must exist");
+  assert.equal((homeNav.match(/<svg\b/g) || []).length, 5);
+  assert.equal((portalNav.match(/<svg\b/g) || []).length, 5);
+  for (const label of ["Inicio", "Mi terapia", "Wellness", "Progreso", "Cuenta"]) {
+    assert.ok(homeNav.includes(label) && portalNav.includes(label), label + " missing from navigation");
+  }
+  assert.match(homeNav, /esapp-nav-heart/);
+  assert.match(portalNav, /esapp-nav-heart/);
+  assert.doesNotMatch(homeNav, /<span aria-hidden="true">[⌂▤◉☷]/);
+});

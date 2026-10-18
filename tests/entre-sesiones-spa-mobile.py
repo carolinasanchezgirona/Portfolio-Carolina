@@ -156,7 +156,24 @@ def test_authenticated(page, width):
     assert_true(page.url.endswith("?vista=panel"), "Sidebar not synced with URL")
     page.locator('button[data-need="rumiacion"]').click()
     assert_true(page.locator('[data-space-panel="wellness"]').is_visible(), "Wellness need shortcut failed")
-    assert_true(page.url.endswith("?vista=wellness"), "Wellness shortcut not reflected in URL")
+    assert_true(page.url.endswith("?vista=wellness&seccion=explorar"),
+                "Selecting a need should open Wellness Explore with its own route")
+    assert_true(page.locator("#wellness-context").is_visible(),
+                "Need-specific tools context not displayed")
+    assert_true("bucle mental" in page.locator("#wellness-context").inner_text(),
+                "Wrong tools displayed for the selected need")
+    # A shortcut from Today is a single Android history step.
+    page.go_back(wait_until="domcontentloaded")
+    assert_true(page.url.endswith("?vista=panel"), "Android Back did not restore Today after need shortcut")
+    assert_true(page.locator('[data-space-panel="today"]').is_visible(),
+                "Today panel not restored from the shortcut")
+    page.go_forward(wait_until="domcontentloaded")
+    assert_true(page.locator('[data-space-panel="wellness"]').is_visible(),
+                "Android Forward did not restore Wellness Explore")
+    assert_true(page.url.endswith("?vista=wellness&seccion=explorar"),
+                "Android Forward lost Wellness Explore route")
+    assert_true(page.locator(".esapp-bottom-nav a[aria-current='page']").inner_text() == "Wellness",
+                "Wellness nav state not restored by Android Forward")
     page.locator(".esapp-bottom-nav a", has_text="Cuenta").click()
     assert_true(page.locator('[data-space-panel="account"]').is_visible(), "Account navigation failed")
     assert_true(page.locator(".esapp-bottom-nav a[aria-current='page']").inner_text() == "Cuenta", "Account tab state incorrect")
