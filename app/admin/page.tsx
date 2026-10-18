@@ -32,7 +32,7 @@ const sections: { href: string; icon: IconName; eyebrow: string; title: string; 
   { href: "/admin/economia/", icon: "economy", eyebrow: "Administración", title: "Contabilidad", detail: "Facturas, cobros, gastos, importaciones y exportaciones.", secondary: "Abrir contabilidad", tone: "coral" },
   { href: "/admin/articulos/", icon: "editorial", eyebrow: "Comunicación", title: "Centro editorial", detail: "Artículos, contenidos web y publicaciones de Instagram.", secondary: "Abrir centro editorial", tone: "navy" },
   { href: "/admin/clinica/materiales-externos/", icon: "resources", eyebrow: "Herramientas clínicas", title: "Biblioteca clínica", detail: "Añadir, editar, clasificar, descargar, archivar y asignar materiales a pacientes.", secondary: "Gestionar biblioteca", tone: "turquoise" },
-  { href: "/admin/recursos/#marketing-suscriptores", icon: "editorial", eyebrow: "Marketing", title: "Suscriptores", detail: "Altas, bajas y conexión con Brevo para recursos gratuitos.", secondary: "Ver captación", tone: "coral" },
+  { href: "/admin/marketing/", icon: "editorial", eyebrow: "Marketing", title: "Marketing", detail: "Suscriptores, captación y conexión con Brevo.", secondary: "Ver captación", tone: "coral" },
   { href: "/admin/recursos/", icon: "resources", eyebrow: "Materiales digitales", title: "Recursos", detail: "Publicación, materiales gratuitos y de pago, pedidos y descargas.", secondary: "Administrar recursos", tone: "turquoise" },
   { href: "/admin/preguntas/", icon: "questions", eyebrow: "Participación", title: "Preguntas", detail: "Revisar, preparar y publicar las preguntas recibidas.", secondary: "Revisar preguntas", tone: "coral" },
 ];
