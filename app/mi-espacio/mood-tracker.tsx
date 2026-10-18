@@ -188,7 +188,7 @@ function MoodFriend({ mood, avatarId, portraitOnly = false }: { mood: number; av
 
 function MoodEvolution({ entries }: { entries: MoodEntry[] }) {
   // Dos semanas muestran mejor los días dispersos sin esconder los últimos valores.
-  const [period, setPeriod] = useState(14);
+  const [period, setPeriod] = useState(90);
   const chartScroll = useRef<HTMLDivElement>(null);
   const [viewportWidth, setViewportWidth] = useState(360);
   const [showMood, setShowMood] = useState(true);
@@ -209,7 +209,7 @@ function MoodEvolution({ entries }: { entries: MoodEntry[] }) {
     const observer = new ResizeObserver(measure);
     observer.observe(element);
     return () => observer.disconnect();
-  }, []);
+  }, [entries.length]);
   useEffect(() => {
     const element = chartScroll.current;
     if (!element) return;
@@ -221,6 +221,7 @@ function MoodEvolution({ entries }: { entries: MoodEntry[] }) {
     return { key, date, entry: entries.find(entry => entry.date === key) };
   });
   const recorded = days.flatMap(day => day.entry ? [day.entry] : []);
+  // Los registros históricos dentro de los 90 días permanecen visibles desde la primera apertura.
   const active = recorded.find(entry => entry.date === picked) ?? recorded.at(-1);
   const compact = period <= 14;
   const width = compact ? viewportWidth : period === 30 ? 960 : 1440;
