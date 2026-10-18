@@ -39,6 +39,19 @@ export default function RecursosPage() {
         </div>
       </section>
 
+      <section className="editorial-section" aria-labelledby="newsletter-title">
+        <div className="editorial-wrap">
+          <div style={{background:"#EAF6FB",borderRadius:22,padding:"clamp(24px,4vw,46px)",display:"flex",flexWrap:"wrap",alignItems:"center",justifyContent:"space-between",gap:24}}>
+            <div style={{maxWidth:650}}>
+              <p style={{fontSize:13,letterSpacing:".12em",fontWeight:700,color:"#08A6A0",marginBottom:12}}>RECURSOS GRATUITOS POR CORREO</p>
+              <h2 id="newsletter-title" style={{color:"#173A5E",fontFamily:"Georgia,serif",fontSize:"clamp(26px,3.5vw,38px)",margin:"0 0 12px"}}>¿Quieres recibir nuevos cuadernos y ejercicios?</h2>
+              <p style={{color:"#35516C",lineHeight:1.7,margin:0}}>Suscríbete para recibir recursos de psicología y neuropsicología y novedades de la consulta. Puedes darte de baja cuando quieras.</p>
+            </div>
+            <a className="editorial-btn editorial-btn-primary" href="/suscribete/" style={{whiteSpace:"normal",textAlign:"center"}}>Quiero recibir recursos gratuitos →</a>
+          </div>
+        </div>
+      </section>
+
       <section className="editorial-section" aria-labelledby="destacados-title">
         <div className="editorial-wrap">
           <div className="editorial-section-head resources-heading">
