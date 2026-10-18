@@ -1514,7 +1514,7 @@
       });
       const data = await response.json().catch(() => ({}));
       if (response.ok && (data.status === "sent" || data.already_sent)) {
-        feedback = "Archivo compartido. Aviso por correo enviado.";
+        feedback = "Archivo compartido. Brevo ha aceptado el correo. La entrega todavía no está confirmada.";
       } else if (response.ok && data.status === "sending") {
         feedback = "Archivo compartido. El aviso por correo está en proceso, sin confirmación de entrega.";
       } else {
@@ -1600,7 +1600,26 @@
         create("span", "", `${documentCategoryLabel(doc.category)} · ${doc.file_name} · ${dateShort.format(new Date(doc.document_date || doc.created_at))}`),
         create("span", "clinic-material-state" + (isShared ? " opened" : ""), isShared ? "Compartido en Mi espacio" : "Solo archivo clínico")
       );
-      if (isShared) info.append(create("span", "clinic-material-state", notice?.status === "sent" ? "Aviso por correo enviado" : notice?.status === "sending" ? "Aviso por correo en proceso" : notice?.status === "failed" ? "Aviso por correo no enviado" : "Sin aviso por correo"));
+      if (isShared) {
+        const noticeLabels = {
+          sending: "Aviso en proceso · entrega sin confirmar",
+          sent: "Aceptado por Brevo · entrega sin confirmar",
+          delivered: "Correo entregado al servidor destinatario",
+          failed: "Aviso no enviado · comprueba el error",
+          bounced: "Correo rechazado por el destinatario",
+          blocked: "Correo bloqueado por el proveedor"
+        };
+        const label = notice ? (noticeLabels[notice.status] || "Estado del correo no disponible") : "Sin aviso por correo";
+        const stamp = notice?.delivered_at || notice?.sent_at || notice?.claimed_at;
+        const dated = stamp && !Number.isNaN(Date.parse(stamp)) ? " · " + new Date(stamp).toLocaleString("es-ES", { dateStyle: "short", timeStyle: "short" }) : "";
+        const state = create("span", "clinic-material-state", label + dated);
+        state.title = notice?.status === "delivered"
+          ? "Confirmación de recepción por el servidor de destino. No garantiza que el paciente haya leído el mensaje."
+          : notice?.status === "sent"
+          ? "Brevo ha aceptado el mensaje, pero todavía no existe confirmación de entrega."
+          : notice?.status === "failed" ? "El envío no ha sido aceptado correctamente. Puedes reintentarlo." : label;
+        info.append(state);
+      }
       const actions = create("div", "clinic-material-row-actions");
       const openButton = create("button", "clinic-secondary", "Abrir");
       openButton.type = "button";
