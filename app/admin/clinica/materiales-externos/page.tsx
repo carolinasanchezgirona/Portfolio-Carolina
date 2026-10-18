@@ -130,6 +130,6 @@ export default function ClinicalExternalMaterialsPage() {
         </form>
       </dialog>
     </section>
-    <Script src="/clinic-external-library.js?v=20261018-rename-5" strategy="afterInteractive" />
+    <Script src="/clinic-external-library.js?v=20261018-types-6" strategy="afterInteractive" />
   </main>;
 }
