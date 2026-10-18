@@ -82,6 +82,12 @@ def run_browser(base):
                   "Default period does not show the scattered fortnight")
 
             plot = page.locator(".mood-evolution-scroll")
+            # ResizeObserver commits the physical mobile width on the next frame.
+            page.wait_for_function("""() => {
+                const el = document.querySelector('.mood-evolution-scroll');
+                const svg = el?.querySelector('svg');
+                return el && svg && svg.getBoundingClientRect().width <= el.clientWidth + 2;
+            }""", timeout=6000)
             check(page.locator(".mood-chart-point").count() == 3,
                   "Three synthetic non-daily mood records were not plotted")
             # Only 9 and 8 days ago are consecutive; today remains an isolated point.
