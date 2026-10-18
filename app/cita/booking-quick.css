@@ -1,0 +1,7 @@
+/* Formulario público: lectura clara en móvil, sin pasos de firma. */
+.booking-privacy{margin:12px 0 16px;padding:13px 15px;border-left:3px solid #08A6A0;background:#F2F9F9;border-radius:0 9px 9px 0;color:#36556B;font-size:.79rem;line-height:1.65}
+.booking-privacy strong{color:#173A5E}
+.booking-privacy a,.booking-terms a{color:#087C82;text-underline-offset:2px;overflow-wrap:anywhere}
+.booking-terms{margin:0 0 10px;color:#36556B;font-size:.84rem;line-height:1.6}
+.booking-first-visit-help{margin-bottom:12px}
+@media(max-width:680px){.booking-privacy{padding:12px;font-size:.77rem}.booking-terms{font-size:.82rem}}
