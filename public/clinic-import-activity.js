@@ -15,7 +15,7 @@
     container.id="clinic-import-activity";
     container.className="clinic-neuro-catalog";
     const heading=node("h3","Importar actividad");
-    const help=node("p","Incorpora una actividad propia y clasifícala con las categorías del catálogo. Por ahora se guarda únicamente en este navegador y dispositivo; no se envía ni asigna automáticamente a pacientes.");
+    const help=node("p","Incorpora una actividad propia y clasifícala con las categorías del catálogo. El código es opcional. Por ahora se guarda únicamente en este navegador y dispositivo; no se envía ni asigna automáticamente a pacientes.");
     help.className="clinic-material-helper";
     const form=node("form");
     form.style.cssText="display:grid;gap:12px;margin:16px 0;";
@@ -28,8 +28,8 @@
     [["apoyo_alto","Inicial"],["apoyo_moderado","Intermedio"],["autonomo","Avanzado"]].forEach(([v,t])=>level.append(new Option(t,v)));
     const format=field("Modalidad",node("select"));
     [["visual","Visual"],["verbal","Verbal"],["funcional","Funcional"],["logico","Razonamiento"]].forEach(([v,t])=>format.append(new Option(t,v)));
-    const content=field("Código HTML de la actividad (puede incluir CSS y JavaScript)",node("textarea"));
-    content.required=true;content.rows=8;content.placeholder="<!doctype html>...";content.spellcheck=false;
+    const content=field("Código HTML, CSS o JavaScript (opcional)",node("textarea"));
+    content.required=false;content.rows=8;content.placeholder="<!doctype html>...";content.spellcheck=false;
     const buttons=node("div");buttons.style.cssText="display:flex;gap:10px;flex-wrap:wrap;";
     const preview=node("button","Vista previa");preview.type="button";preview.className="clinic-secondary";
     const submit=node("button","Guardar actividad");submit.type="submit";submit.className="clinic-secondary";
@@ -46,7 +46,7 @@
         const card=node("article");card.className="clinic-neuro-catalog-card";
         card.append(node("h4",item.title),node("p",(composer.GROUPS.find(x=>x[0]===item.domain)||[])[1]||item.domain));
         const view=node("button","Previsualizar");view.type="button";view.className="clinic-secondary";
-        view.addEventListener("click",()=>{frame.srcdoc=item.code;frame.style.display="block";frame.scrollIntoView({behavior:"smooth",block:"nearest"});});
+        view.disabled=!item.code;view.addEventListener("click",()=>{if(!item.code)return;frame.srcdoc=item.code;frame.style.display="block";frame.scrollIntoView({behavior:"smooth",block:"nearest"});});
         const edit=node("button","Editar");edit.type="button";edit.className="clinic-secondary";
         edit.addEventListener("click",()=>{name.value=item.title;category.value=item.domain;level.value=item.level;format.value=item.format;content.value=item.code;form.dataset.editId=item.id;form.scrollIntoView({behavior:"smooth"});});
         const remove=node("button","Eliminar");remove.type="button";remove.className="clinic-secondary";
@@ -54,11 +54,11 @@
         card.append(view,edit,remove);list.append(card);
       });
     };
-    preview.addEventListener("click",()=>{if(!content.value.trim()){status.textContent="Pega primero el código HTML.";return;}frame.srcdoc=content.value;frame.style.display="block";});
+    preview.addEventListener("click",()=>{if(!content.value.trim()){status.textContent="Esta actividad no tiene código para previsualizar.";return;}frame.srcdoc=content.value;frame.style.display="block";});
     form.addEventListener("submit",event=>{
       event.preventDefault();
       const title=name.value.trim(),code=content.value.trim();
-      if(!title || !category.value || !code){status.textContent="Completa nombre, categoría y código.";return;}
+      if(!title || !category.value){status.textContent="Completa el nombre y la categoría.";return;}
       if(code.length>500000){status.textContent="El código supera el tamaño permitido (500 KB).";return;}
       try{
         const items=read(),id=form.dataset.editId||("custom-"+Date.now()+"-"+Math.random().toString(36).slice(2));
