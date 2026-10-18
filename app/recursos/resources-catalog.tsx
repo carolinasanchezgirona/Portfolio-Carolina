@@ -146,14 +146,16 @@ export default function ResourcesCatalog() {
               <span>{resource.format_label}</span>
               <strong>{euro(resource.price_cents)}</strong>
             </div>
-            <button
+            {resource.price_cents === 0 ? (
+              <a className="editorial-btn editorial-btn-primary resource-buy-button" href={`/api/resources/free-download?slug=${encodeURIComponent(resource.slug)}`}>Descargar gratis</a>
+            ) : <button
               className="editorial-btn editorial-btn-primary resource-buy-button"
               type="button"
               onClick={() => startCheckout(resource)}
               disabled={buyingId === resource.id}
             >
               {buyingId === resource.id ? "Preparando pago…" : "Comprar y descargar"}
-            </button>
+            </button>}
           </article>
         ))}
       </div>
