@@ -102,6 +102,20 @@
       renderInternal();
     } catch(e) { message("ext-internal-count","No disponible");message("ext-internal-list","No se pudo cargar el catálogo interno: "+(e.message||"error de acceso")); }
   }
+  async function renameMaterial(material, internal) {
+    const proposed=window.prompt("Nuevo nombre del material:",material.title||"");
+    if(proposed===null)return;
+    const title=proposed.trim();
+    if(title.length<3 || title.length>180)throw new Error("El nombre debe tener entre 3 y 180 caracteres.");
+    if(title===material.title)return;
+    const table=internal?"clinical_exercise_templates":"clinical_external_materials";
+    await rest(table+"?id=eq."+encodeURIComponent(material.id),{
+      method:"PATCH",headers:{"Prefer":"return=minimal"},
+      body:JSON.stringify({title,updated_at:new Date().toISOString()})
+    });
+    if(internal)await loadInternal();else await loadMaterials();
+    message("ext-status","Nombre actualizado. Los archivos y asignaciones se conservan.");
+  }
   async function previewMaterial(material, internal) {
     const overlay=el("dialog","ext-preview-dialog");
     const heading=el("div","ext-preview-heading");
@@ -155,7 +169,7 @@
     if (!items.length) { host.append(el("p","ext-muted","No hay materiales en esta vista."));return; }
     const scroll=el("div","ext-table-scroll");
     const table=el("table","ext-library-table");
-    const thead=el("thead");const titles=["Código / material","Tipo / categoría","Estado","Vista previa","Editar","Archivar","Eliminar"];
+    const thead=el("thead");const titles=["Código / material","Tipo / categoría","Estado","Vista previa","Cambiar nombre","Editar","Archivar","Eliminar"];
     const header=el("tr");titles.forEach(t=>{const th=el("th",null,t);th.scope="col";header.append(th);});thead.append(header);table.append(thead);
     const tbody=el("tbody");
     items.forEach(m=>{
@@ -177,6 +191,7 @@
         td.append(box);return td;
       }
       row.append(choice("Vista previa",()=>previewMaterial(m,internal)));
+      row.append(choice("Cambiar nombre",()=>renameMaterial(m,internal)));
       row.append(choice("Editar",()=>internal?editInternal(m):startEdit(m)));
       row.append(choice(archived?"Recuperar":"Archivar",()=>internal?setInternalStatus(m,archived?"active":"archived"):setArchive(m,!archived)));
       row.append(choice("Eliminar",()=>{message("ext-status","La eliminación definitiva está deshabilitada para proteger materiales ya asignados. Utiliza Archivar.");},false));
