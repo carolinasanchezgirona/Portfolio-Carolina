@@ -686,6 +686,8 @@ export default function AdminClinicaPage() {
             He comprobado consignas, estímulos, respuestas, accesibilidad y adecuación individual antes de prescribir este material.
           </label>
           <label>Correo destinatario<input id="clinic-exercise-email" type="email" required /></label>
+          <label>Segundo correo destinatario (opcional)<input id="clinic-exercise-email-secondary" type="email" autoComplete="off" placeholder="otro@correo.com" /></label>
+          <p className="clinic-note">Si introduces un segundo correo, se preparará una entrega independiente con su propio enlace. Comprueba que tienes autorización para compartir este material con esa persona.</p>
           <p className="clinic-note">El correo será neutro. El paciente podrá leer el material online y descargar un PDF profesional. El enlace personal caduca en 7 días.</p>
           <p id="clinic-exercise-message" className="clinic-message" role="status" />
           <div className="clinic-material-review-actions"><details><summary>Comprobar vista previa y PDF</summary><div className="clinic-material-review-buttons"><button id="clinic-preview-material" className="clinic-secondary" type="button">Vista del paciente</button><button id="clinic-preview-pdf" className="clinic-secondary" type="button">PDF de prueba</button></div></details></div>
