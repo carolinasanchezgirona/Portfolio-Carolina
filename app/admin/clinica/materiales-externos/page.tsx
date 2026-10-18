@@ -16,7 +16,7 @@ export default function ClinicalExternalMaterialsPage() {
         <div>
           <p className="ext-eyebrow">Dememoria · EntreSesiones · Área profesional</p>
           <h1>Materiales ya elaborados</h1>
-          <p className="ext-description">Guarda cuadernos, fichas externas y sus solucionarios en una biblioteca privada. Sin volver a generarlos.</p>
+          <p className="ext-description">Añade, edita, clasifica, descarga, archiva y asigna materiales clínicos, con solucionarios privados y sin volver a generarlos.</p>
         </div>
         <div className="ext-top-actions">
           <a className="ext-quiet" href="/admin/clinica/?panel=1">← Gestión clínica</a>
