@@ -26,7 +26,7 @@
     if (text !== undefined) node.textContent = String(text);
     return node;
   };
-  const state = {session:null, materials:[], patients:[], assignItem:null, busy:false};
+  const state = {session:null, materials:[], patients:[], assignItem:null, editItem:null, busy:false};
   function message(id, value) {
     const target = byId(id);
     if (target) target.textContent = value || "";
@@ -102,17 +102,40 @@
     state.patients = rows.filter(p => p.status !== "archived" && p.full_name);
   }
   function startCreate() {
+    state.editItem=null;
     byId("ext-form").reset();
+    byId("ext-patient-file").required=true;
+    byId("ext-form-title").textContent="Añadir a la biblioteca";
+    byId("ext-save").textContent="Guardar en biblioteca";
     byId("ext-editor").hidden = false;
     byId("ext-open-form").hidden = true;
     message("ext-form-message","");
     byId("ext-title").focus();
     byId("ext-editor").scrollIntoView({behavior:"smooth",block:"start"});
   }
+  function startEdit(material) {
+    state.editItem=material;
+    byId("ext-form").reset();
+    byId("ext-title").value=material.title || "";
+    byId("ext-type").value=material.material_type || "worksheet";
+    byId("ext-area").value=material.clinical_area || "psychology";
+    byId("ext-domain").value=material.cognitive_domain || "other";
+    byId("ext-level").value=material.level || "unspecified";
+    byId("ext-description").value=material.description || "";
+    byId("ext-patient-file").required=false;
+    byId("ext-editor").hidden=false;
+    byId("ext-open-form").hidden=true;
+    byId("ext-form-title").textContent="Editar ficha del material";
+    byId("ext-save").textContent="Guardar cambios";
+    message("ext-form-message","Los archivos existentes se conservan. Para cambiarlos, crea una nueva versión como material independiente.");
+    byId("ext-editor").scrollIntoView({behavior:"smooth",block:"start"});
+  }
   function closeCreate() {
     byId("ext-editor").hidden = true;
     byId("ext-open-form").hidden = false;
     byId("ext-form").reset();
+    state.editItem=null;
+    byId("ext-patient-file").required=true;
     message("ext-form-message","");
   }
   async function save(event) {
@@ -123,6 +146,21 @@
     const solutionFile=byId("ext-solution-file").files?.[0];
     if (title.length<3) {message("ext-form-message","Escribe un título de al menos tres caracteres.");return;}
     state.busy=true;byId("ext-save").disabled=true;
+    if(state.editItem) {
+      try {
+        if(patientFile || solutionFile)throw new Error("Al editar se conservan los archivos originales. Para sustituirlos, crea una nueva versión.");
+        const existing=state.editItem;
+        await rest("clinical_external_materials?id=eq."+encodeURIComponent(existing.id),{
+          method:"PATCH",headers:{"Prefer":"return=minimal"},
+          body:JSON.stringify({title,material_type:byId("ext-type").value,clinical_area:byId("ext-area").value,
+            cognitive_domain:byId("ext-domain").value,level:byId("ext-level").value,
+            description:byId("ext-description").value.trim() || null,updated_at:new Date().toISOString()})
+        });
+        closeCreate();await loadMaterials();message("ext-status","Ficha actualizada. Archivos y asignaciones conservados.");
+      }catch(e){message("ext-form-message",e.message || "No se han podido guardar los cambios.");}
+      finally{state.busy=false;byId("ext-save").disabled=false;}
+      return;
+    }
     const uploaded=[];
     try {
       message("ext-form-message","Comprobando archivos…");
@@ -207,6 +245,7 @@
       card.append(el("p","ext-muted",(DOMAIN[material.cognitive_domain]||"Varias funciones")+" · "+new Date(material.created_at).toLocaleDateString("es-ES")));
       if(material.description)card.append(el("p","ext-muted",material.description));
       const actions=el("div","ext-actions");
+      actions.append(action("Editar ficha",()=>startEdit(material)));
       actions.append(action("Descargar paciente",()=>download(material.patient_file_path,material.patient_file_name)));
       if(material.solution_file_path)actions.append(action("Solucionario · solo profesional",()=>download(material.solution_file_path,material.solution_file_name)));
       if (!material.archived)actions.append(action("Asignar a paciente",()=>openAssign(material),true));
