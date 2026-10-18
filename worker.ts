@@ -2117,6 +2117,20 @@ export default {
       return handleStripeWebhook(request, env);
     }
 
+    if (url.pathname === "/api/resources/free-download" || url.pathname === "/api/resources/free-download/") {
+      if (request.method !== "GET") return new Response("Method Not Allowed", { status: 405 });
+      const slug = url.searchParams.get("slug") || "";
+      if (!/^[a-z0-9-]{1,120}$/.test(slug)) return new Response("Invalid resource", { status: 400 });
+      if (!env.SUPABASE_SERVICE_ROLE_KEY) return new Response("Download unavailable", { status: 503 });
+      const lookup = await fetch(`${RESOURCE_SUPABASE}/rest/v1/digital_resources?select=id,slug,title,file_path,price_cents&status=eq.published&slug=eq.${encodeURIComponent(slug)}&limit=1`, { headers: serviceHeaders(env), cache: "no-store" });
+      if (!lookup.ok) return new Response("Download unavailable", { status: 503 });
+      const rows = await lookup.json().catch(() => []);
+      const resource = Array.isArray(rows) ? rows[0] : null;
+      if (!resource || Number(resource.price_cents) !== 0 || !resource.file_path) return new Response("Resource unavailable", { status: 404 });
+      const file = await fetch(`${RESOURCE_SUPABASE}/storage/v1/object/authenticated/resource-files/${storageObjectPath(String(resource.file_path))}`, { headers: { apikey: env.SUPABASE_SERVICE_ROLE_KEY, Authorization: `Bearer ${env.SUPABASE_SERVICE_ROLE_KEY}` }, cache: "no-store" });
+      if (!file.ok) return new Response("File unavailable", { status: 404 });
+      return new Response(file.body, { status: 200, headers: { "Content-Type": "application/pdf", "Content-Disposition": `attachment; filename="${slug}.pdf"`, "Cache-Control": "public, max-age=300", "X-Content-Type-Options": "nosniff" } });
+    }
     if (url.pathname === "/api/resources/checkout" || url.pathname === "/api/resources/checkout/") return handleResourceCheckout(request, env);
     if (url.pathname === "/api/resources/access" || url.pathname === "/api/resources/access/") return handleResourceAccess(request, env);
     if (url.pathname === "/api/resources/download" || url.pathname === "/api/resources/download/") return handleResourceDownload(request, env);
