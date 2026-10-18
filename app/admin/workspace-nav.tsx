@@ -37,6 +37,7 @@ export default function AdminWorkspaceNav({ active }: { active: Area }) {
           <a href="/admin/articulos/">Artículos</a>
           <a href="/admin/clinica/materiales-externos/">Cuadernos y fichas externos</a>
           <a href="/admin/recursos/" aria-current={active === "recursos" ? "page" : undefined}>Recursos</a>
+          <a href="/admin/marketing/">Marketing</a>
           <a href="/admin/preguntas/" aria-current={active === "preguntas" ? "page" : undefined}>Preguntas</a>
           <a href="/admin/">Panel general</a>
         </div>
