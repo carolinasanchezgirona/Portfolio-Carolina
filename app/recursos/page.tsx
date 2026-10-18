@@ -32,8 +32,8 @@ export default function RecursosPage() {
           <aside className="resources-hero-note">
             <span>Biblioteca digital</span>
             <p>
-              Los materiales se incorporarán progresivamente. Cuando un recurso esté publicado, podrá adquirirse
-              mediante pago seguro y descargarse después de la confirmación.
+              Los materiales se incorporan progresivamente. Encontrarás recursos de acceso gratuito y
+              cuadernos de pago, siempre identificados con claridad.
             </p>
           </aside>
         </div>
@@ -93,9 +93,9 @@ export default function RecursosPage() {
 
       <section className="editorial-section resources-free" aria-labelledby="free-title">
         <div className="editorial-wrap resources-free-grid">
-          <div><p className="editorial-section-eyebrow">También habrá recursos gratuitos</p><h2 id="free-title">Probar antes de comprar.</h2></div>
+          <div><p className="editorial-section-eyebrow">Recursos gratuitos</p><h2 id="free-title">Materiales para descargar y utilizar.</h2></div>
           <div>
-            <p>La biblioteca incluirá materiales breves de acceso libre. Servirán como herramientas independientes y como muestra del enfoque de los cuadernos completos.</p>
+            <p>La biblioteca incluye y seguirá incorporando materiales gratuitos de apoyo y psicoeducación.</p>
             <a className="editorial-btn editorial-btn-secondary" href="/articulos/">Ver artículos</a>
           </div>
         </div>
