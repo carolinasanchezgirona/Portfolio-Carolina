@@ -62,3 +62,18 @@
 @media (max-width: 899px) {
  .ext-catalog .ext-library-table{min-width:740px}
 }
+
+/* Nueve columnas: tipo traducido y categoría clínica independientes. */
+@media(min-width:900px){
+.ext-catalog .ext-library-table{font-size:12px!important}
+.ext-library-table th:first-child,.ext-library-table td:first-child{width:24%!important}
+.ext-library-table th:nth-child(2),.ext-library-table td:nth-child(2){width:10%!important}
+.ext-library-table th:nth-child(3),.ext-library-table td:nth-child(3){width:15%!important}
+.ext-library-table th:nth-child(4),.ext-library-table td:nth-child(4){width:7%!important}
+.ext-library-table th:nth-child(5),.ext-library-table td:nth-child(5){width:9%!important}
+.ext-library-table th:nth-child(6),.ext-library-table td:nth-child(6){width:10%!important}
+.ext-library-table th:nth-child(7),.ext-library-table td:nth-child(7){width:7%!important}
+.ext-library-table th:nth-child(8),.ext-library-table td:nth-child(8){width:9%!important}
+.ext-library-table th:nth-child(9),.ext-library-table td:nth-child(9){width:9%!important}
+.ext-library-table th:nth-child(4){text-align:left}
+}
