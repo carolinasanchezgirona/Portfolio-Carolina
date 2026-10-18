@@ -112,10 +112,10 @@
     if(!items.length){host.append(el("p","ext-muted","No se encontraron materiales internos."));return;}
     items.forEach(m=>{
       const card=el("article","ext-item");
-      card.append(el("h3",null,m.title||"Sin título"));
+      const head=el("div","ext-material-select");const check=el("input");check.type="checkbox";check.setAttribute("aria-label","Seleccionar "+(m.title||"material"));check.addEventListener("change",()=>{card.classList.toggle("ext-selected",check.checked);actions.hidden=!check.checked;});head.append(check,el("h3",null,m.title||"Sin título"));card.append(head);
       card.append(el("p","ext-muted",[m.material_type,(m.process_tags||[]).join(", "),m.status==="active"?"Activo":"Archivado"].filter(Boolean).join(" · ")));
       if(m.summary)card.append(el("p","ext-muted",m.summary));
-      const actions=el("div","ext-actions");
+      const actions=el("div","ext-actions");actions.hidden=true;
       actions.append(action("Editar ficha",()=>editInternal(m)));
       actions.append(action(m.status==="active"?"Archivar":"Recuperar",()=>setInternalStatus(m,m.status==="active"?"archived":"active")));
       card.append(actions);host.append(card);
@@ -288,10 +288,10 @@
       );
       if (material.solution_file_path) meta.append(badge("Con solucionario","ext-pill-pro"));
       if (material.archived) meta.append(badge("Archivado"));
-      card.append(meta,el("h3",null,material.title));
+      const head=el("div","ext-material-select");const check=el("input");check.type="checkbox";check.setAttribute("aria-label","Seleccionar "+material.title);head.append(check,el("h3",null,material.title));card.append(meta,head);
       card.append(el("p","ext-muted",(DOMAIN[material.cognitive_domain]||"Varias funciones")+" · "+new Date(material.created_at).toLocaleDateString("es-ES")));
       if(material.description)card.append(el("p","ext-muted",material.description));
-      const actions=el("div","ext-actions");
+      const actions=el("div","ext-actions");actions.hidden=true;check.addEventListener("change",()=>{card.classList.toggle("ext-selected",check.checked);actions.hidden=!check.checked;});
       actions.append(action("Editar ficha",()=>startEdit(material)));
       actions.append(action("Descargar paciente",()=>download(material.patient_file_path,material.patient_file_name)));
       if(material.solution_file_path)actions.append(action("Solucionario · solo profesional",()=>download(material.solution_file_path,material.solution_file_name)));
