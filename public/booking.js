@@ -81,6 +81,7 @@
     if (!els.message) return;
     els.message.textContent = text;
     els.message.className = `form-message${type ? ` form-message-${type}` : ""}`;
+    if (type === "error") window.gtag?.("event", "booking_form_error");
   }
 
   async function rpc(path, body) {
@@ -119,6 +120,9 @@
     if (els.submit) els.submit.disabled = false;
     showMessage("");
     window.gtag?.("event", "booking_slot_selected");
+    if (window.matchMedia("(max-width: 760px)").matches) {
+      window.setTimeout(() => form.scrollIntoView({ behavior: "smooth", block: "start" }), 180);
+    }
     document.querySelectorAll(".time-option, .first-slot-button").forEach((button) => {
       const selected = button.dataset.startsAt === slot.starts_at;
       button.classList.toggle("is-selected", selected);
@@ -288,6 +292,7 @@
     if (!email) return showMessage("Escribe tu correo electrónico.", "error");
     if (!form.elements.patient_email.checkValidity()) return showMessage("Comprueba que el correo electrónico sea válido.", "error");
     if (!phone) return showMessage("Escribe tu número de teléfono.", "error");
+    window.gtag?.("event", "booking_submit");
     els.submit.disabled = true;
     els.submit.textContent = "Registrando…";
     try {
