@@ -35,6 +35,7 @@ export default function MarketingPage(){
  </section>
  {state?<p role="status" style={{color:"#9e4e43"}}>{state}</p>:null}
  <div style={{display:"flex",flexWrap:"wrap",gap:14,marginTop:25}}>
+ <a href="https://c6645869.sibforms.com/serve/MUIFAIuvbjgYqrRqmmfpA-O89yKi9fH-Kb6Yp0UkGDyZKb_O1wjUF1SHUqEcp20MeACDjXZHQBzDuXijbIdqi8CB692onRlW0SA6IVn-N_ym1RIdQjptK-couFyXNVAQiyPtFM4hkdWfLmwNQgVfnarzCyzZDYkTDXyOH2O8g5m7BN-Gw--aM1hnRHHMfp39FyhRtcurRMbxfwtgMQ==" target="_blank" rel="noopener noreferrer" style={{background:"#08A6A0",color:"#fff",padding:"14px 22px",borderRadius:10,textDecoration:"none"}}>Ver formulario de suscripción ↗</a>
  <a href="https://app.brevo.com/" target="_blank" rel="noopener noreferrer" style={{background:"#173A5E",color:"#fff",padding:"14px 22px",borderRadius:10,textDecoration:"none"}}>Ver contactos en Brevo ↗</a>
  <a href="/admin/recursos/" style={{border:"1px solid #173A5E",padding:"14px 22px",borderRadius:10,color:"#173A5E",textDecoration:"none"}}>Gestionar recursos</a>
  </div>
