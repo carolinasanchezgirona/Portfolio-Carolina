@@ -268,7 +268,7 @@ function MoodEvolution({ entries }: { entries: MoodEntry[] }) {
               {showEnergy && <rect x={x(i)-5} y={y(day.entry.energy+1)-5} width="10" height="10" rx="2" fill="#cf6b5c" stroke="#fff" strokeWidth="1.5"/>}
             </g>}
             {(period === 7 || i === 0 || i === period-1 ||
-              (period === 14 ? i % 3 === 0 : i % (period === 30 ? 5 : 15) === 0)) &&
+              (period === 14 ? (i % 3 === 0 && i < period - 2) : i % (period === 30 ? 5 : 15) === 0)) &&
               <text x={x(i)} y="271" textAnchor="middle" fill="#526d80" fontSize={compact ? 12 : 14}>{dateLabel(day.key)}</text>}
           </g>)}
         </svg>
