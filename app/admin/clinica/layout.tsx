@@ -30,6 +30,7 @@ export default function ClinicaLayout({ children }: Readonly<{ children: React.R
       <script src="/clinic-admin-tasks.js?v=20261009-visibility-1" defer />
       <script src="/clinic-patient-admin-enhancements.js?v=20261009-fixes-2" defer />
       <script src="/clinic-patient-workspace.js?v=20261009-2" defer />
+      <script src="/clinic-deferred-consent.js?v=20261018-1" defer />
       <script src="/clinic-pwa.js?v=20260917-2" defer />
     </>
   );
