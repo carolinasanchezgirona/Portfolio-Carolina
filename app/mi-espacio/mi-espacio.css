@@ -1245,3 +1245,10 @@
 .wellness-experience .wellness-moment-section .mood-tracker{margin:0;border-color:#d6e7ed;border-radius:25px;box-shadow:0 10px 34px rgba(23,58,94,.045);background:linear-gradient(145deg,#fff,#fafdff)}
 .wellness-experience .wellness-moment-section .mood-tracker-heading .space-eyebrow{color:#bd6a5d;font-weight:800;letter-spacing:.17em}
 @media(max-width:600px){.space-page .space-moment-shortcut{padding:18px;gap:14px}.space-page .space-moment-shortcut .space-primary{width:100%}.wellness-experience .wellness-moment-section{scroll-margin-top:72px}.wellness-experience .wellness-moment-section .mood-tracker{margin:0;padding:15px;border-radius:19px}}
+
+/* Dos decisiones complementarias, al mismo nivel, en la portada de Wellness. */
+.wellness-experience .wellness-primary-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px;align-items:start;margin:20px 0 32px}
+.wellness-experience .wellness-primary-grid > *{min-width:0;margin:0}
+.wellness-experience .wellness-primary-grid .wellness-need-section{height:100%}
+.wellness-experience .wellness-primary-grid .wellness-need-section .wellness-section-title h3{font-size:clamp(1.6rem,2.6vw,2.6rem)}
+@media(max-width:1200px){.wellness-experience .wellness-primary-grid{grid-template-columns:1fr}.wellness-experience .wellness-primary-grid .wellness-need-section{height:auto}}
