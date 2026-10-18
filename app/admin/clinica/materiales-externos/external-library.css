@@ -29,3 +29,15 @@
 .ext-preview-text{white-space:pre-wrap;line-height:1.6}
 .ext-preview-frame{border:0;width:100%;height:65vh}
 .ext-preview-image{max-width:100%;max-height:65vh;object-fit:contain;display:block;margin:auto}
+
+/* Ajuste de encuadre: el grid antiguo no debe limitar la tabla a una tarjeta. */
+.ext-catalog,.ext-catalog .ext-items{min-width:0;width:100%;max-width:100%;box-sizing:border-box}
+.ext-catalog .ext-items{display:block!important}
+.ext-catalog .ext-table-scroll{display:block;width:100%;max-width:100%;overflow-x:auto;box-sizing:border-box}
+.ext-catalog .ext-library-table{width:100%;min-width:940px;table-layout:auto}
+.ext-library-table th,.ext-library-table td{box-sizing:border-box}
+.ext-library-table th:first-child,.ext-library-table td:first-child{min-width:260px;width:34%}
+.ext-library-table th:nth-child(2),.ext-library-table td:nth-child(2){min-width:170px;width:20%;overflow-wrap:anywhere}
+.ext-library-table th:nth-child(3),.ext-library-table td:nth-child(3){min-width:85px}
+.ext-library-table th:nth-child(n+4),.ext-library-table td:nth-child(n+4){min-width:86px;text-align:center}
+@media(min-width:1150px){.ext-catalog .ext-library-table{min-width:0}}
