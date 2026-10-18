@@ -5,3 +5,16 @@
 .ext-material-select h3{margin:0;min-width:0}
 .ext-item.ext-selected{outline:2px solid #087b8b;outline-offset:1px}
 .ext-actions[hidden]{display:none!important}
+
+/* Vista de filas compactas para administrar el catálogo */
+.ext-table-scroll{width:100%;overflow-x:auto;border:1px solid #d5e4ee;border-radius:12px}
+.ext-library-table{width:100%;border-collapse:collapse;min-width:740px;font-size:14px}
+.ext-library-table th{background:#eff6f9;text-align:left;font-weight:700;color:#173a5e;padding:11px 12px;white-space:nowrap;border-bottom:1px solid #d5e4ee}
+.ext-library-table td{padding:10px 12px;border-bottom:1px solid #e3edf3;vertical-align:middle}
+.ext-library-table tbody tr:nth-child(even){background:#fafcfd}
+.ext-library-table tbody tr:hover{background:#edf8fa}
+.ext-library-table tbody tr:last-child td{border-bottom:0}
+.ext-library-table .ext-library-name{font-weight:650;color:#173a5e;min-width:270px}
+.ext-library-table .ext-table-choice{text-align:center;width:80px}
+.ext-library-table input[type=checkbox]{height:19px;width:19px;accent-color:#087b8b;cursor:pointer}
+.ext-library-table input:disabled{cursor:not-allowed;opacity:.35}
