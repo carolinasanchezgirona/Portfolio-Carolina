@@ -250,7 +250,7 @@
     const lastDate = new Date(madridLocalToIso(lastKey, "12:00"));
     els.weekTitle.textContent = `Semana del ${dayShort.format(firstDate)} al ${dayShort.format(lastDate)}`;
     els.weekSubtitle.textContent = monthYear.format(firstDate);
-    els.total.textContent = String(appointments.length);
+    els.total.textContent = String(appointments.filter((a) => !["cancelled", "canceled"].includes(a.status)).length);
     els.confirmed.textContent = String(appointments.filter((a) => a.status === "confirmed").length);
     els.pending.textContent = String(appointments.filter((a) => a.status === "pending").length);
     els.cancelled.textContent = String(appointments.filter((a) => ["cancelled", "canceled"].includes(a.status)).length);
@@ -259,7 +259,7 @@
     for (let i = 0; i < 7; i += 1) {
       const key = addDaysKey(weekStartKey, i);
       const instant = new Date(madridLocalToIso(key, "12:00"));
-      const dayAppointments = appointments.filter((a) => keyFromIso(a.starts_at) === key);
+      const dayAppointments = appointments.filter((a) => keyFromIso(a.starts_at) === key && !["cancelled", "canceled"].includes(a.status));
       const dayBlocks = scheduleBlocks.filter((b) => keyFromIso(b.starts_at) === key);
       const column = document.createElement("article");
       column.className = "calendar-day-column";
@@ -386,7 +386,7 @@
   }
 
   function renderDay(key, titleEl, summaryEl, listEl, emptyLabel, allowQuickActions = false) {
-    const dayAppointments = appointments.filter((a) => keyFromIso(a.starts_at) === key);
+    const dayAppointments = appointments.filter((a) => keyFromIso(a.starts_at) === key && !["cancelled", "canceled"].includes(a.status));
     const active = dayAppointments.filter((a) => !["cancelled", "canceled"].includes(a.status));
     titleEl.textContent = dateLong.format(new Date(madridLocalToIso(key, "12:00")));
     summaryEl.innerHTML = `<article><strong>${active.length}</strong><span>Citas activas</span></article><article><strong>${active.filter((a) => a.status === "confirmed").length}</strong><span>Confirmadas</span></article><article><strong>${active.filter((a) => a.status === "pending").length}</strong><span>Pendientes</span></article>`;
