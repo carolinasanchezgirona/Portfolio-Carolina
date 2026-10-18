@@ -320,6 +320,7 @@
    Los periodos cortos caben completos; los largos conservan desplazamiento táctil. */
 .mood-evolution-scroll{min-width:0;overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch;scrollbar-width:thin;touch-action:pan-x pan-y}
 .mood-evolution-scroll svg{height:290px;flex:none}
+.mood-evolution-scroll svg[data-chart-compact="true"]{width:100%!important;height:auto!important;max-width:100%!important}
 .mood-chart-point:focus-visible{outline:none}
 .mood-chart-point:focus-visible :is(circle,rect){stroke:#173a5e;stroke-width:4}
 .mood-chart-hint{color:#486777!important;font-size:.82rem!important;line-height:1.65!important}
