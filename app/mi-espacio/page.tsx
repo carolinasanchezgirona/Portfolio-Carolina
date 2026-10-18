@@ -281,6 +281,7 @@ export default function MiEspacioPage() {
             </nav>
 
             <div className="wellness-subpanel" data-wellness-section="inicio">
+            <div className="wellness-primary-grid">
             <div id="wellness-mi-momento" className="wellness-moment-section">
               <MoodTracker />
             </div>
@@ -333,6 +334,8 @@ export default function MiEspacioPage() {
                 </button>
               </div>
             </section>
+
+            </div>
 
             <section className="wellness-quick-section" aria-labelledby="wellness-quick-heading">
               <div className="wellness-section-title">
