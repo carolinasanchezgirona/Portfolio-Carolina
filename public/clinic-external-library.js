@@ -26,7 +26,7 @@
     if (text !== undefined) node.textContent = String(text);
     return node;
   };
-  const state = {session:null, materials:[], patients:[], assignItem:null, editItem:null, busy:false};
+  const state = {session:null, materials:[], patients:[], assignItem:null, editItem:null, internal:[], busy:false};
   function message(id, value) {
     const target = byId(id);
     if (target) target.textContent = value || "";
@@ -95,6 +95,53 @@
   async function loadMaterials() {
     state.materials = await rest("clinical_external_materials?select=*&order=updated_at.desc&limit=500") || [];
     render();
+  }
+  async function loadInternal() {
+    try {
+      state.internal=await rest("clinical_exercise_templates?select=*&order=title.asc&limit=1000") || [];
+      renderInternal();
+    } catch(e) { message("ext-internal-count","No disponible");message("ext-internal-list","No se pudo cargar el catálogo interno: "+(e.message||"error de acceso")); }
+  }
+  function renderInternal() {
+    const search=byId("ext-internal-search").value.toLocaleLowerCase("es").trim();
+    const filter=byId("ext-internal-filter").value;
+    const items=state.internal.filter(m=>(filter==="all" || (filter==="active" ? m.status==="active" : m.status!=="active")) &&
+      (!search || [m.title,m.summary,m.instructions,m.material_type,...(m.process_tags||[])].filter(Boolean).join(" ").toLocaleLowerCase("es").includes(search)));
+    message("ext-internal-count",state.internal.filter(m=>m.status==="active").length+" materiales activos");
+    const host=byId("ext-internal-list");host.replaceChildren();
+    if(!items.length){host.append(el("p","ext-muted","No se encontraron materiales internos."));return;}
+    items.forEach(m=>{
+      const card=el("article","ext-item");
+      card.append(el("h3",null,m.title||"Sin título"));
+      card.append(el("p","ext-muted",[m.material_type,(m.process_tags||[]).join(", "),m.status==="active"?"Activo":"Archivado"].filter(Boolean).join(" · ")));
+      if(m.summary)card.append(el("p","ext-muted",m.summary));
+      const actions=el("div","ext-actions");
+      actions.append(action("Editar ficha",()=>editInternal(m)));
+      actions.append(action(m.status==="active"?"Archivar":"Recuperar",()=>setInternalStatus(m,m.status==="active"?"archived":"active")));
+      card.append(actions);host.append(card);
+    });
+  }
+  async function editInternal(m) {
+    const title=window.prompt("Nombre del material",m.title||"");
+    if(title===null)return;
+    if(title.trim().length<3)throw new Error("El título debe tener al menos tres caracteres.");
+    const summary=window.prompt("Descripción / resumen",m.summary||"");
+    if(summary===null)return;
+    const instructions=window.prompt("Instrucciones del material",m.instructions||"");
+    if(instructions===null)return;
+    await rest("clinical_exercise_templates?id=eq."+encodeURIComponent(m.id),{
+      method:"PATCH",headers:{"Prefer":"return=minimal"},
+      body:JSON.stringify({title:title.trim(),summary:summary.trim(),instructions:instructions.trim(),updated_at:new Date().toISOString()})
+    });
+    await loadInternal();message("ext-status","Material interno actualizado. Las asignaciones anteriores se conservan.");
+  }
+  async function setInternalStatus(m,status) {
+    if(!window.confirm((status==="archived"?"¿Archivar":"¿Recuperar")+" «"+m.title+"»? Las asignaciones existentes no se eliminarán."))return;
+    await rest("clinical_exercise_templates?id=eq."+encodeURIComponent(m.id),{
+      method:"PATCH",headers:{"Prefer":"return=minimal"},
+      body:JSON.stringify({status,updated_at:new Date().toISOString()})
+    });
+    await loadInternal();message("ext-status",status==="archived"?"Material interno archivado.":"Material interno recuperado.");
   }
   async function ensurePatients() {
     if (state.patients.length) return;
