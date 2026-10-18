@@ -52,6 +52,12 @@ jobs:
           node --check public/clinic-neuro-catalog-browser.js
           node --experimental-strip-types --test tests/clinical-neuro-visual.test.mjs tests/clinical-neuro-library.test.mjs tests/clinical-neuro-weekly.test.mjs tests/clinical-neuro-progress.test.mjs tests/clinical-neuro-composer.test.mjs tests/clinical-neuro-audit.test.mjs tests/clinical-neuro-neuronup-benchmark.test.mjs tests/clinical-neuro-catalog.test.mjs tests/clinical-neuro-simple-workspace.test.mjs tests/clinical-neuro-patient-workbook.test.mjs
 
+      - name: Comprobar reserva rápida, conversión y protección de datos
+        run: |
+          node --check public/booking.js
+          node --check public/clinic-deferred-consent.js
+          node --test tests/booking-conversion.test.mjs
+
       - name: Validar editor clínico, guardado automático y navegación
         run: |
           node --check public/admin-clinica.js
