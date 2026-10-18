@@ -64,7 +64,7 @@ export default function BookingPage() {
           <fieldset className="patient-type-fieldset">
             <legend>¿Es tu primera visita?</legend>
             <div className="patient-type-options">
-              <label className="patient-type-option"><input type="radio" name="patient_type" value="new" form="booking-form" defaultChecked /><span><strong>Primera visita</strong><small>Antes de confirmar, podrás consultar la información de privacidad y el consentimiento informado.</small></span></label>
+              <label className="patient-type-option"><input type="radio" name="patient_type" value="new" form="booking-form" defaultChecked /><span><strong>Primera visita</strong><small>Elige un horario y deja tus datos. El encuadre y los documentos clínicos se revisan en consulta.</small></span></label>
               <label className="patient-type-option"><input type="radio" name="patient_type" value="existing" form="booking-form" /><span><strong>Paciente existente</strong><small>Selecciona esta opción si ya has acudido a consulta. Se aplicará la política de cancelación.</small></span></label>
             </div>
           </fieldset>
@@ -94,7 +94,7 @@ export default function BookingPage() {
         </section>
 
         <form id="booking-form" className="booking-panel booking-form">
-          <div className="booking-panel-heading"><span className="booking-step" aria-hidden="true">03</span><div><p className="booking-kicker">Datos y aceptación</p><h2>Completa la reserva</h2></div></div>
+          <div className="booking-panel-heading"><span className="booking-step" aria-hidden="true">03</span><div><p className="booking-kicker">Un último paso</p><h2>¿A quién confirmamos la cita?</h2></div></div>
           <input id="selected-slot" name="starts_at" type="hidden" />
           <div id="selection-summary" className="selection-summary">Todavía no has elegido un horario.</div>
           <div className="form-field"><label htmlFor="patient-name">Nombre y apellidos</label><input id="patient-name" name="patient_name" type="text" autoComplete="name" maxLength={120} required /></div>
@@ -104,22 +104,21 @@ export default function BookingPage() {
           </div>
           <p className="form-help">Todos los campos mostrados son obligatorios. No incluyas información clínica ni el motivo de consulta en este formulario.</p>
 
-          <div id="new-patient-documents" className="acceptances">
-            <div className="first-visit-note" role="note"><strong>Para la primera visita</strong><p>Si dispones de informes o documentación previa que pueda ser relevante para la atención, puedes traerla a la sesión: informes de psicología o psiquiatría, valoraciones médicas, pruebas, informes hospitalarios o información sobre tratamientos actuales. No es necesario aportar documentación que no consideres relacionada con el motivo de consulta ni enviarla a través de este formulario.</p></div>
-            <label className="privacy-check"><input name="privacy_acknowledged" type="checkbox" required /><span>Declaro haber leído la <a href="/privacidad/" target="_blank" rel="noopener">Política de privacidad y protección de datos</a>.</span></label>
-            <label className="privacy-check"><input name="informed_consent_accepted" type="checkbox" required /><span>He leído y acepto el <a id="consent-link" href="/consentimiento-psicologico/" target="_blank" rel="noopener">consentimiento informado para intervención psicológica</a>.</span></label>
+          <div className="booking-privacy" role="note" aria-label="Información básica sobre protección de datos">
+            <strong>Protección de datos.</strong> Responsable: Carolina Sánchez Girona (Dememoria).
+            Finalidad: gestionar tu reserva y comunicarnos contigo. Base jurídica: gestión de tu solicitud de cita
+            (art. 6.1.b del RGPD). Destinatarios: proveedores tecnológicos necesarios y organismos cuando exista
+            obligación legal; pueden existir transferencias internacionales con garantías.
+            Puedes ejercer tus derechos escribiendo a{" "}
+            <a href="mailto:contact@carolinasanchezgirona.com">contact@carolinasanchezgirona.com</a>.
+            Consulta la <a href="/privacidad/" target="_blank" rel="noopener noreferrer">información de privacidad completa</a>.
           </div>
-
-          <div className="acceptances cancellation-acceptance"><label className="privacy-check"><input name="cancellation_accepted" type="checkbox" required /><span>He leído y acepto la <a href="#cancellation-information">política de cancelación</a>. Si necesito cambiar o cancelar la cita, avisaré con al menos 24 horas de antelación.</span></label></div>
-
-          <div id="new-patient-signature" className="form-field signature-field"><label htmlFor="signer-name">Firma electrónica · escribe tu nombre y apellidos</label><input id="signer-name" name="signer_name" type="text" autoComplete="name" maxLength={120} required /><p className="form-help">Debe coincidir exactamente con el campo «Nombre y apellidos». Al confirmar, esta firma queda asociada a la fecha, la cita y los documentos aceptados.</p></div>
-
-          <div id="new-patient-information" className="legal-information">
-            <details id="privacy-information" className="privacy-details"><summary>Información de privacidad</summary><p>Puedes consultar la <a href="/privacidad/" target="_blank" rel="noopener">Política de privacidad y protección de datos completa</a> antes de confirmar la reserva.</p></details>
-            <details id="consent-information" className="privacy-details"><summary>Consentimiento informado</summary><p id="consent-description">Consulta el <a href="/consentimiento-psicologico/" target="_blank" rel="noopener">consentimiento informado para intervención psicológica</a>.</p></details>
-          </div>
-
-          <details id="cancellation-information" className="privacy-details"><summary>Cancelaciones y cambios</summary><p>Si necesitas cancelar o cambiar la cita, avisa con al menos 24 horas de antelación. Las situaciones imprevistas se valorarán individualmente.</p></details>
+          <p className="booking-terms">Al confirmar la reserva aceptas las{" "}
+            <a href="#cancellation-information">condiciones de cancelación</a>.
+            Si necesitas cambiar o cancelar, avisa con al menos 24 horas; los imprevistos se valorarán individualmente.
+          </p>
+          <details id="cancellation-information" className="privacy-details"><summary>Ver condiciones de cancelación</summary><p>Si necesitas cancelar o cambiar la cita, avisa con al menos 24 horas de antelación. Las situaciones imprevistas se valorarán individualmente.</p></details>
+          <details className="privacy-details booking-first-visit-help"><summary>¿Es tu primera visita?</summary><p>Podrás revisar el encuadre y el consentimiento clínico con la profesional al comenzar la atención. Si tienes informes relevantes, puedes traerlos, pero no es necesario adjuntarlos para pedir cita.</p></details>
           <div id="form-message" className="form-message" role="status" aria-live="polite" />
           <button id="booking-submit" className="booking-submit" type="submit" disabled>Confirmar reserva <span aria-hidden="true">→</span></button>
         </form>
