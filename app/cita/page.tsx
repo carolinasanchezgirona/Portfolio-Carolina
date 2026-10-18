@@ -127,7 +127,7 @@ export default function BookingPage() {
 
       <footer className="editorial-footer booking-footer"><div className="editorial-wrap editorial-footer-inner"><div><p className="editorial-footer-brand">Carolina Sánchez | Psicóloga</p><p>Dememoria · Consulta de Psicología y Neuropsicología</p></div><div><p>Arenys de Mar · Atención online</p><p>© 2026 Carolina Sánchez Girona</p></div></div></footer>
 
-      <Script src="/booking.js" strategy="afterInteractive" />
+      <Script src="/booking.js?v=20261018-captacion-1" strategy="afterInteractive" />
       <Script src="/booking-calendar.js?v=20260913-calendar-1" strategy="afterInteractive" />
       <Script src="/pwa.js" strategy="afterInteractive" />
     </main>
