@@ -102,12 +102,60 @@
       renderInternal();
     } catch(e) { message("ext-internal-count","No disponible");message("ext-internal-list","No se pudo cargar el catálogo interno: "+(e.message||"error de acceso")); }
   }
+  async function previewMaterial(material, internal) {
+    const overlay=el("dialog","ext-preview-dialog");
+    const heading=el("div","ext-preview-heading");
+    const title=el("h2",null,material.title||"Vista previa");
+    const close=el("button","ext-action","Cerrar");
+    close.type="button";
+    close.addEventListener("click",()=>overlay.close());
+    heading.append(title,close);
+    const body=el("div","ext-preview-body");
+    overlay.append(heading,body);
+    document.body.append(overlay);
+    overlay.addEventListener("close",()=>overlay.remove(),{once:true});
+    overlay.showModal();
+    if(internal) {
+      const doc=material.patient_document||{};
+      const sections=[
+        ["Resumen",material.summary],["Introducción",doc.introduction],
+        ["Objetivo",doc.objective],["Instrucciones",doc.instructions||material.instructions],
+        ["Ejemplo",doc.example],["Registro",doc.record_prompt],
+        ["Recordatorio",doc.remember]
+      ];
+      sections.forEach(([name,value])=>{
+        if(!value)return;
+        const section=el("section");
+        section.append(el("h3",null,name),el("p","ext-preview-text",Array.isArray(value)?value.join("\n"):value));
+        body.append(section);
+      });
+      if(!body.children.length)body.append(el("p","ext-muted","Esta ficha no tiene contenido de vista previa."));
+      return;
+    }
+    body.append(el("p","ext-muted","Preparando vista preliminar privada…"));
+    try {
+      const response=await fetch(storageUrl(BUCKET,material.patient_file_path),{headers:headers(),cache:"no-store"});
+      if(!response.ok)throw new Error(await errorText(response));
+      const blob=await response.blob();
+      const url=URL.createObjectURL(blob);
+      overlay.addEventListener("close",()=>URL.revokeObjectURL(url),{once:true});
+      body.replaceChildren();
+      if(blob.type==="application/pdf" || /\.pdf$/i.test(material.patient_file_name||"")){
+        const frame=el("iframe","ext-preview-frame");frame.title="Vista previa del PDF";frame.src=url;body.append(frame);
+      } else if(blob.type.startsWith("image/")){
+        const picture=el("img","ext-preview-image");picture.alt="Vista previa de "+material.title;picture.src=url;body.append(picture);
+      } else {
+        body.append(el("p","ext-muted","Este formato no admite vista integrada. Puedes descargarlo para consultarlo."));
+        body.append(action("Descargar",()=>download(material.patient_file_path,material.patient_file_name)));
+      }
+    }catch(e){body.replaceChildren(el("p","ext-muted","No se pudo abrir la vista previa: "+(e.message||"error de acceso")));}
+  }
   function libraryTable(items, host, internal) {
     host.replaceChildren();
     if (!items.length) { host.append(el("p","ext-muted","No hay materiales en esta vista."));return; }
     const scroll=el("div","ext-table-scroll");
     const table=el("table","ext-library-table");
-    const thead=el("thead");const titles=["Código / material","Tipo / categoría","Estado","Editar","Archivar","Eliminar"];
+    const thead=el("thead");const titles=["Código / material","Tipo / categoría","Estado","Vista previa","Editar","Archivar","Eliminar"];
     const header=el("tr");titles.forEach(t=>{const th=el("th",null,t);th.scope="col";header.append(th);});thead.append(header);table.append(thead);
     const tbody=el("tbody");
     items.forEach(m=>{
@@ -128,6 +176,7 @@
         });
         td.append(box);return td;
       }
+      row.append(choice("Vista previa",()=>previewMaterial(m,internal)));
       row.append(choice("Editar",()=>internal?editInternal(m):startEdit(m)));
       row.append(choice(archived?"Recuperar":"Archivar",()=>internal?setInternalStatus(m,archived?"active":"archived"):setArchive(m,!archived)));
       row.append(choice("Eliminar",()=>{message("ext-status","La eliminación definitiva está deshabilitada para proteger materiales ya asignados. Utiliza Archivar.");},false));
