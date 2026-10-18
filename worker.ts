@@ -5,6 +5,7 @@ import { containsDirectPatientIdentifiers, CLINICAL_IDENTIFIERS_ERROR } from "./
 
 interface Env {
   DAILY_API_KEY?: string;
+  BREVO_API_KEY?: string;
   STRIPE_WEBHOOK_SECRET: string;
   STRIPE_WEBHOOK_SECRET_TEST?: string;
   STRIPE_SECRET_KEY?: string;
@@ -2130,6 +2131,15 @@ export default {
       const file = await fetch(`${RESOURCE_SUPABASE}/storage/v1/object/authenticated/resource-files/${storageObjectPath(String(resource.file_path))}`, { headers: { apikey: env.SUPABASE_SERVICE_ROLE_KEY, Authorization: `Bearer ${env.SUPABASE_SERVICE_ROLE_KEY}` }, cache: "no-store" });
       if (!file.ok) return new Response("File unavailable", { status: 404 });
       return new Response(file.body, { status: 200, headers: { "Content-Type": "application/pdf", "Content-Disposition": `attachment; filename="${slug}.pdf"`, "Cache-Control": "public, max-age=300", "X-Content-Type-Options": "nosniff" } });
+    }
+    if (url.pathname === "/api/marketing/brevo-stats") {
+      if (!await verifyEditorialOwner(request)) return resourceJson({ error: "No autorizado" }, 401);
+      if (!env.BREVO_API_KEY) return resourceJson({ error: "Brevo no configurado" }, 503);
+      const reply = await fetch("https://api.brevo.com/v3/contacts/lists?limit=50", { headers: { "api-key": env.BREVO_API_KEY, accept: "application/json" }, cache: "no-store" });
+      if (!reply.ok) return resourceJson({ error: "Error de conexión con Brevo", status: reply.status }, 502);
+      const data = await reply.json() as { lists?: Array<{ id: number; name: string; totalSubscribers?: number }> };
+      const found = data.lists?.find((item) => item.name === "Recursos gratuitos | Carolina Sánchez");
+      return resourceJson({ connected: true, list_found: !!found, subscriber_count: found?.totalSubscribers ?? null });
     }
     if (url.pathname === "/api/resources/checkout" || url.pathname === "/api/resources/checkout/") return handleResourceCheckout(request, env);
     if (url.pathname === "/api/resources/access" || url.pathname === "/api/resources/access/") return handleResourceAccess(request, env);
