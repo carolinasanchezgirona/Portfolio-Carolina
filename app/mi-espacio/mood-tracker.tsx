@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useId, useMemo, useState } from "react";
+import { useEffect, useId, useMemo, useRef, useState } from "react";
 import "./mood-tracker.css";
 
 type MoodEntry = { date: string; rating: number; energy: number; energy_scale?: 5 };
@@ -187,11 +187,34 @@ function MoodFriend({ mood, avatarId, portraitOnly = false }: { mood: number; av
 }
 
 function MoodEvolution({ entries }: { entries: MoodEntry[] }) {
-  const [period, setPeriod] = useState(7);
+  // Dos semanas muestran mejor los días dispersos sin esconder los últimos valores.
+  const [period, setPeriod] = useState(14);
+  const chartScroll = useRef<HTMLDivElement>(null);
+  const [viewportWidth, setViewportWidth] = useState(360);
   const [showMood, setShowMood] = useState(true);
   const [showEnergy, setShowEnergy] = useState(true);
   const [picked, setPicked] = useState<string | null>(null);
   const gradient = useId().replace(/:/g, "");
+  // El periodo de 7 o 14 días se adapta a la pantalla. Los intervalos largos
+  // siguen siendo desplazables, pero abren mostrando los registros recientes.
+  useEffect(() => {
+    const element = chartScroll.current;
+    if (!element) return;
+    const measure = () => setViewportWidth(Math.max(280, Math.floor(element.clientWidth)));
+    measure();
+    if (typeof ResizeObserver === "undefined") {
+      window.addEventListener("resize", measure);
+      return () => window.removeEventListener("resize", measure);
+    }
+    const observer = new ResizeObserver(measure);
+    observer.observe(element);
+    return () => observer.disconnect();
+  }, []);
+  useEffect(() => {
+    const element = chartScroll.current;
+    if (!element) return;
+    element.scrollLeft = period > 14 ? element.scrollWidth - element.clientWidth : 0;
+  }, [period, viewportWidth, entries.length]);
   const days = Array.from({ length: period }, (_, i) => {
     const date = dayOffset(i - period + 1);
     const key = keyForDate(date);
@@ -199,8 +222,10 @@ function MoodEvolution({ entries }: { entries: MoodEntry[] }) {
   });
   const recorded = days.flatMap(day => day.entry ? [day.entry] : []);
   const active = recorded.find(entry => entry.date === picked) ?? recorded.at(-1);
-  const width = period === 7 ? 720 : period === 30 ? 960 : 1440;
-  const x = (i: number) => 112 + i * (width - 224) / (period - 1);
+  const compact = period <= 14;
+  const width = compact ? viewportWidth : period === 30 ? 960 : 1440;
+  const inset = compact ? 42 : 112;
+  const x = (i: number) => inset + i * (width - inset * 2) / (period - 1);
   const y = (value: number) => 226 - (value - 1) * 44;
   const dateLabel = (key: string) => new Intl.DateTimeFormat("es-ES", { day:"numeric", month:"short" }).format(new Date(key + "T12:00:00"));
   function segments(energy: boolean) {
@@ -214,31 +239,44 @@ function MoodEvolution({ entries }: { entries: MoodEntry[] }) {
   }
   return <section className="mood-evolution" aria-labelledby="mood-evolution-title">
     <div className="mood-evolution-heading"><div><p className="space-eyebrow">Mis momentos</p><h4 id="mood-evolution-title">Así me he ido sintiendo</h4><p>Observa tus cambios de ánimo y energía, a tu ritmo.</p></div>
-      <div className="mood-periods" role="group" aria-label="Periodo del gráfico">{[7,30,90].map(value => <button type="button" key={value} aria-pressed={period === value} onClick={() => { setPeriod(value); setPicked(null); }}>{value} días</button>)}</div></div>
+      <div className="mood-periods" role="group" aria-label="Periodo del gráfico">{[7,14,30,90].map(value => <button type="button" key={value} aria-pressed={period === value} onClick={() => { setPeriod(value); setPicked(null); }}>{value} días</button>)}</div></div>
     <div className="mood-chart-legend"><label><input type="checkbox" checked={showMood} onChange={e => setShowMood(e.target.checked)} /><span className="mood-legend-dot" />Ánimo · línea continua</label><label><input type="checkbox" checked={showEnergy} onChange={e => setShowEnergy(e.target.checked)} /><span className="mood-legend-dot energy" />Energía · línea discontinua</label><span>{recorded.length} de {period} días registrados</span></div>
     {recorded.length ? <>
-      <p className="mood-chart-hint">Toca un punto para consultar ese día. Desliza el gráfico para recorrer el periodo.</p>
-      <div className="mood-evolution-scroll" tabIndex={0} role="region" aria-label="Gráfico desplazable de ánimo y energía">
-        <svg width={width} height="290" viewBox={`0 0 ${width} 290`} role="group" aria-label="Evolución de los registros personales">
+      <p className="mood-chart-hint">Cada registro aparece como un punto de ánimo y un cuadrado de energía. Las líneas solo unen días consecutivos.{period > 14 ? " Desliza el gráfico para ver fechas anteriores." : ""}</p>
+      <div ref={chartScroll} className="mood-evolution-scroll" tabIndex={period > 14 ? 0 : -1} role="region" aria-label="Gráfico de ánimo y energía por fechas">
+        <svg width={width} height="290" viewBox={`0 0 ${width} 290`} role="img" aria-label={`Gráfico con ${recorded.length} registros de los últimos ${period} días. Animo y energía se muestran por separado.`}>
           <defs><linearGradient id={gradient} x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stopColor="#08a6a0" stopOpacity=".23"/><stop offset="100%" stopColor="#08a6a0" stopOpacity=".02"/></linearGradient></defs>
-          {[1,2,3,4,5].map(value => <g key={value}><line x1="106" y1={y(value)} x2={width-106} y2={y(value)} stroke="#d8e7ee" strokeDasharray="4 5" />{showMood && <text x="94" y={y(value)+5} textAnchor="end" fill="#173a5e" fontSize="14">{MOODS[value-1].name}</text>}{showEnergy && <text x={width-94} y={y(value)+5} fill="#9f4b42" fontSize="14">{ENERGY[value-1]}</text>}</g>)}
+          {[1,2,3,4,5].map(value => <g key={value}>
+            <line x1={compact ? 29 : 106} y1={y(value)} x2={width-(compact ? 15 : 106)} y2={y(value)} stroke="#d8e7ee" strokeDasharray="4 5" />
+            {compact
+              ? <text x="8" y={y(value)+5} fill="#526d80" fontSize="13">{value}</text>
+              : <>
+                {showMood && <text x="94" y={y(value)+5} textAnchor="end" fill="#173a5e" fontSize="14">{MOODS[value-1].name}</text>}
+                {showEnergy && <text x={width-94} y={y(value)+5} fill="#9f4b42" fontSize="14">{ENERGY[value-1]}</text>}
+              </>}
+          </g>)}
           {showMood && segments(false).filter(points => points.length > 1).map((points,i) => <g key={i}><polygon points={`${points[0].split(',')[0]},242 ${points.join(' ')} ${points.at(-1)!.split(',')[0]},242`} fill={`url(#${gradient})`}/><polyline points={points.join(' ')} fill="none" stroke="#078e88" strokeWidth="3.5" strokeLinejoin="round"/></g>)}
           {showEnergy && segments(true).filter(points => points.length > 1).map((points,i) => <polyline key={i} points={points.join(' ')} fill="none" stroke="#cf6b5c" strokeWidth="3" strokeDasharray="7 6" strokeLinejoin="round"/>)}
           {days.map((day,i) => <g key={day.key}>
             {day.entry && <g role="button" tabIndex={0} aria-label={`${dateLabel(day.key)}: ánimo ${MOODS[day.entry.rating-1].name}, energía ${ENERGY[day.entry.energy]}`} onClick={() => setPicked(day.key)} onKeyDown={e => { if(e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setPicked(day.key); } }} className="mood-chart-point">
-              <rect x={x(i)-10} y="32" width="20" height="215" fill="transparent"/>
-              {active?.date === day.key && <line x1={x(i)} y1="32" x2={x(i)} y2="242" stroke="#173a5e" opacity=".22"/>}
-              {showMood && <circle cx={x(i)} cy={y(day.entry.rating)} r={period===90?4:6} fill="#fff" stroke="#078e88" strokeWidth="3"/>}
-              {showEnergy && <rect x={x(i)-4} y={y(day.entry.energy+1)-4} width="8" height="8" rx="1" fill="#cf6b5c" stroke="#fff"/>}
+              <rect x={x(i)-Math.max(9,(width-inset*2)/period/2)} y="32" width={Math.max(18,(width-inset*2)/period)} height="215" fill="transparent"/>
+              {active?.date === day.key && <line x1={x(i)} y1="32" x2={x(i)} y2="242" stroke="#173a5e" opacity=".24" strokeDasharray="3 4"/>}
+              {showMood && <>
+                <circle cx={x(i)} cy={y(day.entry.rating)} r={period===90?7:11} fill="#a4ded7" opacity=".42"/>
+                <circle cx={x(i)} cy={y(day.entry.rating)} r={period===90?4:6.5} fill="#fff" stroke="#078e88" strokeWidth="3"/>
+              </>}
+              {showEnergy && <rect x={x(i)-5} y={y(day.entry.energy+1)-5} width="10" height="10" rx="2" fill="#cf6b5c" stroke="#fff" strokeWidth="1.5"/>}
             </g>}
-            {(period === 7 || i % (period === 30 ? 5 : 15) === 0 || i === period-1) && <text x={x(i)} y="271" textAnchor="middle" fill="#526d80" fontSize="14">{dateLabel(day.key)}</text>}
+            {(period === 7 || i === 0 || i === period-1 ||
+              (period === 14 ? i % 3 === 0 : i % (period === 30 ? 5 : 15) === 0)) &&
+              <text x={x(i)} y="271" textAnchor="middle" fill="#526d80" fontSize={compact ? 12 : 14}>{dateLabel(day.key)}</text>}
           </g>)}
         </svg>
       </div>
       {active && <div className="mood-chart-detail" aria-live="polite"><strong>{dateLabel(active.date)}</strong><span>Ánimo: <b>{MOODS[active.rating-1].name}</b></span><span>Energía: <b>{ENERGY[active.energy]}</b></span></div>}
       <details className="mood-chart-table"><summary>Consultar todos los registros del periodo</summary><ul>{recorded.map(entry => <li key={entry.date}><button type="button" onClick={() => setPicked(entry.date)}>{dateLabel(entry.date)} · {MOODS[entry.rating-1].name} · Energía {ENERGY[entry.energy].toLowerCase()}</button></li>)}</ul></details>
     </> : <div className="mood-week-empty">Aún no hay registros en este periodo. Tu primer momento aparecerá aquí como un punto; la evolución se construirá con tus próximos registros.</div>}
-    <p className="mood-chart-caption">Los días sin registro quedan vacíos, sin unir ni estimar valores. Estas escalas reflejan tus respuestas; no son una medida diagnóstica ni una puntuación de mejora.</p>
+    <p className="mood-chart-caption">Los días sin registro quedan vacíos, sin unir ni estimar valores. Si solo registraste un día, verás un punto, no una línea. Estas escalas reflejan tus respuestas; no son una medida diagnóstica ni una puntuación de mejora.</p>
   </section>;
 }
 
