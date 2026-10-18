@@ -84,7 +84,7 @@ function sendEvent(name: string, parameters: Record<string, string | number> = {
 
 function sectionForPath(path: string): BookingSource["sourceSection"] {
   if (path === "/") return "inicio";
-  if (["/psicologia/", "/neuropsicologia/", "/psicologa-arenys-de-mar/", "/evaluacion-neuropsicologica/"].includes(path)) return "servicios";
+  if (["/psicologia/", "/neuropsicologia/", "/psicologa-arenys-de-mar/", "/evaluacion-neuropsicologica/", "/ansiedad/", "/duelo/", "/depresion/", "/ataques-de-panico/", "/deterioro-cognitivo/", "/problemas-de-memoria/"].includes(path)) return "servicios";
   if (path.startsWith("/articulos/") || path.startsWith("/podcast/") || path.startsWith("/pregunta-a-carolina/")) return "contenidos";
   if (path.startsWith("/recursos/")) return "recursos";
   return "otras";
@@ -122,6 +122,7 @@ export default function GoogleAnalyticsConsent() {
 }
 
 function PublicAnalyticsConsent() {
+  const pathname = usePathname() || "/";
   const [consent, setConsent] = useState<ConsentChoice | null>(null);
   const [isReady, setIsReady] = useState(false);
   const [isPanelOpen, setIsPanelOpen] = useState(false);
@@ -181,6 +182,22 @@ function PublicAnalyticsConsent() {
       observer.disconnect();
     };
   }, [consent]);
+
+  useEffect(() => {
+    if (consent !== "accepted" || (pathname !== "/cita" && pathname !== "/cita/")) return;
+    let tries = 0;
+    let retry: number | undefined;
+    const record = () => {
+      if (typeof window.gtag === "function") {
+        // Solo un nombre de evento; nunca datos de la persona ni motivo de consulta.
+        sendEvent("booking_form_view");
+      } else if (tries++ < 20) {
+        retry = window.setTimeout(record, 250);
+      }
+    };
+    record();
+    return () => { if (retry !== undefined) window.clearTimeout(retry); };
+  }, [consent, pathname]);
 
   function chooseConsent(choice: ConsentChoice) {
     if (choice === "rejected") denyAnalyticsConsent();
