@@ -78,8 +78,11 @@ def run_browser(base):
                       wait_until="domcontentloaded", timeout=30000)
             page.locator(".mood-evolution-scroll svg").wait_for(timeout=20000)
             page.locator(".mood-chart-point").first.wait_for()
+            check(page.locator(".mood-periods button[aria-pressed=true]").inner_text() == "90 días",
+                  "Default period should show the complete 90-day history")
+            page.get_by_role("button", name="14 días", exact=True).click()
             check(page.locator(".mood-periods button[aria-pressed=true]").inner_text() == "14 días",
-                  "Default period does not show the scattered fortnight")
+                  "Selected period does not show the scattered fortnight")
 
             plot = page.locator(".mood-evolution-scroll")
             # ResizeObserver commits the physical mobile width on the next frame.
