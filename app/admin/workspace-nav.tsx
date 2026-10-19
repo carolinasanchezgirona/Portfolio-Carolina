@@ -33,6 +33,7 @@ export default function AdminWorkspaceNav({ active }: { active: Area }) {
         <div className="admin-workspace-more-panel">
           <p className="admin-workspace-more-label">Administración</p>
           <a href="/admin/economia/" aria-current={active === "economia" ? "page" : undefined}>Contabilidad</a>
+          <a href="/admin/mensajes/">Mensajes de pacientes</a>
           <a href="/admin/notificaciones/">Centro de avisos</a>
           <a href="/admin/articulos/">Artículos</a>
           <a href="/admin/clinica/materiales-externos/">Cuadernos y fichas externos</a>

@@ -26,6 +26,7 @@ function AdminIcon({ name }: { name: IconName }) {
 }
 
 const sections: { href: string; icon: IconName; eyebrow: string; title: string; detail: string; secondary: string; tone: string }[] = [
+  { href: "/admin/mensajes/", icon: "questions", eyebrow: "Entre Sesiones", title: "Mensajes de pacientes", detail: "Leer mensajes privados, revisar pendientes de lectura y responder a tus pacientes.", secondary: "Abrir mensajes", tone: "turquoise" },
   { href: "/admin/clinica/?panel=1", icon: "clinical", eyebrow: "Atención sanitaria", title: "Gestión clínica", detail: "Pacientes, sesiones, informes, actividades y Mi espacio.", secondary: "Abrir gestión clínica", tone: "navy" },
   { href: "/admin/agenda/", icon: "calendar", eyebrow: "Organización", title: "Agenda", detail: "Citas, disponibilidad, cambios, confirmaciones y recordatorios.", secondary: "Abrir agenda", tone: "turquoise" },
   { href: "/admin/notificaciones/", icon: "bell", eyebrow: "Actividad", title: "Centro de avisos", detail: "Nuevas reservas, actividades entregadas, tareas y facturas pendientes.", secondary: "Revisar avisos", tone: "navy" },

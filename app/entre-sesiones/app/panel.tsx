@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import Image from "next/image";
+import PatientMessages from "../../../components/patient-messages";
 
 type Appointment = { starts_at?: string; service_code?: string } | null;
 type Material = {
@@ -103,6 +104,7 @@ export default function EntreSesionesApp() {
     const installed = window.matchMedia("(display-mode: standalone)").matches ||
       ("standalone" in navigator && (navigator as Navigator & { standalone?: boolean }).standalone === true);
     setIsStandalone(installed);
+    if (window.location.hash === "#instalar") setInstallHint(true);
     const handler = (event: Event) => {
       event.preventDefault();
       setInstallEvent(event as InstallEvent);
@@ -208,6 +210,7 @@ export default function EntreSesionesApp() {
         <a href={workspace}>Ejercicios</a>
         <a href={wellness}>Wellness</a>
         <a href={progress}>Progreso</a>
+        <a href="#mensajes">Mensajes</a>
       </nav>
       <section className="esapp-welcome" aria-labelledby="esapp-welcome-title">
         <div className="esapp-welcome-copy">
@@ -225,6 +228,8 @@ export default function EntreSesionesApp() {
           </button>
         </div>}
       </section>
+
+      {status === "ready" && <PatientMessages />}
 
       {status === "ready" && <section className="esapp-feature" aria-label="Materiales disponibles">
         <div className="esapp-feature-copy">

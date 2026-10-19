@@ -1,3 +1,5 @@
+import { notifyPatientMessages } from "./patient-message-email";
+import { patientMessages } from "./patient-messages";
 import { adminAppointmentVideo, patientAppointmentVideo } from './appointment-video';
 import { dailyTest } from "./daily-test";
 import { adminPushRequest, runAdminPushCron } from "./admin-webpush";
@@ -2151,6 +2153,18 @@ export default {
     if (url.pathname === "/api/patient-portal/password-link" || url.pathname === "/api/patient-portal/password-link/") return handlePatientPortalPasswordAuth(request, env, "password-link");
     if (url.pathname === "/api/patient-portal/password-set" || url.pathname === "/api/patient-portal/password-set/") return handlePatientPortalPasswordAuth(request, env, "password-set");
     if (url.pathname === "/api/patient-portal/password-login" || url.pathname === "/api/patient-portal/password-login/") return handlePatientPortalPasswordAuth(request, env, "password-login");
+    if (["/api/patient-portal/messages", "/api/admin/patient-messages"].includes(url.pathname.replace(/\/$/, ""))) {
+      return patientMessages(request, {
+        origin: patientPortalSameOrigin,
+        session: req => patientPortalSession(req, env),
+        owner: verifyEditorialOwner,
+        query: (path, init = {}) => fetch(RESOURCE_SUPABASE + "/rest/v1/" + path, {
+          ...init, headers: serviceHeaders(env, { "Content-Type": "application/json", Prefer: "return=minimal" }), cache: "no-store",
+        }),
+        notify: (patientId, nonce) => notifyPatientMessages(env, patientId, nonce),
+        json: patientPortalJson,
+      });
+    }
     if (url.pathname === "/api/patient-portal/session" || url.pathname === "/api/patient-portal/session/") return handlePatientPortalSession(request, env);
     if (url.pathname === "/api/patient-portal/preferences" || url.pathname === "/api/patient-portal/preferences/") return handlePatientPortalPreferences(request, env);
     if (url.pathname === "/api/patient-portal/response" || url.pathname === "/api/patient-portal/response/") return handlePatientPortalResponse(request, env);
@@ -2174,5 +2188,6 @@ export default {
   },
   async scheduled(_event: unknown, env: Env, ctx: { waitUntil(promise: Promise<void>): void }): Promise<void> {
     ctx.waitUntil(runAdminPushCron(env));
+    ctx.waitUntil(notifyPatientMessages(env));
   },
 };
