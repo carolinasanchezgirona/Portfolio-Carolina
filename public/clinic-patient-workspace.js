@@ -29,6 +29,7 @@
 
   const layout = [
     ["resumen","Resumen","Preparación de la sesión y estado actual"],
+    ["notas","Notas","Notas privadas y próximos pasos de este historial"],
     ["datos","Datos","Identificación y datos administrativos"],
     ["historia","Historia","Antecedentes, formulación y coordinación"],
     ["evaluacion","Evaluación","Evaluación clínica y medidas"],
@@ -84,6 +85,7 @@
   add("resumen",summaryGrid);
   add("resumen",summarySave);
   add("resumen",tasks);
+  add("notas",select("#clinic-private-notes"));
   add("datos",select(".clinic-personal-admin-section"));
   add("datos",consents);
   add("datos",duplicates);
