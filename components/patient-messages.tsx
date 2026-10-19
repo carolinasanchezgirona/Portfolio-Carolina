@@ -24,7 +24,7 @@ export default function PatientMessages({ admin = false }: { admin?: boolean }) 
     const endpoint = admin ? "/api/admin/patient-messages" + (!list && selected ? "?patient_id=" + selected : "") : "/api/patient-portal/messages";
     const res = await fetch(endpoint, { method, headers, credentials: "include", cache: "no-store", ...(data ? { body: JSON.stringify(data) } : {}) });
     const result = await res.json();
-    if (!res.ok) { if (admin && res.status === 401) { setAuthorized(false); window.location.assign("/admin/clinica/acceso/?next=/admin/mensajes/"); } throw new Error(result.error || "No se han podido cargar los mensajes."); }
+    if (!res.ok) { if (res.status === 401 || res.status === 403) { setMessages([]); setLoaded(false); } if (admin && res.status === 401) { setAuthorized(false); window.location.assign("/admin/clinica/acceso/?next=/admin/mensajes/"); } throw new Error(result.error || "No se han podido cargar los mensajes."); }
     if (admin) setAuthorized(true);
     return result;
   }, [admin, selected]);
@@ -79,10 +79,10 @@ export default function PatientMessages({ admin = false }: { admin?: boolean }) 
         <p>{m.body}</p><small>{m.read_at ? "Leído" : "Enviado · pendiente de lectura"}</small>
       </article>)}</div>
       {messages.length >= 200 && <p>Se muestran los 200 mensajes más recientes.</p>}
-      <form onSubmit={send}><label htmlFor="private-message-body">{admin ? "Responder al paciente" : "Tu mensaje"}</label><textarea id="private-message-body" required maxLength={4000} rows={4} value={body} disabled={busy} onChange={e => { setBody(e.target.value); setNonce(""); }} />
+      {loaded && <form onSubmit={send}><label htmlFor="private-message-body">{admin ? "Responder al paciente" : "Tu mensaje"}</label><textarea id="private-message-body" required maxLength={4000} rows={4} value={body} disabled={busy} onChange={e => { setBody(e.target.value); setNonce(""); }} />
         <div className="private-messages-actions"><small>{body.length}/4000</small><button disabled={busy || !body.trim()} type="submit">{busy ? "Enviando…" : "Enviar mensaje"}</button></div>
         <p role="status" aria-live="polite">{notice}</p>
-      </form>
+      </form>}
     </>}
     <p className="private-messages-refresh">Actualización cada 30 segundos. <button type="button" onClick={() => void load()}>Actualizar</button></p>
   </section>;

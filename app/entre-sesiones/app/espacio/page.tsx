@@ -25,7 +25,7 @@ export default function EntreSesionesEspacio() {
         </span>
         <span>Entre Sesiones</span>
       </a>
-      <a href="/entre-sesiones/app/#mensajes">Mensajes a Carolina</a>
+      <a href="/entre-sesiones/app/mensajes/">Mensajes a Carolina</a>
       <span className="esapp-portal-subtitle">Mi espacio personal</span>
     </div>
     <MiEspacioPage />
