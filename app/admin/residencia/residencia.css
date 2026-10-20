@@ -42,3 +42,5 @@
 .res-assessment-grid article span{color:#516979;font-size:13px;line-height:1.5;flex:1}
 .res-assessment-grid article button{width:100%}
 .res-assessment-grid article button:disabled{background:#f2f5f7}
+
+.res-bulk{margin:12px 0}.res-bulk-panel{border:1px solid #cbdde7;background:#f5fafc;border-radius:12px;padding:16px;margin-top:12px}.res-bulk-panel h3{margin:0 0 8px;font:22px Georgia,serif}.res-bulk-panel p{line-height:1.5;font-size:14px}.res-import-table{overflow:auto;max-height:350px;margin:16px 0}.res-import-table table{border-collapse:collapse;width:100%;font-size:13px}.res-import-table th,.res-import-table td{padding:8px;border-bottom:1px solid #d9e6ed;text-align:left}.res-import-table input[type=checkbox]{width:18px;height:18px}
