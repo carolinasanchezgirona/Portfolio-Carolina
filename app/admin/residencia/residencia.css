@@ -66,3 +66,10 @@
 @media(max-width:650px){.res-mmse-item .res-grid{grid-template-columns:1fr}.res-mmse .res-score-summary:first-child{position:static}}
 
 .res-copy-upload{padding:12px;background:#f7fbfd;border:1px dashed #b7cbd6;border-radius:10px}.res-copy-upload img,.res-copy-saved-image{max-width:100%;max-height:320px;object-fit:contain;display:block;margin:10px 0;border-radius:8px}.res-copy-upload small{display:block;margin-top:8px;color:#516979}
+
+.res-mmse-compact{display:grid;grid-template-columns:minmax(160px,1.4fr) minmax(180px,1.2fr) 160px;align-items:center;gap:12px;padding:8px 0}
+.res-mmse-compact .res-mmse-prompt{font-size:13px;line-height:1.35}
+.res-mmse-compact .res-mmse-prompt small{display:block;color:#526b7a;font-weight:400}
+.residence .res-mmse-compact input,.residence .res-mmse-compact select{margin:0;padding:8px;font-size:14px}
+.res-mmse-group>label>textarea{min-height:66px}
+@media(max-width:740px){.res-mmse-compact{grid-template-columns:minmax(0,1fr) 125px;gap:7px}.res-mmse-compact .res-mmse-prompt{grid-column:1/-1}}
