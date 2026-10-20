@@ -2091,6 +2091,34 @@ async function clinicalMaterialEnrichRequest(request: Request, env: Env): Promis
   }
 }
 
+
+async function residenceClinicalAnalysis(request: Request, env: Env): Promise<Response> {
+  if(request.method!=="POST")return editorialJson({error:"Método no permitido."},405);
+  if(!await verifyEditorialOwner(request))return editorialJson({error:"Acceso no autorizado."},401);
+  if(!env.OPENAI_API_KEY)return editorialJson({error:"IA clínica no configurada."},503);
+  if(Number(request.headers.get("content-length")||0)>50000)return editorialJson({error:"Demasiados datos en la solicitud."},413);
+  let input:Record<string,unknown>;
+  try{input=await request.json() as Record<string,unknown>;}catch{return editorialJson({error:"Datos no válidos."},400);}
+  const raw=Array.isArray(input.assessments)?input.assessments.slice(-35):[];
+  const allowed=["date","instrument","version","language","education","validity","comparability","score","maximum","errors","items","adjustment","stage","correct","durationSeconds","modality","stimulus","method","orientationTime","orientationPlace","registration","attention","recall","naming","repetition","commands","reading","writing","copying","conditions","executionNotes","interpretation","qualitative","clinicalChange","direction"];
+  const assessments=raw.map(v=>{
+    const x=v&&typeof v==="object"&&!Array.isArray(v)?v as Record<string,unknown>:{};
+    return Object.fromEntries(allowed.filter(k=>typeof x[k]==="string").map(k=>[k,(x[k] as string).slice(0,900)]));
+  });
+  if(!assessments.length)return editorialJson({error:"No existen valoraciones suficientes."},400);
+  const context=typeof input.context==="string"?input.context.slice(0,1500):"";
+  if(containsDirectPatientIdentifiers(JSON.stringify({assessments,context})))return editorialJson({error:CLINICAL_IDENTIFIERS_ERROR},422);
+  const instructions="Actúa como asistente de una neuropsicóloga de residencia geriátrica. Analiza SOLAMENTE la información proporcionada sin inventar baremos, umbrales ni datos. Compara MMSE/MEC, Pfeiffer, GDS Reisberg, Yesavage, reloj y fluencia, incluyendo subítems MMSE y cambios longitudinales solo cuando las versiones, idioma y procedimientos sean comparables. Una puntuación global de cribado no permite atribuir de forma específica déficits a funciones cognitivas. El GDS de Reisberg es estadificación global, no una prueba específica de memoria. La fluencia y el reloj son tareas multideterminadas. Para hablar de afectación probable exige apoyo convergente de pruebas específicas, referencias normativas documentadas y/o impacto funcional. Describe separadamente hallazgos, inferencias tentativas, contradicciones, confusores (escolaridad, déficits sensoriales, delirium, fatiga, depresión, idioma, medicación) y datos faltantes. Nunca infieras diagnóstico etiológico, progresión ni empeoramiento clínico de cambios brutos aislados. No envíes información identificativa. Responde EXCLUSIVAMENTE JSON válido, sin markdown, con {summary:string, domains:[{name:string,status:string,argument:string,evidence:string[],contradictions:string[],missing:string[]}], integrated_interpretation:string, piai:[{domain:string,objective:string,indicator:string}], residence:string[], family:string[], caveats:string[]}. Para status usa solamente Indicios de afectación, Sin indicios claros, Hallazgos discordantes o No evaluable. Mantén recomendaciones concretas, respetuosas y pendientes de validación profesional.";
+  try{
+    const response=await fetch("https://api.openai.com/v1/responses",{method:"POST",headers:{"Authorization":"Bearer "+env.OPENAI_API_KEY,"Content-Type":"application/json"},body:JSON.stringify({model:env.OPENAI_CLINICAL_MODEL||"gpt-4.1-mini",store:false,instructions,input:JSON.stringify({assessments,context})})});
+    if(!response.ok)return editorialJson({error:"El servicio de IA no ha podido analizar las valoraciones."},502);
+    const data=await response.json() as Record<string,unknown>;
+    const result=parseJsonObjectText(openAIResponseText(data));
+    if(typeof result.summary!=="string"||!Array.isArray(result.domains)||!Array.isArray(result.piai))return editorialJson({error:"Respuesta de IA incompleta. Repite el análisis."},502);
+    return editorialJson({analysis:result,generatedAt:new Date().toISOString()});
+  }catch{return editorialJson({error:"No se ha podido completar el análisis clínico."},502);}
+}
+
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
     const url = new URL(request.url);
@@ -2179,6 +2207,7 @@ export default {
     }
     if (url.pathname === "/api/editorial/generate" || url.pathname === "/api/editorial/generate/") return editorialRequest(request, env, "content");
     if (url.pathname === "/api/editorial/image" || url.pathname === "/api/editorial/image/") return editorialRequest(request, env, "image");
+    if (url.pathname === "/api/residence/clinical-analysis" || url.pathname === "/api/residence/clinical-analysis/") return residenceClinicalAnalysis(request, env);
     if (url.pathname === "/api/clinical/structure" || url.pathname === "/api/clinical/structure/") return clinicalStructureRequest(request, env);
     if (url.pathname === "/api/clinical/diagnostic-suggestion" || url.pathname === "/api/clinical/diagnostic-suggestion/") return clinicalDiagnosticSuggestionRequest(request, env);
     if (url.pathname === "/api/clinical/visual-image" || url.pathname === "/api/clinical/visual-image/") return clinicalNeuroVisualImageRequest(request, env);
