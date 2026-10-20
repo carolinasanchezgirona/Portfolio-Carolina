@@ -110,3 +110,10 @@ body:has(.admin-workspace-nav) .private-messages :is(textarea,select):focus-visi
 .residence .res-trend polyline{stroke:var(--admin-plum)}
 .residence .res-trend circle{fill:var(--admin-petroleum)}
 .residence .res-trend text{fill:var(--admin-palette-muted)}
+
+/* Shared launcher artwork for the Android app and professional web workspace. */
+.admin-hub-page .admin-hub-mark img,.clinic-page .clinic-brand-mark img{
+ display:block;width:100%;height:100%;object-fit:cover;border-radius:inherit;
+}
+.admin-hub-page a.admin-hub-outline{text-decoration:none;display:inline-flex;align-items:center}
+.admin-hub-page [data-android-download][hidden]{display:none!important}

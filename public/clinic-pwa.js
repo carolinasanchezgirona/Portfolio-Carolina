@@ -2,7 +2,9 @@
   "use strict";
 
   let deferredPrompt = null;
-  const isStandalone = window.matchMedia("(display-mode: standalone)").matches || window.navigator.standalone === true;
+  const isNativeApp = /MiClinicaAndroid\//i.test(window.navigator.userAgent);
+  if (isNativeApp) document.querySelectorAll("[data-android-download]").forEach((link) => { link.hidden = true; });
+  const isStandalone = isNativeApp || window.matchMedia("(display-mode: standalone)").matches || window.navigator.standalone === true;
   const isIOS = /iphone|ipad|ipod/i.test(window.navigator.userAgent);
   const isAndroid = /android/i.test(window.navigator.userAgent);
 

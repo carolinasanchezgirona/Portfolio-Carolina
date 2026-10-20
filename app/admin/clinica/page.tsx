@@ -29,7 +29,7 @@ export default function AdminClinicaPage() {
       <section id="clinic-app" className="clinic-app" hidden>
         <header className="clinic-topbar">
           <div className="clinic-topbar-title">
-            <span className="clinic-brand-mark" aria-hidden="true">D</span>
+            <span className="clinic-brand-mark" aria-hidden="true"><img src="/clinic-pwa-icon-192.png" alt="" width={48} height={48} /></span>
             <div>
               <p className="clinic-eyebrow">Dememoria · Área profesional</p>
               <h1>Gestión clínica</h1>

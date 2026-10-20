@@ -8,7 +8,7 @@ export const metadata: Metadata = {
   title: "Gestión clínica | Carolina Sánchez",
   description: "Aplicación privada para la gestión clínica de Dememoria.",
   manifest: "/clinic-manifest.webmanifest",
-  icons: { icon: "/clinic-pwa-icon.svg", apple: "/clinic-pwa-icon.svg" },
+  icons: { icon: { url: "/clinic-pwa-icon-192.png", type: "image/png", sizes: "192x192" }, apple: { url: "/clinic-pwa-icon-180.png", type: "image/png", sizes: "180x180" } },
   appleWebApp: { capable: true, title: "Mi clínica", statusBarStyle: "default" },
   robots: { index: false, follow: false, nocache: true },
 };
@@ -31,7 +31,7 @@ export default function ClinicaLayout({ children }: Readonly<{ children: React.R
       <script src="/clinic-patient-admin-enhancements.js?v=20261009-fixes-2" defer />
       <script src="/clinic-patient-workspace.js?v=20261020-palette-1" defer />
       <script src="/clinic-deferred-consent.js?v=20261018-1" defer />
-      <script src="/clinic-pwa.js?v=20260917-2" defer />
+      <script src="/clinic-pwa.js?v=20261020-android-native-1" defer />
     </>
   );
 }

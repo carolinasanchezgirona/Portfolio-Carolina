@@ -47,11 +47,12 @@ export default function AdminHomePage() {
       <section id="admin-home" className="admin-home" hidden>
         <header className="admin-hub-topbar">
           <a href="/admin/" className="admin-hub-brand" aria-label="Panel de administración de Dememoria">
-            <span className="admin-hub-mark" aria-hidden="true">D</span>
+            <span className="admin-hub-mark" aria-hidden="true"><img src="/clinic-pwa-icon-192.png" alt="" width={47} height={47} /></span>
             <span><strong>Dememoria</strong><small>Área profesional · Carolina Sánchez Girona</small></span>
           </a>
           <div className="admin-hub-top-actions">
             <span className="admin-hub-private"><AdminIcon name="shield" /> Acceso privado</span>
+            <a className="admin-hub-outline" href="/downloads/mi-clinica-1.0.0.apk" download data-android-download>Descargar app Android</a>
             <button id="admin-home-refresh" className="admin-hub-outline" type="button">Actualizar</button>
             <button id="admin-home-logout" className="admin-hub-outline" type="button">Cerrar sesión</button>
           </div>
@@ -136,7 +137,7 @@ export default function AdminHomePage() {
         </section>
         <p className="admin-hub-footer-note">Panel exclusivo de la consulta. Las ventas de recursos digitales se muestran por separado de la facturación de servicios sanitarios.</p>
       </section>
-      <Script src="/clinic-pwa.js?v=20261020-general-entry-1" strategy="afterInteractive" />
+      <Script src="/clinic-pwa.js?v=20261020-android-native-1" strategy="afterInteractive" />
       <Script src="/admin-dashboard.js?v=20261009-hub-1" strategy="afterInteractive" />
     </main>
   );

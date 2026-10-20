@@ -7,7 +7,7 @@ import "./admin-palette.css";
 export const metadata: Metadata = {
   title: "Administración | Carolina Sánchez",
   manifest: "/clinic-manifest.webmanifest",
-  icons: { icon: "/clinic-pwa-icon.svg", apple: "/clinic-pwa-icon.svg" },
+  icons: { icon: { url: "/clinic-pwa-icon-192.png", type: "image/png", sizes: "192x192" }, apple: { url: "/clinic-pwa-icon-180.png", type: "image/png", sizes: "180x180" } },
   robots: {
     index: false,
     follow: false,
