@@ -1,8 +1,8 @@
 {
   "name": "Gestión clínica · Carolina Sánchez",
   "short_name": "Mi clínica",
-  "description": "Gestión clínica privada de Carolina Sánchez.",
-  "start_url": "/admin/clinica/?source=pwa",
+  "description": "Panel general privado y gestión profesional de Carolina Sánchez.",
+  "start_url": "/admin/?source=pwa",
   "scope": "/admin/",
   "display": "standalone",
   "background_color": "#FBF9F5",

@@ -1,0 +1,22 @@
+const {chromium}=require('playwright');
+const assert=require('node:assert/strict');
+(async()=>{
+ const browser=await chromium.launch({headless:true,executablePath:process.env.CHROMIUM_PATH||undefined,args:['--no-sandbox','--disable-dev-shm-usage']});
+ const context=await browser.newContext({serviceWorkers:"block"});
+ const owner='9d2cfdb1-fed6-4f76-b47a-d58507eb14f2';
+ await context.route('https://grgyvdxkjdstdyumdfyg.supabase.co/**',async route=>{const path=new URL(route.request().url()).pathname;await route.fulfill({json:path.endsWith('/user')?{id:owner}:path.endsWith('/token')?{access_token:'TEST_ONLY',user:{id:owner}}:[]});});
+ const page=await context.newPage();
+ await page.goto('http://localhost:3000/admin/clinica/?source=pwa');
+ await page.waitForURL('**/admin/clinica/acceso/**');
+ await page.getByLabel('Correo',{exact:true}).fill('test@example.com');
+ await page.getByLabel('Contraseña',{exact:false}).fill('TEST_ONLY');
+ await page.locator('#clinical-access-submit').click();
+ await page.waitForURL('http://localhost:3000/admin/');
+ await page.locator('#admin-home:not([hidden])').waitFor();
+ assert.equal(new URL(page.url()).pathname,'/admin/');
+ await page.goto('http://localhost:3000/admin/clinica/');await page.waitForURL('http://localhost:3000/admin/');
+ await page.goto('http://localhost:3000/admin/clinica/acceso/?next=%2Fadmin%2Fclinica%2F%3Fpanel%3D1');await page.waitForURL('http://localhost:3000/admin/');
+ await page.goto('http://localhost:3000/admin/clinica/?panel=1&view=patients');await page.locator('#clinic-app:not([hidden])').waitFor();assert.equal(new URL(page.url()).pathname,'/admin/clinica/');
+ assert.equal((await (await page.request.get('http://localhost:3000/clinic-manifest.webmanifest')).json()).start_url,'/admin/?source=pwa');
+ await browser.close();console.log('PASS: old PWA and bare clinical entry open general panel; login and existing session return to panel; explicit clinical navigation remains available');
+})().catch(e=>{console.error(e);process.exit(1)});

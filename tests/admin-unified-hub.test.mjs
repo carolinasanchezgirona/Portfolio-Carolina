@@ -64,8 +64,8 @@ test("all modules can return to hub and billing deep links open the right form",
   assert.match(page,/tab=invoices/);
   assert.match(econ,/requested\.get\("tab"\)/);
   assert.match(econ,/if \(tab === "invoices" && requested\.get\("nuevo"\) === "1"\) clearInvoiceForm\(\)/);
-  assert.match(access,/next : "\/admin\/"/);
-  assert.match(clinic,/next=%2Fadmin%2Fclinica%2F%3Fpanel%3D1/);
+  assert.match(access,/window\.location\.assign\("\/admin\/"\)/);
+  assert.match(clinic,/next=%2Fadmin%2F/);
 });
 
 test("responsive, legible dashboard with keyboard focus",()=>{
