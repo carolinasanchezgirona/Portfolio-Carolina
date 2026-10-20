@@ -15,7 +15,7 @@ const subphases:Record<string,[string,string][]>={
 };
 export function scoreReisberg(e:Entry):Entry{
  const phase=e.stage||'',sub=e.reisbergSubstage||'';
- return {...e,instrument:'GDS de Reisberg',version:'Escala de deterioro global de Reisberg (7 fases)',validity:phase&&(!['6','7'].includes(phase)||sub)?'Aplicado':'Incompleto',score:phase,maximum:'7',direction:'Más bajo es más favorable'};
+ return {...e,instrument:'GDS de Reisberg',version:'Escala de deterioro global de Reisberg (7 fases)',validity:phase&&e.evidence?.trim()&&(!['6','7'].includes(phase)||sub)?'Aplicado':'Incompleto',score:phase,maximum:'7',direction:'Más bajo es más favorable'};
 }
 export default function ReisbergForm({entry,onChange}:{entry:Entry;onChange:(e:Entry)=>void}){
  const set=(key:string,value:string)=>onChange(scoreReisberg({...entry,[key]:value,...(key==='stage'?{reisbergSubstage:''}:{})}));
