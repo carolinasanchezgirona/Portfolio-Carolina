@@ -79,3 +79,5 @@
 .res-mmse-extra>summary{cursor:pointer;font-weight:650;color:#173a5e}
 .res-mmse-extra[open]>summary{margin-bottom:12px}
 .res-ai-review>.res-heading{position:sticky;top:0;z-index:4;background:#fff;padding:12px 0;border-bottom:1px solid #d9e6ed}
+
+.res-test-picker{min-width:250px;margin:0!important}.res-test-picker select{margin-top:5px!important}.res-test-history-views{display:grid;gap:10px;margin-top:15px}.res-test-history-views>details{background:#f8fbfd;border:1px solid #d9e6ed;border-radius:10px;padding:12px 15px}.res-test-history-views summary{cursor:pointer;font-weight:700}.res-test-history-views>details[open] summary{padding-bottom:12px;border-bottom:1px solid #d9e6ed;margin-bottom:12px}
