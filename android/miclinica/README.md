@@ -30,3 +30,14 @@ Sin navegación HTTP interna ni orígenes comodín en el canal de documentos.
 El canal recibe mensajes solo del marco principal y del origen HTTPS exacto de la consulta.
 Sin interfaz JavaScript genérica, acceso local de WebView ni depuración de producción.
 Sin copia de seguridad de los datos de la aplicación.
+
+## Entrega 1.0.0 verificada
+APK: [descarga desde la web](https://carolinasanchezgirona.com/downloads/mi-clinica-1.0.0.apk).
+Abrir el archivo en Android 10 o posterior, permitir la instalación desde el navegador si el sistema lo solicita y pulsar Instalar.
+Se inicia sesión dentro de Mi clínica. La aplicación requiere conexión.
+
+SHA-256 del APK: `09a09e36af7652adafdd0d2f2f822971717a52b921da0069735c9bbec882bebf`.
+Certificado SHA-256: `772fb88a1da081328f1994b4cb3cbc2de7f4d08a107cf5b43427b8c61e623c3b`.
+Verificación: compilación release, cuatro pruebas de navegación, lint, firma APK v2, identidad del paquete y permiso exclusivo INTERNET.
+El icono adaptativo y los iconos web comparten el diseño renovado en ciruela, turquesa y petróleo.
+Las barras del sistema usan texto oscuro sobre fondo claro para mantener el contraste en Android 10–16.
