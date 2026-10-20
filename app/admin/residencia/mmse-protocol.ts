@@ -1,7 +1,6 @@
 import type {Entry,Field} from './model';
 
 export const mmseVersion='NORMACODERM (Anexo 2)';
-export const mmseProtocol='/residence-protocols/mmse-normacoderm-anexo-2.pdf';
 export const isNormacoderm=(entry:Entry)=>entry.instrument==='MMSE'&&entry.version===mmseVersion;
 export const mmseAreas:[string,string,number][]=[
  ['orientationTime','Orientación temporal',5],['orientationPlace','Orientación espacial',5],

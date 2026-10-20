@@ -155,6 +155,9 @@ jobs:
       - name: Validar publicación de preguntas y propuestas con IA
         run: node --experimental-strip-types --test tests/expert-questions.test.mjs
 
+      - name: Validar aplicaciones y evolución de residencia
+        run: node --experimental-strip-types --test tests/residence-model.test.mjs tests/residence-schedule.test.mjs tests/residence-mmse.test.mjs tests/residence-web-assessments.test.mjs
+
       - name: Compilar y exportar web
         run: npm run build
 
