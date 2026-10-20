@@ -31,3 +31,5 @@
 .res-ai-output p,.res-ai-output li{line-height:1.6;overflow-wrap:anywhere}
 .res-ai-output .res-domain-card{margin:12px 0}
 .res-ai-proposal{padding:14px 0;border-bottom:1px solid #dae7eb}
+
+.res-test-interpretation{background:#f5fafc;border:1px solid #c6dce5;border-radius:12px;padding:16px;margin:14px 0}.res-test-interpretation h4{margin-top:0}.res-test-interpretation p{line-height:1.55}
