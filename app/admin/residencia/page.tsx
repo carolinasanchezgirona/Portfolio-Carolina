@@ -10,6 +10,7 @@ import {applicationOrder,displayTimestamp,stampEntry} from './assessment-history
 import MmseForm,{MmseAnswers} from './mmse-form';
 import PfeifferForm,{scorePfeiffer} from './pfeiffer-form';
 import YesavageForm,{scoreYesavage30} from './yesavage-form';
+import ClockForm,{scoreClock} from './clock-form';
 import AssessmentProgress,{EntryComparison} from './assessment-progress';
 import {residenceApi as api,residenceOwner as owner} from './api';
 import ResidenceSchedule from './schedule';
