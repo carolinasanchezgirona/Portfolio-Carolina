@@ -2,176 +2,20 @@
   "version": "1.0.0",
   "application_id": "com.carolinasanchezgirona.miclinica",
   "certificate_sha256": "772fb88a1da081328f1994b4cb3cbc2de7f4d08a107cf5b43427b8c61e623c3b",
-  "bundle_url": "https://sb-77rn5i6dufe4.vercel.run/mi-clinica-android-1.0.0-bundle.zip",
-  "bundle_sha256": "ffbea5cf8cf83878e242cd5b7e5223a6190b6287c98e441890056a8765fc274a",
+  "bundle_url": "https://sb-77rn5i6dufe4.vercel.run/mi-clinica-android-1.0.0-final.zip",
+  "bundle_sha256": "9a04d7861428646978a57946796346ea64d0a8170cb31956be1845e3c125a220",
   "files": [
     {
-      "path": "android/miclinica/app/src/main/res/mipmap-hdpi/ic_foreground.png",
-      "sha256": "ac190632c6715a328c511d4bc0550f2da523f95f5d5621142ebd4106ce6945da",
-      "size": 16053,
-      "previous_sha256": null
-    },
-    {
-      "path": "android/miclinica/app/src/main/res/mipmap-hdpi/ic_launcher.png",
-      "sha256": "41a2a2f7ac0cdf5118c568a572a2253a1d3dbdeb6795bfbfe5b96773d0c32f67",
-      "size": 3576,
-      "previous_sha256": null
-    },
-    {
-      "path": "android/miclinica/app/src/main/res/mipmap-hdpi/ic_launcher_round.png",
-      "sha256": "41a2a2f7ac0cdf5118c568a572a2253a1d3dbdeb6795bfbfe5b96773d0c32f67",
-      "size": 3576,
-      "previous_sha256": null
-    },
-    {
-      "path": "android/miclinica/app/src/main/res/mipmap-mdpi/ic_foreground.png",
-      "sha256": "e807821b6827be609688875eded1131342e4da4900d22a845f1292bd3029d25c",
-      "size": 7083,
-      "previous_sha256": null
-    },
-    {
-      "path": "android/miclinica/app/src/main/res/mipmap-mdpi/ic_launcher.png",
-      "sha256": "729a4922326625951b8c1175e207d0576d99ba701cec9899cb9903d15fb93319",
-      "size": 1951,
-      "previous_sha256": null
-    },
-    {
-      "path": "android/miclinica/app/src/main/res/mipmap-mdpi/ic_launcher_round.png",
-      "sha256": "729a4922326625951b8c1175e207d0576d99ba701cec9899cb9903d15fb93319",
-      "size": 1951,
-      "previous_sha256": null
-    },
-    {
-      "path": "android/miclinica/app/src/main/res/mipmap-xhdpi/ic_foreground.png",
-      "sha256": "9a52d5dc96b6770125d9852370cc2db7691783321bd7df2f6cd17f6e46b1275f",
-      "size": 29232,
-      "previous_sha256": null
-    },
-    {
-      "path": "android/miclinica/app/src/main/res/mipmap-xhdpi/ic_launcher.png",
-      "sha256": "4461defeccec4e6a630074c156e20c5a1dc042f5f7e02ef0e4c0f4c86ff1eadb",
-      "size": 5827,
-      "previous_sha256": null
-    },
-    {
-      "path": "android/miclinica/app/src/main/res/mipmap-xhdpi/ic_launcher_round.png",
-      "sha256": "4461defeccec4e6a630074c156e20c5a1dc042f5f7e02ef0e4c0f4c86ff1eadb",
-      "size": 5827,
-      "previous_sha256": null
-    },
-    {
-      "path": "android/miclinica/app/src/main/res/mipmap-xxhdpi/ic_foreground.png",
-      "sha256": "16ae1249f9c80bcda313ff3ab0e5e4023da957f236e7943404909416ed149986",
-      "size": 73724,
-      "previous_sha256": null
-    },
-    {
-      "path": "android/miclinica/app/src/main/res/mipmap-xxhdpi/ic_launcher.png",
-      "sha256": "838e2ebdca813317e9da8ec9b074dcbcd86a9c38866b8b638e8e97e423f7a0c8",
-      "size": 12490,
-      "previous_sha256": null
-    },
-    {
-      "path": "android/miclinica/app/src/main/res/mipmap-xxhdpi/ic_launcher_round.png",
-      "sha256": "838e2ebdca813317e9da8ec9b074dcbcd86a9c38866b8b638e8e97e423f7a0c8",
-      "size": 12490,
-      "previous_sha256": null
-    },
-    {
-      "path": "android/miclinica/app/src/main/res/mipmap-xxxhdpi/ic_foreground.png",
-      "sha256": "db5464411a425e8e1cf30c48ed9f63f38aa3cbd61b76449da273791ef5ff752c",
-      "size": 134881,
-      "previous_sha256": null
-    },
-    {
-      "path": "android/miclinica/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png",
-      "sha256": "d972e884a2c879fc39dbe000586728b51189b6242f230ec6c22e0e80214e3734",
-      "size": 22835,
-      "previous_sha256": null
-    },
-    {
-      "path": "android/miclinica/app/src/main/res/mipmap-xxxhdpi/ic_launcher_round.png",
-      "sha256": "d972e884a2c879fc39dbe000586728b51189b6242f230ec6c22e0e80214e3734",
-      "size": 22835,
-      "previous_sha256": null
-    },
-    {
-      "path": "app/admin/admin-palette.css",
-      "sha256": "49c356d29bb774ffbfb5d4848663eda16d428b709b75de817d1fd1ed52085e63",
-      "size": 6872,
-      "previous_sha256": "eff50fcfa41f8384efef66799df2c0a750b6db8beff824494318cc83c0981905"
-    },
-    {
-      "path": "app/admin/clinica/layout.tsx",
-      "sha256": "91a2f3031e38d60899f9435eb81e2de8042e3a5aa0eb3fa619df88a7ff4dadf9",
-      "size": 1928,
-      "previous_sha256": "2da190a659769f8a33b0063185d327b390d9b5271a3491019df6671ec7ca44e5"
-    },
-    {
-      "path": "app/admin/clinica/page.tsx",
-      "sha256": "6748cba1a4f8ae6d39b1c06bfa7af4935e7d81bcf47afbc296be41775edf9f0a",
-      "size": 61413,
-      "previous_sha256": "ccccd25b10746398faf07f05d5b878cd6f0fbb5efbcc8e613850bd8b22f2b7a9"
-    },
-    {
-      "path": "app/admin/layout.tsx",
-      "sha256": "59d4441ddb6ef9394730e11d3b2ed01c69a2a9308cfe3e00d4aed02b97b8b9db",
-      "size": 861,
-      "previous_sha256": "63d18a6c25e515090b785cfa3dc0f6b11b98923087a035ea9357c893b4a83c9a"
-    },
-    {
-      "path": "app/admin/page.tsx",
-      "sha256": "1ead94c573f7cb8e67bcd3c7adbae10f901be12cff009bd806d364a6aa558a60",
-      "size": 11749,
-      "previous_sha256": "0f7c8b8bc9eb03e86cbbe2ce4784766dc622f94fa58099ae9f66f87dc85982b9"
-    },
-    {
-      "path": "public/clinic-manifest.webmanifest",
-      "sha256": "f027f738b9f8cb1702a7193560dd32a74be11680eebcc967fdb3d3d1c042325f",
-      "size": 622,
-      "previous_sha256": "f7a9bce16d7cc652127e0bc19d296edfd3e5e1eec51dadefaa5e206be392aae8"
-    },
-    {
-      "path": "public/clinic-pwa-icon-180.png",
-      "sha256": "97124569359e900489c84498c3155fbef47d8f99b8529d43bcb284ae22b8bc3c",
-      "size": 19921,
-      "previous_sha256": null
-    },
-    {
-      "path": "public/clinic-pwa-icon-192.png",
-      "sha256": "d972e884a2c879fc39dbe000586728b51189b6242f230ec6c22e0e80214e3734",
-      "size": 22835,
-      "previous_sha256": null
-    },
-    {
-      "path": "public/clinic-pwa-icon-512.png",
-      "sha256": "1df949c60558a478bcaccdfde92d060471fd6f615dfb2e693e2bb8e96e6858c6",
-      "size": 181566,
-      "previous_sha256": null
-    },
-    {
-      "path": "public/clinic-pwa-icon.svg",
-      "sha256": "639adba8c10f9cfd720b98ff9af6dda8ec3baddc5b2c5b922eb5ce8dfa32f04e",
-      "size": 242256,
-      "previous_sha256": "e5b2fd3535f5347ab36856b7781f2d5f254d9ee400035ec0ccfe655ad71afb11"
-    },
-    {
-      "path": "public/clinic-pwa.js",
-      "sha256": "5b59e8b9538ddd461f285cedfb0abe2bcaf7c609a8cf4058957cb569eb5edfbf",
-      "size": 3906,
-      "previous_sha256": "29edb5a1debd196291fa440586534f091437be62a626748078970d9dd07f26b9"
-    },
-    {
       "path": "public/downloads/mi-clinica-1.0.0.apk",
-      "sha256": "6fbc5545e5ed1096677ffd7edafbee227287b1d9eaf64caa793b072b0fe70c9b",
+      "sha256": "09a09e36af7652adafdd0d2f2f822971717a52b921da0069735c9bbec882bebf",
       "size": 3096009,
-      "previous_sha256": null
+      "previous_sha256": "6fbc5545e5ed1096677ffd7edafbee227287b1d9eaf64caa793b072b0fe70c9b"
     },
     {
       "path": "public/downloads/mi-clinica-1.0.0.sha256",
-      "sha256": "fee048e6c6edcc2cf0d14cbb9a070a578abf5d034f55a849f25c735fd4c350d8",
+      "sha256": "3a16cb2f9fc686fd4893b906d4e6f79228b9def105fdbaaa32b81822d29e0a36",
       "size": 87,
-      "previous_sha256": null
+      "previous_sha256": "fee048e6c6edcc2cf0d14cbb9a070a578abf5d034f55a849f25c735fd4c350d8"
     }
   ]
 }
