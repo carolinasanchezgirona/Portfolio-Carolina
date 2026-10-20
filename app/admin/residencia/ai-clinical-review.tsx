@@ -1,10 +1,10 @@
 'use client';
 import {useState} from 'react';
-import type {Entry} from './model';
+import type {Entry,Resident} from './model';
 
 type Domain={name:string;status:string;argument:string;evidence:string[];contradictions:string[];missing:string[]};
 type Analysis={summary:string;domains:Domain[];integrated_interpretation:string;piai:{domain:string;objective:string;indicator:string}[];residence:string[];family:string[];caveats:string[]};
-export default function AiClinicalReview({records,onAdopt}:{records:Entry[];onAdopt:(entry:Entry)=>void}){
+export default function AiClinicalReview({records,resident,onAdopt}:{records:Entry[];resident:Resident;onAdopt:(entry:Entry)=>void}){
  const [analysis,setAnalysis]=useState<Analysis|null>(null);
  const [busy,setBusy]=useState(false),[error,setError]=useState('');
  const clean=records.filter(e=>e.validity==='Aplicado').map(e=>Object.fromEntries(Object.entries(e).filter(([key])=>['date','instrument','version','language','education','validity','comparability','score','maximum','errors','items','adjustment','stage','correct','durationSeconds','modality','stimulus','method','orientationTime','orientationPlace','registration','attention','recall','naming','repetition','commands','reading','writing','copying','conditions','executionNotes','interpretation','qualitative','clinicalChange','direction'].includes(key))));
