@@ -1,0 +1,67 @@
+name: Publicar paquete Android verificado
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'android/miclinica/release-import.json'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  actions: write
+
+concurrency:
+  group: miclinica-android-delivery
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - name: Importar archivos con hashes y rutas verificadas
+        run: python3 scripts/android/import-android-release.py
+      - name: Verificar firma Android, identidad y permisos
+        shell: bash
+        run: |
+          set -euo pipefail
+          signer="$ANDROID_HOME/build-tools/35.0.0/apksigner"
+          if [ ! -x "$signer" ]; then
+            sdkmanager "build-tools;35.0.0" >/dev/null
+          fi
+          "$signer" verify --verbose --print-certs public/downloads/mi-clinica-1.0.0.apk > /tmp/miclinica-signature.txt
+          python3 - <<'PY'
+          import json,pathlib,subprocess,os
+          manifest=json.loads(pathlib.Path('android/miclinica/release-import.json').read_text())
+          text=pathlib.Path('/tmp/miclinica-signature.txt').read_text()
+          expected='Signer #1 certificate SHA-256 digest: '+manifest['certificate_sha256']
+          assert expected in text, 'Unexpected Android signing certificate'
+          aapt=os.environ['ANDROID_HOME']+'/build-tools/35.0.0/aapt'
+          details=subprocess.check_output([aapt,'dump','badging','public/downloads/mi-clinica-1.0.0.apk'],text=True)
+          assert "package: name='com.carolinasanchezgirona.miclinica' versionCode='1' versionName='1.0.0'" in details
+          permissions=[line for line in details.splitlines() if line.startswith('uses-permission:')]
+          assert permissions==["uses-permission: name='android.permission.INTERNET'"], permissions
+          print('Firma APK, paquete Android y permiso de Internet verificados')
+          PY
+      - name: Guardar APK, iconos y enlace de descarga
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import json,pathlib,subprocess
+          manifest=json.loads(pathlib.Path('android/miclinica/release-import.json').read_text())
+          subprocess.run(['git','add','--']+[e['path'] for e in manifest['files']],check=True)
+          PY
+          if ! git diff --cached --quiet; then
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git commit -m "Publicar Mi clínica Android 1.0.0 e icono renovado"
+            git push origin HEAD:main
+          fi
+      - name: Comprobar y publicar la web con el APK
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh workflow run web-build-check.yml --ref main
