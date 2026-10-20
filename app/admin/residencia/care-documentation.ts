@@ -1,0 +1,41 @@
+import type {Entry,Resident} from './model';
+export const diaryTopics=['Cognición','Emoción','Evolución global','Participación','Intervención familiar','Intervención profesional','Convivencia'] as const;
+export function entryTopics(e:Entry):string[]{try{const values=JSON.parse(e.topics||'[]');return Array.isArray(values)?diaryTopics.filter(t=>values.includes(t)):[];}catch{return [];}}
+export function diaryOrder(a:Entry,b:Entry){return (b.createdAt||b.date||'').localeCompare(a.createdAt||a.date||'')||b.id.localeCompare(a.id);}
+export function filterDiary(entries:Entry[],topic='',from='',to='',query=''){
+ const needle=query.trim().toLocaleLowerCase('es');
+ return entries.filter(e=>(!topic||(topic==='Sin clasificar'?!entryTopics(e).length:entryTopics(e).includes(topic)))&&(!from||(e.date||'')>=from)&&(!to||(e.date||'')<=to)&&(!needle||[e.observation,e.intervention,e.response,e.plan,e.professional,e.source].join(' ').toLocaleLowerCase('es').includes(needle))).sort(diaryOrder);
+}
+export const reportSections=[
+ ['reason','Motivo y finalidad'],['background','Antecedentes y contexto relevante'],['methods','Fuentes, pruebas y condiciones'],['cognition','Funcionamiento cognitivo'],['emotion','Estado emocional y conducta'],['function','Funcionalidad, comunicación y apoyos'],['participation','Adaptación, participación y convivencia'],['evolution','Evolución y respuesta a las intervenciones'],['intervention','Intervención profesional y familiar'],['goals','Objetivos PIAI y seguimiento'],['conclusions','Conclusiones profesionales'],['recommendations','Recomendaciones y plan de actuación'],['limitations','Limitaciones de la valoración']
+] as const;
+export type ReportSection=typeof reportSections[number][0];
+export const reportTypes=['Valoración inicial','Evolución y seguimiento','Revisión semestral','Coordinación o derivación','Alta o cierre','Otro'] as const;
+const text=(value?:string)=>value?.trim()||'';
+const lines=(parts:(string|undefined)[])=>parts.filter(p=>text(p)).join('\n');
+function labelled(source:Record<string,string>,pairs:[string,string][]){return lines(pairs.map(([key,label])=>text(source[key])?label+': '+text(source[key]):''));}
+function dated(e:Entry,body:string){return body?`${e.date||'Fecha no registrada'} · ${body}`:'';}
+function within(e:Entry,from:string,to:string){return (!from||!!e.date&&e.date>=from)&&(!to||!!e.date&&e.date<=to);}
+export function reportDraft(r:Resident,e:Entry,selected:readonly string[]):Entry{
+ const from=e.periodFrom||'',to=e.periodTo||'',p=r.data.profile;
+ const records=(kind:keyof Resident['data'])=>(r.data[kind] as Entry[]).filter(x=>within(x,from,to)).sort((a,b)=>(a.date||'').localeCompare(b.date||''));
+ const assessments=records('assessments'),scales=records('scales'),notes=records('followups'),attendance=records('attendance'),goals=records('goals'),interviews=records('interviews'),meetings=records('meetings');
+ const topicNotes=(topic:string)=>lines(notes.filter(x=>entryTopics(x).includes(topic)).map(x=>dated(x,labelled(x,[['observation','Observación'],['response','Respuesta'],['intervention','Intervención'],['plan','Plan']]))));
+ const values:Record<ReportSection,string>={
+ reason:text(p.reason),
+ background:labelled(p,[['admission','Ingreso'],['diagnoses','Diagnósticos registrados y fuente'],['medicalHistory','Antecedentes clínicos'],['psychHistory','Antecedentes psicológicos'],['cognitiveHistory','Historia cognitiva'],['medication','Medicación relevante'],['education','Escolaridad'],['language','Idioma']]),
+ methods:lines([lines(scales.map(x=>dated(x,labelled(x,[['instrument','Prueba'],['version','Versión'],['validity','Estado de aplicación'],['score','Puntuación'],['maximum','Máximo'],['errors','Errores'],['items','Ítems'],['stage','Estadio'],['correct','Respuestas correctas'],['conditions','Condiciones'],['interpretation','Interpretación registrada']])))),lines(assessments.map(x=>dated(x,labelled(x,[['sources','Fuentes y condiciones']])))),lines(interviews.map(x=>dated(x,labelled(x,[['type','Entrevista'],['reason','Motivo'],['content','Información recogida']]))))]),
+ cognition:lines([labelled(p,[['cognitiveProfile','Perfil actual'],['awareness','Conciencia y apoyos']]),...assessments.map(x=>dated(x,text(x.cognition))),topicNotes('Cognición')]),
+ emotion:lines([labelled(p,[['emotionalState','Estado emocional'],['behavior','Conducta'],['behaviorSupports','Apoyos']]),...assessments.map(x=>dated(x,text(x.emotion))),topicNotes('Emoción')]),
+ function:lines([labelled(p,[['dailyLiving','Autonomía y apoyos'],['communication','Comunicación'],['sensory','Apoyos sensoriales'],['mobility','Movilidad'],['carePlan','Adaptaciones']]),...assessments.map(x=>dated(x,text(x.function)))]),
+ participation:lines([labelled(p,[['adaptation','Adaptación'],['preferences','Preferencias'],['relationships','Convivencia y vínculos'],['participation','Participación']]),...attendance.map(x=>dated(x,labelled(x,[['activity','Actividad'],['presence','Asistencia'],['participation','Participación'],['response','Respuesta'],['supports','Apoyos']]))),topicNotes('Participación'),topicNotes('Convivencia')]),
+ evolution:lines([...notes.filter(x=>!entryTopics(x).length||entryTopics(x).includes('Evolución global')).map(x=>dated(x,labelled(x,[['observation','Observación'],['response','Respuesta y evolución']]))),...assessments.map(x=>dated(x,labelled(x,[['conclusion','Síntesis registrada']])))]),
+ intervention:lines([labelled(p,[['interventionPlan','Plan profesional'],['familyNeeds','Acuerdos familiares'],['context','Coordinación']]),topicNotes('Intervención familiar'),topicNotes('Intervención profesional'),...notes.filter(x=>!entryTopics(x).length&&x.intervention).map(x=>dated(x,text(x.intervention))),...interviews.map(x=>dated(x,labelled(x,[['agreements','Acuerdos']]))),...meetings.map(x=>dated(x,labelled(x,[['summary','Coordinación'],['decisions','Acuerdos'],['plan','Plan']])))]),
+ goals:lines(goals.map(x=>dated(x,labelled(x,[['area','Área'],['objective','Objetivo'],['indicator','Indicador'],['intervention','Actuación y apoyos'],['responsible','Responsable'],['state','Estado'],['evaluation','Resultado'],['next','Revisión']])))),
+ conclusions:'',recommendations:'',limitations:lines(scales.map(x=>dated(x,labelled(x,[['instrument','Prueba'],['conditions','Condiciones'],['executionNotes','Observaciones de ejecución'],['comparability','Comparabilidad']]))))
+ };
+ const result:Entry={...e,format:'structured-v1',sourceAt:new Date().toISOString()};
+ for(const [key] of reportSections)if(selected.includes(key))result[key]=values[key];
+ return result;
+}
+export function reportText(r:Resident,e:Entry){return lines([e.title||'Informe psicológico y neuropsicológico',r.data.profile.name||r.code,'Centro: '+r.center,'Fecha: '+e.date,e.reportType?'Tipo: '+e.reportType:'',e.recipient?'Destinatario: '+e.recipient:'',e.purpose?'Finalidad: '+e.purpose:'',e.periodFrom||e.periodTo?'Periodo: '+(e.periodFrom||'Inicio del historial')+' — '+(e.periodTo||e.date):e.period?'Periodo: '+e.period:'',...reportSections.flatMap(([key,label])=>text(e[key])?['\n'+label.toLocaleUpperCase('es'),text(e[key])]:[]),e.body?'\nContenido del informe\n'+e.body:'',e.author?'\nProfesional: '+e.author:'',e.registration?'N.º colegiación: '+e.registration:'']);}
