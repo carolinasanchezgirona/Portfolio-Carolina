@@ -46,42 +46,42 @@
     const style = document.createElement("style");
     style.id = "clinic-dx-ai-styles";
     style.textContent = `
-      .clinic-dx-ai{grid-column:1/-1;margin:0 0 8px;padding:16px;border:1px solid #cfe0e9;border-radius:14px;background:linear-gradient(145deg,#fff,#f5fafc)}
+      .clinic-dx-ai{grid-column:1/-1;margin:0 0 8px;padding:16px;border:1px solid #c8dfe0;border-radius:14px;background:linear-gradient(145deg,#fff,#f4f9f9)}
       .clinic-dx-ai-head{display:flex;align-items:flex-start;justify-content:space-between;gap:14px}
-      .clinic-dx-ai-head h4{margin:2px 0 5px;color:#173A5E}
-      .clinic-dx-ai-head p{margin:0;max-width:740px;color:#607483;line-height:1.5;font-size:.82rem}
-      .clinic-dx-ai-badge{white-space:nowrap;border:1px solid #b9dfdc;background:#eefaf9;color:#116b67;border-radius:999px;padding:6px 9px;font-size:.7rem;font-weight:800}
+      .clinic-dx-ai-head h4{margin:2px 0 5px;color:#0e5c7c}
+      .clinic-dx-ai-head p{margin:0;max-width:740px;color:#536e78;line-height:1.5;font-size:.82rem}
+      .clinic-dx-ai-badge{white-space:nowrap;border:1px solid #c8dfe0;background:#f4f9f9;color:#183d4c;border-radius:999px;padding:6px 9px;font-size:.7rem;font-weight:800}
       .clinic-dx-ai-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;align-items:center}
-      .clinic-dx-ai-status{font-size:.76rem;color:#607483}
-      .clinic-dx-ai-result{margin-top:16px;padding-top:16px;border-top:1px solid #dbe7ee;display:grid;gap:12px}
-      .clinic-dx-ai-primary{padding:14px;border:1px solid #c9dce6;border-radius:12px;background:#fff}
-      .clinic-dx-ai-primary h5,.clinic-dx-ai-card h5{margin:0 0 7px;color:#173A5E;font-size:.9rem}
-      .clinic-dx-ai-primary p,.clinic-dx-ai-card p{margin:0;color:#405766;line-height:1.5;font-size:.8rem;white-space:pre-wrap}
-      .clinic-dx-ai-signal{display:inline-flex;margin-bottom:8px;border-radius:999px;padding:5px 8px;font-size:.68rem;font-weight:800;background:#edf4f8;color:#526977}
-      .clinic-dx-ai-signal.provisional{background:#eaf9f8;color:#145d5a}
-      .clinic-dx-ai-signal.insufficient{background:#fff4df;color:#835e17}
+      .clinic-dx-ai-status{font-size:.76rem;color:#536e78}
+      .clinic-dx-ai-result{margin-top:16px;padding-top:16px;border-top:1px solid #edf7f7;display:grid;gap:12px}
+      .clinic-dx-ai-primary{padding:14px;border:1px solid #c8dfe0;border-radius:12px;background:#fff}
+      .clinic-dx-ai-primary h5,.clinic-dx-ai-card h5{margin:0 0 7px;color:#0e5c7c;font-size:.9rem}
+      .clinic-dx-ai-primary p,.clinic-dx-ai-card p{margin:0;color:#536e78;line-height:1.5;font-size:.8rem;white-space:pre-wrap}
+      .clinic-dx-ai-signal{display:inline-flex;margin-bottom:8px;border-radius:999px;padding:5px 8px;font-size:.68rem;font-weight:800;background:#f4f9f9;color:#536e78}
+      .clinic-dx-ai-signal.provisional{background:#f4f9f9;color:#183d4c}
+      .clinic-dx-ai-signal.insufficient{background:#fcf8e6;color:#665619}
       .clinic-dx-ai-meta{display:flex;flex-wrap:wrap;gap:7px;margin:9px 0 10px}
-      .clinic-dx-ai-meta span{display:inline-flex;padding:5px 8px;border-radius:999px;background:#edf4f8;color:#526977;font-size:.68rem;font-weight:800}
-      .clinic-dx-ai-meta .high{background:#e7f5ec;color:#23613a}
-      .clinic-dx-ai-meta .moderate{background:#fff4df;color:#7a5b18}
+      .clinic-dx-ai-meta span{display:inline-flex;padding:5px 8px;border-radius:999px;background:#f4f9f9;color:#536e78;font-size:.68rem;font-weight:800}
+      .clinic-dx-ai-meta .high{background:#edf6ea;color:#2d6658}
+      .clinic-dx-ai-meta .moderate{background:#fcf8e6;color:#665619}
       .clinic-dx-ai-meta .low{background:#f7eeee;color:#8a4949}
-      .clinic-dx-ai-code{margin-top:9px!important;padding:9px 10px;border-radius:9px;background:#f4f8fa;color:#4a6473!important;font-size:.74rem!important}
+      .clinic-dx-ai-code{margin-top:9px!important;padding:9px 10px;border-radius:9px;background:#f4f9f9;color:#536e78!important;font-size:.74rem!important}
       .clinic-dx-ai-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-      .clinic-dx-ai-card{padding:13px;border:1px solid #dbe7ee;border-radius:12px;background:#fff}
-      .clinic-dx-ai-list{margin:8px 0 0;padding-left:18px;color:#405766;font-size:.78rem;line-height:1.5}
+      .clinic-dx-ai-card{padding:13px;border:1px solid #edf7f7;border-radius:12px;background:#fff}
+      .clinic-dx-ai-list{margin:8px 0 0;padding-left:18px;color:#536e78;font-size:.78rem;line-height:1.5}
       .clinic-dx-ai-differential{display:grid;gap:8px}
-      .clinic-dx-ai-diff{padding:12px;border:1px solid #dbe7ee;border-radius:11px;background:#fff}
-      .clinic-dx-ai-diff strong{display:block;color:#173A5E;margin-bottom:5px;font-size:.82rem}
+      .clinic-dx-ai-diff{padding:12px;border:1px solid #edf7f7;border-radius:11px;background:#fff}
+      .clinic-dx-ai-diff strong{display:block;color:#0e5c7c;margin-bottom:5px;font-size:.82rem}
       .clinic-dx-ai-diff-badges{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 7px}
-      .clinic-dx-ai-diff-badges span{padding:4px 7px;border-radius:999px;background:#edf4f8;color:#526977;font-size:.65rem;font-weight:800}
+      .clinic-dx-ai-diff-badges span{padding:4px 7px;border-radius:999px;background:#f4f9f9;color:#536e78;font-size:.65rem;font-weight:800}
       .clinic-dx-ai-diff-badges .less-likely{background:#f7eeee;color:#8a4949}
-      .clinic-dx-ai-diff-badges .plausible{background:#eaf9f8;color:#145d5a}
-      .clinic-dx-ai-diff p{margin:3px 0;color:#4b6170;font-size:.76rem;line-height:1.45}
-      .clinic-dx-ai-tool{padding:9px 0;border-top:1px solid #e5edf2}
+      .clinic-dx-ai-diff-badges .plausible{background:#f4f9f9;color:#183d4c}
+      .clinic-dx-ai-diff p{margin:3px 0;color:#536e78;font-size:.76rem;line-height:1.45}
+      .clinic-dx-ai-tool{padding:9px 0;border-top:1px solid #edf7f7}
       .clinic-dx-ai-tool:first-of-type{border-top:0;padding-top:0}
-      .clinic-dx-ai-tool strong{display:block;color:#173A5E;font-size:.78rem}
-      .clinic-dx-ai-tool p{margin:4px 0 0;color:#4b6170;font-size:.74rem;line-height:1.45}
-      .clinic-dx-ai-caution{padding:10px 12px;border-left:3px solid #F2766B;border-radius:9px;background:#fff8f6;color:#6f4b47;font-size:.74rem;line-height:1.5}
+      .clinic-dx-ai-tool strong{display:block;color:#0e5c7c;font-size:.78rem}
+      .clinic-dx-ai-tool p{margin:4px 0 0;color:#536e78;font-size:.74rem;line-height:1.45}
+      .clinic-dx-ai-caution{padding:10px 12px;border-left:3px solid #8c4192;border-radius:9px;background:#fff8f6;color:#536e78;font-size:.74rem;line-height:1.5}
       @media(max-width:760px){.clinic-dx-ai-head,.clinic-dx-ai-grid{display:grid}.clinic-dx-ai-badge{justify-self:start}}
     `;
     document.head.append(style);

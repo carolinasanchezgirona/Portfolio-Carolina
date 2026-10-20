@@ -35,10 +35,10 @@
 
   const style = document.createElement("style");
   style.textContent = `
-    .clinic-patient-dashboard{margin:16px 0 18px;padding:17px;border:1px solid #9EDCE7;border-radius:15px;background:#F7FCFD}
+    .clinic-patient-dashboard{margin:16px 0 18px;padding:17px;border:1px solid #c8dfe0;border-radius:15px;background:#ffffff}
     .clinic-dashboard-heading{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:10px}.clinic-dashboard-heading h3{margin:0;font-family:Newsreader,Georgia,serif;font-size:1.35rem;font-weight:500}.clinic-dashboard-heading .clinic-eyebrow{margin-bottom:3px}
-    .clinic-dashboard-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px}.clinic-dashboard-grid article{min-width:0;padding:13px;border:1px solid #CFE9EE;border-radius:12px;background:#fff;display:grid;gap:4px}.clinic-dashboard-grid span{color:#667983;font-size:.74rem;font-weight:700}.clinic-dashboard-grid strong{color:#075A68;font-size:1.05rem;line-height:1.25;overflow-wrap:anywhere}.clinic-dashboard-grid small{min-height:1.1em;color:#667983;font-size:.72rem;line-height:1.35;overflow-wrap:anywhere}.clinic-dashboard-grid article.is-attention{border-color:#e6c58f;background:#fff9ee}.clinic-dashboard-grid article.is-attention strong{color:#8a5b11}
-    .clinic-dashboard-alerts{margin-top:10px;padding:10px 12px;border-radius:10px;background:#FFF4E3;color:#72521e;font-size:.78rem;line-height:1.45}.clinic-dashboard-alerts strong{display:block;margin-bottom:3px;color:#62430f}
+    .clinic-dashboard-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px}.clinic-dashboard-grid article{min-width:0;padding:13px;border:1px solid #c8dfe0;border-radius:12px;background:#fff;display:grid;gap:4px}.clinic-dashboard-grid span{color:#536e78;font-size:.74rem;font-weight:700}.clinic-dashboard-grid strong{color:#0e5c7c;font-size:1.05rem;line-height:1.25;overflow-wrap:anywhere}.clinic-dashboard-grid small{min-height:1.1em;color:#536e78;font-size:.72rem;line-height:1.35;overflow-wrap:anywhere}.clinic-dashboard-grid article.is-attention{border-color:#e8d15d;background:#fcf8e6}.clinic-dashboard-grid article.is-attention strong{color:#665619}
+    .clinic-dashboard-alerts{margin-top:10px;padding:10px 12px;border-radius:10px;background:#fcf8e6;color:#665619;font-size:.78rem;line-height:1.45}.clinic-dashboard-alerts strong{display:block;margin-bottom:3px;color:#665619}
     @media(max-width:760px){.clinic-dashboard-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
     @media(max-width:480px){.clinic-dashboard-grid{grid-template-columns:1fr}.clinic-dashboard-heading{align-items:flex-start}.clinic-patient-dashboard{padding:13px}}
   `;

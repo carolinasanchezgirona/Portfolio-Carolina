@@ -133,17 +133,17 @@
   const css = document.createElement("style");
   css.id = "clinic-patient-workspace-styles";
   css.textContent = `
-    .clinic-patient-workspace-nav{display:flex;gap:7px;overflow-x:auto;overscroll-behavior-x:contain;scrollbar-width:thin;padding:12px 0 9px;margin:16px 0 8px;position:sticky;top:0;z-index:5;background:#fff;border-bottom:1px solid #d8e1e7}
-    .clinic-workspace-tab{flex:0 0 auto;appearance:none;background:#f4f7f8;border:1px solid #d8e1e7;border-radius:7px;padding:11px 15px;color:#344a59;font:600 .85rem Arial,sans-serif;cursor:pointer}
-    .clinic-workspace-tab.active,.clinic-workspace-tab:focus-visible{background:#173A5E;border-color:#173A5E;color:#fff;outline-offset:2px}
+    .clinic-patient-workspace-nav{display:flex;gap:7px;overflow-x:auto;overscroll-behavior-x:contain;scrollbar-width:thin;padding:12px 0 9px;margin:16px 0 8px;position:sticky;top:0;z-index:5;background:#fff;border-bottom:1px solid #c8dfe0}
+    .clinic-workspace-tab{flex:0 0 auto;appearance:none;background:#f4f9f9;border:1px solid #c8dfe0;border-radius:7px;padding:11px 15px;color:#536e78;font:600 .85rem Arial,sans-serif;cursor:pointer}
+    .clinic-workspace-tab.active,.clinic-workspace-tab:focus-visible{background:#0e5c7c;border-color:#0e5c7c;color:#fff;outline-offset:2px}
     .clinic-workspace-panel[hidden]{display:none!important}
     .clinic-workspace-panel{padding:10px 0 20px;min-height:200px}
     .clinic-workspace-panel-heading{margin:5px 0 20px}
-    .clinic-workspace-panel-heading h3{font-family:Arial,sans-serif;font-size:1.2rem;color:#173A5E;margin:0 0 5px}
-    .clinic-workspace-panel-heading p{font-size:.82rem;color:#5e6f7c;margin:0}
+    .clinic-workspace-panel-heading h3{font-family:Arial,sans-serif;font-size:1.2rem;color:#0e5c7c;margin:0 0 5px}
+    .clinic-workspace-panel-heading p{font-size:.82rem;color:#536e78;margin:0}
     .clinic-workspace-panel>.clinic-record-section{margin-bottom:16px}
     .clinic-workspace-panel>.clinic-form-grid{margin:12px 0}
-    .clinic-patient-page-content>.clinic-form-actions-bottom{position:sticky;bottom:0;z-index:4;padding:12px 16px;border-top:1px solid #d8e1e7;background:rgba(255,255,255,.97)}
+    .clinic-patient-page-content>.clinic-form-actions-bottom{position:sticky;bottom:0;z-index:4;padding:12px 16px;border-top:1px solid #c8dfe0;background:rgba(255,255,255,.97)}
     .clinic-workspace-panel>.clinic-patient-tools-grid{display:block}
     @media(max-width:640px){.clinic-workspace-tab{padding:10px 13px}.clinic-patient-page-content>.clinic-form-actions-bottom{flex-wrap:wrap}.clinic-workspace-panel{min-height:100px}}
   `;

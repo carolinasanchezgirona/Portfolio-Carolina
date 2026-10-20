@@ -1,14 +1,14 @@
-.clinic-page{--brand:#11A6C2;--brand-dark:#075A68;--brand-soft:#EAF6F8;--brand-border:#9EDCE7}
+.clinic-page{--brand:#8c4192;--brand-dark:#0e5c7c;--brand-soft:#edf7f7;--brand-border:#c8dfe0}
 .clinic-page .clinic-eyebrow{color:var(--brand-dark)!important}
-.clinic-page .clinic-primary{border-color:var(--brand)!important;background:var(--brand)!important;color:#fffdf9!important}
+.clinic-page .clinic-primary{border-color:var(--brand)!important;background:var(--brand)!important;color:#ffffff!important}
 .clinic-page .clinic-primary:hover{border-color:var(--brand-dark)!important;background:var(--brand-dark)!important}
-.clinic-page .clinic-secondary{border-color:var(--brand-border)!important;background:#fffdf9!important;color:var(--brand-dark)!important}
+.clinic-page .clinic-secondary{border-color:var(--brand-border)!important;background:#ffffff!important;color:var(--brand-dark)!important}
 .clinic-page .clinic-secondary:hover{border-color:var(--brand)!important;background:var(--brand-soft)!important}
-.clinic-page .clinic-tabs button.active{background:var(--brand)!important;color:#fffdf9!important;box-shadow:0 5px 16px rgba(17,166,194,.22)!important}
+.clinic-page .clinic-tabs button.active{background:var(--brand)!important;color:#ffffff!important;box-shadow:0 5px 16px rgba(25,182,190,.22)!important}
 .clinic-page .clinic-appointment{border-left-color:var(--brand)!important}
 .clinic-page .clinic-status-pill{background:var(--brand-soft)!important;color:var(--brand-dark)!important}
-.clinic-page .clinic-status-pill.pending{background:#fff1cf!important;color:#745800!important}
-.clinic-page .clinic-status-pill.completed{background:#e7f4eb!important;color:#23613a!important}
+.clinic-page .clinic-status-pill.pending{background:#fcf8e6!important;color:#665619!important}
+.clinic-page .clinic-status-pill.completed{background:#edf6ea!important;color:#2d6658!important}
 .clinic-page .clinic-status-pill.cancelled{background:#fff0ea!important;color:#9b3516!important}
 .clinic-page .clinic-open-patient{border-color:var(--brand-border)!important;color:var(--brand-dark)!important}
 .clinic-page .clinic-next-step,.clinic-page .clinic-preparation,.clinic-page .clinic-draft-generator,.clinic-page .clinic-report-toolbar{background:var(--brand-soft)!important}
@@ -19,10 +19,80 @@
 .clinic-page .clinic-goals-heading .clinic-text,.clinic-page .clinic-draft-generator strong{color:var(--brand-dark)!important}
 .clinic-page .clinic-report-sheet header{border-bottom-color:var(--brand)!important}
 .clinic-page .clinic-report-sheet h1{color:var(--brand-dark)!important}
-.clinic-page .clinic-report-sheet{box-shadow:0 12px 40px rgba(17,166,194,.08)!important}
+.clinic-page .clinic-report-sheet{box-shadow:0 12px 40px rgba(25,182,190,.08)!important}
 .clinic-page .clinic-login-card{border-radius:18px}
-.clinic-page .clinic-login-card input{border-color:#d8ccbc}
+.clinic-page .clinic-login-card input{border-color:#c8dfe0}
 .clinic-page .clinic-login-card .clinic-primary{margin-top:20px}
 .clinic-page .clinic-pwa-install-login{width:100%;margin-top:10px}
 .clinic-page .clinic-pwa-install-hint{margin:8px 0 0;text-align:center;line-height:1.45}
 @media(max-width:560px){.clinic-login-shell{padding:18px}.clinic-login-card{padding:28px 24px}}
+
+/* Shared palette for the clinical workspace, access and materials library.
+   Light palette colors are accents; readable text uses petroleum, plum or forest. */
+:is(.clinic-page,.clinical-access-page,.external-library){
+  --palette-plum:#8c4192;
+  --palette-turquoise:#19b6be;
+  --palette-petroleum:#0e5c7c;
+  --palette-forest:#2d6658;
+  --palette-leaf:#8bc281;
+  --palette-yellow:#e8d15d;
+  --palette-bg:#f3f8f8;
+  --palette-line:#c8dfe0;
+  --palette-muted:#536e78;
+  --palette-plum-soft:#f4edf5;
+}
+body:has(.clinic-page),body:has(.clinical-access-page),body:has(.external-library){
+  background:#f3f8f8;
+}
+.clinic-page .clinic-brand-mark{
+  background:var(--palette-petroleum);
+  box-shadow:inset 0 -4px 0 var(--palette-turquoise);
+}
+.clinic-page .clinic-navigation,
+.clinic-page .clinic-topbar,
+.clinic-page .clinic-patient-page-header{
+  border-color:var(--palette-line);
+}
+.clinic-page .clinic-summary article{border-top:3px solid var(--palette-plum)}
+.clinic-page .clinic-summary article:nth-child(4n+2){border-top-color:var(--palette-turquoise)}
+.clinic-page .clinic-summary article:nth-child(4n+3){border-top-color:var(--palette-leaf)}
+.clinic-page .clinic-summary article:nth-child(4n+4){border-top-color:var(--palette-yellow)}
+.clinic-page .clinic-appointment{border-left-color:var(--palette-turquoise)!important}
+.clinic-page .clinic-note{
+  background:var(--palette-plum-soft);
+  color:var(--palette-petroleum);
+}
+.clinic-page .clinic-marker-grid label:has(input:checked),
+.clinic-page .clinic-session-goals label:has(input:checked){
+  background:var(--palette-plum-soft)!important;
+  color:var(--palette-plum)!important;
+}
+:is(.clinic-page,.clinical-access-page,.external-library) :is(input,select,textarea,progress){
+  accent-color:var(--palette-plum);
+}
+:is(.clinic-page,.clinical-access-page,.external-library) :is(input,select,textarea,button,a,summary):focus-visible{
+  outline:3px solid var(--palette-plum);
+  outline-offset:3px;
+}
+.clinic-page :is(input,textarea)::placeholder{color:var(--palette-muted);opacity:1}
+.clinic-page .neuro-chart svg line{stroke:var(--palette-line)}
+.clinic-page .neuro-chart svg polyline{stroke:var(--palette-plum)}
+.clinic-page .neuro-chart svg circle{fill:var(--palette-petroleum)}
+.clinic-page .neuro-chart svg text{fill:var(--palette-muted)}
+.clinical-access-page #clinical-access-submit,
+.external-library .ext-primary{
+  border-color:var(--palette-plum);
+  background:var(--palette-plum);
+  color:#fff;
+}
+.clinical-access-page #clinical-access-submit:hover,
+.external-library .ext-primary:hover{
+  background:var(--palette-petroleum);
+}
+.external-library .ext-privacy-note{
+  background:#edf6ea;
+  color:var(--palette-forest);
+}
+@media print{
+  .clinic-page .clinic-report-sheet{background:#fff!important;box-shadow:none!important}
+}

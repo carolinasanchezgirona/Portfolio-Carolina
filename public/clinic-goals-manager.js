@@ -50,18 +50,18 @@
 
   const style = document.createElement("style");
   style.textContent = `
-    .clinic-goals-manager{margin:18px 0;padding:18px;border:1px solid #CFE9EE;border-radius:15px;background:#fff}
+    .clinic-goals-manager{margin:18px 0;padding:18px;border:1px solid #c8dfe0;border-radius:15px;background:#fff}
     .clinic-goals-manager-heading{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-bottom:12px}
     .clinic-goals-manager-heading h3{margin:0;font-family:Newsreader,Georgia,serif;font-size:1.35rem;font-weight:500}
     .clinic-goals-manager-list{display:grid;gap:9px}
-    .clinic-goal-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px 14px;align-items:center;padding:12px 13px;border:1px solid #DDECEF;border-radius:12px;background:#FDFEFE}
+    .clinic-goal-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px 14px;align-items:center;padding:12px 13px;border:1px solid #edf7f7;border-radius:12px;background:#ffffff}
     .clinic-goal-row.is-completed{opacity:.72}.clinic-goal-row.is-paused{opacity:.72}
-    .clinic-goal-main{min-width:0}.clinic-goal-main strong{display:block;color:#24343d;font-size:.9rem;overflow-wrap:anywhere}
+    .clinic-goal-main{min-width:0}.clinic-goal-main strong{display:block;color:#183d4c;font-size:.9rem;overflow-wrap:anywhere}
     .clinic-goal-meta{display:flex;gap:7px;flex-wrap:wrap;margin-top:6px}
-    .clinic-goal-chip{padding:4px 7px;border-radius:999px;background:#EAF6F8;color:#075A68;font-size:.68rem;font-weight:750}
-    .clinic-goal-chip.priority-high{background:#fff0ea;color:#9b3516}.clinic-goal-chip.priority-low{background:#f1f3f4;color:#667983}.clinic-goal-chip.status-completed{background:#e7f4eb;color:#23613a}.clinic-goal-chip.status-paused{background:#f2f2f2;color:#667983}.clinic-goal-chip.status-review{background:#fff1cf;color:#745800}
+    .clinic-goal-chip{padding:4px 7px;border-radius:999px;background:#edf7f7;color:#0e5c7c;font-size:.68rem;font-weight:750}
+    .clinic-goal-chip.priority-high{background:#fff0ea;color:#9b3516}.clinic-goal-chip.priority-low{background:#f4f9f9;color:#536e78}.clinic-goal-chip.status-completed{background:#edf6ea;color:#2d6658}.clinic-goal-chip.status-paused{background:#f2f2f2;color:#536e78}.clinic-goal-chip.status-review{background:#fcf8e6;color:#665619}
     .clinic-goal-actions{display:flex;gap:7px;flex-wrap:wrap;justify-content:flex-end}.clinic-goal-actions button{min-height:34px;padding:6px 10px;font-size:.74rem}
-    .clinic-goal-empty{padding:18px;border:1px dashed #CFE9EE;border-radius:11px;color:#667983;text-align:center;font-size:.82rem}
+    .clinic-goal-empty{padding:18px;border:1px dashed #c8dfe0;border-radius:11px;color:#536e78;text-align:center;font-size:.82rem}
     @media(max-width:620px){.clinic-goals-manager-heading{align-items:stretch;flex-direction:column}.clinic-goals-manager-heading button{width:100%}.clinic-goal-row{grid-template-columns:1fr}.clinic-goal-actions{justify-content:flex-start}.clinic-goal-actions button{flex:1}}
   `;
   document.head.append(style);

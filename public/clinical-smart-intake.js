@@ -98,29 +98,29 @@
     const style = document.createElement("style");
     style.id = "clinic-smart-intake-styles";
     style.textContent = `
-      .clinic-smart-launcher{margin:14px 0 18px;display:inline-flex;align-items:center;gap:8px;min-height:36px;padding:8px 12px;border:1px solid #b9d2df;border-radius:8px;background:#fff;color:#173A5E;font:inherit;font-size:13px;font-weight:750;cursor:pointer}\n      .clinic-smart-launcher[hidden],.clinic-smart-intake[hidden]{display:none!important}\n      .clinic-smart-intake{margin:22px 0;padding:22px;border:1px solid #cfe0e9;border-radius:18px;background:linear-gradient(145deg,#fff,#f4fafc)}
+      .clinic-smart-launcher{margin:14px 0 18px;display:inline-flex;align-items:center;gap:8px;min-height:36px;padding:8px 12px;border:1px solid #c8dfe0;border-radius:8px;background:#fff;color:#0e5c7c;font:inherit;font-size:13px;font-weight:750;cursor:pointer}\n      .clinic-smart-launcher[hidden],.clinic-smart-intake[hidden]{display:none!important}\n      .clinic-smart-intake{margin:22px 0;padding:22px;border:1px solid #c8dfe0;border-radius:18px;background:linear-gradient(145deg,#fff,#f4f9f9)}
       .clinic-smart-head,.clinic-smart-preview-head{display:flex;justify-content:space-between;align-items:flex-start;gap:18px;margin-bottom:16px}
-      .clinic-smart-head h3,.clinic-smart-preview h4{margin:2px 0 5px;color:#173A5E}
-      .clinic-smart-head p{margin:0;max-width:680px;color:#607483;line-height:1.5}
-      .clinic-smart-badge{white-space:nowrap;border:1px solid #b9dfdc;background:#eefaf9;color:#116b67;border-radius:999px;padding:6px 10px;font-size:12px;font-weight:750}
+      .clinic-smart-head h3,.clinic-smart-preview h4{margin:2px 0 5px;color:#0e5c7c}
+      .clinic-smart-head p{margin:0;max-width:680px;color:#536e78;line-height:1.5}
+      .clinic-smart-badge{white-space:nowrap;border:1px solid #c8dfe0;background:#f4f9f9;color:#183d4c;border-radius:999px;padding:6px 10px;font-size:12px;font-weight:750}
       .clinic-smart-intake textarea{width:100%;box-sizing:border-box;margin-top:6px}
       .clinic-smart-actions{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:12px}
-      .clinic-smart-preview{margin-top:20px;padding-top:20px;border-top:1px solid #d9e5ee}
+      .clinic-smart-preview{margin-top:20px;padding-top:20px;border-top:1px solid #edf7f7}
       .clinic-smart-fields{display:grid;gap:9px;margin-bottom:18px}
-      .clinic-smart-field{padding:12px 14px;border:1px solid #dbe7ee;border-radius:12px;background:#fff}
-      .clinic-smart-field strong{display:block;color:#173A5E;margin-bottom:5px}
+      .clinic-smart-field{padding:12px 14px;border:1px solid #edf7f7;border-radius:12px;background:#fff}
+      .clinic-smart-field strong{display:block;color:#0e5c7c;margin-bottom:5px}
       .clinic-smart-field p{margin:0;white-space:pre-wrap;line-height:1.5}
       .clinic-smart-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
-      .clinic-smart-grid article,.clinic-smart-exercises{padding:15px;border-radius:14px;background:#fff;border:1px solid #dbe7ee}
+      .clinic-smart-grid article,.clinic-smart-exercises{padding:15px;border-radius:14px;background:#fff;border:1px solid #edf7f7}
       .clinic-smart-list{display:grid;gap:8px;margin-top:10px}
-      .clinic-smart-item{padding:9px 11px;border-radius:10px;background:#f6fafc;line-height:1.45}
-      .clinic-smart-confidence{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.04em;color:#607483}
+      .clinic-smart-item{padding:9px 11px;border-radius:10px;background:#ffffff;line-height:1.45}
+      .clinic-smart-confidence{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.04em;color:#536e78}
       .clinic-smart-exercises{margin-top:14px}
       .clinic-smart-process{display:grid;gap:3px}
-      .clinic-smart-process strong{color:#173A5E}
+      .clinic-smart-process strong{color:#0e5c7c}
       .clinic-smart-exercise-candidates{margin-top:12px;display:grid;gap:8px}
-      .clinic-smart-exercise{display:flex;justify-content:space-between;gap:12px;align-items:center;padding:10px 12px;border:1px solid #dbe7ee;border-radius:11px}
-      .clinic-smart-exercise small{display:block;color:#607483;margin-top:3px}
+      .clinic-smart-exercise{display:flex;justify-content:space-between;gap:12px;align-items:center;padding:10px 12px;border:1px solid #edf7f7;border-radius:11px}
+      .clinic-smart-exercise small{display:block;color:#536e78;margin-top:3px}
       @media(max-width:760px){.clinic-smart-head,.clinic-smart-preview-head{display:grid}.clinic-smart-grid{grid-template-columns:1fr}.clinic-smart-badge{justify-self:start}}
     `;
     document.head.append(style);

@@ -23,13 +23,13 @@ export default function ClinicaLayout({ children }: Readonly<{ children: React.R
       <script src="/clinic-word-export.js?v=20261009-legal-1" defer />
       <script src="/clinic-report-options.js?v=20261009-legal-1" defer />
       <script src="/clinic-ux-guards.js?v=20260915-1" defer />
-      <script src="/clinic-patient-dashboard.js?v=20261017-shared-review-1" defer />
-      <script src="/clinic-goals-manager.js?v=20261009-visibility-1" defer />
-      <script src="/clinic-scale-trends.js?v=20261009-visibility-1" defer />
-      <script src="/clinic-template-library.js?v=20260915-3" defer />
-      <script src="/clinic-admin-tasks.js?v=20261009-visibility-1" defer />
+      <script src="/clinic-patient-dashboard.js?v=20261020-palette-1" defer />
+      <script src="/clinic-goals-manager.js?v=20261020-palette-1" defer />
+      <script src="/clinic-scale-trends.js?v=20261020-palette-1" defer />
+      <script src="/clinic-template-library.js?v=20261020-palette-1" defer />
+      <script src="/clinic-admin-tasks.js?v=20261020-palette-1" defer />
       <script src="/clinic-patient-admin-enhancements.js?v=20261009-fixes-2" defer />
-      <script src="/clinic-patient-workspace.js?v=20261020-professional-notes-1" defer />
+      <script src="/clinic-patient-workspace.js?v=20261020-palette-1" defer />
       <script src="/clinic-deferred-consent.js?v=20261018-1" defer />
       <script src="/clinic-pwa.js?v=20260917-2" defer />
     </>

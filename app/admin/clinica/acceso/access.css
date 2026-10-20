@@ -4,10 +4,10 @@
   place-items:center;
   padding:56px 24px 72px;
   background:
-    radial-gradient(circle at 12% 18%,rgba(8,166,160,.10),transparent 28%),
-    radial-gradient(circle at 88% 78%,rgba(242,118,107,.08),transparent 26%),
-    #f6fafc;
-  color:#173A5E;
+    radial-gradient(circle at 12% 18%,rgba(25,182,190,.10),transparent 28%),
+    radial-gradient(circle at 88% 78%,rgba(140,65,146,.08),transparent 26%),
+    #ffffff;
+  color:#0e5c7c;
 }
 .clinical-access-panel{
   width:min(1040px,100%);
@@ -19,7 +19,7 @@
 .clinical-access-brand{padding:18px 0}
 .clinical-access-kicker{
   margin:0 0 14px;
-  color:#08A6A0;
+  color:#0e5c7c;
   font-size:.76rem;
   font-weight:800;
   letter-spacing:.1em;
@@ -33,14 +33,14 @@
   font-weight:500;
   line-height:.98;
   letter-spacing:-.04em;
-  color:#173A5E;
+  color:#0e5c7c;
 }
 .clinical-access-intro{
   max-width:620px;
   margin:24px 0 0;
   font-size:1.05rem;
   line-height:1.7;
-  color:#5b7184;
+  color:#536e78;
 }
 .clinical-access-trust{
   display:flex;
@@ -50,24 +50,24 @@
 }
 .clinical-access-trust span{
   padding:8px 11px;
-  border:1px solid #cddde8;
+  border:1px solid #c8dfe0;
   border-radius:999px;
   background:rgba(255,255,255,.72);
-  color:#4f677a;
+  color:#536e78;
   font-size:.78rem;
   font-weight:700;
 }
 .clinical-access-card{
   padding:32px;
-  border:1px solid #d6e4ec;
+  border:1px solid #edf7f7;
   border-radius:24px;
   background:rgba(255,255,255,.94);
-  box-shadow:0 28px 80px rgba(23,58,94,.10);
+  box-shadow:0 28px 80px rgba(14,92,124,.10);
   backdrop-filter:blur(16px);
 }
 .clinical-access-card-head p{
   margin:0 0 5px;
-  color:#08A6A0;
+  color:#0e5c7c;
   font-size:.74rem;
   font-weight:800;
   letter-spacing:.08em;
@@ -78,13 +78,13 @@
   font-family:var(--font-newsreader),Georgia,serif;
   font-size:2.15rem;
   font-weight:500;
-  color:#173A5E;
+  color:#0e5c7c;
 }
 .clinical-access-card label{
   display:grid;
   gap:8px;
   margin-top:16px;
-  color:#314e67;
+  color:#536e78;
   font-size:.84rem;
   font-weight:750;
 }
@@ -92,17 +92,17 @@
   width:100%;
   min-height:52px;
   padding:12px 14px;
-  border:1px solid #c9d9e4;
+  border:1px solid #c8dfe0;
   border-radius:13px;
   background:#fff;
-  color:#173A5E;
+  color:#0e5c7c;
   font:inherit;
   outline:none;
   transition:border-color .18s ease,box-shadow .18s ease;
 }
 .clinical-access-card input:focus{
-  border-color:#08A6A0;
-  box-shadow:0 0 0 4px rgba(8,166,160,.10);
+  border-color:#0e5c7c;
+  box-shadow:0 0 0 4px rgba(25,182,190,.10);
 }
 .clinical-access-message{
   min-height:20px;
@@ -116,12 +116,12 @@
   margin-top:8px;
   border:0;
   border-radius:999px;
-  background:#173A5E;
+  background:#0e5c7c;
   color:#fff;
   font:inherit;
   font-weight:800;
   cursor:pointer;
-  box-shadow:0 12px 28px rgba(23,58,94,.18);
+  box-shadow:0 12px 28px rgba(14,92,124,.18);
 }
 #clinical-access-submit:hover{transform:translateY(-1px)}
 #clinical-access-submit:disabled{opacity:.65;cursor:wait;transform:none}
@@ -130,10 +130,10 @@
   justify-content:space-between;
   gap:16px;
   margin-top:18px;
-  color:#708495;
+  color:#536e78;
   font-size:.76rem;
 }
-.clinical-access-footer a{color:#173A5E;text-decoration:none;font-weight:750}
+.clinical-access-footer a{color:#0e5c7c;text-decoration:none;font-weight:750}
 @media(max-width:820px){
   .clinical-access-page{padding-top:36px}
   .clinical-access-panel{grid-template-columns:1fr}
