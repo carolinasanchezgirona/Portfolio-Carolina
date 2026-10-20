@@ -12,3 +12,9 @@ test('next review follows the latest assessment, not insertion order',()=>{
  resident.data.assessments=[];
  assert.equal(nextReview(resident),'2026-01-01');
 });
+
+test('legacy resident records preserve profile and receive independent new registries',async()=>{
+ const {normalizeResident}=await import('../app/admin/residencia/model.ts');
+ const r=normalizeResident({id:'r',data:{profile:{name:'Persona'},assessments:[],reports:[],attendance:[],followups:[],goals:[]}});
+ assert.equal(r.data.profile.name,'Persona');assert.deepEqual(r.data.scales,[]);assert.deepEqual(r.data.interviews,[]);
+});
