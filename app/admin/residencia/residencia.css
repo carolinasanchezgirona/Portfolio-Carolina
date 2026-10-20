@@ -44,3 +44,5 @@
 .res-assessment-grid article button:disabled{background:#f2f5f7}
 
 .res-bulk{margin:12px 0}.res-bulk-panel{border:1px solid #cbdde7;background:#f5fafc;border-radius:12px;padding:16px;margin-top:12px}.res-bulk-panel h3{margin:0 0 8px;font:22px Georgia,serif}.res-bulk-panel p{line-height:1.5;font-size:14px}.res-import-table{overflow:auto;max-height:350px;margin:16px 0}.res-import-table table{border-collapse:collapse;width:100%;font-size:13px}.res-import-table th,.res-import-table td{padding:8px;border-bottom:1px solid #d9e6ed;text-align:left}.res-import-table input[type=checkbox]{width:18px;height:18px}
+
+.res-review-workspace h3{margin:26px 0 14px}.res-review-summary{display:flex;align-items:center;gap:12px;padding:16px 20px;background:#eaf6fb;border-radius:12px;margin:16px 0}.res-review-summary strong{font-size:30px}.res-review-item{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:14px;padding:16px 0;border-bottom:1px solid #d9e6ed}.res-review-item>div:first-child{flex:1;min-width:210px}.res-review-item p{margin:7px 0;line-height:1.5}.res-review-item small{color:#516979}.res-review-item button{flex-shrink:0}
