@@ -13,7 +13,7 @@ export default function AiClinicalReview({records,onAdopt}:{records:Entry[];onAd
   try{
    const session=JSON.parse(sessionStorage.getItem('dememoria_admin_session')||'null');
    if(!session?.access_token)throw Error('Inicia sesión en el administrador.');
-   const resp=await fetch('/api/residence/clinical-analysis',{method:'POST',headers:{Authorization:'Bearer '+session.access_token,'Content-Type':'application/json'},body:JSON.stringify({assessments:clean})});
+   const resp=await fetch('/api/residence/clinical-analysis',{method:'POST',headers:{Authorization:'Bearer '+session.access_token,'Content-Type':'application/json'},body:JSON.stringify({assessments:clean,context:'Evaluación neuropsicológica residencial; integrar hallazgos entre dominios y valorar discrepancias.'})});
    const data=await resp.json();
    if(!resp.ok)throw Error(data.error||'No se ha podido generar el análisis.');
    if(!data.analysis||!Array.isArray(data.analysis.domains))throw Error('Respuesta de análisis incompleta.');
