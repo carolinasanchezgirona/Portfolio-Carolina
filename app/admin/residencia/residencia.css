@@ -73,3 +73,9 @@
 .residence .res-mmse-compact input,.residence .res-mmse-compact select{margin:0;padding:8px;font-size:14px}
 .res-mmse-group>label>textarea{min-height:66px}
 @media(max-width:740px){.res-mmse-compact{grid-template-columns:minmax(0,1fr) 125px;gap:7px}.res-mmse-compact .res-mmse-prompt{grid-column:1/-1}}
+
+.res-mmse-basics{margin:8px 0 10px}
+.res-mmse-extra{margin:8px 0 16px;border:1px solid #d9e6ed;border-radius:10px;padding:12px 14px;background:#f8fbfd}
+.res-mmse-extra>summary{cursor:pointer;font-weight:650;color:#173a5e}
+.res-mmse-extra[open]>summary{margin-bottom:12px}
+.res-ai-review>.res-heading{position:sticky;top:0;z-index:4;background:#fff;padding:12px 0;border-bottom:1px solid #d9e6ed}
