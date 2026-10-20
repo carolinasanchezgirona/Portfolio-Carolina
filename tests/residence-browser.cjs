@@ -23,32 +23,31 @@ assert.equal(await page.locator('.admin-workspace-nav').count(),0);
 await page.getByRole('button',{name:'+ Nuevo residente',exact:true}).click();
 await page.getByLabel('Código interno',{exact:true}).fill('R-001');await page.getByLabel('Centro de la ficha',{exact:true}).fill('Centro de prueba');await page.getByLabel('Nombre y apellidos',{exact:true}).fill('Residente de prueba');await page.getByRole('button',{name:'Guardar ficha',exact:true}).click();await page.getByText('Guardado correctamente.',{exact:true}).waitFor();
 const id=residents[0].id;
-await page.getByRole('button',{name:'Valoraciones',exact:true}).click();
-const protocol=page.getByRole('complementary',{name:'Protocolo MMSE NORMACODERM'});
-await protocol.waitFor();
-await page.setViewportSize({width:390,height:844});assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
-await page.screenshot({path:'/tmp/res-mmse-protocol-mobile.png',fullPage:true});
-const pdf=await page.request.get(new URL(await protocol.getByRole('link',{name:'Abrir protocolo PDF',exact:true}).getAttribute('href'),page.url()).href);
-assert.equal(pdf.status(),200);assert((await pdf.body()).subarray(0,5).equals(Buffer.from('%PDF-')));
-await page.getByLabel('Residente del nuevo registro',{exact:true}).selectOption(id);
-await protocol.getByRole('button',{name:'+ Registrar MMSE NORMACODERM',exact:true}).click();
-assert.equal(await page.getByLabel('Versión / adaptación utilizada',{exact:true}).inputValue(),'NORMACODERM (Anexo 2)');
-assert.equal(await page.getByLabel('Puntuación máxima de la versión',{exact:true}).inputValue(),'30');
-assert.equal(await page.getByLabel('Fijación (0–3)',{exact:true}).inputValue(),'');
-await page.getByLabel('Fijación (0–3)',{exact:true}).fill('4');
-await page.getByRole('button',{name:'Guardar registro',exact:true}).click();await page.getByText('Fijación: introduce un entero entre 0 y 3.',{exact:true}).waitFor();assert.equal(residents[0].data.scales.length,0);
-await page.getByLabel('Fijación (0–3)',{exact:true}).fill('3');
-await page.getByLabel('Puntuación total registrada',{exact:true}).fill('24');
-await page.getByLabel('Puntuación corregida registrada por la profesional',{exact:true}).fill('25');
-await page.getByLabel('Corrección aplicada y tabla de referencia utilizada',{exact:true}).fill('Corrección manual, tabla de página 7');
-await page.screenshot({path:'/tmp/res-mmse-entry-mobile.png',fullPage:true});
-await page.getByRole('button',{name:'Guardar registro',exact:true}).click();await page.getByText('Guardado correctamente.',{exact:true}).waitFor();
-assert.equal(residents[0].data.scales[0].registration,'3');assert.equal(residents[0].data.scales[0].score,'24');assert.equal(residents[0].data.scales[0].correctedScore,'25');assert.equal(residents[0].data.scales[0].recall,undefined);
-await page.reload();await page.getByRole('button',{name:'Valoraciones',exact:true}).click();await page.getByLabel('Residente del nuevo registro',{exact:true}).selectOption(id);
-await page.getByRole('button',{name:'Editar',exact:true}).click();assert.equal(await page.getByLabel('Puntuación corregida registrada por la profesional',{exact:true}).inputValue(),'25');await page.getByRole('button',{name:'Cancelar',exact:true}).click();
-await page.setViewportSize({width:1440,height:1000});
 
-for(const instrument of ['MMSE','MEC','Pfeiffer','GDS de Reisberg','Yesavage','Test del reloj','Fluencia verbal']){
+const {mmseGroups,activeMmseGroups}=require('../app/admin/residencia/mmse-items.ts');
+async function startMmse(date){await page.getByRole('button',{name:'Valoraciones',exact:true}).click();await page.getByLabel('Residente del nuevo registro',{exact:true}).selectOption(id);await page.getByRole('button',{name:'+ Nueva aplicación MMSE',exact:true}).click();await page.getByLabel('Fecha de aplicación',{exact:true}).fill(date);}
+async function scoreMmse(failed=[]){for(const g of activeMmseGroups({attentionMethod:'Restas seriadas'}))for(const item of g.items)await page.getByLabel('Puntuación: '+item.prompt,{exact:true}).selectOption(failed.includes(item.key)?'0':'1');}
+await startMmse('2026-09-20');assert.equal(await page.locator('a[href$=".pdf"]').count(),0);
+await page.getByLabel('Respuesta: ¿En qué año estamos?',{exact:true}).fill('2026');
+await scoreMmse();await page.getByLabel('Anotaciones sobre la ejecución',{exact:true}).fill('Primera aplicación, colaboradora');
+await page.getByLabel('Notas: registration',{exact:true}).fill('Sin repeticiones adicionales');
+await page.setViewportSize({width:390,height:844});assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
+await page.screenshot({path:'/tmp/res-web-mmse-mobile.png',fullPage:false});
+await page.getByRole('button',{name:'Guardar registro',exact:true}).click();await page.getByText('Guardado correctamente.',{exact:true}).waitFor();
+const first=residents[0].data.scales[0];assert.equal(first.score,'30');assert.equal(first.validity,'Aplicado');assert(first.createdAt);assert.equal(first.mmse_year_response,'2026');assert.equal(first.mmse_note_registration,'Sin repeticiones adicionales');
+await page.setViewportSize({width:1440,height:1000});
+await startMmse('2026-10-20');await scoreMmse(['year','month']);await page.getByLabel('Anotaciones sobre la ejecución',{exact:true}).fill('Fatiga al inicio');
+const canvas=page.getByRole('img',{name:'Espacio para dibujar la copia',exact:true});await canvas.scrollIntoViewIfNeeded();const box=await canvas.boundingBox();await page.mouse.move(box.x+20,box.y+20);await page.mouse.down();await page.mouse.move(box.x+80,box.y+80);await page.mouse.up();
+await page.getByRole('button',{name:'Guardar registro',exact:true}).click();await page.getByText('Guardado correctamente.',{exact:true}).waitFor();
+const second=residents[0].data.scales.find(e=>e.id!==first.id);assert.equal(second.score,'28');assert(second.copyDrawing.includes('['));assert.equal(residents[0].data.scales.length,2);
+await page.getByText('Cambio: ',{exact:false}).first().waitFor();assert((await page.locator('.res-comparison').innerText()).includes('-2 puntos'));
+const progress=page.getByRole('region',{name:'Evolución de las pruebas',exact:true});await progress.waitFor();assert.equal(await progress.locator('tbody tr').count(),2);await progress.screenshot({path:'/tmp/res-web-mmse-progress.png'});
+await startMmse('2026-10-21');await page.getByLabel('Puntuación: ¿En qué año estamos?',{exact:true}).selectOption('0');await page.getByRole('button',{name:'Guardar registro',exact:true}).click();await page.getByText('Guardado correctamente.',{exact:true}).waitFor();
+assert.equal(residents[0].data.scales.length,3);const partial=residents[0].data.scales.find(e=>![first.id,second.id].includes(e.id));assert.equal(partial.score,'');assert.equal(partial.validity,'Incompleto');assert.equal(await progress.locator('tbody tr').count(),2);
+await progress.getByRole('button',{name:'2026-10-20',exact:true}).click();await page.getByLabel('Anotaciones sobre la ejecución',{exact:true}).fill('Fatiga al inicio; nota revisada');await page.getByRole('button',{name:'Guardar registro',exact:true}).click();await page.getByText('Guardado correctamente.',{exact:true}).waitFor();
+assert.equal(residents[0].data.scales.find(e=>e.id===second.id).createdAt,second.createdAt);assert.equal(residents[0].data.scales.length,3);assert.equal(residents[0].data.scales.find(e=>e.id===first.id).score,'30');
+await page.reload();await page.getByRole('button',{name:'Valoraciones',exact:true}).click();await page.getByLabel('Residente del nuevo registro',{exact:true}).selectOption(id);assert.equal(await page.locator('.res-record').count(),3);assert.equal(await progress.locator('tbody tr').count(),2);
+for(const instrument of ['MEC','Pfeiffer','GDS de Reisberg','Yesavage','Test del reloj','Fluencia verbal']){
  await page.getByRole('button',{name:'Valoraciones',exact:true}).click();await page.getByLabel('Residente del nuevo registro',{exact:true}).selectOption(id);await page.getByRole('button',{name:'+ Registrar test',exact:true}).click();
  await page.getByLabel('Prueba',{exact:true}).selectOption(instrument);await page.getByLabel('Versión / adaptación utilizada',{exact:true}).fill('Versión de prueba');
  if(instrument==='Pfeiffer')await page.getByLabel('Número de errores registrados',{exact:true}).fill('2');
@@ -58,7 +57,7 @@ for(const instrument of ['MMSE','MEC','Pfeiffer','GDS de Reisberg','Yesavage','T
  else await page.getByLabel('Puntuación total registrada',{exact:true}).fill('20');
  await page.getByRole('button',{name:'Guardar registro',exact:true}).click();await page.getByText('Guardado correctamente.',{exact:true}).waitFor();
 }
-assert.equal(residents[0].data.scales.length,8);assert.equal(new Set(residents[0].data.scales.map(e=>e.instrument)).size,7);
+assert.equal(residents[0].data.scales.length,9);assert.equal(new Set(residents[0].data.scales.map(e=>e.instrument)).size,7);
 await page.getByRole('button',{name:'Valoraciones',exact:true}).click();await page.getByRole('button',{name:'+ Nueva valoración',exact:true}).click();await page.getByLabel('Síntesis e implicaciones para el PIAI',{exact:true}).fill('Revisar objetivos con la persona');await page.getByRole('button',{name:'Guardar registro',exact:true}).click();await page.getByText('Guardado correctamente.',{exact:true}).waitFor();assert.equal(residents[0].data.assessments.length,1);
 await page.getByRole('button',{name:'Informes',exact:true}).click();await page.getByRole('button',{name:'+ Nuevo informe',exact:true}).click();await page.getByLabel('Título',{exact:true}).fill('Informe de residencia');await page.getByLabel('Contenido del informe',{exact:true}).fill('Contenido profesional de prueba');await page.getByRole('button',{name:'Guardar registro',exact:true}).click();await page.getByText('Guardado correctamente.',{exact:true}).waitFor();
 await page.getByRole('button',{name:'Informes',exact:true}).click();await page.getByText('Contenido profesional de prueba',{exact:false}).waitFor();await page.getByRole('button',{name:'Imprimir / PDF',exact:true}).click();await page.emulateMedia({media:'print'});assert(await page.locator('.res-print-record').isVisible());assert.equal(await page.locator('.res-print-record').getByText('Contenido profesional de prueba',{exact:true}).count(),1);await page.emulateMedia({media:'screen'});await page.evaluate(()=>dispatchEvent(new Event('afterprint')));
