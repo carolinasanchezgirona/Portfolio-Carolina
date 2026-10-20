@@ -23,3 +23,11 @@
 .res-domain-card summary{font-weight:700;cursor:pointer}
 .res-domain-card button{margin-top:10px}
 @media(max-width:720px){.res-domain-grid{grid-template-columns:1fr}.res-domain-panel{padding:12px}}
+
+.res-ai-review{margin:22px 0;padding:20px;border:1px solid #c3dce3;border-radius:16px;background:#f5fafc}
+.res-ai-review h3{font-family:Georgia,serif;font-size:23px;margin:0}
+.res-ai-output{margin-top:22px;background:white;border-radius:12px;padding:18px}
+.res-ai-output h4{margin:22px 0 8px}
+.res-ai-output p,.res-ai-output li{line-height:1.6;overflow-wrap:anywhere}
+.res-ai-output .res-domain-card{margin:12px 0}
+.res-ai-proposal{padding:14px 0;border-bottom:1px solid #dae7eb}
