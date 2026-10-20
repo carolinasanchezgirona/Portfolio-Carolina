@@ -26,7 +26,7 @@ function idsFor(e:Entry):DomainId[]{
  default:return [];
  }
 }
-const mmseParts:Record<string,[string,string]>={orientation:['orientationTime','orientationPlace'],attention:['attention'],memory:['registration','recall'],language:['naming','repetition','commands','reading','writing'],visuospatial:['copying']};
+const mmseParts:Record<string,string[]>={orientation:['orientationTime','orientationPlace'],attention:['attention'],memory:['registration','recall'],language:['naming','repetition','commands','reading','writing'],visuospatial:['copying']};
 function evidence(e:Entry,id:DomainId):string{
  const areas=mmseParts[id];if(e.instrument==='MMSE'&&areas){const available=areas.filter(k=>e[k]!==undefined&&e[k]!==''),sum=available.reduce((n,k)=>n+Number(e[k]),0);if(available.length)return e.instrument+' '+e.date+': '+available.join(' + ')+' = '+sum+' puntos (puntuación directa)';}
  const m=assessmentMetric(e);return e.instrument+' '+e.date+': '+(m?m.value+(m.maximum?' / '+m.maximum:''):'registro documentado');
