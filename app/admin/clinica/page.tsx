@@ -57,6 +57,8 @@ export default function AdminClinicaPage() {
               <p className="clinic-more-heading">Administración</p>
               <a className="clinic-more-item" href="/admin/economia/">Contabilidad</a>
               <a className="clinic-more-item" href="/admin/notificaciones/">Centro de avisos</a>
+              <a className="clinic-more-item" href="/admin/tareas/">Mi agenda profesional</a>
+              <a className="clinic-more-item" href="/admin/residencia/">Residentes · centros</a>
               <a className="clinic-more-item" href="/admin/">Panel general</a>
               <div className="clinic-more-install-slot" />
               <button id="clinic-logout" className="clinic-more-item clinic-more-logout" type="button">Cerrar sesión</button>
@@ -168,18 +170,6 @@ export default function AdminClinicaPage() {
             Eliminar solo se usa para fichas creadas por error y sin actividad clínica. Si la ficha ya contiene historia, sesiones o documentos, utiliza Archivar.
           </p>
 
-          <section id="clinic-private-notes" className="clinic-private-notes" aria-labelledby="clinic-private-notes-title">
-            <h3 id="clinic-private-notes-title">Notas del historial</h3>
-            <p>Tu bloc privado para apuntar qué debes hacer con este paciente. No se muestra al paciente ni se añade a sus documentos.</p>
-            <label htmlFor="clinic-private-notes-body">Notas y próximos pasos</label>
-            <textarea id="clinic-private-notes-body" rows={10} maxLength={20000} autoComplete="off" spellCheck placeholder="Por ejemplo: preparar el informe, revisar una escala, enviar material o retomar un tema en la próxima sesión…" disabled />
-            <div className="clinic-private-notes-actions">
-              <button id="clinic-private-notes-save" className="clinic-primary" type="button" disabled>Guardar notas</button>
-              <button id="clinic-private-notes-reload" className="clinic-secondary" type="button" hidden>Recargar nota guardada (descarta borrador)</button>
-              <span id="clinic-private-notes-date" className="clinic-note" />
-            </div>
-            <p id="clinic-private-notes-status" className="clinic-message" role="status" aria-live="polite" />
-          </section>
 
           <details className="clinic-record-section clinic-personal-admin-section" open>
             <summary><span>Datos personales y administrativos</span><small>Identificación, contacto y gestión asistencial</small></summary>
