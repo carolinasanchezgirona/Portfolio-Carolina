@@ -45,8 +45,7 @@
     try {
       await login();
       password.value = "";
-      const next = new URL(window.location.href).searchParams.get("next");
-      window.location.assign(next && next.startsWith("/admin/") ? next : "/admin/");
+      window.location.assign("/admin/");
     } catch (error) {
       message.textContent = error?.message || "No se ha podido iniciar sesión.";
       submit.disabled = false;
@@ -59,7 +58,6 @@
       sessionStorage.removeItem(SESSION_KEY);
       return;
     }
-    const next = new URL(window.location.href).searchParams.get("next");
-    window.location.replace(next && next.startsWith("/admin/") ? next : "/admin/");
+    window.location.replace("/admin/");
   })();
 })();

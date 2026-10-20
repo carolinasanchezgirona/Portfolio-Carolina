@@ -5,6 +5,8 @@ import "./workspace-navigation.css";
 
 export const metadata: Metadata = {
   title: "Administración | Carolina Sánchez",
+  manifest: "/clinic-manifest.webmanifest",
+  icons: { icon: "/clinic-pwa-icon.svg", apple: "/clinic-pwa-icon.svg" },
   robots: {
     index: false,
     follow: false,
