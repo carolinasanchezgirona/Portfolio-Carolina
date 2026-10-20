@@ -3,11 +3,12 @@ import {useState} from 'react';
 import type {Entry} from './model';
 import {applicationOrder,displayTimestamp,assessmentMetric,comparableSeries,comparisonFor} from './assessment-history';
 import {mmseAreas} from './mmse-protocol';
+import TestInterpretation from './test-interpretation';
 export const signed=(v:number)=>(v>0?'+':'')+v;
 export function EntryComparison({records,entry}:{records:Entry[];entry:Entry}){
- const c=comparisonFor(records,entry);if(!c)return null;
+ const c=comparisonFor(records,entry);if(!c)return <TestInterpretation entry={entry}/>;
  const changes=entry.instrument==='MMSE'?mmseAreas.filter(([key])=>entry[key]!==undefined&&entry[key]!==''&&c.previous[key]!==undefined&&c.previous[key]!==''&&Number(entry[key])!==Number(c.previous[key])):[];
- return <aside className="res-comparison"><h4>Comparación con la aplicación anterior compatible</h4><p>{c.previous.date}: <strong>{assessmentMetric(c.previous)!.value}</strong> → {entry.date}: <strong>{c.metric.value}</strong>. Cambio: <strong>{signed(c.delta)} puntos</strong>. Desde la primera ({c.first.date}): <strong>{signed(c.baselineDelta)}</strong>.</p>{changes.length>0&&<p>Áreas con cambio: {changes.map(([key,label])=>label+' ('+signed(Number(entry[key])-Number(c.previous[key]))+')').join('; ')}.</p>}{entry.conditions!==c.previous.conditions&&<p>Las condiciones o apoyos registrados han cambiado. Revisa su efecto antes de interpretar la diferencia.</p>}</aside>;
+ return <><TestInterpretation entry={entry}/><aside className="res-comparison"><h4>Comparación con la aplicación anterior compatible</h4><p>{c.previous.date}: <strong>{assessmentMetric(c.previous)!.value}</strong> → {entry.date}: <strong>{c.metric.value}</strong>. Cambio: <strong>{signed(c.delta)} puntos</strong>. Desde la primera ({c.first.date}): <strong>{signed(c.baselineDelta)}</strong>.</p>{changes.length>0&&<p>Áreas con cambio: {changes.map(([key,label])=>label+' ('+signed(Number(entry[key])-Number(c.previous[key]))+')').join('; ')}.</p>}{entry.conditions!==c.previous.conditions&&<p>Las condiciones o apoyos registrados han cambiado. Revisa su efecto antes de interpretar la diferencia.</p>}</aside></>;
 }
 export default function AssessmentProgress({records,onOpen}:{records:Entry[];onOpen:(e:Entry)=>void}){
  const [selected,setSelected]=useState('');const sorted=[...records].sort(applicationOrder),references=sorted.filter(assessmentMetric);const seen=new Set<string>();const options=references.filter(e=>{const key=assessmentMetric(e)!.signature;if(seen.has(key))return false;seen.add(key);return true;});
