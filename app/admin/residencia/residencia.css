@@ -64,3 +64,5 @@
 .res-mmse-item textarea{min-height:54px}
 .res-mmse-next{display:flex;justify-content:space-between;gap:12px;margin-top:16px}
 @media(max-width:650px){.res-mmse-item .res-grid{grid-template-columns:1fr}.res-mmse .res-score-summary:first-child{position:static}}
+
+.res-copy-upload{padding:12px;background:#f7fbfd;border:1px dashed #b7cbd6;border-radius:10px}.res-copy-upload img,.res-copy-saved-image{max-width:100%;max-height:320px;object-fit:contain;display:block;margin:10px 0;border-radius:8px}.res-copy-upload small{display:block;margin-top:8px;color:#516979}
