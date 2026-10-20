@@ -337,6 +337,8 @@ export default function MiEspacioPage() {
 
             </div>
 
+            <div id="wellness-evolution-full" className="wellness-evolution-full" />
+
             <section className="wellness-quick-section" aria-labelledby="wellness-quick-heading">
               <div className="wellness-section-title">
                 <div>

@@ -1252,3 +1252,58 @@
 .wellness-experience .wellness-primary-grid .wellness-need-section{height:100%}
 .wellness-experience .wellness-primary-grid .wellness-need-section .wellness-section-title h3{font-size:clamp(1.6rem,2.6vw,2.6rem)}
 @media(max-width:1200px){.wellness-experience .wellness-primary-grid{grid-template-columns:1fr}.wellness-experience .wellness-primary-grid .wellness-need-section{height:auto}}
+
+
+/* Entre Sesiones: portada Wellness equilibrada y evolución en ancho completo. */
+.wellness-experience .wellness-primary-grid{
+  grid-template-columns:repeat(auto-fit,minmax(min(100%,400px),1fr));
+  align-items:stretch;
+  gap:clamp(16px,2vw,24px);
+  margin:20px 0 24px;
+}
+.wellness-experience .wellness-primary-grid > *{min-width:0;max-width:100%;align-self:stretch}
+.wellness-experience .wellness-primary-grid .wellness-moment-section .mood-tracker{
+  height:100%;display:flex;flex-direction:column;min-width:0;
+}
+.wellness-experience .wellness-primary-grid .mood-tracker-body{
+  grid-template-columns:minmax(0,1fr);min-width:0;
+}
+.wellness-experience .wellness-primary-grid .mood-friend-panel{min-height:210px}
+.wellness-experience .wellness-primary-grid .mood-tracker-inputs{min-width:0}
+.wellness-experience .wellness-primary-grid :is(.mood-options,.mood-energy-options){min-width:0}
+.wellness-experience .wellness-primary-grid .wellness-need-section{
+  height:100%;min-width:0;margin:0;
+}
+.wellness-experience .wellness-primary-grid .wellness-needs-editorial button{min-width:0}
+.wellness-experience .wellness-need-section{container-type:inline-size}
+@container (max-width:560px){
+  .wellness-experience .wellness-needs-editorial button{
+    grid-template-columns:minmax(0,1fr) 18px;
+    grid-template-rows:74px auto;
+    align-items:start;align-content:start;gap:10px 4px;
+    min-height:182px;padding:13px;border-radius:17px;
+  }
+  .wellness-experience .wellness-needs-editorial button>.wellness-art{
+    grid-column:1;grid-row:1;width:74px;height:74px;aspect-ratio:1;
+  }
+  .wellness-experience .wellness-needs-editorial .wellness-need-copy{
+    grid-column:1/-1;grid-row:2;width:100%;align-self:start;overflow-wrap:anywhere;
+  }
+  .wellness-experience .wellness-needs-editorial button>.wellness-arrow{
+    grid-column:2;grid-row:1;justify-self:end;align-self:center;
+  }
+}
+.wellness-experience .wellness-evolution-full{width:100%;min-width:0;margin:0 0 34px}
+.wellness-experience .wellness-evolution-full .mood-history{
+  width:100%;min-width:0;margin:0;padding:clamp(16px,2.7vw,28px);
+  border:1px solid #d6e7ed;border-radius:24px;background:#fff;
+  box-shadow:0 10px 34px rgba(23,58,94,.045);
+}
+.wellness-experience .wellness-evolution-full .mood-evolution{
+  width:100%;max-width:none;min-width:0;margin:22px 0;
+}
+@media(max-width:750px){
+  .wellness-experience .wellness-primary-grid{grid-template-columns:minmax(0,1fr);gap:16px}
+  .wellness-experience .wellness-evolution-full .mood-history{padding:16px;border-radius:18px}
+  .wellness-experience .wellness-primary-grid .mood-friend-panel{min-height:230px}
+}

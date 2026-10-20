@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useId, useMemo, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import "./mood-tracker.css";
 
 type MoodEntry = { date: string; rating: number; energy: number; energy_scale?: 5 };
@@ -224,7 +225,7 @@ function MoodEvolution({ entries }: { entries: MoodEntry[] }) {
   // Los registros históricos dentro de los 90 días permanecen visibles desde la primera apertura.
   const active = recorded.find(entry => entry.date === picked) ?? recorded.at(-1);
   const compact = period <= 14;
-  const width = compact ? viewportWidth : period === 30 ? 960 : 1440;
+  const width = compact ? viewportWidth : Math.max(viewportWidth, period === 30 ? 960 : 1440);
   const inset = compact ? 42 : 112;
   const x = (i: number) => inset + i * (width - inset * 2) / (period - 1);
   const y = (value: number) => 226 - (value - 1) * 44;
@@ -326,9 +327,14 @@ export default function MoodTracker() {
   const [energy, setEnergy] = useState(2);
   const [loaded, setLoaded] = useState(false);
   const [message, setMessage] = useState("");
+  const [chartHost, setChartHost] = useState<HTMLElement | null>(null);
   const today = keyForDate(new Date());
 
   const scopedMoodKey = scope ? STORAGE_KEY + ":" + scope : null;
+  useEffect(() => {
+    // El historial se dibuja fuera de las columnas, a todo el ancho disponible.
+    setChartHost(document.getElementById("wellness-evolution-full"));
+  }, []);
   useEffect(() => {
     const clearWithWellness = () => {
       if (!scopedMoodKey) return;
@@ -411,6 +417,7 @@ export default function MoodTracker() {
   );
 
   return (
+    <>
     <section className="mood-tracker" aria-labelledby="mood-tracker-title">
       <div className="mood-tracker-heading">
         <div>
@@ -462,7 +469,9 @@ export default function MoodTracker() {
           <span className="mood-status" role="status" aria-live="polite">{message}</span>
         </div>
       </div>
-      <div className="mood-history">
+    </section>
+    {chartHost && createPortal(
+      <section className="mood-history" aria-label="Historial de ánimo y energía">
         <div className="mood-history-heading">
           <div><strong>Tu semana, a tu manera</strong><p>Un recuerdo de tus registros, no una nota sobre tu progreso.</p></div>
           {entries.length > 0 && <button type="button" onClick={clear}>Borrar historial</button>}
@@ -483,7 +492,9 @@ export default function MoodTracker() {
           ) : <p className="mood-recent-empty">Todavía no tienes registros. Aparecerán aquí cuando quieras comenzar.</p>}
         </section>
         <p className="mood-privacy-note">Este registro es opcional, permanece en el navegador y no se envía a Carolina ni se incorpora a tu historia clínica. Si borras los datos del navegador, también desaparecerá. No escribas aquí información clínica sensible.</p>
-      </div>
-    </section>
+      </section>,
+      chartHost
+    )}
+    </>
   );
 }
