@@ -1,14 +1,14 @@
 /* Unified admin software UI: shared density and visual language */
 :root{
-  --admin-bg:#f7f9fb;
+  --admin-bg:#f3f8f8;
   --admin-surface:#ffffff;
-  --admin-line:#e1e7ec;
-  --admin-line-strong:#d3dde4;
-  --admin-text:#263f55;
-  --admin-muted:#788692;
-  --admin-navy:#173A5E;
-  --admin-accent:#08A6A0;
-  --admin-soft:#eef4f7;
+  --admin-line:#c8dfe0;
+  --admin-line-strong:#c8dfe0;
+  --admin-text:#183d4c;
+  --admin-muted:#536e78;
+  --admin-navy:#0e5c7c;
+  --admin-accent:#19b6be;
+  --admin-soft:#f4f9f9;
   --admin-radius:8px;
 }
 
@@ -47,7 +47,7 @@
 }
 .admin-eyebrow,.articles-eyebrow,.questions-admin-eyebrow,.resources-eyebrow{
   margin:0 0 3px!important;
-  color:#536b7c!important;
+  color:#536e78!important;
   font-size:.62rem!important;
   letter-spacing:.07em!important;
 }
@@ -89,7 +89,7 @@
   color:var(--admin-navy)!important;
 }
 .admin-text,.articles-text,.resources-text{
-  color:#637482!important;
+  color:#536e78!important;
 }
 .admin-danger,.articles-danger,.resources-danger,.questions-admin-footer .danger{
   border-radius:7px!important;
@@ -113,7 +113,7 @@
   border:0!important;
   border-radius:6px!important;
   background:transparent!important;
-  color:#536b7c!important;
+  color:#536e78!important;
   font-size:.75rem!important;
 }
 .admin-view-tabs button.active{
@@ -149,7 +149,7 @@
 .calendar-day-head{
   padding:9px 10px!important;
   border-color:var(--admin-line)!important;
-  background:#f4f7f9!important;
+  background:#f4f9f9!important;
 }
 .calendar-day-body{padding:7px!important;gap:6px!important}
 .appointment-card{
@@ -166,7 +166,7 @@
   margin:10px 0 0!important;
   padding:8px 10px!important;
   border-radius:7px!important;
-  background:#f2f5f7!important;
+  background:#f4f9f9!important;
   font-size:.72rem!important;
 }
 
@@ -213,7 +213,7 @@
   padding:5px!important;
   border:1px solid var(--admin-line)!important;
   border-radius:7px!important;
-  background:#f5f7f9!important;
+  background:#f4f9f9!important;
 }
 .editor-toolbar select,.editor-toolbar button{
   min-height:29px!important;
@@ -234,7 +234,7 @@
 .questions-admin-sidebar{
   padding:14px!important;
   border-color:var(--admin-line)!important;
-  background:#f9fbfc!important;
+  background:#ffffff!important;
 }
 .questions-admin-filters{gap:4px!important;margin-bottom:12px!important}
 .questions-admin-filters button{
@@ -279,7 +279,7 @@
 .resources-list-panel{
   padding:14px!important;
   border-color:var(--admin-line)!important;
-  background:#f9fbfc!important;
+  background:#ffffff!important;
 }
 .resources-filters{gap:4px!important;margin-bottom:12px!important}
 .resources-filters button{
@@ -311,7 +311,7 @@
 .admin-login-card,.articles-login-card,.questions-admin-login,.resources-login-card,
 .appointment-dialog{
   border-radius:12px!important;
-  box-shadow:0 12px 36px rgba(23,58,94,.08)!important;
+  box-shadow:0 12px 36px rgba(14,92,124,.08)!important;
 }
 .admin-login-card,.articles-login-card,.questions-admin-login,.resources-login-card{
   padding:24px!important;

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Script from "next/script";
 import "./admin-unified.css";
 import "./workspace-navigation.css";
+import "./admin-palette.css";
 
 export const metadata: Metadata = {
   title: "Administración | Carolina Sánchez",

@@ -51,48 +51,48 @@ export default function MarketingPage(){
    void loadBookings();
    return()=>{live=false;};
  },[]);
- return <main style={{minHeight:"100vh",background:"#f8fbfd",padding:"32px clamp(18px,4vw,60px)",color:"#173A5E"}}>
+ return <main className="admin-marketing-page" style={{minHeight:"100vh",background:"#ffffff",padding:"32px clamp(18px,4vw,60px)",color:"#0e5c7c"}}>
  <div style={{maxWidth:1250,margin:"auto"}}>
- <p style={{color:"#08A6A0",fontWeight:700,letterSpacing:".12em",fontSize:13}}>ADMINISTRACIÓN · MARKETING</p>
+ <p style={{color:"#0e5c7c",fontWeight:700,letterSpacing:".12em",fontSize:13}}>ADMINISTRACIÓN · MARKETING</p>
  <h1 style={{fontFamily:"Georgia,serif",fontSize:"clamp(34px,4vw,52px)",margin:"12px 0"}}>Suscriptores y captación</h1>
  <p style={{fontSize:18,maxWidth:780,lineHeight:1.6}}>Consulta las suscripciones confirmadas de Brevo y accede a las herramientas de difusión de tus recursos gratuitos.</p>
  <AdminWorkspaceNav active="otra"/>
  <section style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(210px,1fr))",gap:16,margin:"30px 0"}}>
- {["Suscriptores confirmados","Nuevas altas","Bajas","Descargas gratuitas"].map((label,i)=><article key={label} style={{background:"#eaf6fb",borderRadius:18,padding:22,minHeight:134}}>
+ {["Suscriptores confirmados","Nuevas altas","Bajas","Descargas gratuitas"].map((label,i)=><article key={label} style={{background:"#edf7f7",borderRadius:18,padding:22,minHeight:134}}>
  <h2 style={{fontSize:17,margin:0}}>{label}</h2>
  <p style={{fontSize:i===0?32:18,fontWeight:700,margin:"20px 0 0"}}>{i===0&&typeof stats?.subscriber_count==="number"?stats.subscriber_count: i===0&&stats?.error?stats.error:i===0&&stats&&!stats.list_found?"Lista no localizada":i===0?"Pendiente":"Sin medición"}</p>
  </article>)}
  </section>
- <section aria-labelledby="captacion-reservas-title" style={{margin:"35px 0",padding:"clamp(18px,3vw,28px)",border:"1px solid #d6e8ef",borderRadius:18,background:"#fff"}}>
- <p style={{color:"#087c82",fontSize:12,fontWeight:750,letterSpacing:".08em",margin:"0 0 6px"}}>RESERVAS · ÚLTIMOS 30 DÍAS</p>
+ <section aria-labelledby="captacion-reservas-title" style={{margin:"35px 0",padding:"clamp(18px,3vw,28px)",border:"1px solid #edf7f7",borderRadius:18,background:"#fff"}}>
+ <p style={{color:"#0e5c7c",fontSize:12,fontWeight:750,letterSpacing:".08em",margin:"0 0 6px"}}>RESERVAS · ÚLTIMOS 30 DÍAS</p>
  <h2 id="captacion-reservas-title" style={{fontFamily:"Georgia,serif",fontSize:"clamp(22px,3vw,30px)",margin:"0 0 12px"}}>Primeras visitas que entran en la consulta</h2>
- <p style={{color:"#526c82",lineHeight:1.6,marginTop:0}}>Datos de tu agenda privada, no de Google Analytics. Se muestran recuentos sin nombres, teléfonos, correos ni información clínica.</p>
+ <p style={{color:"#536e78",lineHeight:1.6,marginTop:0}}>Datos de tu agenda privada, no de Google Analytics. Se muestran recuentos sin nombres, teléfonos, correos ni información clínica.</p>
  <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(170px,1fr))",gap:12}}>
  {[
    ["Solicitudes de primera visita",bookingCounts?.first],
    ["Primeras citas no canceladas",bookingCounts?.activeFirst],
    ["Primeras visitas realizadas",bookingCounts?.completedFirst],
    ["Todas las reservas",bookingCounts?.total]
- ].map(([label,value])=><div key={String(label)} style={{padding:17,borderRadius:12,background:"#eaf6fb"}}>
+ ].map(([label,value])=><div key={String(label)} style={{padding:17,borderRadius:12,background:"#edf7f7"}}>
    <p style={{fontSize:14,margin:0}}>{label}</p>
    <strong style={{display:"block",fontSize:30,marginTop:8}}>{typeof value==="number"?value:"—"}</strong>
  </div>)}
  </div>
  {bookingStatus?<p role="status" style={{color:"#9e4e43"}}>{bookingStatus}</p>:null}
  {bookingCounts?.truncated?<p role="note" style={{color:"#9e4e43"}}>Hay más de 1.000 registros; esta vista muestra solo los 1.000 más recientes.</p>:null}
- <p style={{color:"#526c82",lineHeight:1.6,fontSize:14}}>«Primera visita» se basa en la opción elegida al reservar. «Realizada» depende de que la cita esté marcada como completada en la agenda.</p>
+ <p style={{color:"#536e78",lineHeight:1.6,fontSize:14}}>«Primera visita» se basa en la opción elegida al reservar. «Realizada» depende de que la cita esté marcada como completada en la agenda.</p>
  </section>
- <section style={{margin:"26px 0",padding:"22px",border:"1px solid #d6e8ef",borderRadius:16,background:"#fff"}}>
+ <section style={{margin:"26px 0",padding:"22px",border:"1px solid #edf7f7",borderRadius:16,background:"#fff"}}>
  <h2 style={{margin:"0 0 8px",fontSize:21}}>¿En qué parte de la reserva se pierden visitas?</h2>
- <p style={{color:"#526c82",lineHeight:1.65,margin:"0 0 13px"}}>En Google Analytics, cuando la persona ha aceptado las cookies, puedes consultar los eventos <strong>booking_click</strong> (abre la reserva), <strong>booking_slot_selected</strong> (elige horario), <strong>booking_submit</strong> (intenta reservar) y <strong>booking_complete</strong> (la solicitud se ha registrado). Son métricas parciales, porque quienes rechazan la analítica no se incluyen.</p>
- <a href="https://analytics.google.com/analytics/web/" target="_blank" rel="noopener noreferrer" style={{display:"inline-block",borderRadius:9,padding:"11px 16px",background:"#173A5E",color:"white",textDecoration:"none"}}>Abrir Google Analytics ↗</a>
+ <p style={{color:"#536e78",lineHeight:1.65,margin:"0 0 13px"}}>En Google Analytics, cuando la persona ha aceptado las cookies, puedes consultar los eventos <strong>booking_click</strong> (abre la reserva), <strong>booking_slot_selected</strong> (elige horario), <strong>booking_submit</strong> (intenta reservar) y <strong>booking_complete</strong> (la solicitud se ha registrado). Son métricas parciales, porque quienes rechazan la analítica no se incluyen.</p>
+ <a href="https://analytics.google.com/analytics/web/" target="_blank" rel="noopener noreferrer" style={{display:"inline-block",borderRadius:9,padding:"11px 16px",background:"var(--admin-plum)",color:"white",textDecoration:"none"}}>Abrir Google Analytics ↗</a>
  </section>
  {state?<p role="status" style={{color:"#9e4e43"}}>{state}</p>:null}
  <div style={{display:"flex",flexWrap:"wrap",gap:14,marginTop:25}}>
- <a href="https://c6645869.sibforms.com/serve/MUIFAIuvbjgYqrRqmmfpA-O89yKi9fH-Kb6Yp0UkGDyZKb_O1wjUF1SHUqEcp20MeACDjXZHQBzDuXijbIdqi8CB692onRlW0SA6IVn-N_ym1RIdQjptK-couFyXNVAQiyPtFM4hkdWfLmwNQgVfnarzCyzZDYkTDXyOH2O8g5m7BN-Gw--aM1hnRHHMfp39FyhRtcurRMbxfwtgMQ==" target="_blank" rel="noopener noreferrer" style={{background:"#08A6A0",color:"#fff",padding:"14px 22px",borderRadius:10,textDecoration:"none"}}>Ver formulario de suscripción ↗</a>
- <a href="https://app.brevo.com/" target="_blank" rel="noopener noreferrer" style={{background:"#173A5E",color:"#fff",padding:"14px 22px",borderRadius:10,textDecoration:"none"}}>Ver contactos en Brevo ↗</a>
- <a href="/admin/recursos/" style={{border:"1px solid #173A5E",padding:"14px 22px",borderRadius:10,color:"#173A5E",textDecoration:"none"}}>Gestionar recursos</a>
+ <a href="https://c6645869.sibforms.com/serve/MUIFAIuvbjgYqrRqmmfpA-O89yKi9fH-Kb6Yp0UkGDyZKb_O1wjUF1SHUqEcp20MeACDjXZHQBzDuXijbIdqi8CB692onRlW0SA6IVn-N_ym1RIdQjptK-couFyXNVAQiyPtFM4hkdWfLmwNQgVfnarzCyzZDYkTDXyOH2O8g5m7BN-Gw--aM1hnRHHMfp39FyhRtcurRMbxfwtgMQ==" target="_blank" rel="noopener noreferrer" style={{background:"var(--admin-plum)",color:"#fff",padding:"14px 22px",borderRadius:10,textDecoration:"none"}}>Ver formulario de suscripción ↗</a>
+ <a href="https://app.brevo.com/" target="_blank" rel="noopener noreferrer" style={{background:"var(--admin-plum)",color:"#fff",padding:"14px 22px",borderRadius:10,textDecoration:"none"}}>Ver contactos en Brevo ↗</a>
+ <a href="/admin/recursos/" style={{border:"1px solid #0e5c7c",padding:"14px 22px",borderRadius:10,color:"#0e5c7c",textDecoration:"none"}}>Gestionar recursos</a>
  </div>
- <p style={{marginTop:25,color:"#526c82",lineHeight:1.6}}>Solo el contador de suscriptores procede de Brevo. Las métricas de altas, bajas y descargas requieren una implementación de seguimiento adicional.</p>
+ <p style={{marginTop:25,color:"#536e78",lineHeight:1.6}}>Solo el contador de suscriptores procede de Brevo. Las métricas de altas, bajas y descargas requieren una implementación de seguimiento adicional.</p>
  </div></main>;
 }

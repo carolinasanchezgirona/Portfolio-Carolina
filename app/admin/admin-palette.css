@@ -1,0 +1,112 @@
+/* One palette for every professional admin route. Keep patient-facing styles scoped out. */
+:root{
+  --admin-plum:#8c4192;
+  --admin-turquoise:#19b6be;
+  --admin-petroleum:#0e5c7c;
+  --admin-forest:#2d6658;
+  --admin-leaf:#8bc281;
+  --admin-yellow:#e8d15d;
+  --admin-palette-bg:#f3f8f8;
+  --admin-palette-line:#c8dfe0;
+  --admin-palette-muted:#536e78;
+  --admin-plum-soft:#f4edf5;
+}
+body:has(:is(.admin-hub-page,.admin-page,.articles-admin-page,.questions-admin-page,.questions-admin-loading,.resources-admin-page,.econ-page,.admin-notice-page,.residence,.professional,.admin-marketing-page,.admin-workspace-nav)){
+  background:var(--admin-palette-bg);
+}
+.admin-hub-page .admin-hub-mark,
+.admin-hub-page .admin-hub-main-action{
+  background:var(--admin-plum);
+  color:#fff;
+}
+.admin-hub-page .admin-hub-main-action:hover{background:var(--admin-petroleum)}
+.admin-hub-page .admin-hub-mark{box-shadow:inset 0 -4px 0 var(--admin-turquoise)}
+.admin-hub-page .admin-home-eyebrow{color:var(--admin-plum)}
+.admin-hub-page .admin-hub-shortcuts>a{
+  border-color:var(--admin-palette-line);
+  border-top:3px solid var(--admin-plum);
+}
+.admin-hub-page .admin-hub-shortcuts>a:nth-child(5n+2){border-top-color:var(--admin-turquoise)}
+.admin-hub-page .admin-hub-shortcuts>a:nth-child(5n+3){border-top-color:var(--admin-leaf)}
+.admin-hub-page .admin-hub-shortcuts>a:nth-child(5n+4){border-top-color:var(--admin-yellow)}
+.admin-hub-page .admin-hub-shortcuts>a:nth-child(5n+5){border-top-color:var(--admin-forest)}
+.admin-hub-page .admin-hub-shortcuts>a:hover{background:var(--admin-plum-soft);border-color:var(--admin-plum)}
+.admin-hub-page .admin-hub-module{border-color:var(--admin-palette-line);border-top:4px solid var(--module-accent,var(--admin-plum))}
+.admin-hub-page .admin-hub-module:nth-child(6n+1){--module-accent:var(--admin-plum);--module-soft:#f4edf5;--module-ink:var(--admin-plum)}
+.admin-hub-page .admin-hub-module:nth-child(6n+2){--module-accent:var(--admin-turquoise);--module-soft:#edf7f7;--module-ink:var(--admin-petroleum)}
+.admin-hub-page .admin-hub-module:nth-child(6n+3){--module-accent:var(--admin-petroleum);--module-soft:#edf4f7;--module-ink:var(--admin-petroleum)}
+.admin-hub-page .admin-hub-module:nth-child(6n+4){--module-accent:var(--admin-forest);--module-soft:#edf6ea;--module-ink:var(--admin-forest)}
+.admin-hub-page .admin-hub-module:nth-child(6n+5){--module-accent:var(--admin-leaf);--module-soft:#edf6ea;--module-ink:var(--admin-forest)}
+.admin-hub-page .admin-hub-module:nth-child(6n+6){--module-accent:var(--admin-yellow);--module-soft:#fcf8e6;--module-ink:#665619}
+.admin-hub-page .admin-hub-module .admin-hub-module-icon{background:var(--module-soft);color:var(--module-ink)}
+.admin-hub-page .admin-hub-module .admin-hub-module-open{color:var(--module-ink)}
+.admin-hub-page .admin-home-priority{border-top:3px solid var(--admin-turquoise)}
+.admin-hub-page .admin-home-priority.attention{background:#fcf8e6;border-color:var(--admin-yellow);color:#665619}
+
+/* Matching actions and current-view indicators across all admin workspaces. */
+.admin-page .admin-primary,
+.articles-admin-page .articles-primary,
+.resources-admin-page .resources-primary,
+.questions-admin-page .questions-admin-actions .primary,
+.questions-admin-page .questions-admin-primary{
+  background:var(--admin-plum)!important;
+  border-color:var(--admin-plum)!important;
+  color:#fff!important;
+}
+.econ-page .econ-button,
+.econ-page .econ-tabs button.active,
+.econ-page .econ-movement-filters button.active,
+.admin-notice-page .admin-notice-filters button[aria-pressed=true],
+.admin-notice-page .admin-notice-push-actions button,
+.residence button[type=submit],
+.residence aside>button,
+.residence .res-tabs [aria-pressed=true],
+.residence .res-local-nav [aria-pressed=true],
+.residence .res-day-nav [aria-pressed=true],
+.residence .res-clinical-shortcuts button[aria-pressed=true],
+.residence .res-mmse-nav button[aria-pressed=true],
+.professional button.professional-primary{
+  background:var(--admin-plum);
+  border-color:var(--admin-plum);
+  color:#fff;
+}
+.admin-page .admin-view-tabs button.active,
+.articles-admin-page .articles-filters button.active{
+  background:var(--admin-plum)!important;
+  color:#fff!important;
+}
+.admin-workspace-nav :is(a,summary).is-active{background:var(--admin-plum);color:#fff}
+.residence .res-list button.selected{
+  background:var(--admin-plum-soft);
+  border-color:var(--admin-plum);
+  color:var(--admin-petroleum);
+}
+.residence .res-stats :is(span,button),
+.professional .professional-stats button{
+  border-top:3px solid var(--admin-turquoise);
+}
+:is(.admin-hub-page,.admin-page,.articles-admin-page,.questions-admin-page,.resources-admin-page,.econ-page,.admin-notice-page,.residence,.professional,.admin-marketing-page) :is(input,select,textarea,progress){accent-color:var(--admin-plum)}
+:is(.admin-hub-page,.admin-page,.articles-admin-page,.questions-admin-page,.resources-admin-page,.econ-page,.admin-notice-page,.residence,.professional,.admin-marketing-page) :is(input,select,textarea,button,a,summary):focus-visible{
+  outline:3px solid var(--admin-plum);
+  outline-offset:3px;
+}
+.admin-workspace-nav :is(a,summary):focus-visible{outline:3px solid var(--admin-plum);outline-offset:3px}
+
+/* The messaging component is shared with the patient portal: scope admin colors. */
+body:has(.admin-workspace-nav) .private-messages{color:var(--admin-petroleum);border-color:var(--admin-palette-line)}
+body:has(.admin-workspace-nav) .private-messages :is(textarea,select){color:var(--admin-petroleum);border-color:var(--admin-palette-line)}
+body:has(.admin-workspace-nav) .private-messages button{background:var(--admin-plum);border-color:var(--admin-plum);color:#fff}
+body:has(.admin-workspace-nav) .private-messages-refresh button{background:#fff;color:var(--admin-petroleum)}
+body:has(.admin-workspace-nav) .private-messages-history .from-patient{background:#edf7f7}
+body:has(.admin-workspace-nav) .private-messages-history .from-clinician{background:var(--admin-plum-soft)}
+body:has(.admin-workspace-nav) .private-messages :is(textarea,select):focus-visible{outline-color:var(--admin-plum)}
+
+@media print{
+  .residence{background:#fff}
+}
+
+.residence .res-trend path{stroke:var(--admin-palette-muted)}
+.residence .res-trend line{stroke:var(--admin-palette-line)}
+.residence .res-trend polyline{stroke:var(--admin-plum)}
+.residence .res-trend circle{fill:var(--admin-petroleum)}
+.residence .res-trend text{fill:var(--admin-palette-muted)}
