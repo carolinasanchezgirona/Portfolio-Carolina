@@ -46,3 +46,21 @@
 .res-bulk{margin:12px 0}.res-bulk-panel{border:1px solid #cbdde7;background:#f5fafc;border-radius:12px;padding:16px;margin-top:12px}.res-bulk-panel h3{margin:0 0 8px;font:22px Georgia,serif}.res-bulk-panel p{line-height:1.5;font-size:14px}.res-import-table{overflow:auto;max-height:350px;margin:16px 0}.res-import-table table{border-collapse:collapse;width:100%;font-size:13px}.res-import-table th,.res-import-table td{padding:8px;border-bottom:1px solid #d9e6ed;text-align:left}.res-import-table input[type=checkbox]{width:18px;height:18px}
 
 .res-review-workspace h3{margin:26px 0 14px}.res-review-summary{display:flex;align-items:center;gap:12px;padding:16px 20px;background:#eaf6fb;border-radius:12px;margin:16px 0}.res-review-summary strong{font-size:30px}.res-review-item{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:14px;padding:16px 0;border-bottom:1px solid #d9e6ed}.res-review-item>div:first-child{flex:1;min-width:210px}.res-review-item p{margin:7px 0;line-height:1.5}.res-review-item small{color:#516979}.res-review-item button{flex-shrink:0}
+
+/* Aplicación clínica MMSE concentrada en una sola sección a la vez. */
+.res-mmse .res-score-summary:first-child{position:sticky;top:0;z-index:3;background:#fff;border:1px solid #d9e6ed;border-radius:12px;padding:12px 16px;box-shadow:0 4px 16px #173a5e0d}
+.res-mmse .res-score-summary h3{margin:0 0 4px}
+.res-mmse-nav{display:flex;gap:6px;overflow-x:auto;scrollbar-width:thin;margin:16px 0;padding:4px 0}
+.res-mmse-nav button{white-space:nowrap;padding:9px 12px;background:#fff}
+.res-mmse-nav button[aria-pressed=true]{background:#173a5e;color:#fff}
+.res-mmse-nav small{display:inline-block;margin-left:8px;font-weight:400}
+.res-mmse-group{padding:16px;border:1px solid #d9e6ed;border-radius:12px;background:#fff}
+.res-mmse-group>h4{margin:0 0 10px;font-size:18px}
+.res-mmse-item{padding:10px 0;border-top:1px solid #e6eef2}
+.res-mmse-item h4{margin:0 0 7px;font-size:14px}
+.res-mmse-item h4 small{display:block;font-weight:400;margin-top:3px}
+.res-mmse-item .res-grid{grid-template-columns:minmax(0,1.7fr) minmax(160px,.7fr);gap:12px}
+.res-mmse-item label{margin:3px 0}
+.res-mmse-item textarea{min-height:54px}
+.res-mmse-next{display:flex;justify-content:space-between;gap:12px;margin-top:16px}
+@media(max-width:650px){.res-mmse-item .res-grid{grid-template-columns:1fr}.res-mmse .res-score-summary:first-child{position:static}}
