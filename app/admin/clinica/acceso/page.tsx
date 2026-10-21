@@ -14,21 +14,16 @@ export default function ClinicalAccessPage() {
       <section className="clinical-access-panel">
         <div className="clinical-access-brand">
           <p className="clinical-access-kicker">Dememoria · Espacio profesional</p>
-          <h1>Acceso al panel de administración</h1>
+          <h1>Acceso a Mi clínica</h1>
           <p className="clinical-access-intro">
-            Área privada desde la que puedes acceder a pacientes, agenda, facturación, contenidos y recursos digitales.
+            Pacientes, agenda, facturación y recursos de tu consulta.
           </p>
-          <div className="clinical-access-trust" aria-label="Características del acceso">
-            <span>Acceso restringido</span>
-            <span>Datos clínicos protegidos</span>
-            <span>Sesión privada</span>
-          </div>
+          <p className="clinical-access-trust">Acceso privado · Uso profesional</p>
         </div>
 
         <form id="clinical-access-form" className="clinical-access-card">
           <div className="clinical-access-card-head">
-            <p>Identificación</p>
-            <h2>Entrar</h2>
+            <h2>Iniciar sesión</h2>
           </div>
 
           <label>
@@ -43,7 +38,7 @@ export default function ClinicalAccessPage() {
 
           <p id="clinical-access-message" className="clinical-access-message" role="status" aria-live="polite" />
 
-          <button id="clinical-access-submit" type="submit">Acceder al panel de administración</button>
+          <button id="clinical-access-submit" type="submit">Entrar a Mi clínica</button>
 
           <div className="clinical-access-footer">
             <a href="/admin/agenda/">Volver a la agenda</a>
