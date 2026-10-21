@@ -223,7 +223,7 @@ export default function AdminAgendaPage() {
         </form>
       </dialog>
 
-      <Script src="/admin-agenda-v3.js?v=20261018-hide-cancelled-1" strategy="afterInteractive" />
+      <Script src="/admin-agenda-v3.js?v=20261021-ux-1" strategy="afterInteractive" />
       <Script src="/admin-agenda-enhancement.js?v=20261018-hide-cancelled-1" strategy="afterInteractive" />
       <Script src="/pwa.js?v=20260915-admin-2" strategy="afterInteractive" />
     </main>

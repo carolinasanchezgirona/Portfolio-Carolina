@@ -211,7 +211,7 @@ export default function EconomiaPage() {
           </section>
         </div>
       </div>
-      <Script src="/admin-economia.js?v=20261009-ingresos-externos-1" strategy="afterInteractive" />
+      <Script src="/admin-economia.js?v=20261021-ux-1" strategy="afterInteractive" />
     </main>
   );
 }

@@ -162,7 +162,7 @@ export default function AdminRecursosPage() {
         </div>
       </section>
 
-      <Script src="/admin-resources.js?v=20261018-brevo-1" strategy="afterInteractive" />
+      <Script src="/admin-resources.js?v=20261021-ux-1" strategy="afterInteractive" />
     </main>
   );
 }

@@ -144,7 +144,7 @@ export default function AdminHomePage() {
         <p className="admin-hub-footer-note">Panel exclusivo de la consulta. Las ventas de recursos digitales se muestran por separado de la facturación de servicios sanitarios.</p>
       </section>
       <Script src="/clinic-pwa.js?v=20261020-android-native-1" strategy="afterInteractive" />
-      <Script src="/admin-dashboard.js?v=20261009-hub-1" strategy="afterInteractive" />
+      <Script src="/admin-dashboard.js?v=20261021-ux-1" strategy="afterInteractive" />
     </main>
   );
 }

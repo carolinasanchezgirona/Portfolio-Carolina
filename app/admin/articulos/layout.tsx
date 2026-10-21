@@ -15,7 +15,7 @@ export default function AdminArticlesLayout({ children }: { children: ReactNode 
       {children}
       <Script src="/admin-articles-layout.js?v=20260913-layout-2" strategy="afterInteractive" />
       <Script src="/articles-ux-guards.js?v=20260915-1" strategy="afterInteractive" />
-      <Script src="/article-versioning.js?v=20261006-1" strategy="afterInteractive" />
+      <Script src="/article-versioning.js?v=20261021-ux-1" strategy="afterInteractive" />
     </>
   );
 }
