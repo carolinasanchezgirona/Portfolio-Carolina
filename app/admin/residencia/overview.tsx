@@ -1,7 +1,12 @@
 'use client';
 import {useState} from 'react';
 import type {Entry, Kind, Resident} from './model';
-import {nextReview, sections, today} from './model';
+import {newEntry,nextReview, sections, today} from './model';
+
+import {monthlyFollowups} from './followup-planning';
+import ResidenceTaskChecklist from './task-checklist';
+
+const displayDate=(date:string)=>new Date(date+'T12:00:00Z').toLocaleDateString('es-ES',{timeZone:'Europe/Madrid'});
 
 type Props = {
   residents: Resident[];
@@ -24,8 +29,9 @@ export default function ResidenceOverview({residents, onDirectory, onSchedule, o
     .flatMap(kind => r.data[kind].filter(e => e.next && e.next <= now)
       .map(entry => ({resident: r, kind, entry}))))
     .sort((a, b) => a.entry.next.localeCompare(b.entry.next));
-  const upcoming = active.filter(r => nextReview(r) > now)
-    .sort((a, b) => nextReview(a).localeCompare(nextReview(b)));
+  const upcoming = active.filter(r=>!r.data.profile.admission||r.data.profile.admission<=now).map(resident=>({resident,plan:monthlyFollowups(resident,now)}))
+    .sort((a,b)=>a.plan.next.localeCompare(b.plan.next)||(a.resident.data.profile.name||a.resident.code).localeCompare(b.resident.data.profile.name||b.resident.code,'es'));
+  const monthLabel=new Date(now+'T12:00:00Z').toLocaleDateString('es-ES',{month:'long',year:'numeric',timeZone:'Europe/Madrid'});
   return <section className="res-overview" aria-labelledby="res-overview-title">
     <div className="res-heading">
       <div><h2 id="res-overview-title">Tu trabajo en residencia</h2><p className="res-help">Revisa lo pendiente y accede al historial de cada persona.</p></div>
@@ -55,17 +61,22 @@ export default function ResidenceOverview({residents, onDirectory, onSchedule, o
       </section>
       <section className="res-content" aria-labelledby="res-actions-title">
         <h3 id="res-actions-title">Actuaciones pendientes</h3>
-        {actions.length ? actions.map(({resident: r, kind, entry: e}) => <article className="res-review-item" key={r.id + kind + e.id}>
+        <ResidenceTaskChecklist/>
+        <details><summary>Recordatorios vinculados a los historiales</summary>{actions.length ? actions.map(({resident: r, kind, entry: e}) => <article className="res-review-item" key={r.id + kind + e.id}>
           <div><strong>{r.data.profile.name || r.code}</strong><p>{sections.find(s => s.key === kind)?.title}</p><small>Previsto: {e.next}</small></div>
           <button type="button" onClick={() => onOpen(r, kind, e)}>Ver actuación</button>
-        </article>) : <p>No hay actuaciones pendientes con fecha de revisión.</p>}
+        </article>) : <p>No hay recordatorios con fecha de revisión pendiente.</p>}</details>
       </section>
       <section className="res-content" aria-labelledby="res-upcoming-title">
-        <h3 id="res-upcoming-title">Próximas revisiones</h3>
-        {upcoming.length ? upcoming.map(r => <article className="res-review-item" key={r.id}>
-          <div><strong>{r.data.profile.name || r.code}</strong><p>{r.center}</p><small>{nextReview(r)}</small></div>
-          <button type="button" onClick={() => onOpen(r, 'assessments')}>Ver valoración</button>
-        </article>) : <p>No hay próximas revisiones programadas.</p>}
+        <h3 id="res-upcoming-title">Próximas revisiones · Seguimientos</h3>
+        <p className="res-help">Mínimo de 2 seguimientos al mes por residente · {monthLabel}. Fechas orientativas: día 15 y último día del mes.</p>
+        <p className="res-help">Se cuentan los días con entradas en el diario. Varias anotaciones del mismo día cuentan como un seguimiento.</p>
+        {upcoming.length ? upcoming.map(({resident:r,plan}) => <article className="res-review-item" key={r.id}>
+          <div><strong>{r.data.profile.name || r.code}</strong><p>{r.center} · {plan.completed}/2 realizados este mes</p>
+          <p className={'res-followup-status'+(plan.overdue?' is-overdue':'')}>{plan.overdue?'Seguimiento pendiente desde el ':plan.dueToday?'Seguimiento para hoy: ':'Próximo seguimiento: '}{displayDate(plan.next)}</p>
+          <small>{plan.remaining?plan.remaining+' seguimiento'+(plan.remaining===1?' pendiente':'s pendientes')+' para completar el mínimo mensual.':'Mínimo mensual completado.'}{plan.last?' Último seguimiento: '+displayDate(plan.last)+'.':' Sin seguimientos registrados.'}</small></div>
+          <button type="button" onClick={() => onOpen(r, 'followups',newEntry('followups'))}>Registrar seguimiento</button>
+        </article>) : <p>Añade residentes activos para ver sus próximos seguimientos.</p>}
       </section>
     </div>
   </section>;
