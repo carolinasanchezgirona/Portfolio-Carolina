@@ -159,3 +159,11 @@
 @media print{.res-offline{display:none!important}}
 
 @media(max-width:850px){.res-organized .res-local-nav button{font-size:11px;line-height:1.2;overflow-wrap:anywhere}.res-organized .res-local-nav button span{min-height:27px;display:flex;align-items:center;justify-content:center}}
+
+/* Compact offline settings; operational notices remain visible. */
+.res-offline{padding:0 4px;border:0;border-radius:0;background:transparent;color:#536e78}
+.res-offline-disclosure>summary{width:fit-content;margin:0;padding:8px 0;font-size:13px;font-weight:500;cursor:pointer}
+.res-offline-disclosure>summary:focus-visible{outline:2px solid #0e5c7c;outline-offset:3px;border-radius:4px}
+.res-offline-body{padding:14px 16px;margin:4px 0 12px;border:1px solid #c9dce6;border-radius:10px;background:#fff;color:#173a5e}
+.res-offline-indicator{font-weight:600}
+@media(max-width:650px){.res-offline{padding:0;margin:8px 14px}.res-offline-body{padding:12px}}
