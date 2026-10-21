@@ -3,6 +3,7 @@ import {useEffect,useState} from 'react';
 import type {Resident} from './model';
 import {today} from './model';
 import {residenceApi as api} from './api';
+import {offlineStatus,syncedEvent} from './offline-store';
 import {addDays,monday,overlaps,ScheduleEvent,ScheduleType,timeLabel,validSchedule,weekDays} from './schedule-model';
 const slots=Array.from({length:20},(_,i)=>540+i*30);
 export default function ResidenceSchedule({residents,onResident}:{residents:Resident[];onResident:(id:string)=>void}){
@@ -11,6 +12,7 @@ export default function ResidenceSchedule({residents,onResident}:{residents:Resi
  const [center,setCenter]=useState(''),[display,setDisplay]=useState('week'),[day,setDay]=useState(0),[typeDraft,setTypeDraft]=useState<ScheduleType|null>(null);
  const [retry,setRetry]=useState(0),[dirty,setDirty]=useState(false),[typeDirty,setTypeDirty]=useState(false);
  useEffect(()=>{if(matchMedia('(max-width:700px)').matches){setDisplay('day');setDay(Math.min(5,(new Date(today()+'T12:00:00Z').getUTCDay()+6)%7));}},[]);
+ useEffect(()=>{const refresh=()=>{if(!dirty&&!typeDirty&&!draft&&!typeDraft)setRetry(n=>n+1);};window.addEventListener(syncedEvent,refresh);return()=>window.removeEventListener(syncedEvent,refresh);},[dirty,typeDirty,draft,typeDraft]);
  useEffect(()=>{const leave=(e:BeforeUnloadEvent)=>{if(dirty||typeDirty){e.preventDefault();e.returnValue='';}};window.addEventListener('beforeunload',leave);return()=>window.removeEventListener('beforeunload',leave);},[dirty,typeDirty]);
  useEffect(()=>{let active=true;setLoading(true);setMessage('');void(async()=>{try{
   const [cats,rows]=await Promise.all([api('/rest/v1/residence_schedule_types?select=*&order=label.asc&limit=1000'),(async()=>{let all:ScheduleEvent[]=[];for(let offset=0;;offset+=500){const chunk=await api('/rest/v1/residence_schedule?select=id,event_date,start_min,end_min,category_id,title,center,resident_id,location,notes,status,revision&event_date=gte.'+week+'&event_date=lte.'+addDays(week,5)+'&order=event_date.asc,start_min.asc,id.asc&limit=500&offset='+offset);if(!Array.isArray(chunk))throw Error('No se ha podido leer el horario.');all=all.concat(chunk);if(chunk.length<500)return all;}})()]);
@@ -23,10 +25,10 @@ export default function ResidenceSchedule({residents,onResident}:{residents:Resi
   const payload={id:e.id,event_date:e.event_date,start_min:e.start_min,end_min:e.end_min,category_id:e.category_id,title:e.title.trim(),center:e.center.trim(),resident_id:e.resident_id,location:e.location,notes:e.notes,status:e.status,revision:e.revision+1};
   const rows=await api('/rest/v1/residence_schedule'+(e.revision?'?id=eq.'+e.id+'&revision=eq.'+e.revision:''),{method:e.revision?'PATCH':'POST',body:JSON.stringify(e.revision?payload:Array.from({length:repeat},(_,i)=>({...payload,id:i===0?e.id:crypto.randomUUID(),event_date:addDays(e.event_date,i*7)})))});
   if(!Array.isArray(rows)||rows.length!==(e.revision?1:repeat))throw Error('La actividad ha cambiado en otra ventana. El borrador sigue aquí; cópialo antes de recargar.');
-  setEvents(old=>[...old.filter(item=>item.id!==e.id),...rows.filter(item=>item.event_date>=week&&item.event_date<=addDays(week,5))]);setDraft(null);setDirty(false);setRepeat(1);setMessage('Actividad guardada'+(!e.revision&&repeat>1?' en '+repeat+' semanas.':'.'));
+  setEvents(old=>[...old.filter(item=>item.id!==e.id),...rows.filter(item=>item.event_date>=week&&item.event_date<=addDays(week,5))]);setDraft(null);setDirty(false);setRepeat(1);setMessage(offlineStatus().pending?'Actividad guardada en este dispositivo. Pendiente de sincronizar.':'Actividad guardada'+(!e.revision&&repeat>1?' en '+repeat+' semanas.':'.'));
  }catch(err){setMessage((err as Error).message);}finally{setBusy(false);}}
  async function saveType(){if(!typeDraft||busy)return;const p={...typeDraft,label:typeDraft.label.trim(),color:typeDraft.color.toLowerCase(),revision:typeDraft.revision+1};if(!p.label||!/^#[0-9a-f]{6}$/.test(p.color)){setMessage('Indica un nombre y un color válido.');return;}if(types.some(t=>t.id!==p.id&&(t.color.toLowerCase()===p.color||t.label.toLowerCase()===p.label.toLowerCase()))){setMessage('Ese nombre o color ya está en uso. Elige uno diferente.');return;}setBusy(true);try{
-  const rows=await api('/rest/v1/residence_schedule_types'+(typeDraft.revision?'?id=eq.'+p.id+'&revision=eq.'+typeDraft.revision:''),{method:typeDraft.revision?'PATCH':'POST',body:JSON.stringify(p)});if(!rows?.[0])throw Error('El tipo ha cambiado en otra ventana. Conserva tu borrador antes de recargar.');setTypes(old=>[...old.filter(t=>t.id!==p.id),rows[0]].sort((a,b)=>a.label.localeCompare(b.label)));setTypeDraft(null);setTypeDirty(false);setMessage('Tipo de actividad guardado.');
+  const rows=await api('/rest/v1/residence_schedule_types'+(typeDraft.revision?'?id=eq.'+p.id+'&revision=eq.'+typeDraft.revision:''),{method:typeDraft.revision?'PATCH':'POST',body:JSON.stringify(p)});if(!rows?.[0])throw Error('El tipo ha cambiado en otra ventana. Conserva tu borrador antes de recargar.');setTypes(old=>[...old.filter(t=>t.id!==p.id),rows[0]].sort((a,b)=>a.label.localeCompare(b.label)));setTypeDraft(null);setTypeDirty(false);setMessage(offlineStatus().pending?'Tipo guardado en este dispositivo. Pendiente de sincronizar.':'Tipo de actividad guardado.');
  }catch(e){setMessage((e as Error).message);}finally{setBusy(false);}}
  const centers=[...new Set([...residents.map(r=>r.center),...events.map(e=>e.center)])].sort();
  const visible=events.filter(e=>e.status!=='cancelled'&&(!center||e.center===center));
