@@ -5,7 +5,7 @@ import {today} from './model';
 type Row={id:string;revision:number;[key:string]:any};
 type Pending={id:string;table:string;rows:Row[];base:(Row|null)[];created:string;error?:string;remote?:Row[]};
 type Draft={resident:Row;tab:string;entry:any;dirty:boolean};
-type State={owner:string;cache:Record<string,Row[]>;pending:Pending[];draft?:Draft;lastSync?:string;prepared?:string;persistent?:boolean;history?:Pending[];versions?:Record<string,Row>;complete?:Record<string,boolean>};
+type State={owner:string;cache:Record<string,Row[]>;pending:Pending[];draft?:Draft;lastSync?:string;prepared?:string;persistent?:boolean;history?:Pending[];versions?:Record<string,Row>;complete?:Record<string,boolean>;localRevision?:number};
 type Vault={version:1;salt:Uint8Array;iv:Uint8Array;data:ArrayBuffer};
 let key:CryptoKey|null=null;
 let salt:Uint8Array;
@@ -49,28 +49,31 @@ export async function offlineApi(path:string,init:RequestInit={}){
  const table=tableOf(path);if(!table)return remoteApi(path,init);
  if(!init.method||init.method==='GET'){
   try{const rows=await remoteApi(path,init);if(!Array.isArray(rows))throw Error('Respuesta no válida.');return await locked(async s=>{for(const [cachedPath,cached] of Object.entries(s.cache))if(tableOf(cachedPath)===table)s.cache[cachedPath]=cached.map(r=>rows.find(n=>n.id===r.id)||r);s.cache[path]=rows;const params=new URL(path,'https://local').searchParams,limit=Number(params.get('limit')||0);s.complete ||= {};if(!params.get('offset')||params.get('offset')==='0')s.complete[scopeOf(path)]=false;if(limit&&rows.length<limit)s.complete[scopeOf(path)]=true;const result=filterRows(path,overlay(s,table,cachedRows(s,table)));remember(s,table,result);await persist(s);return result;});}
-  catch(e){if(!networkFailure(e)&&!(e instanceof ResidenceApiError&&e.status===401))throw e;return locked(async s=>{if(!(path in s.cache)&&!s.complete?.[scopeOf(path)])throw Error('Este apartado o semana todavía no está descargado. Ábrelo con conexión antes de usarlo aquí.');return filterRows(path,overlay(s,table,cachedRows(s,table)));});}
+  catch(e){if(!networkFailure(e)&&!(e instanceof ResidenceApiError&&e.status===401))throw e;return locked(async s=>{if(!(path in s.cache)&&!s.complete?.[scopeOf(path)])throw Error('Este apartado o semana todavía no está descargado. Ábrelo con conexión antes de usarlo aquí.');const result=filterRows(path,overlay(s,table,cachedRows(s,table)));remember(s,table,result);await persist(s);return result;});}
  }
  if(!['POST','PATCH'].includes(init.method))throw Error('Esta operación requiere conexión.');
  const raw=JSON.parse(String(init.body)),rows:Row[]=Array.isArray(raw)?raw:[raw];
  if(!rows.length||rows.some(r=>!r.id||!Number.isInteger(r.revision)))throw Error('Registro no válido para guardado local.');
- await locked(async s=>{const all=overlay(s,table,Object.entries(s.cache).filter(([p])=>tableOf(p)===table).flatMap(([,r])=>r));const expected=Number(new URL(path,'https://local').searchParams.get('revision')?.slice(3));const base=rows.map(r=>init.method==='POST'?null:s.versions?.[table+'/'+r.id+'/'+expected]||all.find(x=>x.id===r.id)||null);remember(s,table,rows);const failed=s.pending.find(p=>p.table===table&&p.error&&rows.every(r=>p.rows.some(x=>x.id===r.id)));if(failed){failed.rows=failed.rows.map(r=>rows.find(x=>x.id===r.id)||r);failed.error=undefined;failed.remote=undefined;}else s.pending.push({id:crypto.randomUUID(),table,rows,base,created:new Date().toISOString()});await persist(s);});
+ await locked(async s=>{const all=overlay(s,table,Object.entries(s.cache).filter(([p])=>tableOf(p)===table).flatMap(([,r])=>r));const expected=Number(new URL(path,'https://local').searchParams.get('revision')?.slice(3));const base=rows.map(r=>init.method==='POST'?null:s.versions?.[table+'/'+r.id+'/'+expected]||all.find(x=>x.id===r.id)||null);for(const r of rows){s.localRevision=(s.localRevision||0)-1;r.revision=s.localRevision;}remember(s,table,rows);const failed=s.pending.find(p=>p.table===table&&p.error&&rows.every(r=>p.rows.some(x=>x.id===r.id)));if(failed){failed.rows=failed.rows.map(r=>rows.find(x=>x.id===r.id)||r);failed.error=undefined;failed.remote=undefined;}else s.pending.push({id:crypto.randomUUID(),table,rows,base,created:new Date().toISOString()});await persist(s);});
  // Only a committed IndexedDB transaction allows the editor to close.
  void synchronize().catch(()=>{});return rows;
 }
+// Local revisions are negative and unique per vault, so optimistic edits in two
+// windows cannot alias a server revision or each other's base snapshot.
+function acknowledged(remote:Row|undefined,payload:Row){return !!remote&&matchesPayload(remote,{...payload,revision:remote.revision});}
 function readPath(table:string,id:string){return '/rest/v1/'+table+'?select=*&id=eq.'+encodeURIComponent(id);}
 async function replay(p:Pending,prefer?:'local'|'remote'){
  const result:Row[]=[];
  // POST batches stay atomic (e.g. repeated weekly appointments).
  const existing=await Promise.all(p.rows.map(r=>remoteApi(readPath(p.table,r.id)).then(rows=>rows[0] as Row|undefined)));
  if(p.base.every(b=>!b)){
-  if(existing.every((r,i)=>r&&matchesPayload(r,p.rows[i])))return existing as Row[];
+  if(existing.every((r,i)=>acknowledged(r,p.rows[i])))return existing as Row[];
   if(existing.some(Boolean))throw Error('El registro ya existe con otra versión. La copia local sigue pendiente.');
-  return remoteApi('/rest/v1/'+p.table,{method:'POST',body:JSON.stringify(p.rows.length===1?p.rows[0]:p.rows)});
+  return remoteApi('/rest/v1/'+p.table,{method:'POST',body:JSON.stringify(p.rows.length===1?{...p.rows[0],revision:1}:p.rows.map(r=>({...r,revision:1})))});
  }
  for(let i=0;i<p.rows.length;i++){
   const local=p.rows[i],base=p.base[i],remote=existing[i];
-  if(remote&&matchesPayload(remote,local)){result.push(remote);continue;}
+  if(remote&&acknowledged(remote,local)){result.push(remote);continue;}
   if(!remote)throw Error('El registro no está disponible en el servidor. La copia local se conserva.');
   const merged=mergeVersions(base,local,remote,prefer);
   if(merged.conflicts.length&&!prefer){p.remote=existing.filter(Boolean) as Row[];throw Error('Hay cambios diferentes en el mismo registro. Revisa las dos versiones.');}
@@ -91,7 +94,7 @@ export function synchronize(prefer?:'local'|'remote'):Promise<void>{
   while(s.pending.length){const p=s.pending[0];try{const returned=await replay(p,prefer);if(prefer){s.history=[...(s.history||[]),structuredClone(p)];prefer=undefined;}
    // Rebase dependent local saves onto the acknowledged merged server version.
    for(let i=0;i<p.rows.length;i++){const local=p.rows[i],server=returned.find((r:Row)=>r.id===local.id);if(!server)throw Error('El servidor no ha confirmado todos los registros.');
-    for(const next of s.pending.slice(1).filter(n=>n.table===p.table)){const j=next.rows.findIndex(r=>r.id===local.id);if(j>=0){const old=next.rows[j];next.base[j]=server;next.rows[j]={...mergeVersions(local,old,server).value,revision:server.revision+1};break;}}
+    for(const next of s.pending.slice(1).filter(n=>n.table===p.table)){const j=next.rows.findIndex(r=>r.id===local.id);if(j>=0){const old=next.rows[j],merged=mergeVersions(next.base[j],old,server);if(!merged.conflicts.length){next.base[j]=server;next.rows[j]={...merged.value,revision:old.revision};}break;}}
     for(const [path,cached] of Object.entries(s.cache))if(tableOf(path)===p.table)s.cache[path]=[...cached.filter(r=>r.id!==server.id),server];
    }
    s.pending.shift();s.lastSync=new Date().toISOString();await persist(s);
