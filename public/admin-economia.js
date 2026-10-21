@@ -333,6 +333,7 @@
           amount_cents:amount
         }),
       });
+      window.adminUX?.saved("econ-external-income-form");
       form.reset(); $("#econ-external-income-date").value = today();
       $("#econ-external-income-register").open = false;
       await load(); setStatus("Ingreso externo documentado registrado. Se conserva la referencia del justificante.");
@@ -402,6 +403,7 @@
     if (Number(appointment.price_eur) > 0) $("#econ-invoice-price").value = Number(appointment.price_eur).toFixed(2);
   }
   function clearInvoiceForm() {
+    if(window.adminUX?.canDiscard("econ-invoice-form")===false)return;
     editingInvoice = null;
     $("#econ-invoice-form").reset();
     $("#econ-invoice-date").value = today();
@@ -411,6 +413,7 @@
     $("#econ-invoice-patient").focus();
   }
   function editDraft(invoice) {
+    if(window.adminUX?.canDiscard("econ-invoice-form")===false)return;
     if (invoice.status !== "draft") throw new Error("Solo se pueden editar borradores.");
     showTab("invoices");
     editingInvoice = invoice.id;
@@ -538,6 +541,7 @@
         headers: { Prefer: "return=representation" },
         body: JSON.stringify(payload),
       });
+      window.adminUX?.saved("econ-invoice-form");
       editingInvoice = null; $("#econ-invoice-form").hidden=true;
       await load(); setStatus("Borrador guardado. Revísalo antes de emitir.");
     } catch (err) { setStatus(err.message); }
@@ -557,6 +561,7 @@
         method:"PATCH", headers:{Prefer:"return=representation"},
         body:JSON.stringify({legal_name,tax_id,fiscal_address,email,first_invoice_year,first_invoice_number}),
       });
+      window.adminUX?.saved("econ-issuer-form");
       await load(); setStatus("Datos fiscales guardados. Comprueba que sean correctos antes de emitir.");
     } catch (err) { setStatus(err.message); }
   });
@@ -640,6 +645,7 @@
           amount_cents:requirePositiveCents($("#econ-expense-amount").value),
         }),
       });
+      window.adminUX?.saved("econ-expense-form");
       $("#econ-expense-form").reset(); $("#econ-expense-date").value = today();
       await load(); setStatus("Gasto registrado.");
     } catch (err) { setStatus(err.message); }

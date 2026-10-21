@@ -14,10 +14,10 @@ export default function MarketingPage(){
    try{
     const stored=sessionStorage.getItem(sessionKey);
     const session=stored?JSON.parse(stored):null;
-    if(!session?.access_token){setState("Necesitas iniciar sesión desde Recursos digitales para acceder a Marketing.");return;}
+    if(!session?.access_token){setState("Inicia sesión en el panel profesional para acceder a Marketing.");return;}
     const response=await fetch("/api/marketing/brevo-stats",{headers:{Authorization:"Bearer "+session.access_token},cache:"no-store"});
     const data=await response.json();
-    if(response.status===401){setState("La sesión ha caducado. Vuelve a iniciar sesión en Recursos digitales.");return;}
+    if(response.status===401){setState("La sesión ha caducado. Vuelve a iniciar sesión en el panel profesional.");return;}
     setStats(data);
     setState(response.ok?"":"No se han podido cargar las estadísticas.");
    }catch{setState("No se ha podido conectar con el servidor.");}
@@ -51,12 +51,12 @@ export default function MarketingPage(){
    void loadBookings();
    return()=>{live=false;};
  },[]);
- return <main className="admin-marketing-page" style={{minHeight:"100vh",background:"#ffffff",padding:"32px clamp(18px,4vw,60px)",color:"#0e5c7c"}}>
+ return <main className="admin-marketing-page" style={{minHeight:"100vh",background:"#ffffff",color:"#0e5c7c"}}>
  <div style={{maxWidth:1250,margin:"auto"}}>
  <p style={{color:"#0e5c7c",fontWeight:700,letterSpacing:".12em",fontSize:13}}>ADMINISTRACIÓN · MARKETING</p>
  <h1 style={{fontFamily:"Georgia,serif",fontSize:"clamp(34px,4vw,52px)",margin:"12px 0"}}>Suscriptores y captación</h1>
  <p style={{fontSize:18,maxWidth:780,lineHeight:1.6}}>Consulta las suscripciones confirmadas de Brevo y accede a las herramientas de difusión de tus recursos gratuitos.</p>
- <AdminWorkspaceNav active="otra"/>
+ <AdminWorkspaceNav active="marketing"/>
  <section style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(210px,1fr))",gap:16,margin:"30px 0"}}>
  {["Suscriptores confirmados","Nuevas altas","Bajas","Descargas gratuitas"].map((label,i)=><article key={label} style={{background:"#edf7f7",borderRadius:18,padding:22,minHeight:134}}>
  <h2 style={{fontSize:17,margin:0}}>{label}</h2>
@@ -87,7 +87,7 @@ export default function MarketingPage(){
  <p style={{color:"#536e78",lineHeight:1.65,margin:"0 0 13px"}}>En Google Analytics, cuando la persona ha aceptado las cookies, puedes consultar los eventos <strong>booking_click</strong> (abre la reserva), <strong>booking_slot_selected</strong> (elige horario), <strong>booking_submit</strong> (intenta reservar) y <strong>booking_complete</strong> (la solicitud se ha registrado). Son métricas parciales, porque quienes rechazan la analítica no se incluyen.</p>
  <a href="https://analytics.google.com/analytics/web/" target="_blank" rel="noopener noreferrer" style={{display:"inline-block",borderRadius:9,padding:"11px 16px",background:"var(--admin-plum)",color:"white",textDecoration:"none"}}>Abrir Google Analytics ↗</a>
  </section>
- {state?<p role="status" style={{color:"#9e4e43"}}>{state}</p>:null}
+ {state?<p role="status" style={{color:"#9e4e43"}}>{state} <a href="/admin/clinica/acceso/">Iniciar sesión</a></p>:null}
  <div style={{display:"flex",flexWrap:"wrap",gap:14,marginTop:25}}>
  <a href="https://c6645869.sibforms.com/serve/MUIFAIuvbjgYqrRqmmfpA-O89yKi9fH-Kb6Yp0UkGDyZKb_O1wjUF1SHUqEcp20MeACDjXZHQBzDuXijbIdqi8CB692onRlW0SA6IVn-N_ym1RIdQjptK-couFyXNVAQiyPtFM4hkdWfLmwNQgVfnarzCyzZDYkTDXyOH2O8g5m7BN-Gw--aM1hnRHHMfp39FyhRtcurRMbxfwtgMQ==" target="_blank" rel="noopener noreferrer" style={{background:"var(--admin-plum)",color:"#fff",padding:"14px 22px",borderRadius:10,textDecoration:"none"}}>Ver formulario de suscripción ↗</a>
  <a href="https://app.brevo.com/" target="_blank" rel="noopener noreferrer" style={{background:"var(--admin-plum)",color:"#fff",padding:"14px 22px",borderRadius:10,textDecoration:"none"}}>Ver contactos en Brevo ↗</a>

@@ -248,4 +248,12 @@
     if(loading)loading.textContent="No se ha podido comprobar el acceso. Actualiza para intentarlo de nuevo.";
     setStatus(error?.message||"No se ha podido iniciar el panel.");
   });
+  const toolSearch=document.querySelector('#admin-tool-search');
+  toolSearch?.addEventListener('input',()=>{
+    const normalize=value=>String(value).normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
+    const terms=normalize(toolSearch.value).split(/\s+/).filter(Boolean),cards=[...document.querySelectorAll('.admin-hub-module')];
+    for(const card of cards)card.hidden=!terms.every(term=>normalize(card.textContent).includes(term));
+    const count=cards.filter(card=>!card.hidden).length,notice=document.querySelector('#admin-tool-search-status');
+    if(notice)notice.textContent=!terms.length?'':count?count+' herramienta(s) encontrada(s).':'No hay herramientas con esa búsqueda.';
+  });
 })();

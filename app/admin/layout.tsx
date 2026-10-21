@@ -3,6 +3,7 @@ import Script from "next/script";
 import "./admin-unified.css";
 import "./workspace-navigation.css";
 import "./admin-palette.css";
+import "./admin-experience.css";
 
 export const metadata: Metadata = {
   title: "Administración | Carolina Sánchez",
@@ -18,7 +19,9 @@ export const metadata: Metadata = {
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   return (
     <>
+      <a href="#admin-main-content" className="admin-skip-link">Ir al contenido</a>
       {children}
+      <Script src="/admin-experience.js?v=20261021-ux-1" strategy="afterInteractive" />
       <Script src="/admin-shell.js?v=20261009-nav-2" strategy="afterInteractive" />
       <Script src="/admin-articles-media.js?v=20260914-media-1" strategy="afterInteractive" />
     </>

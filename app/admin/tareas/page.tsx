@@ -49,7 +49,7 @@ export default function ProfessionalOrganizer(){
   if(filter==='undated'&&!(t.status==='open'&&!t.due_at))return false;if(filter==='done'&&t.status!=='done')return false;
   return (t.title+' '+(t.note||'')).toLowerCase().includes(search.toLowerCase());
  }).sort((a,b)=>(date(a)||'9999').localeCompare(date(b)||'9999')||({high:0,normal:1,low:2}[a.priority]-{high:0,normal:1,low:2}[b.priority]));
- return <main className="professional"><header><p className="professional-kicker">MI ORGANIZACIÓN</p><h1>Mi agenda profesional</h1><p>Todo lo que tienes que hacer, en un solo sitio.</p><AdminWorkspaceNav active="otra"/></header><p role="status">{message}</p>
+ return <main className="professional"><header><p className="professional-kicker">MI ORGANIZACIÓN</p><h1>Mi agenda profesional</h1><p>Todo lo que tienes que hacer, en un solo sitio.</p><AdminWorkspaceNav active="tareas"/></header><p role="status">{message}</p>
  {!ready?<a href="/admin/clinica/acceso/?next=/admin/tareas/">Iniciar sesión</a>:<>
  <div className="professional-stats"><button onClick={()=>setFilter('open')}><strong>{open.length}</strong> Pendientes</button><button onClick={()=>setFilter('today')}><strong>{open.filter(t=>date(t)===now).length}</strong> Para hoy</button><button onClick={()=>setFilter('overdue')}><strong>{open.filter(t=>date(t)&&date(t)<now).length}</strong> Vencidas</button></div>
  <div className="professional-columns"><section className="professional-card"><div className="professional-heading"><h2>Mis tareas</h2><button disabled={busy} className="professional-primary" onClick={()=>edit(fresh())}>+ Nueva tarea</button></div>

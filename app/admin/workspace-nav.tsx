@@ -1,4 +1,4 @@
-type Area = "agenda" | "economia" | "articulos" | "recursos" | "preguntas" | "otra";
+type Area = "agenda" | "economia" | "articulos" | "recursos" | "preguntas" | "tareas" | "residencia" | "mensajes" | "notificaciones" | "marketing" | "biblioteca" | "otra";
 
 type Icon = "today" | "agenda" | "patients" | "pending" | "more";
 
@@ -17,7 +17,7 @@ function NavIcon({ name }: { name: Icon }) {
 /** Navegación transversal de la zona profesional: solo renderizar tras autenticar. */
 export default function AdminWorkspaceNav({ active }: { active: Area }) {
   const options = [
-    { key: "today", icon: "today", label: "Hoy", href: "/admin/clinica/?panel=1&view=today" },
+    { key: "today", icon: "today", label: "Inicio", href: "/admin/" },
     { key: "agenda", icon: "agenda", label: "Agenda", href: "/admin/agenda/" },
     { key: "patients", icon: "patients", label: "Pacientes", href: "/admin/clinica/?panel=1&view=patients" },
     { key: "pending", icon: "pending", label: "Pendientes", href: "/admin/clinica/?panel=1&view=pending" },
@@ -31,16 +31,18 @@ export default function AdminWorkspaceNav({ active }: { active: Area }) {
       <details className="admin-workspace-more">
         <summary className={!["agenda", "otra"].includes(active) ? "is-active" : undefined}><NavIcon name="more" /><span>Más</span></summary>
         <div className="admin-workspace-more-panel">
+          <p className="admin-workspace-more-label">Consulta y organización</p>
+          <a href="/admin/tareas/" aria-current={active === "tareas" ? "page" : undefined}>Tareas y notas</a>
+          <a href="/admin/residencia/" aria-current={active === "residencia" ? "page" : undefined}>Residencia</a>
           <p className="admin-workspace-more-label">Administración</p>
-          <a href="/admin/tareas/">Mi agenda profesional</a>
-          <a href="/admin/residencia/">Residencia</a>
           <a href="/admin/economia/" aria-current={active === "economia" ? "page" : undefined}>Contabilidad</a>
-          <a href="/admin/mensajes/">Mensajes de pacientes</a>
-          <a href="/admin/notificaciones/">Centro de avisos</a>
-          <a href="/admin/articulos/">Artículos</a>
-          <a href="/admin/clinica/materiales-externos/">Cuadernos y fichas externos</a>
+          <a href="/admin/mensajes/" aria-current={active === "mensajes" ? "page" : undefined}>Mensajes de pacientes</a>
+          <a href="/admin/notificaciones/" aria-current={active === "notificaciones" ? "page" : undefined}>Centro de avisos</a>
+          <p className="admin-workspace-more-label">Contenidos y materiales</p>
+          <a href="/admin/articulos/" aria-current={active === "articulos" ? "page" : undefined}>Centro editorial</a>
+          <a href="/admin/clinica/materiales-externos/" aria-current={active === "biblioteca" ? "page" : undefined}>Biblioteca clínica</a>
           <a href="/admin/recursos/" aria-current={active === "recursos" ? "page" : undefined}>Recursos</a>
-          <a href="/admin/marketing/">Marketing</a>
+          <a href="/admin/marketing/" aria-current={active === "marketing" ? "page" : undefined}>Marketing</a>
           <a href="/admin/preguntas/" aria-current={active === "preguntas" ? "page" : undefined}>Preguntas</a>
           <a href="/admin/">Panel general</a>
         </div>

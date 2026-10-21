@@ -238,6 +238,7 @@
     state.patients = rows.filter(p => p.status !== "archived" && p.full_name);
   }
   function startCreate() {
+    if(window.adminUX?.canDiscard("ext-form")===false)return;
     state.editItem=null;
     byId("ext-form").reset();
     byId("ext-patient-file").required=true;
@@ -250,6 +251,7 @@
     byId("ext-editor").scrollIntoView({behavior:"smooth",block:"start"});
   }
   function startEdit(material) {
+    if(window.adminUX?.canDiscard("ext-form")===false)return;
     state.editItem=material;
     byId("ext-form").reset();
     byId("ext-title").value=material.title || "";
@@ -292,6 +294,7 @@
             cognitive_domain:byId("ext-domain").value,level:byId("ext-level").value,
             description:byId("ext-description").value.trim() || null,updated_at:new Date().toISOString()})
         });
+        window.adminUX?.saved("ext-form");
         closeCreate();await loadMaterials();message("ext-status","Ficha actualizada. Archivos y asignaciones conservados.");
       }catch(e){message("ext-form-message",e.message || "No se han podido guardar los cambios.");}
       finally{state.busy=false;byId("ext-save").disabled=false;}
@@ -327,6 +330,7 @@
       await rest("clinical_external_materials",{
         method:"POST",headers:{"Prefer":"return=minimal"},body:JSON.stringify(payload)
       });
+      window.adminUX?.saved("ext-form");
       closeCreate();
       await loadMaterials();
       message("ext-status","Material guardado en la biblioteca privada. Ya puedes descargarlo o asignarlo a un paciente.");

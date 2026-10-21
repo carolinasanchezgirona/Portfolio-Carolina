@@ -590,6 +590,7 @@
     try {
       els.appointmentStatus.value = "cancelled";
       await saveAppointment();
+      window.adminUX?.saved("appointment-form");
       els.dialog.close();
       await loadWeek();
     } catch (error) {
@@ -813,6 +814,7 @@
     setFormMessage("Guardando…");
     try {
       await saveAppointment();
+      window.adminUX?.saved("appointment-form");
       els.dialog.close();
       weekStartKey = mondayKey(els.date.value);
       await loadWeek();
@@ -830,6 +832,7 @@
     setBlockMessage("Guardando bloqueo…");
     try {
       await createBlock();
+      window.adminUX?.saved("block-form");
       els.blockDialog.close();
       weekStartKey = mondayKey(els.blockDate.value);
       await loadWeek();

@@ -33,7 +33,7 @@ export default function AdminNotificationsPage() {
           </div>
           <button type="button" id="admin-notice-refresh" className="admin-notice-action">Actualizar avisos</button>
         </div>
-        <AdminWorkspaceNav active="otra" />
+        <AdminWorkspaceNav active="notificaciones" />
         <section className="admin-notice-push" aria-labelledby="admin-notice-push-heading">
           <div className="admin-notice-push-top">
             <div>

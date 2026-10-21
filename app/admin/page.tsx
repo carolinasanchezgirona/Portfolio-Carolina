@@ -73,30 +73,17 @@ export default function AdminHomePage() {
           </div>
           <nav className="admin-hub-shortcuts" aria-label="Acciones rápidas">
             <a href="/admin/agenda/">Ver las citas</a>
+            <a href="/admin/residencia/">Residencia</a>
+            <a href="/admin/tareas/">Tareas y notas</a>
             <a href="/admin/notificaciones/">Centro de avisos</a>
             <a href="/admin/clinica/?panel=1">Buscar un paciente</a>
             <a href="/admin/economia/?tab=invoices&amp;nuevo=1">Crear un borrador de factura</a>
             <a href="/admin/articulos/">Preparar contenido</a>
+            <a href="#admin-hub-tools">Todas las herramientas ↓</a>
           </nav>
         </section>
 
-        <section className="admin-hub-modules" aria-labelledby="admin-hub-modules-title">
-          <div className="admin-hub-section-heading">
-            <div><p className="admin-home-eyebrow">Herramientas</p><h2 id="admin-hub-modules-title">Todas tus áreas de trabajo</h2></div>
-            <p>Selecciona el apartado en el que quieras trabajar.</p>
-          </div>
-          <nav className="admin-hub-module-grid" aria-label="Módulos de administración">
-            {sections.map(section => (
-              <a key={section.href} href={section.href} className={"admin-hub-module admin-hub-tone-" + section.tone}>
-                <span className="admin-hub-module-icon"><AdminIcon name={section.icon} /></span>
-                <span className="admin-hub-module-label">{section.eyebrow}</span>
-                <strong>{section.title}</strong>
-                <span className="admin-hub-module-description">{section.detail}</span>
-                <span className="admin-hub-module-open">{section.secondary}<AdminIcon name="arrow" /></span>
-              </a>
-            ))}
-          </nav>
-        </section>
+
 
         <section className="admin-hub-priority-section" aria-labelledby="admin-hub-priorities-title">
           <div className="admin-hub-section-heading">
@@ -134,6 +121,25 @@ export default function AdminHomePage() {
               <div id="admin-home-commerce" className="admin-home-list"><p className="admin-home-empty">Cargando…</p></div>
             </section>
           </div>
+        </section>
+        <section id="admin-hub-tools" className="admin-hub-modules" aria-labelledby="admin-hub-modules-title">
+          <div className="admin-hub-section-heading">
+            <div><p className="admin-home-eyebrow">Herramientas</p><h2 id="admin-hub-modules-title">Todas tus áreas de trabajo</h2></div>
+            <p>Selecciona el apartado en el que quieras trabajar.</p>
+          </div>
+          <label className="admin-hub-tool-search" htmlFor="admin-tool-search">Buscar una herramienta<input id="admin-tool-search" type="search" placeholder="Residentes, facturas, informes, materiales…" autoComplete="off" /></label>
+          <p id="admin-tool-search-status" role="status" aria-live="polite" />
+          <nav className="admin-hub-module-grid" aria-label="Módulos de administración">
+            {sections.map(section => (
+              <a key={section.href} href={section.href} className={"admin-hub-module admin-hub-tone-" + section.tone}>
+                <span className="admin-hub-module-icon"><AdminIcon name={section.icon} /></span>
+                <span className="admin-hub-module-label">{section.eyebrow}</span>
+                <strong>{section.title}</strong>
+                <span className="admin-hub-module-description">{section.detail}</span>
+                <span className="admin-hub-module-open">{section.secondary}<AdminIcon name="arrow" /></span>
+              </a>
+            ))}
+          </nav>
         </section>
         <p className="admin-hub-footer-note">Panel exclusivo de la consulta. Las ventas de recursos digitales se muestran por separado de la facturación de servicios sanitarios.</p>
       </section>

@@ -1,4 +1,5 @@
 import Script from "next/script";
+import AdminWorkspaceNav from "../../workspace-nav";
 import type { Metadata } from "next";
 import "./external-library.css";
 
@@ -12,6 +13,7 @@ export default function ClinicalExternalMaterialsPage() {
   return <main className="external-library">
     <div id="ext-loading" className="ext-loading" role="status">Comprobando acceso profesional…</div>
     <section id="ext-app" hidden>
+      <AdminWorkspaceNav active="biblioteca" />
       <header className="ext-topbar">
         <div>
           <p className="ext-eyebrow">Dememoria · EntreSesiones · Área profesional</p>

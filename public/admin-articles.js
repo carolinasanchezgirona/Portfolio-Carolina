@@ -121,6 +121,7 @@
   }
 
   function newArticle() {
+    if(window.adminUX?.canDiscard("article-form")===false)return;
     els.form.reset();
     els.id.value = "";
     els.content.innerHTML = "";
@@ -139,6 +140,7 @@
   }
 
   function openArticle(a) {
+    if(window.adminUX?.canDiscard("article-form")===false)return;
     els.id.value = a.id;
     els.title.value = a.title || "";
     els.subtitle.value = a.subtitle || "";
@@ -217,7 +219,13 @@
     };
   }
 
-  async function save(mode) {
+  let saveInFlight=false;
+  async function save(mode){
+    if(saveInFlight)return;saveInFlight=true;
+    const buttons=[els.saveDraft,els.publish,els.schedule].filter(Boolean);buttons.forEach(button=>button.disabled=true);
+    try{return await persistChanges(mode);}finally{saveInFlight=false;buttons.forEach(button=>button.disabled=false);}
+  }
+  async function persistChanges(mode){
     if (!els.title.value.trim()) return setMessage("Escribe el título del artículo.");
     if (!plainTextFromHtml(els.content.innerHTML)) return setMessage("Escribe el contenido del artículo.");
     if (!els.slug.value.trim()) els.slug.value = slugify(els.title.value);
@@ -229,6 +237,7 @@
     const r = await fetch(url, { method: id ? "PATCH" : "POST", headers: authHeaders({ Prefer: "return=representation" }), body: JSON.stringify(body) });
     const result = await r.json().catch(() => []);
     if (!r.ok) throw new Error(result.message || (result.code === "23505" ? "Ya existe un artículo con esa URL." : "No se ha podido guardar."));
+    window.adminUX?.saved("article-form");
     const savedId = id || result?.[0]?.id;
     await loadArticles(savedId);
     setMessage(mode === "draft" ? "Borrador guardado." : mode === "scheduled" ? "Publicación programada correctamente." : "Publicado correctamente.");
@@ -338,6 +347,7 @@
     setMessage("Eliminando…");
     const r = await fetch(`${REST_URL}/articles?id=eq.${encodeURIComponent(id)}`, { method: "DELETE", headers: authHeaders() });
     if (!r.ok) { const body = await r.json().catch(() => ({})); throw new Error(body.message || "No se ha podido eliminar."); }
+    window.adminUX?.saved("article-form");
     els.form.hidden = true; els.empty.hidden = false; els.id.value = "";
     document.querySelector("#article-workspace")?.classList.remove("workspace-show-editor");
     await loadArticles();

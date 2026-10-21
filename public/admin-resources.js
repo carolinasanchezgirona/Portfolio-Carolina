@@ -118,11 +118,13 @@
   }
   function showMobileEditor(){ document.querySelector(".resources-workspace")?.classList.add("workspace-show-editor"); }
   function newResource(){
+    if(window.adminUX?.canDiscard("resource-form")===false)return;
     els.form.reset(); els.id.value=""; els.filePath.value=""; els.category.value="psicologia";els.audience.value="general";els.format.value="PDF";
     els.editorTitle.textContent="Nuevo recurso";els.statusLabel.textContent="Borrador nuevo";els.archive.hidden=true;els.deleteButton.hidden=true;els.fileState.textContent="Todavía no hay archivo subido.";
     els.empty.hidden=true;els.form.hidden=false;showMobileEditor();setMessage("");resetCover();renderList();els.title.focus();
   }
   function openResource(r){
+    if(window.adminUX?.canDiscard("resource-form")===false)return;
     els.id.value=r.id;els.title.value=r.title||"";els.subtitle.value=r.subtitle||"";els.slug.value=r.slug||"";els.price.value=((r.price_cents||0)/100).toFixed(2);
     els.description.value=r.description||"";els.category.value=r.category||"psicologia";els.audience.value=r.audience||"general";els.format.value=r.format_label||"PDF";els.featured.checked=Boolean(r.featured);
     els.coverUrl.value=r.cover_url||"";els.coverAlt.value=r.cover_alt||"";els.filePath.value=r.file_path||"";els.relatedPage.value=r.related_page||"";els.relatedArticle.value=r.related_article_id||"";
@@ -143,22 +145,31 @@
       published_at:status==="published"?(resources.find(r=>r.id===els.id.value)?.published_at||new Date().toISOString()):null
     };
   }
+  let saveInFlight=false;
   async function save(status){
+    if(saveInFlight)return;saveInFlight=true;
+    const buttons=[els.saveDraft,els.publish].filter(Boolean);buttons.forEach(button=>button.disabled=true);
+    try{return await persistChanges(status);}finally{saveInFlight=false;buttons.forEach(button=>button.disabled=false);}
+  }
+  async function persistChanges(status){
     const body=payload(status), id=els.id.value;
     setMessage(status==="published"?"Publicando…":"Guardando…");
     const url=id?`${REST_URL}/digital_resources?id=eq.${encodeURIComponent(id)}`:`${REST_URL}/digital_resources`;
     const r=await fetch(url,{method:id?"PATCH":"POST",headers:authHeaders({Prefer:"return=representation"}),body:JSON.stringify(body)});
     const result=await r.json().catch(()=>[]);
     if(!r.ok)throw new Error(result.message||"No se ha podido guardar.");
+    window.adminUX?.saved("resource-form");
     const savedId=id||result?.[0]?.id;await loadData(savedId);setMessage(status==="published"?"Recurso publicado.":"Borrador guardado.");
   }
   async function archiveResource(){
+    if(window.adminUX?.canDiscard("resource-form")===false)return;
     if(!els.id.value)return;const r=await fetch(`${REST_URL}/digital_resources?id=eq.${encodeURIComponent(els.id.value)}`,{method:"PATCH",headers:authHeaders({Prefer:"return=representation"}),body:JSON.stringify({status:"archived",updated_at:new Date().toISOString()})});
     if(!r.ok)throw new Error("No se ha podido archivar.");await loadData(els.id.value);setMessage("Recurso archivado.");
   }
   async function deleteResource(){
     const id=els.id.value;if(!id)return;if(!window.confirm(`¿Eliminar definitivamente “${els.title.value.trim()}”?`))return;
     const r=await fetch(`${REST_URL}/digital_resources?id=eq.${encodeURIComponent(id)}`,{method:"DELETE",headers:authHeaders()});if(!r.ok)throw new Error("No se ha podido eliminar.");
+    window.adminUX?.saved("resource-form");
     els.form.hidden=true;els.empty.hidden=false;els.id.value="";document.querySelector(".resources-workspace")?.classList.remove("workspace-show-editor");await loadData();
   }
   async function upload(bucket,file,isPublic){

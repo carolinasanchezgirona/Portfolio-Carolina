@@ -8,6 +8,8 @@ export default function PatientMessages({ admin = false }: { admin?: boolean }) 
   const [selected, setSelected] = useState("");
   const selection = useRef(selected); selection.current = selected;
   const [body, setBody] = useState("");
+  const drafts=useRef<Record<string,string>>({});
+  useEffect(()=>{const leave=(event:BeforeUnloadEvent)=>{if(body.trim()||Object.values(drafts.current).some(v=>v.trim())){event.preventDefault();event.returnValue='';}};window.addEventListener('beforeunload',leave);return()=>window.removeEventListener('beforeunload',leave);},[body]);
   const [nonce, setNonce] = useState("");
   const [error, setError] = useState("");
   const [notice, setNotice] = useState("");
@@ -51,7 +53,7 @@ export default function PatientMessages({ admin = false }: { admin?: boolean }) 
     event.preventDefault(); if (busy) return;
     setBusy(true); setError(""); setNotice("");
     const sendNonce = nonce || crypto.randomUUID(); setNonce(sendNonce);
-    try { await api("POST", { body, nonce: sendNonce }); setBody(""); setNonce(""); setNotice("Mensaje enviado."); await load(); }
+    try { await api("POST", { body, nonce: sendNonce }); delete drafts.current[selected]; setBody(""); setNonce(""); setNotice("Mensaje enviado."); await load(); }
     catch (err) { setError(err instanceof Error ? err.message : "No se ha enviado el mensaje."); }
     finally { setBusy(false); }
   }
@@ -65,7 +67,7 @@ export default function PatientMessages({ admin = false }: { admin?: boolean }) 
   return <section id="mensajes" className="private-messages" aria-labelledby="private-messages-title">
     <h2 id="private-messages-title">{admin ? "Mensajes de pacientes" : "Mensajes a Carolina"}</h2>
     {!admin && <p>Escríbeme entre sesiones y consulta aquí mis respuestas. Este espacio no se atiende de forma inmediata ni es un canal de urgencias.</p>}
-    {authorized && admin && <label>Conversaciones <select disabled={busy} value={selected} onChange={e => { setSelected(e.target.value); setBody(""); setNonce(""); }}><option value="">Selecciona un paciente</option>{unique.map(m => {
+    {authorized && admin && <label>Conversaciones <select aria-label="Conversaciones" disabled={busy} value={selected} onChange={e => { drafts.current[selected]=body;setSelected(e.target.value); setBody(drafts.current[e.target.value]||""); setNonce(""); }}><option value="">Selecciona un paciente</option>{unique.map(m => {
       const pending = threads.filter(t => t.patient_id === m.patient_id && t.sender === "patient" && !t.read_at).length;
       return <option key={m.patient_id} value={m.patient_id}>{m.patient?.full_name || "Paciente"}{pending ? ` · ${pending} sin leer` : ""}</option>;
     })}</select></label>}
@@ -79,7 +81,7 @@ export default function PatientMessages({ admin = false }: { admin?: boolean }) 
         <p>{m.body}</p><small>{m.read_at ? "Leído" : "Enviado · pendiente de lectura"}</small>
       </article>)}</div>
       {messages.length >= 200 && <p>Se muestran los 200 mensajes más recientes.</p>}
-      {loaded && <form onSubmit={send}><label htmlFor="private-message-body">{admin ? "Responder al paciente" : "Tu mensaje"}</label><textarea id="private-message-body" required maxLength={4000} rows={4} value={body} disabled={busy} onChange={e => { setBody(e.target.value); setNonce(""); }} />
+      {loaded && <form onSubmit={send}><label htmlFor="private-message-body">{admin ? "Responder al paciente" : "Tu mensaje"}</label><textarea id="private-message-body" required maxLength={4000} rows={4} value={body} disabled={busy} onChange={e => { setBody(e.target.value);drafts.current[selected]=e.target.value; setNonce(""); }} />
         <div className="private-messages-actions"><small>{body.length}/4000</small><button disabled={busy || !body.trim()} type="submit">{busy ? "Enviando…" : "Enviar mensaje"}</button></div>
         <p role="status" aria-live="polite">{notice}</p>
       </form>}

@@ -84,12 +84,14 @@
       });
       if(!r.ok){const b=await r.json().catch(()=>({}));throw new Error(b.message||"No se ha podido autoguardar.");}
       dirty=false;lastSavedAt=new Date();
+      window.adminUX?.saved("article-form");
       status.textContent=`Guardado automáticamente · ${lastSavedAt.toLocaleTimeString("es-ES",{hour:"2-digit",minute:"2-digit"})}`;
     }catch(error){
       status.textContent="Autoguardado pendiente";
       if(message&&!message.textContent)message.textContent=error?.message||"No se ha podido autoguardar.";
     }finally{saving=false;}
   }
+  window.addEventListener("admin:form-saved",event=>{if(event.detail?.id===form.id){dirty=false;status.textContent="Autoguardado listo";}});
   setInterval(autosave,45000);
   window.addEventListener("beforeunload",(event)=>{if(dirty&&idField.value){event.preventDefault();event.returnValue="";}});
 
@@ -125,6 +127,7 @@
     allowed.forEach(k=>{if(Object.prototype.hasOwnProperty.call(snapshot,k))body[k]=snapshot[k];});
     const r=await fetch(`${SUPABASE_URL}/rest/v1/articles?id=eq.${encodeURIComponent(id)}`,{method:"PATCH",headers:headers({Prefer:"return=minimal"}),body:JSON.stringify(body)});
     if(!r.ok){message.textContent="No se ha podido restaurar la versión.";return;}
+    window.adminUX?.saved("article-form");
     dialog.close();window.location.reload();
   }
   historyButton.addEventListener("click",()=>{dialog.showModal();loadVersions();});

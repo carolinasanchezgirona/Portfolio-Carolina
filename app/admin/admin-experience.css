@@ -1,0 +1,30 @@
+/* Shared ergonomics for the private workspace. */
+.admin-skip-link{position:fixed;z-index:200;left:16px;top:12px;transform:translateY(-160%);padding:12px 18px;background:#173a5e;color:#fff;border-radius:8px;text-decoration:none;font:600 15px var(--font-inter),Arial,sans-serif}
+.admin-skip-link:focus{transform:none;outline:3px solid #19b6be;outline-offset:3px}
+body.admin-ux-active main{min-width:0;scroll-margin-top:18px}
+body.admin-ux-active :is(.admin-workspace-nav,.clinic-navigation){box-sizing:border-box}
+body.admin-ux-active .admin-workspace-nav :is(a,summary){box-sizing:border-box;min-width:0}
+body.admin-ux-active .admin-workspace-more-panel [aria-current=page]{font-weight:750;border-left:3px solid #8c4192}
+.admin-form-state{font:600 13px/1.5 var(--font-inter),Arial,sans-serif;color:#713277;padding:10px 12px;margin:0 0 16px;border-left:3px solid #8c4192;background:#f7f1f8;border-radius:0 7px 7px 0}
+.admin-form-state:empty{display:none}
+.admin-messages-page{max-width:1200px;margin:0 auto;padding:24px 16px 110px;color:#0e5c7c}
+.admin-marketing-page{padding:32px clamp(18px,4vw,60px)}
+.admin-hub-tool-search{display:grid;gap:8px;max-width:620px;margin:0 0 14px;color:#173a5e;font-size:14px;font-weight:650}
+.admin-hub-tool-search input{width:100%;padding:12px 14px;border:1px solid #c8dfe0;border-radius:9px;font:inherit;background:#fff;color:#173a5e}
+.admin-hub-module[hidden]{display:none!important}
+.clinic-back-home{color:#536e78;font-size:14px;text-decoration:none;white-space:nowrap;padding:10px 0}
+@media(min-width:1100px){
+ body.admin-ux-active .admin-notice-page{padding-left:max(250px,calc((100vw - 1530px)/2 + 250px))}
+ body.admin-ux-active .admin-marketing-page{padding-left:max(250px,calc((100vw - 1530px)/2 + 250px))}
+ body.admin-ux-active .admin-messages-page,body.admin-ux-active .external-library{max-width:1530px;width:calc(100% - 32px);padding-left:235px;padding-right:24px}
+}
+@media(max-width:800px){
+ body.admin-ux-active :is(.admin-marketing-page,.admin-messages-page,.external-library){padding-bottom:calc(110px + env(safe-area-inset-bottom,0px))}
+ body.admin-ux-active main :is(input:not([type=checkbox]):not([type=radio]):not([type=color]),select,textarea){font-size:16px}
+ body.admin-ux-active .admin-workspace-nav{width:100%;min-width:0}
+ body.admin-ux-active :is(.admin-workspace-more-panel,.clinic-more-panel,.workspace-context-items){max-width:calc(100vw - 24px);overscroll-behavior:contain}
+ body.admin-ux-active main :is(button,[role=button]){min-height:44px}
+ body.admin-ux-active .clinic-top-actions{flex-wrap:wrap;justify-content:flex-end}
+}
+@media(prefers-reduced-motion:reduce){body.admin-ux-active *,body.admin-ux-active *::before,body.admin-ux-active *::after{scroll-behavior:auto!important;animation-duration:.01ms!important;transition-duration:.01ms!important}}
+@media print{.admin-skip-link,.admin-form-state,.clinic-back-home{display:none!important}body.admin-ux-active .admin-notice-page,body.admin-ux-active .admin-marketing-page,body.admin-ux-active .admin-messages-page,body.admin-ux-active .external-library{padding-left:0;width:100%}}

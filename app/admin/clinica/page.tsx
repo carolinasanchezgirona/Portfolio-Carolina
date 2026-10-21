@@ -37,6 +37,7 @@ export default function AdminClinicaPage() {
             </div>
           </div>
           <div className="clinic-top-actions">
+            <a className="clinic-back-home" href="/admin/">← Panel general</a>
             <button id="clinic-refresh" className="clinic-icon-action" type="button" title="Actualizar información" aria-label="Actualizar información"><ClinicIcon name="refresh" /></button>
           </div>
         </header>
@@ -98,7 +99,7 @@ export default function AdminClinicaPage() {
             <div className="clinic-patients-actions">
               <div className="clinic-search-field">
                 <span className="clinic-search-icon" aria-hidden="true">⌕</span>
-                <input id="clinic-patient-search" type="search" placeholder="Buscar paciente, correo, teléfono o mutua" autoComplete="off" />
+                <input id="clinic-patient-search" aria-label="Buscar pacientes" type="search" placeholder="Buscar paciente, correo, teléfono o mutua" autoComplete="off" />
               </div>
               <label className="clinic-archived-toggle"><input id="clinic-show-archived" type="checkbox" /> Mostrar archivados</label>
               <button id="clinic-new-patient" className="clinic-primary" type="button">+ Nuevo paciente</button>

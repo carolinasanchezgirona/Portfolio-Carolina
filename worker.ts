@@ -1,3 +1,4 @@
+import { residenceMaterialAi } from "./residence-material-ai";
 import { notifyPatientMessages } from "./patient-message-email";
 import { patientMessages } from "./patient-messages";
 import { adminAppointmentVideo, patientAppointmentVideo } from './appointment-video';
@@ -2207,6 +2208,7 @@ export default {
     }
     if (url.pathname === "/api/editorial/generate" || url.pathname === "/api/editorial/generate/") return editorialRequest(request, env, "content");
     if (url.pathname === "/api/editorial/image" || url.pathname === "/api/editorial/image/") return editorialRequest(request, env, "image");
+    if (url.pathname === "/api/residence/material-generate" || url.pathname === "/api/residence/material-generate/") return residenceMaterialAi(request, env, verifyEditorialOwner);
     if (url.pathname === "/api/residence/clinical-analysis" || url.pathname === "/api/residence/clinical-analysis/") return residenceClinicalAnalysis(request, env);
     if (url.pathname === "/api/clinical/structure" || url.pathname === "/api/clinical/structure/") return clinicalStructureRequest(request, env);
     if (url.pathname === "/api/clinical/diagnostic-suggestion" || url.pathname === "/api/clinical/diagnostic-suggestion/") return clinicalDiagnosticSuggestionRequest(request, env);
