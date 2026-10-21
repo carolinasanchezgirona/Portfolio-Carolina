@@ -34,7 +34,7 @@ export async function unlockOffline(password:string){const v=await readVault();i
 export async function lockOffline(){await navigator.locks.request(dbName,()=>{key=null;memory=null;notify();});}
 export function savedDraft(){return memory?.draft;}
 export async function storeDraft(draft:Draft|undefined){if(isUnlocked())await locked(async s=>{s.draft=draft;await persist(s);});}
-function tableOf(path:string){return path.match(/^\/rest\/v1\/(residence_records|residence_schedule_types|residence_schedule)(?:\?|$)/)?.[1];}
+function tableOf(path:string){return path.match(/^\/rest\/v1\/(residence_records|residence_schedule_types|residence_schedule|residence_materials)(?:\?|$)/)?.[1];}
 function overlay(s:State,table:string,rows:Row[]){const result=new Map(rows.map(r=>[r.id,r]));for(const p of s.pending.filter(p=>p.table===table))for(const r of p.rows)result.set(r.id,r);return [...result.values()];}
 function cachedRows(s:State,table:string){return [...new Map(Object.entries(s.cache).filter(([p])=>tableOf(p)===table).flatMap(([,rows])=>rows).map(r=>[r.id,r])).values()];}
 function filterRows(path:string,rows:Row[]){const u=new URL(path,'https://local');let result=rows.filter(r=>[...u.searchParams].every(([k,v])=>!['id','event_date'].includes(k)||(v.startsWith('eq.')?String(r[k])===v.slice(3):v.startsWith('gte.')?String(r[k])>=v.slice(4):v.startsWith('lte.')?String(r[k])<=v.slice(4):true)));const order=u.searchParams.get('order')?.split(',')||[];result.sort((a,b)=>{for(const field of order){const [k,d]=field.split('.'),av=a[k],bv=b[k];const diff=av===bv?0:av>bv?1:-1;if(diff)return d==='desc'?-diff:diff;}return 0;});const offset=Number(u.searchParams.get('offset')||0),limit=Number(u.searchParams.get('limit')||result.length);return result.slice(offset,offset+limit);}
@@ -107,6 +107,7 @@ export async function prepareOffline(){
  await synchronize();
  // Capture exact paginated queries used by the workspace, including an empty final page.
  for(let offset=0;;offset+=500){const rows=await offlineApi('/rest/v1/residence_records?select=*&order=code.asc,id.asc&limit=500&offset='+offset);if(rows.length<500)break;}
+ for(let offset=0;;offset+=100){const rows=await offlineApi('/rest/v1/residence_materials?select=*&order=created_at.desc,id.asc&limit=100&offset='+offset);if(rows.length<100)break;}
  await offlineApi('/rest/v1/residence_schedule_types?select=*&order=label.asc&limit=1000');
  const week=monday(today());for(let offset=0;;offset+=500){const rows=await offlineApi('/rest/v1/residence_schedule?select=id,event_date,start_min,end_min,category_id,title,center,resident_id,location,notes,status,revision&event_date=gte.'+week+'&event_date=lte.'+addDays(week,5)+'&order=event_date.asc,start_min.asc,id.asc&limit=500&offset='+offset);if(rows.length<500)break;}
  if(!('serviceWorker' in navigator))throw Error('El navegador no permite preparar la aplicación sin conexión.');
@@ -118,3 +119,4 @@ export async function prepareOffline(){
  const persistent=await navigator.storage?.persist?.().catch(()=>false)||false;
  await locked(async s=>{s.prepared=new Date().toISOString();s.persistent=persistent;await persist(s);});
 }
+
