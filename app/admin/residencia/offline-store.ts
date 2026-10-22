@@ -1,7 +1,7 @@
 import {remoteApi,ResidenceApiError,residenceOwner} from './remote';
 import {mergeVersions,matchesPayload} from './offline-merge';
-import {monday,addDays} from './schedule-model';
-import {today} from './model';
+import {addDays} from './schedule-model';
+import {AssessmentCampaign,campaignError,campaignPath} from './campaign-model';
 type Row={id:string;revision:number;[key:string]:any};
 type Pending={id:string;table:string;rows:Row[];base:(Row|null)[];created:string;error?:string;remote?:Row[]};
 type Draft={resident:Row;tab:string;entry:any;dirty:boolean};
@@ -34,7 +34,7 @@ export async function unlockOffline(password:string){const v=await readVault();i
 export async function lockOffline(){await navigator.locks.request(dbName,()=>{key=null;memory=null;notify();});}
 export function savedDraft(){return memory?.draft;}
 export async function storeDraft(draft:Draft|undefined){if(isUnlocked())await locked(async s=>{s.draft=draft;await persist(s);});}
-function tableOf(path:string){return path.match(/^\/rest\/v1\/(residence_records|residence_schedule_types|residence_schedule|residence_materials)(?:\?|$)/)?.[1];}
+function tableOf(path:string){return path.match(/^\/rest\/v1\/(residence_records|residence_schedule_types|residence_schedule|residence_materials|residence_assessment_campaigns)(?:\?|$)/)?.[1];}
 function overlay(s:State,table:string,rows:Row[]){const result=new Map(rows.map(r=>[r.id,r]));for(const p of s.pending.filter(p=>p.table===table))for(const r of p.rows)result.set(r.id,r);return [...result.values()];}
 function cachedRows(s:State,table:string){return [...new Map(Object.entries(s.cache).filter(([p])=>tableOf(p)===table).flatMap(([,rows])=>rows).map(r=>[r.id,r])).values()];}
 function filterRows(path:string,rows:Row[]){const u=new URL(path,'https://local');let result=rows.filter(r=>[...u.searchParams].every(([k,v])=>!['id','event_date'].includes(k)||(v.startsWith('eq.')?String(r[k])===v.slice(3):v.startsWith('gte.')?String(r[k])>=v.slice(4):v.startsWith('lte.')?String(r[k])<=v.slice(4):true)));const order=u.searchParams.get('order')?.split(',')||[];result.sort((a,b)=>{for(const field of order){const [k,d]=field.split('.'),av=a[k],bv=b[k];const diff=av===bv?0:av>bv?1:-1;if(diff)return d==='desc'?-diff:diff;}return 0;});const offset=Number(u.searchParams.get('offset')||0),limit=Number(u.searchParams.get('limit')||result.length);return result.slice(offset,offset+limit);}
@@ -78,6 +78,7 @@ async function replay(p:Pending,prefer?:'local'|'remote'){
   const merged=mergeVersions(base,local,remote,prefer);
   if(merged.conflicts.length&&!prefer){p.remote=existing.filter(Boolean) as Row[];throw Error('Hay cambios diferentes en el mismo registro. Revisa las dos versiones.');}
   const value={...merged.value,id:local.id,revision:remote.revision+1,updated_at:new Date().toISOString()};
+  if(p.table==='residence_assessment_campaigns'){const problem=campaignError(value as AssessmentCampaign);if(problem){p.remote=existing.filter(Boolean) as Row[];throw Error('Revisa la agenda antes de sincronizar: '+problem);}}
   if(p.table!=='residence_records')delete value.updated_at;
   if(p.table==='residence_schedule')delete value.slot;
   const saved=await remoteApi('/rest/v1/'+p.table+'?id=eq.'+encodeURIComponent(local.id)+'&revision=eq.'+remote.revision,{method:'PATCH',body:JSON.stringify(value)});
@@ -109,7 +110,8 @@ export async function prepareOffline(){
  for(let offset=0;;offset+=500){const rows=await offlineApi('/rest/v1/residence_records?select=*&order=code.asc,id.asc&limit=500&offset='+offset);if(rows.length<500)break;}
  for(let offset=0;;offset+=100){const rows=await offlineApi('/rest/v1/residence_materials?select=*&order=created_at.desc,id.asc&limit=100&offset='+offset);if(rows.length<100)break;}
  await offlineApi('/rest/v1/residence_schedule_types?select=*&order=label.asc&limit=1000');
- const week=monday(today());for(let offset=0;;offset+=500){const rows=await offlineApi('/rest/v1/residence_schedule?select=id,event_date,start_min,end_min,category_id,title,center,resident_id,location,notes,status,revision&event_date=gte.'+week+'&event_date=lte.'+addDays(week,5)+'&order=event_date.asc,start_min.asc,id.asc&limit=500&offset='+offset);if(rows.length<500)break;}
+ for(let offset=0;;offset+=100){const rows=await offlineApi(campaignPath+offset);if(rows.length<100)break;}
+ const week='2026-10-19';for(let offset=0;;offset+=500){const rows=await offlineApi('/rest/v1/residence_schedule?select=id,event_date,start_min,end_min,category_id,title,center,resident_id,location,notes,status,revision&event_date=gte.'+week+'&event_date=lte.'+addDays(week,5)+'&order=event_date.asc,start_min.asc,id.asc&limit=500&offset='+offset);if(rows.length<500)break;}
  if(!('serviceWorker' in navigator))throw Error('El navegador no permite preparar la aplicación sin conexión.');
  const reg=await navigator.serviceWorker.register('/sw.js');await reg.update();await navigator.serviceWorker.ready;
  const installing=reg.installing||reg.waiting;if(installing&&installing.state!=='activated')await new Promise<void>((resolve,reject)=>{const timer=setTimeout(()=>reject(Error('La actualización de la aplicación sigue pendiente. Reintenta la descarga.')),20000);installing.addEventListener('statechange',()=>{if(installing.state==='activated'){clearTimeout(timer);resolve();}else if(installing.state==='redundant'){clearTimeout(timer);reject(Error('No se ha podido actualizar la aplicación.'));}});});
