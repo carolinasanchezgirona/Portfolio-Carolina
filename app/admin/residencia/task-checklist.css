@@ -10,3 +10,28 @@
 .res-task-list .res-task-date input{font-size:14px;padding:8px;min-width:0}.res-task-list li.is-done .res-task-check span{text-decoration:line-through;color:#536e78}
 .res-task-list small{color:#9b3f37;font-weight:600}
 .res-followup-status{font-weight:600}.res-followup-status.is-overdue{color:#9b3f37}
+
+/* Tasks: visible priorities, selectable cards and one-step completion. */
+.res-tasks-visual .res-task-top{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap}
+.res-tasks-visual h4{margin:0;font-size:17px}.res-task-top p{margin:6px 0;color:#536e78;font-size:14px}
+.res-tasks-visual .res-task-summary{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px;margin:18px 0}
+.res-tasks-visual .res-task-summary button{display:flex;flex-direction:column;gap:6px;align-items:flex-start;background:#fff;color:#173a5e;border:1px solid #c8dfe0;border-radius:12px;padding:12px;min-width:0;min-height:80px;text-align:left}
+.res-tasks-visual .res-task-summary strong{font-size:25px}.res-tasks-visual .res-task-summary span{font-size:12px}
+.res-tasks-visual .res-task-summary button[aria-pressed=true]{background:#eaf6fb;border:2px solid #173a5e;padding:11px}
+.res-tasks-visual form[hidden]{display:none!important}
+.res-tasks-visual form{padding:18px;border:1px solid #c8dfe0;border-radius:14px;background:#f5fafb;margin:16px 0}
+.res-tasks-visual .res-duty-options{grid-template-columns:repeat(2,minmax(0,1fr));max-height:none;overflow:visible;gap:8px}
+.res-tasks-visual .res-duty-options label{padding:12px;border:1px solid #c8dfe0;border-radius:10px;background:#fff;cursor:pointer;min-width:0}
+.res-tasks-visual .res-duty-options label.is-selected{background:#eaf6fb;border-color:#08a6a0}
+.res-tasks-visual .res-task-search{max-width:540px;margin:16px 0}
+.res-task-group{border:1px solid #dce7ed;border-left:4px solid #8aa4b5;border-radius:12px;margin:16px 0;background:#fff;padding:16px}
+.res-task-group.is-overdue{border-left-color:#c15148}.res-task-group.is-today{border-left-color:#08a6a0}.res-task-group.is-done{border-left-color:#8c4192}
+.res-task-group header{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}
+.res-task-group header p{font-size:12px;color:#536e78;margin:0}.res-task-group h4 span{font-size:12px;background:#eaf6fb;border-radius:20px;padding:3px 8px}
+.res-tasks-visual .res-task-check{cursor:pointer;font-weight:600}
+.res-tasks-visual input[type=checkbox]{width:22px;height:22px;accent-color:#08a6a0}
+.res-tasks-visual .res-task-list{margin-bottom:0}.res-tasks-visual .res-task-list li:last-child{border-bottom:0}
+.res-task-empty{padding:24px;background:#f5fafb;border-radius:12px;margin:16px 0}.res-task-empty p{font-size:14px}
+.res-tasks-visual :is(button,input):focus-visible{outline:3px solid #08a6a0;outline-offset:3px}
+.res-tasks-visual .res-task-refresh{font-size:12px;margin-top:8px}
+@media(max-width:650px){.res-tasks-visual .res-task-summary{grid-template-columns:repeat(3,minmax(0,1fr))}.res-tasks-visual .res-duty-options{grid-template-columns:1fr}.res-task-group{padding:12px}.res-tasks-visual form{padding:12px}}
