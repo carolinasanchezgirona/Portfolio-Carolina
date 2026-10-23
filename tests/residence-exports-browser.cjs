@@ -42,6 +42,10 @@ const {chromium}=require('playwright');
   await panel.getByRole('button',{name:'← Semana anterior',exact:true}).click();
   await panel.getByLabel('Volcado completo',{exact:true}).check();const full=await download('Descargar volcado completo en PDF','complete.pdf');
   assert.match(full,/DIARIO SOLO VOLCADO COMPLETO/);assert.match(full,/OBJETIVO FICTICIO Semana siguiente/);assert.match(full,/OBJETIVO FICTICIO Archivada/);assert.match(full,/ULTIMA TAREA PAGINADA/);assert(taskOffsets.includes(500));
+  await panel.getByLabel('Un residente',{exact:true}).check();await panel.getByLabel('Residente del volcado individual',{exact:true}).selectOption('ficticia-0');
+  const individual=await download('Descargar historial del residente en PDF','individual.pdf');assert.match(individual,/DIARIO SOLO VOLCADO COMPLETO/);assert.doesNotMatch(individual,/OBJETIVO FICTICIO Semana siguiente|OBJETIVO FICTICIO Archivada|ULTIMA TAREA PAGINADA|Campañas de valoración/);
+  await panel.getByLabel('Residente del volcado individual',{exact:true}).selectOption('ficticia-2');const archived=await download('Descargar historial del residente en PDF','archived.pdf');assert.match(archived,/OBJETIVO FICTICIO Archivada/);assert.doesNotMatch(archived,/DIARIO SOLO VOLCADO COMPLETO/);
+  await panel.getByLabel('Volcado completo',{exact:true}).check();
   failMaterials=true;await panel.getByRole('button',{name:'Descargar volcado completo en PDF',exact:true}).click();await panel.getByText(/No se ha completado la exportación/).waitFor();failMaterials=false;
   for(const width of [360,390,768,1440]){await page.setViewportSize({width,height:1000});assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),'Export overflow at '+width);}
   await page.setViewportSize({width:390,height:844});await page.screenshot({path:output+'/exports-mobile.png',fullPage:true});
@@ -51,11 +55,12 @@ const {chromium}=require('playwright');
   await page.getByRole('button',{name:'Registrar valoración de esta cita',exact:true}).click();
   await page.getByLabel('Síntesis e implicaciones para el PIAI',{exact:true}).fill('SÍNTESIS CLÍNICA FICTICIA');await page.getByRole('button',{name:'Guardar registro',exact:true}).click();
   await page.getByText('Valoración guardada y cita marcada como realizada.',{exact:true}).waitFor();assert.equal(campaign.data.slots[0].status,'done');assert.equal(residents[0].data.assessments[0].next,'2027-04-23');
+  const directDownload=page.waitForEvent('download');await page.getByRole('button',{name:'Descargar historial completo en PDF',exact:true}).click();const direct=await directDownload;await direct.saveAs(output+'/individual-direct.pdf');const directText=execFileSync('pdftotext',[output+'/individual-direct.pdf','-'],{encoding:'utf8'});assert.match(directText,/SÍNTESIS CLÍNICA FICTICIA/);assert.doesNotMatch(directText,/OBJETIVO FICTICIO Semana siguiente|Archivada/);
   await page.getByRole('navigation',{name:'Áreas clínicas del historial'}).getByRole('button',{name:'Diario',exact:true}).click();await page.getByRole('button',{name:'+ Nueva entrada',exact:true}).click();
   await page.getByLabel('Cognición',{exact:true}).check();await page.getByLabel('Entrada del diario *',{exact:true}).fill('Nota ficticia de coordinación');await page.getByLabel('Contabilizar como seguimiento mensual',{exact:true}).uncheck();
   await page.getByRole('button',{name:'Guardar registro',exact:true}).click();await page.getByText('Guardado correctamente.',{exact:true}).waitFor();assert.equal(residents[0].data.followups.at(-1).countForMonthly,'false');
   await nav.getByRole('button',{name:'Inicio',exact:true}).click();const summary=page.locator('#res-pending-goals .res-review-item').filter({hasText:'Esta semana'});await summary.getByLabel('Revisión PIAI de Esta semana',{exact:true}).fill('2026-10-30');await page.getByText('PIAI añadido a pendientes de revisión.',{exact:true}).waitFor();assert.equal(residents[0].data.profile.piaiReviewDate,'2026-10-30');
   await page.screenshot({path:output+'/home-mobile.png',fullPage:true});assert.deepEqual(errors,[]);
-  console.log('PASS: direct PDFs, weekly boundaries, full pagination, images, failed-source block, mobile layout, campaign completion, follow-up exclusion and PIAI dates');
+  console.log('PASS: direct PDFs, individual selector and record button, archived residents, weekly boundaries, full pagination, images, failed-source block, mobile layout, campaign completion, follow-up exclusion and PIAI dates');
  }catch(error){if(page){await page.screenshot({path:'/tmp/residence-export-failure.png',fullPage:true});require('node:fs').writeFileSync('/tmp/residence-export-failure.html',await page.content());}throw error;}finally{await browser.close();server.kill();}
 })().catch(e=>{console.error(e);process.exitCode=1;});

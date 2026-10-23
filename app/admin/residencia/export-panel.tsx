@@ -5,27 +5,41 @@ import {today} from './model';
 import {residenceApi as api} from './api';
 import {offlineStatus} from './offline-store';
 import {addDays} from './schedule-model';
-import {completeDocument,piaiReasons,weeklyPiaiDocument,weekRange} from './export-model';
+import {completeDocument,piaiReasons,residentDocument,weeklyPiaiDocument,weekRange} from './export-model';
 import type {ExportBundle} from './export-model';
 import './export-panel.css';
 
 async function allRows<T>(path:string,size=500):Promise<T[]>{
  let all:T[]=[];for(let offset=0;;offset+=size){const page=await api(path+'&limit='+size+'&offset='+offset);if(!Array.isArray(page))throw Error('La respuesta de exportación no es válida.');all=all.concat(page);if(page.length<size)return all;}
 }
-export default function ResidenceExports({residents,disabled=false}:{residents:Resident[];disabled?:boolean}){
+async function individualPdf(resident:Resident){
+ const [{downloadPdf},materials]=await Promise.all([import('./pdf-export'),allRows<ExportBundle['materials'][number]>('/rest/v1/residence_materials?select=*&order=created_at.desc,id.asc',100)]);
+ await downloadPdf(residentDocument(resident,materials,new Date().toISOString()));
+}
+export function ResidentPdfButton({resident,disabled=false}:{resident:Resident;disabled?:boolean}){
+ const [busy,setBusy]=useState(false),[message,setMessage]=useState('');
+ async function download(){if(busy||disabled)return;setBusy(true);setMessage('Preparando el historial…');try{await individualPdf(resident);setMessage('Historial generado. Revisa las descargas de tu dispositivo.');}catch(error){setMessage('No se ha completado la exportación. '+(error as Error).message);}finally{setBusy(false);}}
+ return <div className="res-no-print"><button type="button" disabled={busy||disabled||resident.revision===0} onClick={()=>void download()}>{busy?'Preparando historial…':'Descargar historial completo en PDF'}</button><p role="status" aria-live="polite">{message}</p></div>;
+}
+export default function ResidenceExports({residents,currentResident,disabled=false}:{residents:Resident[];currentResident?:Resident|null;disabled?:boolean}){
  const [open,setOpen]=useState(false),[mode,setMode]=useState('complete'),[date,setDate]=useState(today),[undated,setUndated]=useState(true);
+ const [singleId,setSingleId]=useState('');
  const [excluded,setExcluded]=useState<string[]>([]),[extra,setExtra]=useState<string[]>([]),[add,setAdd]=useState('');
  const [busy,setBusy]=useState(false),[message,setMessage]=useState('');
  const range=weekRange(date||today());
  const candidates=residents.filter(r=>r.status==='active'&&(piaiReasons(r,range.from,range.to,undated).length||extra.includes(r.id))).sort((a,b)=>(a.data.profile.name||a.code).localeCompare(b.data.profile.name||b.code,'es'));
  const selected=candidates.filter(r=>!excluded.includes(r.id));
+ const individual=residents.find(r=>r.id===(singleId||currentResident?.id));
  function reset(){setExcluded([]);setExtra([]);setMessage('');}
  async function download(){
   if(busy||disabled)return;setBusy(true);setMessage('Preparando el PDF…');
   try{
    const {downloadPdf}=await import('./pdf-export');
    const createdAt=new Date().toISOString();
-   if(mode==='weekly'){
+   if(mode==='resident'){
+    if(!individual)throw Error('Selecciona el residente cuyo historial quieres descargar.');
+    await individualPdf(individual);
+   }else if(mode==='weekly'){
     if(!selected.length)throw Error('Selecciona al menos un residente para el PIAI semanal.');
     await downloadPdf(weeklyPiaiDocument(selected,range.from,range.to,createdAt));
    }else{
@@ -45,8 +59,8 @@ export default function ResidenceExports({residents,disabled=false}:{residents:R
   <button type="button" aria-expanded={open} disabled={busy} onClick={()=>setOpen(v=>!v)}>Exportar PDF</button>
   {open&&<div className="res-export-panel">
    <h2>Exportar información</h2>
-   <fieldset disabled={busy||disabled}><legend>Contenido del documento</legend><div className="res-export-modes"><label><input type="radio" name="res-export-mode" checked={mode==='complete'} onChange={()=>{setMode('complete');setMessage('');}}/>Volcado completo</label><label><input type="radio" name="res-export-mode" checked={mode==='weekly'} onChange={()=>{setMode('weekly');setMessage('');}}/>Solo PIAI de la semana</label></div>
-   {mode==='complete'?<><p>Todos los residentes ({residents.length}), incluidos archivados y exitus: ficha, valoraciones y respuestas, diario, PIAI, informes, entrevistas, actividades, incidencias y documentación registrada.</p><p>Necesita conexión para comprobar todos los apartados. También incluye horario, campañas, tareas y biblioteca de materiales con sus soluciones. Las referencias a documentos externos se conservan; los archivos externos no se incorporan.</p></>:<>
+   <fieldset disabled={busy||disabled}><legend>Contenido del documento</legend><div className="res-export-modes"><label><input type="radio" name="res-export-mode" checked={mode==='complete'} onChange={()=>{setMode('complete');setMessage('');}}/>Volcado completo</label><label><input type="radio" name="res-export-mode" checked={mode==='resident'} onChange={()=>{setMode('resident');if(currentResident)setSingleId(currentResident.id);setMessage('');}}/>Un residente</label><label><input type="radio" name="res-export-mode" checked={mode==='weekly'} onChange={()=>{setMode('weekly');setMessage('');}}/>Solo PIAI de la semana</label></div>
+   {mode==='resident'?<><label>Residente del volcado individual<select aria-label="Residente del volcado individual" value={individual?.id||''} onChange={e=>setSingleId(e.target.value)}><option value="">Selecciona un residente…</option>{[...residents].sort((a,b)=>(a.data.profile.name||a.code).localeCompare(b.data.profile.name||b.code,'es')).map(r=><option key={r.id} value={r.id}>{r.data.profile.name||r.code} · {r.code} · {r.center}{r.status==='archived'?' · Archivado':r.status==='exitus'?' · Exitus':''}</option>)}</select></label><p>Ficha e historial completo de la persona seleccionada: valoraciones, respuestas e imágenes, seguimientos, PIAI, informes, entrevistas, actividades, incidencias y documentación registrada. Incluye sus materiales vinculados y sus soluciones.</p>{individual&&<p><strong>{individual.data.profile.name||individual.code}</strong> · {individual.code} · {individual.center}</p>}</>:mode==='complete'?<><p>Todos los residentes ({residents.length}), incluidos archivados y exitus: ficha, valoraciones y respuestas, diario, PIAI, informes, entrevistas, actividades, incidencias y documentación registrada.</p><p>Necesita conexión para comprobar todos los apartados. También incluye horario, campañas, tareas y biblioteca de materiales con sus soluciones. Las referencias a documentos externos se conservan; los archivos externos no se incorporan.</p></>:<>
     <div className="res-toolbar"><button type="button" onClick={()=>{setDate(addDays(range.from,-7));reset();}}>← Semana anterior</button><label>Semana de los PIAI<input type="date" required value={date} onChange={e=>{setDate(e.target.value);reset();}}/></label><button type="button" onClick={()=>{setDate(addDays(range.from,7));reset();}}>Semana siguiente →</button></div>
     <p>Del {range.from} al {range.to} (lunes a domingo). Se incluyen revisiones de objetivos y reuniones PIAI previstas o registradas esa semana.</p>
     <label className="res-check"><input type="checkbox" checked={undated} onChange={e=>{setUndated(e.target.checked);setExcluded([]);}}/>Incluir PIAI pendientes sin fecha asignada</label>
@@ -55,7 +69,7 @@ export default function ResidenceExports({residents,disabled=false}:{residents:R
     <ul className="res-export-residents">{candidates.map(r=><li key={r.id}><label><input type="checkbox" checked={!excluded.includes(r.id)} onChange={e=>setExcluded(old=>e.target.checked?old.filter(id=>id!==r.id):[...old,r.id])}/><span><strong>{r.data.profile.name||r.code}</strong><small>{r.code} · {r.center}</small><small>{piaiReasons(r,range.from,range.to,undated).join(' · ')||'Añadido manualmente'}</small></span></label></li>)}</ul>
     {!candidates.length&&<p>No hay PIAI previstos para esta semana. Puedes añadir residentes al documento.</p>}
    </>}
-   <button type="button" disabled={!residents.length||(mode==='weekly'&&(!date||!selected.length))} onClick={()=>void download()}>Descargar {mode==='weekly'?'PIAI semanal':'volcado completo'} en PDF</button>
+   <button type="button" disabled={!residents.length||(mode==='resident'&&!individual)||(mode==='weekly'&&(!date||!selected.length))} onClick={()=>void download()}>Descargar {mode==='weekly'?'PIAI semanal':mode==='resident'?'historial del residente':'volcado completo'} en PDF</button>
    </fieldset>
    {disabled&&<p role="status">Guarda o cierra los cambios en edición antes de exportar.</p>}
    {offlineStatus().pending>0&&<p>Hay cambios guardados en este dispositivo pendientes de sincronización. Se incluyen en el contenido disponible.</p>}

@@ -26,7 +26,7 @@ import CareReportEditor,{ReportPreview} from './care-report';
 import CareDiary,{DiaryEditor,DiaryBody} from './care-diary';
 import {entryTopics} from './care-documentation';
 import ResidenceOverview from './overview';
-import ResidenceExports from './export-panel';
+import ResidenceExports,{ResidentPdfButton} from './export-panel';
 import ResidentSummary from './resident-summary';
 import {completeAssessmentAppointments} from './assessment-completion';
 import MaterialFactory from './material-factory';
@@ -81,7 +81,7 @@ function ResidenceContent(){
  <div className="res-main-content">
  <p role="status" className="res-message">{message}</p>
  {!ready?<a href="/admin/clinica/acceso/?next=/admin/residencia/">Iniciar sesión</a>:<>
- <ResidenceExports residents={rows} disabled={busy||dirty||!!entry||materialDirty||scheduleDirty}/>
+ <ResidenceExports residents={rows} currentResident={resident} disabled={busy||dirty||!!entry||materialDirty||scheduleDirty}/>
  {view==='home'&&<ResidenceOverview onSetPiaiReview={setPiaiReview} residents={rows} onDirectory={()=>navigate('residents')} onSchedule={()=>navigate('schedule')} onOpen={open}/> }
  {view==='schedule'&&<ResidenceOrganization residents={rows} onDirty={setScheduleDirty} onAssessment={(id,date)=>{const r=rows.find(r=>r.id===id);if(r)open(r,'assessments',{...newEntry('assessments'),date,next:sixMonths(date)});}} onResident={id=>{const r=rows.find(r=>r.id===id);if(r)open(r);}}/>}
  {view==='stimulation'&&<MaterialFactory residents={rows} active residentFilter={materialResident} onDirty={setMaterialDirty}/>}
@@ -91,6 +91,7 @@ function ResidenceContent(){
  {view==='residents'&&<div className={resident?'res-detail':'res-directory'}>{!resident&&<aside className="res-no-print"><div className="res-heading"><h2>Residentes</h2><button disabled={busy} onClick={()=>open(blankResident())}>+ Nuevo residente</button></div><ResidentImport existing={rows} onImported={incoming=>setRows(old=>[...old.filter(r=>!incoming.some(n=>n.id===r.id)),...incoming].sort((a,b)=>a.code.localeCompare(b.code)))}/><label><input type="checkbox" checked={archived} onChange={e=>setArchived(e.target.checked)}/> Incluir archivados</label><label className="res-section-select">Seleccionar residente<select aria-label="Seleccionar residente" disabled={busy||!visible.length} value="" onChange={e=>{const selected=visible.find(r=>r.id===e.target.value);if(selected)open(selected);}}><option value="">Selecciona un residente…</option>{[...visible].sort((a,b)=>(a.data.profile.name||a.code).localeCompare(b.data.profile.name||b.code,'es')).map(r=><option key={r.id} value={r.id}>{r.data.profile.name||r.code} · {r.code} · {r.center}{r.status==='archived'?' · Archivado':r.status==='exitus'?' · Exitus':''}</option>)}</select></label>{!visible.length&&<p>No hay residentes con estos filtros.</p>}</aside>}
  {resident&&<section className="res-content">{!resident?<div className="res-empty"><h2>Historial del residente</h2><p>Busca un residente o crea su ficha. Aquí se reúnen su historia, valoraciones, entrevistas, actividades, seguimientos y PIAI.</p></div>:<><div className="res-heading"><div><button className="res-back-directory res-no-print" disabled={busy} onClick={()=>navigate('residents')}>← Volver a residentes</button><p className="res-kicker">HISTORIAL DE RESIDENCIA</p><h2>{resident.data.profile.name||resident.code||'Nuevo residente'}</h2><p>{resident.code} · {resident.center||'Centro pendiente'} {resident.updated_at?'· Guardado: '+new Date(resident.updated_at).toLocaleString('es-ES'):''}</p></div></div>
  <ResidentSummary resident={resident}/>
+ <ResidentPdfButton resident={resident} disabled={busy||dirty||!!entry}/>
  <button className="res-no-print" type="button" disabled={busy} onClick={()=>{if(!canLeave())return;setMaterialResident(resident.id);setView('stimulation');setEntry(null);setDirty(false);setResident(null);}}>Materiales de estimulación vinculados</button>
  <nav className="res-clinical-shortcuts res-no-print" aria-label="Áreas clínicas del historial">{primaryTabs.map(([key,label])=><button key={key} type="button" disabled={busy} aria-pressed={tab===key||(key==='scales'&&tab==='assessments')} onClick={()=>switchTab(key)}>{label}</button>)}</nav>
  <details className="res-secondary-records res-no-print" open={['interviews','attendance','incidents','meetings','documents'].includes(tab)||undefined}><summary>Entrevistas, actividades y documentación</summary><label className="res-section-select">Otros registros del historial<select aria-label="Apartado del historial" disabled={busy} value={['interviews','attendance','incidents','meetings','documents'].includes(tab)?tab:''} onChange={e=>switchTab(e.target.value as Kind)}><option value="" disabled>Selecciona un apartado…</option>{sections.filter(s=>['interviews','attendance','incidents','meetings','documents'].includes(s.key)).map(s=><option value={s.key} key={s.key}>{s.title}</option>)}</select></label></details>

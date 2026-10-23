@@ -5,7 +5,7 @@ import {existsSync,readFileSync,writeFileSync,mkdirSync} from 'node:fs';
 import {fileURLToPath} from 'node:url';
 registerHooks({resolve(specifier,context,next){if(specifier.startsWith('.')&&context.parentURL?.includes('/app/admin/residencia/')&&!/\.[a-z]+$/.test(specifier)){const url=new URL(specifier+'.ts',context.parentURL);if(existsSync(fileURLToPath(url)))return next(url.href,context);}return next(specifier,context);}});
 const {emptyData}=await import('../app/admin/residencia/model.ts');
-const {weekRange,piaiReasons,completeDocument,weeklyPiaiDocument}=await import('../app/admin/residencia/export-model.ts');
+const {weekRange,piaiReasons,completeDocument,residentDocument,weeklyPiaiDocument}=await import('../app/admin/residencia/export-model.ts');
 const {completeAssessmentAppointments}=await import('../app/admin/residencia/assessment-completion.ts');
 const {monthlyFollowups}=await import('../app/admin/residencia/followup-planning.ts');
 const resident=(id='a')=>({id,code:'FICTICIO-'+id,center:'Centro ficticio',status:'active',revision:1,data:{...emptyData(),profile:{name:'Persona ficticia '+id}}});
@@ -41,6 +41,17 @@ test('complete dump includes every registry, custom profile fields, JSON respons
 test('excluded diary entries never satisfy the monthly target; mixed same-day notes still count once',()=>{
  const r=resident();r.data.followups=[{id:'1',date:'2026-10-01',countForMonthly:'false'},{id:'2',date:'2026-10-02'},{id:'3',date:'2026-10-02',countForMonthly:'true'}];
  assert.equal(monthlyFollowups(r,'2026-10-23').completed,1);
+});
+test('individual dump contains all of the selected history and only their material links, including archived residents',()=>{
+ const r=resident('individual');r.status='archived';r.data.followups=[{id:'note',date:'2026-10-23',observation:'DIARIO INDIVIDUAL'}];
+ r.data.reports=[{id:'report',date:'2026-10-23',body:'INFORME INDIVIDUAL'}];
+ const material=(id,links)=>({id,title:id,created_at:stamp,data:{config:{language:'es'},reviewed:true,exercises:[{title:'Ficha compartida',instruction:'Consigna',body:'Contenido',answer:'Solución',domain:'Atención'}]},links});
+ const shared=material('MATERIAL VINCULADO',[{id:r.id,date:'2026-10-23'},{id:'OTRO RESIDENTE EXCLUIDO',date:'2026-10-22'}]);
+ const other=material('MATERIAL AJENO EXCLUIDO',[{id:'other',date:'2026-10-23'}]);
+ const doc=residentDocument(r,[shared,other],stamp),text=doc.blocks.map(b=>b.text).join('\n');
+ assert.match(text,/DIARIO INDIVIDUAL/);assert.match(text,/INFORME INDIVIDUAL/);assert.match(text,/Archivado/);assert.match(text,/MATERIAL VINCULADO/);assert.match(text,/Solución/);
+ assert.doesNotMatch(text,/EXCLUIDO|Organización de la residencia|Tareas profesionales|Campañas de valoración/);assert.match(doc.filename,/Historial_Residente_FICTICIO-individual/);
+ assert.equal(shared.links.length,2);
 });
 test('a saved complete review updates only matching planned appointments; partial tests and repeated saves are idempotent',async()=>{
  const before=resident(),after=structuredClone(before);after.data.assessments=[{id:'review',date:'2026-10-23',conclusion:'Síntesis ficticia'}];
