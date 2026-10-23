@@ -9,7 +9,7 @@ function isoDate(year:number,month:number,day:number){return new Date(Date.UTC(y
 export function monthlyFollowups(resident:Resident,now:string){
  const month=now.slice(0,7),year=Number(now.slice(0,4)),monthIndex=Number(now.slice(5,7))-1;
  const admission=resident.data.profile.admission||'';
- const entries=resident.data.followups.filter(e=>validDate(e.date||'')&&e.date<=now&&(!validDate(admission)||e.date>=admission));
+ const entries=resident.data.followups.filter(e=>e.countForMonthly!=='false'&&validDate(e.date||'')&&e.date<=now&&(!validDate(admission)||e.date>=admission));
  // Multiple notes on a single day describe one follow-up, rather than several visits.
  const dates=[...new Set(entries.filter(e=>e.date.startsWith(month+'-')).map(e=>e.date))].sort();
  const completed=dates.length,remaining=Math.max(0,2-completed);

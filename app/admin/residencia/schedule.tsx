@@ -7,11 +7,12 @@ import {addDays,overlaps,ScheduleEvent,ScheduleType,timeLabel,validSchedule,week
 // Stable reference dates store the recurring timetable without generating weekly copies.
 const timetableMonday='2026-10-19';
 const slots=Array.from({length:20},(_,i)=>540+i*30);
-export default function ResidenceSchedule({residents,onResident}:{residents:Resident[];onResident:(id:string)=>void}){
+export default function ResidenceSchedule({residents,onResident,onDirty}:{residents:Resident[];onResident:(id:string)=>void;onDirty?:(dirty:boolean)=>void}){
  const [week]=useState(timetableMonday),[events,setEvents]=useState<ScheduleEvent[]>([]),[types,setTypes]=useState<ScheduleType[]>([]);
  const [draft,setDraft]=useState<ScheduleEvent|null>(null),[busy,setBusy]=useState(false),[loading,setLoading]=useState(true),[message,setMessage]=useState('');
  const [center,setCenter]=useState(''),[display,setDisplay]=useState('week'),[day,setDay]=useState(0),[typeDraft,setTypeDraft]=useState<ScheduleType|null>(null);
  const [retry,setRetry]=useState(0),[dirty,setDirty]=useState(false),[typeDirty,setTypeDirty]=useState(false);
+ useEffect(()=>{onDirty?.(dirty||typeDirty);return()=>onDirty?.(false);},[dirty,typeDirty,onDirty]);
  useEffect(()=>{if(matchMedia('(max-width:700px)').matches){setDisplay('day');setDay(Math.min(5,(new Date().getDay()+6)%7));}},[]);
  useEffect(()=>{const refresh=()=>{if(!dirty&&!typeDirty&&!draft&&!typeDraft)setRetry(n=>n+1);};window.addEventListener(syncedEvent,refresh);return()=>window.removeEventListener(syncedEvent,refresh);},[dirty,typeDirty,draft,typeDraft]);
  useEffect(()=>{const leave=(e:BeforeUnloadEvent)=>{if(dirty||typeDirty){e.preventDefault();e.returnValue='';}};window.addEventListener('beforeunload',leave);return()=>window.removeEventListener('beforeunload',leave);},[dirty,typeDirty]);
