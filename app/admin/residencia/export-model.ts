@@ -1,5 +1,6 @@
 import type {Entry, Kind, Resident} from './model';
 import {sections} from './model';
+import {behaviorFields,goalLabel,resolveSource} from './clinical-workflow';
 import {profileGroups} from './profile-fields';
 import {reportSections} from './care-documentation';
 import {testFields} from './test-fields';
@@ -26,6 +27,8 @@ export function piaiReasons(r:Resident,from:string,to:string,includeUndated=true
  return [...new Set(reasons)];
 }
 const extraLabels:Record<string,string>={
+ ...Object.fromEntries(behaviorFields),behaviorRecord:'Registro conductual estructurado',goalId:'Objetivo PIAI vinculado',goalReview:'Valoración del objetivo',goalEvidence:'Indicador observado / evidencia del resultado',sourceRef:'Registro de origen',sourceLabel:'Referencia del registro de origen',
+ geriatricFormat:'Modalidad de registro de la prueba',geriCategory:'Categoría de Katz',resultSummary:'Resultado descriptivo',informant:'Informante',sourceUrl:'Fuente del protocolo',protocolReference:'Referencia del protocolo aplicado',
  code:'Código',center:'Centro',status:'Estado',createdAt:'Fecha y hora de creación',updatedAt:'Última edición',
  piaiReviewPending:'PIAI pendiente de revisión',piaiReviewDate:'Fecha de revisión del PIAI',
  topics:'Temáticas',source:'Fuente',executionNotes:'Observaciones de ejecución',validity:'Estado de aplicación',
@@ -47,7 +50,7 @@ function readable(value:unknown):string{
 }
 function fields(blocks:ExportBlock[],record:Record<string,unknown>,context:Record<string,string>={}){
  for(const [key,value] of Object.entries(record)){
-  if(['id','revision','format'].includes(key)||value===undefined||value===null||value==='')continue;
+  if((key.startsWith('geri_')&&record.answers)||['id','revision','format'].includes(key)||value===undefined||value===null||value==='')continue;
   if(typeof value==='string'&&/^data:image\/(png|jpeg|jpg);base64,/.test(value))blocks.push({type:'image',text:context[key]||fieldLabel(key),value});
   else blocks.push({type:'text',text:(context[key]||fieldLabel(key))+': '+readable(value)});
  }
@@ -55,7 +58,7 @@ function fields(blocks:ExportBlock[],record:Record<string,unknown>,context:Recor
 function records(blocks:ExportBlock[],r:Resident,kind:Kind,entries=r.data[kind]){
  blocks.push({type:'heading',text:sections.find(s=>s.key===kind)!.title+' ('+entries.length+')'});
  if(!entries.length)blocks.push({type:'text',text:'Sin registros.'});
- for(const e of [...entries].sort((a,b)=>(a.date||'').localeCompare(b.date||''))){blocks.push({type:'heading',text:e.date||'Sin fecha'});fields(blocks,e,{...Object.fromEntries(sections.find(s=>s.key===kind)!.fields.map(([k,label])=>[k,label.split('|')[0]])),...(kind==='scales'?{...Object.fromEntries(testFields(e).map(([k,label])=>[k,label.split('|')[0]])),...mmseLabels}:{}),...(kind==='reports'?Object.fromEntries(reportSections):{})});}
+ for(const e of [...entries].sort((a,b)=>(a.date||'').localeCompare(b.date||''))){blocks.push({type:'heading',text:e.date||'Sin fecha'});fields(blocks,{...e,...(e.goalId?{goalId:goalLabel(r,e.goalId)}:{}),...(e.sourceRef?{sourceRef:resolveSource(r,e.sourceRef)?.label||e.sourceLabel||'Origen no disponible'}:{})},{...Object.fromEntries(sections.find(s=>s.key===kind)!.fields.map(([k,label])=>[k,label.split('|')[0]])),...(kind==='scales'?{...Object.fromEntries(testFields(e).map(([k,label])=>[k,label.split('|')[0]])),...mmseLabels}:{}),...(kind==='reports'?Object.fromEntries(reportSections):{})});}
 }
 function residentTitle(blocks:ExportBlock[],r:Resident){blocks.push({type:'title',text:r.data.profile.name||r.code,page:true},{type:'text',text:r.code+' · '+r.center+' · '+({active:'Activo',archived:'Archivado',exitus:'Exitus'}[r.status]||r.status)});}
 function clinicalBlocks(blocks:ExportBlock[],r:Resident){residentTitle(blocks,r);if(r.updated_at)blocks.push({type:'text',text:'Última actualización de la ficha: '+r.updated_at});blocks.push({type:'heading',text:'Historia clínica y ficha'});fields(blocks,r.data.profile,profileLabels);for(const f of r.data.customFields||[])blocks.push({type:'text',text:(f.label||'Campo personalizado')+': '+f.value});for(const s of sections)records(blocks,r,s.key);}
@@ -84,8 +87,10 @@ export function residentDocument(resident:Resident,materials:Material[],createdA
 }
 export function weeklyPiaiDocument(residents:Resident[],from:string,to:string,createdAt:string):ExportDocument{
  const blocks:ExportBlock[]=[{type:'text',text:'Semana del '+from+' al '+to+' · '+residents.length+' residentes. Documento de trabajo con la información PIAI guardada; conserva el estado de cada objetivo.'}];
- for(const r of residents){residentTitle(blocks,r);for(const reason of piaiReasons(r,from,to))blocks.push({type:'text',text:reason});blocks.push({type:'heading',text:'Síntesis para el PIAI'});const p=r.data.profile;fields(blocks,Object.fromEntries(['preferences','cognitiveProfile','emotionalState','behavior','dailyLiving','communication','sensory','carePlan','interventionPlan','familyNeeds'].filter(k=>p[k]).map(k=>[k,p[k]])),profileLabels);const assessment=latest(r.data.assessments.filter(e=>e.date<=to));if(assessment)fields(blocks,{fechaValoracion:assessment.date,sintesis:assessment.conclusion},{fechaValoracion:'Fecha de la última valoración',sintesis:'Síntesis clínica registrada'});
+ for(const r of residents){residentTitle(blocks,r);for(const reason of piaiReasons(r,from,to))blocks.push({type:'text',text:reason});blocks.push({type:'heading',text:'Síntesis para el PIAI'});const p=r.data.profile;fields(blocks,Object.fromEntries(['clinicalBaseline','baselineDate','baselineSource','premorbidPersonality','preferences','cognitiveProfile','emotionalState','behavior','dailyLiving','communication','sensory','carePlan','interventionPlan','familyNeeds'].filter(k=>p[k]).map(k=>[k,p[k]])),profileLabels);const assessment=latest(r.data.assessments.filter(e=>e.date<=to));if(assessment)fields(blocks,{fechaValoracion:assessment.date,sintesis:assessment.conclusion},{fechaValoracion:'Fecha de la última valoración',sintesis:'Síntesis clínica registrada'});
   records(blocks,r,'goals',r.data.goals.filter(e=>(!e.date||e.date<=to)&&(activeGoal(e)||within(e.next,from,to)||within(e.date,from,to)||within((e.updatedAt||e.createdAt||'').slice(0,10),from,to))));
+  const goalIds=new Set(r.data.goals.filter(e=>(!e.date||e.date<=to)&&(activeGoal(e)||within(e.next,from,to)||within(e.date,from,to)||within((e.updatedAt||e.createdAt||'').slice(0,10),from,to))).map(e=>e.id));
+  records(blocks,r,'followups',r.data.followups.filter(e=>!!e.goalId&&goalIds.has(e.goalId)&&within(e.date,from,to)));
   records(blocks,r,'meetings',r.data.meetings.filter(e=>within(e.date,from,to)||within(e.next,from,to)));
  }
  return {title:'PIAI de la semana',subtitle:from+' - '+to,filename:'PIAI_Semana_'+from+'.pdf',blocks,createdAt};

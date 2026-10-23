@@ -168,3 +168,18 @@
 .res-offline-body{padding:14px 16px;margin:4px 0 12px;border:1px solid #c9dce6;border-radius:10px;background:#fff;color:#173a5e}
 .res-offline-indicator{font-weight:600}
 @media(max-width:650px){.res-offline{padding:0;margin:8px 14px}.res-offline-body{padding:12px}}
+
+/* Clinical reference and care-plan continuity. */
+.res-clinical-summary { margin-block: 1rem; }
+.res-clinical-cards { display: grid; grid-template-columns: repeat(auto-fit,minmax(min(100%,280px),1fr)); gap: 1rem; }
+.res-clinical-cards article { min-width: 0; padding: 1rem; border: 1px solid #d6e2eb; border-radius: 14px; background: #fff; }
+.res-clinical-cards p,.res-goal-progress p,.res-summary p { white-space: pre-wrap; overflow-wrap: anywhere; }
+.res-clinical-cards ul,.res-goal-progress ul { padding-left: 1.2rem; }
+.res-goal-progress { margin-top: 1rem; padding-top: 1rem; border-top: 1px solid #d6e2eb; }
+.res-goal-source { grid-column: 1 / -1; }
+.res-behavior-fields { margin-block: 1rem; padding: 1rem; border: 1px solid #d6e2eb; border-radius: 12px; }
+.res-geriatric-form { min-width: 0; }
+.res-geriatric-items { display: grid; grid-template-columns: repeat(auto-fit,minmax(min(100%,300px),1fr)); gap: 1rem; margin-block: 1rem; }
+.res-geriatric-items label { min-width: 0; }
+.res-geriatric-items select { width: 100%; min-width: 0; white-space: normal; }
+.res-geriatric-answers { overflow-wrap: anywhere; }
