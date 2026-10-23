@@ -49,7 +49,7 @@ export default function ResidenceOverview({residents, onDirectory, onSchedule, o
  const monthLabel=new Date(now+'T12:00:00Z').toLocaleDateString('es-ES',{month:'long',year:'numeric',timeZone:'Europe/Madrid'});
   return <section className="res-overview" aria-labelledby="res-overview-title">
     <div className="res-heading">
-      <div><h2 id="res-overview-title">Tu jornada en residencia</h2><p className="res-help">Qué toca hoy, qué está pendiente y dónde continuar.</p></div>
+      <div><h2 id="res-overview-title">Bienvenida, Carolina</h2><p className="res-help">Qué toca hoy, qué está pendiente y dónde continuar.</p></div>
       <button type="button" onClick={onSchedule}>Ver horario</button>
     </div>
     <div className="res-dashboard-summary">
