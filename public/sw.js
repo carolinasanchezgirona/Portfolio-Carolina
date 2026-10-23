@@ -4,7 +4,7 @@ self.addEventListener("activate", (event) => event.waitUntil(self.clients.claim(
 const RESIDENCE_CACHE = 'residence-shell-v1';
 function shellUrl(url) {
  return url.origin === self.location.origin && (url.pathname.startsWith('/_next/static/') ||
-  ['/admin/residencia/', '/admin/residencia/index.html'].includes(url.pathname) ||
+  ['/admin/residencia/', '/admin/residencia/index.html', '/fonts/residence-sans.ttf'].includes(url.pathname) ||
   /^\/(?:admin-shell\.js|clinic-pwa-icon-\d+\.png|clinic-manifest\.webmanifest)$/.test(url.pathname));
 }
 self.addEventListener('message', event => {
