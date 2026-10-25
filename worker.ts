@@ -1373,6 +1373,41 @@ async function clinicalStructureRequest(request: Request, env: Env): Promise<Res
 
 
 /** Private diagnostic support. Suggestions are provisional and require professional review before saving. */
+async function clinicalTreatmentSuggestionRequest(request: Request, env: Env): Promise<Response> {
+  if (request.method !== "POST") return editorialJson({ error: "Método no permitido." }, 405);
+  if (!await verifyEditorialOwner(request)) return editorialJson({ error: "Sesión no autorizada." }, 401);
+  if (!env.OPENAI_API_KEY) return editorialJson({ error: "IA clínica no configurada." }, 503);
+  if (Number(request.headers.get("content-length") || 0) > 65000) return editorialJson({ error: "Solicitud demasiado extensa." }, 413);
+  let data: Record<string, unknown>;
+  try { data = await request.json() as Record<string, unknown>; }
+  catch { return editorialJson({ error: "Datos no válidos." }, 400); }
+  const raw = data.profile && typeof data.profile === "object" && !Array.isArray(data.profile) ? data.profile as Record<string, unknown> : {};
+  const allowed = ["clinical_summary","medication_notes","reason_for_consultation","current_problem_history","psychological_psychiatric_history","medical_history","family_history","personal_family_context","social_context","academic_work_context","significant_life_events","clinical_examination","psychometric_assessment","neuropsychological_assessment","diagnoses","diagnostic_hypotheses","differential_diagnosis","current_clinical_problems","predisposing_factors","precipitating_factors","perpetuating_factors","protective_factors","integrative_formulation","clinical_evolution_summary","risk_safety","clinical_observations","therapeutic_goals","treatment_plan"];
+  const profile = Object.fromEntries(allowed.map(k => [k, editorialText(raw[k], 4500)]).filter((entry) => Boolean(entry[1])));
+  if (containsDirectPatientIdentifiers(JSON.stringify(profile))) return editorialJson({ error: CLINICAL_IDENTIFIERS_ERROR }, 422);
+  if (Object.values(profile).join(" ").length < 80) return editorialJson({ error: "Se necesita más información clínica." }, 400);
+  const instructions = [
+    "Eres un asistente de planificación psicoterapéutica y neuropsicológica para una profesional sanitaria de España.",
+    "Responde en español profesional. Usa solamente información proporcionada, sin inventar síntomas, evaluaciones, riesgos, criterios diagnósticos ni evidencia.",
+    "Proporciona propuestas provisionales, NO decisiones ni indicaciones directas al paciente. La profesional valida cada elemento.",
+    "Diferencia claramente hallazgos de hipótesis. No supongas que un diagnóstico previo está confirmado.",
+    "Prioriza seguridad y evaluación adicional cuando existan signos de riesgo autolesivo, abuso de sustancias, privación de sueño, violencia, manía, psicosis o descompensación médica; no propongas ejercicios de exposición o trauma sin valoración de estabilidad.",
+    "Objetivos individualizados y medibles, con indicadores de evolución, prioridad y horizonte orientativo solo si procede.",
+    "Intervenciones basadas en evidencia (TCC, ACT, DBT, terapia interpersonal, rehabilitación neuropsicológica, psicoeducación) cuando sean apropiadas; explica por qué encajan, secuencia, precauciones y seguimiento. No indiques dosis ni prescribas fármacos.",
+    "Si faltan datos, incluye preguntas y objetivos iniciales de evaluación en lugar de inventar un plan cerrado.",
+    "Devuelve EXCLUSIVAMENTE JSON válido con la forma {summary:string, objectives:[{objective:string,rationale:string,indicator:string,priority:string}], interventions:[{approach:string,actions:string,rationale:string,precautions:string}], missing_information:string[], safety_considerations:string[], limitations:string[]}.",
+    "Máximo 6 objetivos y 6 intervenciones. Cada campo ha de ser breve y concreto."
+  ].join(" ");
+  try {
+    const response = await fetch("https://api.openai.com/v1/responses", { method:"POST", headers:{ Authorization:"Bearer " + env.OPENAI_API_KEY, "Content-Type":"application/json" }, body: JSON.stringify({ model:env.OPENAI_CLINICAL_MODEL || "gpt-4.1-mini", store:false, instructions, input:JSON.stringify(profile) }) });
+    if (!response.ok) return editorialJson({ error:"No se ha podido generar la propuesta de intervención." }, 502);
+    const body = await response.json() as Record<string, unknown>;
+    const result = parseJsonObjectText(openAIResponseText(body));
+    if (!Array.isArray(result.objectives) || !Array.isArray(result.interventions)) return editorialJson({ error:"Respuesta incompleta del asistente." }, 502);
+    return editorialJson({ proposal:result, generatedAt:new Date().toISOString() });
+  } catch { return editorialJson({ error:"Error durante la generación de sugerencias." }, 502); }
+}
+
 async function clinicalDiagnosticSuggestionRequest(request: Request, env: Env): Promise<Response> {
   if (request.method !== "POST") return editorialJson({ error: "Método no permitido." }, 405);
   if (!await verifyEditorialOwner(request)) return editorialJson({ error: "Sesión no autorizada." }, 401);
@@ -2216,6 +2251,7 @@ export default {
     if (url.pathname === "/api/residence/material-generate" || url.pathname === "/api/residence/material-generate/") return residenceMaterialAi(request, env, verifyEditorialOwner);
     if (url.pathname === "/api/residence/clinical-analysis" || url.pathname === "/api/residence/clinical-analysis/") return residenceClinicalAnalysis(request, env);
     if (url.pathname === "/api/clinical/structure" || url.pathname === "/api/clinical/structure/") return clinicalStructureRequest(request, env);
+    if (url.pathname === "/api/clinical/treatment-suggestion" || url.pathname === "/api/clinical/treatment-suggestion/") return clinicalTreatmentSuggestionRequest(request, env);
     if (url.pathname === "/api/clinical/diagnostic-suggestion" || url.pathname === "/api/clinical/diagnostic-suggestion/") return clinicalDiagnosticSuggestionRequest(request, env);
     if (url.pathname === "/api/clinical/visual-image" || url.pathname === "/api/clinical/visual-image/") return clinicalNeuroVisualImageRequest(request, env);
     if (url.pathname === "/api/clinical/material-draft" || url.pathname === "/api/clinical/material-draft/") return clinicalMaterialDraftRequest(request, env);
