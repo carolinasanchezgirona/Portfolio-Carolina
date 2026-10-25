@@ -1,7 +1,7 @@
 "use client";
 import {useEffect,useRef,useState} from "react";
 import {schema,choices,normalize,detectHeader,detectMapping,mappedRows,errors,rowYear,sourceKey,cellValue,duplicateIds,type BookKind,type BookData,type BookRow} from "./tax-book-utils";
-import {parseCSV} from "./import-utils";
+import {parseCSV,dateISO} from "./import-utils";
 import {readXlsxLocally} from "./xlsx-reader";
 import {makeWorkbook} from "./tax-book-xlsx";
 import {workspaceRows,emptyLedger,groups,amount,rowDate,party,partyId,ref,yearOf,missing,type WorkspaceRow,type Ledger} from "./accounting-workspace";
@@ -85,7 +85,12 @@ export default function TaxBooks(){
  const display=sourceRows.filter(r=>(view==="registers"||r.book===book)&&
   (filter==="all"||filter==="duplicates"?(filter==="all"||duplicates.has(r.id)||duplicateWarnings.has(r.id)):missing(r,filter,mode))&&
   (!query||normalize([party(r),partyId(r),ref(r),r.source_name].join(" ")).includes(normalize(query))))
-  .sort((a,b)=>isPreview?Number(errors(b.book,b.data,mode).length>0)-Number(errors(a.book,a.data,mode).length>0):0);
+  .sort((a,b)=>{
+   // Sort the displayed date chronologically, independently of database return order.
+   // Missing or invalid dates stay last; same-day references use natural numeric order.
+   const dateA=dateISO(rowDate(a))||"9999-12-31",dateB=dateISO(rowDate(b))||"9999-12-31";
+   return dateA.localeCompare(dateB)||ref(a).localeCompare(ref(b),"es",{numeric:true})||a.source_row-b.source_row;
+  });
  const pending=annual.filter(r=>errors(r.book,r.data,mode).length).length;
  async function save(){
   if(busy)return;setBusy(true);setMessage("");
