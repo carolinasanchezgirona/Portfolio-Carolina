@@ -1,1 +1,42 @@
 .clinic-patient-danger-action{margin-left:auto!important;color:#9a3412!important;border-color:#e8d15d!important;background:#fcf8e6!important}.clinic-message[data-danger="true"]{color:#9a3412!important}.clinic-duplicate-panel{margin:10px 0 14px;padding:12px;border:1px solid #e8d15d;border-radius:8px;background:#fcf8e6}.clinic-duplicate-heading strong{display:block;color:#7c2d12}.clinic-duplicate-heading p{margin:3px 0 10px;color:#536e78;font-size:.78rem}.clinic-duplicate-card{display:flex;justify-content:space-between;gap:10px;align-items:center;padding:9px 0;border-top:1px solid #e8d15d}.clinic-duplicate-card:first-of-type{border-top:0}.clinic-duplicate-card>div:first-child{display:grid;gap:2px}.clinic-duplicate-card span{font-size:.72rem;color:#536e78}.clinic-duplicate-actions{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}.clinic-consent-section{margin-top:10px}.clinic-consent-grid{display:grid;gap:8px}.clinic-consent-row{display:grid;grid-template-columns:minmax(150px,1fr) repeat(3,minmax(120px,.7fr)) minmax(150px,1fr) auto;gap:8px;align-items:end;padding:10px;border:1px solid #edf7f7;border-radius:8px;background:#fff}.clinic-consent-row>strong{align-self:center;color:#0e5c7c;font-size:.84rem}.clinic-consent-row label{display:grid;gap:4px;font-size:.68rem;color:#536e78}.clinic-consent-row input,.clinic-consent-row select{min-height:34px;padding:6px 8px;border:1px solid #c8dfe0;border-radius:7px;background:#fff;font:inherit}.clinic-audit-section{margin:18px 0;padding:14px;border-top:1px solid #edf7f7;border-bottom:1px solid #edf7f7}.clinic-audit-section .clinic-history article{display:grid;gap:2px;padding:8px 0;border-bottom:1px solid #f4f9f9}.clinic-audit-section .clinic-history article:last-child{border-bottom:0}.clinic-audit-section .clinic-history span{font-size:.72rem;color:#536e78}@media(max-width:980px){.clinic-consent-row{grid-template-columns:1fr 1fr}.clinic-consent-row>strong,.clinic-consent-notes{grid-column:1/-1}.clinic-duplicate-card{align-items:flex-start;flex-direction:column}.clinic-duplicate-actions{justify-content:flex-start}}
+
+/* Historia clínica: lectura directa y menor carga visual (2026-10-25). */
+.clinic-record-sections{gap:9px;margin:15px 0}
+.clinic-record-section summary{padding:11px 14px;gap:12px}
+.clinic-record-section summary span{font-size:1.05rem;font-weight:550}
+.clinic-record-section summary small{font-weight:400}
+.clinic-record-section-body{padding:12px 14px}
+.clinic-record-section-body.clinic-form-grid{gap:10px 12px}
+.clinic-record-section-body.clinic-form-grid label{
+  gap:5px;
+  font-size:.8rem;
+  font-weight:400;
+  line-height:1.4;
+  color:#486272;
+  min-width:0;
+}
+.clinic-record-section-body textarea{
+  field-sizing:content;
+  box-sizing:border-box;
+  height:auto;
+  min-height:60px!important;
+  max-height:none!important;
+  overflow-y:visible!important;
+  padding:9px 11px;
+  font-weight:400!important;
+  font-size:.9rem;
+  line-height:1.5;
+  color:#183d4c;
+  resize:vertical;
+}
+.clinic-record-section-body textarea::placeholder{font-weight:400;color:#8698a1}
+.clinic-record-section-body textarea:not(:placeholder-shown){background:#fff}
+.clinic-record-section-body .clinic-full textarea{min-height:60px!important}
+@media(min-width:1200px){
+  .clinic-record-section-body.clinic-form-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(max-width:620px){
+  .clinic-record-section-body.clinic-form-grid{grid-template-columns:minmax(0,1fr)}
+  .clinic-record-section-body{padding:10px 12px}
+  .clinic-record-section-body textarea{font-size:16px}
+}
