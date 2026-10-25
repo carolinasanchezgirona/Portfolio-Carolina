@@ -40,3 +40,17 @@
   .clinic-record-section-body{padding:10px 12px}
   .clinic-record-section-body textarea{font-size:16px}
 }
+
+
+.clinic-treatment-ai{padding:14px;border:1px solid #c8dfe0;border-radius:12px;background:#fff}
+.clinic-treatment-ai h4{margin:0 0 5px;font-size:1rem;font-weight:600;color:#173a5e}
+.clinic-treatment-ai>p{margin:0 0 12px;font-size:.82rem;font-weight:400;color:#536e78}
+.clinic-treatment-ai-status{display:inline-block;margin-left:10px;color:#536e78;font-size:.78rem;font-weight:400}
+#clinic-treatment-ai-results{display:grid;gap:12px;margin-top:15px;font-size:.85rem;font-weight:400}
+#clinic-treatment-ai-results[hidden]{display:none}
+#clinic-treatment-ai-results section{display:grid;gap:8px}
+#clinic-treatment-ai-results h5{margin:5px 0 1px;font-weight:600;color:#173a5e;font-size:.9rem}
+#clinic-treatment-ai-results article{padding:12px;border:1px solid #e2ecef;border-radius:9px;background:#fbfdfe}
+#clinic-treatment-ai-results article p{margin:0 0 5px;white-space:pre-wrap;font-weight:400;line-height:1.5}
+#clinic-treatment-ai-results article button{margin-top:8px}
+#clinic-treatment-ai-results ul{margin:0;padding-left:21px}
