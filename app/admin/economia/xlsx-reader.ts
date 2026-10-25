@@ -5,7 +5,7 @@
  */
 const MAX_FILE = 5_000_000;
 const MAX_XML = 7_000_000;
-const MAX_SHEETS = 8;
+const MAX_SHEETS = 32;
 const textDecoder = new TextDecoder("utf-8", {fatal:false});
 function u16(view:DataView,n:number){return view.getUint16(n,true);}
 function u32(view:DataView,n:number){return view.getUint32(n,true);}
@@ -66,6 +66,17 @@ export async function readXlsxLocally(file:File, maxRows=255):Promise<{name:stri
   const sheetPaths=Array.from(entries.keys()).filter(name=>/^xl\/worksheets\/sheet\d+\.xml$/.test(name))
     .sort((a,b)=>Number(a.match(/sheet(\d+)/)?.[1]||0)-Number(b.match(/sheet(\d+)/)?.[1]||0)).slice(0,MAX_SHEETS);
   if(!sheetPaths.length)throw Error("No se encuentran hojas de cálculo compatibles.");
+  const sheetNames=new Map<string,string>();
+  const workbookText=await fileText("xl/workbook.xml"),relationsText=await fileText("xl/_rels/workbook.xml.rels");
+  if(workbookText&&relationsText){
+    const relationships=byLocal(parseXml(relationsText).documentElement,"Relationship");
+    for(const sheet of byLocal(parseXml(workbookText).documentElement,"sheet")){
+      const id=sheet.getAttribute("r:id");
+      const target=relationships.find(r=>r.getAttribute("Id")===id)?.getAttribute("Target")||"";
+      const path=target.startsWith("/")?target.slice(1):"xl/"+target;
+      sheetNames.set(path,sheet.getAttribute("name")||path);
+    }
+  }
   let shared:string[]=[];
   const strings=await fileText("xl/sharedStrings.xml");
   if(strings){
@@ -86,7 +97,7 @@ export async function readXlsxLocally(file:File, maxRows=255):Promise<{name:stri
         const colLetters=/^([A-Z]{1,3})\d+$/.exec(address)?.[1];
         if(!colLetters)continue;
         const col=[...colLetters].reduce((acc,ch)=>acc*26+ch.charCodeAt(0)-64,0)-1;
-        if(col<0||col>=35)continue;
+        if(col<0||col>=64)continue;
         const t=cell.getAttribute("t"), val=Array.from(cell.children).find(e=>e.localName==="v")?.textContent || "";
         const inline=Array.from(cell.children).find(e=>e.localName==="is");
         let value:unknown=val;
@@ -98,7 +109,7 @@ export async function readXlsxLocally(file:File, maxRows=255):Promise<{name:stri
       }
       if(array.some(x=>x!==undefined&&x!=="")) rows.push(array);
     }
-    all.push({name:path.split("/").pop()?.replace(".xml","")||path,rows});
+    all.push({name:sheetNames.get(path)||path.split("/").pop()?.replace(".xml","")||path,rows});
   }
   return all;
 }

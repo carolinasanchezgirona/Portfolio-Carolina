@@ -694,6 +694,39 @@
     return rows.length;
   }
   function exposeImportBridge() {
+    window.DememoriaTaxBridge = {
+      list: () => allRows("billing_tax_book_rows"),
+      issuer: () => issuer,
+      save: async input => {
+        if (!session?.access_token || !Array.isArray(input) || !input.length || input.length>10000)
+          throw new Error("Selecciona entre 1 y 10.000 registros.");
+        const rows = input.map(raw => {
+          if (!["income","expense","investment"].includes(raw.book) || !/^[a-f0-9]{64}$/.test(raw.source_key || ""))
+            throw new Error("Libro u origen de registro incorrectos.");
+          const data = {};
+          if (!raw.data || typeof raw.data !== "object" || Array.isArray(raw.data)) throw new Error("Datos de registro incorrectos.");
+          for (const [key,value] of Object.entries(raw.data)) {
+            if (!/^c(0[1-9]|[1-3][0-9]|4[0-2])$/.test(key) || typeof value !== "string" || value.length>1000)
+              throw new Error("Campo fiscal no válido.");
+            data[key]=value;
+          }
+          if (!Number.isInteger(raw.source_row)||raw.source_row<1||raw.source_row>10034||String(raw.source_name||"").length>320)
+            throw new Error("Origen del archivo incorrecto.");
+          return {id:raw.id,book:raw.book,data,source_key:raw.source_key,source_name:String(raw.source_name||""),source_row:raw.source_row,notes:""};
+        });
+        await rest("billing_tax_book_rows",{method:"POST",headers:{Prefer:"return=minimal"},body:JSON.stringify(rows)});
+      },
+      update: async (id, input) => {
+        if (!session?.access_token || !/^[a-f0-9-]{36}$/i.test(id) || !input || typeof input !== "object" || Array.isArray(input))
+          throw new Error("Registro no válido.");
+        const data = {};
+        for (const [key,value] of Object.entries(input)) {
+          if (!/^c(0[1-9]|[1-3][0-9]|4[0-2])$/.test(key) || typeof value !== "string" || value.length>1000) throw new Error("Campo fiscal no válido.");
+          data[key]=value;
+        }
+        await rest("billing_tax_book_rows?id=eq."+encodeURIComponent(id),{method:"PATCH",headers:{Prefer:"return=minimal"},body:JSON.stringify({data})});
+      }
+    };
     window.DememoriaIncomeBridge = {
       snapshot: () => ({
         references: [...externalIncome.map(r => r.external_reference), ...invoices.map(r => r.invoice_number).filter(Boolean)].map(r => r.trim().toLowerCase()),
@@ -777,9 +810,10 @@
       contents.hidden = false;
       await load();
       exposeImportBridge();
+      showTab("books");
       const requested = new URL(window.location.href).searchParams;
       const tab = requested.get("tab");
-      if (["overview", "movements", "invoices", "expenses", "settings"].includes(tab)) {
+      if (["books", "overview", "movements", "invoices", "expenses", "settings"].includes(tab)) {
         showTab(tab);
         if (tab === "movements" && ["all", "income", "expense"].includes(requested.get("filter"))) setMovementFilter(requested.get("filter"));
         if (tab === "invoices" && requested.get("nuevo") === "1") clearInvoiceForm();
@@ -789,6 +823,7 @@
       $("#econ-access").hidden = false;
       window.DememoriaEconBridge = undefined;
       window.DememoriaIncomeBridge = undefined;
+      window.DememoriaTaxBridge = undefined;
       setStatus(err.message);
     }
   })();

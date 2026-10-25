@@ -108,6 +108,7 @@ jobs:
           node --test tests/billing-invoices.test.mjs tests/billing-external-income.test.mjs
           node --experimental-strip-types --test tests/billing-import.test.mjs
           node --experimental-strip-types --test tests/billing-income-import.test.mjs tests/billing-invoice-email.test.mjs
+          node --test tests/billing-tax-books.test.mjs
 
       - name: Validar documentos, audios y control de acceso de pacientes
         run: |

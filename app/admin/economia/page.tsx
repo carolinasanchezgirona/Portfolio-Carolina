@@ -2,7 +2,7 @@ import Script from "next/script";
 import type { Metadata } from "next";
 import "./economia.css";
 import EconomyImportTools from "./import-tools";
-import IncomeImport from "./income-import";
+import TaxBooks from "./tax-books";
 import AdminWorkspaceNav from "../workspace-nav";
 
 export const metadata: Metadata = {
@@ -36,11 +36,16 @@ export default function EconomiaPage() {
         <div id="econ-content" hidden>
           <AdminWorkspaceNav active="economia" />
           <nav className="econ-tabs" aria-label="Secciones de contabilidad">
+            <button type="button" data-econ-tab="books">Libros registro AEAT</button>
             <button type="button" className="active" data-econ-tab="overview">Resumen</button>
             <button type="button" data-econ-tab="movements">Movimientos</button>
             <button type="button" data-econ-tab="invoices">Facturas</button>
             <button type="button" data-econ-tab="settings">Configuración fiscal</button>
           </nav>
+
+          <section data-econ-panel="books" hidden>
+            <TaxBooks />
+          </section>
 
           <section data-econ-panel="overview">
             <div className="econ-section-heading">
@@ -132,7 +137,7 @@ export default function EconomiaPage() {
               <button type="button" aria-pressed="false" data-econ-filter="expense">Gastos</button>
             </div>
             <p className="econ-help">Los cobros de las facturas emitidas aquí se registran exclusivamente desde «Facturas». Los ingresos externos deben estar documentados y no pueden duplicar cobros ya registrados. Ninguno de estos registros sustituye una factura exigible.</p>
-            <IncomeImport />
+            <p><a className="econ-button" href="/admin/economia/?tab=books">Importar CSV o Excel en los libros registro AEAT</a></p>
             <details id="econ-external-income-register" className="econ-expense-register">
               <summary>+ Registrar ingreso externo documentado</summary>
               <div className="econ-expense-register-inner">
@@ -213,7 +218,7 @@ export default function EconomiaPage() {
           </section>
         </div>
       </div>
-      <Script src="/admin-economia.js?v=20261025-income-email-1" strategy="afterInteractive" />
+      <Script src="/admin-economia.js?v=20261025-aeat-books-1" strategy="afterInteractive" />
     </main>
   );
 }
