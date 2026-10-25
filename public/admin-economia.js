@@ -331,7 +331,7 @@
     const income = receipts.filter(row => row.paid_date?.startsWith(month)).map(row => {
       const invoice = invById.get(row.invoice_id);
       return {
-        kind: "income", date: row.paid_date, amount: Number(row.amount_cents),
+        kind: "income", invoiceId: invoice?.id || null, date: row.paid_date, amount: Number(row.amount_cents),
         concept: invoice?.invoice_number ? "Cobro · " + invoice.invoice_number : "Cobro registrado",
         details: [invoice?.recipient_name || "Sin factura vinculada", ({bizum:"Bizum",bank_transfer:"Transferencia",card:"Tarjeta",cash:"Efectivo",other:"Otro"}[row.method] || "Medio no indicado")].join(" · ")
       };
@@ -427,6 +427,41 @@
   function filteredMovementRows() {
     return movementRows().filter(row => movementFilter === "all" || row.kind === movementFilter);
   }
+  function prepareMovementInvoice(row) {
+    const invoice = invoices.find(i => i.id === row.invoiceId);
+    if (invoice) {
+      showTab("invoices");
+      const detail = $("#econ-invoice-detail");
+      detail.replaceChildren(invoiceCard(invoice));
+      detail.scrollIntoView({behavior:"smooth",block:"start"});
+      return;
+    }
+    const external = externalIncome.find(i => i.id === row.externalId);
+    if (external?.source === "external_invoice") {
+      setStatus("Este ingreso ya tiene una factura externa: evita emitir otra por el mismo cobro.");
+      return;
+    }
+    showTab("invoices");
+    clearInvoiceForm();
+    $("#econ-invoice-date").value = row.date || today();
+    $("#econ-invoice-price").value = fmtInputEuros(row.amount);
+    $("#econ-invoice-quantity").value = "1";
+    $("#econ-invoice-service").value = "custom";
+    $("#econ-custom-service-wrap").hidden = false;
+    $("#econ-invoice-custom-service").value = (external?.concept || "").slice(0,250);
+    setStatus("Completa el paciente y comprueba los datos fiscales. Fecha, concepto e importe se han precargado.");
+    $("#econ-invoice-form").scrollIntoView({behavior:"smooth",block:"start"});
+  }
+  function sendMovementInvoice(row) {
+    const invoice = invoices.find(i => i.id === row.invoiceId && i.status === "issued");
+    if (!invoice) return;
+    showTab("invoices");
+    const detail = $("#econ-invoice-detail");
+    detail.replaceChildren(invoiceCard(invoice));
+    const sendButton = detail.querySelector("button:nth-child(2)");
+    if (sendButton) sendButton.click();
+    detail.scrollIntoView({behavior:"smooth",block:"start"});
+  }
   function renderMovements() {
     const all = movementRows();
     const received = all.filter(row => row.kind === "income").reduce((total, row) => total + row.amount, 0);
@@ -447,9 +482,15 @@
       main.append(el("span", "econ-movement-date", fmtDate(row.date)), el("strong", "", row.concept), el("small", "", row.details));
       const amount = el("strong", "econ-movement-amount", (row.kind === "income" ? "+ " : "− ") + money(row.amount));
       card.append(main, amount);
-      if (row.externalId) {
+      if (row.kind === "income") {
         const actions = el("div", "econ-external-void-actions");
-        actions.append(btn("Anular ingreso", "econ-outline", () => showVoidExternalIncome(card, row.externalId)));
+        actions.append(btn("Hacer factura", "econ-outline", () => prepareMovementInvoice(row)));
+        const invoice = invoices.find(i => i.id === row.invoiceId && i.status === "issued");
+        const send = btn("Enviar factura", "econ-outline", () => sendMovementInvoice(row));
+        send.disabled = !invoice;
+        if (!invoice) send.title = "Disponible cuando la factura esté emitida y vinculada";
+        actions.append(send);
+        if (row.externalId) actions.append(btn("Anular ingreso", "econ-outline", () => showVoidExternalIncome(card, row.externalId)));
         card.append(actions);
       }
       list.append(card);
