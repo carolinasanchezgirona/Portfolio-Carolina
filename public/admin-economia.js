@@ -77,9 +77,9 @@
     setStatus("Actualizando datos económicos…");
     const data = await Promise.all([
       rest("billing_issuer_settings?select=*&id=eq.1"),
-      rest("billing_invoices?select=*&order=created_at.desc&limit=1000"),
+      allRows("billing_invoices"),
       allRows("billing_receipts"),
-      rest("billing_expenses?select=*&order=expense_date.desc&limit=1000"),
+      allRows("billing_expenses"),
       rest("clinical_patients?select=id,full_name,national_id,address,care_context,status&order=full_name.asc&limit=1000"),
       rest("appointment_bookings?select=id,clinical_patient_id,starts_at,price_eur,service_code,status&order=starts_at.desc&limit=1000"),
       allRows("billing_external_income"),
@@ -95,17 +95,19 @@
     emailDeliveries = data[7] || [];
     renderAll();
     setStatus("");
+    window.dispatchEvent(new Event("dememoria-econ-updated"));
   }
   function showTab(tab) {
     // Enlaces anteriores a ?tab=expenses siguen llevando al filtro de Gastos.
-    const resolved = tab === "expenses" ? "movements" : tab;
+    const resolved = ["income","expense","investment"].includes(tab) ? "books" : tab === "expenses" ? "movements" : tab;
     document.querySelectorAll("[data-econ-tab]").forEach((b) => {
-      const active = b.dataset.econTab === resolved;
+      const active = b.dataset.econTab === tab || (tab === "expenses" && b.dataset.econTab === "movements");
       b.classList.toggle("active", active);
       b.setAttribute("aria-current", active ? "page" : "false");
     });
     document.querySelectorAll("[data-econ-panel]").forEach((section) => { section.hidden = section.dataset.econPanel !== resolved; });
     if (tab === "expenses") setMovementFilter("expense");
+    if (resolved === "books") window.dispatchEvent(new CustomEvent("dememoria-tax-view",{detail:tab}));
   }
   function fillPatients() {
     const select = $("#econ-invoice-patient"), previous = select.value;
@@ -155,10 +157,19 @@
       " facturas emitidas con un importe pendiente. El cobro nunca se presume por el hecho de que exista una cita.";
   }
   function renderInvoiceList() {
-    const list = $("#econ-invoice-list");
-    list.replaceChildren();
+    const list = $("#econ-invoice-list"); list.replaceChildren();
     if (!invoices.length) { list.append(el("p", "econ-empty", "Todavía no hay facturas ni borradores.")); return; }
-    invoices.forEach(invoice => {
+    const scroll = el("div", "econ-compact-scroll"), table = el("table", "econ-compact-table"), header = el("thead"), line = el("tr"), body = el("tbody"), detail = el("div");
+    ["Factura", "Fecha", "Destinatario", "Total", "Cobrado", "Estado", "Acciones"].forEach(label => line.append(el("th", "", label)));
+    header.append(line); table.append(header);
+    [...invoices].sort((a,b)=>(b.issue_date||b.created_at||"").localeCompare(a.issue_date||a.created_at||"")).forEach(invoice => {
+      const row = el("tr");
+      [invoice.invoice_number || "Borrador",fmtDate(invoice.issue_date || invoice.service_date),invoice.recipient_name,money(Math.round(invoiceGross(invoice))),money(paid(invoice)),invoice.status === "draft" ? "Borrador" : paid(invoice)>=invoice.total_cents ? "Cobrada" : "Pendiente de cobro"].forEach(value => row.append(el("td", "", value)));
+      const action=el("td"); action.append(btn("Ver / enviar", "econ-outline", () => { detail.replaceChildren(invoiceCard(invoice)); detail.scrollIntoView({behavior:"smooth",block:"start"}); })); row.append(action); body.append(row);
+    });
+    table.append(body); scroll.append(table); list.append(scroll,detail);
+  }
+  function invoiceCard(invoice) {
       const card = el("article", "econ-invoice");
       const head = el("div", "econ-invoice-head");
       const left = el("div");
@@ -189,8 +200,7 @@
         actions.append(btn("Emitir factura", "econ-button", () => showIssueConfirmation(card, invoice)));
         card.append(actions);
       }
-      list.append(card);
-    });
+    return card;
   }
   function showIssueConfirmation(card, invoice) {
     card.querySelector(".econ-confirm-panel")?.remove();
@@ -697,7 +707,9 @@
     window.DememoriaTaxBridge = {
       list: () => allRows("billing_tax_book_rows"),
       issuer: () => issuer,
-      save: async input => {
+      ledger: () => ({invoices:[...invoices],receipts:[...receipts],expenses:[...expenses],income:[...externalIncome]}),
+      navigate: tab => showTab(tab),
+      save: async (input, upsert = false) => {
         if (!session?.access_token || !Array.isArray(input) || !input.length || input.length>10000)
           throw new Error("Selecciona entre 1 y 10.000 registros.");
         const rows = input.map(raw => {
@@ -712,9 +724,9 @@
           }
           if (!Number.isInteger(raw.source_row)||raw.source_row<1||raw.source_row>10034||String(raw.source_name||"").length>320)
             throw new Error("Origen del archivo incorrecto.");
-          return {id:raw.id,book:raw.book,data,source_key:raw.source_key,source_name:String(raw.source_name||""),source_row:raw.source_row,notes:""};
+          return {id:raw.id,book:raw.book,data,source_key:raw.source_key,source_name:String(raw.source_name||""),source_row:raw.source_row,notes:String(raw.notes||"").slice(0,2000)};
         });
-        await rest("billing_tax_book_rows",{method:"POST",headers:{Prefer:"return=minimal"},body:JSON.stringify(rows)});
+        await rest("billing_tax_book_rows"+(upsert?"?on_conflict=id":""),{method:"POST",headers:{Prefer:upsert?"resolution=merge-duplicates,return=minimal":"return=minimal"},body:JSON.stringify(rows)});
       },
       update: async (id, input) => {
         if (!session?.access_token || !/^[a-f0-9-]{36}$/i.test(id) || !input || typeof input !== "object" || Array.isArray(input))
@@ -813,7 +825,7 @@
       showTab("books");
       const requested = new URL(window.location.href).searchParams;
       const tab = requested.get("tab");
-      if (["books", "overview", "movements", "invoices", "expenses", "settings"].includes(tab)) {
+      if (["books", "income", "expense", "investment", "overview", "movements", "invoices", "expenses", "settings"].includes(tab)) {
         showTab(tab);
         if (tab === "movements" && ["all", "income", "expense"].includes(requested.get("filter"))) setMovementFilter(requested.get("filter"));
         if (tab === "invoices" && requested.get("nuevo") === "1") clearInvoiceForm();
@@ -828,4 +840,5 @@
     }
   })();
 })();
+
 

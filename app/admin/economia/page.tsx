@@ -36,12 +36,13 @@ export default function EconomiaPage() {
         <div id="econ-content" hidden>
           <AdminWorkspaceNav active="economia" />
           <nav className="econ-tabs" aria-label="Secciones de contabilidad">
-            <button type="button" data-econ-tab="books">Libros registro AEAT</button>
-            <button type="button" className="active" data-econ-tab="overview">Resumen</button>
-            <button type="button" data-econ-tab="movements">Movimientos</button>
+            <button type="button" className="active" data-econ-tab="books">Resumen</button>
+            <button type="button" data-econ-tab="income">Ingresos</button>
+            <button type="button" data-econ-tab="expense">Gastos</button>
+            <button type="button" data-econ-tab="investment">Bienes de inversión</button>
             <button type="button" data-econ-tab="invoices">Facturas</button>
-            <button type="button" data-econ-tab="settings">Configuración fiscal</button>
           </nav>
+          <div className="econ-secondary-actions"><button type="button" data-econ-tab="settings">Configuración fiscal</button><button type="button" data-econ-tab="movements">Cobros y pagos</button></div>
 
           <section data-econ-panel="books" hidden>
             <TaxBooks />
@@ -218,8 +219,9 @@ export default function EconomiaPage() {
           </section>
         </div>
       </div>
-      <Script src="/admin-economia.js?v=20261025-aeat-books-1" strategy="afterInteractive" />
+      <Script src="/admin-economia.js?v=20261025-accounting-ux-1" strategy="afterInteractive" />
     </main>
   );
 }
+
 

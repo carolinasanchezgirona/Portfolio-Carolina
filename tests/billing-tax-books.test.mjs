@@ -17,6 +17,7 @@ function load(file){
 }
 const {schema,blank,detectMapping,detectHeader,mappedRows,errors,decimal,sourceKey,duplicateIds}=load("tax-book-utils");
 const {makeWorkbook}=load("tax-book-xlsx");
+const {workspaceRows,groups,amount,yearOf}=load("accounting-workspace");
 test("AEAT schema preserves official column order and all 36/42/42 columns",()=>{
  assert.deepEqual(Object.values(schema).map(s=>s.columns.length),[36,42,42]);
  assert.equal(schema.income.columns[15].label,"NIF Destinatario · Identificación");
@@ -82,3 +83,33 @@ test("reimport detects reordered rows while preserving multiple identical lines 
  assert.equal(duplicateIds([a,b],[]).size,0);
  assert.equal(duplicateIds([a,b],[a]).size,1);
 });
+test("editor groups preserve every official column exactly once",()=>{
+ for(const book of ["income","expense","investment"]){
+  const keys=groups(book).flatMap(g=>g.keys);
+  assert.equal(keys.length,schema[book].columns.length);assert.equal(new Set(keys).size,keys.length);
+  assert.deepEqual([...keys].sort(),Array.from(schema[book].columns,c=>c.key).sort());
+ }
+});
+const ledgerInvoice={id:"invoice-1",status:"issued",invoice_number:"F-2026-117",issue_date:"2026-10-23",service_date:"2026-10-23",recipient_name:"Pagador de prueba",recipient_tax_id:"00000000T",quantity:1,unit_price_cents:6000,total_cents:6000,vat_cents:0,tax_treatment:"exempt_healthcare"};
+test("issued invoices and receipts share one fiscal row without presuming computable income",async()=>{
+ const ledger={invoices:[ledgerInvoice],receipts:[{invoice_id:"invoice-1",amount_cents:3500,paid_date:"2026-10-23"}],expenses:[],income:[]};
+ const rows=await workspaceRows([],ledger);
+ assert.equal(rows.length,1);assert.equal(amount(rows[0]),6000);assert.equal(rows[0].linked.paid,3500);
+ assert.equal(rows[0].data.c08,"");assert.equal(rows[0].data.c03,"");assert.equal(rows[0].data.c20,"E1");
+ assert.ok(rows[0].linked.locked.includes("c21"));assert.equal(rows[0].virtual,true);
+ const persisted={...rows[0],virtual:undefined,data:{...rows[0].data,c01:"2026"}};
+ const again=await workspaceRows([persisted],ledger);assert.equal(again.length,1);assert.equal(again[0].data.c01,"2026");
+});
+test("imported invoice reference links to the issued source instead of creating another row",async()=>{
+ const data=blank("income");data.c12="F-2026-117";data.c21="60,00";
+ const imported={id:"tax-1",book:"income",data,source_key:"original",source_name:"archivo",source_row:2,notes:""};
+ const rows=await workspaceRows([imported],{invoices:[ledgerInvoice],receipts:[],expenses:[],income:[]});
+ assert.equal(rows.length,1);assert.equal(rows[0].id,"tax-1");assert.equal(rows[0].linked.id,"invoice-1");assert.equal(amount(rows[0]),6000);
+});
+test("cash-only income stays distinct from invoice gross and is not duplicated for a known issued reference",async()=>{
+ const ledger={invoices:[ledgerInvoice],receipts:[],expenses:[],income:[{id:"external-1",received_date:"2026-10-23",external_reference:"F-2026-117",amount_cents:6000,payment_method:"bizum"},{id:"external-2",received_date:"2026-10-24",external_reference:"OP-2",amount_cents:3500,payment_method:"bizum"}]};
+ const rows=await workspaceRows([],ledger);assert.equal(rows.length,2);
+ const cash=rows.find(r=>r.id==="external-2");assert.equal(cash.data.c21,"");assert.equal(cash.data.c28,"35,00");assert.equal(cash.data.c08,"");assert.equal(yearOf(cash),"2026");
+ const reloaded=await workspaceRows([cash],ledger);assert.equal(reloaded.filter(r=>r.id==="external-2").length,1);
+});
+
