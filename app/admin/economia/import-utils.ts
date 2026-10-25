@@ -85,7 +85,7 @@ export function expenseIssue(row:ExpenseDraft):string {
 export function fingerprint(row:ExpenseDraft):string {
  return [row.expense_date,flat(row.supplier),flat(row.concept),String(row.amount_cents)].join("|");
 }
-export function parseCSV(content:string):string[][] {
+export function parseCSV(content:string, maxRows=251):string[][] {
  const text=content.replace(/^\uFEFF/,"").slice(0,1500000);
  const first=text.split(/\r?\n/)[0]||"";
  const options=[";",",","\t"];
@@ -95,10 +95,12 @@ export function parseCSV(content:string):string[][] {
   const ch=text[i];
   if(ch==='"'){if(quoted&&text[i+1]==='"'){value+='"';i++;}else quoted=!quoted;}
   else if(ch===delim&&!quoted){row.push(value);value="";}
-  else if((ch==="\r"||ch==="\n")&&!quoted){if(ch==="\r"&&text[i+1]==="\n")i++;row.push(value);if(row.some(x=>x.trim()))rows.push(row);row=[];value="";if(rows.length>251)break;}
+  else if((ch==="\r"||ch==="\n")&&!quoted){if(ch==="\r"&&text[i+1]==="\n")i++;row.push(value);if(row.some(x=>x.trim()))rows.push(row);row=[];value="";if(rows.length>maxRows){if(maxRows>251)throw Error("El CSV supera 10.000 filas. Divide el archivo.");break;}}
   else value+=ch;
  }
  if(quoted)throw new Error("CSV con comillas sin cerrar.");
  if(row.length||value){row.push(value);if(row.some(x=>x.trim()))rows.push(row);}
+ if(maxRows>251&&rows.length>maxRows)throw Error("El CSV supera 10.000 filas. Divide el archivo.");
  return rows;
 }
+

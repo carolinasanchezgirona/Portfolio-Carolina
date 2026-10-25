@@ -17,7 +17,7 @@ function parseXml(value:string):Document{
 function byLocal(tag:Element,local:string):Element[]{
   return Array.from(tag.getElementsByTagName("*")).filter(el=>el.localName===local);
 }
-export async function readXlsxLocally(file:File):Promise<{name:string;rows:unknown[][]}[]> {
+export async function readXlsxLocally(file:File, maxRows=255):Promise<{name:string;rows:unknown[][]}[]> {
   if(!/\.xlsx$/i.test(file.name))throw Error("Se admite Excel .xlsx. Los antiguos .xls deben guardarse primero como .xlsx.");
   if(!file.size||file.size>MAX_FILE)throw Error("El archivo Excel debe tener menos de 5 MB.");
   if(typeof DecompressionStream==="undefined")throw Error("Este navegador no permite descomprimir Excel localmente. Puedes exportarlo a CSV.");
@@ -76,7 +76,9 @@ export async function readXlsxLocally(file:File):Promise<{name:string;rows:unkno
   for(const path of sheetPaths){
     const xml=parseXml(await fileText(path));
     const rows:unknown[][]=[];
-    const xrows=byLocal(xml.documentElement,"row").slice(0,255);
+    const allRows=byLocal(xml.documentElement,"row");
+    if(maxRows>255 && allRows.length>maxRows)throw Error("La hoja supera 10.000 filas de datos. Divide el archivo.");
+    const xrows=allRows.slice(0,maxRows);
     for(const row of xrows){
       const array:unknown[]=[];
       for(const cell of Array.from(row.children).filter(el=>el.localName==="c")){
@@ -100,3 +102,4 @@ export async function readXlsxLocally(file:File):Promise<{name:string;rows:unkno
   }
   return all;
 }
+

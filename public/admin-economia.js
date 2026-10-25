@@ -63,16 +63,25 @@
     if (!response.ok) throw new Error(body?.message || body?.hint || body?.error || "No se ha podido realizar la operación.");
     return body;
   }
+  async function allRows(table, select = "*") {
+    const rows = [];
+    for (let offset = 0; ; offset += 500) {
+      const batch = await rest(table + "?select=" + select + "&order=id.asc&limit=500&offset=" + offset);
+      rows.push(...batch);
+      if (batch.length < 500) return rows;
+      if (rows.length >= 100000) throw new Error("Demasiados movimientos para revisar de forma segura.");
+    }
+  }
   async function load() {
     setStatus("Actualizando datos económicos…");
     const data = await Promise.all([
       rest("billing_issuer_settings?select=*&id=eq.1"),
       rest("billing_invoices?select=*&order=created_at.desc&limit=1000"),
-      rest("billing_receipts?select=*&order=paid_date.desc&limit=1000"),
+      allRows("billing_receipts"),
       rest("billing_expenses?select=*&order=expense_date.desc&limit=1000"),
       rest("clinical_patients?select=id,full_name,national_id,address,care_context,status&order=full_name.asc&limit=1000"),
       rest("appointment_bookings?select=id,clinical_patient_id,starts_at,price_eur,service_code,status&order=starts_at.desc&limit=1000"),
-      rest("billing_external_income?select=*&order=received_date.desc&limit=1000"),
+      allRows("billing_external_income"),
     ]);
     issuer = data[0]?.[0] || null;
     invoices = data[1] || [];
@@ -620,6 +629,46 @@
     return rows.length;
   }
   function exposeImportBridge() {
+    window.DememoriaIncomeBridge = {
+      snapshot: () => ({
+        references: [...externalIncome.map(r => r.external_reference), ...invoices.map(r => r.invoice_number).filter(Boolean)].map(r => r.trim().toLowerCase()),
+        payments: [...receipts.map(r => ({date:r.paid_date,amount:Number(r.amount_cents)})),
+          ...externalIncome.filter(r => !r.voided_at).map(r => ({date:r.received_date,amount:Number(r.amount_cents)}))]
+      }),
+      importRows: async input => {
+        if (!session?.access_token || !Array.isArray(input) || !input.length || input.length > 10000)
+          throw new Error("Selecciona entre 1 y 10.000 ingresos.");
+        const rows = input.map(raw => {
+          const date = String(raw.received_date || "");
+          const parsed = new Date(date + "T12:00:00Z");
+          if (!/^\d{4}-\d{2}-\d{2}$/.test(date) || Number.isNaN(parsed.getTime()) || parsed.toISOString().slice(0,10) !== date)
+            throw new Error("Fecha de ingreso incorrecta.");
+          const ref = String(raw.external_reference || "").trim(), concept = String(raw.concept || "").trim();
+          if (ref.length < 3 || ref.length > 100 || concept.length < 5 || concept.length > 200)
+            throw new Error("Referencia o concepto incorrectos.");
+          if (!Number.isSafeInteger(raw.amount_cents) || raw.amount_cents < 1 || raw.amount_cents > 10000000)
+            throw new Error("Importe incorrecto.");
+          if (!["external_invoice","other_documented"].includes(raw.source) || !["bizum","bank_transfer","card","cash","other"].includes(raw.payment_method))
+            throw new Error("Origen o medio de pago incorrectos.");
+          return {received_date:date, external_reference:ref, concept, source:raw.source, payment_method:raw.payment_method, amount_cents:raw.amount_cents};
+        });
+        const latest = await allRows("billing_external_income","external_reference");
+        const issued = await allRows("billing_invoices","id,invoice_number");
+        const known = new Set([...latest.map(r=>r.external_reference),...issued.map(r=>r.invoice_number).filter(Boolean)].map(r=>r.trim().toLowerCase()));
+        for (const row of rows) {
+          const key = row.external_reference.toLowerCase();
+          if (known.has(key)) throw new Error("La referencia " + row.external_reference + " ya existe. No se ha importado ninguna fila.");
+          known.add(key);
+        }
+        // One request: the database rejects the whole batch if any reference conflicts.
+        await rest("billing_external_income", {method:"POST",headers:{Prefer:"return=minimal"},body:JSON.stringify(rows)});
+        try { await load(); } catch (_) {
+          externalIncome.push(...rows);
+          setStatus("Ingresos guardados. Pulsa Actualizar para recargar el resumen.");
+        }
+        return rows.length;
+      }
+    };
     window.DememoriaEconBridge = {
       existing: () => expenses.map(row => ({
         expense_date:row.expense_date, category:row.category, supplier:row.supplier,
@@ -674,7 +723,9 @@
       contents.hidden = true;
       $("#econ-access").hidden = false;
       window.DememoriaEconBridge = undefined;
+      window.DememoriaIncomeBridge = undefined;
       setStatus(err.message);
     }
   })();
 })();
+

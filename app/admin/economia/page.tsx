@@ -2,6 +2,7 @@ import Script from "next/script";
 import type { Metadata } from "next";
 import "./economia.css";
 import EconomyImportTools from "./import-tools";
+import IncomeImport from "./income-import";
 import AdminWorkspaceNav from "../workspace-nav";
 
 export const metadata: Metadata = {
@@ -131,6 +132,7 @@ export default function EconomiaPage() {
               <button type="button" aria-pressed="false" data-econ-filter="expense">Gastos</button>
             </div>
             <p className="econ-help">Los cobros de las facturas emitidas aquí se registran exclusivamente desde «Facturas». Los ingresos externos deben estar documentados y no pueden duplicar cobros ya registrados. Ninguno de estos registros sustituye una factura exigible.</p>
+            <IncomeImport />
             <details id="econ-external-income-register" className="econ-expense-register">
               <summary>+ Registrar ingreso externo documentado</summary>
               <div className="econ-expense-register-inner">
@@ -211,7 +213,8 @@ export default function EconomiaPage() {
           </section>
         </div>
       </div>
-      <Script src="/admin-economia.js?v=20261021-ux-1" strategy="afterInteractive" />
+      <Script src="/admin-economia.js?v=20261025-income-import-1" strategy="afterInteractive" />
     </main>
   );
 }
+
