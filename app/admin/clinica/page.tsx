@@ -777,6 +777,7 @@ export default function AdminClinicaPage() {
       <Script src="/admin-clinica.js?v=20261020-general-entry-1" strategy="afterInteractive" />
       <Script src="/clinical-smart-intake.js?v=20261020-palette-1" strategy="afterInteractive" />
       <Script src="/clinical-diagnostic-assistant.js?v=20261020-palette-1" strategy="afterInteractive" />
+      <Script src="/clinical-treatment-assistant.js?v=20261025-1" strategy="afterInteractive" />
       <Script src="/admin-clinica-audit-fixes.js?v=20260915-1" strategy="afterInteractive" />
     </main>
   );
