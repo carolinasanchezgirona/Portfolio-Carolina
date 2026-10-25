@@ -21,7 +21,7 @@ test("external income is owner-only, references are unique and patient data is e
 });
 
 test("external income only counts real documented receipts, not invoices issued", () => {
-  assert.match(app, /rest\("billing_external_income\?select=/);
+  assert.match(app, /allRows\("billing_external_income"\)/);
   assert.match(app, /const externalReceipts = externalIncome\.filter\(r => !r\.voided_at/);
   assert.match(app, /const collected = invoiceReceipts \+ externalReceipts/);
   assert.match(app, /const independent = externalIncome\.filter\(row => !row\.voided_at/);
@@ -40,3 +40,4 @@ test("every extra income requires confirmation, supporting reference and one com
   assert.match(page, /Historial de ingresos anulados/);
   assert.match(nav, />Gestión económica<\/a>|>Contabilidad<\/a>/);
 });
+

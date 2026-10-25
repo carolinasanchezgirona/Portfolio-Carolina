@@ -107,6 +107,7 @@ jobs:
           node --check public/admin-economia.js
           node --test tests/billing-invoices.test.mjs tests/billing-external-income.test.mjs
           node --experimental-strip-types --test tests/billing-import.test.mjs
+          node --experimental-strip-types --test tests/billing-income-import.test.mjs tests/billing-invoice-email.test.mjs
 
       - name: Validar documentos, audios y control de acceso de pacientes
         run: |
@@ -220,5 +221,6 @@ jobs:
             echo "::error::Solicitud de invitación fallida: estado ${status}."
             exit 1
           fi
+
 
 
