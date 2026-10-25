@@ -15,7 +15,7 @@ function load(file){
  vm.runInNewContext(code,{module,exports:module.exports,require:id=>load(path.relative(base,path.resolve(path.dirname(full),id))),Blob,CompressionStream,Response,TextEncoder,TextDecoder,crypto,Date,Map,Set,Uint8Array,DataView});
  cache.set(full,module.exports);return module.exports;
 }
-const {schema,blank,detectMapping,detectHeader,mappedRows,errors,decimal,sourceKey}=load("tax-book-utils");
+const {schema,blank,detectMapping,detectHeader,mappedRows,errors,decimal,sourceKey,duplicateIds}=load("tax-book-utils");
 const {makeWorkbook}=load("tax-book-xlsx");
 test("AEAT schema preserves official column order and all 36/42/42 columns",()=>{
  assert.deepEqual(Object.values(schema).map(s=>s.columns.length),[36,42,42]);
@@ -74,4 +74,11 @@ test("XLSX export has annual official tabs, full headers, no formulas, and disti
 test("incomplete drafts can exist without inventing required fields",()=>{
  const d=blank("expense");d.c26="60,00";assert.equal(d.c08,"");assert.ok(errors("expense",d).length);
  assert.equal(blank("investment").c15,"");
+});
+test("reimport detects reordered rows while preserving multiple identical lines within a new file",()=>{
+ const data=blank("income");data.c12="F-117";data.c21="60,00";
+ const a={id:"a",book:"income",data,source_key:"first-position"},b={...a,id:"b",source_key:"different-position"};
+ assert.equal(duplicateIds([b],[a]).has("b"),true);
+ assert.equal(duplicateIds([a,b],[]).size,0);
+ assert.equal(duplicateIds([a,b],[a]).size,1);
 });

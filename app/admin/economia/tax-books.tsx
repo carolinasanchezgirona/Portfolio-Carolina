@@ -1,6 +1,6 @@
 "use client";
 import {useEffect,useState} from "react";
-import {schema,choices,normalize,detectHeader,detectMapping,mappedRows,errors,rowYear,sourceKey,cellValue,type BookKind,type BookData,type BookRow} from "./tax-book-utils";
+import {schema,choices,normalize,detectHeader,detectMapping,mappedRows,errors,rowYear,sourceKey,cellValue,duplicateIds,type BookKind,type BookData,type BookRow} from "./tax-book-utils";
 import {parseCSV} from "./import-utils";
 import {readXlsxLocally} from "./xlsx-reader";
 import {makeWorkbook} from "./tax-book-xlsx";
@@ -21,8 +21,10 @@ export default function TaxBooks(){
  },[]);
  async function rebuild(all:Sheet[],fileName:string){
   const result:BookRow[]=[];
+  const occurrences=new Map<string,number>();
   for(const s of all)for(const r of mappedRows(s.book,s.rows,s.header,s.mapping)){
-   result.push({id:crypto.randomUUID(),book:s.book,data:r.data,source_key:await sourceKey(s.book,s.name,r.source_row,r.data),source_name:fileName+" · "+s.name,source_row:r.source_row,notes:""});
+   const signature=JSON.stringify([s.book,r.data]),occurrence=(occurrences.get(signature)||0)+1;occurrences.set(signature,occurrence);
+   result.push({id:crypto.randomUUID(),book:s.book,data:r.data,source_key:await sourceKey(s.book,"registro",occurrence,r.data),source_name:fileName+" · "+s.name,source_row:r.source_row,notes:""});
   }
   if(result.length>10000)throw Error("El archivo contiene más de 10.000 filas. No se ha guardado ninguna.");
   if(!result.length)throw Error("No se han reconocido datos. Revisa la hoja, la fila de encabezados y las columnas.");
@@ -56,8 +58,7 @@ export default function TaxBooks(){
   setSheets(next);setBusy(true);try{await rebuild(next,name);}catch(e){setMessage(e instanceof Error?e.message:"Revisa las columnas.");}finally{setBusy(false);}
  }
  const isPreview=preview.length>0;
- const known=new Set(saved.map(r=>r.source_key)),seen=new Set<string>();
- const duplicates=new Set(preview.filter(r=>{const repeated=known.has(r.source_key)||seen.has(r.source_key);seen.add(r.source_key);return repeated;}).map(r=>r.id));
+ const duplicates=duplicateIds(preview,saved);
  const annual=saved.filter(r=>rowYear(r)===year||!rowYear(r));
  const display=(isPreview?preview:annual).filter(r=>r.book===book&&(!showOnlyPending||errors(r.book,r.data,mode).length));
  const pending=annual.filter(r=>errors(r.book,r.data,mode).length).length;

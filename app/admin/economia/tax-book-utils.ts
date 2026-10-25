@@ -130,6 +130,13 @@ export function errors(book:BookKind,data:BookData,mode:"IRPF"|"UNIFICADO"="IRPF
  return e;
 }
 export function rowYear(r:BookRow):string{return r.data.c01||((r.data[r.book==="investment"?"c18":"c09"]||"").split("/")[2])||"";}
+export function duplicateIds(input:BookRow[],saved:BookRow[]):Set<string>{
+ const signature=(r:BookRow)=>JSON.stringify([r.book,Object.keys(r.data).sort().map(k=>[k,r.data[k].trim()])]);
+ const remaining=new Map<string,number>();for(const r of saved){const k=signature(r);remaining.set(k,(remaining.get(k)||0)+1);}
+ const known=new Set(saved.map(r=>r.source_key)),seen=new Set<string>(),ids=new Set<string>();
+ for(const r of input){const k=signature(r),n=remaining.get(k)||0;if(n>0||known.has(r.source_key)||seen.has(r.source_key))ids.add(r.id);if(n>0)remaining.set(k,n-1);seen.add(r.source_key);}
+ return ids;
+}
 export async function sourceKey(book:BookKind,sheet:string,row:number,data:BookData):Promise<string>{
  const bytes=new TextEncoder().encode(JSON.stringify([book,sheet,row,data]));
  return Array.from(new Uint8Array(await crypto.subtle.digest("SHA-256",bytes)),b=>b.toString(16).padStart(2,"0")).join("");
