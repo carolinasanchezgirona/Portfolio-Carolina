@@ -32,7 +32,7 @@ export async function workspaceRows(saved:BookRow[],ledger:Ledger):Promise<Works
   if(persisted){persisted.linked=linked;persisted.yearHint=yearHint.slice(0,4);return;}
   if(linked.kind==="invoice"||linked.kind==="income"){
    const number=ref({book,data} as BookRow),matching=result.filter(r=>r.book===book&&number&&ref(r)===number);
-   if(matching.length){matching.forEach(r=>{r.linked=linked;r.yearHint=yearHint.slice(0,4);});return;}
+   if(matching.length){matching.forEach(r=>{r.linked={...linked,locked:[]};r.yearHint=yearHint.slice(0,4);});return;}
   }
   // An old cash expense with the same date/supplier/amount as a fiscal row is queued for review, not added to totals twice.
   result.push({id,book,data,source_key,source_name:label,source_row:1,notes:"",linked,virtual:true,yearHint:yearHint.slice(0,4)});
