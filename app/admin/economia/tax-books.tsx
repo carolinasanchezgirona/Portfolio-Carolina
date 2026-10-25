@@ -1,6 +1,6 @@
 "use client";
 import {useEffect,useState} from "react";
-import {schema,choices,detectHeader,detectMapping,mappedRows,errors,rowYear,sourceKey,cellValue,type BookKind,type BookData,type BookRow} from "./tax-book-utils";
+import {schema,choices,normalize,detectHeader,detectMapping,mappedRows,errors,rowYear,sourceKey,cellValue,type BookKind,type BookData,type BookRow} from "./tax-book-utils";
 import {parseCSV} from "./import-utils";
 import {readXlsxLocally} from "./xlsx-reader";
 import {makeWorkbook} from "./tax-book-xlsx";
@@ -36,9 +36,15 @@ export default function TaxBooks(){
    const raw=/\.xlsx$/i.test(file.name)?await readXlsxLocally(file,10034):/\.csv$/i.test(file.name)?[{name:"CSV",rows:parseCSV(await file.text(),10034)}]:null;
    if(!raw)throw Error("Admite .xlsx o .csv. Guarda los antiguos .xls como .xlsx.");
    const usable=raw.filter(s=>s.rows.length>1);
-   const named=usable.filter(s=>/^(EXPEDIDAS_INGRESOS|RECIBIDAS_GASTOS|INGRESOS|GASTOS|BIENES.INVERSI[ÓO]N)$/i.test(s.name));
-   const chosen=named.length?named:usable.slice(0,1);
-   const next:Sheet[]=chosen.map(s=>{const kind:BookKind=/gastos|recibidas/i.test(s.name)?"expense":/bienes|inversi/i.test(s.name)?"investment":/ingresos|expedidas/i.test(s.name)?"income":book;const header=detectHeader(kind,s.rows);return {...s,book:kind,header,mapping:detectMapping(kind,s.rows,header)};});
+   const candidates:Sheet[]=usable.map(s=>{
+    const headerValues=s.rows.slice(0,5).flat().map(normalize);
+    const kind:BookKind=/bienes|inversi[oó]n/i.test(s.name)||headerValues.some(v=>["valoradquisicion","metododeamortizacion","valoramortizable"].includes(v))?"investment":
+      /gastos|recibidas/i.test(s.name)||headerValues.some(v=>["proveedor","expedidor","nombreexpedidor","nifexpedidor"].includes(v))?"expense":
+      /ingresos|expedidas/i.test(s.name)||headerValues.some(v=>["cliente","destinatario","nombredestinatario","nifdestinatario"].includes(v))?"income":book;
+    const header=detectHeader(kind,s.rows);return {...s,book:kind,header,mapping:detectMapping(kind,s.rows,header)};
+   });
+   const recognized=candidates.filter(s=>Object.values(s.mapping).filter(i=>i>=0).length>=2);
+   const next=recognized.length?recognized:candidates.sort((a,b)=>Object.values(b.mapping).filter(i=>i>=0).length-Object.values(a.mapping).filter(i=>i>=0).length).slice(0,1);
    if(!next.length)throw Error("El archivo no contiene datos.");
    setSheets(next);setSourceSheet(0);setBook(next[0].book);await rebuild(next,file.name);
    setMessage("Datos reconocidos automáticamente. Los campos desconocidos siguen vacíos. Revisa los pendientes y guarda cuando quieras.");
