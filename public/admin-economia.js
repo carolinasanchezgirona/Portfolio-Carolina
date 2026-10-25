@@ -431,8 +431,8 @@
     const invoice = invoices.find(i => i.id === row.invoiceId);
     if (invoice) {
       showTab("invoices");
-      const detail = $("#econ-invoice-detail");
-      detail.replaceChildren(invoiceCard(invoice));
+      const detail = $("#econ-invoice-list");
+      detail.prepend(invoiceCard(invoice));
       detail.scrollIntoView({behavior:"smooth",block:"start"});
       return;
     }
@@ -456,9 +456,10 @@
     const invoice = invoices.find(i => i.id === row.invoiceId && i.status === "issued");
     if (!invoice) return;
     showTab("invoices");
-    const detail = $("#econ-invoice-detail");
-    detail.replaceChildren(invoiceCard(invoice));
-    const sendButton = detail.querySelector("button:nth-child(2)");
+    const detail = $("#econ-invoice-list");
+    const card = invoiceCard(invoice);
+    detail.prepend(card);
+    const sendButton = card.querySelector(".econ-actions button:nth-child(2)");
     if (sendButton) sendButton.click();
     detail.scrollIntoView({behavior:"smooth",block:"start"});
   }
