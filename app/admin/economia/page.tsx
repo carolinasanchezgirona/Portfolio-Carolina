@@ -78,7 +78,7 @@ export default function EconomiaPage() {
                 <button id="econ-new-invoice" type="button" className="econ-button">+ Nueva factura</button>
               </div>
             </div>
-            <p className="econ-help">Primero se crea un borrador. Al emitir, el número y los datos fiscales quedan fijados; no se pueden editar ni eliminar desde la aplicación. No se envían facturas por correo automáticamente.</p>
+            <p className="econ-help">Primero se crea un borrador. Al emitir, el número y los datos fiscales quedan fijados. Después puedes guardar el PDF o enviarlo por email, revisando y confirmando el destinatario. No se envían facturas por correo automáticamente.</p>
             <form id="econ-invoice-form" className="econ-card" hidden>
               <h3>Preparar borrador</h3>
               <div className="econ-form-grid">
@@ -213,7 +213,7 @@ export default function EconomiaPage() {
           </section>
         </div>
       </div>
-      <Script src="/admin-economia.js?v=20261025-income-import-1" strategy="afterInteractive" />
+      <Script src="/admin-economia.js?v=20261025-income-email-1" strategy="afterInteractive" />
     </main>
   );
 }

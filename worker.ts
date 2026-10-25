@@ -1,6 +1,7 @@
 import { residenceOrganizationDocument } from "./residence-organization-document";
 import { residenceMaterialAi } from "./residence-material-ai";
 import { notifyPatientMessages } from "./patient-message-email";
+import { billingInvoiceEmail } from "./billing-invoice-email";
 import { patientMessages } from "./patient-messages";
 import { adminAppointmentVideo, patientAppointmentVideo } from './appointment-video';
 import { dailyTest } from "./daily-test";
@@ -2125,6 +2126,8 @@ export default {
   async fetch(request: Request, env: Env): Promise<Response> {
     const url = new URL(request.url);
 
+    if (url.pathname.replace(/\/$/, "") === "/api/admin/invoices/email") return billingInvoiceEmail(request, env, verifyEditorialOwner);
+
     if (url.pathname === "/api/admin/push" || url.pathname === "/api/admin/push/") return adminPushRequest(request, env, verifyEditorialOwner);
     if (url.pathname === "/api/video/appointment") return adminAppointmentVideo(request, env, verifyEditorialOwner);
     if (url.pathname === "/api/patient-portal/video") {
@@ -2224,3 +2227,4 @@ export default {
     ctx.waitUntil(notifyPatientMessages(env));
   },
 };
+

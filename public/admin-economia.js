@@ -14,6 +14,7 @@
   const contents = $("#econ-content");
   let session;
   let issuer = null, patients = [], bookings = [], invoices = [], receipts = [], expenses = [], externalIncome = [];
+  let emailDeliveries = [];
   let editingInvoice = null;
   let movementFilter = "all";
 
@@ -82,6 +83,7 @@
       rest("clinical_patients?select=id,full_name,national_id,address,care_context,status&order=full_name.asc&limit=1000"),
       rest("appointment_bookings?select=id,clinical_patient_id,starts_at,price_eur,service_code,status&order=starts_at.desc&limit=1000"),
       allRows("billing_external_income"),
+      rest("billing_invoice_email_deliveries?select=invoice_id,recipient_email,status,created_at,sent_at&order=created_at.desc&limit=1000").catch(() => []),
     ]);
     issuer = data[0]?.[0] || null;
     invoices = data[1] || [];
@@ -90,6 +92,7 @@
     patients = data[4] || [];
     bookings = data[5] || [];
     externalIncome = data[6] || [];
+    emailDeliveries = data[7] || [];
     renderAll();
     setStatus("");
   }
@@ -173,6 +176,11 @@
           " · Pendiente " + money(remaining)));
         const actions = el("div", "econ-actions");
         actions.append(btn("Imprimir / guardar PDF", "econ-outline", () => printInvoice(invoice)));
+        actions.append(btn("Enviar por email", "econ-outline", b => showInvoiceEmail(card, b, invoice)));
+        const delivery = emailDeliveries.find(d => d.invoice_id === invoice.id);
+        if (delivery) card.append(el("p", "econ-help", delivery.status === "accepted"
+          ? "Email aceptado para envío · " + delivery.recipient_email + " · " + fmtDate(delivery.sent_at)
+          : delivery.status === "failed" ? "Último envío rechazado por el servicio de correo." : "Último envío pendiente de verificar."));
         if (remaining > 0) actions.append(btn("Registrar cobro", "econ-outline", b => showPaymentForm(card, b, invoice, remaining)));
         card.append(actions);
       } else {
@@ -203,6 +211,63 @@
     }));
     actions.append(btn("Volver", "econ-outline", () => panel.remove()));
     panel.append(actions); card.append(panel);
+  }
+  async function invoiceEmailRequest(method, body) {
+    if (!session?.access_token) throw new Error("Vuelve a iniciar sesión.");
+    const response = await fetch("/api/admin/invoices/email" + (method === "GET" ? "?invoice_id=" + encodeURIComponent(body.invoice_id) : ""), {
+      method, cache:"no-store", headers:{"Content-Type":"application/json",Authorization:"Bearer " + session.access_token},
+      ...(method === "POST" ? {body:JSON.stringify(body)} : {})
+    });
+    const result = await response.json().catch(() => ({}));
+    if (!response.ok) throw new Error(result.error || "No se ha podido completar el envío. Revisa el historial antes de repetir.");
+    return result;
+  }
+  async function showInvoiceEmail(card, clicked, invoice) {
+    const old = card.querySelector(".econ-email-form");
+    if (old) { old.remove(); return; }
+    clicked.disabled = true;
+    try {
+      const info = await invoiceEmailRequest("GET", {invoice_id:invoice.id});
+      const form = el("form", "econ-card econ-email-form");
+      form.append(el("h4", "", "Enviar factura " + invoice.invoice_number));
+      form.append(el("p", "econ-help", "Se adjuntará el PDF de esta factura emitida. Comprueba que el correo pertenece al paciente o al destinatario autorizado."));
+      const label = el("label", "", "Correo del destinatario");
+      const email = el("input"); email.type="email"; email.required=true; email.maxLength=254; email.value=info.email || ""; label.append(email);
+      const consentLabel = el("label", "econ-external-confirm");
+      const consent = el("input"); consent.type="checkbox"; consent.required=true;
+      consentLabel.append(consent, document.createTextNode("He comprobado el destinatario y quiero enviarle esta factura."));
+      form.append(label,el("p", "", "Asunto: Factura " + invoice.invoice_number),el("p", "econ-help", "Hola, te adjunto la factura " + invoice.invoice_number + ". Si necesitas alguna aclaración, puedes responder a este correo. Un saludo, Carolina Sánchez Girona."),consentLabel);
+      let resend = null;
+      if (info.deliveries.some(d => d.status === "accepted")) {
+        const resendLabel = el("label", "econ-external-confirm");
+        resend = el("input"); resend.type="checkbox"; resend.required=true;
+        resendLabel.append(resend,document.createTextNode("Esta factura ya se envió: confirmo que quiero reenviarla."));
+        form.append(resendLabel);
+      }
+      if (info.deliveries.length) {
+        const history = el("details"); history.append(el("summary", "", "Historial de envíos"));
+        info.deliveries.forEach(d => history.append(el("p", "econ-help", d.recipient_email + " · " + new Intl.DateTimeFormat("es-ES",{dateStyle:"short",timeStyle:"short",timeZone:"Europe/Madrid"}).format(new Date(d.sent_at || d.created_at)) + " · " + ({accepted:"Aceptado para envío",failed:"Rechazado",pending:"Pendiente",unknown:"Pendiente de verificar"}[d.status] || d.status))));
+        form.append(history);
+      }
+      const pending = info.deliveries.some(d => ["pending","unknown"].includes(d.status));
+      if (!info.configured) form.append(el("p", "", "El envío por email todavía no está configurado en el servidor."));
+      if (pending) form.append(el("p", "", "Hay un intento pendiente de verificar. Comprueba su estado con el servicio de correo antes de reenviar."));
+      const feedback = el("p"); feedback.setAttribute("role","status");
+      const actions=el("div","econ-actions"), send=el("button","econ-button","Enviar factura con PDF");send.type="submit";send.disabled=!info.configured||pending;
+      actions.append(send,btn("Cancelar","econ-outline",()=>form.remove()));form.append(feedback,actions);
+      const requestId = crypto.randomUUID();
+      email.addEventListener("input",()=>{consent.checked=false;});
+      form.addEventListener("submit",async event=>{
+        event.preventDefault();if(send.disabled||!consent.checked||!form.reportValidity())return;
+        send.disabled=true;feedback.textContent="Enviando factura…";
+        try {
+          const result = await invoiceEmailRequest("POST",{invoice_id:invoice.id,email:email.value.trim(),request_id:requestId,confirm_recipient:true,confirm_resend:!!resend?.checked});
+          feedback.textContent = result.audit_saved === false ? "El servicio ha aceptado el correo, pero no se ha podido actualizar el historial. No vuelvas a enviarlo sin verificarlo." : "Correo aceptado para envío. La recepción o lectura del destinatario no está confirmada.";
+          try { await load(); } catch (_) { setStatus(feedback.textContent); }
+        } catch(error) { feedback.textContent=error.message; }
+      });
+      card.append(form);
+    } finally { clicked.disabled = false; }
   }
   function showPaymentForm(card, clicked, invoice, remaining) {
     if (card.querySelector(".econ-payment-form")) { card.querySelector(".econ-payment-form").remove(); return; }
