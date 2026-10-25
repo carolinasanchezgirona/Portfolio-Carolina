@@ -36,7 +36,7 @@ export default function TaxBooks(){
  function go(next:BookKind|"summary"){setView(next);if(next!=="summary")setBook(next);setPage(0);setFilter("all");setSelected(new Set());window.DememoriaTaxBridge?.navigate?.(next==="summary"?"books":next);}
  function importAction(){setImportOpen(true);setDownloadsOpen(false);setStep(1);setTimeout(()=>importRef.current?.scrollIntoView?.({behavior:"smooth",block:"start"}),0);}
  function downloadAction(){setDownloadsOpen(true);setImportOpen(false);setTimeout(()=>downloadRef.current?.scrollIntoView?.({behavior:"smooth",block:"start"}),0);}
- function pendingFilter(next:typeof filter){setView("registers");setFilter(next);setPage(0);setSelected(new Set());}
+ function pendingFilter(next:typeof filter){setView("registers");setFilter(next);setQuery("");setPage(0);setSelected(new Set());}
  async function rebuild(all:Sheet[],fileName:string){
   const result:BookRow[]=[];
   const occurrences=new Map<string,number>();
@@ -49,7 +49,7 @@ export default function TaxBooks(){
   setPreview(result);setPage(0);setReviewed(false);
  }
  async function open(file:File|undefined){
-  if(!file)return;setBusy(true);setMessage("");setPreview([]);setSheets([]);setName(file.name);setReviewed(false);
+  if(!file)return;setBusy(true);setMessage("");setPreview([]);setSheets([]);setName(file.name);setReviewed(false);setQuery("");setSelected(new Set());
   try{
    if(!file.size||file.size>5000000)throw Error("El archivo debe ocupar menos de 5 MB.");
    if(/\.csv$/i.test(file.name)&&file.size>1500000)throw Error("El CSV debe ocupar menos de 1,5 MB.");
