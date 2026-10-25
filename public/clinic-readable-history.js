@@ -85,6 +85,33 @@
     render();
     section._renderHistoryPreview = render;
   });
+  // Acceso a los asistentes existentes, manteniendo sus controles de revisión.
+  const aiPanel = document.createElement("section");
+  aiPanel.className = "clinic-record-section";
+  aiPanel.style.padding = "16px";
+  aiPanel.innerHTML = '<h3 style="margin:0 0 6px;color:#173a5e">Sugerencias clínicas con IA</h3><p style="font-weight:400;margin:0 0 12px;color:#52677b">Hipótesis y propuestas para revisión profesional. No se incorporan automáticamente a la historia validada.</p>';
+  const aiActions = document.createElement("div");
+  aiActions.style.cssText = "display:flex;flex-wrap:wrap;gap:10px";
+  [["Sugerir diagnóstico",1,"clinic-dx-ai-run"],["Sugerir objetivos y tratamiento",3,"clinic-treatment-ai-run"]].forEach(([caption,index,id]) => {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "history-toggle";
+    button.textContent = caption;
+    button.addEventListener("click", () => {
+      const section = sections[index];
+      section.open = true;
+      const edit = section.querySelector(".history-toggle");
+      if (!section.classList.contains("history-editing")) edit?.click();
+      const target = document.getElementById(id);
+      if (target) {
+        target.scrollIntoView({block:"center",behavior:"smooth"});
+        target.click();
+      }
+    });
+    aiActions.appendChild(button);
+  });
+  aiPanel.appendChild(aiActions);
+  root.appendChild(aiPanel);
   const refresh = () => sections.forEach(section => section._renderHistoryPreview?.());
   // La aplicación rellena los campos de forma programática al cambiar de paciente.
   document.addEventListener("click", () => { setTimeout(refresh, 120); setTimeout(refresh, 600); }, true);
