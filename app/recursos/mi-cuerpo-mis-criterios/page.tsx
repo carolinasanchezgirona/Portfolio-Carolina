@@ -15,7 +15,7 @@ return <main style={{background:"#fff",padding:"64px 20px",minHeight:"80vh"}}>
 <section style={{borderTop:"1px solid #d7e8ed",marginTop:42,paddingTop:30}}>
 <h2 style={{fontFamily:"Georgia,serif",fontSize:30,color:"#173A5E"}}>¿Quieres recibir próximos recursos?</h2>
 <p style={{lineHeight:1.7,color:"#35516C"}}>Suscríbete voluntariamente a nuestras novedades. No necesitas suscribirte para acceder a los cuadernos gratuitos.</p>
-<a href="https://c6645869.sibforms.com/serve/MUIFAIuvbjgYqrRqmmfpA-O89yKi9fH-Kb6Yp0UkGDyZKb_O1wjUF1SHUqEcp20MeACDjXZHQBzDuXijbIdqi8CB692onRlW0SA6IVn-N_ym1RIdQjptK-couFyXNVAQiyPtFM4hkdWfLmwNQgVfnarzCyzZDYkTDXyOH2O8g5m7BN-Gw--aM1hnRHHMfp39FyhRtcurRMbxfwtgMQ==" target="_blank" rel="noopener noreferrer" style={{display:"inline-block",padding:"15px 24px",background:"#173A5E",color:"white",borderRadius:50,textDecoration:"none",fontWeight:700}}>Suscribirme a las novedades ↗</a>
+<a href="/suscribete/" style={{display:"inline-block",padding:"15px 24px",background:"#173A5E",color:"white",borderRadius:50,textDecoration:"none",fontWeight:700}}>Suscribirme a las novedades ↗</a>
 </section>
 </section></main>;
 }

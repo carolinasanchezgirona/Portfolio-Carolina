@@ -1,3 +1,4 @@
+import LegalLinks from "../components/legal-links";
 import type { Metadata } from "next";
 import Script from "next/script";
 import "./mi-espacio.css";
@@ -76,6 +77,7 @@ export default function MiEspacioPage() {
           <p id="space-access-message" className="space-access-message" role="status" aria-live="polite" />
           <button id="space-open-panel" className="space-primary" type="button" hidden>Abrir Mi espacio en otra pestaña</button>
 
+          <div className="space-access-foot"><p>Responsable: Carolina Sánchez Girona (Dememoria). Usamos tu correo para identificarte y darte acceso al servicio, sobre la base de su prestación y, cuando corresponda, la asistencia sanitaria. Más información y ejercicio de derechos en la política de privacidad.</p><LegalLinks /></div>
           <p className="space-access-foot">Los enlaces de configuración solo sirven una vez. Nadie puede ver tus materiales clínicos hasta que te identifiques correctamente.</p>
         </div>
       </section>
@@ -457,7 +459,7 @@ export default function MiEspacioPage() {
           <section className="space-view" data-space-panel="account" hidden>
             <div className="space-hero">
               <p className="space-eyebrow">Cuenta y privacidad</p>
-              <h2>Mi configuración y privacidad</h2>
+              <h2>Mi configuración y privacidad</h2><LegalLinks />
               <p>La separación entre Wellness y terapia es intencionada. La elección del personaje se guarda en tu cuenta y tus registros libres de bienestar permanecen en este dispositivo, separados por paciente.</p>
             </div>
 

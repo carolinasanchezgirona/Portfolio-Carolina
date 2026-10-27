@@ -1,0 +1,17 @@
+.newsletter-page{min-height:70vh;background:#fff;padding:clamp(40px,6vw,85px) 20px;color:#173A5E;}
+.newsletter-section{max-width:770px;margin:auto;}
+.newsletter-section>h1{font-family:Georgia,serif;font-size:clamp(36px,5vw,58px);line-height:1.14;margin:18px 0;}
+.newsletter-eyebrow{font-size:13px;letter-spacing:.13em;font-weight:700;color:#087e7a;}
+.newsletter-lead{font-size:20px;line-height:1.7;color:#35516C;}
+.newsletter-form-wrap{margin:28px 0;}
+.newsletter-form{display:grid;gap:14px;margin-top:24px;}
+.newsletter-form>label{font-weight:600;}
+.newsletter-form>input{width:100%;min-height:48px;border:1px solid #8297aa;border-radius:8px;padding:12px;font:inherit;}
+.newsletter-form .newsletter-consent{display:flex;align-items:flex-start;gap:12px;font-size:.95rem;line-height:1.65;font-weight:400;}
+.newsletter-consent input{flex:0 0 auto;width:22px;height:22px;margin-top:3px;}
+.newsletter-form a,.newsletter-section>a,.privacy-summary a{color:#173A5E;text-decoration:underline;text-underline-offset:3px;}
+.newsletter-form button{justify-self:start;min-height:48px;white-space:normal;text-align:center;}
+.newsletter-form button:disabled{opacity:.65;cursor:wait;}
+.newsletter-form input:focus-visible,.newsletter-form a:focus-visible,.newsletter-form button:focus-visible{outline:3px solid #08A6A0;outline-offset:3px;}
+.newsletter-note,.newsletter-message{font-size:.95rem;line-height:1.7;color:#35516C;}
+.newsletter-honeypot{position:absolute;left:-10000px;width:1px;height:1px;overflow:hidden;}

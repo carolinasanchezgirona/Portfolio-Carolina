@@ -710,11 +710,17 @@ main {
   outline-offset: 3px;
 }
 
-.analytics-consent-actions .analytics-consent-accept {
+.analytics-consent-actions button {
   color: #fff;
   background: #24211f;
   border-color: #24211f;
 }
+
+.site-legal-links { display: flex; flex-wrap: wrap; gap: 12px 20px; align-items: center; font-size: .86rem; padding-block: 12px; }
+.site-legal-links a { color: inherit; text-decoration: underline; text-underline-offset: 3px; }
+.site-footer-bottom { flex-wrap: wrap; }
+.privacy-summary { padding: 18px; border: 1px solid #d6e1e7; border-radius: 12px; font-size: .9rem; line-height: 1.65; }
+.privacy-summary p:last-child { margin-bottom: 0; }
 
 .analytics-consent-settings {
   position: fixed;

@@ -26,6 +26,7 @@ export const metadata: Metadata = {
   metadataBase: new URL("https://carolinasanchezgirona.com"),
   applicationName: "Carolina Sánchez | Psicóloga",
   creator: "Carolina Sánchez Girona",
+  referrer: "no-referrer",
   title: {
     default: "Carolina Sánchez | Psicóloga y Neuropsicóloga en Arenys de Mar",
     template: "%s | Carolina Sánchez",

@@ -3,12 +3,15 @@
 import type { ReactNode } from "react";
 import { usePathname } from "next/navigation";
 import SocialLinks from "./social-links";
+import LegalLinks from "./legal-links";
 import "./conversion.css";
 
 const administrativeRoutes = [
   "/cita",
   "/admin",
   "/privacidad",
+  "/aviso-legal",
+  "/cookies",
   "/consentimiento-psicologico",
   "/consentimiento-neuropsicologico",
   "/mi-espacio",
@@ -181,6 +184,7 @@ function SiteFooter() {
 
       <div className="editorial-wrap site-footer-bottom">
         <span>© 2026 Carolina Sánchez Girona</span>
+        <LegalLinks />
         <div className="site-footer-contact">
           <a href="mailto:contact@carolinasanchezgirona.com">contact@carolinasanchezgirona.com</a>
           <SocialLinks compact />
@@ -202,6 +206,7 @@ export default function SiteShell({ children }: { children: ReactNode }) {
       <div className="editorial-site public-page-shell">
         <a className="skip-link" href="#contenido-principal">Saltar al contenido principal</a>
         <div id="contenido-principal" tabIndex={-1}>{children}</div>
+        <LegalLinks />
         <a className="mobile-booking-shortcut" href="/cita/">Pedir cita</a>
         <CrisisNotice />
       </div>

@@ -2161,6 +2161,27 @@ export default {
   async fetch(request: Request, env: Env): Promise<Response> {
     const url = new URL(request.url);
 
+    if (["/api/newsletter/subscribe", "/api/newsletter/status"].includes(url.pathname.replace(/\/$/, ""))) {
+      const statusOnly = url.pathname.replace(/\/$/, "").endsWith("/status");
+      if (request.method !== (statusOnly ? "GET" : "POST")) return resourceJson({ error: "Método no permitido." }, 405);
+      if (!statusOnly && !patientPortalSameOrigin(request)) return resourceJson({ error: "Origen no permitido." }, 403);
+      if (!env.SUPABASE_SERVICE_ROLE_KEY) return resourceJson({ error: "Servicio no disponible." }, 503);
+      if (!statusOnly && !request.headers.get("Content-Type")?.startsWith("application/json")) return resourceJson({ error: "Formato no válido." }, 415);
+      if (Number(request.headers.get("Content-Length") || 0) > 4096) return resourceJson({ error: "Solicitud demasiado grande." }, 413);
+      const body = statusOnly ? undefined : await request.text();
+      if (body && body.length > 4096) return resourceJson({ error: "Solicitud demasiado grande." }, 413);
+      try {
+        const response = await fetch(`${RESOURCE_SUPABASE}/functions/v1/newsletter-subscribe`, {
+          method: request.method,
+          headers: { Authorization: `Bearer ${env.SUPABASE_SERVICE_ROLE_KEY}`, apikey: env.SUPABASE_SERVICE_ROLE_KEY,
+            "Content-Type": "application/json", "X-Newsletter-Client-IP": request.headers.get("CF-Connecting-IP") || "unknown" },
+          body, signal: AbortSignal.timeout(30_000),
+        });
+        const result = await response.json().catch(() => ({ error: "Servicio no disponible." }));
+        return resourceJson(result, response.status);
+      } catch { return resourceJson({ error: "No se ha podido tramitar la suscripción." }, 503); }
+    }
+
     if (url.pathname.replace(/\/$/, "") === "/api/admin/invoices/email") return billingInvoiceEmail(request, env, verifyEditorialOwner);
 
     if (url.pathname === "/api/admin/push" || url.pathname === "/api/admin/push/") return adminPushRequest(request, env, verifyEditorialOwner);

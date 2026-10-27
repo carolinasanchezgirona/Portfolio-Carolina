@@ -20,4 +20,10 @@
 .legal-data{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px 24px;padding:20px;border:1px solid #E4E0D8;border-radius:12px;background:#fff;}
 .legal-data p{margin:0;}
 .legal-footer{padding:28px 0 40px;border-top:1px solid #E4E0D8;color:#81796e;font-size:.8rem;}
+.legal-table-wrap{overflow-x:auto;max-width:100%;margin-block:18px;}
+.legal-document table{width:100%;border-collapse:collapse;text-align:left;font-size:.9rem;}
+.legal-document th,.legal-document td{padding:14px;vertical-align:top;border:1px solid #d8dfdf;line-height:1.6;overflow-wrap:anywhere;}
+.legal-document th{background:#eaf2f5;color:#173A5E;}
+.legal-document a{color:#14517b;text-underline-offset:3px;overflow-wrap:anywhere;}
+.legal-document section{scroll-margin-top:24px;}
 @media(max-width:680px){.legal-wrap{width:min(100% - 32px,880px)}.legal-header{min-height:68px}.legal-hero{padding:38px 0 24px}.legal-data{grid-template-columns:1fr}.legal-document{padding-top:28px}}

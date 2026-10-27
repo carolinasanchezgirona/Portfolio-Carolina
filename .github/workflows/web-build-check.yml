@@ -58,6 +58,9 @@ jobs:
           node --check public/clinic-deferred-consent.js
           node --test tests/booking-conversion.test.mjs
 
+      - name: Verificar consentimiento de cookies y suscripción con confirmación
+        run: node --experimental-strip-types --test tests/website-privacy.test.mjs
+
       - name: Validar editor clínico, guardado automático y navegación
         run: |
           node --check public/admin-clinica.js
