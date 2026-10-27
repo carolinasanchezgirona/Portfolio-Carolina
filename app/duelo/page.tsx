@@ -6,9 +6,10 @@ export const metadata: Metadata = {
   description:
     "Atención psicológica para procesos de duelo, fallecimientos, rupturas y otras pérdidas. Consulta para adultos en Arenys de Mar y online.",
   alternates: { canonical: "/duelo/" },
+  twitter: { card: "summary", title: "Psicóloga para duelo en Arenys de Mar y online | Carolina Sánchez", description: "Atención psicológica para procesos de duelo, fallecimientos, rupturas y otras pérdidas. Consulta para adultos en Arenys de Mar y online." },
   openGraph: {
-    title: "Psicóloga para duelo | Carolina Sánchez Girona",
-    description: "Atención psicológica en procesos de duelo, presencial en Arenys de Mar y online.",
+    title: "Psicóloga para duelo en Arenys de Mar y online | Carolina Sánchez",
+    description: "Atención psicológica para procesos de duelo, fallecimientos, rupturas y otras pérdidas. Consulta para adultos en Arenys de Mar y online.",
     url: "https://carolinasanchezgirona.com/duelo/",
   },
 };

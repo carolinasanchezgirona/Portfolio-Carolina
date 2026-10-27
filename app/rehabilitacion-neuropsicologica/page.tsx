@@ -2,12 +2,13 @@ import type { Metadata } from "next";
 import "../seo-pages.css";
 
 export const metadata: Metadata = {
-  title: "Rehabilitación neuropsicológica",
+  title: "Rehabilitación neuropsicológica en Arenys de Mar",
   description: "Rehabilitación neuropsicológica tras ictus, TCE u otras condiciones neurológicas: atención, memoria, funciones ejecutivas y autonomía.",
   alternates: { canonical: "/rehabilitacion-neuropsicologica/" },
+  twitter: { card: "summary", title: "Rehabilitación neuropsicológica en Arenys de Mar | Carolina Sánchez", description: "Rehabilitación neuropsicológica tras ictus, TCE u otras condiciones neurológicas: atención, memoria, funciones ejecutivas y autonomía." },
   openGraph: {
-    title: "Rehabilitación neuropsicológica | Carolina Sánchez Girona",
-    description: "Intervención neuropsicológica orientada a objetivos funcionales, estrategias compensatorias y recuperación de autonomía.",
+    title: "Rehabilitación neuropsicológica en Arenys de Mar | Carolina Sánchez",
+    description: "Rehabilitación neuropsicológica tras ictus, TCE u otras condiciones neurológicas: atención, memoria, funciones ejecutivas y autonomía.",
     url: "https://carolinasanchezgirona.com/rehabilitacion-neuropsicologica/",
   },
 };

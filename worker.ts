@@ -2161,6 +2161,15 @@ export default {
   async fetch(request: Request, env: Env): Promise<Response> {
     const url = new URL(request.url);
 
+    // Give legacy category links a filtered static page, including without JavaScript.
+    const articleCategory = url.searchParams.get("categoria");
+    if (["GET", "HEAD"].includes(request.method) && ["/articulos", "/articulos/"].includes(url.pathname)
+      && (articleCategory === "psicologia" || articleCategory === "neuropsicologia")) {
+      url.pathname = `/articulos/categoria/${articleCategory}/`;
+      url.searchParams.delete("categoria");
+      return Response.redirect(url.toString(), 301);
+    }
+
     if (["/api/newsletter/subscribe", "/api/newsletter/status"].includes(url.pathname.replace(/\/$/, ""))) {
       const statusOnly = url.pathname.replace(/\/$/, "").endsWith("/status");
       if (request.method !== (statusOnly ? "GET" : "POST")) return resourceJson({ error: "Método no permitido." }, 405);

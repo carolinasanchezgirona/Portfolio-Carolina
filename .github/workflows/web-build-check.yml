@@ -163,6 +163,9 @@ jobs:
       - name: Validar aplicaciones y evolución de residencia
         run: node --experimental-strip-types --test tests/residence-model.test.mjs tests/residence-schedule.test.mjs tests/residence-mmse.test.mjs tests/residence-web-assessments.test.mjs tests/residence-care-documentation.test.mjs tests/residence-clinical-workflow.test.mjs tests/residence-geriatric-tests.test.mjs tests/residence-offline-merge.test.mjs tests/residence-materials.test.mjs tests/residence-ai-materials.test.mjs tests/residence-followup-planning.test.mjs tests/residence-exports.test.mjs
 
+      - name: Verificar categorías de artículos y redirecciones SEO
+        run: node --test tests/articles-categories.test.mjs
+
       - name: Compilar y exportar web
         run: npm run build
 

@@ -6,10 +6,11 @@ export const metadata: Metadata = {
   description:
     "Neuropsicóloga en Arenys de Mar (Maresme). Evaluación de memoria, atención y deterioro cognitivo, seguimiento de demencias y orientación a familiares.",
   alternates: { canonical: "/neuropsicologia/" },
+  twitter: { card: "summary", title: "Neuropsicóloga en Arenys de Mar y Maresme | Carolina Sánchez", description: "Neuropsicóloga en Arenys de Mar (Maresme). Evaluación de memoria, atención y deterioro cognitivo, seguimiento de demencias y orientación a familiares." },
   openGraph: {
-    title: "Neuropsicología en Arenys de Mar | Carolina Sánchez Girona",
+    title: "Neuropsicóloga en Arenys de Mar y Maresme | Carolina Sánchez",
     description:
-      "Evaluación e intervención neuropsicológica en Arenys de Mar y seguimiento cuando es necesario comprender mejor el perfil cognitivo.",
+      "Neuropsicóloga en Arenys de Mar (Maresme). Evaluación de memoria, atención y deterioro cognitivo, seguimiento de demencias y orientación a familiares.",
     url: "https://carolinasanchezgirona.com/neuropsicologia/",
   },
 };
@@ -144,6 +145,7 @@ export default function NeuropsychologyPage() {
               <li><span>Área</span><strong>Maresme</strong></li>
             </ul>
             <a className="editorial-btn editorial-btn-primary" href="/cita/">Consultar disponibilidad</a>
+            <p className="seo-local-note">La sesión de neuropsicología dura 60 minutos y cuesta 75 €. Las evaluaciones completas que requieran varias sesiones, pruebas específicas o informe se presupuestan aparte.</p>
           </div>
           <div className="seo-card">
             <h3>Áreas relacionadas</h3>

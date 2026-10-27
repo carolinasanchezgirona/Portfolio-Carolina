@@ -54,30 +54,47 @@
   async function renderList() {
     const grid = document.querySelector("#articles-grid");
     const status = document.querySelector("#articles-status");
-    const category = new URLSearchParams(window.location.search).get("categoria");
+    const requestedCategory = main.dataset.articleFilter && main.dataset.articleFilter !== "all"
+      ? main.dataset.articleFilter : new URLSearchParams(window.location.search).get("categoria");
+    const category = ["psicologia", "neuropsicologia"].includes(requestedCategory) ? requestedCategory : null;
     const staticSlugs = staticArticleSlugs(grid);
     document.querySelectorAll(".articles-filters a").forEach((link) => {
       const value = link.dataset.category;
-      link.classList.toggle("active", (!category && value === "all") || category === value);
+      const active = (!category && value === "all") || category === value;
+      link.classList.toggle("active", active);
+      if (active) link.setAttribute("aria-current", "page"); else link.removeAttribute("aria-current");
     });
+    const emptyMessage = category ? `Todavía no hay artículos publicados de ${categoryLabel(category)}.` : "Próximamente encontrarás aquí nuevos artículos.";
+    // Filter the exported cards before fetching, preserving a correct offline fallback.
+    grid.querySelectorAll("[data-article-category]").forEach((card) => {
+      card.hidden = Boolean(category && card.dataset.articleCategory !== category);
+    });
+    const hasStaticArticles = Array.from(grid.querySelectorAll("[data-article-category]")).some((card) => !card.hidden);
+    status.hidden = hasStaticArticles;
+    if (!hasStaticArticles) status.textContent = emptyMessage;
 
     try {
       const rows = await request(`articles?select=${encodeURIComponent(select)}&status=eq.published&order=featured.desc,published_at.desc`);
       const visible = rows.filter(isPublishedNow);
       const articles = category === "psicologia" || category === "neuropsicologia" ? visible.filter((a) => a.category === category) : visible;
       grid.replaceChildren();
-      if (!articles.length) { status.textContent = "Próximamente encontrarás aquí nuevos artículos."; status.hidden = false; return; }
+      if (!articles.length) { status.textContent = emptyMessage; status.hidden = false; return; }
       status.hidden = true;
       articles.forEach((article) => {
         const card = document.createElement("article");
         card.className = `articles-card${article.featured ? " featured" : ""}`;
+        card.dataset.articleCategory = article.category;
         const href = articleHref(article.slug, staticSlugs);
         const summary = article.subtitle || article.excerpt || "";
         const mins = readingMinutes(article.content);
         card.innerHTML = `${article.image_url ? `<a class="articles-card-image" href="${href}" aria-label="Leer ${escapeHtml(article.title)}"><img src="${escapeHtml(article.image_url)}" alt="${escapeHtml(article.image_alt || "")}" loading="lazy" decoding="async"></a>` : ""}<div class="articles-card-body"><div class="articles-card-meta"><span class="articles-card-category">${categoryLabel(article.category)}</span>${article.published_at ? `<span>${formatDate(article.published_at)}</span>` : ""}${mins ? `<span>${mins} min</span>` : ""}</div><h2><a href="${href}">${escapeHtml(article.title)}</a></h2>${summary ? `<p>${escapeHtml(summary)}</p>` : ""}<a class="articles-card-link" href="${href}">Leer artículo →</a></div>`;
         grid.append(card);
       });
-    } catch (error) { status.hidden = false; status.textContent = error.message; }
+    } catch {
+      // Keep the filtered exported list when the live update is unavailable.
+      status.hidden = hasStaticArticles;
+      if (!hasStaticArticles) status.textContent = emptyMessage;
+    }
   }
 
   function relatedLabel(path) {

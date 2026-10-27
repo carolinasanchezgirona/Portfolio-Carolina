@@ -6,10 +6,11 @@ export const metadata: Metadata = {
   description:
     "Psicóloga para adultos en Arenys de Mar (Maresme) y online. Atención a la ansiedad, bajo estado de ánimo, duelo, relaciones y estrés. Consulta y reserva de cita.",
   alternates: { canonical: "/psicologia/" },
+  twitter: { card: "summary", title: "Psicología para adultos en Arenys de Mar y online | Carolina Sánchez", description: "Psicóloga para adultos en Arenys de Mar (Maresme) y online. Atención a la ansiedad, bajo estado de ánimo, duelo, relaciones y estrés. Consulta y reserva de cita." },
   openGraph: {
-    title: "Psicología General Sanitaria | Carolina Sánchez Girona",
+    title: "Psicología para adultos en Arenys de Mar y online | Carolina Sánchez",
     description:
-      "Atención psicológica para adultos en Arenys de Mar y online.",
+      "Psicóloga para adultos en Arenys de Mar (Maresme) y online. Atención a la ansiedad, bajo estado de ánimo, duelo, relaciones y estrés. Consulta y reserva de cita.",
     url: "https://carolinasanchezgirona.com/psicologia/",
   },
 };

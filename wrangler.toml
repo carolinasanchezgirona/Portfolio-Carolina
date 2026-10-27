@@ -15,7 +15,7 @@ crons = ["*/10 * * * *"]
 [assets]
 directory = "./out"
 binding = "ASSETS"
-run_worker_first = [ "/api/*", "/admin/videoconsulta/prueba", "/admin/videoconsulta/prueba/" ]
+run_worker_first = [ "/api/*", "/articulos", "/articulos/", "/admin/videoconsulta/prueba", "/admin/videoconsulta/prueba/" ]
 
 [secrets]
 required = [ "STRIPE_WEBHOOK_SECRET" ]

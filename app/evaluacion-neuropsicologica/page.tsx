@@ -6,9 +6,10 @@ export const metadata: Metadata = {
   description:
     "Evaluación neuropsicológica en Arenys de Mar de memoria, atención, lenguaje, funciones ejecutivas y funcionamiento cotidiano.",
   alternates: { canonical: "/evaluacion-neuropsicologica/" },
+  twitter: { card: "summary", title: "Evaluación neuropsicológica en Arenys de Mar | Carolina Sánchez", description: "Evaluación neuropsicológica en Arenys de Mar de memoria, atención, lenguaje, funciones ejecutivas y funcionamiento cotidiano." },
   openGraph: {
-    title: "Evaluación neuropsicológica | Carolina Sánchez Girona",
-    description: "Valoración de memoria, atención, lenguaje y funciones ejecutivas en Arenys de Mar.",
+    title: "Evaluación neuropsicológica en Arenys de Mar | Carolina Sánchez",
+    description: "Evaluación neuropsicológica en Arenys de Mar de memoria, atención, lenguaje, funciones ejecutivas y funcionamiento cotidiano.",
     url: "https://carolinasanchezgirona.com/evaluacion-neuropsicologica/",
   },
 };
@@ -142,7 +143,7 @@ export default function NeuropsychAssessmentPage() {
               <li><span>Área</span><strong>Neuropsicología</strong></li>
             </ul>
             <a className="editorial-btn editorial-btn-primary" href="/cita/">Consultar disponibilidad</a>
-            <p className="seo-local-note">La extensión total de una evaluación depende de la pregunta clínica y de las pruebas necesarias.</p>
+            <p className="seo-local-note">La sesión de neuropsicología dura 60 minutos y cuesta 75 €. Las evaluaciones completas que requieran varias sesiones, pruebas específicas o informe se presupuestan aparte.</p>
           </div>
           <div className="seo-card">
             <h3>Relacionados</h3>

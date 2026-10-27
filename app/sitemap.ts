@@ -51,7 +51,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${base}/demencias/`, lastModified: staticLastModified, changeFrequency: "monthly", priority: 0.86 },
     { url: `${base}/estimulacion-cognitiva/`, lastModified: staticLastModified, changeFrequency: "monthly", priority: 0.84 },
     { url: `${base}/familiares-y-cuidadores-de-personas-con-demencia/`, lastModified: staticLastModified, changeFrequency: "monthly", priority: 0.84 },
-    { url: `${base}/articulos/`, lastModified: staticLastModified, changeFrequency: "weekly", priority: 0.88 },
+    { url: `${base}/articulos/`, lastModified: new Date("2026-10-27T00:00:00+01:00"), changeFrequency: "weekly", priority: 0.88 },
     { url: `${base}/pregunta-a-carolina/`, lastModified: new Date(questionsLastModified), changeFrequency: "weekly", priority: 0.88 },
     { url: `${base}/recursos/`, lastModified: staticLastModified, changeFrequency: "weekly", priority: 0.78 },
     { url: `${base}/podcast/`, lastModified: new Date("2026-10-11T12:00:00+02:00"), changeFrequency: "weekly", priority: 0.8 },
@@ -60,9 +60,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${base}/cita/`, lastModified: staticLastModified, changeFrequency: "daily", priority: 0.9 },
   ];
 
-  const articles = (await getPublishedArticles())
-    .filter((article) => isArticleVisible(article))
-    .map((article) => ({
+  const publishedArticles = (await getPublishedArticles()).filter((article) => isArticleVisible(article));
+  const articleCategories: MetadataRoute.Sitemap = ["psicologia", "neuropsicologia"]
+    .filter((category) => publishedArticles.some((article) => article.category === category))
+    .map((category) => ({ url: `${base}/articulos/categoria/${category}/`, lastModified: new Date("2026-10-27T00:00:00+01:00"), changeFrequency: "weekly", priority: 0.7 }));
+  const articles = publishedArticles.map((article) => ({
       url: `${base}/articulos/${encodeURIComponent(article.slug)}/`,
       lastModified: article.updated_at ? new Date(article.updated_at) : article.published_at ? new Date(article.published_at) : undefined,
       changeFrequency: "monthly" as const,
@@ -76,5 +78,5 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.76,
   }));
 
-  return [...staticPages, ...articles, ...podcastPages];
+  return [...staticPages, ...articleCategories, ...articles, ...podcastPages];
 }
