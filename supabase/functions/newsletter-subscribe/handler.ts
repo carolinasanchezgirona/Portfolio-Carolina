@@ -18,10 +18,11 @@ async function brevo(env: NewsletterEnv, path: string, body?: unknown) {
   });
 }
 export async function prepareNewsletter(env: NewsletterEnv): Promise<Configuration> {
-  const [listsResponse, attributesResponse, templatesResponse] = await Promise.all([
+  const [listsResponse, attributesResponse, templatesResponse, sendersResponse] = await Promise.all([
     brevo(env, "/contacts/lists?limit=50"), brevo(env, "/contacts/attributes"), brevo(env, "/smtp/templates?limit=1000"),
+    brevo(env, "/senders"),
   ]);
-  if (!listsResponse.ok || !attributesResponse.ok || !templatesResponse.ok) throw Error("newsletter_configuration_unavailable");
+  if (!listsResponse.ok || !attributesResponse.ok || !templatesResponse.ok || !sendersResponse.ok) throw Error("newsletter_configuration_unavailable");
   const lists = await listsResponse.json() as { lists?: Array<{ id: number; name: string }>; count?: number };
   let list = lists.lists?.find(item => item.name === NEWSLETTER_LIST_NAME);
   // Do not select a different list, or fetch any contacts, when looking for the target.
@@ -49,8 +50,14 @@ export async function prepareNewsletter(env: NewsletterEnv): Promise<Configurati
   const templates = await templatesResponse.json() as { templates?: Array<{ id: number; name: string; isActive: boolean; htmlContent?: string }> };
   let templateId = templates.templates?.find(item => item.name === NEWSLETTER_TEMPLATE_NAME && item.isActive && /doubleoptin/.test(item.htmlContent || ""))?.id;
   if (templateId === undefined) {
+    const senders = await sendersResponse.json() as { senders?: Array<{ id: number; name: string; email: string; active: boolean }> };
+    const activeSenders = senders.senders?.filter(item => item.active) || [];
+    const sender = activeSenders.find(item => item.email === "contact@carolinasanchezgirona.com")
+      || activeSenders.find(item => /carolina|demem[oò]ria/i.test(item.name))
+      || (activeSenders.length === 1 ? activeSenders[0] : undefined);
+    if (!sender) throw Error("newsletter_verified_sender_missing");
     const created = await brevo(env, "/smtp/templates", {
-      sender: { name: "Carolina Sánchez Girona", email: "contact@carolinasanchezgirona.com" },
+      sender: { name: "Carolina Sánchez Girona", id: sender.id },
       replyTo: "contact@carolinasanchezgirona.com", templateName: NEWSLETTER_TEMPLATE_NAME,
       subject: "Confirma tu suscripción a los recursos gratuitos", isActive: true, tag: "website-newsletter-doi",
       htmlContent: `<html lang="es"><body style="font-family:Arial,sans-serif;color:#173A5E;line-height:1.7;max-width:600px;margin:auto;padding:24px"><h1>Confirma tu suscripción</h1><p>Has solicitado recibir recursos gratuitos y novedades de Carolina Sánchez Girona.</p><p>${NEWSLETTER_CONSENT_TEXT}</p><p><a href="{{ doubleoptin }}">Confirmar mi suscripción</a></p><p>Si no has hecho esta solicitud, ignora este mensaje. No se te añadirá a la lista por recibirlo.</p><p>Responsable: Carolina Sánchez Girona (Dememoria). Puedes retirar el consentimiento mediante la baja de cada comunicación o escribiendo a contact@carolinasanchezgirona.com.</p><p><a href="${SITE}/privacidad/">Política de privacidad</a> · <a href="{{ unsubscribe }}">No deseo recibir comunicaciones</a></p></body></html>`,
@@ -75,18 +82,38 @@ async function consumeLimit(env: NewsletterEnv, type: string, value: string, max
   if (!response.ok) throw Error("newsletter_limits_unavailable");
   return await response.json() === true;
 }
+async function verifyNewsletterService(request: Request, env: NewsletterEnv) {
+  const authorization = request.headers.get("Authorization") || "";
+  if (!env.SUPABASE_SERVICE_ROLE_KEY) return false;
+  if (authorization === `Bearer ${env.SUPABASE_SERVICE_ROLE_KEY}`) return true;
+  if (!/^Bearer [A-Za-z0-9._~-]{40,4096}$/.test(authorization) || !env.SUPABASE_URL) return false;
+  // Rotated service credentials can differ from the Edge runtime's legacy key.
+  // Verify against this project's restricted, empty result set. Do not decode
+  // or trust an unsigned role claim, and do not request users or clinical data.
+  try {
+    const verification = await fetch(env.SUPABASE_URL + "/rest/v1/website_newsletter_limits?select=key_hash&limit=0", {
+      headers: { apikey: authorization.slice(7), Authorization: authorization },
+      cache: "no-store", redirect: "manual", signal: AbortSignal.timeout(5000),
+    });
+    return verification.status === 200;
+  } catch { return false; }
+}
 export function createNewsletterHandler(env: NewsletterEnv) {
   let configuration: Promise<Configuration> | null = null;
   return async function newsletter(request: Request): Promise<Response> {
-    if (!env.SUPABASE_SERVICE_ROLE_KEY || request.headers.get("Authorization") !== `Bearer ${env.SUPABASE_SERVICE_ROLE_KEY}`) return json({ error: "No autorizado." }, 401);
+    if (!await verifyNewsletterService(request, env)) return json({ error: "No autorizado." }, 401);
     if (request.method === "GET") {
-      if (!env.BREVO_API_KEY || !env.SUPABASE_URL) return json({ available: false }, 503);
+      if (!env.BREVO_API_KEY || !env.SUPABASE_URL) return json({ available: false, reason: !env.BREVO_API_KEY ? "email_not_configured" : "database_not_configured" }, 503);
       try {
         // Readiness initializes only dedicated template/attribute metadata, never a contact or an email.
         if (!configuration) configuration = prepareNewsletter(env).catch(error => { configuration = null; throw error; });
         await configuration;
         return json({ available: true });
-      } catch { return json({ available: false }, 503); }
+      } catch (error) {
+        const reason = error instanceof Error && /^newsletter_[a-z_]+$/.test(error.message) ? error.message : "newsletter_configuration_unavailable";
+        console.error("[newsletter]", reason);
+        return json({ available: false, reason }, 503);
+      }
     }
     if (request.method !== "POST") return json({ error: "Método no permitido." }, 405);
     if (!request.headers.get("Content-Type")?.startsWith("application/json")) return json({ error: "Formato no válido." }, 415);

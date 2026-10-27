@@ -16,6 +16,7 @@ function mockProvider(t, { limited = false, deliveryStatus = 201, provision = fa
     calls.push({ url: String(url), method: init.method || 'GET', body });
     if (String(url).includes('/rpc/consume_website_newsletter_limit')) return Response.json(!limited);
     if (String(url).includes('/contacts/lists?')) return Response.json({ lists: [{ id: 7, name: NEWSLETTER_LIST_NAME }], count: 1 });
+    if (String(url).endsWith('/senders')) return Response.json({senders:[{id:9,name:'Carolina Sánchez',email:'carolina@verified.example.invalid',active:true}]});
     if (String(url).endsWith('/contacts/attributes')) return Response.json({ attributes: provision ? [] : Object.entries({ CG_NEWSLETTER_CONSENT: 'boolean', CG_NEWSLETTER_VERSION: 'text', CG_NEWSLETTER_REQUESTED_AT: 'text', CG_NEWSLETTER_SOURCE: 'text', CG_NEWSLETTER_TEXT: 'text' }).map(([name,type]) => ({ name, type, category: 'normal' })) });
     if (String(url).includes('/contacts/attributes/normal/')) return Response.json({}, { status: 201 });
     if (String(url).endsWith('/smtp/templates?limit=1000')) return Response.json({ templates: provision ? [] : [{ id: 12, name: NEWSLETTER_TEMPLATE_NAME, isActive: true, htmlContent: '<a href="{{ doubleoptin }}">Confirmar</a>' }] });
@@ -80,7 +81,42 @@ test('readiness provisions dedicated metadata only and never sends a message', a
   assert.equal(result.status,200); assert.deepEqual(await result.json(),{available:true});
   assert.equal(calls.filter(call=>call.url.includes('/contacts/attributes/normal/')).length,5);
   const template=calls.find(call=>call.url.endsWith('/smtp/templates'));
+  assert.deepEqual(template.body.sender,{name:'Carolina Sánchez Girona',id:9});
   assert.ok(template.body.htmlContent.includes('{{ doubleoptin }}'));
   assert.ok(template.body.htmlContent.includes('/privacidad/'));
   assert.ok(!calls.some(call=>call.url.includes('doubleOptinConfirmation')||call.url.endsWith('/smtp/email')));
+});
+
+test('rotated service credential is independently verified without reading contacts or trusting JWT claims', async t => {
+  const calls=mockProvider(t);
+  const base=globalThis.fetch;
+  t.mock.method(globalThis,'fetch',async (url, init) => {
+    if (String(url).endsWith('/website_newsletter_limits?select=key_hash&limit=0')) {
+      calls.push({url:String(url),method:init.method||'GET'});
+      return Response.json([]);
+    }
+    return base(url,init);
+  });
+  const rotated='rotated-project-service-key-'.repeat(3);
+  const response=await createNewsletterHandler(env)(request(payload,'POST',rotated));
+  assert.equal(response.status,202);
+  assert.ok(calls.some(call=>call.url.includes('limit=0')));
+  assert.ok(!calls.some(call=>call.url.includes('/auth/v1/admin/users')));
+});
+test('forged service role claim fails closed when the project rejects its credential',async t => {
+  const forged=Buffer.from(JSON.stringify({alg:'none'})).toString('base64url')+'.'+Buffer.from(JSON.stringify({role:'service_role'})).toString('base64url')+'.unsigned';
+  const calls=[];
+  t.mock.method(globalThis,'fetch',async(url)=>{calls.push(String(url));return Response.json({error:'denied'},{status:403});});
+  const response=await createNewsletterHandler(env)(request(payload,'POST',forged));
+  assert.equal(response.status,401);
+  assert.equal(calls.length,1);
+  assert.ok(calls[0].includes('limit=0'));
+});
+test('missing verified sender fails readiness without creating a sender or sending mail',async t => {
+  const calls=mockProvider(t,{provision:true}); const base=globalThis.fetch;
+  t.mock.method(globalThis,'fetch',async(url,init)=>String(url).endsWith('/senders')?Response.json({senders:[]}):base(url,init));
+  const response=await createNewsletterHandler(env)(request(undefined,'GET'));
+  assert.equal(response.status,503);
+  assert.equal((await response.json()).reason,'newsletter_verified_sender_missing');
+  assert.ok(!calls.some(call=>call.url.endsWith('/smtp/templates')||call.url.includes('doubleOptinConfirmation')));
 });
