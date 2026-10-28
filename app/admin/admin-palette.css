@@ -24,14 +24,14 @@ body:has(:is(.admin-hub-page,.admin-page,.articles-admin-page,.questions-admin-p
 .admin-hub-page .admin-home-eyebrow{color:var(--admin-plum)}
 .admin-hub-page .admin-hub-shortcuts>a{
   border-color:var(--admin-palette-line);
-  border-top:3px solid var(--admin-plum);
+  border-inline-start:3px solid var(--admin-plum);
 }
-.admin-hub-page .admin-hub-shortcuts>a:nth-child(5n+2){border-top-color:var(--admin-turquoise)}
-.admin-hub-page .admin-hub-shortcuts>a:nth-child(5n+3){border-top-color:var(--admin-leaf)}
-.admin-hub-page .admin-hub-shortcuts>a:nth-child(5n+4){border-top-color:var(--admin-yellow)}
-.admin-hub-page .admin-hub-shortcuts>a:nth-child(5n+5){border-top-color:var(--admin-forest)}
+.admin-hub-page .admin-hub-shortcuts>a:nth-child(5n+2){border-inline-start-color:var(--admin-turquoise)}
+.admin-hub-page .admin-hub-shortcuts>a:nth-child(5n+3){border-inline-start-color:var(--admin-leaf)}
+.admin-hub-page .admin-hub-shortcuts>a:nth-child(5n+4){border-inline-start-color:var(--admin-yellow)}
+.admin-hub-page .admin-hub-shortcuts>a:nth-child(5n+5){border-inline-start-color:var(--admin-forest)}
 .admin-hub-page .admin-hub-shortcuts>a:hover{background:var(--admin-plum-soft);border-color:var(--admin-plum)}
-.admin-hub-page .admin-hub-module{border-color:var(--admin-palette-line);border-top:4px solid var(--module-accent,var(--admin-plum))}
+.admin-hub-page .admin-hub-module{border-color:var(--admin-palette-line);border-top:1px solid #e1e8ee}
 .admin-hub-page .admin-hub-module:nth-child(6n+1){--module-accent:var(--admin-plum);--module-soft:#f4edf5;--module-ink:var(--admin-plum)}
 .admin-hub-page .admin-hub-module:nth-child(6n+2){--module-accent:var(--admin-turquoise);--module-soft:#edf7f7;--module-ink:var(--admin-petroleum)}
 .admin-hub-page .admin-hub-module:nth-child(6n+3){--module-accent:var(--admin-petroleum);--module-soft:#edf4f7;--module-ink:var(--admin-petroleum)}
@@ -40,7 +40,10 @@ body:has(:is(.admin-hub-page,.admin-page,.articles-admin-page,.questions-admin-p
 .admin-hub-page .admin-hub-module:nth-child(6n+6){--module-accent:var(--admin-yellow);--module-soft:#fcf8e6;--module-ink:#665619}
 .admin-hub-page .admin-hub-module .admin-hub-module-icon{background:var(--module-soft);color:var(--module-ink)}
 .admin-hub-page .admin-hub-module .admin-hub-module-open{color:var(--module-ink)}
-.admin-hub-page .admin-home-priority{border-top:3px solid var(--admin-turquoise)}
+.admin-hub-page .admin-home-priority{border:1px solid #e1e8ee}
+.admin-hub-page .admin-home-priority:nth-child(3n+1) strong{color:var(--admin-plum)}
+.admin-hub-page .admin-home-priority:nth-child(3n+2) strong{color:var(--admin-petroleum)}
+.admin-hub-page .admin-home-priority:nth-child(3n+3) strong{color:var(--admin-forest)}
 .admin-hub-page .admin-home-priority.attention{background:#fcf8e6;border-color:var(--admin-yellow);color:#665619}
 
 /* Matching actions and current-view indicators across all admin workspaces. */
