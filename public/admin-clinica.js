@@ -1853,7 +1853,7 @@
     head.append(create("span","clinic-preparation-sheet-note","Propuesta de organización · revisar en consulta"));
     sheet.append(head);
     const focusText = String(patient.next_session_focus || last?.next_session_note || "").trim();
-    const focusLines = focusText.split(/\n+/).map(v=>v.replace(/^[-•*\\s]+/,"").trim()).filter(Boolean);
+    const focusLines = focusText.split(/\n+/).map(v=>v.replace(/^[-•*\s]+/,"").trim()).filter(Boolean);
     const priorities = [
       focusLines[0] || "Definir el foco clínico y los cambios desde la última sesión",
       ...(goals.filter(g=>g.status === "review").slice(0,2).map(g=>"Revisar objetivo: "+g.title)),
