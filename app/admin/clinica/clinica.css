@@ -1342,3 +1342,15 @@ body.clinic-report-page-open{overflow:auto!important}
 @media(max-width:760px){.clinic-material-row-actions .clinic-material-planning{max-width:100%;width:100%}}
 
 .clinic-private-notes{padding:20px;border:1px solid #c8dfe0;border-radius:14px;background:#fff}.clinic-private-notes h3{margin:0 0 10px;color:#0e5c7c}.clinic-private-notes>p{line-height:1.5;color:#536e78}.clinic-private-notes label{display:block;font-weight:600;margin:18px 0 8px}.clinic-private-notes textarea{box-sizing:border-box;width:100%;resize:vertical;min-height:240px;padding:14px;border:1px solid #a3c9ce;border-radius:10px;font:inherit;line-height:1.6;color:#0e5c7c}.clinic-private-notes textarea:focus{outline:3px solid #0e5c7c;outline-offset:2px}.clinic-private-notes-actions{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-top:14px}.clinic-private-notes-actions button{white-space:normal}.clinic-private-notes [data-error="true"]{color:#a33027}@media(max-width:640px){.clinic-private-notes{padding:15px}.clinic-private-notes-actions button{width:100%}}
+
+/* Compact pre-session clinical workspace, October 2026 */
+.clinic-preparation-unified{display:grid;grid-template-columns:minmax(0,1fr);gap:10px}
+.clinic-preparation-unified article{padding:12px 16px;min-height:0}
+.clinic-preparation-unified article.clinic-full{grid-column:auto}
+.clinic-preparation-unified article>strong{margin-bottom:4px}
+.clinic-preparation-unified .clinic-preparation-item{line-height:1.4;margin:4px 0 0;white-space:pre-wrap}
+.clinic-preparation-preview{margin:6px 0!important;line-height:1.45;color:#344e5b;overflow-wrap:anywhere}
+.clinic-preparation-extra{margin-top:8px;border-top:1px solid #e3edef;padding-top:8px}
+.clinic-preparation-extra summary{cursor:pointer;color:#0e5c7c;font-weight:600;font-size:.8rem}
+.clinic-preparation-extra .clinic-preparation-item{margin:10px 0 0}
+.clinic-preparation-action{margin-top:8px}
