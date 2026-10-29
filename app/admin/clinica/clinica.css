@@ -1354,3 +1354,14 @@ body.clinic-report-page-open{overflow:auto!important}
 .clinic-preparation-extra summary{cursor:pointer;color:#0e5c7c;font-weight:600;font-size:.8rem}
 .clinic-preparation-extra .clinic-preparation-item{margin:10px 0 0}
 .clinic-preparation-action{margin-top:8px}
+
+.clinic-preparation-sheet{border:1px solid #bdd8df;border-radius:12px;background:#fff;padding:18px;margin-bottom:14px}
+.clinic-preparation-sheet-head{display:flex;align-items:baseline;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.clinic-preparation-sheet h3{font-size:1.08rem;margin:0 0 10px;color:#173A5E}
+.clinic-preparation-sheet h4{font-size:.91rem;margin:10px 0 8px;color:#0e5c7c}
+.clinic-preparation-sheet-block{margin-top:10px}
+.clinic-preparation-check{display:flex;align-items:flex-start;gap:10px;margin:6px 0;line-height:1.45;font-weight:400;color:#344e5b}
+.clinic-preparation-check input{margin-top:4px;accent-color:#08a6a0}
+.clinic-preparation-check:has(input:checked) span{text-decoration:line-through;opacity:.65}
+.clinic-preparation-sheet-note{color:#667b84;font-size:.78rem!important;line-height:1.4}
+.clinic-preparation-sheet-pending{font-size:.84rem;color:#173A5E;margin:12px 0 4px;font-weight:600}
