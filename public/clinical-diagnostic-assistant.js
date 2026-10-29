@@ -372,21 +372,25 @@
     el("clinic-dx-ai-result").hidden = true;
 
     try {
-      const response = await fetch("/api/clinical/diagnostic-suggestion", {
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), 45000);
+      let response;
+      try { response = await fetch("/api/clinical/diagnostic-suggestion", {
+        signal: controller.signal,
         method: "POST",
         headers: {
           Authorization: "Bearer " + value.access_token,
           "Content-Type": "application/json"
         },
         body: JSON.stringify({ profile })
-      });
+      }); } finally { clearTimeout(timeout); }
       const body = await response.json().catch(() => ({}));
-      if (!response.ok) throw new Error(body.error || "No se ha podido generar la sugerencia diagnóstica.");
+      if (!response.ok) throw new Error(body.error || `Error del servicio de diagnóstico (HTTP ${response.status}).`);
       suggestion = body;
       renderSuggestion();
       status.textContent = "Propuesta preparada. Revisa criterios, certeza, diferencial, pruebas y cualquier código antes de incorporarla.";
     } catch (error) {
-      status.textContent = error?.message || "No se ha podido generar la sugerencia diagnóstica.";
+      status.textContent = error?.name === "AbortError" ? "La solicitud ha superado 45 segundos. Comprueba el servicio de IA." : (error?.message || "No se ha podido conectar con el servicio de diagnóstico.");
     } finally {
       button.disabled = false;
     }
