@@ -1805,12 +1805,35 @@
     const addCard = (title,entries,wide=false) => {
       const card = create("article",wide ? "clinic-full clinic-preparation-detail" : "clinic-preparation-detail");
       card.append(create("strong","",title));
+      let shown = 0;
+      let extra = null;
       for (const [label,value] of entries) {
         if (value === null || value === undefined || value === "") continue;
         const line = create("p","clinic-preparation-item");
         if (label) line.append(create("span","clinic-preparation-label",label + ": "));
-        line.append(document.createTextNode(String(value)));
-        card.append(line);
+        const content = String(value);
+        const longText = content.length > 190 || content.includes("\\n") || content.includes("•");
+        if (longText || shown >= 3) {
+          if (!extra) {
+            extra = document.createElement("details");
+            extra.className = "clinic-preparation-extra";
+            const toggle = document.createElement("summary");
+            toggle.textContent = "Ver información completa";
+            extra.append(toggle);
+            card.append(extra);
+          }
+          if (longText) {
+            const preview = create("p","clinic-preparation-preview");
+            preview.textContent = content.slice(0,145).trimEnd() + (content.length > 145 ? "…" : "");
+            if (!card.querySelector(".clinic-preparation-preview")) card.insertBefore(preview,extra);
+          }
+          line.append(document.createTextNode(content));
+          extra.append(line);
+        } else {
+          line.append(document.createTextNode(content));
+          card.append(line);
+          shown++;
+        }
       }
       list.append(card);
       return card;
