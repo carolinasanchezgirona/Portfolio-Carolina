@@ -82,13 +82,16 @@
     status.textContent="Generando objetivos y estrategias para revisión…";
     $("clinic-treatment-ai-results").hidden=true;
     try{
-      const response=await fetch("/api/clinical/treatment-suggestion",{method:"POST",headers:{"Authorization":"Bearer "+session.access_token,"Content-Type":"application/json"},body:JSON.stringify({profile})});
-      const body=await response.json();
-      if(!response.ok)throw Error(body.error||"Error de análisis.");
+      const controller=new AbortController();
+      const timeout=setTimeout(()=>controller.abort(),45000);
+      let response;
+      try { response=await fetch("/api/clinical/treatment-suggestion",{signal:controller.signal,method:"POST",headers:{"Authorization":"Bearer "+session.access_token,"Content-Type":"application/json"},body:JSON.stringify({profile})}); } finally {clearTimeout(timeout)}
+      const body=await response.json().catch(()=>({}));
+      if(!response.ok)throw Error(body.error||`Error del servicio de tratamiento (HTTP ${response.status}).`);
       proposal=body.proposal;
       render();
       status.textContent="Propuesta lista para valoración profesional.";
-    }catch(error){status.textContent=error.message||"No se pudo generar la propuesta."}
+    }catch(error){status.textContent=error?.name==="AbortError"?"La solicitud ha superado 45 segundos. Comprueba el servicio de IA.":(error?.message||"No se pudo conectar con el servicio de tratamiento.")}
     finally{button.disabled=false}
   }
   function mount(){
@@ -106,6 +109,8 @@
     area.append(button,text("span","","clinic-treatment-ai-status"));
     area.lastChild.id="clinic-treatment-ai-status";
     area.lastChild.setAttribute("role","status");
+    area.lastChild.setAttribute("aria-live","polite");
+    area.lastChild.style.cssText="display:block;margin-top:10px;font-size:14px;color:#173A5E;white-space:pre-wrap";
     const results=document.createElement("div");
     results.id="clinic-treatment-ai-results";results.hidden=true;
     area.append(results);
