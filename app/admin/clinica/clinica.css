@@ -1365,3 +1365,37 @@ body.clinic-report-page-open{overflow:auto!important}
 .clinic-preparation-check:has(input:checked) span{text-decoration:line-through;opacity:.65}
 .clinic-preparation-sheet-note{color:#667b84;font-size:.78rem!important;line-height:1.4}
 .clinic-preparation-sheet-pending{font-size:.84rem;color:#173A5E;margin:12px 0 4px;font-weight:600}
+
+
+/* Compact clinical dashboard: pre-session */
+.clinic-preparation-dashboard{width:100%;display:grid;gap:12px;font-size:14px;line-height:1.45}
+.clinic-preparation-dashboard-title{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.clinic-preparation-dashboard-title h3{margin:0;color:#173A5E;font-size:21px;font-weight:750}
+.clinic-preparation-dashboard-title p{margin:3px 0 0;color:#536e78;font-size:13px}
+.clinic-preparation-dashboard-actions{display:flex;flex-wrap:wrap;gap:8px}
+.clinic-preparation-stats{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:9px}
+.clinic-preparation-stat{background:#fff;border:1px solid #d6e5ed;border-radius:9px;padding:10px 12px;min-width:0;display:flex;flex-direction:column;align-items:flex-start;gap:4px}
+.clinic-preparation-stat>span{color:#536e78;font-size:12px;font-weight:600}
+.clinic-preparation-stat>strong{color:#173A5E;font-size:15px;overflow-wrap:anywhere}
+.clinic-preparation-stat .clinic-preparation-action{border:0;padding:0;min-height:0!important;background:transparent;color:#0e5c7c;font-size:12px!important;text-decoration:underline}
+.clinic-preparation-columns{display:grid;grid-template-columns:minmax(0,1.45fr) minmax(290px,1fr);gap:12px;align-items:start}
+.clinic-preparation-workbook,.clinic-preparation-side-card{border:1px solid #cfdee5;border-radius:10px;background:#fff;padding:14px;min-width:0}
+.clinic-preparation-workbook h4,.clinic-preparation-side-card h4{font-size:16px;color:#173A5E;margin:0 0 9px}
+.clinic-preparation-workblock{margin:9px 0 12px}
+.clinic-preparation-workblock h5{margin:0 0 5px;padding:7px 9px;border-radius:6px;background:#eaf6fb;color:#0e5c7c;font-size:13px}
+.clinic-preparation-check{display:flex;align-items:flex-start;gap:9px;padding:5px 3px;border-bottom:1px solid #edf2f5;color:#344e5b;font-size:13px;line-height:1.35;font-weight:400}
+.clinic-preparation-check input{margin:2px 0 0;flex:0 0 auto;accent-color:#08a6a0}
+.clinic-preparation-check:has(input:checked) span{text-decoration:line-through;opacity:.6}
+.clinic-preparation-side{display:grid;gap:10px;min-width:0}
+.clinic-preparation-side-card{padding:12px 14px}
+.clinic-preparation-side-card .clinic-preparation-action{margin-top:8px;min-height:30px!important;padding:5px 10px!important;font-size:12px!important}
+.clinic-preparation-detail-line{margin:7px 0;font-size:13px;color:#536e78;line-height:1.4;overflow-wrap:anywhere}
+.clinic-preparation-detail-line strong{color:#173A5E}
+.clinic-preparation-summary{font-size:13px;color:#344e5b;line-height:1.5;margin:5px 0;white-space:pre-wrap;overflow-wrap:anywhere}
+.clinic-preparation-expand{margin-top:8px;border-top:1px solid #e2edf1;padding-top:7px}
+.clinic-preparation-expand summary{cursor:pointer;color:#0e5c7c;font-size:12px;font-weight:650}
+.clinic-preparation-expand p{white-space:pre-wrap;overflow-wrap:anywhere;font-size:13px;line-height:1.5}
+.clinic-preparation-muted,.clinic-preparation-note{font-size:12px;color:#647985;margin:7px 0}
+.clinic-preparation-safety{border-color:#f3d5bd;background:#fff9f4}
+@media(max-width:1100px){.clinic-preparation-stats{grid-template-columns:repeat(3,minmax(0,1fr))}.clinic-preparation-columns{grid-template-columns:minmax(0,1fr)}}
+@media(max-width:640px){.clinic-preparation-stats{grid-template-columns:repeat(2,minmax(0,1fr))}.clinic-preparation-dashboard-title h3{font-size:19px}.clinic-preparation-workbook,.clinic-preparation-side-card{padding:10px}.clinic-preparation-dashboard{gap:9px}}
