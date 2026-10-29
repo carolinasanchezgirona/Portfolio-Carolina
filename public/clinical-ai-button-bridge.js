@@ -36,7 +36,12 @@
     target.click();
     const panel = document.getElementById(kind === "diagnostic" ? "clinic-dx-ai" : "clinic-treatment-ai");
     const status = document.getElementById(messages[kind]);
-    if (panel && !panel.checkVisibility?.()) panel.hidden = false;
+    if (panel) {
+      let parent = panel.closest("details");
+      while (parent) { parent.open = true; parent = parent.parentElement?.closest("details"); }
+      panel.hidden = false;
+      panel.scrollIntoView({ behavior: "smooth", block: "center" });
+    }
     if (status) {
       status.setAttribute("aria-live", "polite");
       status.style.cssText += ";display:block;min-height:18px";
