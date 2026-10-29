@@ -1845,6 +1845,50 @@
       card.append(button);
     };
 
+    // Hoja de trabajo derivada de registros existentes. Casillas locales a esta vista,
+    // sin cambiar información clínica validada ni persistir estados clínicos implícitos.
+    const sheet = create("section","clinic-preparation-sheet");
+    const head = create("div","clinic-preparation-sheet-head");
+    head.append(create("h3","","Guion de la próxima sesión"));
+    head.append(create("span","clinic-preparation-sheet-note","Propuesta de organización · revisar en consulta"));
+    sheet.append(head);
+    const focusText = String(patient.next_session_focus || last?.next_session_note || "").trim();
+    const focusLines = focusText.split(/\n+/).map(v=>v.replace(/^[-•*\\s]+/,"").trim()).filter(Boolean);
+    const priorities = [
+      focusLines[0] || "Definir el foco clínico y los cambios desde la última sesión",
+      ...(goals.filter(g=>g.status === "review").slice(0,2).map(g=>"Revisar objetivo: "+g.title)),
+      ...(pendingExercises.length ? ["Revisar tareas entre sesiones ("+pendingExercises.length+")"] : []),
+      ...(profile.risk_safety ? ["Revisar vigencia del registro de seguridad"] : [])
+    ].slice(0,5);
+    const questions = [
+      "¿Qué ha cambiado desde la última consulta?",
+      "¿Qué repercusión funcional ha tenido y qué conviene priorizar hoy?",
+      ...(last?.homework_note ? ["¿Qué dificultades surgieron con la tarea acordada?"] : []),
+      ...(goals.length ? ["¿Qué evolución observas respecto a los objetivos?"] : [])
+    ];
+    const addChecklist = (title,items) => {
+      const section=create("div","clinic-preparation-sheet-block");
+      section.append(create("h4","",title));
+      items.forEach((value,index)=>{
+        const label=create("label","clinic-preparation-check");
+        const checkbox=document.createElement("input");
+        checkbox.type="checkbox";
+        checkbox.setAttribute("aria-label",value);
+        const span=create("span","",value);
+        label.append(checkbox,span);
+        section.append(label);
+      });
+      sheet.append(section);
+    };
+    addChecklist("Prioridades para abordar",priorities);
+    addChecklist("Preguntas de seguimiento",questions);
+    const pending=create("p","clinic-preparation-sheet-pending",
+      "Pendientes documentados: "+pendingExercises.length+" tareas · "+goals.filter(g=>g.status==="review").length+" objetivos por revisar · "+openReports.length+" informes en borrador.");
+    sheet.append(pending);
+    const note=create("p","clinic-preparation-sheet-note","Las casillas son una ayuda visual temporal. No guardan cambios en la historia clínica ni representan una valoración completada.");
+    sheet.append(note);
+    els.preparation.append(sheet);
+
     const next = addCard("Próxima consulta",[
       ["Fecha",upcoming ? safeDate(upcoming.starts_at) + " · " + timeFormat.format(new Date(upcoming.starts_at)) : "No consta una próxima cita propia"],
       ["Situación",upcoming ? statusLabel(upcoming.status) : ""]
