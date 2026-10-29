@@ -1782,182 +1782,129 @@
 
   function renderPreparation(patient) {
     els.preparation.replaceChildren();
-    const approved = patientSessions(patient.id).filter(item => item.status === "approved");
-    const last = approved[0] || null;
+    const last = patientSessions(patient.id).filter(item=>item.status==="approved")[0] || null;
     const profile = clinicalProfile(patient);
     const goals = patientGoals(patient.id);
-    const assignments = patientExercises(patient.id);
-    const measurements = scaleMeasurements.filter(item => item.patient_id === patient.id)
-      .sort((a,b) => new Date(b.measured_at) - new Date(a.measured_at));
-    const openReports = clinicalReports.filter(item => item.patient_id === patient.id && item.status === "draft");
-    const now = new Date();
-    const upcoming = patientAppointments(patient.id)
-      .filter(item => new Date(item.starts_at) > now && !["cancelled","canceled","no_show"].includes(item.status))
-      .sort((a,b) => new Date(a.starts_at) - new Date(b.starts_at))[0] || null;
-    const pendingExercises = assignments.filter(item =>
-      ["prepared","sent","assigned"].includes(item.status) || item.patient_response_status === "shared"
-    );
-    const safeDate = input => {
-      const date = input ? new Date(input) : null;
-      return date && !Number.isNaN(date.getTime()) ? dateShort.format(date) : "Sin fecha registrada";
+    const pendingExercises = patientExercises(patient.id).filter(item=>["prepared","sent","assigned"].includes(item.status)||item.patient_response_status==="shared");
+    const openReports = clinicalReports.filter(item=>item.patient_id===patient.id&&item.status==="draft");
+    const latestMeasure = scaleMeasurements.filter(item=>item.patient_id===patient.id).sort((a,b)=>new Date(b.measured_at)-new Date(a.measured_at))[0];
+    const upcoming = patientAppointments(patient.id).filter(item=>new Date(item.starts_at)>new Date()&&!["cancelled","canceled","no_show"].includes(item.status)).sort((a,b)=>new Date(a.starts_at)-new Date(b.starts_at))[0] || null;
+    const date = v => v && !Number.isNaN(new Date(v).getTime()) ? dateShort.format(new Date(v)) : "Sin registrar";
+    const action = (label,callback,primary=false) => {
+      const b=create("button",primary?"clinic-primary clinic-preparation-action":"clinic-secondary clinic-preparation-action",label);
+      b.type="button";b.addEventListener("click",callback);return b;
     };
-    const list = create("div","clinic-preparation-grid clinic-preparation-unified");
-    const addCard = (title,entries,wide=false) => {
-      const card = create("article",wide ? "clinic-full clinic-preparation-detail" : "clinic-preparation-detail");
-      card.append(create("strong","",title));
-      let shown = 0;
-      let extra = null;
-      for (const [label,value] of entries) {
-        if (value === null || value === undefined || value === "") continue;
-        const line = create("p","clinic-preparation-item");
-        if (label) line.append(create("span","clinic-preparation-label",label + ": "));
-        const content = String(value);
-        const longText = content.length > 190 || content.includes("\\n") || content.includes("•");
-        if (longText || shown >= 3) {
-          if (!extra) {
-            extra = document.createElement("details");
-            extra.className = "clinic-preparation-extra";
-            const toggle = document.createElement("summary");
-            toggle.textContent = "Ver información completa";
-            extra.append(toggle);
-            card.append(extra);
-          }
-          if (longText) {
-            const preview = create("p","clinic-preparation-preview");
-            preview.textContent = content.slice(0,145).trimEnd() + (content.length > 145 ? "…" : "");
-            if (!card.querySelector(".clinic-preparation-preview")) card.insertBefore(preview,extra);
-          }
-          line.append(document.createTextNode(content));
-          extra.append(line);
-        } else {
-          line.append(document.createTextNode(content));
-          card.append(line);
-          shown++;
-        }
-      }
-      list.append(card);
-      return card;
+    const navigate=tab=>window.ClinicPatientWorkspace?.activate(tab);
+    const wrapper=create("div","clinic-preparation-dashboard");
+    const heading=create("div","clinic-preparation-dashboard-title");
+    const headingText=create("div");
+    headingText.append(create("h3","","Preparar sesión"),create("p","","Información clave y guion de trabajo para la próxima consulta."));
+    const headingActions=create("div","clinic-preparation-dashboard-actions");
+    headingActions.append(action("Consultar sesiones",()=>navigate("sesiones")));
+    if(upcoming)headingActions.append(action("Abrir sesión",()=>openSession(patient,upcoming),true));
+    heading.append(headingText,headingActions);wrapper.append(heading);
+    const stats=create("div","clinic-preparation-stats");
+    const stat=(label,value,link,callback)=>{
+      const card=create("div","clinic-preparation-stat");
+      card.append(create("span","",label),create("strong","",value));
+      if(link)card.append(action(link,callback));
+      stats.append(card);
     };
-    const addAction = (card,label,tab) => {
-      const button = create("button","clinic-secondary clinic-preparation-action",label);
-      button.type = "button";
-      button.addEventListener("click",() => window.ClinicPatientWorkspace?.activate(tab));
-      card.append(button);
-    };
-
-    // Hoja de trabajo derivada de registros existentes. Casillas locales a esta vista,
-    // sin cambiar información clínica validada ni persistir estados clínicos implícitos.
-    const sheet = create("section","clinic-preparation-sheet");
-    const head = create("div","clinic-preparation-sheet-head");
-    head.append(create("h3","","Guion de la próxima sesión"));
-    head.append(create("span","clinic-preparation-sheet-note","Propuesta de organización · revisar en consulta"));
-    sheet.append(head);
-    const focusText = String(patient.next_session_focus || last?.next_session_note || "").trim();
-    const focusLines = focusText.split(/\n+/).map(v=>v.replace(/^[-•*\s]+/,"").trim()).filter(Boolean);
-    const priorities = [
-      focusLines[0] || "Definir el foco clínico y los cambios desde la última sesión",
-      ...(goals.filter(g=>g.status === "review").slice(0,2).map(g=>"Revisar objetivo: "+g.title)),
-      ...(pendingExercises.length ? ["Revisar tareas entre sesiones ("+pendingExercises.length+")"] : []),
-      ...(profile.risk_safety ? ["Revisar vigencia del registro de seguridad"] : [])
+    stat("Próxima consulta",upcoming?date(upcoming.starts_at)+" · "+timeFormat.format(new Date(upcoming.starts_at)):"No programada",upcoming?"Abrir sesión":"Ver agenda",()=>upcoming?openSession(patient,upcoming):navigate("sesiones"));
+    stat("Última sesión",last?date(last.session_date):"Sin registro","Consultar",()=>navigate("sesiones"));
+    stat("Objetivos activos",String(goals.filter(g=>g.status!=="completed"&&g.status!=="archived").length),"Ver tratamiento",()=>navigate("tratamiento"));
+    stat("Ejercicios pendientes",String(pendingExercises.length),"Revisar",()=>navigate("tratamiento"));
+    stat("Informes borrador",String(openReports.length),"Ver informes",()=>navigate("documentos"));
+    wrapper.append(stats);
+    const columns=create("div","clinic-preparation-columns");
+    const left=create("section","clinic-preparation-workbook");
+    left.append(create("h4","","Guion de la próxima sesión"));
+    const focus=String(patient.next_session_focus||last?.next_session_note||"").trim();
+    const focusLines=focus.split(/\n+/).map(v=>v.replace(/^[-•*\s]+/,"").trim()).filter(Boolean);
+    const priorities=[
+      focusLines[0]||"Definir el foco clínico de la sesión",
+      ...goals.filter(g=>g.status==="review").slice(0,2).map(g=>"Revisar objetivo: "+g.title),
+      ...(pendingExercises.length?["Revisar trabajo entre sesiones"]:[]),
+      ...(profile.risk_safety?["Revisar la vigencia de los datos de seguridad"]:[])
     ].slice(0,5);
-    const questions = [
+    const questions=[
       "¿Qué ha cambiado desde la última consulta?",
-      "¿Qué repercusión funcional ha tenido y qué conviene priorizar hoy?",
-      ...(last?.homework_note ? ["¿Qué dificultades surgieron con la tarea acordada?"] : []),
-      ...(goals.length ? ["¿Qué evolución observas respecto a los objetivos?"] : [])
+      "¿Qué repercusión ha tenido sobre el funcionamiento cotidiano?",
+      ...(last?.homework_note?["¿Qué dificultades surgieron con la tarea acordada?"]:[]),
+      ...(goals.length?["¿Cómo han evolucionado los objetivos actuales?"]:[])
     ];
-    const addChecklist = (title,items) => {
-      const section=create("div","clinic-preparation-sheet-block");
-      section.append(create("h4","",title));
-      items.forEach((value,index)=>{
-        const label=create("label","clinic-preparation-check");
-        const checkbox=document.createElement("input");
-        checkbox.type="checkbox";
-        checkbox.setAttribute("aria-label",value);
-        const span=create("span","",value);
-        label.append(checkbox,span);
-        section.append(label);
+    const checklist=(title,items)=>{
+      const section=create("section","clinic-preparation-workblock");
+      section.append(create("h5","",title));
+      items.forEach(value=>{
+        const row=create("label","clinic-preparation-check");
+        const input=document.createElement("input");input.type="checkbox";
+        row.append(input,create("span","",value));section.append(row);
       });
-      sheet.append(section);
+      left.append(section);
     };
-    addChecklist("Prioridades para abordar",priorities);
-    addChecklist("Preguntas de seguimiento",questions);
-    const pending=create("p","clinic-preparation-sheet-pending",
-      "Pendientes documentados: "+pendingExercises.length+" tareas · "+goals.filter(g=>g.status==="review").length+" objetivos por revisar · "+openReports.length+" informes en borrador.");
-    sheet.append(pending);
-    const note=create("p","clinic-preparation-sheet-note","Las casillas son una ayuda visual temporal. No guardan cambios en la historia clínica ni representan una valoración completada.");
-    sheet.append(note);
-    els.preparation.append(sheet);
-
-    const next = addCard("Próxima consulta",[
-      ["Fecha",upcoming ? safeDate(upcoming.starts_at) + " · " + timeFormat.format(new Date(upcoming.starts_at)) : "No consta una próxima cita propia"],
-      ["Situación",upcoming ? statusLabel(upcoming.status) : ""]
-    ]);
-    if(upcoming) {
-      const action = create("button","clinic-primary clinic-preparation-action","Abrir sesión");
-      action.type = "button";
-      action.addEventListener("click",() => openSession(patient,upcoming));
-      next.append(action);
+    checklist("Prioridades para abordar",priorities);
+    checklist("Preguntas clave de seguimiento",questions);
+    const pending=[
+      ...pendingExercises.slice(0,3).map(item=>"Revisar: "+(item.title||"Material asignado")),
+      ...goals.filter(g=>g.status==="review").slice(0,2).map(g=>"Objetivo pendiente: "+g.title),
+      ...(openReports.length?["Revisar "+openReports.length+" informe(s) en borrador"]:[])
+    ];
+    checklist("Pendientes documentados",pending.length?pending:["No constan tareas documentadas pendientes"]);
+    left.append(create("p","clinic-preparation-note","Las casillas son temporales y no modifican la historia validada."));
+    const right=create("div","clinic-preparation-side");
+    const panel=title=>{const p=create("section","clinic-preparation-side-card");p.append(create("h4","",title));right.append(p);return p;};
+    const detail=(holder,label,value)=>{
+      if(!value)return;
+      const p=create("p","clinic-preparation-detail-line");
+      p.append(create("strong","",label+": "),document.createTextNode(String(value)));
+      holder.append(p);
+    };
+    const preview=(holder,value)=>{
+      const text=String(value||"");
+      if(!text){holder.append(create("p","clinic-preparation-muted","Sin información documentada."));return;}
+      const lines=text.split(/\n+/).map(v=>v.trim()).filter(Boolean);
+      const brief=lines.slice(0,3).join(" · ").slice(0,260);
+      holder.append(create("p","clinic-preparation-summary",brief+(text.length>brief.length?"…":"")));
+      if(text.length>brief.length){
+        const details=document.createElement("details");
+        details.className="clinic-preparation-expand";
+        details.append(create("summary","","Ver información completa"),create("p","",text));
+        holder.append(details);
+      }
+    };
+    const focusPanel=panel("Foco clínico documentado");
+    preview(focusPanel,focus);
+    detail(focusPanel,"Origen",patient.next_session_focus?"Ficha clínica":last?.next_session_note?"Última sesión aprobada":"Sin registrar");
+    focusPanel.append(action("Abrir historia",()=>navigate("historia")));
+    const lastPanel=panel("Última sesión"+(last?" · "+date(last.session_date):""));
+    if(last){
+      detail(lastPanel,"Evolución",String(last.evolution_note||"").slice(0,160));
+      detail(lastPanel,"Intervención",String(last.intervention_note||"").slice(0,160));
+      detail(lastPanel,"Acuerdos",String(last.agreements_note||"").slice(0,160));
+      detail(lastPanel,"Tarea",String(last.homework_note||"").slice(0,160));
+      const extra=[last.evolution_note,last.intervention_note,last.agreements_note,last.homework_note].filter(Boolean).join("\n\n");
+      if(extra.length>640){
+        const details=document.createElement("details");details.className="clinic-preparation-expand";
+        details.append(create("summary","","Consultar texto íntegro"),create("p","",extra));lastPanel.append(details);
+      }
+    }else lastPanel.append(create("p","clinic-preparation-muted","No constan sesiones aprobadas."));
+    lastPanel.append(action("Consultar sesiones",()=>navigate("sesiones")));
+    if(profile.risk_safety){
+      const safety=panel("Seguridad y coordinación · información registrada");
+      safety.classList.add("clinic-preparation-safety");
+      preview(safety,profile.risk_safety);
+      safety.append(create("p","clinic-preparation-note","Verificar actualidad y contexto. No constituye una nueva valoración del riesgo."));
+      safety.append(action("Abrir historia",()=>navigate("historia")));
     }
-    const focus = patient.next_session_focus || last?.next_session_note || "";
-    addCard("Pregunta clínica y foco de seguimiento",[
-      ["Foco documentado",focus || "No consta un foco específico registrado"],
-      ["Fuente",patient.next_session_focus ? "Ficha clínica" : last?.next_session_note ? "Última sesión aprobada" : ""]
-    ]);
-
-    const previous = addCard("Última sesión aprobada",last ? [
-      ["Fecha",safeDate(last.session_date)],
-      ["Evolución registrada",last.evolution_note || "Sin nota de evolución"],
-      ["Intervención",last.intervention_note || ""],
-      ["Respuesta",last.response_note || ""],
-      ["Acuerdos",last.agreements_note || ""],
-      ["Tarea prescrita",last.homework_note || ""]
-    ] : [["Situación","No constan sesiones clínicas aprobadas"]],true);
-    addAction(previous,"Consultar sesiones","sesiones");
-
-    const goalCard = addCard("Objetivos terapéuticos activos",goals.length ?
-      goals.slice(0,5).map(item => [
-        item.status === "review" ? "Por revisar" : "Activo",
-        item.title + (item.last_reviewed_at ? " · revisado " + safeDate(item.last_reviewed_at) : "")
-      ]) : [["Registro","No constan objetivos activos"]]);
-    addAction(goalCard,"Ver tratamiento","tratamiento");
-
-    const exerciseCard = addCard("Trabajo entre sesiones",[
-      ["Pendientes de envío, respuesta o revisión",String(pendingExercises.length)],
-      ...pendingExercises.slice(0,3).map(item => [
-        item.patient_response_status === "shared" ? "Respuesta compartida" : "Asignación",
-        (item.title || "Material") + (item.review_due_at ? " · revisión prevista " + safeDate(item.review_due_at) : "")
-      ])
-    ]);
-    addAction(exerciseCard,"Revisar ejercicios","tratamiento");
-
-    const lastMeasurement = measurements[0];
-    const scaleCard = addCard("Evaluación y medidas",lastMeasurement ? [
-      ["Último instrumento",lastMeasurement.instrument || "No identificado"],
-      ["Fecha",safeDate(lastMeasurement.measured_at)],
-      ["Puntuación registrada",lastMeasurement.total_score === null || lastMeasurement.total_score === undefined ? "Sin puntuación numérica" : String(lastMeasurement.total_score)],
-      ["Interpretación","La puntuación aislada no acredita mejoría ni empeoramiento."]
-    ] : [["Registro","No constan mediciones en la ficha"]]);
-    addAction(scaleCard,"Ver evaluación","evaluacion");
-
-    const docs = addCard("Documentación en curso",[
-      ["Informes pendientes de revisión",String(openReports.length)],
-      ["Síntesis clínica",patient.clinical_summary ? patient.clinical_summary : "No consta una síntesis clínica"]
-    ],true);
-    addAction(docs,"Ver informes","documentos");
-
-    if(profile.risk_safety) {
-      const safety = addCard("Seguridad y coordinación · registro existente",[
-        ["Información documentada",profile.risk_safety],
-        ["Nota","Revisar vigencia y contexto. Este panel no realiza una valoración automática del riesgo."]
-      ],true);
-      safety.classList.add("clinic-preparation-alert");
-      addAction(safety,"Abrir historia","historia");
+    if(latestMeasure){
+      const measures=panel("Última evaluación");
+      detail(measures,latestMeasure.instrument||"Instrumento",date(latestMeasure.measured_at));
+      measures.append(action("Ver evaluación",()=>navigate("evaluacion")));
     }
-    els.preparation.append(list);
-    const attribution = create("p","clinic-preparation-footnote",
-      "Resumen descriptivo elaborado con los registros disponibles. No sustituye la valoración profesional ni presume que un dato anterior siga vigente.");
-    els.preparation.append(attribution);
+    columns.append(left,right);wrapper.append(columns);
+    wrapper.append(create("p","clinic-preparation-footnote","Resumen de datos documentados. Las preguntas son orientativas y requieren revisión profesional."));
+    els.preparation.append(wrapper);
   }
 
   function renderSessionBrief(patient,appointment) {
