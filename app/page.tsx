@@ -237,8 +237,7 @@ export default function HomePage() {
               escuche, explique y ayude a tomar decisiones sin respuestas automáticas.
             </p>
             <p>
-              Combino razonamiento clínico, evaluación estructurada y objetivos terapéuticos concretos. Actualmente
-              curso el Grado en Terapia Ocupacional, una formación que amplía mi perspectiva sobre la autonomía y el funcionamiento cotidiano.
+              Combino razonamiento clínico, evaluación estructurada y objetivos terapéuticos concretos, con una atención centrada en las necesidades y el funcionamiento cotidiano de cada persona.
             </p>
             <p>
               Participo también en divulgación profesional en psicología sanitaria y neuropsicología, con publicaciones en la revista PsiAra del Col·legi Oficial de Psicologia de Catalunya.
