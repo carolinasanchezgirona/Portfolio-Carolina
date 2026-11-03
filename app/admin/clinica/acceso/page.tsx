@@ -48,6 +48,10 @@ export default function ClinicalAccessPage() {
         <form id="clinical-mfa-form" className="clinical-access-card" hidden>
           <div className="clinical-access-card-head"><h2>Confirmación con Authenticator</h2></div>
           <p>Abre Google Authenticator o Microsoft Authenticator en tu móvil e introduce el código de seis dígitos.</p>
+          <label id="clinical-mfa-choice" hidden>
+            Dispositivo Authenticator
+            <select id="clinical-mfa-factor" aria-label="Seleccionar dispositivo Authenticator" />
+          </label>
           <label>
             Código de verificación
             <input id="clinical-mfa-code" type="text" inputMode="numeric" autoComplete="one-time-code" pattern="[0-9]{6}" maxLength={6} required />

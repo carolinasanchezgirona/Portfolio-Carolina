@@ -14,83 +14,140 @@ a{color:#1b658c}button:disabled{opacity:.6}.secondary{color:#153751;background:#
 code{display:block;padding:10px;background:#f6f8fb;border:1px solid #d3dfe7;border-radius:8px;word-break:break-all;font-size:16px;letter-spacing:2px}
 .status{min-height:26px;color:#28637f}.small{font-size:13px;color:#647b89}
 [hidden]{display:none!important}
+.device-list{list-style:none;padding:0;margin:0 0 24px}.device-list li{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 0;border-bottom:1px solid #d9e5ee}.device-list span{overflow-wrap:anywhere}.device-list small{display:block;color:#627e8a}.device-list button{white-space:nowrap}.actions{display:flex;flex-wrap:wrap;gap:10px}.warning{border-left:4px solid #de944c;padding:10px 14px;background:#fff9ed}.qr[hidden]{display:none}.key{user-select:text}.toplink{display:inline-block;margin-bottom:14px}
 </style></head><body>
-<main><p><a href="/admin/">Volver a Mi clínica</a></p>
-<h1>Verificación con Authenticator</h1>
-<p>Protege la administración con un código de seis dígitos generado en tu móvil, además de la contraseña.</p>
-<div class="banner">Solo tendrás que vincular Authenticator una vez. La protección se activará cuando confirmes el primer código.</div>
-<section id="not-signed-in" hidden><p>Inicia sesión como administradora antes de configurar Authenticator.</p><p><a href="/admin/clinica/acceso/">Ir al acceso</a></p></section>
-<section id="available" hidden>
-<h2>Activa el segundo factor</h2>
-<p>Abre Google Authenticator o Microsoft Authenticator en tu móvil. Añade una cuenta y escanea el QR.</p>
-<button id="begin-enrollment">Generar código QR</button>
+<main>
+<a class="toplink" href="/admin/">Volver a Mi clínica</a>
+<h1>Seguridad de acceso</h1>
+<p>Gestiona los dispositivos que generan códigos de Authenticator para tu administración clínica.</p>
+<p class="banner"><strong>Recomendación:</strong> configura un Authenticator principal en tu móvil y otro <strong>independiente</strong> en una tablet o segundo móvil. Cada dispositivo tendrá su propio QR y se podrá revocar por separado.</p>
+<section id="not-signed-in" hidden>
+<h2>Inicia sesión para gestionar la seguridad</h2>
+<p>Necesitas una sesión administrativa y, si ya vinculaste Authenticator, su segundo factor.</p>
+<a href="/admin/clinica/acceso/">Ir al acceso de Mi clínica</a>
+</section>
+<section id="manage" hidden>
+<h2>Dispositivos vinculados</h2>
+<ul id="factor-list" class="device-list" aria-live="polite"></ul>
+<p id="factor-info" class="small"></p>
+<button id="begin-enrollment" type="button">Añadir Authenticator</button>
+<p class="small">Por seguridad, nunca podrás retirar el último dispositivo desde este panel. Primero añade y verifica uno de respaldo.</p>
 </section>
 <section id="qr-enrollment" hidden>
-<h2>Escanea el código</h2>
-<img id="enroll-qr" class="qr" alt="Código QR para Authenticator">
-<p>Si estás viendo esta página en el mismo móvil, añade la cuenta manualmente con esta clave:</p>
-<code id="enroll-secret"></code>
-<p class="small">La clave es confidencial: no la compartas ni la envíes por correo o WhatsApp.</p>
+<h2 id="enroll-heading">Vincular dispositivo</h2>
+<p>En el <strong>dispositivo que deseas añadir</strong>, abre Google Authenticator o Microsoft Authenticator y escanea este QR. No reutilices el QR del primer dispositivo.</p>
+<img id="enroll-qr" class="qr" alt="QR de configuración de Authenticator">
+<p>Si no puedes escanearlo, introduce esta clave manualmente en el dispositivo nuevo:</p>
+<code id="enroll-secret" class="key"></code>
+<p class="warning small">Es una clave secreta. No hagas capturas, no la envíes por WhatsApp o correo y no la guardes junto con tu contraseña. Puedes conservarla en papel, bajo llave y separada de las demás credenciales.</p>
 <form id="enroll-form">
-<label>Código de seis dígitos<input type="text" id="enroll-code" inputmode="numeric" autocomplete="one-time-code" pattern="[0-9]{6}" maxlength="6" required></label>
-<button id="enroll-submit" type="submit">Activar la protección</button>
+<label>Código del nuevo Authenticator
+<input type="text" id="enroll-code" inputmode="numeric" autocomplete="one-time-code" pattern="[0-9]{6}" maxlength="6" required></label>
+<div class="actions"><button id="enroll-submit" type="submit">Verificar y vincular</button>
+<button id="enroll-cancel" class="secondary" type="button">Cancelar</button></div>
 </form>
-</section>
-<section id="already-enrolled" hidden>
-<h2>Segundo factor activado</h2>
-<p>Tu cuenta ya tiene un Authenticator verificado. Los siguientes accesos requerirán su código.</p>
-<p class="small">Para no perder el acceso, conserva una copia de recuperación segura o configura un segundo factor en un dispositivo de respaldo.</p>
-<a href="/admin/">Volver al panel</a>
 </section>
 <p class="status" id="message" role="status" aria-live="polite"></p>
 </main>
-<script src="/admin-authenticator.js"></script>
+<script src="/admin-authenticator.js?v=20261103-recovery"></script>
 <script>
 (async()=>{
 "use strict";
 const OWNER="9d2cfdb1-fed6-4f76-b47a-d58507eb14f2";
 const KEY="dememoria_admin_session";
+const auth=window.AdminAuthenticator;
 const $=s=>document.querySelector(s);
-const show=(s)=>$(s).hidden=false;
-const hide=(s)=>$(s).hidden=true;
-let session;let factor;
-const status=s=>$("#message").textContent=s;
-try {
- session=JSON.parse(sessionStorage.getItem(KEY)||"null");
- if(!session?.access_token){show("#not-signed-in");return;}
- const state=await window.AdminAuthenticator.state(session);
- if(state.user?.id!==OWNER)throw Error("Esta cuenta no tiene permiso para administrar la clínica.");
- if(state.enrolled){
-   if(!state.verified) {
-     status("Para continuar, confirma antes tu código de Authenticator en la pantalla de acceso.");
-     show("#not-signed-in");
-     return;
-   }
-   show("#already-enrolled");return;
+const show=id=>$(id).hidden=false,hide=id=>$(id).hidden=true;
+const status=text=>$("#message").textContent=text||"";
+let session=null,factor=null,factorCount=0;
+function clearSecret(){
+ factor=null;
+ $("#enroll-qr").removeAttribute("src");
+ $("#enroll-secret").textContent="";
+ $("#enroll-code").value="";
+ $("#enroll-submit").disabled=false;
+ hide("#qr-enrollment");
+}
+function showLogin(text){
+ hide("#manage");clearSecret();show("#not-signed-in");
+ status(text);
+}
+async function refresh(){
+ const state=await auth.state(session);
+ if(state.user?.id!==OWNER)throw Error("La cuenta no tiene permisos de administración.");
+ if(state.enrolled&&!state.verified){showLogin("Confirma primero tu acceso con Authenticator.");return;}
+ factorCount=state.factors.length;
+ hide("#not-signed-in");show("#manage");
+ const list=$("#factor-list");list.replaceChildren();
+ if(!factorCount){
+  const entry=document.createElement("li");entry.textContent="Aún no tienes ningún Authenticator vinculado.";
+  list.append(entry);
+ }else{
+  for(const [index,f] of state.factors.entries()){
+   const item=document.createElement("li");
+   const description=document.createElement("span");
+   const title=document.createElement("strong");
+   title.textContent=auth.factorName(f,index);
+   const detail=document.createElement("small");
+   detail.textContent=factorCount===1?"Único dispositivo verificado":"Dispositivo verificado";
+   description.append(title,detail);item.append(description);
+   const button=document.createElement("button");
+   button.type="button";button.className="secondary";
+   button.textContent="Retirar";button.dataset.factor=f.id;
+   if(factorCount===1){button.disabled=true;button.title="Añade primero un dispositivo de respaldo.";}
+   item.append(button);list.append(item);
+  }
  }
- show("#available");
-} catch(error){status(error.message||"No se ha podido verificar la sesión.");show("#not-signed-in");}
+ $("#factor-info").textContent=factorCount===0
+  ? "Empieza por tu móvil habitual. Después añade el dispositivo de respaldo."
+  : factorCount===1
+    ? "Tienes un único dispositivo: añade un segundo Authenticator en otro teléfono o tablet para recuperar el acceso si pierdes el primero."
+    : "Ya tienes "+factorCount+" dispositivos independientes. Puedes retirar uno perdido y continuar usando el otro.";
+ $("#begin-enrollment").textContent=factorCount
+  ? "Añadir dispositivo de respaldo":"Vincular Authenticator principal";
+ $("#begin-enrollment").disabled=false;
+}
 $("#begin-enrollment").onclick=async()=>{
- const button=$("#begin-enrollment");button.disabled=true;
+ const button=$("#begin-enrollment");button.disabled=true;status("Preparando nuevo Authenticator…");
  try{
-  factor=await window.AdminAuthenticator.enroll(session);
-  if(!factor.id||!factor.totp?.secret)throw Error("No se ha generado el factor.");
-  window.AdminAuthenticator.renderQr($("#enroll-qr"),factor.totp.qr_code);
-  $("#enroll-secret").textContent=factor.totp.secret;
-  hide("#available");show("#qr-enrollment");
-  status("Escanea el QR, introduce el código y confirma la activación.");
+  const created=await auth.enroll(session,factorCount?"respaldo":"principal");
+  if(!created?.id||!created?.totp?.secret)throw Error("No se ha creado el factor.");
+  factor=created;
+  auth.renderQr($("#enroll-qr"),created.totp.qr_code);
+  $("#enroll-secret").textContent=created.totp.secret;
+  $("#enroll-heading").textContent=factorCount?"Vincular Authenticator de respaldo":"Vincular Authenticator principal";
+  hide("#manage");show("#qr-enrollment");status("Escanea el código y verifica los seis dígitos.");
  }catch(error){status(error.message);button.disabled=false;}
 };
-$("#enroll-form").onsubmit=async(e)=>{
+$("#enroll-cancel").onclick=()=>{clearSecret();show("#manage");status("Vinculación cancelada. No se ha activado ningún nuevo dispositivo.");};
+$("#enroll-form").onsubmit=async e=>{
  e.preventDefault();
- const button=$("#enroll-submit");button.disabled=true;
+ const button=$("#enroll-submit");button.disabled=true;status("Verificando el nuevo dispositivo…");
  try{
-  const verified=await window.AdminAuthenticator.verify(session,factor.id,$("#enroll-code").value.trim());
-  sessionStorage.setItem(KEY,JSON.stringify(verified));session=verified;
-  $("#enroll-secret").textContent="";
-  hide("#qr-enrollment");show("#already-enrolled");
-  status("Authenticator activado correctamente.");
+  if(!factor?.id)throw Error("No se ha iniciado ninguna vinculación.");
+  session=await auth.verify(session,factor.id,$("#enroll-code").value.trim());
+  sessionStorage.setItem(KEY,JSON.stringify(session));
+  clearSecret();
+  await refresh();
+  status("Dispositivo vinculado. Comprueba el acceso con tu Authenticator de respaldo antes de depender de él.");
  }catch(error){status(error.message);button.disabled=false;$("#enroll-code").select();}
 };
+$("#factor-list").addEventListener("click",async e=>{
+ const button=e.target.closest("button[data-factor]");
+ if(!button)return;
+ if(factorCount<=1){status("No se puede retirar el último dispositivo.");return;}
+ const name=button.parentElement.querySelector("strong")?.textContent||"este Authenticator";
+ if(!confirm("¿Retirar "+name+"? Asegúrate de conservar el acceso con otro dispositivo. Esta acción no se puede deshacer."))return;
+ button.disabled=true;status("Retirando dispositivo…");
+ try{
+  await auth.unenroll(session,button.dataset.factor);
+  await refresh();status("Dispositivo retirado. El resto de tus Authenticators sigue disponible.");
+ }catch(error){status(error.message);button.disabled=false;}
+});
+try{
+ session=JSON.parse(sessionStorage.getItem(KEY)||"null");
+ if(!session?.access_token){showLogin("Inicia sesión para configurar la recuperación.");return;}
+ await refresh();
+}catch(error){showLogin(error.message||"No se ha podido comprobar la sesión.");}
 })();
 </script></body></html>

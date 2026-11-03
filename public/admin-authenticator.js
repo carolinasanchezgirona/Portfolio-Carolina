@@ -44,9 +44,20 @@
     return {user, factors, enrolled:factors.length>0,
       verified: factors.length===0 || tokenAal(session)==="aal2"};
   }
-  async function enroll(session) {
+  function factorName(factor, position=0) {
+    return String(factor?.friendly_name || (position===0 ? "Authenticator principal" : "Authenticator de respaldo")).slice(0,70);
+  }
+  // Each device is a distinct TOTP factor with a distinct secret.
+  // Unlike cloning a single QR, this allows a lost device to be revoked.
+  async function enroll(session, kind="principal") {
+    const current=await state(session);
+    if(current.enrolled && !current.verified)
+      throw new Error("Confirma primero tu acceso con un Authenticator ya vinculado.");
+    if(current.factors.length>=10)throw new Error("Se ha alcanzado el límite de factores TOTP.");
+    const backup=kind==="respaldo" || current.enrolled;
     return request("POST","/factors",session,{
-      factor_type:"totp", friendly_name: clinic?"Mi clínica":"Mineuri Admin",
+      factor_type:"totp",
+      friendly_name: (clinic?"Mi clínica":"Mineuri") + (backup?" · Respaldo":" · Principal"),
       issuer: clinic?"Carolina - Mi clínica":"Mineuri",
     });
   }
@@ -65,6 +76,11 @@
   }
   async function unenroll(session,factorId) {
     if (tokenAal(session)!=="aal2") throw new Error("Confirma antes tu código de Authenticator.");
+    if(!/^[0-9a-f-]{36}$/i.test(String(factorId)))throw new Error("Factor no válido.");
+    const current=await state(session);
+    if(!current.verified)throw new Error("Se requiere una sesión verificada con Authenticator.");
+    if(current.factors.length<=1)throw new Error("No puedes retirar tu último Authenticator. Añade primero uno de respaldo.");
+    if(!current.factors.some(f=>f.id===factorId))throw new Error("El dispositivo ya no está vinculado.");
     return request("DELETE","/factors/"+encodeURIComponent(factorId),session);
   }
   function renderQr(img, svg) {
@@ -75,5 +91,5 @@
     img.src="data:image/svg+xml;charset=utf-8,"+(raw.startsWith("%3C")?raw:encodeURIComponent(raw));
     img.alt="Código QR para vincular Authenticator";
   }
-  window.AdminAuthenticator={request,tokenAal,verifiedFactors,state,enroll,verify,unenroll,renderQr,clinic};
+  window.AdminAuthenticator={request,tokenAal,verifiedFactors,state,enroll,verify,unenroll,renderQr,factorName,clinic};
 })();
