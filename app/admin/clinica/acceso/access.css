@@ -149,3 +149,6 @@
 
 /* A password form and an Authenticator challenge must never be visible together. */
 #clinical-access-form[hidden], #clinical-mfa-form[hidden] { display: none !important; }
+
+#clinical-mfa-choice[hidden] {display:none !important}
+#clinical-mfa-factor {width:100%;padding:12px;border:1px solid #aec4d7;border-radius:8px;background:white;color:#223a4e}
