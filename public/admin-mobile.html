@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="es"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>Confirmaciones de acceso · Mi clínica</title>
+<style>
+:root{font:16px/1.55 system-ui,-apple-system,Segoe UI,sans-serif;color:#173b50;background:#f4f8fa}
+*{box-sizing:border-box}body{margin:0}.wrap{max-width:620px;padding:26px 18px 70px;margin:auto}
+header{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:25px}
+header strong{font:600 29px Georgia,serif;color:#194866}a{color:#246c7e}
+article{border:1px solid #d7e3e8;background:white;box-shadow:0 14px 40px #173b5010;border-radius:18px;padding:26px}
+h1{font:500 34px Georgia,serif;margin:0 0 10px}h2{font-size:21px;margin:22px 0 10px}
+p{margin:10px 0;color:#4b6570}form{display:grid;gap:13px}label{display:grid;gap:5px;font-weight:600;font-size:14px}
+input{min-height:46px;border:1px solid #bacfd7;padding:10px 12px;border-radius:9px;font:inherit;max-width:100%}
+button{border:0;padding:12px 16px;border-radius:9px;font:600 15px system-ui;cursor:pointer}
+.primary{background:#173b50;color:white}.neutral{background:#e8f2f5;color:#173b50}.danger{background:#fff2f2;color:#962f3d}
+button:disabled{opacity:.6;cursor:wait}.buttons{display:flex;flex-wrap:wrap;gap:9px}
+.request{padding:15px;border:1px solid #d9e5e8;border-radius:12px;margin:14px 0}
+.request strong{display:block;margin-bottom:5px}.request small{display:block;color:#637e87;margin-bottom:12px}
+.muted{font-size:14px;color:#647983}.status{min-height:26px;font-size:14px;color:#345d71}
+[hidden]{display:none!important}.note{border-left:3px solid #37a6ad;padding:10px 14px;background:#f0f8f8;border-radius:6px}
+</style></head><body>
+<div class="wrap"><header><strong>mineuri.</strong><a href="/admin/">Volver a administración</a></header>
+<article>
+<h1>Confirmar accesos</h1>
+<p>Este teléfono puede aprobar o denegar inicios de sesión sin compartir tu contraseña.</p>
+<p class="note">Antes de activar la protección, vincula aquí tu móvil. La clave privada permanece guardada en este dispositivo.</p>
+
+<div id="login-area">
+<h2>Vincular este móvil</h2>
+<p class="muted">Inicia sesión una vez en el teléfono que quieres autorizar.</p>
+<form id="phone-login">
+<label>Correo electrónico<input type="email" id="phone-email" autocomplete="username" required></label>
+<label>Contraseña<input type="password" id="phone-password" autocomplete="current-password" required></label>
+<button class="primary" id="phone-sign-in">Identificarme</button>
+</form>
+<div id="pair-area" hidden>
+<p id="pair-help"></p>
+<button class="primary" type="button" id="pair-device">Vincular mi teléfono y activar avisos</button>
+</div>
+</div>
+
+<div id="trusted-area" hidden>
+<h2>Teléfono vinculado</h2>
+<p id="trusted-description" class="muted"></p>
+<div class="buttons">
+<button class="neutral" id="reload" type="button">Actualizar solicitudes</button>
+<button class="danger" id="revoke" type="button">Desvincular este móvil</button>
+</div>
+<h2>Solicitudes pendientes</h2>
+<div id="requests"><p>No hay solicitudes pendientes.</p></div>
+</div>
+<p id="result" class="status" role="status" aria-live="polite"></p>
+<p class="muted">Si los avisos están bloqueados, puedes abrir esta página en tu móvil y actualizar las solicitudes. Nunca apruebes un acceso que no hayas iniciado.</p>
+</article></div>
+<script src="/admin-mobile-auth.js"></script>
+<script>
+(()=>{"use strict";
+const m=window.AdminMobile,$=q=>document.querySelector(q);
+let signedToken=null,checking=false;
+const setStatus=v=>{$("#result").textContent=v;};
+async function showDevice(){
+ const phone=await m.getDevice();
+ $("#login-area").hidden=!!phone?.enrolled;
+ $("#trusted-area").hidden=!phone?.enrolled;
+ if(phone?.enrolled){
+   $("#trusted-description").textContent=phone.notifications
+     ?"Recibirás un aviso en este teléfono cuando se solicite acceso."
+     :"El dispositivo puede aprobar accesos, pero no tiene notificaciones activadas.";
+   await refresh();
+ }
+}
+async function refresh(){
+ if(checking)return;checking=true;
+ try{
+   const v=await m.pending();
+   const container=$("#requests");container.replaceChildren();
+   if(!v.requests?.length){const p=document.createElement("p");p.textContent="No hay solicitudes pendientes.";container.append(p);return;}
+   for(const request of v.requests){
+     const card=document.createElement("div");card.className="request";
+     const title=document.createElement("strong");title.textContent=request.label||"Nuevo inicio de sesión";
+     const created=document.createElement("small");created.textContent="Solicitado: "+new Date(request.created_at).toLocaleString("es-ES");
+     const buttons=document.createElement("div");buttons.className="buttons";
+     for(const accept of [false,true]){
+       const button=document.createElement("button");button.type="button";
+       button.className=accept?"primary":"danger";button.textContent=accept?"Sí, soy yo":"Denegar";
+       button.onclick=async()=>{
+         buttons.querySelectorAll("button").forEach(b=>b.disabled=true);
+         try{await m.decide(request.id,accept);setStatus(accept?"Acceso autorizado.":"Acceso denegado.");await refresh();}
+         catch(err){setStatus(err.message);buttons.querySelectorAll("button").forEach(b=>b.disabled=false);}
+       };buttons.append(button);
+     }
+     card.append(title,created,buttons);container.append(card);
+   }
+ }catch(err){setStatus(err.message);}finally{checking=false;}
+}
+$("#phone-login").addEventListener("submit",async event=>{
+ event.preventDefault();const button=$("#phone-sign-in");button.disabled=true;
+ try{
+   const res=await m.passwordLogin($("#phone-email").value,$("#phone-password").value);
+   signedToken=res.session.access_token;$("#phone-password").value="";
+   const state=res.verification;
+   if(state.paired&&!state.approved){
+     $("#pair-area").hidden=true;
+     setStatus("Este panel ya tiene otro móvil de confianza. Aprueba primero este inicio desde el teléfono anterior.");
+     await m.api("request",{},signedToken);
+     const interval=setInterval(async()=>{
+       try{const s=await m.api("status",{},signedToken);if(s.approved){clearInterval(interval);$("#pair-area").hidden=false;setStatus("Acceso aprobado. Ya puedes vincular este teléfono.");}}
+       catch{clearInterval(interval);}
+     },3000);
+   }else{
+     $("#pair-area").hidden=false;
+     $("#pair-help").textContent="Vincula este móvil. Se te solicitará permiso para recibir notificaciones.";
+     setStatus("");
+   }
+ }catch(err){setStatus(err.message);}finally{button.disabled=false;}
+});
+$("#pair-device").addEventListener("click",async()=>{
+ const button=$("#pair-device");button.disabled=true;setStatus("Vinculando el dispositivo…");
+ try{
+  const result=await m.enroll(signedToken);
+  setStatus(result.notifications?"Teléfono vinculado. Avisos activados.":"Teléfono vinculado. Para recibir avisos, permite las notificaciones de este sitio.");
+  await showDevice();
+ }catch(err){setStatus(err.message);}finally{button.disabled=false;}
+});
+$("#reload").onclick=refresh;
+$("#revoke").onclick=async()=>{
+ if(!confirm("¿Desvincular este teléfono? Si es tu único dispositivo, la aprobación móvil quedará desactivada."))return;
+ try{await m.revoke();setStatus("Dispositivo desvinculado.");await showDevice();}
+ catch(err){setStatus(err.message);}
+};
+showDevice().catch(err=>setStatus(err.message));
+setInterval(()=>{if(!document.hidden&&!$("#trusted-area").hidden)refresh();},12000);
+})();
+</script></body></html>
