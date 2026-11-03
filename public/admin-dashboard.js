@@ -26,7 +26,15 @@
     const r = await fetch(`${AUTH_URL}/user`, { headers: authHeaders(), cache: "no-store" });
     if (!r.ok) return null;
     const user = await r.json().catch(() => null);
-    return user?.id === OWNER ? user : null;
+    if (user?.id !== OWNER) return null;
+    const gate=await fetch(`${SUPABASE_URL}/functions/v1/admin-mobile-approval`,{
+      method:"POST",cache:"no-store",
+      headers:{apikey:KEY,Authorization:"Bearer "+s.access_token,"Content-Type":"application/json"},
+      body:JSON.stringify({action:"status"}),
+    }).catch(()=>null);
+    if(!gate?.ok)return null;
+    const approval=await gate.json().catch(()=>({}));
+    return !approval.paired || approval.approved ? user : null;
   }
 
   function setStatus(text) {
