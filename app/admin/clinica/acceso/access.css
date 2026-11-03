@@ -146,3 +146,6 @@
   .clinical-access-card{padding:22px 20px;border-radius:14px}
   .clinical-access-card-head h2{font-size:25px;margin-bottom:18px}
 }
+
+/* Preserve the hidden state during phone verification. */
+#clinical-mobile-wait[hidden], #clinical-access-form[hidden] { display:none!important; }
