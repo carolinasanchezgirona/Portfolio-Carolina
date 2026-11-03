@@ -52,24 +52,32 @@ self.addEventListener('fetch', event => {
  })());
 });
 
-/* Solo metadatos genéricos. El proveedor push nunca recibe nombres ni detalles clínicos. */
-self.addEventListener("push", (event) => {
-  event.waitUntil(self.registration.showNotification("Dememoria · Nuevo aviso", {
-    body: "Tienes novedades pendientes en tu área profesional.",
-    icon: "/pwa-icon.svg",
-    badge: "/pwa-icon.svg",
-    tag: "dememoria-professional-notice",
-    renotify: false,
-    data: { url: "/admin/notificaciones/" },
-  }));
+/* Los avisos de seguridad y los avisos de actividad usan el mismo SW.
+   Nunca se incluyen nombres de pacientes ni datos clínicos en el push. */
+self.addEventListener("push",(event)=>{
+  let security=false;
+  try{security=event.data?.json()?.kind==="admin-mobile-approval";}catch{}
+  event.waitUntil(self.registration.showNotification(
+    security?"Mi clínica · Confirma un acceso":"Dememoria · Nuevo aviso",{
+      body:security
+        ?"¿Estás intentando entrar en la administración? Revisa la solicitud desde tu móvil."
+        :"Tienes novedades pendientes en tu área profesional.",
+      icon:"/pwa-icon.svg",badge:"/pwa-icon.svg",
+      tag:security?"clinical-admin-login":"dememoria-professional-notice",
+      renotify:security,
+      data:{url:security?"/admin-mobile.html":"/admin/notificaciones/"},
+    }
+  ));
 });
-self.addEventListener("notificationclick", (event) => {
+self.addEventListener("notificationclick",(event)=>{
   event.notification.close();
-  event.waitUntil((async () => {
-    const url = new URL("/admin/notificaciones/", self.location.origin).href;
-    const windows = await self.clients.matchAll({ type: "window", includeUncontrolled: true });
-    const app = windows.find(client => client.url.startsWith(self.location.origin + "/admin/"));
-    if (app) { await app.navigate(url); await app.focus(); return; }
+  event.waitUntil((async()=>{
+    const path=event.notification.data?.url==="/admin-mobile.html"
+      ?"/admin-mobile.html":"/admin/notificaciones/";
+    const url=new URL(path,self.location.origin).href;
+    const windows=await self.clients.matchAll({type:"window",includeUncontrolled:true});
+    const app=windows.find(client=>client.url.startsWith(url));
+    if(app){await app.focus();return;}
     await self.clients.openWindow(url);
   })());
 });
