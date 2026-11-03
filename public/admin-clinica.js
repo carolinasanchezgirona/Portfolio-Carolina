@@ -1652,7 +1652,7 @@
         whatsappButton.type = "button";
         whatsappButton.title = "Abre WhatsApp Web con un mensaje neutro y el enlace privado de acceso a Mi espacio. No adjunta el PDF automáticamente.";
         whatsappButton.addEventListener("click", () => {
-          const rawPhone = String(patient.phone || "").replace(/[^\\d]/g, "");
+          const rawPhone = String(patient.phone || "").replace(/[^\d]/g, "");
           const phone = rawPhone.length === 9 ? "34" + rawPhone : rawPhone;
           if (!phone || phone.length < 11 || phone.length > 15) {
             els.patientMessage.textContent = "Revisa y guarda el teléfono del paciente antes de abrir WhatsApp.";
