@@ -76,7 +76,7 @@
   }
   async function serviceWorker() {
     if (!("serviceWorker" in navigator)) return null;
-    return navigator.serviceWorker.register(clinic?"/sw.js":"/admin/sw.js",{scope:clinic?"/":"/admin/"});
+    return navigator.serviceWorker.register(clinic?"/admin-mfa-sw.js":"/admin/sw.js",{scope:clinic?"/admin-mfa/":"/admin/"});
   }
   function fromBase64url(v) {
     return Uint8Array.from(atob(v.replace(/-/g,"+").replace(/_/g,"/")+"=".repeat((4-v.length%4)%4)),c=>c.charCodeAt(0));
