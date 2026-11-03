@@ -966,7 +966,19 @@ async function verifyEditorialOwner(request: Request): Promise<boolean> {
     });
     if (!response.ok) return false;
     const user = await response.json() as { id?: string };
-    return user.id === EDITORIAL_OWNER;
+    if (user.id !== EDITORIAL_OWNER) return false;
+    // A password-only JWT must not bypass mobile approval through Worker APIs.
+    const gate = await fetch(EDITORIAL_SUPABASE + "/rest/v1/rpc/admin_mobile_gate", {
+      method: "POST",
+      headers: {
+        apikey: EDITORIAL_PUBLISHABLE,
+        Authorization: authorization,
+        "Content-Type": "application/json",
+      },
+      body: "{}", cache: "no-store",
+    });
+    if (!gate.ok) return false;
+    return await gate.json() === true;
   } catch {
     return false;
   }
