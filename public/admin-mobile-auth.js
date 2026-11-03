@@ -2,7 +2,7 @@
    The signing key is non-exportable and stored in IndexedDB on the paired phone. */
 (() => {
   "use strict";
-  const clinic = !location.hostname.includes("mineuri.com");
+  const clinic = !!document.currentScript?.src?.includes("/admin-mobile-auth.js");
   const url = clinic
     ? "https://grgyvdxkjdstdyumdfyg.supabase.co"
     : "https://qtuzwzanifviukqcfzwa.supabase.co";
