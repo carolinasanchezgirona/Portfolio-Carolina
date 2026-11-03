@@ -175,7 +175,15 @@
     const response = await fetch(`${AUTH_URL}/user`, { headers: { apikey: KEY, Authorization: `Bearer ${session.access_token}` }, cache: "no-store" });
     if (!response.ok) return null;
     const user = await response.json();
-    return user?.id === ALLOWED_USER_ID ? user : null;
+    if (user?.id !== ALLOWED_USER_ID) return null;
+    const gate=await fetch(`${SUPABASE_URL}/functions/v1/admin-mobile-approval`,{
+      method:"POST",cache:"no-store",
+      headers:{apikey:KEY,Authorization:"Bearer "+session.access_token,"Content-Type":"application/json"},
+      body:JSON.stringify({action:"status"}),
+    }).catch(()=>null);
+    if(!gate?.ok)return null;
+    const approval=await gate.json().catch(()=>({}));
+    return !approval.paired || approval.approved ? user : null;
   }
   async function signIn(email, password) {
     const response = await fetch(`${AUTH_URL}/token?grant_type=password`, {
