@@ -5,6 +5,7 @@ import { runInNewContext } from "node:vm";
 
 const src = readFileSync("public/admin-authenticator.js", "utf8");
 const factorId = "11111111-2222-4333-8444-555555555555";
+const factor2 = "22222222-3333-4444-8555-666666666666";
 const jwt = aal => "x." + Buffer.from(JSON.stringify({aal})).toString("base64url") + ".y";
 
 function browser({factors = [{id:factorId,factor_type:"totp",status:"verified"}],verifiedAal="aal2"} = {}) {
@@ -16,6 +17,7 @@ function browser({factors = [{id:factorId,factor_type:"totp",status:"verified"}]
    if(url.endsWith("/factors/"+factorId+"/verify"))return {ok:true,json:async()=>({
       access_token:jwt(verifiedAal),refresh_token:"refresh",expires_in:3600,user:{id:"admin"},
    })};
+   if(options.method==="DELETE" && url.endsWith("/factors/"+factorId))return {ok:true,json:async()=>({})};
    if(url.endsWith("/factors"))return {ok:true,json:async()=>({
       id:factorId,totp:{qr_code:"<svg xmlns='http://www.w3.org/2000/svg'/>",secret:"TESTONLY"},
    })};
@@ -61,4 +63,56 @@ test("QR code is only used as an image, never innerHTML",()=>{
  assert.ok(img.src.startsWith("data:image/svg+xml;charset=utf-8,%3Csvg"));
  assert.match(img.alt,/Authenticator/);
  assert.doesNotMatch(src,/\.innerHTML\s*=/);
+});
+
+test("first device enrollment labels its independent secret as principal",async()=>{
+ const {auth,calls}=browser({factors:[]});
+ await auth.enroll({access_token:jwt("aal1")},"principal");
+ const request=calls.find(c=>c.method==="POST");
+ assert.match(request.body.friendly_name,/Principal/);
+ assert.equal(request.body.factor_type,"totp");
+});
+test("backup device gets its own separately enrolled TOTP factor",async()=>{
+ const {auth,calls}=browser();
+ await auth.enroll({access_token:jwt("aal2")},"respaldo");
+ const request=calls.find(c=>c.method==="POST");
+ assert.match(request.body.friendly_name,/Respaldo/);
+ assert.equal(request.body.factor_type,"totp");
+});
+test("password-only session cannot enroll a backup factor",async()=>{
+ const {auth,calls}=browser();
+ await assert.rejects(auth.enroll({access_token:jwt("aal1")},"respaldo"),/Confirma primero/);
+ assert.equal(calls.filter(c=>c.method==="POST").length,0);
+});
+test("the only verified factor cannot be deleted through the admin UI helper",async()=>{
+ const {auth,calls}=browser();
+ await assert.rejects(auth.unenroll({access_token:jwt("aal2")},factorId),/último Authenticator/);
+ assert.equal(calls.filter(c=>c.method==="DELETE").length,0);
+});
+test("an enrolled backup allows revoking the lost original device",async()=>{
+ const factors=[
+  {id:factorId,factor_type:"totp",status:"verified",friendly_name:"Principal"},
+  {id:factor2,factor_type:"totp",status:"verified",friendly_name:"Respaldo"},
+ ];
+ const {auth,calls}=browser({factors});
+ await auth.unenroll({access_token:jwt("aal2")},factorId);
+ assert.equal(calls.filter(c=>c.method==="DELETE").length,1);
+});
+test("unknown or forged factor ids cannot be revoked",async()=>{
+ const factors=[
+  {id:factorId,factor_type:"totp",status:"verified"},
+  {id:factor2,factor_type:"totp",status:"verified"},
+ ];
+ const {auth,calls}=browser({factors});
+ await assert.rejects(auth.unenroll({access_token:jwt("aal2")},"33333333-4444-4555-8666-777777777777"),/ya no está vinculado/);
+ assert.equal(calls.filter(c=>c.method==="DELETE").length,0);
+});
+test("administrator without AAL2 cannot remove a factor",async()=>{
+ const factors=[
+  {id:factorId,factor_type:"totp",status:"verified"},
+  {id:factor2,factor_type:"totp",status:"verified"},
+ ];
+ const {auth,calls}=browser({factors});
+ await assert.rejects(auth.unenroll({access_token:jwt("aal1")},factorId),/Confirma antes/);
+ assert.equal(calls.length,0);
 });
