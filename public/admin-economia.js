@@ -861,6 +861,12 @@
       if (!auth.ok) throw new Error("La sesión ha caducado.");
       const user = await auth.json();
       if (user?.id !== OWNER) throw new Error("Acceso restringido.");
+      const gate=await fetch(SUPA+"/rest/v1/rpc/admin_mobile_gate",{
+        method:"POST",cache:"no-store",
+        headers:{apikey:KEY,Authorization:"Bearer "+session.access_token,"Content-Type":"application/json"},
+        body:"{}",
+      });
+      if(!gate.ok || await gate.json()!==true)throw new Error("Confirma el acceso con Authenticator.");
       contents.hidden = false;
       await load();
       exposeImportBridge();

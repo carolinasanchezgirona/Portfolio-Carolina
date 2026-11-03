@@ -36,7 +36,9 @@ test("one central admin route for all six management sections",()=>{
 test("private content remains hidden until Supabase verifies owner identity",()=>{
   assert.match(page,/id="admin-home" className="admin-home" hidden/);
   assert.match(client,/const user = await currentUser\(\)/);
-  assert.match(client,/return user\?\.id === OWNER \? user : null/);
+  assert.match(client,/if \(user\?\.id !== OWNER\) return null/);
+  assert.ok(client.includes("/rest/v1/rpc/admin_mobile_gate"));
+  assert.ok(client.includes("return await gate.json()===true?user:null"));
   const verify=client.indexOf("const user = await currentUser();");
   const reveal=client.indexOf("root.hidden = false;",verify);
   assert.ok(verify>=0&&reveal>verify);

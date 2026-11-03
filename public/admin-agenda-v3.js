@@ -144,7 +144,14 @@
     const response = await fetch(`${AUTH_URL}/user`, { headers: { apikey: KEY, Authorization: `Bearer ${session.access_token}` }, cache: "no-store" });
     if (!response.ok) return null;
     const user = await response.json();
-    return user?.id === ALLOWED_USER_ID ? user : null;
+    if(user?.id!==ALLOWED_USER_ID)return null;
+    const gate=await fetch(SUPABASE_URL+"/rest/v1/rpc/admin_mobile_gate",{
+      method:"POST",cache:"no-store",
+      headers:{apikey:KEY,Authorization:"Bearer "+session.access_token,"Content-Type":"application/json"},
+      body:"{}",
+    }).catch(()=>null);
+    if(!gate?.ok)return null;
+    return await gate.json()===true?user:null;
   }
 
   async function signIn(email, password) {
@@ -157,6 +164,13 @@
     if (body.user?.id !== ALLOWED_USER_ID) throw new Error("Esta cuenta no tiene acceso al área administrativa.");
     saveSession(body);
     currentUser = body.user;
+    const state=await fetch(`${AUTH_URL}/user`,{
+      headers:{apikey:KEY,Authorization:"Bearer "+body.access_token},cache:"no-store",
+    }).then(r=>r.json()).catch(()=>({}));
+    if(Array.isArray(state.factors)&&state.factors.some(f=>f.factor_type==='totp'&&f.status==='verified')){
+      window.location.assign('/admin/clinica/acceso/');
+      throw new Error('Continúa la confirmación con Authenticator.');
+    }
   }
 
   async function requestPasswordReset(email) {

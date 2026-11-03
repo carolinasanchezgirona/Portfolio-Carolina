@@ -966,7 +966,18 @@ async function verifyEditorialOwner(request: Request): Promise<boolean> {
     });
     if (!response.ok) return false;
     const user = await response.json() as { id?: string };
-    return user.id === EDITORIAL_OWNER;
+    if (user.id !== EDITORIAL_OWNER) return false;
+    // Supabase verifies the JWT, then Postgres enforces aal2 after TOTP enrollment.
+    const gate = await fetch(EDITORIAL_SUPABASE + "/rest/v1/rpc/admin_mobile_gate", {
+      method: "POST", cache: "no-store",
+      headers: {
+        apikey: EDITORIAL_PUBLISHABLE,
+        Authorization: authorization,
+        "Content-Type": "application/json",
+      },
+      body: "{}",
+    });
+    return gate.ok && await gate.json() === true;
   } catch {
     return false;
   }

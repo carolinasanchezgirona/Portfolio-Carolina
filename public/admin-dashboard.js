@@ -26,7 +26,15 @@
     const r = await fetch(`${AUTH_URL}/user`, { headers: authHeaders(), cache: "no-store" });
     if (!r.ok) return null;
     const user = await r.json().catch(() => null);
-    return user?.id === OWNER ? user : null;
+    if (user?.id !== OWNER) return null;
+    // Server-backed authorization. A verified TOTP factor requires aal2.
+    const gate=await fetch(SUPABASE_URL+"/rest/v1/rpc/admin_mobile_gate",{
+      method:"POST", cache:"no-store",
+      headers:{...authHeaders(),"Content-Type":"application/json"},
+      body:"{}",
+    }).catch(()=>null);
+    if(!gate?.ok)return null;
+    return await gate.json()===true?user:null;
   }
 
   function setStatus(text) {
