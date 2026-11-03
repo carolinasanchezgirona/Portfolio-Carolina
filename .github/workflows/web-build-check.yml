@@ -41,6 +41,15 @@ jobs:
         with:
           deno-version: v2.x
 
+      - name: Validar autenticación administrativa TOTP
+        run: |
+          node --check public/admin-authenticator.js
+          node --check public/clinical-access.js
+          node --check public/admin-dashboard.js
+          node --check public/admin-clinica.js
+          node --check public/admin-agenda-v3.js
+          node --check public/admin-economia.js
+
       - name: Comprobar TypeScript de la función neuropsicológica
         run: deno check --node-modules-dir=auto supabase/functions/view-clinical-exercise/index.ts
 
