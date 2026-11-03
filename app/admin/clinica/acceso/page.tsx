@@ -45,9 +45,17 @@ export default function ClinicalAccessPage() {
             <span>Uso profesional privado</span>
           </div>
         </form>
+        <section id="clinical-mobile-wait" className="clinical-access-card" hidden aria-live="polite">
+          <h2>Confirma desde tu móvil</h2>
+          <p id="clinical-mobile-message">Comprueba la solicitud de acceso desde tu teléfono.</p>
+          <button type="button" id="clinical-mobile-resend">Reenviar solicitud</button>
+          <button type="button" id="clinical-mobile-cancel">Cancelar el acceso</button>
+          <p><a href="/admin-mobile.html" target="_blank" rel="noopener noreferrer">Abrir confirmaciones en el teléfono</a></p>
+        </section>
       </section>
 
-      <Script src="/clinical-access.js?v=20261020-general-entry-1" strategy="afterInteractive" />
+      <Script src="/admin-mobile-auth.js?v=20261103" strategy="afterInteractive" />
+      <Script src="/clinical-access.js?v=20261103-mobile-approval" strategy="afterInteractive" />
     </main>
   );
 }
