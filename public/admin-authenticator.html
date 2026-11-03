@@ -1,0 +1,96 @@
+<!doctype html><html lang="es"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex,nofollow"><title>Authenticator · Mi clínica</title>
+<style>
+:root{font:16px/1.55 system-ui,-apple-system,Segoe UI,sans-serif;color:#153751;background:#f1f6fa}
+*{box-sizing:border-box}body{margin:0;padding:24px}main{max-width:680px;margin:20px auto;background:#fff;border-radius:20px;padding:32px;box-shadow:0 14px 40px #163c5420}
+h1{font:600 34px/1.2 Georgia,serif;margin:5px 0 18px;color:#173e61}h2{font-size:20px;margin:22px 0 12px}
+p{color:#4c6572}label{display:grid;gap:5px;font-weight:600;margin:16px 0}
+input{font:inherit;padding:11px;border:1px solid #a9c4d5;border-radius:9px;width:100%}
+button{font:600 15px system-ui;padding:12px 18px;color:white;background:#174b78;border:0;border-radius:9px;cursor:pointer}
+a{color:#1b658c}button:disabled{opacity:.6}.secondary{color:#153751;background:#e7f0f7}
+.banner{background:#ecf7f9;border-left:4px solid #34a2b8;padding:12px 16px;border-radius:8px}
+.qr{display:block;max-width:260px;width:100%;margin:18px auto}
+code{display:block;padding:10px;background:#f6f8fb;border:1px solid #d3dfe7;border-radius:8px;word-break:break-all;font-size:16px;letter-spacing:2px}
+.status{min-height:26px;color:#28637f}.small{font-size:13px;color:#647b89}
+[hidden]{display:none!important}
+</style></head><body>
+<main><p><a href="/admin/">Volver a Mi clínica</a></p>
+<h1>Verificación con Authenticator</h1>
+<p>Protege la administración con un código de seis dígitos generado en tu móvil, además de la contraseña.</p>
+<div class="banner">Solo tendrás que vincular Authenticator una vez. La protección se activará cuando confirmes el primer código.</div>
+<section id="not-signed-in" hidden><p>Inicia sesión como administradora antes de configurar Authenticator.</p><p><a href="/admin/clinica/acceso/">Ir al acceso</a></p></section>
+<section id="available" hidden>
+<h2>Activa el segundo factor</h2>
+<p>Abre Google Authenticator o Microsoft Authenticator en tu móvil. Añade una cuenta y escanea el QR.</p>
+<button id="begin-enrollment">Generar código QR</button>
+</section>
+<section id="qr-enrollment" hidden>
+<h2>Escanea el código</h2>
+<img id="enroll-qr" class="qr" alt="Código QR para Authenticator">
+<p>Si estás viendo esta página en el mismo móvil, añade la cuenta manualmente con esta clave:</p>
+<code id="enroll-secret"></code>
+<p class="small">La clave es confidencial: no la compartas ni la envíes por correo o WhatsApp.</p>
+<form id="enroll-form">
+<label>Código de seis dígitos<input type="text" id="enroll-code" inputmode="numeric" autocomplete="one-time-code" pattern="[0-9]{6}" maxlength="6" required></label>
+<button id="enroll-submit" type="submit">Activar la protección</button>
+</form>
+</section>
+<section id="already-enrolled" hidden>
+<h2>Segundo factor activado</h2>
+<p>Tu cuenta ya tiene un Authenticator verificado. Los siguientes accesos requerirán su código.</p>
+<p class="small">Para no perder el acceso, conserva una copia de recuperación segura o configura un segundo factor en un dispositivo de respaldo.</p>
+<a href="/admin/">Volver al panel</a>
+</section>
+<p class="status" id="message" role="status" aria-live="polite"></p>
+</main>
+<script src="/admin-authenticator.js"></script>
+<script>
+(async()=>{
+"use strict";
+const OWNER="9d2cfdb1-fed6-4f76-b47a-d58507eb14f2";
+const KEY="dememoria_admin_session";
+const $=s=>document.querySelector(s);
+const show=(s)=>$(s).hidden=false;
+const hide=(s)=>$(s).hidden=true;
+let session;let factor;
+const status=s=>$("#message").textContent=s;
+try {
+ session=JSON.parse(sessionStorage.getItem(KEY)||"null");
+ if(!session?.access_token){show("#not-signed-in");return;}
+ const state=await window.AdminAuthenticator.state(session);
+ if(state.user?.id!==OWNER)throw Error("Esta cuenta no tiene permiso para administrar la clínica.");
+ if(state.enrolled){
+   if(!state.verified) {
+     status("Para continuar, confirma antes tu código de Authenticator en la pantalla de acceso.");
+     show("#not-signed-in");
+     return;
+   }
+   show("#already-enrolled");return;
+ }
+ show("#available");
+} catch(error){status(error.message||"No se ha podido verificar la sesión.");show("#not-signed-in");}
+$("#begin-enrollment").onclick=async()=>{
+ const button=$("#begin-enrollment");button.disabled=true;
+ try{
+  factor=await window.AdminAuthenticator.enroll(session);
+  if(!factor.id||!factor.totp?.secret)throw Error("No se ha generado el factor.");
+  window.AdminAuthenticator.renderQr($("#enroll-qr"),factor.totp.qr_code);
+  $("#enroll-secret").textContent=factor.totp.secret;
+  hide("#available");show("#qr-enrollment");
+  status("Escanea el QR, introduce el código y confirma la activación.");
+ }catch(error){status(error.message);button.disabled=false;}
+};
+$("#enroll-form").onsubmit=async(e)=>{
+ e.preventDefault();
+ const button=$("#enroll-submit");button.disabled=true;
+ try{
+  const verified=await window.AdminAuthenticator.verify(session,factor.id,$("#enroll-code").value.trim());
+  sessionStorage.setItem(KEY,JSON.stringify(verified));session=verified;
+  $("#enroll-secret").textContent="";
+  hide("#qr-enrollment");show("#already-enrolled");
+  status("Authenticator activado correctamente.");
+ }catch(error){status(error.message);button.disabled=false;$("#enroll-code").select();}
+};
+})();
+</script></body></html>
