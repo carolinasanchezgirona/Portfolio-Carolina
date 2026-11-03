@@ -41,6 +41,13 @@ jobs:
         with:
           deno-version: v2.x
 
+      - name: Validar aprobaciones de acceso desde el móvil
+        run: |
+          deno check --node-modules-dir=auto supabase/functions/admin-mobile-approval/index.ts
+          node --check public/admin-mobile-auth.js
+          node --check public/admin-mfa-sw.js
+          node --check public/clinical-access.js
+
       - name: Comprobar TypeScript de la función neuropsicológica
         run: deno check --node-modules-dir=auto supabase/functions/view-clinical-exercise/index.ts
 
