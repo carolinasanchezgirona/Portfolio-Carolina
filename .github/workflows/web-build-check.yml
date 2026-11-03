@@ -49,6 +49,7 @@ jobs:
           node --check public/admin-clinica.js
           node --check public/admin-agenda-v3.js
           node --check public/admin-economia.js
+          node --test tests/admin-authenticator.test.mjs
 
       - name: Comprobar TypeScript de la función neuropsicológica
         run: deno check --node-modules-dir=auto supabase/functions/view-clinical-exercise/index.ts
