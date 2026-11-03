@@ -148,9 +148,9 @@ export default function AboutPage() {
           </section>
 
           <section>
-            <h2>Neurociencia, tecnología y formación complementaria</h2>
+            <h2>Formación complementaria e intereses profesionales</h2>
             <p>
-              Paralelamente a la práctica clínica estoy cursando Ingeniería Biomédica. Esta formación no sustituye mi identidad profesional como psicóloga y neuropsicóloga; la complementa desde el interés por la neurociencia, los sistemas biológicos, los datos, la tecnología sanitaria y las nuevas herramientas de evaluación.
+              Paralelamente a la práctica clínica estoy cursando el Grado en Terapia Ocupacional. Esta formación complementa mi trabajo en psicología y neuropsicología, especialmente en la comprensión de la autonomía, las actividades de la vida diaria y la participación de las personas en su entorno.
             </p>
             <p>
               Me interesa especialmente cómo la neuroimagen, los biomarcadores digitales, la inteligencia artificial y las tecnologías médicas pueden contribuir a una evaluación más precisa sin perder el significado clínico de la historia y del funcionamiento cotidiano de la persona.
