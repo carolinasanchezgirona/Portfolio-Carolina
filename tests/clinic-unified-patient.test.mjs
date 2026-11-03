@@ -37,8 +37,8 @@ test("pre-session brief is factual and uses only patient-linked authorized in-me
   for(const term of [
     'patientSessions(patient.id)', 'status === "approved"', 'patientGoals(patient.id)',
     'patientExercises(patient.id)', 'item.patient_id === patient.id',
-    'measurements[0]', 'openReports', 'patient.next_session_focus',
-    'profile.risk_safety', 'No sustituye la valoración profesional'
+    'scaleMeasurements.filter(item => item.patient_id === patient.id', 'openReports', 'patient.next_session_focus',
+    'profile.risk_safety', 'No actualiza por sí mismo la valoración clínica'
   ]) assert.ok(brief.includes(term),term);
   assert.match(brief,/document\.createTextNode/);
   assert.doesNotMatch(brief,/innerHTML|fetch\(|localStorage|eval\(/);
