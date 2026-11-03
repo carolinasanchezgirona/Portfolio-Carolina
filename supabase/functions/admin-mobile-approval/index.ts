@@ -99,7 +99,10 @@ async function notifyPhones(userId: string, requestId: string): Promise<boolean>
 Deno.serve(async (request) => {
   const origin = request.headers.get("origin") || "";
   if (!ORIGINS.includes(origin)) return Response.json({error:"Origen no autorizado"},{status:403});
-  if (request.method==="OPTIONS") return reply({},204,origin);
+  if (request.method==="OPTIONS") return new Response(null,{status:204,headers:{
+    "Access-Control-Allow-Origin":origin,"Access-Control-Allow-Headers":"authorization,apikey,content-type",
+    "Access-Control-Allow-Methods":"POST,OPTIONS","Vary":"Origin",
+  }});
   if (request.method!=="POST") return reply({error:"Método no permitido"},405,origin);
   if (Number(request.headers.get("content-length") || 0)>10000) return reply({error:"Solicitud demasiado grande"},413,origin);
   try {
@@ -130,7 +133,9 @@ Deno.serve(async (request) => {
       // Validate the actual key material, not just the JWK labels.
       await crypto.subtle.importKey("jwk",jwk as JsonWebKey,{name:"ECDSA",namedCurve:"P-256"},false,["verify"]);
       const subscription=validSubscription(body.push_subscription) ? body.push_subscription : null;
-      const result=await backend("enroll",{...user,public_key:jwk,push_subscription:subscription,label:String(body.label||"Móvil de confianza")});
+      const deviceId=String(body.device_id||"");
+      if(!/^[0-9a-f-]{36}$/i.test(deviceId)) throw Error("Dispositivo no válido.");
+      const result=await backend("enroll",{...user,device_id:deviceId,public_key:jwk,push_subscription:subscription,label:String(body.label||"Móvil de confianza")});
       return reply(result,200,origin);
     }
     if (action==="pending") {
