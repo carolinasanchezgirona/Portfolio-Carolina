@@ -72,7 +72,7 @@
     const raw=svg.startsWith("data:image/svg+xml;utf-8,") ?
       svg.slice("data:image/svg+xml;utf-8,".length) : svg;
     // The QR is rendered as an isolated image; we don't insert provider SVG as HTML.
-    img.src="data:image/svg+xml;charset=utf-8,"+encodeURIComponent(raw);
+    img.src="data:image/svg+xml;charset=utf-8,"+(raw.startsWith("%3C")?raw:encodeURIComponent(raw));
     img.alt="Código QR para vincular Authenticator";
   }
   window.AdminAuthenticator={request,tokenAal,verifiedFactors,state,enroll,verify,unenroll,renderQr,clinic};
