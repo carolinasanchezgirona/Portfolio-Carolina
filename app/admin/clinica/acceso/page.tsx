@@ -45,9 +45,21 @@ export default function ClinicalAccessPage() {
             <span>Uso profesional privado</span>
           </div>
         </form>
+        <form id="clinical-mfa-form" className="clinical-access-card" hidden>
+          <div className="clinical-access-card-head"><h2>Confirmación con Authenticator</h2></div>
+          <p>Abre Google Authenticator o Microsoft Authenticator en tu móvil e introduce el código de seis dígitos.</p>
+          <label>
+            Código de verificación
+            <input id="clinical-mfa-code" type="text" inputMode="numeric" autoComplete="one-time-code" pattern="[0-9]{6}" maxLength={6} required />
+          </label>
+          <p id="clinical-mfa-message" className="clinical-access-message" role="status" aria-live="polite" />
+          <button id="clinical-mfa-submit" type="submit">Confirmar acceso</button>
+          <button id="clinical-mfa-cancel" type="button">Volver</button>
+        </form>
       </section>
 
-      <Script src="/clinical-access.js?v=20261020-general-entry-1" strategy="afterInteractive" />
+      <Script src="/admin-authenticator.js?v=20261103" strategy="afterInteractive" />
+      <Script src="/clinical-access.js?v=20261103-totp" strategy="afterInteractive" />
     </main>
   );
 }
