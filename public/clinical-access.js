@@ -14,6 +14,8 @@
   const mfaMessage = document.getElementById("clinical-mfa-message");
   const mfaSubmit = document.getElementById("clinical-mfa-submit");
   const mfaCancel = document.getElementById("clinical-mfa-cancel");
+  const mfaFactor = document.getElementById("clinical-mfa-factor");
+  const mfaChoice = document.getElementById("clinical-mfa-choice");
   let pending = null;
   let factorId = null;
 
@@ -34,8 +36,16 @@
     password.value="";mfaCode.value="";
     window.location.assign("/admin/");
   }
-  function showMfa(session,id) {
-    pending=session;factorId=id;
+  function showMfa(session,factors) {
+    pending=session;factorId=factors[0]?.id;
+    mfaFactor.replaceChildren();
+    for(const [index,factor] of factors.entries()) {
+      const option=document.createElement("option");
+      option.value=factor.id;
+      option.textContent=(window.AdminAuthenticator?.factorName(factor,index)) || "Authenticator "+(index+1);
+      mfaFactor.append(option);
+    }
+    mfaChoice.hidden=factors.length<2;
     form.hidden=true;
     mfaForm.hidden=false;
     mfaMessage.textContent="";
@@ -57,7 +67,7 @@
     const totp=await authenticator();
     const state=await totp.state(session);
     if(state.user.id!==OWNER)throw new Error("Esta cuenta no tiene permisos de administración.");
-    if(state.enrolled&&!state.verified){showMfa(session,state.factors[0].id);return;}
+    if(state.enrolled&&!state.verified){showMfa(session,state.factors);return;}
     saveAndEnter(session);
   }
 
@@ -73,7 +83,7 @@
     mfaSubmit.disabled=true;mfaMessage.textContent="Verificando código…";
     try{
       const totp=await authenticator();
-      const verified=await totp.verify(pending,factorId,mfaCode.value.trim());
+      const verified=await totp.verify(pending,mfaFactor.value||factorId,mfaCode.value.trim());
       saveAndEnter(verified);
     }catch(error){
       mfaMessage.textContent=error?.message||"Código incorrecto o caducado.";
