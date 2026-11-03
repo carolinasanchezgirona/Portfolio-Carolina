@@ -146,3 +146,6 @@
   .clinical-access-card{padding:22px 20px;border-radius:14px}
   .clinical-access-card-head h2{font-size:25px;margin-bottom:18px}
 }
+
+/* A password form and an Authenticator challenge must never be visible together. */
+#clinical-access-form[hidden], #clinical-mfa-form[hidden] { display: none !important; }
