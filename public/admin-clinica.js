@@ -1647,6 +1647,26 @@
         finally { shareButton.disabled = false; }
       });
       actions.append(openButton, shareButton);
+      if (isShared) {
+        const whatsappButton = create("button", "clinic-secondary", "Compartir por WhatsApp");
+        whatsappButton.type = "button";
+        whatsappButton.title = "Abre WhatsApp Web con un mensaje neutro y el enlace privado de acceso a Mi espacio. No adjunta el PDF automáticamente.";
+        whatsappButton.addEventListener("click", () => {
+          const rawPhone = String(patient.phone || "").replace(/[^\\d]/g, "");
+          const phone = rawPhone.length === 9 ? "34" + rawPhone : rawPhone;
+          if (!phone || phone.length < 11 || phone.length > 15) {
+            els.patientMessage.textContent = "Revisa y guarda el teléfono del paciente antes de abrir WhatsApp.";
+            return;
+          }
+          if (!window.confirm("¿Abrir WhatsApp para el teléfono terminado en " + phone.slice(-3) + "? Verifica que pertenece al paciente y que ha autorizado este canal. El documento no se adjuntará automáticamente.")) return;
+          const portalUrl = window.location.origin + "/mi-espacio";
+          const message = "Hola, tienes un documento disponible en tu espacio privado. Puedes acceder aquí: " + portalUrl;
+          const link = "https://web.whatsapp.com/send?phone=" + encodeURIComponent(phone) + "&text=" + encodeURIComponent(message);
+          const opened = window.open(link, "_blank", "noopener,noreferrer");
+          if (!opened) els.patientMessage.textContent = "Permite las ventanas emergentes para abrir WhatsApp Web.";
+        });
+        actions.append(whatsappButton);
+      }
       if (isShared && (!notice || notice.status === "failed")) {
         const notify = create("button", "clinic-secondary", notice?.status === "failed" ? "Reintentar aviso" : "Enviar aviso");
         notify.type = "button";
