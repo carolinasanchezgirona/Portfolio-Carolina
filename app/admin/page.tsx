@@ -70,6 +70,7 @@ export default function AdminHomePage() {
             </a>
             <div className="admin-hub-top-actions">
               <span className="admin-hub-private"><AdminIcon name="shield" /> Acceso privado</span>
+              <a className="admin-hub-outline" href="/admin-mobile.html"><AdminIcon name="shield" /> Verificación móvil</a>
               <a className="admin-hub-outline" href="/downloads/mi-clinica-1.0.0.apk" download data-android-download>Descargar app Android</a>
               <button id="admin-home-refresh" className="admin-hub-outline" type="button">Actualizar</button>
               <button id="admin-home-logout" className="admin-hub-outline" type="button">Cerrar sesión</button>
