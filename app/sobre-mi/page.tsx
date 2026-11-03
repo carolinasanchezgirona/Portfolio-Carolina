@@ -148,9 +148,9 @@ export default function AboutPage() {
           </section>
 
           <section>
-            <h2>Formación complementaria e intereses profesionales</h2>
+            <h2>Neurociencia, tecnología e intereses profesionales</h2>
             <p>
-              Paralelamente a la práctica clínica estoy cursando el Grado en Terapia Ocupacional. Esta formación complementa mi trabajo en psicología y neuropsicología, especialmente en la comprensión de la autonomía, las actividades de la vida diaria y la participación de las personas en su entorno.
+              Mi práctica clínica integra la psicología sanitaria y la neuropsicología, con especial interés por la neurociencia, la evaluación del funcionamiento cotidiano y el potencial de las herramientas tecnológicas en el ámbito sanitario.
             </p>
             <p>
               Me interesa especialmente cómo la neuroimagen, los biomarcadores digitales, la inteligencia artificial y las tecnologías médicas pueden contribuir a una evaluación más precisa sin perder el significado clínico de la historia y del funcionamiento cotidiano de la persona.
