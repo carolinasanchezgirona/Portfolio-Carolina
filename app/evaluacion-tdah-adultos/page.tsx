@@ -145,7 +145,7 @@ export default function AdultAdhdAssessmentPage() {
           </div>
           <p className="tdah-hero-note">Atención presencial en Arenys de Mar · Psicóloga General Sanitaria y Neuropsicóloga · COPC 24892</p>
           </div>
-          <figure className="tdah-hero-photo"><Image src="/tdah-adulto-organizacion.webp" alt="Adulto ante varias tareas, notas y recordatorios, imagen ilustrativa de dificultades de organización y atención" width={320} height={272} sizes="(max-width: 720px) 310px, 340px" priority /></figure>
+          <figure className="tdah-hero-photo"><img src="https://images.unsplash.com/photo-1758598304969-6942c79a26af?auto=format&fit=crop&w=1200&q=85" alt="Adulto trabajando frente a un ordenador, imagen ilustrativa de concentración y demandas de atención" width="1200" height="800" fetchPriority="high" decoding="async" /></figure>
         </div>
       </section>
 
