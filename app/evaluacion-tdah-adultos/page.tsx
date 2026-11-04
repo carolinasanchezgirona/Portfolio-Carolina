@@ -145,7 +145,7 @@ export default function AdultAdhdAssessmentPage() {
           </div>
           <p className="tdah-hero-note">Atención presencial en Arenys de Mar · Psicóloga General Sanitaria y Neuropsicóloga · COPC 24892</p>
           </div>
-          <figure className="tdah-hero-photo"><img src="https://images.unsplash.com/photo-1758598304969-6942c79a26af?auto=format&fit=crop&w=1200&q=85" alt="Adulto trabajando frente a un ordenador, imagen ilustrativa de concentración y demandas de atención" width="1200" height="800" fetchPriority="high" decoding="async" /></figure>
+          <figure className="tdah-hero-photo"><img src="/tdah-adulto-contexto-v2.webp" alt="Adulto ante múltiples tareas, agenda y temporizador, ilustración de dificultades de atención, planificación y organización" width="888" height="756" fetchPriority="high" decoding="async" /></figure>
         </div>
       </section>
 
@@ -211,7 +211,7 @@ export default function AdultAdhdAssessmentPage() {
 
           <section className="tdah-document-section">
             <div className="tdah-download">
-              <figure className="tdah-download-photo"><img src="https://cdn.pixabay.com/photo/2019/05/27/22/57/planner-4233907_1280.jpg" alt="Agenda y material de planificación sobre una mesa, relacionados con la organización y la atención" width="1280" height="856" loading="lazy" /></figure>
+              <figure className="tdah-download-photo"><img src="/tdah-evaluacion-proceso-v2.svg" alt="Cuaderno con lista de tareas y temporizador, relacionados con las funciones ejecutivas y la gestión del tiempo" width="640" height="260" loading="lazy" /></figure>
               <div className="tdah-download-text">
                 <h3>Información sobre el proceso de evaluación</h3>
                 <p>Modalidades, procedimiento, precios y condiciones de contratación.</p>
