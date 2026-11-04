@@ -54,7 +54,6 @@ export default function AdminHomePage() {
             <a href="/admin/" aria-current="page"><AdminIcon name="home" />Resumen</a>
             <a href="/admin/agenda/"><AdminIcon name="calendar" />Agenda</a>
             <a href="/admin/clinica/?panel=1&amp;view=patients"><AdminIcon name="patients" />Pacientes</a>
-            <a href="/admin/clinica/?panel=1&amp;view=pending"><AdminIcon name="clinical" />Pendientes clínicos</a>
             <a href="/admin/residencia/"><AdminIcon name="clinical" />Residencia</a>
             <a href="/admin/economia/"><AdminIcon name="economy" />Contabilidad</a>
             <a href="/admin/clinica/materiales-externos/"><AdminIcon name="resources" />Biblioteca clínica</a>
@@ -105,10 +104,6 @@ export default function AdminHomePage() {
               <section className="admin-home-panel">
                 <div className="admin-home-panel-heading"><div><p className="admin-home-eyebrow">Consulta</p><h3>Citas de hoy</h3></div><a href="/admin/agenda/">Ver agenda</a></div>
                 <div id="admin-home-today" className="admin-home-list"><p className="admin-home-empty">Cargando…</p></div>
-              </section>
-              <section className="admin-home-panel">
-                <div className="admin-home-panel-heading"><div><p className="admin-home-eyebrow">Seguimiento</p><h3>Tareas clínicas</h3></div><a href="/admin/clinica/?panel=1">Abrir clínica</a></div>
-                <div id="admin-home-clinical" className="admin-home-list"><p className="admin-home-empty">Cargando…</p></div>
               </section>
               <section className="admin-home-panel">
                 <div className="admin-home-panel-heading"><div><p className="admin-home-eyebrow">Economía</p><h3>Facturas y cobros</h3></div><a href="/admin/economia/">Abrir contabilidad</a></div>
