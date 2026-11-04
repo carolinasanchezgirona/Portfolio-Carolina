@@ -1,0 +1,27 @@
+.adhd-patient-page{min-height:100vh;background:#f5fafb;color:#17324b;font-family:Arial,Helvetica,sans-serif}
+.adhd-patient-page *{box-sizing:border-box}
+.adhd-patient-header{max-width:1150px;margin:auto;padding:24px 22px;display:flex;align-items:center;justify-content:space-between;gap:15px;border-bottom:1px solid #dce9e9}
+.adhd-patient-header>span{font-size:12px;color:#50707d}
+.adhd-patient-brand{display:grid;gap:4px;text-decoration:none;color:#17324b}
+.adhd-patient-brand span{font-size:12px;color:#5e7b86}
+.adhd-patient-wrap{max-width:830px;margin:38px auto;padding:0 18px 48px}
+.adhd-patient-card{background:#fff;border:1px solid #d4e3e4;border-radius:17px;padding:clamp(22px,4vw,42px);box-shadow:0 14px 40px #17324b08}
+.adhd-patient-kicker{color:#0a7a87;font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase}
+.adhd-patient-card h1{font-family:Georgia,serif;font-size:clamp(28px,5vw,42px);font-weight:500;line-height:1.1;margin:12px 0 18px}
+.adhd-patient-card h2{font-family:Georgia,serif;font-size:26px;font-weight:500;margin:24px 0 12px}
+.adhd-patient-card p{line-height:1.65;color:#476572}
+.adhd-patient-safety{font-size:13px;background:#f0f6f7;padding:12px 14px;border-left:3px solid #177e8d;border-radius:4px}
+.adhd-patient-card [hidden]{display:none!important}
+.adhd-patient-primary,.adhd-patient-secondary{cursor:pointer;min-height:46px;padding:10px 18px;border-radius:10px;font-size:14px;font-weight:650}
+.adhd-patient-primary{color:#fff;background:#173d53;border:1px solid #173d53}
+.adhd-patient-secondary{color:#173d53;background:#fff;border:1px solid #b8d1d6}
+.adhd-patient-buttons{display:flex;flex-wrap:wrap;gap:10px;margin:20px 0}
+.adhd-patient-fields{display:grid;gap:18px;margin-top:23px}
+.adhd-patient-fields label,.adhd-patient-card label{font-size:14px;font-weight:600;display:grid;gap:8px}
+.adhd-patient-fields textarea,.adhd-patient-card input{width:100%;border:1px solid #b9d2d7;border-radius:10px;min-height:44px;padding:12px;background:#fff;color:#17324b;font:400 14px/1.6 Arial,Helvetica,sans-serif}
+.adhd-patient-fields textarea{min-height:115px;resize:vertical}
+.adhd-patient-fields textarea:focus-visible,.adhd-patient-card input:focus-visible,.adhd-patient-primary:focus-visible,.adhd-patient-secondary:focus-visible{outline:3px solid #a0e1e3;outline-offset:2px}
+.adhd-patient-status{font-size:13px;min-height:20px;color:#116a78}
+.adhd-patient-status.error{color:#ae2838}
+.adhd-patient-footnote{text-align:center;font-size:12px;line-height:1.6;color:#637b84;margin:20px auto}
+@media(max-width:550px){.adhd-patient-header{align-items:flex-start}.adhd-patient-card{padding:22px 18px}.adhd-patient-buttons{display:grid}.adhd-patient-buttons button{width:100%}}
