@@ -72,6 +72,19 @@
     region.append(host);
     new MutationObserver(sync).observe(root,{attributes:true,attributeFilter:["data-assessment-id","data-assessment-patient-id","data-assessment-modality"]});
     region.addEventListener("adhd:assessment",sync);
+    region.addEventListener("adhd:plan-test",async event=>{
+      const d=event.detail||{};
+      if(d.assessmentId!==assessmentId||!CATALOG[d.testKey]||host.hidden)return;
+      const existing=testRows.find(t=>t.instrument_key===d.testKey&&t.status!=="reviewed")
+        ||testRows.find(t=>t.instrument_key===d.testKey);
+      if(existing){
+        currentTestId=existing.id;render();
+        host.scrollIntoView({behavior:"smooth",block:"nearest"});
+      }else{
+        await addTest(d.testKey);
+        if(currentTestId)host.scrollIntoView({behavior:"smooth",block:"nearest"});
+      }
+    });
     sync();
   }
   function sync(){
@@ -103,6 +116,7 @@
       if(currentTestId&&!testRows.some(t=>t.id===currentTestId))currentTestId="";
       render();
       noticeText("");
+      region?.dispatchEvent(new Event("adhd:neuro-updated",{bubbles:true}));
     }catch(e){noticeText(e.message||"No se pudieron cargar los registros.",true)}
   }
   function inputField(label,value="",tag="textarea"){
