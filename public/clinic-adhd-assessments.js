@@ -80,6 +80,31 @@
    status=h("p","","adhd-feedback");status.setAttribute("role","status");
    editor=h("div",undefined,"adhd-editor");
    region.append(list,status,editor);
+   region.addEventListener("adhd:open-form",event=>{
+     const d=event.detail||{};
+     if(!assessment||d.assessmentId!==assessment.id||!labels[d.formKey])return;
+     selection=d.formKey;paint();
+     editor.querySelector(".adhd-sheet")?.scrollIntoView({behavior:"smooth",block:"nearest"});
+   });
+   region.addEventListener("adhd:upgrade-request",async event=>{
+     const d=event.detail||{};
+     if(!assessment||assessment.id!==d.assessmentId||assessment.modality!=="diagnostic")return;
+     if(assessment.status==="completed"||assessment.status==="cancelled"){msg("No se puede cambiar una evaluación cerrada.",true);return;}
+     if(d.accepted!==true||typeof d.indication!=="string"||d.indication.trim().length<8){msg("Falta la aceptación presupuestaria o la justificación clínica.",true);return;}
+     try{
+       msg("Actualizando modalidad…");
+       const updated=await api("rpc/upgrade_adhd_assessment",{
+         method:"POST",
+         body:JSON.stringify({p_assessment_id:assessment.id,p_budget_accepted:true,p_clinical_indication:d.indication.trim()})
+       });
+       if(!updated||updated.modality!=="expanded")throw Error("No se confirmó la ampliación.");
+       Object.assign(assessment,{modality:"expanded",fee_eur:600,upgrade_budget_acknowledged_at:updated.upgrade_budget_acknowledged_at||null});
+       const option=Array.from(list.querySelector("select")?.options||[]).find(o=>o.value===assessment.id);
+       if(option)option.textContent="Ampliada 600 € · "+new Date(assessment.created_at).toLocaleDateString("es-ES")+" · "+assessment.status;
+       paint();
+       msg("Ampliación registrada. Puedes planificar las pruebas complementarias. Revisa y archiva el presupuesto aceptado en la historia.");
+     }catch(error){msg(error.message||"No se pudo actualizar la modalidad.",true);}
+   });
    slot.append(region);
   };
   tryAttach();
@@ -104,14 +129,49 @@
   }catch(e){msg(e.message||"No se pudo cargar.",true)}
  }
  async function newAssessment(){
-  const modal=window.prompt("Modalidad: escribe 1 para diagnóstica (450 €) o 2 para ampliada (600 €)","1");
-  if(modal===null)return;if(!["1","2"].includes(modal.trim())){msg("Elige 1 o 2.",true);return;}
-  const modality=modal.trim()==="1"?"diagnostic":"expanded";
-  try{
-    const rows=await api("clinical_adhd_assessments",{method:"POST",headers:{Prefer:"return=representation"},body:JSON.stringify({patient_id:patientId,modality,fee_eur:modality==="diagnostic"?450:600})});
-    if(!rows?.[0])throw Error("No se pudo registrar la evaluación.");
-    await loadPatient();msg("Nueva evaluación creada.");
-  }catch(e){msg(e.message,true)}
+  const existing=list.querySelector(".adhd-new-evaluation");
+  if(existing){existing.remove();return;}
+  const box=h("section",undefined,"adhd-new-evaluation");
+  const heading=h("div",undefined,"adhd-new-evaluation-head");
+  heading.append(h("h4","Seleccionar modalidad de evaluación"),h("p","El protocolo guía la elección de instrumentos, pero la indicación y las conclusiones son clínicas."));
+  box.append(heading);
+  const options=h("div",undefined,"adhd-mode-options");
+  const descriptions=[
+   ["diagnostic","Evaluación diagnóstica","450 €","5–6 horas estimadas","Entrevista evolutiva, DIVA-5, funcionamiento, síntomas y diagnóstico diferencial. Pruebas cognitivas solo si están indicadas y se acuerda la ampliación."],
+   ["expanded","Evaluación neuropsicológica ampliada","600 €","10 horas estimadas","Incluye todo lo anterior y permite planificar pruebas de atención, funciones ejecutivas, memoria y otros dominios en función de la pregunta clínica."]
+  ];
+  let selected="diagnostic";
+  const radios=[];
+  for(const [value,title,price,hours,description] of descriptions){
+    const label=h("label",undefined,"adhd-mode-option");
+    const input=document.createElement("input");
+    input.type="radio";input.name="adhd-modality-choice";input.value=value;
+    input.checked=value===selected;
+    input.addEventListener("change",()=>{if(input.checked)selected=value;});
+    const content=h("span",undefined,"adhd-mode-option-copy");
+    const line=h("span",undefined,"adhd-mode-option-line");
+    line.append(h("strong",title),h("b",price));
+    content.append(line,h("small",hours),h("span",description));
+    label.append(input,content);options.append(label);radios.push(input);
+  }
+  box.append(options);
+  const actions=h("div",undefined,"adhd-actions");
+  const create=button("Crear evaluación",async()=>{
+    if(!patientId||!/^[0-9a-f-]{36}$/i.test(patientId)){msg("Selecciona una ficha de paciente válida.",true);return;}
+    create.disabled=true;
+    try{
+      const rows=await api("clinical_adhd_assessments",{
+        method:"POST",headers:{Prefer:"return=representation"},
+        body:JSON.stringify({patient_id:patientId,modality:selected,fee_eur:selected==="diagnostic"?450:600})
+      });
+      if(!rows?.[0])throw Error("No se pudo crear la evaluación.");
+      await loadPatient();
+      msg("Evaluación creada. La guía muestra los instrumentos indicados y cuáles son opcionales.");
+    }catch(e){msg(e.message||"No se pudo crear.",true);create.disabled=false;}
+  },"primary");
+  actions.append(create,button("Cancelar",()=>box.remove(),"secondary"));
+  box.append(actions);
+  list.append(box);
  }
  async function openAssessment(record){
   if(!record)return;
