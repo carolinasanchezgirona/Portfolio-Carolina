@@ -206,7 +206,18 @@
    editor.append(nav);
    const meta=labels[selection];const form=optionForm(selection);
    const sheet=h("div",undefined,"adhd-sheet");
-   sheet.append(h("h4",meta.title));
+   const titlebar=h("div",undefined,"adhd-test-titlebar");
+   titlebar.append(h("h4",meta.title));
+   const testPdfKey={diva_registro:"diva5",asrs_registro:"asrs",phq9_registro:"phq9",gad7_registro:"gad7",wfirs_registro:"wfirs"}[selection];
+   if(testPdfKey){
+     titlebar.append(button("Abrir PDF original / imprimir",()=>{
+       region.dispatchEvent(new CustomEvent("adhd:pdf-open-request",{
+         bubbles:true,detail:{assessmentId:assessment.id,testKey:testPdfKey}
+       }));
+     },"secondary"));
+   }
+   sheet.append(titlebar);
+   if(testPdfKey)sheet.append(h("p","Consulta el instrumento original y registra sus resultados a continuación. Se guardarán en la historia de esta evaluación.","adhd-help"));
    if(meta.remote){
      const actions=h("div",undefined,"adhd-delivery");
      actions.append(button("Hacer en consulta",()=>switchToClinic(selection),form?.delivery_mode==="in_session"?"selected":"secondary"),
