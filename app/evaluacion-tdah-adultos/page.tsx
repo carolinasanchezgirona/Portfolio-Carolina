@@ -151,23 +151,6 @@ export default function AdultAdhdAssessmentPage() {
 
       <div className="editorial-wrap tdah-main">
         <article className="seo-copy">
-          <section className="tdah-intro-grid">
-            <div>
-            <h2>¿Cuándo puede ser recomendable una evaluación?</h2>
-            <p>Algunas personas consultan porque las siguientes dificultades interfieren de forma persistente en su día a día:</p>
-            <ul>
-              <li>Problemas para mantener la atención en tareas o conversaciones.</li>
-              <li>Procrastinación y dificultad para iniciar o terminar actividades.</li>
-              <li>Olvidos frecuentes, desorganización o pérdida de objetos.</li>
-              <li>Dificultades para planificar, priorizar o gestionar el tiempo.</li>
-              <li>Sensación de inquietud interna o impulsividad.</li>
-              <li>Repercusión en el trabajo, los estudios o las relaciones.</li>
-            </ul>
-            <p>Estas manifestaciones no implican por sí mismas un TDAH. Lo relevante es estudiar su origen, su historia y su impacto funcional.</p>
-            </div>
-            <figure className="tdah-consultation-photo"><Image src="/consulta-carolina-sanchez-despacho.webp" alt="Espacio real de consulta de psicología y neuropsicología en Arenys de Mar" width={1448} height={1086} sizes="(max-width: 760px) 100vw, 440px" loading="lazy" /></figure>
-          </section>
-
           <section className="tdah-method-grid">
             <div>
             <h2>Una evaluación clínica, no solo un cuestionario</h2>
@@ -182,7 +165,7 @@ export default function AdultAdhdAssessmentPage() {
               cuando aportan respuesta a una pregunta clínica concreta.
             </p>
             </div>
-            <div className="tdah-method-aside"><span className="tdah-method-number">01 / ORIENTACIÓN</span><h3>No tienes que decidir la modalidad por tu cuenta</h3><p>Antes de empezar, revisaremos el motivo de consulta y te explicaré qué exploración está indicada en tu caso.</p></div>
+            <div className="tdah-method-aside"><span className="tdah-method-number">ORIENTACIÓN CLÍNICA</span><h3>No tienes que decidir la modalidad por tu cuenta</h3><p>Valoraremos tu motivo de consulta y te orientaré sobre qué evaluación puede aportar la información que necesitas.</p></div>
           </section>
 
           <section id="modalidades">
@@ -208,31 +191,13 @@ export default function AdultAdhdAssessmentPage() {
               ))}
             </div>
             <div className="tdah-choice">
-              <h3>¿No sabes qué evaluación necesitas?</h3>
-              <p><strong>No tienes que decidirlo antes de venir.</strong> La evaluación diagnóstica estudia la posible presencia de TDAH y otras explicaciones clínicas. La ampliada añade una caracterización neuropsicológica detallada cuando aporta información pertinente para el caso.</p>
-              <p>Antes de comenzar, valoraremos qué opción es más adecuada para tu motivo de consulta y aclararemos el alcance y el presupuesto. Si durante una evaluación diagnóstica resulta necesario ampliar el estudio, podrás hacerlo por <strong>150 € adicionales</strong>, siempre que forme parte del mismo proceso y se aproveche la valoración ya realizada. Cualquier ampliación se acordará contigo previamente.</p>
-              <a className="editorial-btn editorial-btn-primary" href="mailto:contact@carolinasanchezgirona.com?subject=Solicitud%20de%20evaluacion%20TDAH%20adulto">Solicitar valoración de TDAH</a>
-            </div>
-            <div className="tdah-download">
               <div>
-                <h3>Información sobre el proceso de evaluación</h3>
-                <p>Consulta las modalidades, el procedimiento, los precios y las condiciones económicas antes de contratar.</p>
+                <h3>¿No sabes cuál necesitas?</h3>
+                <p>La modalidad se acuerda contigo según la indicación clínica. Si procede ampliar la valoración dentro del mismo proceso, solo abonarás la diferencia de <strong>150 €</strong>, antes de realizar pruebas adicionales.</p>
               </div>
-              <a className="editorial-btn editorial-btn-secondary" href="/informacion-evaluacion-tdah-adultos.pdf" download="Informacion_evaluacion_TDAH_adultos.pdf" type="application/pdf">
-                Descargar información en PDF
-              </a>
+              <a className="editorial-btn editorial-btn-primary" href="mailto:contact@carolinasanchezgirona.com?subject=Solicitud%20de%20evaluacion%20TDAH%20adulto">Solicitar valoración</a>
             </div>
-            <div className="tdah-included" role="note">
-              <h3>Precio cerrado, todo incluido</h3>
-              <p>Los 450 € o 600 € incluyen las entrevistas y sesiones de evaluación necesarias para completar el proceso acordado,
-                la administración y corrección de instrumentos, la interpretación clínica, el informe escrito y la sesión de devolución.
-                <strong> No se cobra cada sesión de evaluación por separado.</strong></p>
-              <p>El número indicado de sesiones es orientativo y se adapta al caso. Los seguimientos, tratamientos posteriores
-                y valoraciones externas no están incluidos y se informan por separado. El alcance y las condiciones de pago
-                se concretan antes de iniciar la evaluación.</p>
-              <p>La modalidad ampliada no es necesariamente más precisa para diagnosticar TDAH; se recomienda cuando existe
-                una pregunta clínica que justifica explorar el perfil cognitivo con más detalle.</p>
-            </div>
+            <p className="tdah-price-summary"><strong>Precio cerrado, todo incluido.</strong> Sesiones de evaluación, pruebas, interpretación clínica, informe escrito y devolución. Los tratamientos posteriores se contratan por separado.</p>
           </section>
 
           <section>
@@ -245,12 +210,15 @@ export default function AdultAdhdAssessmentPage() {
             </div>
           </section>
 
-          <section>
-            <h2>¿Qué ocurre después de la evaluación?</h2>
-            <p>Recibirás conclusiones clínicas y recomendaciones individualizadas, tanto si se identifica un TDAH como si
-              las dificultades se explican por otros factores. Según los resultados, puede recomendarse intervención psicológica,
-              estrategias de organización y autorregulación, adaptaciones funcionales o valoración por otro profesional sanitario.</p>
-            <p>El tratamiento farmacológico, cuando está indicado, requiere valoración y prescripción médica y no está incluido en estas modalidades.</p>
+          <section className="tdah-document-section">
+            <div className="tdah-download">
+              <figure className="tdah-download-photo"><Image src="/consulta-carolina-sanchez-despacho.webp" alt="Consulta de Carolina Sánchez en Arenys de Mar" width={1448} height={1086} sizes="(max-width: 720px) 100vw, 190px" loading="lazy" /></figure>
+              <div className="tdah-download-text">
+                <h3>Información sobre el proceso de evaluación</h3>
+                <p>Modalidades, procedimiento, precios y condiciones de contratación.</p>
+              </div>
+              <a className="editorial-btn editorial-btn-secondary" href="/informacion-evaluacion-tdah-adultos.pdf" download="Informacion_evaluacion_TDAH_adultos.pdf" type="application/pdf">Descargar PDF</a>
+            </div>
           </section>
 
           <section>
