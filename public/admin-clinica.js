@@ -35,6 +35,8 @@
     patientClose: $("#clinic-patient-close"), patientId: $("#clinic-patient-id"),
     patientName: $("#clinic-patient-name"), patientContact: $("#clinic-patient-contact"),
     archivePatient: $("#clinic-archive-patient"), deletePatient: $("#clinic-delete-patient"), deletePatientNote: $("#clinic-delete-patient-note"),
+    portalAccessStatus: $("#clinic-portal-access-status"), portalAccessNote: $("#clinic-portal-access-note"),
+    portalAccessToggle: $("#clinic-portal-access-toggle"),
     personalFullName: $("#clinic-personal-full-name"), personalBirthDate: $("#clinic-personal-birth-date"),
     personalAge: $("#clinic-personal-age"), personalNationalId: $("#clinic-personal-national-id"),
     personalPhone: $("#clinic-personal-phone"), personalEmail: $("#clinic-personal-email"),
@@ -359,6 +361,30 @@
   }
 
   function updatePatientRecordActions(patient) {
+    if (els.portalAccessStatus && els.portalAccessToggle) {
+      const archived = patient?.status === "archived";
+      const enabled = patient?.portal_access_enabled !== false;
+      const state = archived ? "archived" : enabled ? "active" : "disabled";
+      els.portalAccessStatus.dataset.state = state;
+      els.portalAccessStatus.textContent = archived
+        ? "Sin acceso · ficha archivada"
+        : enabled ? "Acceso activo" : "Acceso desactivado";
+      els.portalAccessToggle.textContent = enabled ? "Desactivar acceso" : "Reactivar acceso";
+      els.portalAccessToggle.disabled = !patient || archived;
+      if (els.portalAccessNote) {
+        let lastChanged = "";
+        if (patient?.portal_access_changed_at) {
+          const date = new Date(patient.portal_access_changed_at);
+          if (!Number.isNaN(date.getTime())) lastChanged = " Último cambio: " +
+            date.toLocaleString("es-ES", { dateStyle: "short", timeStyle: "short" }) + ".";
+        }
+        els.portalAccessNote.textContent = archived
+          ? "Restaura primero la ficha si necesitas permitirle el acceso." + lastChanged
+          : enabled
+            ? "Puedes desactivarlo al finalizar la terapia. Se conservará todo el historial." + lastChanged
+            : "Sesiones y códigos revocados. No puede volver a entrar hasta que lo reactives." + lastChanged;
+      }
+    }
     if (els.archivePatient) {
       const archived = patient?.status === "archived";
       els.archivePatient.textContent = archived ? "Restaurar ficha" : "Archivar ficha";
@@ -2335,6 +2361,7 @@
       currentPatient = updated;
       fillPatientPersonalData(updated);
       renderPatientIdentityHeader(updated);
+      updatePatientRecordActions(updated);
       fillClinicalProfile(updated);
       renderPreparation(updated);
       renderTimeline(updated);
@@ -2343,6 +2370,46 @@
     els.patientMessage.textContent = "Ficha completa guardada.";
     patientFormBaseline = patientFormSnapshot();
     updatePatientSaveState();
+  }
+
+  async function togglePatientPortalAccess() {
+    if (!currentPatient || currentPatient.status === "archived") return;
+    const patientId = currentPatient.id;
+    const enabled = currentPatient.portal_access_enabled !== false;
+    const question = enabled
+      ? "¿Desactivar Entre Sesiones para este paciente? Se cerrarán sus sesiones y no podrá volver a entrar. El historial clínico y los materiales se conservan."
+      : "¿Reactivar Entre Sesiones para este paciente? Podrá volver a acceder con sus credenciales.";
+    if (!window.confirm(question)) return;
+    els.portalAccessToggle.disabled = true;
+    els.patientMessage.textContent = enabled ? "Desactivando acceso en el servidor…" : "Reactivando acceso en el servidor…";
+    try {
+      const response = await fetch("/api/admin/patient-portal-access", {
+        method: "POST", cache: "no-store", credentials: "same-origin",
+        headers: { "Authorization": "Bearer " + session.access_token, "Content-Type": "application/json" },
+        body: JSON.stringify({ patient_id: patientId, enabled: !enabled }),
+      });
+      const result = await response.json().catch(() => null);
+      if (!response.ok || !result?.ok || typeof result.enabled !== "boolean") {
+        throw new Error(result?.error || "No se ha confirmado el cambio de acceso.");
+      }
+      const updated = {
+        ...currentPatient,
+        portal_access_enabled: result.enabled,
+        portal_access_changed_at: result.changed_at || currentPatient.portal_access_changed_at,
+        portal_access_disabled_at: result.enabled ? null : result.changed_at,
+      };
+      patients = patients.map((patient) => patient.id === patientId ? updated : patient);
+      currentPatient = updated;
+      updatePatientRecordActions(updated);
+      els.patientMessage.textContent = result.enabled
+        ? "Acceso a Entre Sesiones reactivado y confirmado."
+        : "Acceso desactivado. Se han revocado las sesiones y los códigos pendientes.";
+    } catch (error) {
+      els.patientMessage.textContent = (error?.message || "No se ha podido actualizar el acceso.") +
+        " Comprueba el estado antes de intentarlo de nuevo.";
+    } finally {
+      if (currentPatient?.id === patientId) updatePatientRecordActions(currentPatient);
+    }
   }
 
   async function togglePatientArchive() {
@@ -2556,6 +2623,7 @@
 
   els.showArchived?.addEventListener("change", () => renderPatients(els.patientSearch.value));
   els.archivePatient?.addEventListener("click", () => togglePatientArchive().catch((error) => { els.patientMessage.textContent = error.message; }));
+  els.portalAccessToggle?.addEventListener("click", () => togglePatientPortalAccess());
   els.deletePatient?.addEventListener("click", () => deletePatientCreatedByError().catch((error) => { els.patientMessage.textContent = error.message; }));
   els.patientClose.addEventListener("click", () => closePatientPage());
   els.personalBirthDate?.addEventListener("change", () => { els.personalAge.value = patientAge(els.personalBirthDate.value); });
