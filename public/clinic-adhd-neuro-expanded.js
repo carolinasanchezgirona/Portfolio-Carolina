@@ -191,9 +191,13 @@
         el("span",({
           planned:"Planificada",administered:"Administrada",draft:"Corrección pendiente",reviewed:"Revisada"
         })[test.status]||test.status,"adhd-neuro-small"));
-      row.append(details,btn(test.id===currentTestId?"Ocultar":"Abrir registro",()=>{
-        currentTestId=currentTestId===test.id?"":test.id;render();
-      }));
+      const toggle=()=>{currentTestId=currentTestId===test.id?"":test.id;render();};
+      row.classList.add("adhd-neuro-clickable");
+      row.tabIndex=0;row.setAttribute("role","button");row.setAttribute("aria-expanded",String(test.id===currentTestId));
+      row.setAttribute("aria-label","Editar resultados de "+test.instrument_label);
+      row.addEventListener("click",toggle);
+      row.addEventListener("keydown",e=>{if(e.target===row&&(e.key==="Enter"||e.key===" ")){e.preventDefault();toggle();}});
+      row.append(details);
       cards.append(row);
     }
     section.append(cards);
