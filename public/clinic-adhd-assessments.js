@@ -88,7 +88,7 @@
  }
  async function loadPatient(){
   const revision=++loadNumber;if(!region)return;
-  assessment=null;forms=[];list.replaceChildren();editor.replaceChildren();msg("Cargando evaluaciones…");
+  assessment=null;forms=[];list.replaceChildren();editor.replaceChildren();region.removeAttribute("data-assessment-id");region.removeAttribute("data-assessment-modality");region.removeAttribute("data-assessment-patient-id");msg("Cargando evaluaciones…");
   try{
    const records=await api("clinical_adhd_assessments?select=id,modality,fee_eur,status,created_at,chief_question,evidence_summary,diagnostic_conclusion&patient_id=eq."+encodeURIComponent(patientId)+"&order=created_at.desc&limit=15");
    if(revision!==loadNumber)return;
@@ -126,6 +126,10 @@
  function paint(){
    editor.replaceChildren();
    if(!assessment)return;
+   region.dataset.assessmentId=assessment.id;
+   region.dataset.assessmentModality=assessment.modality;
+   region.dataset.assessmentPatientId=patientId;
+   region.dispatchEvent(new Event("adhd:assessment",{bubbles:true}));
    const top=h("div",undefined,"adhd-case-top");
    const info=h("div");info.append(h("strong",assessment.modality==="diagnostic"?"Evaluación diagnóstica · 450 €":"Evaluación neuropsicológica ampliada · 600 €"),h("small","Paciente vinculado a la historia clínica. Solo la profesional decide la conclusión diagnóstica."));
    const sel=document.createElement("select");sel.setAttribute("aria-label","Estado de la evaluación");
