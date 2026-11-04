@@ -147,3 +147,12 @@
   #clinic-patient-dialog .clinic-patient-workspace-nav{top:57px}
   #clinic-patient-dialog .clinic-patient-workspace-nav .clinic-workspace-tab{padding:8px 10px}
 }
+
+/* 2026-11-04: Remove redundant session-prep and patient reminders from the
+   patient record, without changing approved notes or the pending-task data.
+   The original mount elements remain for existing JS dependencies. */
+#clinic-patient-dialog .clinic-preparation,
+#clinic-patient-dialog #clinic-section-preparation,
+#clinic-patient-dialog .clinic-task-box:not(.clinic-task-global){
+  display:none!important;
+}
