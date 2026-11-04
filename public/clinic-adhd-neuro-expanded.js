@@ -201,6 +201,11 @@
     const wrap=el("section",undefined,"adhd-neuro-editor");
     const heading=el("div",undefined,"adhd-neuro-test-heading");
     heading.append(el("h5",item.instrument_label),el("span",locked?"Resultado validado":"Registro profesional editable"));
+    heading.append(btn("Abrir PDF original / imprimir",()=>{
+      region.dispatchEvent(new CustomEvent("adhd:pdf-open-request",{
+        bubbles:true,detail:{assessmentId:assessmentId,testKey:item.instrument_key}
+      }));
+    },"secondary"));
     wrap.append(heading);
     const fields=el("div",undefined,"adhd-neuro-grid");
     const form={};
