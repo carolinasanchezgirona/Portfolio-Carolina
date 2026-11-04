@@ -24,3 +24,9 @@
 .tdah-included p{margin:0 0 12px;line-height:1.65}
 .tdah-included p:last-child{margin-bottom:0}
 @media(max-width:680px){.tdah-included{padding:19px}}
+
+.tdah-choice{margin:24px 0 18px;padding:25px;border:1px solid var(--e-line);border-radius:14px;background:#fff}
+.tdah-choice h3{margin:0 0 12px;font-size:1.3rem}
+.tdah-choice p{line-height:1.7;margin:0 0 14px}
+.tdah-choice .editorial-btn{display:inline-flex;margin-top:5px}
+@media(max-width:680px){.tdah-choice{padding:20px}}
