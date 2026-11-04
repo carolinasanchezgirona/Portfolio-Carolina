@@ -161,6 +161,16 @@ export default function AdminClinicaPage() {
             </div>
           </header>
           <div id="clinic-patient-contact" className="clinic-contact" />
+          <nav className="clinic-record-quicknav" aria-label="Ir a una sección de la ficha clínica">
+            <a href="#clinic-section-preparation">Preparar sesión</a>
+            <a href="#clinic-smart-intake">Entrada clínica inteligente</a>
+            <a href="#clinic-section-history">Historia y evaluación</a>
+            <a href="#clinic-section-sessions">Sesiones</a>
+            <a href="#clinic-section-documents">Documentos y escalas</a>
+            <a href="#clinic-section-reports">Informes</a>
+            <a href="#clinic-section-personal">Datos personales</a>
+          </nav>
+
           <div className="clinic-record-actions">
             <button id="clinic-print-history" className="clinic-secondary" type="button">Imprimir historial clínico</button>
             <button id="clinic-new-report" className="clinic-primary" type="button">Generar informe</button>
@@ -182,7 +192,7 @@ export default function AdminClinicaPage() {
           </p>
 
 
-          <details className="clinic-record-section clinic-personal-admin-section" open>
+          <details id="clinic-section-personal" className="clinic-record-section clinic-personal-admin-section">
             <summary><span>Datos personales y administrativos</span><small>Identificación, contacto y gestión asistencial</small></summary>
             <div className="clinic-record-section-body clinic-form-grid">
               <label className="clinic-full">Nombre y apellidos
@@ -240,7 +250,7 @@ export default function AdminClinicaPage() {
             </div>
           </details>
 
-          <section className="clinic-preparation">
+          <section id="clinic-section-preparation" className="clinic-preparation">
             <p className="clinic-eyebrow">Preparar sesión</p>
             <div id="clinic-preparation-content" />
           </section>
@@ -255,9 +265,9 @@ export default function AdminClinicaPage() {
             <button className="clinic-primary" type="submit">Guardar ficha</button>
           </div>
 
-          <section className="clinic-record-sections" aria-label="Historia clínica estructurada">
+          <section id="clinic-section-history" className="clinic-record-sections" aria-label="Historia clínica estructurada">
             <details className="clinic-record-section" open>
-              <summary><span>Historia y antecedentes</span><small>Motivo, evolución, antecedentes y contexto</small></summary>
+              <summary><span>Anamnesis clínica y evolutiva</span><small>Motivo de consulta, evolución, antecedentes y contexto</small></summary>
               <div className="clinic-record-section-body clinic-form-grid">
                 <label className="clinic-full">Motivo de consulta<textarea id="clinic-reason-consultation" rows={3} placeholder="Demanda principal, quién solicita la consulta, motivo referido y expectativas…" /></label>
                 <label className="clinic-full">Historia del problema actual<textarea id="clinic-problem-history" rows={4} placeholder="Inicio, evolución, desencadenantes, fluctuaciones, impacto funcional y estrategias utilizadas…" /></label>
@@ -296,7 +306,7 @@ export default function AdminClinicaPage() {
             </details>
 
             <details className="clinic-record-section">
-              <summary><span>Tratamiento y evolución</span><small>Objetivos, plan e integración longitudinal</small></summary>
+              <summary><span>Plan terapéutico y evolución</span><small>Objetivos, intervención y respuesta al tratamiento</small></summary>
               <div className="clinic-record-section-body clinic-form-grid">
                 <label>Objetivos terapéuticos<textarea id="clinic-therapeutic-goals" rows={4} placeholder="Objetivo, prioridad, indicadores de cambio, estado y evolución…" /></label>
                 <label>Plan terapéutico<textarea id="clinic-treatment-plan" rows={4} placeholder="Focos de intervención, estrategias previstas, frecuencia y criterios de revisión…" /></label>
@@ -320,14 +330,14 @@ export default function AdminClinicaPage() {
             <button className="clinic-primary" type="submit">Guardar ficha completa</button>
           </div>
 
-          <section className="clinic-exercises-section">
+          <section id="clinic-section-materials" className="clinic-exercises-section">
             <div className="clinic-goals-heading"><div><p className="clinic-eyebrow">Continuidad terapéutica</p><h3>Material entre sesiones</h3></div><button id="clinic-new-exercise" className="clinic-secondary" type="button">Asignar material</button></div>
             <div id="clinic-exercise-suggestions" className="clinic-exercise-suggestions" />
             <div id="clinic-patient-exercises" className="clinic-history" />
             <NeuroFollowup />
           </section>
 
-          <section className="clinic-patient-tools-grid">
+          <section id="clinic-section-documents" className="clinic-patient-tools-grid">
             <article>
               <div className="clinic-goals-heading"><h3>Cronología clínica</h3><button id="clinic-refresh-timeline" className="clinic-text" type="button">Actualizar</button></div>
               <div id="clinic-patient-timeline" className="clinic-timeline" />
@@ -342,10 +352,10 @@ export default function AdminClinicaPage() {
             </article>
           </section>
 
-          <h3>Informes guardados</h3>
+          <h3 id="clinic-section-reports">Informes guardados</h3>
           <div id="clinic-patient-reports" className="clinic-history" />
 
-          <h3>Sesiones y citas</h3>
+          <h3 id="clinic-section-sessions">Sesiones y citas</h3>
           <div id="clinic-patient-history" className="clinic-history" />
         </form>
       </section>
