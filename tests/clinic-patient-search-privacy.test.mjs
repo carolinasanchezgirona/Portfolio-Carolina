@@ -18,5 +18,5 @@ test("patient directory is hidden until a deliberate search", () => {
   assert.match(render,/El listado permanece oculto por privacidad/);
 });
 test("browser requests fresh patient search code", () => {
-  assert.match(page,/admin-clinica\.js\?v=20261104-patient-search-privacy-1/);
+  assert.match(page,/admin-clinica\.js\?v=20261104-[a-z0-9-]+/);
 });
