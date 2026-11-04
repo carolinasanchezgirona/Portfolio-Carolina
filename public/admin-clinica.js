@@ -794,8 +794,7 @@
     if (currentPatient) {
       renderExercises(currentPatient);
       renderTimeline(currentPatient);
-      renderPending();
-    }
+      }
   }
 
   async function sendExistingAssignment(item, resend = false) {
@@ -980,8 +979,7 @@
             exerciseAssignments = exerciseAssignments.map(entry => entry.id === item.id
               ? { ...entry, review_due_at: updated.review_due_at } : entry);
             renderExercises(currentPatient);
-            renderPending();
-            window.dispatchEvent(new Event("clinic-assignment-plan-updated"));
+                    window.dispatchEvent(new Event("clinic-assignment-plan-updated"));
             els.patientMessage.textContent = value
               ? "Fecha de revisión guardada. Aparecerá en el material del paciente."
               : "Fecha de revisión retirada.";
@@ -1012,8 +1010,7 @@
             if (rows?.[0]) exerciseAssignments = exerciseAssignments.map((value) => value.id === item.id ? rows[0] : value);
             renderExercises(currentPatient);
             renderTimeline(currentPatient);
-            renderPending();
-          } catch (error) {
+                  } catch (error) {
             els.patientMessage.textContent = error.message;
           }
         });
@@ -1461,40 +1458,6 @@
   }
 
 
-  function renderPending() {
-    const drafts = clinicalSessions.filter((item) => item.status === "draft");
-    const exercises = exerciseAssignments.filter((item) => ["prepared", "sent", "assigned"].includes(item.status));
-    const reports = clinicalReports.filter((item) => item.status === "draft");
-    const now = new Date();
-    const withoutNext = patients.filter((patient) =>
-      patient.care_context !== "creu_blava"
-      && !patientAppointments(patient.id).some((item) => new Date(item.starts_at) > now && !["cancelled", "canceled"].includes(item.status))
-    );
-    const groups = [
-      ["Sesiones sin cerrar", drafts, (item) => patientById(item.patient_id)],
-      ["Ejercicios pendientes", exercises, (item) => patientById(item.patient_id)],
-      ["Informes en borrador", reports, (item) => patientById(item.patient_id)],
-      ["Sin próxima cita", withoutNext, (item) => item],
-    ];
-    const total = groups.reduce((sum, [, items]) => sum + items.length, 0);
-    if (els.pendingBadge) els.pendingBadge.textContent = String(total);
-    els.pendingSummary.replaceChildren();
-    groups.forEach(([label, items]) => { const card = create("article"); card.append(create("strong", "", String(items.length)), create("span", "", label)); els.pendingSummary.append(card); });
-    els.pendingList.replaceChildren();
-    groups.forEach(([label, items, getPatient]) => {
-      const section = create("section", "clinic-pending-group"); section.append(create("h3", "", label));
-      if (!items.length) section.append(create("p", "clinic-empty-inline", "Sin pendientes."));
-      items.forEach((item) => {
-        const patient = getPatient(item); if (!patient) return;
-        const row = create("article"); const info = create("div");
-        const detail = item.title || (item.session_number ? `Sesión ${item.session_number}` : patient.public_code);
-        info.append(create("strong", "", patient.public_code), create("span", "", detail));
-        const button = create("button", "clinic-secondary", "Abrir ficha"); button.type = "button"; button.addEventListener("click", () => openPatient(patient));
-        row.append(info, button); section.append(row);
-      });
-      els.pendingList.append(section);
-    });
-  }
   function timelineItems(patient) {
     const items = [];
     patientAppointments(patient.id).forEach((x) => items.push({ date: x.starts_at, type: "Cita", text: statusLabel(x.status) }));
@@ -1802,7 +1765,6 @@
     els.documentDialog.close();
     if (share) await sendClinicalFileNotice(clinicalDocuments[0].id);
     else els.patientMessage.textContent = "Archivo guardado solo en la historia clínica.";
-    renderPending();
   }
   function renderScales(patient) {
     els.patientScales.replaceChildren();
@@ -2248,7 +2210,6 @@
     scaleMeasurements = scaleRows || [];
     renderToday();
     renderPatients(els.patientSearch.value);
-    renderPending();
     setMessage("");
   }
 
@@ -2590,11 +2551,9 @@
   function setView(name) {
     els.todayView.hidden = name !== "today";
     els.patientsView.hidden = name !== "patients";
-    els.pendingView.hidden = name !== "pending";
     els.viewToday.classList.toggle("active", name === "today");
     els.viewPatients.classList.toggle("active", name === "patients");
-    els.viewPending?.classList.toggle("active", name === "pending");
-    [[els.viewToday, "today"], [els.viewPatients, "patients"], [els.viewPending, "pending"]].forEach(([button, key]) => {
+    [[els.viewToday, "today"], [els.viewPatients, "patients"]].forEach(([button, key]) => {
       if (name === key) button?.setAttribute("aria-current", "page");
       else button?.removeAttribute("aria-current");
     });
@@ -2606,7 +2565,6 @@
   els.refresh.addEventListener("click", () => loadData().catch((error) => setMessage(error.message)));
   els.viewToday.addEventListener("click", () => setView("today"));
   els.viewPatients.addEventListener("click", () => setView("patients"));
-  els.viewPending?.addEventListener("click", () => setView("pending"));
   els.patientSearch.addEventListener("input", () => renderPatients(els.patientSearch.value));
   els.newPatient?.addEventListener("click", () => {
     els.newPatientForm.reset();
