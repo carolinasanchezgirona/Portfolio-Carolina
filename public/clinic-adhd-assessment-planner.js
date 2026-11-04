@@ -24,6 +24,27 @@
     ["gad7_registro","GAD-7","Según sospecha","Sintomatología ansiosa y posible interferencia cognitiva."],
     ["wfirs_registro","WFIRS-S","Según disponibilidad y adecuación","Medida funcional opcional; verificar versión lingüística y licencia."],
   ];
+  const pediatricCore=[
+    ["child_anamnesis","Anamnesis evolutiva","Núcleo","Desarrollo, inicio, escolarización y evolución."],
+    ["child_functioning","Repercusión funcional","Núcleo","Autonomía, escuela, hogar y relaciones."],
+    ["family_report","Información familiar","Núcleo","Entrevista familiar y ejemplos en domicilio."],
+    ["school_report","Información escolar","Núcleo","Observaciones del profesorado y documentos del centro."],
+    ["child_differential","Diagnóstico diferencial","Núcleo","TEA, aprendizaje, ansiedad, sueño y otros factores."],
+    ["atento_registro","ATENTO","Complementario","Familia y escuela. Autoinforme a partir de 8 años, si procede."],
+    ["etdah_registro","e-TDAH","Alternativa escolar","Alternativa según disponibilidad y edad (6–12 años)."],
+    ["sena_registro","SENA","Según indicación","Síntomas emocionales y conductuales, con distintos informantes."],
+    ["sdq_registro","SDQ","Complementario","Registro de resultados de versión autorizada."]
+  ];
+  const pediatricNeuro=[
+    {key:"d2r",name:"d2-R",min:6,max:17,when:"Atención selectiva",reasons:["selective"],note:"Baremos por tramo de edad."},
+    {key:"carasr",name:"CARAS-R",min:6,max:17,when:"Atención perceptiva",reasons:["selective"],note:"Opcional; evita redundancia sin motivo clínico."},
+    {key:"fdt",name:"FDT",min:7,max:17,when:"Inhibición/alternancia",reasons:["inhibition"],note:"A partir de 7 años. No disponible a los 6."},
+    {key:"enfen",name:"ENFEN",min:6,max:12,when:"Funciones ejecutivas",reasons:["planning","inhibition"],note:"Exclusivo de 6 a 12 años."},
+    {key:"taveci",name:"TAVECI",min:6,max:17,when:"Aprendizaje y memoria verbal",reasons:["memory"],note:"Alternativa infantojuvenil por indicación."},
+    {key:"tavec",name:"TAVEC",min:16,max:17,when:"Memoria verbal",reasons:["memory"],note:"Solo 16–17 años, según madurez y manual."},
+    {key:"working_memory",name:"Memoria de trabajo",min:6,max:17,when:"Memoria de trabajo",reasons:["working"],note:"Instrumento y baremo específico de edad."},
+    {key:"other",name:"Otra prueba",min:6,max:17,when:"Otros dominios",reasons:["other"],note:"Solo si existe una pregunta clínica específica."}
+  ];
   const indications=[
     ["selective","Atención selectiva y precisión"],
     ["inhibition","Inhibición y flexibilidad cognitiva"],
@@ -49,7 +70,7 @@
     planned:"Planificada",administered:"Administrada"
   };
   let root=null,host=null,content=null;
-  let currentId="",currentMode="",patientId="",status="",savedIndications=[],forms=[],tests=[],generation=0;
+  let currentId="",currentMode="",currentGroup="adult",currentAge=null,patientId="",status="",savedIndications=[],forms=[],tests=[],generation=0;
   const auth=()=>{try{return JSON.parse(sessionStorage.getItem(SESSION)||"null")?.access_token||""}catch{return ""}};
   async function api(path,{method="GET",data=null,returnRows=false}={}){
     if(!auth())throw Error("Inicia sesión de nuevo en Gestión Clínica.");
@@ -98,7 +119,7 @@
     content.replaceChildren(node("p","Actualizando el plan…","adhd-plan-message"));
     try{
       const [a,f,t]=await Promise.all([
-        api("clinical_adhd_assessments?select=id,modality,status,neuro_selection_indications,upgrade_budget_acknowledged_at&id=eq."+id+"&limit=1"),
+        api("clinical_adhd_assessments?select=id,modality,status,age_group,age_at_assessment,fee_eur,neuro_selection_indications,upgrade_budget_acknowledged_at&id=eq."+id+"&limit=1"),
         api("clinical_adhd_forms?select=form_key,status,delivery_mode&assessment_id=eq."+id),
         currentMode==="expanded"
           ?api("clinical_adhd_neuro_tests?select=id,instrument_key,status,created_at&assessment_id=eq."+id+"&order=created_at.asc")
@@ -107,6 +128,8 @@
       if(now!==generation||id!==currentId)return;
       const assessment=Array.isArray(a)?a[0]:null;
       if(!assessment||assessment.modality!==currentMode)throw Error("No se ha podido verificar la modalidad de evaluación.");
+      currentGroup=assessment.age_group||"adult";
+      currentAge=Number.isInteger(assessment.age_at_assessment)?assessment.age_at_assessment:null;
       savedIndications=Array.isArray(assessment.neuro_selection_indications)?
         assessment.neuro_selection_indications.filter(x=>indications.some(i=>i[0]===x)):[];
       forms=Array.isArray(f)?f:[];
@@ -118,7 +141,7 @@
   function render(){
     content.replaceChildren();
     const overview=node("div",undefined,"adhd-plan-overview");
-    overview.append(node("strong",currentMode==="expanded"?"Neuropsicológica ampliada · 600 €":"Clínica diagnóstica · 450 €"),
+    overview.append(node("strong",(currentGroup==="child"?"Infantil":currentGroup==="adolescent"?"Adolescente":"Adultos")+" · "+(currentMode==="expanded"?"Neuropsicológica ampliada":"Clínica diagnóstica")+" · "+(currentGroup==="adult"?(currentMode==="expanded"?600:450):(currentMode==="expanded"?700:500))+" €"),
       node("p",currentMode==="expanded"
         ?"Incluye el núcleo diagnóstico. La batería de rendimiento se adapta a los dominios que necesites explorar."
         :"Incluye valoración clínica, entrevistas y escalas pertinentes. Las pruebas de rendimiento extensas son opcionales y requieren una indicación adicional."));
@@ -126,7 +149,7 @@
     const a=node("section",undefined,"adhd-plan-section");
     a.append(node("h4","1. Evaluación clínica"),node("p","Instrumentos y registros de base, más apoyos al diagnóstico diferencial según los hallazgos.","adhd-plan-muted"));
     const grid=node("div",undefined,"adhd-plan-list");
-    for(const [key,title,kind,description] of core){
+    for(const [key,title,kind,description] of (currentGroup==="adult"?core:pediatricCore.filter(x=>x[0]!=="etdah_registro"||currentAge===null||currentAge<=12))){
       const record=forms.find(f=>f.form_key===key);
       const item=node("div",undefined,"adhd-plan-row");
       const info=node("div",undefined,"adhd-plan-row-info");
@@ -182,15 +205,16 @@
     reasons.append(saveReasons);
     section.append(reasons);
     const selected=savedIndications.length>0;
-    const recommendations=neuro.filter(t=>t.reasons.some(x=>savedIndications.includes(x)));
-    const others=neuro.filter(t=>!recommendations.includes(t));
-    const recommendedSet=selected?recommendations:neuro.filter(t=>["d2r","fdt"].includes(t.key));
+    const available=currentGroup==="adult"?neuro:pediatricNeuro.filter(t=>currentAge===null||(currentAge>=t.min&&currentAge<=t.max));
+    const recommendations=available.filter(t=>t.reasons.some(x=>savedIndications.includes(x)));
+    const others=available.filter(t=>!recommendations.includes(t));
+    const recommendedSet=selected?recommendations:available.filter(t=>currentGroup==="adult"?["d2r","fdt"].includes(t.key):["d2r","carasr"].includes(t.key));
     section.append(node("h5",selected?"Pruebas relacionadas con las áreas seleccionadas":"Pruebas que podrías considerar"));
-    section.append(node("p",selected?"Estas pruebas merecen revisión por su posible aportación a la pregunta clínica.":"d2-R y FDT son opciones frecuentes cuando procede explorar rendimiento atencional y ejecutivo, pero no forman una batería obligatoria.","adhd-plan-muted"));
+    section.append(node("p",selected?"Estas pruebas merecen revisión por su posible aportación a la pregunta clínica.":"d2-R y las pruebas de atención seleccionables por edad son opciones, no requisitos del diagnóstico.","adhd-plan-muted"));
     const grid=node("div",undefined,"adhd-plan-list");
     for(const test of recommendedSet)grid.append(testRow(test));
     section.append(grid);
-    const otherOptions=selected?others:neuro.filter(t=>!["d2r","fdt"].includes(t.key));
+    const otherOptions=selected?others:available.filter(t=>currentGroup==="adult"?!["d2r","fdt"].includes(t.key):!["d2r","carasr"].includes(t.key));
     if(otherOptions.length){
       const details=node("details",undefined,"adhd-plan-extra");
       details.append(node("summary","Ver otras pruebas opcionales"));
@@ -201,8 +225,8 @@
     if(currentMode==="diagnostic"){
       const note=node("div",undefined,"adhd-plan-upgrade");
       note.append(node("strong","¿Necesitas añadir pruebas neuropsicológicas a esta evaluación?"),
-        node("p","Puedes ampliar la modalidad sin repetir entrevistas ni formularios ya guardados. Pasaría de 450 € a 600 € exclusivamente tras documentar que el paciente acepta el nuevo alcance y presupuesto."));
-      if(status!=="completed"&&status!=="cancelled")note.append(button("Preparar ampliación a 600 €",()=>showUpgrade(note),"primary"));
+        node("p","Puedes ampliar la modalidad sin repetir entrevistas ni formularios ya guardados. El cambio será de 450 a 600 € en adultos o de 500 a 700 € en menores, con aceptación documentada."));
+      if(status!=="completed"&&status!=="cancelled")note.append(button("Preparar ampliación a "+(currentGroup==="adult"?600:700)+" €",()=>showUpgrade(note),"primary"));
       else note.append(node("p","La evaluación está cerrada. No se permite modificar la modalidad de un expediente finalizado.","adhd-plan-muted"));
       section.append(note);
     }
@@ -240,7 +264,7 @@
     field.append(reason);
     const confirm=node("label",undefined,"adhd-plan-acknowledge");
     const checkbox=document.createElement("input");checkbox.type="checkbox";
-    confirm.append(checkbox,node("span","Confirmo que se ha explicado al paciente el cambio de alcance y el presupuesto total de 600 €, que ha sido aceptado y que registraré su aceptación en la historia clínica."));
+    confirm.append(checkbox,node("span","Confirmo que se ha explicado el cambio de alcance y el presupuesto total correspondiente, que ha sido aceptado y que registraré su aceptación en la historia clínica."));
     const actions=node("div",undefined,"adhd-plan-toolbar");
     const confirmBtn=button("Confirmar ampliación",()=>{
       if(reason.value.trim().length<8){setNotice("Escribe la justificación clínica de la ampliación.",true);return;}
