@@ -45,3 +45,7 @@
 .adhd-neuro-notice.error{color:#a12738;font-weight:650}
 @media(max-width:850px){.adhd-neuro-score-row{grid-template-columns:repeat(2,minmax(0,1fr))}.adhd-neuro-score-row .adhd-neuro-btn{justify-self:start}}
 @media(max-width:640px){.adhd-neuro-module{padding:14px}.adhd-neuro-metrics{grid-template-columns:1fr}.adhd-neuro-grid{grid-template-columns:1fr}.adhd-neuro-testrow{align-items:start;flex-direction:column}.adhd-neuro-testrow>.adhd-neuro-btn{align-self:start}.adhd-neuro-editor{padding:14px}.adhd-neuro-score-row{grid-template-columns:1fr}}
+
+.adhd-neuro-clickable{cursor:pointer;transition:background .14s ease,border-color .14s ease}
+.adhd-neuro-clickable:hover{background:#f0f9fa;border-color:#63aeb9}
+.adhd-neuro-clickable:focus-visible{outline:3px solid #87cfd8;outline-offset:2px}
