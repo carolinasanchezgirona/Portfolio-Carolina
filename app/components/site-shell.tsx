@@ -34,12 +34,14 @@ const serviceNavigation = [
   { href: "/neuropsicologia/", label: "Neuropsicología" },
   { href: "/evaluacion-tdah-adultos/", label: "Evaluación de TDAH en adultos" },
   { href: "/evaluacion-tea-adultos/", label: "Evaluación de TEA en adultos" },
+  { href: "/evaluacion-memoria-deterioro-cognitivo/", label: "Evaluación de memoria y deterioro cognitivo" },
+  { href: "/evaluacion-altas-capacidades-adultos/", label: "Altas capacidades en adultos" },
   { href: "/residencias/", label: "Para centros y residencias" },
 ] as const;
 
 const servicePaths = [
   "/psicologia/", "/neuropsicologia/", "/residencias/", "/ansiedad/",
-  "/duelo/", "/evaluacion-neuropsicologica/", "/evaluacion-tdah-adultos/", "/evaluacion-tea-adultos/", "/deterioro-cognitivo/",
+  "/duelo/", "/evaluacion-neuropsicologica/", "/evaluacion-tdah-adultos/", "/evaluacion-tea-adultos/", "/evaluacion-memoria-deterioro-cognitivo/", "/evaluacion-altas-capacidades-adultos/", "/deterioro-cognitivo/",
   "/problemas-de-memoria/", "/psicologa-arenys-de-mar/",
 ];
 
@@ -144,6 +146,8 @@ function SiteFooter() {
           <a href="/evaluacion-neuropsicologica/">Evaluación neuropsicológica</a>
           <a href="/evaluacion-tdah-adultos/">Evaluación de TDAH en adultos</a>
           <a href="/evaluacion-tea-adultos/">Evaluación de TEA en adultos</a>
+          <a href="/evaluacion-memoria-deterioro-cognitivo/">Evaluación de memoria y deterioro cognitivo</a>
+          <a href="/evaluacion-altas-capacidades-adultos/">Altas capacidades en adultos</a>
           <a href="/deterioro-cognitivo/">Deterioro cognitivo y memoria</a>
           <a href="/residencias/">Programas para residencias</a>
         </nav>
