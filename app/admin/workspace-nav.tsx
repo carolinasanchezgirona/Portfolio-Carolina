@@ -40,7 +40,8 @@ export default function AdminWorkspaceNav({ active }: { active: Area }) {
           <a href="/admin/notificaciones/" aria-current={active === "notificaciones" ? "page" : undefined}>Centro de avisos</a>
           <p className="admin-workspace-more-label">Contenidos y materiales</p>
           <a href="/admin/articulos/" aria-current={active === "articulos" ? "page" : undefined}>Centro editorial</a>
-          <a href="/admin/clinica/materiales-externos/" aria-current={active === "biblioteca" ? "page" : undefined}>Biblioteca clínica</a>
+          <a href="/admin/clinica/documentacion/" aria-current={active === "biblioteca" ? "page" : undefined}>Documentación</a>
+          <a href="/admin/clinica/materiales-externos/">Biblioteca clínica</a>
           <a href="/admin/recursos/" aria-current={active === "recursos" ? "page" : undefined}>Recursos</a>
           <a href="/admin/marketing/" aria-current={active === "marketing" ? "page" : undefined}>Marketing</a>
           <a href="/admin/preguntas/" aria-current={active === "preguntas" ? "page" : undefined}>Preguntas</a>
