@@ -51,9 +51,72 @@
   asrs_registro:{title:"ASRS-v1.1 · registro de cribado",fields:[["puntuacion","Resultado de cribado según instrucciones originales"],["fecha","Fecha, versión y circunstancias"],["interpretacion","Interpretación clínica y limitaciones"]]},
   phq9_registro:{title:"PHQ-9 · registro",fields:[["puntuacion","Puntuación total 0–27"],["fecha","Fecha de administración"],["item9","Respuesta al ítem 9 y valoración clínica realizada si fue positiva"],["interpretacion","Interpretación contextualizada"]]},
   gad7_registro:{title:"GAD-7 · registro",fields:[["puntuacion","Puntuación total 0–21"],["fecha","Fecha de administración"],["interpretacion","Interpretación contextualizada"]]},
-  wfirs_registro:{title:"WFIRS-S · registro",fields:[["version","Versión, idioma y condiciones de uso"],["subescalas","Puntuaciones por dominio, si procede"],["interpretacion","Interpretación funcional e información complementaria"]]}
+  wfirs_registro:{title:"WFIRS-S · registro",fields:[["version","Versión, idioma y condiciones de uso"],["subescalas","Puntuaciones por dominio, si procede"],["interpretacion","Interpretación funcional e información complementaria"]]},
+  child_anamnesis:{title:"Anamnesis clínica y evolutiva infantil",fields:[
+    ["motivo","Motivo de evaluación, demandas familiares y escolares"],["desarrollo","Gestación, parto, hitos madurativos, lenguaje y desarrollo neurológico"],
+    ["inicio","Inicio y evolución de síntomas atencionales, hiperactividad e impulsividad"],
+    ["escolaridad","Historia educativa, adaptaciones, informes y rendimiento académico"],
+    ["hogar","Rutinas, autonomía, organización y conducta en casa"],["social","Socialización, relaciones y regulación emocional"],
+    ["aprendizaje","Lectoescritura, cálculo, dificultades de aprendizaje y lenguaje"],
+    ["salud","Salud, sueño, audición, visión, medicación y antecedentes médicos"],
+    ["familia","Antecedentes familiares y factores contextuales"],["fuentes","Informantes, documentos y discrepancias entre contextos"]
+  ]},
+  child_functioning:{title:"Funcionamiento en infancia y adolescencia",fields:[
+    ["familia","Impacto en el hogar, convivencia y autonomía"],["escuela","Impacto académico, tareas, comportamiento y apoyos"],
+    ["social","Relaciones con iguales y actividades extraescolares"],["regulacion","Regulación emocional y conductual"],
+    ["autopercepcion","Autoconcepto, malestar y fortalezas"],["persistencia","Persistencia y repercusión en dos o más contextos"]
+  ]},
+  family_report:{title:"Información familiar",fields:[
+    ["informante","Quién aporta la información y relación"],["sintomas","Ejemplos observados de inatención, hiperactividad e impulsividad"],
+    ["funcionamiento","Impacto y frecuencia en domicilio"],["inicio","Historia evolutiva e inicio"],
+    ["instrumentos","Cuestionarios originales aplicados y puntuaciones normativas"],
+    ["observaciones","Concordancias, divergencias y limitaciones de la fuente"]
+  ]},
+  school_report:{title:"Información escolar",fields:[
+    ["informante","Docente o profesional que informa y curso escolar"],
+    ["sintomas","Ejemplos observados en aula y actividades escolares"],
+    ["rendimiento","Rendimiento, adaptaciones, asistencia, organización y tareas"],
+    ["comparacion","Comparación con iguales y contexto escolar"],
+    ["instrumentos","Cuestionarios originales utilizados y resultados"],
+    ["observaciones","Concordancias, divergencias y documentos escolares aportados"]
+  ]},
+  child_differential:{title:"Diagnóstico diferencial infantojuvenil",fields:[
+    ["cronologia","Cronología de síntomas y evolución del neurodesarrollo"],
+    ["aprendizaje","Trastornos específicos del aprendizaje, lenguaje y discapacidad intelectual"],
+    ["tea","TEA, comunicación social, perfiles sensoriales y funciones ejecutivas"],
+    ["emocional","Ansiedad, depresión, trauma y regulación emocional"],
+    ["sueno","Sueño, fatiga, apnea y otros factores médicos"],
+    ["conducta","Trastornos de conducta, oposicionismo y patrones contextuales"],
+    ["adolescencia","Cambios puberales, consumo de sustancias y riesgo si procede"],
+    ["sintesis","Hipótesis diferenciales, comorbilidades, evidencia pendiente y derivaciones"]
+  ]},
+  atento_registro:{title:"ATENTO · puntuaciones por informante",fields:[
+    ["version","Versión autorizada, idioma, edad y baremos"],
+    ["familia","Puntuaciones T/índices informante familiar"],
+    ["escuela","Puntuaciones T/índices informante escolar"],
+    ["autoinforme","Autoinforme desde los 8 años, si procede"],
+    ["concordancia","Comparación entre fuentes, validez e interpretación clínica"]
+  ]},
+  etdah_registro:{title:"e-TDAH · registro",fields:[["version","Manual, versión, edad y baremos"],["familia","Resultados familiares"],["escuela","Resultados escolares"],["interpretacion","Contextualización e interpretación"]]},
+  sena_registro:{title:"SENA · registro",fields:[["version","Nivel y edad, versiones utilizadas"],["familia","Resultados familia"],["escuela","Resultados escuela"],["autoinforme","Autoinforme/entrevista según edad"],["interpretacion","Integración clínica"]]},
+  sdq_registro:{title:"SDQ · registro",fields:[["version","Versión, idioma y condiciones de uso"],["familia","Resultados familia"],["escuela","Resultados escuela"],["autoinforme","Autoinforme si corresponde"],["interpretacion","Interpretación y limitaciones"]]}
  };
  let patientId="",assessment=null,forms=[],selection="anamnesis",currentInputs=null,loadNumber=0;
+ let patientDob=null,patientAge=null,patientGroup=null;
+ const adultForms=["anamnesis","diva_registro","funcionamiento","diferencial","asrs_registro","phq9_registro","gad7_registro","wfirs_registro"];
+ const childForms=["child_anamnesis","child_functioning","family_report","school_report","child_differential","atento_registro","etdah_registro","sena_registro","sdq_registro"];
+ const visibleForms=()=>assessment?.age_group==="adult"?adultForms:childForms;
+ const yearsOld=(iso,reference=new Date())=>{
+   if(!/^\d{4}-\d{2}-\d{2}$/.test(String(iso||"")))return null;
+   const [y,m,d]=iso.split("-").map(Number);
+   const date=new Date(Date.UTC(y,m-1,d));
+   if(date.getUTCFullYear()!==y||date.getUTCMonth()!==m-1||date.getUTCDate()!==d)return null;
+   let age=reference.getFullYear()-y;
+   if((reference.getMonth()+1)<m||((reference.getMonth()+1)===m&&reference.getDate()<d))age--;
+   return age>=0&&age<=120?age:null;
+ };
+ const groupFromAge=age=>age===null?null:age<6?"under6":age<=11?"child":age<=17?"adolescent":"adult";
+ const groupLabel=group=>({adult:"Adultos",child:"Infantil",adolescent:"Adolescente",under6:"Menores de 6 años"})[group]||"Sin edad";
  let region=null,status=null,list=null,editor=null;
  const auth=()=>{try{return JSON.parse(sessionStorage.getItem(SESSION)||"null")?.access_token||""}catch{return ""}};
  const headers=(extra={})=>({apikey:PUB,Authorization:"Bearer "+auth(),"Content-Type":"application/json",...extra});
@@ -81,7 +144,7 @@
    region.append(list,status,editor);
    region.addEventListener("adhd:open-form",event=>{
      const d=event.detail||{};
-     if(!assessment||d.assessmentId!==assessment.id||!labels[d.formKey])return;
+     if(!assessment||d.assessmentId!==assessment.id||!visibleForms().includes(d.formKey))return;
      selection=d.formKey;paint();
      editor.querySelector(".adhd-sheet")?.scrollIntoView({behavior:"smooth",block:"nearest"});
    });
@@ -97,9 +160,9 @@
          body:JSON.stringify({p_assessment_id:assessment.id,p_budget_accepted:true,p_clinical_indication:d.indication.trim()})
        });
        if(!updated||updated.modality!=="expanded")throw Error("No se confirmó la ampliación.");
-       Object.assign(assessment,{modality:"expanded",fee_eur:600,upgrade_budget_acknowledged_at:updated.upgrade_budget_acknowledged_at||null});
+       Object.assign(assessment,{modality:"expanded",fee_eur:updated.fee_eur,upgrade_budget_acknowledged_at:updated.upgrade_budget_acknowledged_at||null});
        const option=Array.from(list.querySelector("select")?.options||[]).find(o=>o.value===assessment.id);
-       if(option)option.textContent="Ampliada 600 € · "+new Date(assessment.created_at).toLocaleDateString("es-ES")+" · "+assessment.status;
+       if(option)option.textContent=groupLabel(assessment.age_group)+" · Ampliada "+updated.fee_eur+" € · "+new Date(assessment.created_at).toLocaleDateString("es-ES")+" · "+assessment.status;
        paint();
        msg("Ampliación registrada. Puedes planificar las pruebas complementarias. Revisa y archiva el presupuesto aceptado en la historia.");
      }catch(error){msg(error.message||"No se pudo actualizar la modalidad.",true);}
@@ -112,17 +175,26 @@
  }
  async function loadPatient(){
   const revision=++loadNumber;if(!region)return;
-  assessment=null;forms=[];list.replaceChildren();editor.replaceChildren();region.removeAttribute("data-assessment-id");region.removeAttribute("data-assessment-modality");region.removeAttribute("data-assessment-patient-id");msg("Cargando evaluaciones…");
+  assessment=null;forms=[];list.replaceChildren();editor.replaceChildren();region.removeAttribute("data-assessment-id");region.removeAttribute("data-assessment-modality");region.removeAttribute("data-assessment-patient-id");region.removeAttribute("data-assessment-age-group");region.removeAttribute("data-assessment-age");msg("Cargando evaluaciones…");
   try{
-   const records=await api("clinical_adhd_assessments?select=id,modality,fee_eur,status,created_at,chief_question,evidence_summary,diagnostic_conclusion&patient_id=eq."+encodeURIComponent(patientId)+"&order=created_at.desc&limit=15");
+   const [records,patient]=await Promise.all([
+     api("clinical_adhd_assessments?select=id,modality,fee_eur,status,age_group,age_at_assessment,birth_date_at_assessment,created_at,chief_question,evidence_summary,diagnostic_conclusion&patient_id=eq."+encodeURIComponent(patientId)+"&order=created_at.desc&limit=15"),
+     api("clinical_patients?select=birth_date&id=eq."+encodeURIComponent(patientId)+"&limit=1")
+   ]);
+   patientDob=patient?.[0]?.birth_date||null;
+   patientAge=yearsOld(patientDob);patientGroup=groupFromAge(patientAge);
    if(revision!==loadNumber)return;
    const panel=h("div",undefined,"adhd-control-row");
    const choice=document.createElement("select");choice.setAttribute("aria-label","Seleccionar evaluación de TDAH");
    panel.append(choice);
-   const create=button("Nueva evaluación",()=>newAssessment(),"primary");panel.append(create);
+   const create=button("Nueva evaluación",()=>newAssessment(),"primary");
+   create.disabled=!patientGroup||patientGroup==="under6";
+   panel.append(create);
+   const details=h("p",patientAge===null?"Indica la fecha de nacimiento en la ficha antes de crear una evaluación.":patientAge<6?"Este protocolo empieza a los 6 años. Utiliza una valoración del neurodesarrollo específica.":groupLabel(patientGroup)+" · "+patientAge+" años · "+(patientGroup==="adult"?"450 € / 600 €":"500 € / 700 €"),"adhd-muted");
+   list.append(details);
    list.append(panel);
    if(!records.length){choice.append(new Option("No hay evaluaciones", ""));list.append(h("p","Aún no se ha abierto ninguna valoración de TDAH para esta persona.","adhd-muted"));msg("");return;}
-   records.forEach((a,i)=>choice.append(new Option((a.modality==="diagnostic"?"Diagnóstica 450 €":"Ampliada 600 €")+" · "+new Date(a.created_at).toLocaleDateString("es-ES")+" · "+a.status,a.id)));
+   records.forEach(a=>choice.append(new Option(groupLabel(a.age_group)+" · "+(a.modality==="diagnostic"?"Diagnóstica":"Ampliada")+" "+a.fee_eur+" € · "+new Date(a.created_at).toLocaleDateString("es-ES")+" · "+a.status,a.id)));
    choice.onchange=()=>openAssessment(records.find(a=>a.id===choice.value));
    await openAssessment(records[0]);
   }catch(e){msg(e.message||"No se pudo cargar.",true)}
@@ -136,8 +208,8 @@
   box.append(heading);
   const options=h("div",undefined,"adhd-mode-options");
   const descriptions=[
-   ["diagnostic","Evaluación diagnóstica","450 €","5–6 horas estimadas","Entrevista evolutiva, DIVA-5, funcionamiento, síntomas y diagnóstico diferencial. Pruebas cognitivas solo si están indicadas y se acuerda la ampliación."],
-   ["expanded","Evaluación neuropsicológica ampliada","600 €","10 horas estimadas","Incluye todo lo anterior y permite planificar pruebas de atención, funciones ejecutivas, memoria y otros dominios en función de la pregunta clínica."]
+   ["diagnostic","Evaluación diagnóstica",patientGroup==="adult"?"450 €":"500 €","Protocolo clínico por edad",patientGroup==="adult"?"Anamnesis evolutiva, DIVA-5, funcionamiento y diagnóstico diferencial.":"Entrevista infantojuvenil, datos familiares y escolares, impacto funcional y diagnóstico diferencial. ATENTO y otras escalas solo si están indicadas."],
+   ["expanded","Evaluación neuropsicológica ampliada",patientGroup==="adult"?"600 €":"700 €","Más exploración cognitiva por dominios","Incluye el circuito diagnóstico e incorpora pruebas estandarizadas adecuadas a la edad y pregunta clínica."]
   ];
   let selected="diagnostic";
   const radios=[];
@@ -156,12 +228,14 @@
   box.append(options);
   const actions=h("div",undefined,"adhd-actions");
   const create=button("Crear evaluación",async()=>{
-    if(!patientId||!/^[0-9a-f-]{36}$/i.test(patientId)){msg("Selecciona una ficha de paciente válida.",true);return;}
+    if(!patientId||!/^[0-9a-f-]{36}$/i.test(patientId)||!patientGroup||patientGroup==="under6"){
+      msg("Necesitas una fecha de nacimiento válida y un paciente de 6 años o más.",true);return;
+    }
     create.disabled=true;
     try{
       const rows=await api("clinical_adhd_assessments",{
         method:"POST",headers:{Prefer:"return=representation"},
-        body:JSON.stringify({patient_id:patientId,modality:selected,fee_eur:selected==="diagnostic"?450:600})
+        body:JSON.stringify({patient_id:patientId,modality:selected,fee_eur:selected==="diagnostic"?(patientGroup==="adult"?450:500):(patientGroup==="adult"?600:700)})
       });
       if(!rows?.[0])throw Error("No se pudo crear la evaluación.");
       await loadPatient();
@@ -188,16 +262,23 @@
    region.dataset.assessmentId=assessment.id;
    region.dataset.assessmentModality=assessment.modality;
    region.dataset.assessmentPatientId=patientId;
+   region.dataset.assessmentAgeGroup=assessment.age_group||"adult";
+   region.dataset.assessmentAge=assessment.age_at_assessment??"";
+   region.dataset.assessmentBirthDate=assessment.birth_date_at_assessment||"";
    region.dispatchEvent(new Event("adhd:assessment",{bubbles:true}));
    const top=h("div",undefined,"adhd-case-top");
-   const info=h("div");info.append(h("strong",assessment.modality==="diagnostic"?"Evaluación diagnóstica · 450 €":"Evaluación neuropsicológica ampliada · 600 €"),h("small","Paciente vinculado a la historia clínica. Solo la profesional decide la conclusión diagnóstica."));
+   const info=h("div");
+   info.append(h("strong",groupLabel(assessment.age_group)+" · "+(assessment.modality==="diagnostic"?"Evaluación diagnóstica":"Evaluación neuropsicológica ampliada")+" · "+assessment.fee_eur+" €"),
+     h("small",(assessment.age_at_assessment!==null?assessment.age_at_assessment+" años al iniciar la evaluación. ":"")+"Solo la profesional valida los resultados y las conclusiones."));
    const sel=document.createElement("select");sel.setAttribute("aria-label","Estado de la evaluación");
    ["in_progress","review","completed","cancelled"].forEach(s=>sel.append(new Option(({in_progress:"En curso",review:"En revisión",completed:"Finalizada",cancelled:"Cancelada"})[s],s)));
    sel.value=assessment.status;
    sel.onchange=async()=>{try{await api("clinical_adhd_assessments?id=eq."+assessment.id,{method:"PATCH",body:JSON.stringify({status:sel.value,updated_at:new Date().toISOString(),...(sel.value==="completed"?{clinical_review_at:new Date().toISOString()}: {})})});assessment.status=sel.value;msg("Estado actualizado.");paint()}catch(e){msg(e.message,true)}};
    top.append(info,sel);editor.append(top);
    const nav=h("div",undefined,"adhd-form-nav");
-   for(const [key,meta] of Object.entries(labels)){
+   if(!visibleForms().includes(selection))selection=visibleForms()[0];
+   for(const key of visibleForms()){
+     const meta=labels[key];
      const f=optionForm(key);
      const b=button(meta.title+(f?" · "+({draft:"Borrador",sent:"Enviado",in_progress:"En curso",submitted:"Recibido",reviewed:"Revisado",revoked:"Revocado"}[f.status]||f.status):""),()=>{selection=key;paint()},selection===key?"selected":"light");
      nav.append(b);
@@ -207,7 +288,8 @@
    const sheet=h("div",undefined,"adhd-sheet");
    const titlebar=h("div",undefined,"adhd-test-titlebar");
    titlebar.append(h("h4",meta.title));
-   const testPdfKey={diva_registro:"diva5",asrs_registro:"asrs",phq9_registro:"phq9",gad7_registro:"gad7",wfirs_registro:"wfirs"}[selection];
+   const testPdfKey={diva_registro:"diva5",asrs_registro:"asrs",phq9_registro:"phq9",gad7_registro:"gad7",wfirs_registro:"wfirs",
+    atento_registro:"atento",etdah_registro:"etdah",sena_registro:"sena",sdq_registro:"sdq"}[selection];
    if(testPdfKey){
      titlebar.append(button("Abrir PDF original / imprimir",()=>{
        region.dispatchEvent(new CustomEvent("adhd:pdf-open-request",{
