@@ -1410,3 +1410,52 @@ body.clinic-report-page-open{overflow:auto!important}
 .clinic-portal-access-note{margin:3px 0 0;color:#536e78;font-size:12px;line-height:1.5}
 .clinic-portal-access>button{flex:0 0 auto;min-height:40px}
 @media(max-width:640px){.clinic-portal-access{align-items:stretch;padding:13px}.clinic-portal-access>button{width:100%}}
+
+
+/* Ficha clínica: navegación funcional y jerarquía de trabajo (noviembre 2026).
+   No modifica el esquema de datos ni los identificadores de los campos. */
+.clinic-record-quicknav{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+  align-items:center;
+  margin:17px 0 23px;
+  padding:12px;
+  border:1px solid #dce9e9;
+  border-radius:13px;
+  background:#f6faf9;
+}
+.clinic-record-quicknav a{
+  display:inline-flex;
+  align-items:center;
+  min-height:36px;
+  padding:8px 12px;
+  border:1px solid #d6e7e6;
+  border-radius:999px;
+  background:#fff;
+  color:#124d5c;
+  font-size:.83rem;
+  font-weight:650;
+  line-height:1.25;
+  text-decoration:none;
+}
+.clinic-record-quicknav a:hover,.clinic-record-quicknav a:focus-visible{
+  border-color:#087a8f;
+  background:#e6f4f5;
+  color:#075c70;
+}
+#clinic-section-preparation,
+#clinic-smart-intake,
+#clinic-section-history,
+#clinic-section-materials,
+#clinic-section-documents,
+#clinic-section-reports,
+#clinic-section-sessions,
+#clinic-section-personal{scroll-margin-top:110px}
+.clinic-personal-admin-section:not([open]){margin-bottom:16px}
+.clinic-record-sections{margin-top:20px}
+.clinic-patient-page-content>.clinic-form-grid{border:1px solid #e4eeee;border-radius:14px;background:#fff;padding:18px}
+@media(max-width:680px){
+  .clinic-record-quicknav{gap:7px;padding:10px}
+  .clinic-record-quicknav a{font-size:.78rem;min-height:34px;padding:7px 10px}
+}
