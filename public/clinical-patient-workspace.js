@@ -112,6 +112,21 @@
     }
   }
 
+  // Native constraint validation happens before submit. Reveal the invalid
+  // control's pane synchronously so it can receive focus and be corrected.
+  form.addEventListener("invalid", (event) => {
+    const field = event.target;
+    if (!(field instanceof HTMLElement)) return;
+    for (const pane of panes) {
+      if (groups.get(pane.id).some(el => el === field || el.contains(field))) {
+        if (pane.id !== active) show(pane.id, false);
+        const details = field.closest("details");
+        if (details) details.open = true;
+        break;
+      }
+    }
+  }, true);
+
   form.addEventListener("input", (e) => {
     if (e.target && e.target.matches("textarea")) refreshSummary();
   });
