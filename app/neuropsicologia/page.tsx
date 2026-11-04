@@ -154,6 +154,8 @@ export default function NeuropsychologyPage() {
               <a href="/evaluacion-neuropsicologica/">Evaluación neuropsicológica</a>
               <a href="/evaluacion-tdah-adultos/">Evaluación del TDAH en adultos · 450 € / 600 €</a>
               <a href="/evaluacion-tea-adultos/">Evaluación del TEA en adultos · 550 € / 750 €</a>
+              <a href="/evaluacion-memoria-deterioro-cognitivo/">Evaluación de memoria y deterioro cognitivo · 350 € / 500 €</a>
+              <a href="/evaluacion-altas-capacidades-adultos/">Altas capacidades en adultos · 450 € / 600 €</a>
               <a href="/problemas-de-memoria/">Problemas de memoria y olvidos</a>
               <a href="/deterioro-cognitivo/">Deterioro cognitivo</a>
               <a href="/demencias/">Demencias y Alzheimer</a>
