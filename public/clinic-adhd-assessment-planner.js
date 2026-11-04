@@ -151,19 +151,22 @@
     const grid=node("div",undefined,"adhd-plan-list");
     for(const [key,title,kind,description] of (currentGroup==="adult"?core:pediatricCore.filter(x=>x[0]!=="etdah_registro"||currentAge===null||currentAge<=12))){
       const record=forms.find(f=>f.form_key===key);
-      const item=node("div",undefined,"adhd-plan-row");
+      const item=node("div",undefined,"adhd-plan-row adhd-plan-clickable");
+      const open=()=>root.dispatchEvent(new CustomEvent("adhd:open-form",{bubbles:true,detail:{assessmentId:currentId,formKey:key}}));
+      item.addEventListener("click",open);
+      item.addEventListener("keydown",e=>{if(e.target===item&&(e.key==="Enter"||e.key===" ")){e.preventDefault();open();}});
+      item.tabIndex=0;item.setAttribute("role","button");item.setAttribute("aria-label","Editar "+title);
       const info=node("div",undefined,"adhd-plan-row-info");
       const top=node("div",undefined,"adhd-plan-row-top");
       top.append(node("strong",title),node("span",kind,"adhd-plan-tag"));
       info.append(top,node("p",description));
       const action=node("div",undefined,"adhd-plan-row-action");
       action.append(node("span",record?(statusLabels[record.status]||record.status):"Sin registrar","adhd-plan-state"));
-      const documentKey={diva_registro:"diva5",asrs_registro:"asrs",phq9_registro:"phq9",gad7_registro:"gad7",wfirs_registro:"wfirs",anamnesis:"anamnesis",diferencial:"differential"}[key];
-      if(documentKey)action.append(button("PDF original",()=>{
+      const documentKey={diva_registro:"diva5",asrs_registro:"asrs",phq9_registro:"phq9",gad7_registro:"gad7",wfirs_registro:"wfirs",anamnesis:"anamnesis",diferencial:"differential",
+        atento_registro:"atento",etdah_registro:"etdah",sena_registro:"sena",sdq_registro:"sdq"}[key];
+      if(documentKey)action.append(button("PDF original",e=>{
+        e.stopPropagation();
         root.dispatchEvent(new CustomEvent("adhd:open-pdf",{bubbles:true,detail:{assessmentId:currentId,testKey:documentKey}}));
-      },"small"));
-      action.append(button(record?"Abrir registro":"Registrar resultado",()=>{
-        root.dispatchEvent(new CustomEvent("adhd:open-form",{bubbles:true,detail:{assessmentId:currentId,formKey:key}}));
       },"small"));
       item.append(info,action);grid.append(item);
     }
@@ -243,15 +246,25 @@
     const action=node("div",undefined,"adhd-plan-row-action");
     const modeOK=currentMode==="expanded"&&status!=="completed"&&status!=="cancelled";
     action.append(node("span",active?(statusLabels[active.status]||active.status):"No planificada","adhd-plan-state"));
-    action.append(button("PDF original",()=>{
+    action.append(button("PDF original",e=>{
+      e.stopPropagation();
       root.dispatchEvent(new CustomEvent("adhd:open-pdf",{bubbles:true,detail:{assessmentId:currentId,testKey:test.key}}));
     },"small"));
     if(currentMode==="expanded"){
-      const b=button(active?"Abrir resultados":"Añadir a la batería",()=>{
-        root.dispatchEvent(new CustomEvent("adhd:plan-test",{bubbles:true,detail:{assessmentId:currentId,testKey:test.key}}));
-      },"small");
-      if(!modeOK)b.disabled=true;
-      action.append(b);
+      if(!active){
+        const b=button("Añadir a la batería",()=>{
+          root.dispatchEvent(new CustomEvent("adhd:plan-test",{bubbles:true,detail:{assessmentId:currentId,testKey:test.key}}));
+        },"small");
+        if(!modeOK)b.disabled=true;
+        action.append(b);
+      }
+    }
+    if(active&&currentMode==="expanded"){
+      const open=()=>root.dispatchEvent(new CustomEvent("adhd:plan-test",{bubbles:true,detail:{assessmentId:currentId,testKey:test.key}}));
+      item.classList.add("adhd-plan-clickable");
+      item.tabIndex=0;item.setAttribute("role","button");item.setAttribute("aria-label","Editar resultados de "+test.name);
+      item.addEventListener("click",open);
+      item.addEventListener("keydown",e=>{if(e.target===item&&(e.key==="Enter"||e.key===" ")){e.preventDefault();open();}});
     }
     item.append(info,action);return item;
   }
@@ -269,7 +282,7 @@
     const confirmBtn=button("Confirmar ampliación",()=>{
       if(reason.value.trim().length<8){setNotice("Escribe la justificación clínica de la ampliación.",true);return;}
       if(!checkbox.checked){setNotice("Debes confirmar la aceptación del nuevo presupuesto para cambiar la modalidad.",true);return;}
-      if(!window.confirm("Se ampliará este mismo expediente a 600 € sin generar cobros ni facturas. ¿Confirmas que el presupuesto ha sido aceptado?"))return;
+      if(!window.confirm("Se ampliará este expediente a "+(currentGroup==="adult"?600:700)+" € sin generar cobros ni facturas. ¿Confirmas que el presupuesto ha sido aceptado?"))return;
       root.dispatchEvent(new CustomEvent("adhd:upgrade-request",{bubbles:true,detail:{assessmentId:currentId,accepted:true,indication:reason.value.trim()}}));
     },"primary");
     actions.append(confirmBtn,button("Cancelar",()=>box.remove(),"secondary"));
