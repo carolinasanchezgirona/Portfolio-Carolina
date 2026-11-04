@@ -204,6 +204,15 @@ export default function AdultAdhdAssessmentPage() {
               <p>Antes de comenzar, valoraremos qué opción es más adecuada para tu motivo de consulta y aclararemos el alcance y el presupuesto. Si durante una evaluación diagnóstica resulta necesario ampliar el estudio, podrás hacerlo por <strong>150 € adicionales</strong>, siempre que forme parte del mismo proceso y se aproveche la valoración ya realizada. Cualquier ampliación se acordará contigo previamente.</p>
               <a className="editorial-btn editorial-btn-primary" href="mailto:contact@carolinasanchezgirona.com?subject=Solicitud%20de%20evaluacion%20TDAH%20adulto">Solicitar valoración de TDAH</a>
             </div>
+            <div className="tdah-download">
+              <div>
+                <h3>Información sobre el proceso de evaluación</h3>
+                <p>Consulta las modalidades, el procedimiento, los precios y las condiciones económicas antes de contratar.</p>
+              </div>
+              <a className="editorial-btn editorial-btn-secondary" href="/informacion-evaluacion-tdah-adultos.pdf" download="Informacion_evaluacion_TDAH_adultos.pdf" type="application/pdf">
+                Descargar información en PDF
+              </a>
+            </div>
             <div className="tdah-included" role="note">
               <h3>Precio cerrado, todo incluido</h3>
               <p>Los 450 € o 600 € incluyen las entrevistas y sesiones de evaluación necesarias para completar el proceso acordado,
