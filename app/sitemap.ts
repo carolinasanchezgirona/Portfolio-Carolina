@@ -21,6 +21,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${base}/psicologa-arenys-de-mar/`, lastModified: homepageLastModified, changeFrequency: "monthly", priority: 0.95 },
     { url: `${base}/psicologia/`, lastModified: refreshedLastModified, changeFrequency: "monthly", priority: 0.9 },
     { url: `${base}/neuropsicologia/`, lastModified: refreshedLastModified, changeFrequency: "monthly", priority: 0.9 },
+    { url: `${base}/evaluacion-tdah-adultos/`, lastModified: new Date("2026-11-04T09:12:00+01:00"), changeFrequency: "monthly", priority: 0.92 },
     { url: `${base}/residencias/`, lastModified: new Date("2026-10-11T10:00:00+02:00"), changeFrequency: "monthly", priority: 0.84 },
     { url: `${base}/residencias/vida-activa/`, lastModified: new Date("2026-10-11T10:00:00+02:00"), changeFrequency: "monthly", priority: 0.82 },
     { url: `${base}/residencias/recursos/`, lastModified: new Date("2026-10-11T10:00:00+02:00"), changeFrequency: "monthly", priority: 0.77 },
