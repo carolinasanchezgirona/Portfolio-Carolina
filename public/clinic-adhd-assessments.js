@@ -71,7 +71,7 @@
  function init(){
   const d=$("#clinic-patient-dialog");if(!d)return;
   const tryAttach=()=>{
-   const slot=$("#clinic-panel-evaluacion")||$(".clinic-record-sections"); if(!slot||$("#adhd-assessment-module"))return;
+   const slot=$("#clinic-panel-evaluacion"); if(!slot||$("#adhd-assessment-module"))return;
    region=h("section",undefined,"adhd-module");region.id="adhd-assessment-module";
    const head=h("div",undefined,"adhd-head");head.append(h("div","EVALUACIONES · TDAH ADULTO","adhd-eyebrow"),h("h3","Proceso de evaluación"));
    head.append(h("p","Anamnesis, entrevista clínica y diagnóstico diferencial. Formularios en consulta o enviados con acceso verificado."));
