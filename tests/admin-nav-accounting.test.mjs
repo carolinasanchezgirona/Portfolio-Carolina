@@ -15,14 +15,14 @@ test("one consistent authenticated professional nav, with working clinical deep 
   assert.match(agenda, /<AdminWorkspaceNav active="agenda" \/>/);
   assert.match(economy, /<AdminWorkspaceNav active="economia" \/>/);
   assert.match(nav, /view=patients/);
-  assert.match(nav, /view=pending/);
+  assert.doesNotMatch(nav, /view=pending/);
   assert.match(clinicJs, /requestedView/);
   assert.match(clinicJs, /setView\(requestedView\)/);
   for (const href of ["/admin/agenda/", "/admin/recursos/", "/admin/economia/", "/admin/"]) {
     assert.ok(nav.includes(href));
   }
   assert.match(styles, /@media\(max-width:800px\)/);
-  assert.match(styles, /grid-template-columns:repeat\(5,minmax\(0,1fr\)\)/);
+  assert.match(styles, /grid-template-columns:repeat\(4,minmax\(0,1fr\)\)/);
   assert.match(styles, /@media\(min-width:1100px\)/);
 });
 
@@ -33,7 +33,7 @@ test("agenda actions appear only in one compact tools menu and original ids surv
   }
   assert.doesNotMatch(agenda, /admin-top-actions/);
   assert.match(clinic, /Citas pendientes/);
-  assert.match(clinic, /Tareas pendientes/);
+  assert.doesNotMatch(clinic, /Tareas pendientes/);
 });
 
 test("accounting separates cash movements from issued invoices", () => {
