@@ -27,3 +27,13 @@
 .adhd-fields textarea:disabled{background:#f4f8f9;color:#516b75}
 .adhd-actions{justify-content:flex-start;margin-top:16px}
 @media(max-width:700px){.adhd-module{padding:16px}.adhd-fields{grid-template-columns:1fr}.adhd-form-nav{gap:5px}.adhd-case-top{padding:12px}}
+
+
+.adhd-test-titlebar{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:10px}
+.adhd-test-titlebar h4{margin:0}
+.adhd-test-titlebar .adhd-btn{flex:0 0 auto}
+.adhd-pdf-library{padding:13px 18px}
+.adhd-pdf-management>summary{cursor:pointer;color:#185b6e;font-size:13px;font-weight:700;line-height:1.5}
+.adhd-pdf-management[open]>summary{margin-bottom:10px}
+.adhd-pdf-management .adhd-pdf-status{margin:9px 0}
+@media(max-width:640px){.adhd-test-titlebar{align-items:flex-start;flex-direction:column}}
