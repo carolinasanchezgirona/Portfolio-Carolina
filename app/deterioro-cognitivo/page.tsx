@@ -146,6 +146,7 @@ export default function CognitiveDeclinePage() {
             <div className="seo-related">
               <a href="/neuropsicologia/">Neuropsicología</a>
               <a href="/evaluacion-neuropsicologica/">Evaluación neuropsicológica</a>
+              <a href="/evaluacion-memoria-deterioro-cognitivo/">Valoración de memoria y deterioro cognitivo · 350 € / 500 €</a>
               <a href="/problemas-de-memoria/">Problemas de memoria y olvidos</a>
               <a href="/demencias/">Demencias y Alzheimer</a>
               <a href="/estimulacion-cognitiva/">Estimulación cognitiva</a>
