@@ -2,12 +2,11 @@
  "use strict";
  const URL="https://grgyvdxkjdstdyumdfyg.supabase.co";
  const REST=URL+"/rest/v1";
- const API=URL+"/functions/v1/adhd-clinical-forms";
  const PUB="sb_publishable_b2MRfP0bPti87V2FXCzHGw_Y9vvcbii";
  const SESSION="dememoria_admin_session";
  const $=(q,root=document)=>root.querySelector(q);
  const labels={
-  anamnesis:{title:"Anamnesis clínica y evolutiva",remote:true,fields:[
+  anamnesis:{title:"Anamnesis clínica y evolutiva",fields:[
    ["motivo","Motivo de consulta y expectativas"],["inicio_actual","Inicio, curso y fluctuaciones de las dificultades actuales"],
    ["infancia","Hitos del desarrollo, regulación conductual, contexto familiar y primeros recuerdos"],["escuela","Primaria: aprendizaje, comportamiento y observaciones del profesorado"],
    ["adolescencia","Adolescencia: autonomía, rendimiento, organización, relaciones y conducta"],
@@ -19,7 +18,7 @@
    ["antecedentes","Antecedentes psicológicos, psiquiátricos y familiares"],
    ["informantes","Informantes y documentación disponible: infancia y actualidad"],["otros","Observaciones adicionales"]
   ]},
-  funcionamiento:{title:"Funcionamiento e impacto cotidiano",remote:true,fields:[
+  funcionamiento:{title:"Funcionamiento e impacto cotidiano",fields:[
    ["trabajo_estudio","Dificultades objetivas en trabajo o estudios y sus consecuencias"],
    ["hogar","Gestión doméstica, autocuidado y obligaciones"],
    ["economia","Organización económica, olvidos, pagos y gastos"],
@@ -32,14 +31,14 @@
    ["interferencia","Ámbitos afectados, frecuencia y gravedad percibida"],
    ["ejemplos","Ejemplos concretos verificables y evolución"]
   ]},
-  diva_registro:{title:"Registro clínico DIVA-5",remote:false,fields:[
+  diva_registro:{title:"Registro clínico DIVA-5",fields:[
    ["adulto_inatencion","Inatención en adulto: número de criterios 0–9 y evidencia"],["adulto_hi","Hiperactividad/impulsividad en adulto: número de criterios 0–9 y evidencia"],
    ["inicio_antes_12","Evidencia de varios síntomas antes de los 12 años y fuentes"],
    ["curso","Persistencia, contexto y cambios evolutivos"],["contextos","Dos o más contextos y repercusión funcional"],
    ["informantes","Informantes y discrepancias relevantes"],["factores","Explicaciones alternativas y/o comorbilidades"],
    ["observaciones","Referencia al protocolo DIVA-5 original archivado; no transcribir sus ítems"]
   ]},
-  diferencial:{title:"Diagnóstico diferencial",remote:false,fields:[
+  diferencial:{title:"Diagnóstico diferencial",fields:[
    ["cronologia","Cronología: síntomas del neurodesarrollo vs. dificultades de inicio reciente"],
    ["ansiedad","Ansiedad: evidencia a favor, en contra y cronología"],["depresion","Depresión: episodios, anhedonia y enlentecimiento"],
    ["bipolaridad","Bipolaridad: hipomanía/manía, episodicidad y sueño"],["sueno","Sueño: insomnio, apnea, turnos y somnolencia"],
@@ -49,10 +48,10 @@
    ["seguridad","Valoración clínica de seguridad y acciones efectuadas, cuando corresponda"],
    ["conclusion","Hipótesis apoyadas, alternativas, incertidumbres, derivaciones y plan de contrastación"]
   ]},
-  asrs_registro:{title:"ASRS-v1.1 · registro de cribado",remote:false,fields:[["puntuacion","Resultado de cribado según instrucciones originales"],["fecha","Fecha, versión y circunstancias"],["interpretacion","Interpretación clínica y limitaciones"]]},
-  phq9_registro:{title:"PHQ-9 · registro",remote:false,fields:[["puntuacion","Puntuación total 0–27"],["fecha","Fecha de administración"],["item9","Respuesta al ítem 9 y valoración clínica realizada si fue positiva"],["interpretacion","Interpretación contextualizada"]]},
-  gad7_registro:{title:"GAD-7 · registro",remote:false,fields:[["puntuacion","Puntuación total 0–21"],["fecha","Fecha de administración"],["interpretacion","Interpretación contextualizada"]]},
-  wfirs_registro:{title:"WFIRS-S · registro",remote:false,fields:[["version","Versión, idioma y condiciones de uso"],["subescalas","Puntuaciones por dominio, si procede"],["interpretacion","Interpretación funcional e información complementaria"]]}
+  asrs_registro:{title:"ASRS-v1.1 · registro de cribado",fields:[["puntuacion","Resultado de cribado según instrucciones originales"],["fecha","Fecha, versión y circunstancias"],["interpretacion","Interpretación clínica y limitaciones"]]},
+  phq9_registro:{title:"PHQ-9 · registro",fields:[["puntuacion","Puntuación total 0–27"],["fecha","Fecha de administración"],["item9","Respuesta al ítem 9 y valoración clínica realizada si fue positiva"],["interpretacion","Interpretación contextualizada"]]},
+  gad7_registro:{title:"GAD-7 · registro",fields:[["puntuacion","Puntuación total 0–21"],["fecha","Fecha de administración"],["interpretacion","Interpretación contextualizada"]]},
+  wfirs_registro:{title:"WFIRS-S · registro",fields:[["version","Versión, idioma y condiciones de uso"],["subescalas","Puntuaciones por dominio, si procede"],["interpretacion","Interpretación funcional e información complementaria"]]}
  };
  let patientId="",assessment=null,forms=[],selection="anamnesis",currentInputs=null,loadNumber=0;
  let region=null,status=null,list=null,editor=null;
@@ -74,7 +73,7 @@
    const slot=$("#clinic-panel-evaluacion"); if(!slot||$("#adhd-assessment-module"))return;
    region=h("section",undefined,"adhd-module");region.id="adhd-assessment-module";
    const head=h("div",undefined,"adhd-head");head.append(h("div","EVALUACIONES · TDAH ADULTO","adhd-eyebrow"),h("h3","Proceso de evaluación"));
-   head.append(h("p","Anamnesis, entrevista clínica y diagnóstico diferencial. Formularios en consulta o enviados con acceso verificado."));
+   head.append(h("p","Anamnesis, entrevistas y pruebas en consulta. Abre el PDF original y guarda aquí el registro profesional de resultados."));
    region.append(head);
    list=h("div",undefined,"adhd-assessment-controls");
    status=h("p","","adhd-feedback");status.setAttribute("role","status");
@@ -218,17 +217,8 @@
    }
    sheet.append(titlebar);
    if(testPdfKey)sheet.append(h("p","Consulta el instrumento original y registra sus resultados a continuación. Se guardarán en la historia de esta evaluación.","adhd-help"));
-   if(meta.remote){
-     const actions=h("div",undefined,"adhd-delivery");
-     actions.append(button("Hacer en consulta",()=>switchToClinic(selection),form?.delivery_mode==="in_session"?"selected":"secondary"),
-      button("Enviar al paciente",()=>sendForm(selection),"secondary"));
-     sheet.append(actions);
-     sheet.append(h("p","Ambas opciones utilizan el mismo expediente. El enlace enviado exige verificación por correo y no contiene resultados clínicos.","adhd-help"));
-   }else sheet.append(h("p","Registro profesional: no se reproducen ítems protegidos de pruebas comerciales.","adhd-help"));
-   if(form?.delivery_mode==="remote"&&["sent","in_progress"].includes(form.status)){
-     sheet.append(h("p","Formulario enviado. La persona puede cumplimentarlo desde casa. Si lo pasas a consulta, se invalidará el acceso remoto.","adhd-remote-note"));
-   }
-   const readOnly=form&&(form.status==="submitted"||form.status==="reviewed"||(form.delivery_mode==="remote"&&["sent","in_progress"].includes(form.status)));
+   sheet.append(h("p","Aplicación exclusivamente presencial. Registra aquí tus observaciones y resultados; para los test utiliza siempre la copia original autorizada.","adhd-help"));
+   const readOnly=form&&(form.status==="submitted"||form.status==="reviewed");
    const fields=h("div",undefined,"adhd-fields");const values=form?.answers||{};
    meta.fields.forEach(([k,title])=>{
      const label=h("label",title);const area=document.createElement("textarea");area.rows=3;area.dataset.adhdField=k;area.value=typeof values[k]==="string"?values[k]:"";area.maxLength=4000;area.disabled=Boolean(readOnly);area.placeholder="Escribe aquí la información clínica relevante…";
@@ -260,34 +250,9 @@
   if(!assessment)return;
   const key=selection;const answers=valuesFromForm();msg("Guardando…");
   try{
-    const f=await ensureForm(key);if(f.status==="submitted"||f.status==="reviewed"||f.delivery_mode==="remote")throw Error("Este formulario está protegido. Revísalo o cambia a modo consulta.");
+    const f=await ensureForm(key);if(f.status==="submitted"||f.status==="reviewed")throw Error("Este formulario está cerrado. Crea una evaluación nueva si necesitas repetirlo.");
     const rows=await api("clinical_adhd_forms?id=eq."+f.id,{method:"PATCH",headers:{Prefer:"return=representation"},body:JSON.stringify({answers,completed_by:"clinician",delivery_mode:"in_session",status:state,updated_at:new Date().toISOString(),...(state==="reviewed"?{reviewed_at:new Date().toISOString()}: {})})});
     Object.assign(f,rows[0]||{});paint();msg(state==="reviewed"?"Formulario registrado como revisado.":"Borrador guardado.");
-  }catch(e){msg(e.message,true)}
- }
- async function switchToClinic(key){
-  if(!assessment)return;
-  const f=optionForm(key);
-  if(f?.status==="submitted"||f?.status==="reviewed"){msg("Las respuestas finalizadas son inmutables. Crea una nueva evaluación si necesitas volver a administrarlo.",true);return;}
-  if(f?.delivery_mode==="remote"&&!confirm("¿Cambiar a consulta? El enlace anterior dejará de funcionar."))return;
-  try{
-   const row=await ensureForm(key);
-   const rows=await api("clinical_adhd_forms?id=eq."+row.id,{method:"PATCH",headers:{Prefer:"return=representation"},body:JSON.stringify({delivery_mode:"in_session",status:"in_progress",access_token_hash:null,access_expires_at:null,otp_hash:null,otp_expires_at:null,remote_session_hash:null,remote_session_expires_at:null,updated_at:new Date().toISOString()})});
-   Object.assign(row,rows[0]||{});selection=key;paint();msg("Modo consulta activado.");
-  }catch(e){msg(e.message,true)}
- }
- async function sendForm(key){
-  if(!assessment)return;
-  const f=optionForm(key);
-  if(f?.status==="submitted"||f?.status==="reviewed"){msg("Ya se ha recibido y/o revisado. No se puede sobrescribir.",true);return;}
-  if(!confirm("Se enviará una invitación al correo de la ficha y el paciente podrá responder con verificación de acceso. ¿Continuar?"))return;
-  try{
-   const row=await ensureForm(key);
-   const r=await fetch(API,{method:"POST",headers:headers(),body:JSON.stringify({action:"send",form_id:row.id})});
-   const body=await r.json().catch(()=>({}));
-   if(!r.ok)throw Error(body.error||"No se pudo enviar.");
-   const refreshed=await api("clinical_adhd_forms?select=*&id=eq."+row.id);
-   Object.assign(row,refreshed[0]||{});paint();msg(body.message||"Invitación enviada.");
   }catch(e){msg(e.message,true)}
  }
  async function reviewForm(f,note){
