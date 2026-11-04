@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import "../seo-pages.css";
 import "../evaluacion-tdah-adultos/tdah.css";
-import "./tea.css";
 
 const baseUrl = "https://carolinasanchezgirona.com/evaluacion-tea-adultos/";
 
@@ -100,7 +99,7 @@ const serviceSchema = {
 
 export default function AdultAutismAssessmentPage() {
   return (
-    <main className="editorial-site tdah-page tea-page">
+    <main className="editorial-site tdah-page">
       <section className="seo-hero">
         <div className="editorial-wrap tdah-hero-grid">
           <div className="tdah-hero-copy">
@@ -123,7 +122,7 @@ export default function AdultAutismAssessmentPage() {
             </div>
             <p className="tdah-hero-note">Atención presencial en Arenys de Mar · Psicóloga General Sanitaria y Neuropsicóloga · COPC 24892</p>
           </div>
-          <figure className="tdah-hero-photo tea-hero-photo">
+          <figure className="tdah-hero-photo">
             <img src="https://images.pexels.com/photos/7584238/pexels-photo-7584238.jpeg?auto=compress&amp;cs=tinysrgb&amp;w=1200" alt="Persona adulta leyendo junto a una ventana en un entorno tranquilo de trabajo" width="1200" height="800" fetchPriority="high" decoding="async" />
           </figure>
         </div>
@@ -144,7 +143,7 @@ export default function AdultAutismAssessmentPage() {
             </div>
           </section>
 
-          <section id="modalidades" className="tea-pricing">
+          <section id="modalidades" >
             <h2>Modalidades y precios</h2>
             <p>Ambas modalidades incluyen una evaluación clínica diagnóstica del TEA. La ampliada añade exploración neuropsicológica cuando está justificada, no un diagnóstico más válido por acumular pruebas.</p>
             <div className="tdah-modalities">
@@ -169,7 +168,7 @@ export default function AdultAutismAssessmentPage() {
             <p className="tdah-price-summary"><strong>Precios cerrados.</strong> Incluyen sesiones de evaluación, pruebas pertinentes, integración clínica, informe y devolución. El ADOS-2 no está incluido en ninguna modalidad; si se considera indicado, se recomendará una valoración complementaria específica.</p>
           </section>
 
-          <section className="tea-process">
+          <section >
             <h2>Cómo se realiza la valoración</h2>
             <div className="tdah-steps">
               <div><span>01</span><h3>Entrevista</h3><p>Motivo de consulta, antecedentes y trayectoria evolutiva desde la infancia.</p></div>
@@ -179,7 +178,7 @@ export default function AdultAutismAssessmentPage() {
             </div>
           </section>
 
-          <section className="tea-questions">
+          <section >
             <h2>Preguntas frecuentes</h2>
             <div className="tdah-faq">
               {faq.map(({ question, answer }) => <details key={question}><summary>{question}</summary><p>{answer}</p></details>)}
