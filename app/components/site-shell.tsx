@@ -32,6 +32,7 @@ function usesGlobalChrome(pathname: string) {
 const serviceNavigation = [
   { href: "/psicologia/", label: "Psicología" },
   { href: "/neuropsicologia/", label: "Neuropsicología" },
+  { href: "/evaluacion-tdah-adultos/", label: "Evaluación de TDAH en adultos" },
   { href: "/residencias/", label: "Para centros y residencias" },
 ] as const;
 
@@ -44,7 +45,7 @@ const resourceNavigation = [
 
 const servicePaths = [
   "/psicologia/", "/neuropsicologia/", "/residencias/", "/ansiedad/",
-  "/duelo/", "/evaluacion-neuropsicologica/", "/deterioro-cognitivo/",
+  "/duelo/", "/evaluacion-neuropsicologica/", "/evaluacion-tdah-adultos/", "/deterioro-cognitivo/",
   "/problemas-de-memoria/", "/psicologa-arenys-de-mar/",
 ];
 
@@ -164,6 +165,7 @@ function SiteFooter() {
           <p className="site-footer-heading">Neuropsicología</p>
           <a href="/neuropsicologia/">Neuropsicología</a>
           <a href="/evaluacion-neuropsicologica/">Evaluación neuropsicológica</a>
+          <a href="/evaluacion-tdah-adultos/">Evaluación de TDAH en adultos</a>
           <a href="/deterioro-cognitivo/">Deterioro cognitivo y memoria</a>
           <a href="/residencias/">Programas para residencias</a>
         </nav>
