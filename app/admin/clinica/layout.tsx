@@ -5,6 +5,7 @@ import "./brand-fixes.css";
 import "./admin-enhancements.css";
 import "./adhd-assessments.css";
 import "./adhd-neuro-expanded.css";
+import "./adhd-assessment-planner.css";
 import "./neuro-materials.css";
 
 export const metadata: Metadata = {
@@ -34,8 +35,9 @@ export default function ClinicaLayout({ children }: Readonly<{ children: React.R
       <Script src="/clinic-patient-admin-enhancements.js?v=20261009-fixes-2" strategy="afterInteractive" />
       <Script src="/clinic-patient-workspace.js?v=20261020-palette-1" strategy="afterInteractive" />
       <Script src="/clinic-deferred-consent.js?v=20261018-1" strategy="afterInteractive" />
-      <Script src="/clinic-adhd-assessments.js?v=20261104-2" strategy="afterInteractive" />
-      <Script src="/clinic-adhd-neuro-expanded.js?v=20261104-2" strategy="afterInteractive" />
+      <Script src="/clinic-adhd-assessments.js?v=20261104-3" strategy="afterInteractive" />
+      <Script src="/clinic-adhd-assessment-planner.js?v=20261104-1" strategy="afterInteractive" />
+      <Script src="/clinic-adhd-neuro-expanded.js?v=20261104-3" strategy="afterInteractive" />
       <Script src="/clinic-pwa.js?v=20261020-android-native-1" strategy="afterInteractive" />
     </>
   );
