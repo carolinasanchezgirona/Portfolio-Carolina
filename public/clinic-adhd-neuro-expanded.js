@@ -190,6 +190,11 @@
     wrap.append(heading);
     const fields=el("div",undefined,"adhd-neuro-grid");
     const form={};
+    if(item.instrument_key==="other"||item.instrument_key==="working_memory"){
+      const custom=inputField("Nombre concreto del instrumento y edición",item.instrument_label,"input");
+      custom.input.maxLength=120;custom.input.disabled=locked;
+      form.instrument_label=custom.input;fields.append(custom.wrap);
+    }
     function field(key,label,text=item[key]||"",tag="textarea"){
       const f=inputField(label,text,tag);
       f.input.disabled=locked;form[key]=f.input;fields.append(f.wrap);
@@ -250,6 +255,7 @@
   async function saveTest(item,fields,scoreArea,review){
     const results=readScores(scoreArea);
     const data={
+      ...(fields.instrument_label?{instrument_label:fields.instrument_label.value.trim()}:{}),
       rationale:fields.rationale.value.trim(),
       test_date:fields.test_date.value||null,
       normative_reference:fields.normative_reference.value.trim(),
@@ -261,6 +267,9 @@
       status:review?"reviewed":(fields.test_date.value?"draft":"planned"),
       updated_at:new Date().toISOString()
     };
+    if(data.instrument_label && (data.instrument_label.length<2||data.instrument_label.length>120)){
+      noticeText("Indica el nombre y edición del instrumento (2–120 caracteres).",true);return;
+    }
     if(review){
       if(!data.test_date||!data.normative_reference||!data.interpretation||!results.length){
         noticeText("Para validar hace falta fecha, baremo, puntuaciones corregidas e interpretación.",true);return;
