@@ -74,6 +74,7 @@ export default function NeuropsychologyPage() {
             <ul>
               <li>Olvidos o cambios de memoria que generan preocupación.</li>
               <li>Dificultades para mantener la atención o seguir tareas complejas, incluido el estudio clínico del <a href="/evaluacion-tdah-adultos/">TDAH en adultos</a> cuando corresponda.</li>
+              <li>Consulta sobre posibles características del espectro autista en la edad adulta: <a href="/evaluacion-tea-adultos/">evaluación del TEA en adultos</a>.</li>
               <li>Problemas de lenguaje, planificación u organización.</li>
               <li>Cambios cognitivos asociados al envejecimiento o a una enfermedad neurológica.</li>
               <li>Dudas sobre deterioro cognitivo o evolución de una demencia.</li>
@@ -152,6 +153,7 @@ export default function NeuropsychologyPage() {
             <div className="seo-related">
               <a href="/evaluacion-neuropsicologica/">Evaluación neuropsicológica</a>
               <a href="/evaluacion-tdah-adultos/">Evaluación del TDAH en adultos · 450 € / 600 €</a>
+              <a href="/evaluacion-tea-adultos/">Evaluación del TEA en adultos · 550 € / 750 €</a>
               <a href="/problemas-de-memoria/">Problemas de memoria y olvidos</a>
               <a href="/deterioro-cognitivo/">Deterioro cognitivo</a>
               <a href="/demencias/">Demencias y Alzheimer</a>
