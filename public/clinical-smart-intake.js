@@ -128,8 +128,8 @@
 
   function buildUi() {
     const form = el("clinic-patient-form");
-    const prep = form?.querySelector(".clinic-preparation");
-    if (!form || !prep || el("clinic-smart-intake")) return;
+    const history = form?.querySelector(".clinic-record-sections");
+    if (!form || !history || el("clinic-smart-intake")) return;
 
     addStyles();
     const launcher = document.createElement("button");
@@ -172,7 +172,7 @@
         <article class="clinic-smart-exercises"><h4>Procesos y ejercicios a considerar</h4><div id="clinic-smart-processes" class="clinic-smart-list"></div><div id="clinic-smart-exercise-candidates" class="clinic-smart-exercise-candidates"></div></article>
       </div>
     `;
-    prep.before(launcher, section);
+    history.before(launcher, section);
 
     launcher.addEventListener("click", () => {
       clear();
