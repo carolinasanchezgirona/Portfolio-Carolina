@@ -2976,7 +2976,7 @@
     }
     showApp();
     const requestedView = new URL(window.location.href).searchParams.get("view");
-    if (["today", "patients", "pending"].includes(requestedView)) setView(requestedView);
+    if (["today", "patients"].includes(requestedView)) setView(requestedView);
     loadData().catch((error) => setMessage(error.message));
   })();
 })();
