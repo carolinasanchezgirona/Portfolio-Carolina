@@ -110,6 +110,7 @@ export default function HomePage() {
               </p>
               <p className="editorial-card-price">Sesión de neuropsicología · 75 € / 60 minutos</p>
               <p className="editorial-card-note">Las evaluaciones completas se presupuestan según las necesidades.</p>
+              <p className="editorial-card-note"><a href="/evaluacion-tdah-adultos/">Nuevo: evaluación del TDAH en adultos, con informe, desde 450 € →</a></p>
               <a className="editorial-card-link" href="/neuropsicologia/">Conocer el servicio de neuropsicología →</a>
             </article>
           </div>
