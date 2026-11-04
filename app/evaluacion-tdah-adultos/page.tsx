@@ -7,7 +7,7 @@ const baseUrl = "https://carolinasanchezgirona.com/evaluacion-tdah-adultos/";
 export const metadata: Metadata = {
   title: "Evaluación del TDAH en adultos en Arenys de Mar y Maresme",
   description:
-    "Evaluación clínica del TDAH en adultos en Arenys de Mar (Maresme). Valoración diagnóstica con informe por 450 € y evaluación neuropsicológica ampliada por 600 €.",
+    "Evaluación de TDAH adulto en Arenys de Mar. Precio cerrado: 450 € o 600 €, con sesiones de evaluación, informe y devolución incluidos.",
   alternates: { canonical: "/evaluacion-tdah-adultos/" },
   openGraph: {
     title: "Evaluación del TDAH en adultos | Carolina Sánchez",
@@ -27,27 +27,27 @@ const modalities = [
   {
     title: "Evaluación diagnóstica del TDAH adulto",
     price: 450,
-    time: "5–6 horas de trabajo profesional estimadas",
+    time: "Orientativamente, 2–3 sesiones · Precio cerrado",
     description:
       "Para estudiar la posible presencia de TDAH y su repercusión en la vida cotidiana mediante una valoración clínica estructurada.",
     features: [
-      "Entrevista clínica y antecedentes del desarrollo.",
-      "Exploración de síntomas actuales y retrospectivos con instrumentos pertinentes.",
-      "Análisis de la repercusión funcional y de posibles explicaciones alternativas.",
-      "Integración clínica, informe escrito y sesión de devolución.",
+      "Entrevista clínica, anamnesis e historia evolutiva desde la infancia.",
+      "Entrevista diagnóstica estructurada e instrumentos clínicos pertinentes.",
+      "Valoración de síntomas, repercusión funcional y diagnóstico diferencial.",
+      "Integración clínica, informe escrito con recomendaciones y sesión de devolución.",
     ],
   },
   {
     title: "Evaluación neuropsicológica ampliada",
     price: 600,
-    time: "Aproximadamente 10 horas de trabajo profesional",
+    time: "Orientativamente, 3–4 sesiones · Precio cerrado",
     description:
       "Cuando, además de la valoración diagnóstica, está clínicamente justificado estudiar con mayor detalle el funcionamiento cognitivo.",
     features: [
-      "Todo el proceso de evaluación diagnóstica.",
+      "Todo el proceso de evaluación diagnóstica estándar.",
       "Exploración cognitiva individualizada, según indicación, de atención, memoria, funciones ejecutivas y otros dominios.",
       "Análisis integrado de resultados y funcionamiento cotidiano.",
-      "Informe neuropsicológico ampliado, devolución y recomendaciones.",
+      "Informe neuropsicológico ampliado, sesión de devolución y recomendaciones individualizadas.",
     ],
   },
 ];
@@ -64,9 +64,28 @@ const faq = [
       "No necesariamente. Se recomienda solo cuando existe una pregunta clínica concreta que justifica explorar el perfil cognitivo con mayor profundidad.",
   },
   {
-    question: "¿Las 5–6 o 10 horas son sesiones presenciales?",
-    answer:
-      "No. Son estimaciones de dedicación profesional total, que incluyen entrevistas, administración y corrección de instrumentos, análisis, redacción del informe y devolución. La duración de las visitas se organiza de forma individualizada.",
+    question: "¿Cuántas sesiones necesitaré?",
+    answer: "Se prevén orientativamente 2–3 sesiones en la evaluación estándar y 3–4 en la ampliada. La organización se adapta a las necesidades del caso y no supone un número rígido.",
+  },
+  {
+    question: "¿Las sesiones se cobran aparte?",
+    answer: "No. Los 450 € o 600 € son precios cerrados que incluyen las sesiones necesarias para completar la evaluación acordada, las pruebas, el informe escrito y la devolución. Los tratamientos o seguimientos posteriores se contratan por separado.",
+  },
+  {
+    question: "¿Puedo tener TDAH aunque nunca me diagnosticaran en la infancia?",
+    answer: "Sí. Algunas personas llegan a la edad adulta sin una valoración previa. La evaluación revisa si existían manifestaciones desde etapas tempranas y cómo han evolucionado.",
+  },
+  {
+    question: "¿Necesito aportar informes escolares o información familiar?",
+    answer: "No es imprescindible para solicitar la evaluación. Cuando están disponibles, los antecedentes escolares o la información de familiares, con consentimiento, pueden contribuir a reconstruir la trayectoria evolutiva.",
+  },
+  {
+    question: "¿Recibiré un informe por escrito?",
+    answer: "Sí. Ambas modalidades incluyen un informe clínico escrito y una sesión de devolución para explicar las conclusiones y recomendaciones.",
+  },
+  {
+    question: "¿Incluye medicación?",
+    answer: "No. La evaluación psicológica y neuropsicológica no incluye prescripción farmacológica. Cuando resulte indicado, se orientará hacia valoración médica especializada.",
   },
   {
     question: "¿El informe garantiza un diagnóstico de TDAH?",
@@ -81,7 +100,7 @@ const serviceSchema = {
   name: "Evaluación clínica y neuropsicológica del TDAH en adultos",
   url: baseUrl,
   description:
-    "Evaluación clínica individualizada del TDAH en adultos, con informe y devolución. Modalidad diagnóstica y modalidad neuropsicológica ampliada según indicación clínica.",
+    "Evaluación de TDAH en adultos con precio cerrado, sesiones clínicas, informe y devolución incluidos. Modalidad diagnóstica y ampliada según indicación.",
   provider: { "@id": "https://carolinasanchezgirona.com/#dememoria" },
   areaServed: ["Arenys de Mar", "Maresme", "Barcelona"],
   hasOfferCatalog: {
@@ -111,12 +130,12 @@ export default function AdultAdhdAssessmentPage() {
           <p className="editorial-eyebrow">Neuropsicología clínica · Arenys de Mar, Maresme</p>
           <h1>Evaluación del TDAH en adultos</h1>
           <p className="seo-lead">
-            ¿Te preocupa que tus dificultades de atención, organización o gestión del tiempo puedan estar relacionadas con un TDAH?
-            Una valoración rigurosa permite estudiar el origen de estas dificultades, su trayectoria desde la infancia y
-            su impacto real, sin dar por hecho ningún diagnóstico.
+            ¿Te cuesta mantener la atención, organizarte, gestionar el tiempo o terminar lo que empiezas?
+            Una valoración clínica permite comprender el origen de estas dificultades, estudiar su evolución desde la infancia
+            y valorar su repercusión en tu vida diaria, sin dar por hecho ningún diagnóstico.
           </p>
           <div className="seo-actions">
-            <a className="editorial-btn editorial-btn-primary" href="/cita/">Solicitar primera visita</a>
+            <a className="editorial-btn editorial-btn-primary" href="mailto:contact@carolinasanchezgirona.com?subject=Solicitud%20de%20evaluacion%20TDAH%20adulto">Solicitar evaluación de TDAH</a>
             <a className="editorial-btn editorial-btn-secondary" href="#modalidades">Ver modalidades y precios</a>
           </div>
           <p className="tdah-hero-note">Atención presencial en Arenys de Mar · Psicóloga General Sanitaria y Neuropsicóloga · COPC 24892</p>
@@ -125,6 +144,20 @@ export default function AdultAdhdAssessmentPage() {
 
       <div className="editorial-wrap seo-layout">
         <article className="seo-copy">
+          <section>
+            <h2>¿Cuándo puede ser recomendable una evaluación?</h2>
+            <p>Algunas personas consultan porque las siguientes dificultades interfieren de forma persistente en su día a día:</p>
+            <ul>
+              <li>Problemas para mantener la atención en tareas o conversaciones.</li>
+              <li>Procrastinación y dificultad para iniciar o terminar actividades.</li>
+              <li>Olvidos frecuentes, desorganización o pérdida de objetos.</li>
+              <li>Dificultades para planificar, priorizar o gestionar el tiempo.</li>
+              <li>Sensación de inquietud interna o impulsividad.</li>
+              <li>Repercusión en el trabajo, los estudios o las relaciones.</li>
+            </ul>
+            <p>Estas manifestaciones no implican por sí mismas un TDAH. Lo relevante es estudiar su origen, su historia y su impacto funcional.</p>
+          </section>
+
           <section>
             <h2>Una evaluación clínica, no solo un cuestionario</h2>
             <p>
@@ -157,15 +190,21 @@ export default function AdultAdhdAssessmentPage() {
                   <ul>
                     {item.features.map((feature) => <li key={feature}>{feature}</li>)}
                   </ul>
-                  <a className="editorial-btn editorial-btn-primary" href="/cita/">Pedir primera visita</a>
+                  <a className="editorial-btn editorial-btn-primary" href={`mailto:contact@carolinasanchezgirona.com?subject=${encodeURIComponent(`Solicitud de evaluación TDAH adulto: ${item.title}`)}`}>Solicitar esta evaluación</a>
                 </article>
               ))}
             </div>
-            <p className="tdah-price-note">
-              Los tiempos son de dedicación profesional total, no de sesiones presenciales. El alcance definitivo,
-              las condiciones de pago y el presupuesto se explican antes de iniciar el proceso. La reserva de una
-              sesión ordinaria de neuropsicología (75 €/60 minutos) no equivale a contratar automáticamente una evaluación completa.
-            </p>
+            <div className="tdah-included" role="note">
+              <h3>Precio cerrado, todo incluido</h3>
+              <p>Los 450 € o 600 € incluyen las entrevistas y sesiones de evaluación necesarias para completar el proceso acordado,
+                la administración y corrección de instrumentos, la interpretación clínica, el informe escrito y la sesión de devolución.
+                <strong> No se cobra cada sesión de evaluación por separado.</strong></p>
+              <p>El número indicado de sesiones es orientativo y se adapta al caso. Los seguimientos, tratamientos posteriores
+                y valoraciones externas no están incluidos y se informan por separado. El alcance y las condiciones de pago
+                se concretan antes de iniciar la evaluación.</p>
+              <p>La modalidad ampliada no es necesariamente más precisa para diagnosticar TDAH; se recomienda cuando existe
+                una pregunta clínica que justifica explorar el perfil cognitivo con más detalle.</p>
+            </div>
           </section>
 
           <section>
@@ -176,6 +215,14 @@ export default function AdultAdhdAssessmentPage() {
               <div><span>03</span><div><h3>Diagnóstico diferencial</h3><p>Análisis de síntomas, dificultades coexistentes y otras explicaciones clínicas. Si procede, exploración neuropsicológica complementaria.</p></div></div>
               <div><span>04</span><div><h3>Informe y devolución</h3><p>Integración de la información, explicación de las conclusiones y recomendaciones adaptadas a la situación de la persona.</p></div></div>
             </div>
+          </section>
+
+          <section>
+            <h2>¿Qué ocurre después de la evaluación?</h2>
+            <p>Recibirás conclusiones clínicas y recomendaciones individualizadas, tanto si se identifica un TDAH como si
+              las dificultades se explican por otros factores. Según los resultados, puede recomendarse intervención psicológica,
+              estrategias de organización y autorregulación, adaptaciones funcionales o valoración por otro profesional sanitario.</p>
+            <p>El tratamiento farmacológico, cuando está indicado, requiere valoración y prescripción médica y no está incluido en estas modalidades.</p>
           </section>
 
           <section>
@@ -198,10 +245,10 @@ export default function AdultAdhdAssessmentPage() {
               <li><span>Diagnóstica</span><strong>450 €</strong></li>
               <li><span>Ampliada</span><strong>600 €</strong></li>
               <li><span>Consulta</span><strong>Arenys de Mar</strong></li>
-              <li><span>Primera visita</span><strong>60 minutos</strong></li>
+              <li><span>Precio</span><strong>Todo incluido</strong></li>
             </ul>
-            <a className="editorial-btn editorial-btn-primary" href="/cita/">Consultar disponibilidad</a>
-            <p className="seo-local-note">Para dudas sobre las modalidades antes de reservar, puedes escribir a <a href="mailto:contact@carolinasanchezgirona.com?subject=Informacion%20evaluacion%20TDAH%20adulto">contact@carolinasanchezgirona.com</a>.</p>
+            <a className="editorial-btn editorial-btn-primary" href="mailto:contact@carolinasanchezgirona.com?subject=Solicitud%20de%20evaluacion%20TDAH%20adulto">Solicitar evaluación de TDAH</a>
+            <p className="seo-local-note">Para consultar qué modalidad se ajusta mejor a tu situación, puedes escribir a <a href="mailto:contact@carolinasanchezgirona.com?subject=Informacion%20evaluacion%20TDAH%20adulto">contact@carolinasanchezgirona.com</a>.</p>
           </div>
           <div className="seo-card">
             <h3>Profesional responsable</h3>
@@ -225,7 +272,7 @@ export default function AdultAdhdAssessmentPage() {
           </div>
           <div className="seo-authority-copy">
             <p>El objetivo es responder a la pregunta clínica con rigor y traducir las conclusiones en información útil para la vida diaria, la intervención psicológica o, cuando corresponda, la coordinación con otros profesionales sanitarios.</p>
-            <div className="seo-authority-links"><a href="/cita/">Solicitar una primera visita →</a></div>
+            <div className="seo-authority-links"><a href="mailto:contact@carolinasanchezgirona.com?subject=Solicitud%20de%20evaluacion%20TDAH%20adulto">Solicitar evaluación de TDAH →</a></div>
           </div>
         </div>
       </section>
