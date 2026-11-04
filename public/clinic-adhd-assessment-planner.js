@@ -135,7 +135,11 @@
       info.append(top,node("p",description));
       const action=node("div",undefined,"adhd-plan-row-action");
       action.append(node("span",record?(statusLabels[record.status]||record.status):"Sin registrar","adhd-plan-state"));
-      action.append(button(record?"Abrir":"Registrar",()=>{
+      const documentKey={diva_registro:"diva5",asrs_registro:"asrs",phq9_registro:"phq9",gad7_registro:"gad7",wfirs_registro:"wfirs",anamnesis:"anamnesis",diferencial:"differential"}[key];
+      if(documentKey)action.append(button("PDF original",()=>{
+        root.dispatchEvent(new CustomEvent("adhd:open-pdf",{bubbles:true,detail:{assessmentId:currentId,testKey:documentKey}}));
+      },"small"));
+      action.append(button(record?"Abrir registro":"Registrar resultado",()=>{
         root.dispatchEvent(new CustomEvent("adhd:open-form",{bubbles:true,detail:{assessmentId:currentId,formKey:key}}));
       },"small"));
       item.append(info,action);grid.append(item);
@@ -215,8 +219,11 @@
     const action=node("div",undefined,"adhd-plan-row-action");
     const modeOK=currentMode==="expanded"&&status!=="completed"&&status!=="cancelled";
     action.append(node("span",active?(statusLabels[active.status]||active.status):"No planificada","adhd-plan-state"));
+    action.append(button("PDF original",()=>{
+      root.dispatchEvent(new CustomEvent("adhd:open-pdf",{bubbles:true,detail:{assessmentId:currentId,testKey:test.key}}));
+    },"small"));
     if(currentMode==="expanded"){
-      const b=button(active?"Abrir registro":"Añadir a la batería",()=>{
+      const b=button(active?"Abrir resultados":"Añadir a la batería",()=>{
         root.dispatchEvent(new CustomEvent("adhd:plan-test",{bubbles:true,detail:{assessmentId:currentId,testKey:test.key}}));
       },"small");
       if(!modeOK)b.disabled=true;
