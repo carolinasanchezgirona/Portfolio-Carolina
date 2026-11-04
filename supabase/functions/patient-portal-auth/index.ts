@@ -95,7 +95,7 @@ async function requestCode(email: string) {
   if (!SERVICE_ROLE_KEY || !BREVO_API_KEY) return json({ error: "El acceso por correo no está configurado." }, 503);
 
   const patientsResponse = await fetch(
-    SUPABASE_URL + "/rest/v1/clinical_patients?select=id,email,status&status=neq.archived&limit=500",
+    SUPABASE_URL + "/rest/v1/clinical_patients?select=id,email,status&status=neq.archived&portal_access_enabled=eq.true&limit=500",
     { headers: serviceHeaders, cache: "no-store" },
   );
   if (!patientsResponse.ok) return json(generic);
@@ -188,6 +188,19 @@ async function verifyCode(email: string, code: string) {
     return json({ error: "Código no válido o caducado." }, 401);
   }
 
+  // An OTP issued before access was suspended must never restore the session.
+  const eligible = await fetch(
+    SUPABASE_URL + "/rest/v1/clinical_patients?select=id&id=eq." +
+      encodeURIComponent(patientId) +
+      "&status=neq.archived&portal_access_enabled=eq.true&limit=1",
+    { headers: serviceHeaders, cache: "no-store" },
+  ).catch(() => null);
+  if (!eligible?.ok) return json({ error: "No se ha podido comprobar el acceso." }, 503);
+  const eligibleRows = await eligible.json().catch(() => []);
+  if (!Array.isArray(eligibleRows) || eligibleRows.length !== 1) {
+    return json({ error: "Acceso no disponible. Contacta con la consulta." }, 401);
+  }
+
   const now = new Date();
   const rawSession = randomToken();
   const tokenHash = await sha256(rawSession);
@@ -222,7 +235,7 @@ const genericPasswordMessage = "Si el correo está habilitado, recibirás instru
 async function eligiblePatient(email: string): Promise<{id: string} | null> {
   const response = await fetch(
     SUPABASE_URL + "/rest/v1/clinical_patients?select=id,email,status&email=ilike." +
-      encodeURIComponent(email) + "&status=neq.archived&limit=2",
+      encodeURIComponent(email) + "&status=neq.archived&portal_access_enabled=eq.true&limit=2",
     { headers: serviceHeaders, cache: "no-store" },
   );
   if (!response.ok) throw new Error("Patient lookup unavailable");
