@@ -70,7 +70,7 @@
     if(key==="taveci")return assessmentAge>=6&&assessmentAge<=16;
     if(key==="tavec"||key==="tesen")return assessmentAge>=16;
     if(["cpt3","tmt"].includes(key))return false;
-    return ["d2r","working_memory","other","atento","etdah","sena"].includes(key);
+    return ["d2r","working_memory","other"].includes(key);
   }
   const noticeText=(msg,error=false)=>{if(notice){notice.textContent=msg;notice.classList.toggle("error",error)}};
   function attach(){
