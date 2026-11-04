@@ -1477,7 +1477,7 @@
       ["Sin próxima cita", withoutNext, (item) => item],
     ];
     const total = groups.reduce((sum, [, items]) => sum + items.length, 0);
-    els.pendingBadge.textContent = String(total);
+    if (els.pendingBadge) els.pendingBadge.textContent = String(total);
     els.pendingSummary.replaceChildren();
     groups.forEach(([label, items]) => { const card = create("article"); card.append(create("strong", "", String(items.length)), create("span", "", label)); els.pendingSummary.append(card); });
     els.pendingList.replaceChildren();
@@ -2593,10 +2593,10 @@
     els.pendingView.hidden = name !== "pending";
     els.viewToday.classList.toggle("active", name === "today");
     els.viewPatients.classList.toggle("active", name === "patients");
-    els.viewPending.classList.toggle("active", name === "pending");
+    els.viewPending?.classList.toggle("active", name === "pending");
     [[els.viewToday, "today"], [els.viewPatients, "patients"], [els.viewPending, "pending"]].forEach(([button, key]) => {
-      if (name === key) button.setAttribute("aria-current", "page");
-      else button.removeAttribute("aria-current");
+      if (name === key) button?.setAttribute("aria-current", "page");
+      else button?.removeAttribute("aria-current");
     });
     document.querySelector(".clinic-more-menu")?.removeAttribute("open");
     if (name === "patients") els.patientSearch.focus();
@@ -2606,7 +2606,7 @@
   els.refresh.addEventListener("click", () => loadData().catch((error) => setMessage(error.message)));
   els.viewToday.addEventListener("click", () => setView("today"));
   els.viewPatients.addEventListener("click", () => setView("patients"));
-  els.viewPending.addEventListener("click", () => setView("pending"));
+  els.viewPending?.addEventListener("click", () => setView("pending"));
   els.patientSearch.addEventListener("input", () => renderPatients(els.patientSearch.value));
   els.newPatient?.addEventListener("click", () => {
     els.newPatientForm.reset();
