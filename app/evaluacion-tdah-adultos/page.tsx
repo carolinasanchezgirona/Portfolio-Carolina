@@ -145,7 +145,7 @@ export default function AdultAdhdAssessmentPage() {
           </div>
           <p className="tdah-hero-note">Atención presencial en Arenys de Mar · Psicóloga General Sanitaria y Neuropsicóloga · COPC 24892</p>
           </div>
-          <figure className="tdah-hero-photo"><Image src="/carolina-sanchez-sobre-mi.webp" alt="Carolina Sánchez Girona, psicóloga y neuropsicóloga" width={540} height={810} sizes="(max-width: 720px) 230px, 280px" priority /></figure>
+          <figure className="tdah-hero-photo"><Image src="/carolina-sanchez-como-trabajo.webp" alt="Carolina Sánchez Girona, psicóloga y neuropsicóloga" width={540} height={960} sizes="(max-width: 720px) 180px, 205px" priority /></figure>
         </div>
       </section>
 
@@ -212,7 +212,7 @@ export default function AdultAdhdAssessmentPage() {
 
           <section className="tdah-document-section">
             <div className="tdah-download">
-              <figure className="tdah-download-photo"><Image src="/consulta-carolina-sanchez-despacho.webp" alt="Consulta de Carolina Sánchez en Arenys de Mar" width={1448} height={1086} sizes="(max-width: 720px) 100vw, 190px" loading="lazy" /></figure>
+              <figure className="tdah-download-photo"><img src="https://cdn.pixabay.com/photo/2019/05/27/22/57/planner-4233907_1280.jpg" alt="Agenda y material de planificación sobre una mesa, relacionados con la organización y la atención" width="1280" height="856" loading="lazy" /></figure>
               <div className="tdah-download-text">
                 <h3>Información sobre el proceso de evaluación</h3>
                 <p>Modalidades, procedimiento, precios y condiciones de contratación.</p>
