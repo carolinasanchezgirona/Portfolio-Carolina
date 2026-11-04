@@ -48,10 +48,6 @@ const modalities = [
 
 const faq = [
   {
-    question: "¿Es necesario realizar el ADOS-2 para diagnosticar autismo en adultos?",
-    answer: "No siempre. La evaluación diagnóstica se fundamenta en la historia del neurodesarrollo, la entrevista clínica, la observación, el funcionamiento cotidiano y el diagnóstico diferencial. En estas modalidades no se administra ADOS-2. Si una situación requiere una valoración observacional estandarizada adicional, se explicará y se orientará hacia una ampliación o derivación específica.",
-  },
-  {
     question: "¿Qué diferencia hay entre la modalidad diagnóstica y la ampliada?",
     answer: "La modalidad diagnóstica estudia el TEA y su diagnóstico diferencial. La ampliada añade una exploración neuropsicológica individualizada cuando es útil para describir el perfil cognitivo, las dificultades asociadas y las necesidades de apoyo. La modalidad ampliada no garantiza mayor certeza diagnóstica del TEA.",
   },
