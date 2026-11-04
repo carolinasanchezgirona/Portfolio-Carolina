@@ -24,10 +24,12 @@ test("one central admin route for all six management sections",()=>{
   ]) assert.ok(page.includes(link),"Missing "+link);
   for(const id of [
     "admin-home","admin-home-loading","admin-home-date",
-    "admin-home-priorities","admin-home-today","admin-home-clinical","admin-home-economy",
+    "admin-home-priorities","admin-home-today","admin-home-economy",
     "admin-home-editorial","admin-home-commerce",
     "admin-home-refresh","admin-home-logout"
   ]) assert.equal((page.match(new RegExp('id="'+id+'"','g'))||[]).length,1,id);
+  assert.doesNotMatch(page,/Pendientes clínicos|Tareas clínicas/);
+  assert.doesNotMatch(client,/clinical_admin_tasks\?select/);
   assert.match(page,/Contabilidad/);
   assert.match(page,/Centro editorial/);
   assert.match(page,/Mi espacio/);
