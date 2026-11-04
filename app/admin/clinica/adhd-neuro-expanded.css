@@ -1,0 +1,47 @@
+
+/* Clinician-only ADHD neuropsychology workspace, displayed below the core assessment. */
+.adhd-neuro-module{background:#f9fcfd;border:1px solid #cddfe3;border-radius:13px;padding:23px;margin:26px 0 10px}
+.adhd-neuro-module[hidden]{display:none!important}
+.adhd-neuro-module *{box-sizing:border-box}
+.adhd-neuro-heading{border-bottom:1px solid #dce8e9;padding:0 0 17px;margin-bottom:18px}
+.adhd-neuro-eyebrow{font-size:11px!important;color:#16758a!important;font-weight:800!important;letter-spacing:.09em;margin:0 0 6px!important}
+.adhd-neuro-heading h3{font-family:var(--font-newsreader),Georgia,serif;font-size:27px;font-weight:500;margin:6px 0 7px;color:#183d4c}
+.adhd-neuro-heading>p:last-child{color:#526e77;font-size:13px;line-height:1.6;margin:0}
+.adhd-neuro-metrics{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-bottom:18px}
+.adhd-neuro-metric{display:grid;gap:3px;background:#fff;border:1px solid #dbe8e8;padding:13px 15px;border-radius:11px}
+.adhd-neuro-metric strong{font-family:var(--font-newsreader),Georgia,serif;font-size:23px;font-weight:500;color:#173d53}
+.adhd-neuro-metric span{font-size:12px;color:#58717b}
+.adhd-neuro-section{padding:20px 0;border-top:1px solid #dce8e9}
+.adhd-neuro-section h4{font:500 26px/1.25 var(--font-newsreader),Georgia,serif;color:#183d4c;margin:0 0 12px}
+.adhd-neuro-section h5{font:500 20px/1.2 var(--font-newsreader),Georgia,serif;margin:0;color:#183d4c}
+.adhd-neuro-section h6{font-size:14px;margin:18px 0 8px;color:#183d4c}
+.adhd-neuro-help,.adhd-neuro-empty{font-size:12px;color:#55717b;line-height:1.6;margin:0 0 15px}
+.adhd-neuro-toolbar{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin:14px 0}
+.adhd-neuro-toolbar select{flex:1 1 230px;padding:11px;border:1px solid #bfd6da;border-radius:9px;background:#fff;color:#183d4c;min-height:42px;max-width:100%;font:inherit}
+.adhd-neuro-btn{border:1px solid #bacfd4;border-radius:9px;background:white;color:#17556b;cursor:pointer;padding:10px 13px;min-height:42px;font-size:13px;font-weight:650}
+.adhd-neuro-btn.primary{background:#173d53;color:white;border-color:#173d53}
+.adhd-neuro-btn.small{font-size:12px;padding:7px 11px;min-height:32px}
+.adhd-neuro-btn:hover{filter:brightness(.96)}
+.adhd-neuro-btn:focus-visible,.adhd-neuro-module textarea:focus-visible,.adhd-neuro-module input:focus-visible,.adhd-neuro-module select:focus-visible{outline:3px solid #9fdee4;outline-offset:2px}
+.adhd-neuro-testrow{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:12px 14px;border:1px solid #dbe6e8;border-radius:9px;background:white;margin:8px 0}
+.adhd-neuro-testrow.active{border-color:#3ba3ac}
+.adhd-neuro-testrow>div{display:grid;gap:4px}
+.adhd-neuro-small{color:#607984;font-size:12px}
+.adhd-neuro-editor{padding:20px;border:1px solid #cce1e2;background:white;border-radius:11px;margin:18px 0}
+.adhd-neuro-test-heading{display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:15px;align-items:center}
+.adhd-neuro-test-heading span{font-size:12px;color:#5d7a83}
+.adhd-neuro-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:16px 0}
+.adhd-neuro-grid label,.adhd-neuro-score-row label{display:grid;gap:7px;color:#274e5b;font-weight:600;font-size:12px}
+.adhd-neuro-module textarea,.adhd-neuro-module input{background:white;color:#183d4c;padding:10px 11px;border:1px solid #c4d9dc;border-radius:8px;font:400 13px/1.5 inherit;max-width:100%}
+.adhd-neuro-module textarea{resize:vertical;min-height:94px}
+.adhd-neuro-module input{min-height:40px}
+.adhd-neuro-score-row{display:grid;grid-template-columns:1.6fr 1fr 1.3fr 1fr auto;align-items:end;gap:9px;margin:9px 0;padding:12px;border:1px solid #e3eeee;border-radius:8px}
+.adhd-neuro-score-row input{width:100%}
+.adhd-neuro-scorearea{margin:13px 0 8px}
+.adhd-neuro-report{margin-top:16px}
+.adhd-neuro-report h5{margin-bottom:12px}
+.adhd-neuro-report textarea{display:block;width:100%;min-height:210px;margin-bottom:10px;background:#fff}
+.adhd-neuro-notice{font-size:12px;min-height:20px;color:#17677a;margin:10px 0}
+.adhd-neuro-notice.error{color:#a12738;font-weight:650}
+@media(max-width:850px){.adhd-neuro-score-row{grid-template-columns:repeat(2,minmax(0,1fr))}.adhd-neuro-score-row .adhd-neuro-btn{justify-self:start}}
+@media(max-width:640px){.adhd-neuro-module{padding:14px}.adhd-neuro-metrics{grid-template-columns:1fr}.adhd-neuro-grid{grid-template-columns:1fr}.adhd-neuro-testrow{align-items:start;flex-direction:column}.adhd-neuro-testrow>.adhd-neuro-btn{align-self:start}.adhd-neuro-editor{padding:14px}.adhd-neuro-score-row{grid-template-columns:1fr}}
