@@ -255,6 +255,37 @@ function patientPortalSameOrigin(request: Request): boolean {
   catch { return false; }
 }
 
+/** Only the verified MFA clinician can change patient portal access. */
+async function handleAdminPatientPortalAccess(request: Request, env: Env): Promise<Response> {
+  if (request.method !== "POST") return patientPortalJson({ error: "Método no permitido." }, 405);
+  if (!patientPortalSameOrigin(request)) return patientPortalJson({ error: "Origen no permitido." }, 403);
+  if (!await verifyEditorialOwner(request)) return patientPortalJson({ error: "Sesión profesional no autorizada." }, 401);
+  if (!env.SUPABASE_SERVICE_ROLE_KEY) return patientPortalJson({ error: "Control de acceso no disponible." }, 503);
+  if (Number(request.headers.get("content-length") || "0") > 1024) {
+    return patientPortalJson({ error: "Solicitud demasiado extensa." }, 413);
+  }
+  let body: Record<string, unknown>;
+  try { body = await request.json() as Record<string, unknown>; }
+  catch { return patientPortalJson({ error: "Datos no válidos." }, 400); }
+  const patientId = typeof body.patient_id === "string" ? body.patient_id : "";
+  if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(patientId)
+      || typeof body.enabled !== "boolean") {
+    return patientPortalJson({ error: "Identificador o estado no válido." }, 400);
+  }
+  // A single database transaction updates eligibility, revokes sessions and
+  // outstanding codes, and writes the audit event, without exposing service_role.
+  const changed = await fetch(RESOURCE_SUPABASE + "/rest/v1/rpc/admin_set_patient_portal_access", {
+    method: "POST", cache: "no-store", headers: serviceHeaders(env),
+    body: JSON.stringify({ p_patient_id: patientId, p_enabled: body.enabled }),
+  }).catch(() => null);
+  if (!changed?.ok) return patientPortalJson({ error: "No se ha podido confirmar el cambio. Actualiza la ficha antes de volver a intentarlo." }, 503);
+  const result = await changed.json().catch(() => null) as Record<string, unknown> | null;
+  if (!result || result.patient_id !== patientId || result.enabled !== body.enabled) {
+    return patientPortalJson({ error: "No se ha podido verificar el cambio de acceso." }, 503);
+  }
+  return patientPortalJson({ ok: true, enabled: result.enabled, changed_at: result.changed_at ?? null });
+}
+
 async function handlePatientPortalAuth(request: Request, env: Env, action: "request" | "verify"): Promise<Response> {
   if (request.method !== "POST") return patientPortalJson({ error: "Método no permitido." }, 405);
   if (!patientPortalSameOrigin(request)) return patientPortalJson({ error: "Origen no permitido." }, 403);
@@ -375,6 +406,18 @@ async function patientPortalSession(request: Request, env: Env): Promise<Patient
   const rows = await response.json().catch(() => []) as Record<string, unknown>[];
   const row = Array.isArray(rows) ? rows[0] : null;
   if (!response.ok || !row?.id || !row?.patient_id || !row?.expires_at) return null;
+
+  // Revocation is enforced on EVERY protected portal request, not only login.
+  // A revoked or archived patient cannot reuse an old cookie or installed PWA.
+  const access = await fetch(
+    RESOURCE_SUPABASE + "/rest/v1/clinical_patients?select=id&id=eq." +
+      encodeURIComponent(String(row.patient_id)) +
+      "&status=neq.archived&portal_access_enabled=eq.true&limit=1",
+    { headers: serviceHeaders(env), cache: "no-store" },
+  ).catch(() => null);
+  if (!access?.ok) return null; // Fail closed if the clinical store is unavailable.
+  const accessRows = await access.json().catch(() => []);
+  if (!Array.isArray(accessRows) || accessRows.length !== 1) return null;
 
   fetch(RESOURCE_SUPABASE + "/rest/v1/patient_portal_sessions?id=eq." + encodeURIComponent(String(row.id)), {
     method: "PATCH",
@@ -2204,6 +2247,7 @@ export default {
 
     if (url.pathname.replace(/\/$/, "") === "/api/admin/invoices/email") return billingInvoiceEmail(request, env, verifyEditorialOwner);
 
+    if (url.pathname === "/api/admin/patient-portal-access" || url.pathname === "/api/admin/patient-portal-access/") return handleAdminPatientPortalAccess(request, env);
     if (url.pathname === "/api/admin/push" || url.pathname === "/api/admin/push/") return adminPushRequest(request, env, verifyEditorialOwner);
     if (url.pathname === "/api/video/appointment") return adminAppointmentVideo(request, env, verifyEditorialOwner);
     if (url.pathname === "/api/patient-portal/video") {
