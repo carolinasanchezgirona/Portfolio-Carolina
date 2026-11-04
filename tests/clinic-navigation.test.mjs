@@ -15,7 +15,7 @@ test("Barra única, controles y enlaces existentes",()=>{
  for(const href of ["/admin/agenda/","/admin/recursos/","/admin/preguntas/","/admin/articulos/","/admin/economia/","/admin/"])
  assert.ok(page.includes('href="'+href+'"'),href);
  assert.match(page,/<details className="clinic-more-menu">/);
- assert.match(clinic,/button\.setAttribute\("aria-current", "page"\)/);
+ assert.match(clinic,/button\?\.setAttribute\("aria-current", "page"\)/);
  assert.match(shell,/pathname\.startsWith\("\/admin\/clinica"\)/);
  assert.match(pwa,/\.clinic-more-install-slot/);
 });
