@@ -167,6 +167,16 @@ export default function AdminClinicaPage() {
             <button id="clinic-archive-patient" className="clinic-text" type="button">Archivar ficha</button>
             <button id="clinic-delete-patient" className="clinic-danger" type="button">Eliminar paciente</button>
           </div>
+          <section className="clinic-portal-access" aria-label="Acceso a Entre Sesiones">
+            <div className="clinic-portal-access-copy">
+              <strong>Entre Sesiones · Acceso del paciente</strong>
+              <p id="clinic-portal-access-status" className="clinic-portal-access-status" role="status" aria-live="polite">Consultando acceso…</p>
+              <p id="clinic-portal-access-note" className="clinic-portal-access-note">
+                Desactivar el acceso cierra las sesiones y bloquea nuevas entradas. No elimina la historia clínica ni los materiales guardados.
+              </p>
+            </div>
+            <button id="clinic-portal-access-toggle" className="clinic-secondary" type="button" disabled>Gestionar acceso</button>
+          </section>
           <p id="clinic-delete-patient-note" className="clinic-record-action-note">
             Eliminar solo se usa para fichas creadas por error y sin actividad clínica. Si la ficha ya contiene historia, sesiones o documentos, utiliza Archivar.
           </p>
