@@ -8,20 +8,23 @@ const styles = readFileSync(new URL("../app/editorial.css", import.meta.url), "u
 test("main public menu uses the agreed architecture", () => {
   assert.match(shell, /<summary>Servicios <ChevronIcon \/>/);
   assert.match(shell, /href="\/pregunta-a-carolina\/".*Tu Consulta<\/a>/);
-  assert.match(shell, /<summary>Recursos <ChevronIcon \/>/);
+  assert.doesNotMatch(shell, /<summary>Recursos <ChevronIcon \/>/);
   assert.match(shell, /href="\/sobre-mi\/"/);
   assert.match(shell, /href="\/mi-espacio\/"/);
   assert.match(shell, /site-booking-cta.*href="\/cita\/"/);
   assert.doesNotMatch(shell, /const mainNavigation/);
 });
 
-test("service and resource links remain at their indexed URLs", () => {
+test("service and editorial links remain, without promoting the resources section", () => {
   for (const href of [
     "/psicologia/", "/neuropsicologia/", "/residencias/",
-    "/recursos/", "/articulos/", "/pregunta-a-carolina/"
+    "/articulos/", "/pregunta-a-carolina/"
   ]) {
     assert.ok(shell.includes('href: "' + href + '"') || shell.includes('href="' + href + '"'), href);
   }
+  assert.doesNotMatch(shell, /resourceNavigation|resourcesActive/);
+  assert.doesNotMatch(shell, /href="\/recursos\/"/);
+  assert.doesNotMatch(shell, /href="\/suscribete\/"/);
 });
 
 test("mobile navigation provides expandable groups and accessible touch targets", () => {

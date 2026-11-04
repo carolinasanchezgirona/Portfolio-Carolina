@@ -37,13 +37,6 @@ const serviceNavigation = [
   { href: "/residencias/", label: "Para centros y residencias" },
 ] as const;
 
-const resourceNavigation = [
-  { href: "/recursos/", label: "Materiales y cuadernos" },
-  { href: "/suscribete/", label: "Recibir recursos gratis" },
-  { href: "/articulos/", label: "Artículos" },
-  { href: "/podcast/", label: "Psicología Incómoda · Podcast" },
-] as const;
-
 const servicePaths = [
   "/psicologia/", "/neuropsicologia/", "/residencias/", "/ansiedad/",
   "/duelo/", "/evaluacion-neuropsicologica/", "/evaluacion-tdah-adultos/", "/evaluacion-tea-adultos/", "/deterioro-cognitivo/",
@@ -62,7 +55,6 @@ function SiteHeader({ pathname }: { pathname: string }) {
   const currentPath = pathname === "/" || pathname.endsWith("/") ? pathname : pathname + "/";
   const currentPage = (href: string) => currentPath === href ? "page" as const : undefined;
   const servicesActive = servicePaths.some(href => currentPath === href || (href === "/residencias/" && currentPath.startsWith(href)));
-  const resourcesActive = currentPath.startsWith("/recursos/") || currentPath.startsWith("/articulos/") || currentPath.startsWith("/podcast/");
 
   return (
     <header className="site-header site-global-header">
@@ -81,14 +73,6 @@ function SiteHeader({ pathname }: { pathname: string }) {
           </div>
         </details>
         <a className="site-nav-feature" href="/pregunta-a-carolina/" aria-current={currentPage("/pregunta-a-carolina/")}>Tu Consulta</a>
-        <details className={"site-nav-group site-nav-resources" + (resourcesActive ? " is-current" : "")}>
-          <summary>Recursos <ChevronIcon /></summary>
-          <div className="site-nav-submenu">
-            {resourceNavigation.map(({ href, label }) =>
-              <a key={href} href={href} aria-current={currentPage(href)}>{label}</a>
-            )}
-          </div>
-        </details>
         <a href="/sobre-mi/" aria-current={currentPage("/sobre-mi/")}>Sobre mí</a>
       </nav>
 
@@ -111,14 +95,6 @@ function SiteHeader({ pathname }: { pathname: string }) {
               </div>
             </details>
             <a className="site-mobile-feature" href="/pregunta-a-carolina/" aria-current={currentPage("/pregunta-a-carolina/")}>Tu Consulta</a>
-            <details className="site-mobile-nav-section">
-              <summary>Recursos <ChevronIcon /></summary>
-              <div className="site-mobile-nav-items">
-                {resourceNavigation.map(({ href, label }) =>
-                  <a key={href} href={href} aria-current={currentPage(href)}>{label}</a>
-                )}
-              </div>
-            </details>
             <a href="/sobre-mi/" aria-current={currentPage("/sobre-mi/")}>Sobre mí</a>
             <a className="site-mobile-patient" href="/mi-espacio/">Mi espacio · Acceso de pacientes</a>
             <a className="site-mobile-booking" href="/cita/">Pedir cita</a>
@@ -177,8 +153,6 @@ function SiteFooter() {
           <a href="/sobre-mi/">Sobre mí</a>
           <a href="/articulos/">Artículos</a>
           <a href="/pregunta-a-carolina/">Tu Consulta</a>
-          <a href="/recursos/">Recursos</a>
-          <a href="/suscribete/">Suscribirse a recursos gratuitos</a>
           <a href="/podcast/">Psicología Incómoda · Podcast</a>
           <a href="/mi-espacio/">Mi espacio</a>
           <a href="/psicologa-arenys-de-mar/">Psicóloga en Arenys de Mar</a>
