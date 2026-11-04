@@ -100,7 +100,7 @@ export default function AdminClinicaPage() {
             <div className="clinic-patients-actions">
               <div className="clinic-search-field">
                 <span className="clinic-search-icon" aria-hidden="true">⌕</span>
-                <input id="clinic-patient-search" aria-label="Buscar pacientes" type="search" placeholder="Buscar paciente, correo, teléfono o mutua" autoComplete="off" />
+                <input id="clinic-patient-search" aria-label="Buscar pacientes" type="search" placeholder="Buscar por nombre, código, teléfono o correo" autoComplete="off" />
               </div>
               <label className="clinic-archived-toggle"><input id="clinic-show-archived" type="checkbox" /> Mostrar archivados</label>
               <button id="clinic-new-patient" className="clinic-primary" type="button">+ Nuevo paciente</button>
@@ -795,7 +795,7 @@ export default function AdminClinicaPage() {
       <Script src="/clinic-neuro-weekly-composer.js?v=20261010-logic-4" strategy="afterInteractive" />
       <Script src="/clinic-neuro-catalog-browser.js?v=20261010-catalog-2" strategy="afterInteractive" />
       <Script src="/clinic-import-activity.js?v=20261018-1" strategy="afterInteractive" />
-      <Script src="/admin-clinica.js?v=20261029-dashboard-approved-1" strategy="afterInteractive" />
+      <Script src="/admin-clinica.js?v=20261104-patient-search-privacy-1" strategy="afterInteractive" />
       <Script src="/clinical-smart-intake.js?v=20261104-historia-reorganizada-1" strategy="afterInteractive" />
       <Script src="/clinical-diagnostic-assistant.js?v=20261029-feedback-1" strategy="afterInteractive" />
       <Script src="/clinical-treatment-assistant.js?v=20261029-feedback-1" strategy="afterInteractive" />
