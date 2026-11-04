@@ -47,7 +47,6 @@ export default function AdminClinicaPage() {
           <button id="clinic-view-today" className="active" type="button" aria-current="page"><ClinicIcon name="today" /><span className="clinic-nav-label">Hoy</span></button>
           <a className="clinic-nav-link" href="/admin/agenda/"><ClinicIcon name="agenda" /><span className="clinic-nav-label">Agenda</span></a>
           <button id="clinic-view-patients" type="button"><ClinicIcon name="patients" /><span className="clinic-nav-label">Pacientes</span></button>
-          <button id="clinic-view-pending" type="button"><ClinicIcon name="pending" /><span className="clinic-nav-label">Pendientes</span><span id="clinic-pending-badge" className="clinic-tab-badge" aria-label="Número de tareas pendientes">0</span></button>
           <details className="clinic-more-menu">
             <summary><ClinicIcon name="more" /><span className="clinic-nav-label">Más</span></summary>
             <div className="clinic-more-panel">
@@ -795,7 +794,7 @@ export default function AdminClinicaPage() {
       <Script src="/clinic-neuro-weekly-composer.js?v=20261010-logic-4" strategy="afterInteractive" />
       <Script src="/clinic-neuro-catalog-browser.js?v=20261010-catalog-2" strategy="afterInteractive" />
       <Script src="/clinic-import-activity.js?v=20261018-1" strategy="afterInteractive" />
-      <Script src="/admin-clinica.js?v=20261104-patient-search-privacy-1" strategy="afterInteractive" />
+      <Script src="/admin-clinica.js?v=20261104-remove-pending-nav-1" strategy="afterInteractive" />
       <Script src="/clinical-smart-intake.js?v=20261104-historia-reorganizada-1" strategy="afterInteractive" />
       <Script src="/clinical-diagnostic-assistant.js?v=20261029-feedback-1" strategy="afterInteractive" />
       <Script src="/clinical-treatment-assistant.js?v=20261029-feedback-1" strategy="afterInteractive" />
