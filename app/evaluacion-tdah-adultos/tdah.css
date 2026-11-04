@@ -18,3 +18,9 @@
 .tdah-faq h3{margin:0 0 8px;font-size:1.16rem}
 .tdah-page .seo-card a:not(.editorial-btn){overflow-wrap:anywhere}
 @media(max-width:680px){.tdah-modality{padding:21px}.tdah-modality-top{align-items:flex-start}.tdah-price{font-size:1.85rem}.tdah-modality .tdah-modality-top h3{font-size:1.35rem}}
+
+.tdah-included{margin:20px 0 0;padding:22px 24px;background:#f3f9f8;border:1px solid var(--e-line);border-left:4px solid var(--e-teal);border-radius:12px}
+.tdah-included h3{margin:0 0 10px;font-size:1.2rem}
+.tdah-included p{margin:0 0 12px;line-height:1.65}
+.tdah-included p:last-child{margin-bottom:0}
+@media(max-width:680px){.tdah-included{padding:19px}}
