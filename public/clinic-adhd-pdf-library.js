@@ -24,7 +24,7 @@ async function storeIndex(data){
  return r.json();
 }
 const objectPath=p=>p.split("/").map(encodeURIComponent).join("/");
-let root=null,panel=null,body=null,notice=null,assessment="",modality="",originals=[],seq=0,busy=false,pending=null;
+let root=null,panel=null,body=null,notice=null,assessment="",modality="",originals=[],seq=0,busy=false,ready=false;
 function status(t,error=false){if(!notice)return;notice.textContent=t;notice.classList.toggle("error",error);}
 function init(){
  const parent=$("#adhd-assessment-module");if(!parent||root===parent)return;
@@ -44,17 +44,16 @@ function init(){
 function sync(){
  if(!root)return;
  const a=root.dataset.assessmentId||"",m=root.dataset.assessmentModality||"";
- if(!uuid.test(a)){assessment="";modality="";panel.hidden=true;seq++;return;}
+ if(!uuid.test(a)){assessment="";modality="";panel.hidden=true;ready=false;seq++;return;}
  panel.hidden=false;
- if(assessment!==a||modality!==m){assessment=a;modality=m;load();}
+ if(assessment!==a||modality!==m){assessment=a;modality=m;ready=false;load();}
 }
 async function load(){
  const n=++seq;status("Cargando PDFs privados…");
  try{
    const rows=await getOriginals();if(n!==seq)return;
-   originals=Array.isArray(rows)?rows:[];draw();status("");
-   if(pending){const key=pending;pending=null;openKey(key);}
- }catch(e){status(e.message,true);pending=null;}
+   originals=Array.isArray(rows)?rows:[];ready=true;draw();status("");
+ }catch(e){ready=false;status(e.message,true);}
 }
 function draw(){
  body.replaceChildren();
@@ -71,7 +70,7 @@ function draw(){
 function handleRequest(detail){
  const key=detail?.testKey;
  if(!labels[key]||!assessment||detail.assessmentId!==assessment)return;
- if(!originals.length&&seq){pending=key;load();return;}
+ if(!ready){panel.querySelector("details")?.setAttribute("open","");status("La biblioteca todavía se está cargando. Vuelve a pulsar el botón cuando termine.",true);return;}
  openKey(key);
 }
 function openKey(key){
