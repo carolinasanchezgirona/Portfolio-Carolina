@@ -551,3 +551,12 @@
   .editorial-hero-statement{max-width:28ch;font-size:1.5rem;}
   .editorial-service-card .editorial-card-hook{font-size:1.5rem;}
 }
+
+
+/* Cabecera pública opaca: evita la superposición visual al hacer scroll. */
+.global-shell > .site-header.site-global-header{
+  background:#FBF9F5;
+  backdrop-filter:none;
+  -webkit-backdrop-filter:none;
+  isolation:isolate;
+}
