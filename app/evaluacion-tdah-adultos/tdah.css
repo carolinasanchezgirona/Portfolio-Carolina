@@ -162,3 +162,40 @@
 @media(max-width:900px){.tdah-page .tdah-hero-grid{gap:20px}.tdah-page .tdah-choice{flex-direction:column;align-items:flex-start}.tdah-page .tdah-download{grid-template-columns:110px minmax(0,1fr)}.tdah-page .tdah-download .editorial-btn{grid-column:2;justify-self:start;margin:0 14px 18px 0}.tdah-page .tdah-download-photo{height:100%;grid-row:span 2}}
 @media(max-width:720px){.tdah-page .tdah-hero-grid{grid-template-columns:1fr;gap:0}.tdah-page .tdah-hero-copy{padding:35px 0 28px}.tdah-page .tdah-hero-photo{height:260px;min-height:0;max-width:none}.tdah-page .tdah-hero-photo img{height:260px;min-height:0;object-position:center 25%}.tdah-page .tdah-method-grid,.tdah-page .tdah-modalities{grid-template-columns:1fr}.tdah-page .tdah-main .seo-copy>section+section{margin-top:30px;padding-top:30px}.tdah-page .tdah-choice .editorial-btn{width:100%}}
 @media(max-width:490px){.tdah-page .tdah-download{display:block;padding:0 0 20px}.tdah-page .tdah-download-photo{width:100%;height:155px}.tdah-page .tdah-download-text{padding:15px 19px}.tdah-page .tdah-download .editorial-btn{margin:0 19px;width:calc(100% - 38px)}}
+
+
+/* Retrato secundario y contenido, sin hero de foto gigante. */
+.tdah-page .tdah-hero-grid{
+  grid-template-columns:minmax(0,1fr) 280px;
+  gap:44px;
+  align-items:center;
+  min-height:0;
+}
+.tdah-page .tdah-hero-copy{padding:48px 0;align-self:center;}
+.tdah-page .tdah-hero-photo{
+  width:100%;
+  max-width:280px;
+  height:auto;
+  min-height:0;
+  margin:0;
+  justify-self:end;
+  border:1px solid var(--e-line);
+  border-radius:16px;
+  background:#f1f3f1;
+  overflow:hidden;
+}
+.tdah-page .tdah-hero-photo img{
+  display:block;
+  width:100%;
+  height:auto;
+  min-height:0;
+  aspect-ratio:2/3;
+  object-fit:cover;
+  object-position:center;
+}
+@media(max-width:720px){
+  .tdah-page .tdah-hero-grid{grid-template-columns:1fr;gap:0}
+  .tdah-page .tdah-hero-copy{padding:35px 0 24px}
+  .tdah-page .tdah-hero-photo{max-width:230px;width:100%;height:auto;min-height:0;justify-self:start;margin-bottom:30px}
+  .tdah-page .tdah-hero-photo img{width:100%;height:auto;min-height:0;aspect-ratio:2/3}
+}
