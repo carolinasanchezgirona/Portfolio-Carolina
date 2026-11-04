@@ -21,7 +21,7 @@ test("patient workspace provides seven navigable areas without duplicate medical
 });
 
 test("patient widgets refresh when the in-page patient record becomes visible", () => {
-  for(const name of ["clinic-patient-dashboard","clinic-goals-manager","clinic-admin-tasks","clinic-scale-trends"]){
+  for(const name of ["clinic-patient-dashboard","clinic-goals-manager","clinic-scale-trends"]){
     const script=file("public/"+name+".js");
     assert.match(script,/\.hidden/);
     assert.doesNotMatch(script,/patientDialog\.open|dialog\.open/);
@@ -42,6 +42,12 @@ test("pre-session brief is factual and uses only patient-linked authorized in-me
   ]) assert.ok(brief.includes(term),term);
   assert.match(brief,/document\.createTextNode/);
   assert.doesNotMatch(brief,/innerHTML|fetch\(|localStorage|eval\(/);
+});
+
+test("administrative pending tasks are not loaded inside the clinical app", () => {
+  assert.doesNotMatch(layout,/clinic-admin-tasks\.js/);
+  assert.doesNotMatch(file("app/admin/clinica/page.tsx"),/id="clinic-pending-view"/);
+  assert.doesNotMatch(main,/function renderPending\(/);
 });
 
 test("consent and audit panels remain within the same patient form", () => {
