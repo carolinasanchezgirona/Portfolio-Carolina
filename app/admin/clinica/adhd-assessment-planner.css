@@ -60,3 +60,7 @@
 .adhd-plan-success{color:#146c5d}
 .adhd-plan-error{color:#a02f41;font-weight:700}
 @media(max-width:750px){.adhd-mode-options,.adhd-plan-reason-options{grid-template-columns:1fr}.adhd-plan-row{flex-direction:column}.adhd-plan-row-action{flex-direction:row;align-items:center;justify-content:space-between}.adhd-test-planner{padding:14px}}
+
+.adhd-plan-clickable{cursor:pointer;transition:background .14s ease,border-color .14s ease}
+.adhd-plan-clickable:hover{background:#f0f9fa;border-color:#63aeb9}
+.adhd-plan-clickable:focus-visible{outline:3px solid #87cfd8;outline-offset:2px}
