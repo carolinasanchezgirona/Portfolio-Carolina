@@ -2178,14 +2178,22 @@
   }
 
   function renderPatients(query = "") {
-    const term = query.trim().toLowerCase();
+    const term = String(query || "").trim().toLowerCase();
+    // Privacy by default: never expose the full patient directory on entry.
+    // Require a meaningful search before revealing any patient record.
+    els.patientList.replaceChildren();
+    if (term.length < 2) {
+      els.patientList.append(create("div", "clinic-empty clinic-private-search-empty",
+        "Escribe al menos 2 caracteres del nombre, código de ficha, teléfono o correo para buscar un paciente. El listado permanece oculto por privacidad."));
+      return;
+    }
     const includeArchived = Boolean(els.showArchived?.checked);
     const filtered = patients.filter((patient) => {
       if (patient.status === "archived" && !includeArchived) return false;
       const externalText = patientExternalVisits(patient.id)
         .map((item) => `${item.insurance_provider} ${item.external_provider} ${externalCenterLabel(item.center)} ${item.visit_date || ""} ${item.visit_time || ""}`)
         .join(" ");
-      return [patient.full_name, patient.email, patient.phone, patient.national_id, patient.insurance_provider, patient.occupation, patient.referring_professional, externalText]
+      return [patient.public_code, patient.full_name, patient.email, patient.phone, patient.national_id, patient.insurance_provider, patient.occupation, patient.referring_professional, externalText]
         .some((value) => (value || "").toLowerCase().includes(term));
     });
     els.patientList.replaceChildren();
