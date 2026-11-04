@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import "../seo-pages.css";
 import "./tdah.css";
 
@@ -125,7 +126,7 @@ export default function AdultAdhdAssessmentPage() {
   return (
     <main className="editorial-site tdah-page">
       <section className="seo-hero">
-        <div className="editorial-wrap seo-hero-inner">
+        <div className="editorial-wrap tdah-hero-grid"><div className="tdah-hero-copy">
           <p className="seo-breadcrumbs">
             <a href="/">Inicio</a><span>·</span>
             <a href="/neuropsicologia/">Neuropsicología</a><span>·</span>
@@ -143,12 +144,15 @@ export default function AdultAdhdAssessmentPage() {
             <a className="editorial-btn editorial-btn-secondary" href="#modalidades">Ver modalidades y precios</a>
           </div>
           <p className="tdah-hero-note">Atención presencial en Arenys de Mar · Psicóloga General Sanitaria y Neuropsicóloga · COPC 24892</p>
+          </div>
+          <figure className="tdah-hero-photo"><Image src="/carolina-sanchez-portada-720.webp" alt="Carolina Sánchez Girona, psicóloga y neuropsicóloga" width={720} height={1080} sizes="(max-width: 760px) 100vw, 380px" priority /></figure>
         </div>
       </section>
 
-      <div className="editorial-wrap seo-layout">
+      <div className="editorial-wrap tdah-main">
         <article className="seo-copy">
-          <section>
+          <section className="tdah-intro-grid">
+            <div>
             <h2>¿Cuándo puede ser recomendable una evaluación?</h2>
             <p>Algunas personas consultan porque las siguientes dificultades interfieren de forma persistente en su día a día:</p>
             <ul>
@@ -160,9 +164,12 @@ export default function AdultAdhdAssessmentPage() {
               <li>Repercusión en el trabajo, los estudios o las relaciones.</li>
             </ul>
             <p>Estas manifestaciones no implican por sí mismas un TDAH. Lo relevante es estudiar su origen, su historia y su impacto funcional.</p>
+            </div>
+            <figure className="tdah-consultation-photo"><Image src="/consulta-carolina-sanchez-despacho.webp" alt="Espacio real de consulta de psicología y neuropsicología en Arenys de Mar" width={1448} height={1086} sizes="(max-width: 760px) 100vw, 440px" loading="lazy" /></figure>
           </section>
 
-          <section>
+          <section className="tdah-method-grid">
+            <div>
             <h2>Una evaluación clínica, no solo un cuestionario</h2>
             <p>
               Las dificultades de concentración, planificación o autorregulación no son exclusivas del TDAH.
@@ -174,6 +181,8 @@ export default function AdultAdhdAssessmentPage() {
               instrumentos apropiados y diagnóstico diferencial. Las pruebas neuropsicológicas se utilizan
               cuando aportan respuesta a una pregunta clínica concreta.
             </p>
+            </div>
+            <div className="tdah-method-aside"><span className="tdah-method-number">01 / ORIENTACIÓN</span><h3>No tienes que decidir la modalidad por tu cuenta</h3><p>Antes de empezar, revisaremos el motivo de consulta y te explicaré qué exploración está indicada en tu caso.</p></div>
           </section>
 
           <section id="modalidades">
@@ -229,10 +238,10 @@ export default function AdultAdhdAssessmentPage() {
           <section>
             <h2>Cómo se realiza la valoración</h2>
             <div className="tdah-steps">
-              <div><span>01</span><div><h3>Entrevista clínica y evolutiva</h3><p>Motivo de consulta, antecedentes, síntomas actuales y reconstrucción del funcionamiento desde la infancia.</p></div></div>
-              <div><span>02</span><div><h3>Exploración estructurada</h3><p>Entrevistas e instrumentos pertinentes, valoración del funcionamiento en distintos ámbitos e información de otras fuentes, cuando sea posible y con consentimiento.</p></div></div>
-              <div><span>03</span><div><h3>Diagnóstico diferencial</h3><p>Análisis de síntomas, dificultades coexistentes y otras explicaciones clínicas. Si procede, exploración neuropsicológica complementaria.</p></div></div>
-              <div><span>04</span><div><h3>Informe y devolución</h3><p>Integración de la información, explicación de las conclusiones y recomendaciones adaptadas a la situación de la persona.</p></div></div>
+              <div><span>01</span><h3>Entrevista</h3><p>Motivo de consulta, antecedentes y evolución desde la infancia.</p></div>
+              <div><span>02</span><h3>Exploración</h3><p>Entrevistas e instrumentos según la necesidad clínica.</p></div>
+              <div><span>03</span><h3>Integración</h3><p>Análisis de resultados y diagnóstico diferencial.</p></div>
+              <div><span>04</span><h3>Devolución</h3><p>Informe escrito, explicación y recomendaciones.</p></div>
             </div>
           </section>
 
@@ -248,39 +257,15 @@ export default function AdultAdhdAssessmentPage() {
             <h2>Preguntas frecuentes</h2>
             <div className="tdah-faq">
               {faq.map(({ question, answer }) => (
-                <div key={question}>
-                  <h3>{question}</h3>
+                <details key={question}>
+                  <summary>{question}</summary>
                   <p>{answer}</p>
-                </div>
+                </details>
               ))}
             </div>
           </section>
         </article>
 
-        <aside className="seo-sidebar" aria-label="Información y reserva">
-          <div className="seo-card">
-            <h2>Evaluación de TDAH adulto</h2>
-            <ul className="seo-facts">
-              <li><span>Diagnóstica</span><strong>450 €</strong></li>
-              <li><span>Ampliada</span><strong>600 €</strong></li>
-              <li><span>Consulta</span><strong>Arenys de Mar</strong></li>
-              <li><span>Precio</span><strong>Todo incluido</strong></li>
-            </ul>
-            <a className="editorial-btn editorial-btn-primary" href="mailto:contact@carolinasanchezgirona.com?subject=Solicitud%20de%20evaluacion%20TDAH%20adulto">Solicitar valoración de TDAH</a>
-            <p className="seo-local-note">Para consultar qué modalidad se ajusta mejor a tu situación, puedes escribir a <a href="mailto:contact@carolinasanchezgirona.com?subject=Informacion%20evaluacion%20TDAH%20adulto">contact@carolinasanchezgirona.com</a>.</p>
-          </div>
-          <div className="seo-card">
-            <h3>Profesional responsable</h3>
-            <p>Carolina Sánchez Girona</p>
-            <p>Psicóloga General Sanitaria y Neuropsicóloga</p>
-            <p>Colegiada COPC 24892</p>
-            <div className="seo-related">
-              <a href="/neuropsicologia/">Neuropsicología clínica</a>
-              <a href="/evaluacion-neuropsicologica/">Evaluación neuropsicológica</a>
-              <a href="/psicologa-arenys-de-mar/">La consulta en Arenys de Mar</a>
-            </div>
-          </div>
-        </aside>
       </div>
 
       <section className="editorial-section seo-authority">
