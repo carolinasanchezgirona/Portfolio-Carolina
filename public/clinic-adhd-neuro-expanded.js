@@ -11,7 +11,13 @@
     tmt: { title:"TMT A/B · Senderos", domain:"executive", minutes:"Variable", why:"Velocidad y alternancia; verificar edición, autorización y baremos utilizados." },
     cpt3: { title:"CPT-3 · Ejecución continua", domain:"attention", minutes:"~14 min", why:"Vigilancia y control de respuesta; interpretación cautelosa y contextualizada." },
     working_memory: { title:"Memoria de trabajo", domain:"working_memory", minutes:"Variable", why:"Prueba estandarizada autorizada que hayas seleccionado, identificando la edición." },
-    other: { title:"Otra prueba neuropsicológica", domain:"other", minutes:"Variable", why:"Únicamente cuando esté indicada y dispongas de material y baremos apropiados." }
+    other: { title:"Otra prueba neuropsicológica", domain:"other", minutes:"Variable", why:"Únicamente cuando esté indicada y dispongas de material y baremos apropiados." },
+    carasr: {title:"CARAS-R · Atención perceptiva",domain:"attention",minutes:"~3 min",why:"Atención perceptiva: baremos escolares de 6 a 18 años."},
+    enfen: {title:"ENFEN · Funciones ejecutivas",domain:"executive",minutes:"Variable",why:"Exploración estandarizada de funciones ejecutivas (6–12 años)."},
+    taveci: {title:"TAVECI · Memoria verbal infantil",domain:"memory",minutes:"~40 min",why:"Exploración del aprendizaje verbal (hasta 16 años)."},
+    atento: {title:"ATENTO · Informantes",domain:"other",minutes:"15–25 min",why:"Registrar resultados editoriales de familia, escuela y autoinforme cuando procede."},
+    etdah: {title:"e-TDAH · Informantes",domain:"other",minutes:"Variable",why:"Resultados del instrumento según manual original."},
+    sena: {title:"SENA · Conducta y emociones",domain:"other",minutes:"Variable",why:"Registro complementario de resultados autorizados."}
   };
   const CLINICAL_FIELDS = [
     ["referral_question","Pregunta neuropsicológica","¿Qué decisión clínica pretende informar esta ampliación?"],
@@ -54,6 +60,18 @@
   }
   let region=null,host=null,body=null,notice=null;
   let assessmentId="",patientId="",currentTestId="",testRows=[],integration=null,loading=0;
+  let ageGroup="adult",assessmentAge=null;
+  function applicable(key){
+    if(ageGroup==="adult")return !["carasr","enfen","taveci","atento","etdah","sena"].includes(key);
+    if(!Number.isInteger(assessmentAge))return false;
+    if(key==="fdt")return assessmentAge>=7;
+    if(key==="enfen")return assessmentAge>=6&&assessmentAge<=12;
+    if(key==="carasr")return assessmentAge>=6&&assessmentAge<=17;
+    if(key==="taveci")return assessmentAge>=6&&assessmentAge<=16;
+    if(key==="tavec"||key==="tesen")return assessmentAge>=16;
+    if(["cpt3","tmt"].includes(key))return false;
+    return ["d2r","working_memory","other","atento","etdah","sena"].includes(key);
+  }
   const noticeText=(msg,error=false)=>{if(notice){notice.textContent=msg;notice.classList.toggle("error",error)}};
   function attach(){
     const root=$("#adhd-assessment-module");
@@ -63,7 +81,7 @@
     host.hidden=true;
     host.id="adhd-neuro-workspace";
     const header=el("div",undefined,"adhd-neuro-heading");
-    header.append(el("p","AMPLIACIÓN NEUROPSICOLÓGICA · 600 €","adhd-neuro-eyebrow"),
+    header.append(el("p","AMPLIACIÓN NEUROPSICOLÓGICA","adhd-neuro-eyebrow"),
       el("h3","Perfil cognitivo e integración profesional"),
       el("p","Escoge únicamente las pruebas indicadas. Los baremos, la corrección y las conclusiones se consignan por la profesional."));
     notice=el("p","","adhd-neuro-notice");notice.setAttribute("role","status");
@@ -97,8 +115,11 @@
       if(body)body.replaceChildren();
       return;
     }
-    if(activeId===assessmentId&&p===patientId)return;
-    assessmentId=activeId;patientId=p;currentTestId="";
+    const nextGroup=region.dataset.assessmentAgeGroup||"adult";
+    const rawAge=Number(region.dataset.assessmentAge);
+    const nextAge=region.dataset.assessmentAge!==""&&Number.isInteger(rawAge)?rawAge:null;
+    if(activeId===assessmentId&&p===patientId&&nextGroup===ageGroup&&nextAge===assessmentAge)return;
+    assessmentId=activeId;patientId=p;ageGroup=nextGroup;assessmentAge=nextAge;currentTestId="";
     reload();
   }
   async function reload(){
@@ -136,6 +157,8 @@
   function render(){
     if(!body)return;
     body.replaceChildren();
+    const group=ageGroup==="adult"?"Adultos":ageGroup==="adolescent"?"Adolescentes (12–17 años)":"Infantil (6–11 años)";
+    body.append(el("p",group+" · "+(ageGroup==="adult"?"600 €":"700 €")+(assessmentAge!==null?" · Edad al inicio: "+assessmentAge+" años":""),"adhd-neuro-help"));
     const summary=el("div",undefined,"adhd-neuro-metrics");
     summary.append(
       metric(String(testRows.length),"Pruebas registradas"),
@@ -155,7 +178,7 @@
       el("p","Crea un registro por administración; si se repite o corrige una prueba, conserva su trazabilidad. No se reproducen ítems, estímulos ni tablas de puntuación.","adhd-neuro-help"));
     const actions=el("div",undefined,"adhd-neuro-toolbar");
     const select=optionSelect(
-      Object.entries(CATALOG).map(([k,v])=>[k,v.title]),
+      Object.entries(CATALOG).filter(([key])=>applicable(key)).map(([k,v])=>[k,v.title]),
       "d2r","Elegir instrumento neuropsicológico"
     );
     actions.append(select,btn("Añadir prueba",()=>addTest(select.value),"primary"));
@@ -182,7 +205,7 @@
   }
   async function addTest(key){
     const instrument=CATALOG[key];
-    if(!instrument)return;
+    if(!instrument||!applicable(key)){noticeText("El instrumento seleccionado no corresponde al rango de edad registrado.",true);return;}
     if(!window.confirm("¿Añadir "+instrument.title+" a la evaluación? Se registrará como planificada."))return;
     try{
       const result=await db("clinical_adhd_neuro_tests",{method:"POST",returnRows:true,payload:{
