@@ -195,7 +195,6 @@ export default function AdultAdhdAssessmentPage() {
                 <h3>¿No sabes cuál necesitas?</h3>
                 <p>La modalidad se acuerda contigo según la indicación clínica. Si procede ampliar la valoración dentro del mismo proceso, solo abonarás la diferencia de <strong>150 €</strong>, antes de realizar pruebas adicionales.</p>
               </div>
-              <a className="editorial-btn editorial-btn-primary" href="mailto:contact@carolinasanchezgirona.com?subject=Solicitud%20de%20evaluacion%20TDAH%20adulto">Solicitar valoración</a>
             </div>
             <p className="tdah-price-summary"><strong>Precio cerrado, todo incluido.</strong> Sesiones de evaluación, pruebas, interpretación clínica, informe escrito y devolución. Los tratamientos posteriores se contratan por separado.</p>
           </section>
