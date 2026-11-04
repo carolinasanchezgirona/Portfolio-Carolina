@@ -212,3 +212,36 @@
 .tdah-page .tdah-hero-photo img{width:100%;height:100%;min-height:0;aspect-ratio:1;object-fit:cover}
 .tdah-page .tdah-hero-copy{padding:32px 0 20px}
 }
+
+
+/* Imagen contextual TDAH: formato horizontal moderado, sin retrato de la profesional. */
+.tdah-page .tdah-hero-grid{
+  grid-template-columns:minmax(0,1fr) 340px;
+  gap:38px;
+  align-items:center;
+}
+.tdah-page .tdah-hero-photo{
+  width:340px;
+  max-width:340px;
+  height:265px;
+  min-height:0;
+  aspect-ratio:340/265;
+  justify-self:end;
+  border:1px solid var(--e-line);
+  border-radius:16px;
+  overflow:hidden;
+}
+.tdah-page .tdah-hero-photo img{
+  display:block;
+  width:100%;
+  height:100%;
+  min-height:0;
+  aspect-ratio:340/265;
+  object-fit:cover;
+  object-position:center center;
+}
+@media(max-width:720px){
+  .tdah-page .tdah-hero-grid{grid-template-columns:1fr;gap:0}
+  .tdah-page .tdah-hero-photo{width:min(100%,310px);max-width:310px;height:auto;aspect-ratio:4/3;justify-self:start;margin-bottom:26px}
+  .tdah-page .tdah-hero-photo img{width:100%;height:100%;min-height:0;aspect-ratio:4/3;object-fit:cover}
+}
