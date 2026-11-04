@@ -40,7 +40,7 @@
     {key:"carasr",name:"CARAS-R",min:6,max:17,when:"Atención perceptiva",reasons:["selective"],note:"Opcional; evita redundancia sin motivo clínico."},
     {key:"fdt",name:"FDT",min:7,max:17,when:"Inhibición/alternancia",reasons:["inhibition"],note:"A partir de 7 años. No disponible a los 6."},
     {key:"enfen",name:"ENFEN",min:6,max:12,when:"Funciones ejecutivas",reasons:["planning","inhibition"],note:"Exclusivo de 6 a 12 años."},
-    {key:"taveci",name:"TAVECI",min:6,max:17,when:"Aprendizaje y memoria verbal",reasons:["memory"],note:"Alternativa infantojuvenil por indicación."},
+    {key:"taveci",name:"TAVECI",min:6,max:16,when:"Aprendizaje y memoria verbal",reasons:["memory"],note:"Alternativa infantojuvenil por indicación."},
     {key:"tavec",name:"TAVEC",min:16,max:17,when:"Memoria verbal",reasons:["memory"],note:"Solo 16–17 años, según madurez y manual."},
     {key:"working_memory",name:"Memoria de trabajo",min:6,max:17,when:"Memoria de trabajo",reasons:["working"],note:"Instrumento y baremo específico de edad."},
     {key:"other",name:"Otra prueba",min:6,max:17,when:"Otros dominios",reasons:["other"],note:"Solo si existe una pregunta clínica específica."}
