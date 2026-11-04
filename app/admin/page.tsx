@@ -157,7 +157,7 @@ export default function AdminHomePage() {
         </div>
       </section>
       <Script src="/clinic-pwa.js?v=20261020-android-native-1" strategy="afterInteractive" />
-      <Script src="/admin-dashboard.js?v=20261021-ux-1" strategy="afterInteractive" />
+      <Script src="/admin-dashboard.js?v=20261104-remove-clinical-tasks-1" strategy="afterInteractive" />
     </main>
   );
 }
