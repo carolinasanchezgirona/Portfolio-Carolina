@@ -165,7 +165,7 @@ export default function AdultAutismAssessmentPage() {
                 <p>Si resulta clínicamente indicado durante el mismo proceso, podrás pasar a la modalidad ampliada abonando solamente la diferencia de <strong>200 €</strong>, antes de realizar las pruebas adicionales.</p>
               </div>
             </div>
-            <p className="tdah-price-summary"><strong>Precios cerrados.</strong> Incluyen sesiones de evaluación, pruebas pertinentes, integración clínica, informe y devolución. El ADOS-2 no está incluido en ninguna modalidad; si se considera indicado, se recomendará una valoración complementaria específica.</p>
+            <p className="tdah-price-summary"><strong>Precios cerrados.</strong> Incluyen sesiones de evaluación, pruebas pertinentes, integración clínica, informe y devolución.</p>
           </section>
 
           <section >
