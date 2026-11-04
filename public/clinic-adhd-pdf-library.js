@@ -3,9 +3,12 @@
 const HOST="https://grgyvdxkjdstdyumdfyg.supabase.co";
 const KEY="sb_publishable_b2MRfP0bPti87V2FXCzHGw_Y9vvcbii";
 const BUCKET="clinical-test-library";
-const labels={diva5:"DIVA-5",asrs:"ASRS-v1.1",wfirs:"WFIRS-S",phq9:"PHQ-9",gad7:"GAD-7",d2r:"d2-R",fdt:"FDT",tavec:"TAVEC",tesen:"TESEN",tmt:"TMT A/B",cpt3:"CPT-3",working_memory:"Memoria de trabajo",other:"Otra prueba",anamnesis:"Anamnesis clínica propia",differential:"Diagnóstico diferencial propio"};
+const labels={diva5:"DIVA-5",asrs:"ASRS-v1.1",wfirs:"WFIRS-S",phq9:"PHQ-9",gad7:"GAD-7",d2r:"d2-R",fdt:"FDT",tavec:"TAVEC",tesen:"TESEN",tmt:"TMT A/B",cpt3:"CPT-3",working_memory:"Memoria de trabajo",other:"Otra prueba",anamnesis:"Anamnesis clínica propia",differential:"Diagnóstico diferencial propio",
+atento:"ATENTO",etdah:"e-TDAH",sena:"SENA",sdq:"SDQ",carasr:"CARAS-R",enfen:"ENFEN",taveci:"TAVECI"};
 const base=["diva5","asrs","wfirs","phq9","gad7","anamnesis","differential"];
 const extended=["d2r","fdt","tavec","tesen","tmt","cpt3","working_memory","other"];
+const pediatricBase=["atento","etdah","sena","sdq","anamnesis","differential"];
+const pediatricAdvanced=["d2r","carasr","fdt","enfen","taveci","tavec","tesen","working_memory","other"];
 const uuid=/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 const $=(q,r=document)=>r.querySelector(q);
 function el(tag,text,cls){const x=document.createElement(tag);if(text!==undefined)x.textContent=text;if(cls)x.className=cls;return x;}
@@ -24,7 +27,7 @@ async function storeIndex(data){
  return r.json();
 }
 const objectPath=p=>p.split("/").map(encodeURIComponent).join("/");
-let root=null,panel=null,body=null,notice=null,assessment="",modality="",originals=[],seq=0,busy=false,ready=false;
+let root=null,panel=null,body=null,notice=null,assessment="",modality="",ageGroup="adult",age=null,originals=[],seq=0,busy=false,ready=false;
 function status(t,error=false){if(!notice)return;notice.textContent=t;notice.classList.toggle("error",error);}
 function init(){
  const parent=$("#adhd-assessment-module");if(!parent||root===parent)return;
@@ -38,15 +41,16 @@ function init(){
  parent.addEventListener("adhd:assessment",sync);
  parent.addEventListener("adhd:open-pdf",e=>handleRequest(e.detail));
  parent.addEventListener("adhd:pdf-open-request",e=>handleRequest(e.detail));
- new MutationObserver(sync).observe(parent,{attributes:true,attributeFilter:["data-assessment-id","data-assessment-modality"]});
+ new MutationObserver(sync).observe(parent,{attributes:true,attributeFilter:["data-assessment-id","data-assessment-modality","data-assessment-age-group","data-assessment-age"]});
  sync();
 }
 function sync(){
  if(!root)return;
- const a=root.dataset.assessmentId||"",m=root.dataset.assessmentModality||"";
+ const a=root.dataset.assessmentId||"",m=root.dataset.assessmentModality||"",g=root.dataset.assessmentAgeGroup||"adult";
+const n=root.dataset.assessmentAge!==""?Number(root.dataset.assessmentAge):null;
  if(!uuid.test(a)){assessment="";modality="";panel.hidden=true;ready=false;seq++;return;}
  panel.hidden=false;
- if(assessment!==a||modality!==m){assessment=a;modality=m;ready=false;load();}
+ if(assessment!==a||modality!==m||ageGroup!==g||age!==n){assessment=a;modality=m;ageGroup=g;age=n;ready=false;load();}
 }
 async function load(){
  const n=++seq;status("Cargando PDFs privados…");
@@ -57,7 +61,14 @@ async function load(){
 }
 function draw(){
  body.replaceChildren();
- for(const key of [...base,...(modality==="expanded"?extended:[])]){
+ const applicable=(k)=>ageGroup==="adult"?true:
+  k==="fdt"?age>=7:
+  k==="enfen"?age>=6&&age<=12:
+  k==="taveci"?age>=6&&age<=16:
+  k==="tavec"||k==="tesen"?age>=16:
+  true;
+for(const key of (ageGroup==="adult"?[...base,...(modality==="expanded"?extended:[])]:
+  [...pediatricBase,...(modality==="expanded"?pediatricAdvanced.filter(applicable):[])])){
    const pdf=originals.find(x=>x.test_key===key);
    const row=el("div",undefined,"adhd-pdf-row");
    const label=el("div");label.append(el("strong",labels[key]),el("small",pdf?"Original disponible: "+pdf.original_filename:"Original pendiente de incorporar"));
