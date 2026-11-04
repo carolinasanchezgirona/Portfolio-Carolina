@@ -83,12 +83,6 @@ export default function AdminClinicaPage() {
           <div id="clinic-today-list" className="clinic-list" />
         </section>
 
-        <section id="clinic-pending-view" className="clinic-view" hidden>
-          <div className="clinic-section-heading"><div><p className="clinic-eyebrow">Carga administrativa</p><h2>Tareas pendientes</h2></div></div>
-          <div id="clinic-pending-summary" className="clinic-summary" />
-          <div id="clinic-pending-list" className="clinic-pending-list" />
-        </section>
-
         <section id="clinic-patients-view" className="clinic-view clinic-patients-workspace" hidden>
           <div className="clinic-page-heading">
             <div>
