@@ -20,7 +20,6 @@ export default function AdminWorkspaceNav({ active }: { active: Area }) {
     { key: "today", icon: "today", label: "Inicio", href: "/admin/" },
     { key: "agenda", icon: "agenda", label: "Agenda", href: "/admin/agenda/" },
     { key: "patients", icon: "patients", label: "Pacientes", href: "/admin/clinica/?panel=1&view=patients" },
-    { key: "pending", icon: "pending", label: "Pendientes", href: "/admin/clinica/?panel=1&view=pending" },
   ] as const;
   return (
     <nav className="admin-workspace-nav" aria-label="Navegación principal de Dememoria">
