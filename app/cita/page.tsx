@@ -61,7 +61,7 @@ export default function BookingPage() {
           </fieldset>
 
           <div className="service-fixed"><div><strong id="selected-service-name">Psicología General Sanitaria</strong><small>60 minutos</small></div><b id="selected-service-price">60 €</b></div>
-          <p className="form-help">Psicología General Sanitaria: 60 € por 60 minutos. Neuropsicología: 75 € por 60 minutos. Las evaluaciones neuropsicológicas completas que requieran varias sesiones, pruebas específicas o informe se valoran aparte.</p>
+          <p className="form-help">Psicología General Sanitaria: 60 € por 60 minutos. Neuropsicología: 75 € por 60 minutos. Si solicitas una evaluación de <a href="/evaluacion-tdah-adultos/">TDAH en adultos</a>, elige Neuropsicóloga para la primera visita. La evaluación diagnóstica completa tiene un precio de 450 € y la ampliada de 600 €, según indicación clínica. Antes de iniciar el proceso se explicará el presupuesto y cómo se aplica el pago de esta primera cita.</p>
 
           <fieldset className="patient-type-fieldset">
             <legend>¿Es tu primera visita?</legend>
