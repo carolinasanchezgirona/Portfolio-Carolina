@@ -150,6 +150,8 @@ export default function NeuropsychAssessmentPage() {
             <div className="seo-related">
               <a href="/neuropsicologia/">Neuropsicología</a>
               <a href="/deterioro-cognitivo/">Deterioro cognitivo</a>
+              <a href="/evaluacion-memoria-deterioro-cognitivo/">Valoración de memoria · 350 € / 500 €</a>
+              <a href="/evaluacion-altas-capacidades-adultos/">Altas capacidades en adultos · 450 € / 600 €</a>
               <a href="/ictus-y-dano-cerebral-adquirido/">Ictus y daño cerebral adquirido</a>
               <a href="/parkinson-y-cambios-cognitivos/">Parkinson y cambios cognitivos</a>
               <a href="/rehabilitacion-neuropsicologica/">Rehabilitación neuropsicológica</a>
