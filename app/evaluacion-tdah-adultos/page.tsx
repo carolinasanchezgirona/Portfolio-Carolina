@@ -145,7 +145,7 @@ export default function AdultAdhdAssessmentPage() {
           </div>
           <p className="tdah-hero-note">Atención presencial en Arenys de Mar · Psicóloga General Sanitaria y Neuropsicóloga · COPC 24892</p>
           </div>
-          <figure className="tdah-hero-photo"><Image src="/carolina-sanchez-portada-720.webp" alt="Carolina Sánchez Girona, psicóloga y neuropsicóloga" width={720} height={1080} sizes="(max-width: 760px) 100vw, 380px" priority /></figure>
+          <figure className="tdah-hero-photo"><Image src="/carolina-sanchez-sobre-mi.webp" alt="Carolina Sánchez Girona, psicóloga y neuropsicóloga" width={540} height={810} sizes="(max-width: 720px) 230px, 280px" priority /></figure>
         </div>
       </section>
 
