@@ -33,7 +33,8 @@
   const availabilityLabel = (key) => {
     if (!availabilityReady) return "Disponibilidad sin verificar";
     if (key < today() || key > addDay(today(), 30)) return "Fuera del periodo de reserva";
-    return "Sin huecos reservables";
+    if (key === today()) return "Reserva online: mínimo 24 h de antelación";
+    return "Sin horarios habilitados para reserva online";
   };
   function newAppointment(key, time) {
     $("#admin-new")?.click();
