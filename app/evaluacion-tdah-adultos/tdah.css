@@ -121,3 +121,44 @@
 .tdah-page .tdah-steps>div{padding:16px 14px}
 }
 @media(max-width:450px){.tdah-page .tdah-steps{grid-template-columns:1fr}.tdah-page .tdah-modality-top{align-items:flex-start}}
+
+
+/* Composición final: jerarquía del boceto, colores y tipografías originales */
+.tdah-page .seo-hero{padding:0;border-bottom:1px solid var(--e-line);overflow:hidden}
+.tdah-page .tdah-hero-grid{grid-template-columns:minmax(0,1.2fr) minmax(0,.8fr);gap:40px;align-items:stretch;min-height:385px}
+.tdah-page .tdah-hero-copy{padding:55px 0 40px;align-self:center}
+.tdah-page .seo-hero h1{max-width:13ch;font-size:clamp(2.7rem,5vw,4.3rem)}
+.tdah-page .seo-lead{max-width:51ch;font-size:1rem;line-height:1.62}
+.tdah-page .tdah-hero-photo{max-width:none;width:100%;height:100%;min-height:385px;border:0;border-radius:0}
+.tdah-page .tdah-hero-photo img{width:100%;height:100%;min-height:385px;aspect-ratio:auto;object-fit:cover;object-position:center 26%}
+.tdah-page .tdah-main{padding-top:44px;padding-bottom:58px}
+.tdah-page .tdah-main .seo-copy>section+section{margin-top:39px;padding-top:35px}
+.tdah-page .tdah-method-grid{grid-template-columns:minmax(0,1.25fr) minmax(260px,.75fr);align-items:center}
+.tdah-page .tdah-method-aside{padding:24px 25px;background:var(--e-teal-tint)}
+.tdah-page .tdah-method-aside h3{font-size:1.5rem}
+.tdah-page .tdah-modalities{gap:18px}
+.tdah-page .tdah-modality{padding:24px}
+.tdah-page .tdah-modality .tdah-modality-top h3{font-size:1.38rem}
+.tdah-page .tdah-modality .tdah-price{font-size:1.9rem}
+.tdah-page .tdah-choice{display:flex;align-items:center;justify-content:space-between;gap:22px;padding:19px 23px;background:var(--e-teal-tint)}
+.tdah-page .tdah-choice>div{max-width:74ch}
+.tdah-page .tdah-choice h3{margin:0 0 7px;font-size:1.27rem}
+.tdah-page .tdah-choice p{margin:0;font-size:.89rem;line-height:1.57}
+.tdah-page .tdah-choice .editorial-btn{flex:none;margin:0}
+.tdah-page .tdah-price-summary{margin:13px 0 0!important;font-size:.88rem;line-height:1.6}
+.tdah-page .tdah-price-summary strong{color:var(--e-ink)}
+.tdah-page .tdah-steps>div{background:transparent;border:0;padding:10px 8px}
+.tdah-page .tdah-steps span{width:54px;height:54px}
+.tdah-page .tdah-document-section{border:0!important;padding-top:0!important}
+.tdah-page .tdah-download{display:grid;grid-template-columns:148px minmax(0,1fr) auto;align-items:center;gap:22px;padding:0;background:var(--e-teal-tint);overflow:hidden;margin:0}
+.tdah-page .tdah-download-photo{margin:0;align-self:stretch;overflow:hidden;height:118px}
+.tdah-page .tdah-download-photo img{width:100%;height:100%;object-fit:cover;object-position:center}
+.tdah-page .tdah-download-text{padding:16px 0}
+.tdah-page .tdah-download h3{margin:0 0 5px;font-size:1.19rem}
+.tdah-page .tdah-download .editorial-btn{margin-right:18px}
+.tdah-page .tdah-faq{gap:7px}
+.tdah-page .tdah-faq summary{padding-top:14px;padding-bottom:14px}
+.tdah-page .tdah-faq summary::after{top:9px}
+@media(max-width:900px){.tdah-page .tdah-hero-grid{gap:20px}.tdah-page .tdah-choice{flex-direction:column;align-items:flex-start}.tdah-page .tdah-download{grid-template-columns:110px minmax(0,1fr)}.tdah-page .tdah-download .editorial-btn{grid-column:2;justify-self:start;margin:0 14px 18px 0}.tdah-page .tdah-download-photo{height:100%;grid-row:span 2}}
+@media(max-width:720px){.tdah-page .tdah-hero-grid{grid-template-columns:1fr;gap:0}.tdah-page .tdah-hero-copy{padding:35px 0 28px}.tdah-page .tdah-hero-photo{height:260px;min-height:0;max-width:none}.tdah-page .tdah-hero-photo img{height:260px;min-height:0;object-position:center 25%}.tdah-page .tdah-method-grid,.tdah-page .tdah-modalities{grid-template-columns:1fr}.tdah-page .tdah-main .seo-copy>section+section{margin-top:30px;padding-top:30px}.tdah-page .tdah-choice .editorial-btn{width:100%}}
+@media(max-width:490px){.tdah-page .tdah-download{display:block;padding:0 0 20px}.tdah-page .tdah-download-photo{width:100%;height:155px}.tdah-page .tdah-download-text{padding:15px 19px}.tdah-page .tdah-download .editorial-btn{margin:0 19px;width:calc(100% - 38px)}}
