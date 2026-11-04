@@ -55,11 +55,6 @@ const modalities = [
 
 const faq = [
   {
-    question: "¿Un test de atención confirma el TDAH?",
-    answer:
-      "No. Ninguna prueba de atención por sí sola confirma o descarta el TDAH. La conclusión se basa en la historia del desarrollo, los síntomas, su repercusión, la información disponible de distintos contextos y el diagnóstico diferencial.",
-  },
-  {
     question: "¿Cómo sé qué modalidad necesito?",
     answer:
       "No tienes que decidirlo por tu cuenta. Antes de iniciar el proceso te orientaré sobre qué evaluación se ajusta mejor a tu motivo de consulta. Ambas son completas para su finalidad: la ampliada añade una exploración cognitiva más detallada cuando está clínicamente indicada.",
