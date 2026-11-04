@@ -166,6 +166,7 @@ export default function MemoryProblemsPage() {
             <div className="seo-related">
               <a href="/neuropsicologia/">Neuropsicología</a>
               <a href="/evaluacion-neuropsicologica/">Evaluación neuropsicológica</a>
+              <a href="/evaluacion-memoria-deterioro-cognitivo/">Evaluación de memoria y deterioro cognitivo · modalidades y precios</a>
               <a href="/deterioro-cognitivo/">Deterioro cognitivo</a>
                             <a href="/demencias/">Demencias y Alzheimer</a>
               <a href="/familiares-y-cuidadores-de-personas-con-demencia/">Familiares y cuidadores</a>
