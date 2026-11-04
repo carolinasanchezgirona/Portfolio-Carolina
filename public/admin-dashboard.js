@@ -148,7 +148,6 @@
 
     const results = await Promise.allSettled([
       get("appointment_bookings?select=id,patient_name,status,starts_at,service_code&starts_at=gte."+encodeURIComponent(start)+"&starts_at=lt."+encodeURIComponent(end)+"&order=starts_at.asc&limit=200"),
-      get("clinical_admin_tasks?select=id,title,status,priority,due_at,created_at&status=neq.completed&order=due_at.asc.nullslast,created_at.asc&limit=50"),
       get("expert_questions?select=id,status,created_at,category,question_public&status=neq.published&status=neq.discarded&order=created_at.asc&limit=100"),
       get("articles?select=id,title,status,scheduled_at,updated_at&or=(status.eq.draft,status.eq.scheduled)&order=updated_at.desc&limit=100"),
       get("digital_resource_orders?select=id,payment_status,amount_total,currency,created_at,paid_at&order=created_at.desc&limit=100"),
@@ -163,11 +162,10 @@
       return;
     }
 
-    const [a,t,q,ar,o,bi,br,issuer] = results;
-    const appointments=resultOf(a), tasks=resultOf(t), questions=resultOf(q), articles=resultOf(ar),
+    const [a,q,ar,o,bi,br,issuer] = results;
+    const appointments=resultOf(a), questions=resultOf(q), articles=resultOf(ar),
       orders=resultOf(o), invoices=resultOf(bi), receipts=resultOf(br), settings=resultOf(issuer);
     const todayActive = appointments.filter(row => !["cancelled","canceled"].includes(String(row.status||"")));
-    const overdue = tasks.filter(row => row.due_at && row.due_at < now);
     const pendingQuestions = questions.filter(row => !["published","discarded"].includes(row.status));
     const scheduled = articles.filter(row => row.status === "scheduled" && row.scheduled_at);
     const ordersPaid = orders.filter(row => ["paid","complete","succeeded"].includes(String(row.payment_status||"").toLowerCase()));
@@ -188,7 +186,6 @@
     const priorities = document.querySelector("#admin-home-priorities");
     if (priorities) priorities.innerHTML = [
       priorityCard("/admin/agenda/",ready(a)?numberFormat.format(todayActive.length):"—","citas de hoy"),
-      priorityCard("/admin/clinica/?panel=1",ready(t)?numberFormat.format(tasks.length):"—","tareas clínicas",overdue.length>0),
       priorityCard("/admin/economia/",ready(bi)&&ready(br)?numberFormat.format(open.length):"—","facturas por cobrar",open.length>0),
       priorityCard("/admin/preguntas/",ready(q)?numberFormat.format(pendingQuestions.length):"—","preguntas pendientes",pendingQuestions.length>0),
       priorityCard("/admin/articulos/",ready(ar)?numberFormat.format(scheduled.length):"—","artículos programados"),
@@ -203,16 +200,6 @@
         '</span></div><small>'+esc(timeFmt.format(new Date(row.starts_at)))+'</small></div>',
         "No hay citas programadas hoy.");
     } else unavailable("#admin-home-today");
-
-    if(ready(t)){
-      const fmt = new Intl.DateTimeFormat("es-ES",{day:"2-digit",month:"2-digit",timeZone:ZONE});
-      renderList("#admin-home-clinical",tasks,row =>
-        '<div class="admin-home-item"><div><strong>'+esc(row.title||"Tarea clínica")+
-        '</strong><span>'+esc(row.priority||"normal")+
-        (row.due_at?" · "+esc(fmt.format(new Date(row.due_at))):"")+
-        '</span></div>'+(row.due_at&&row.due_at<now?"<small>Vencida</small>":"")+'</div>',
-        "No hay tareas clínicas pendientes.");
-    } else unavailable("#admin-home-clinical");
 
     if(ready(bi)&&ready(br)){
       const draftCount=invoices.filter(row=>row.status==="draft").length;
