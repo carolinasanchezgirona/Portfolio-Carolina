@@ -1399,3 +1399,14 @@ body.clinic-report-page-open{overflow:auto!important}
 .clinic-preparation-safety{border-color:#f3d5bd;background:#fff9f4}
 @media(max-width:1100px){.clinic-preparation-stats{grid-template-columns:repeat(3,minmax(0,1fr))}.clinic-preparation-columns{grid-template-columns:minmax(0,1fr)}}
 @media(max-width:640px){.clinic-preparation-stats{grid-template-columns:repeat(2,minmax(0,1fr))}.clinic-preparation-dashboard-title h3{font-size:19px}.clinic-preparation-workbook,.clinic-preparation-side-card{padding:10px}.clinic-preparation-dashboard{gap:9px}}
+
+/* Acceso individual a Entre Sesiones: mantiene la identidad visual de Gestión clínica. */
+.clinic-portal-access{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin:12px 0 16px;padding:15px 18px;background:#fff;border:1px solid #d6e5ed;border-radius:12px}
+.clinic-portal-access-copy{flex:1 1 270px;min-width:0}
+.clinic-portal-access-copy strong{display:block;color:#173A5E;font-size:15px;font-weight:750}
+.clinic-portal-access-status{display:inline-block;margin:8px 0 4px;padding:5px 10px;border-radius:20px;background:#e9f5f2;color:#116557;font-size:13px;font-weight:700}
+.clinic-portal-access-status[data-state="disabled"]{background:#f5eae7;color:#8d3d34}
+.clinic-portal-access-status[data-state="archived"]{background:#eff1f4;color:#566370}
+.clinic-portal-access-note{margin:3px 0 0;color:#536e78;font-size:12px;line-height:1.5}
+.clinic-portal-access>button{flex:0 0 auto;min-height:40px}
+@media(max-width:640px){.clinic-portal-access{align-items:stretch;padding:13px}.clinic-portal-access>button{width:100%}}
