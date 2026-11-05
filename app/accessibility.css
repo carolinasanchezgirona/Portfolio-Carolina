@@ -120,3 +120,24 @@
 @media(max-width:680px){
   .site-crisis-note-inner{font-size:.76rem;}
 }
+
+/* CTA adaptados a la paleta original, conservando estados de foco visibles. */
+.editorial-btn-primary,
+.editorial-site .nav a.nav-cta,
+.article-cta a,
+.booking-submit,
+.calendar-day.is-selected,
+.time-option:hover,
+.time-option.is-selected {
+  background:#708793!important;
+  border-color:#708793!important;
+  color:#fff!important;
+}
+.editorial-btn-primary:hover,
+.editorial-site .nav a.nav-cta:hover,
+.article-cta a:hover,
+.booking-submit:hover:not(:disabled){
+  background:#809DA8!important;
+  border-color:#809DA8!important;
+  color:#243840!important;
+}
