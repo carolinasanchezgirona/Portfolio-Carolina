@@ -20,9 +20,7 @@
 
 :where(button,input,select,textarea){font:inherit;}
 
-/* Keep #11A6C2 as the bright brand accent, but use this darker companion
-   for normal-size text and filled controls. It clears WCAG AA on white and
-   warm off-white backgrounds. */
+/* Text accents use a high-contrast slate companion to the CS palette. */
 .editorial-eyebrow,
 .editorial-role,
 .editorial-card-link,
@@ -53,27 +51,6 @@
 .privacy-check a,
 .form-message-success{
   color:#405A65!important;
-}
-
-.editorial-btn-primary,
-.editorial-site .nav a.nav-cta,
-.article-cta a,
-.booking-submit,
-.calendar-day.is-selected,
-.time-option:hover,
-.time-option.is-selected{
-  background:#405A65!important;
-  border-color:#405A65!important;
-  color:#fff!important;
-}
-
-.editorial-btn-primary:hover,
-.editorial-site .nav a.nav-cta:hover,
-.article-cta a:hover,
-.booking-submit:hover:not(:disabled){
-  background:#304750!important;
-  border-color:#304750!important;
-  color:#fff!important;
 }
 
 /* The Dememoria block now uses the darker brand teal. Light text restores
