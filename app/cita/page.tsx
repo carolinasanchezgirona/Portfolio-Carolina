@@ -107,7 +107,7 @@ export default function BookingPage() {
           <p className="form-help">Todos los campos mostrados son obligatorios. No incluyas información clínica ni el motivo de consulta en este formulario.</p>
 
           <div className="booking-privacy" role="note" aria-label="Información básica sobre protección de datos">
-            <strong>Protección de datos.</strong> Responsable: Carolina Sánchez Girona (Dememoria).
+            <strong>Protección de datos.</strong> Responsable: Carolina Sánchez Girona.
             Finalidad: gestionar tu reserva y comunicarnos contigo. Base jurídica: gestión de tu solicitud de cita
             (art. 6.1.b del RGPD). Destinatarios: proveedores tecnológicos necesarios y organismos cuando exista
             obligación legal; pueden existir transferencias internacionales con garantías.
@@ -126,7 +126,7 @@ export default function BookingPage() {
         </form>
       </section>
 
-      <footer className="editorial-footer booking-footer"><div className="editorial-wrap editorial-footer-inner"><div><p className="editorial-footer-brand">Carolina Sánchez | Psicóloga</p><p>Dememoria · Consulta de Psicología y Neuropsicología</p><LegalLinks /></div><div><p>Arenys de Mar · Atención online</p><p>© 2026 Carolina Sánchez Girona</p></div></div></footer>
+      <footer className="editorial-footer booking-footer"><div className="editorial-wrap editorial-footer-inner"><div><p className="editorial-footer-brand">Carolina Sánchez | Psicóloga</p><p>Consulta de Psicología Sanitaria y Neuropsicología</p><LegalLinks /></div><div><p>Arenys de Mar · Atención online</p><p>© 2026 Carolina Sánchez Girona</p></div></div></footer>
 
       <Script src="/booking.js?v=20261018-captacion-1" strategy="afterInteractive" />
       <Script src="/booking-calendar.js?v=20260913-calendar-1" strategy="afterInteractive" />
