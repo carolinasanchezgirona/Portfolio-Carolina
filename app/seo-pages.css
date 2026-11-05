@@ -1,6 +1,6 @@
 .seo-hero{padding:58px 0 54px;border-bottom:1px solid var(--e-line);}
 .seo-hero-inner{max-width:820px;}
-.seo-breadcrumbs{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:0 0 18px;color:#81796e;font-size:.78rem;}
+.seo-breadcrumbs{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:0 0 18px;color:#617680;font-size:.78rem;}
 .seo-breadcrumbs a{color:var(--e-teal);text-decoration:none;}
 .seo-breadcrumbs a:hover{text-decoration:underline;}
 .seo-hero h1{max-width:18ch;font-size:clamp(2.65rem,5vw,4.45rem);line-height:1.03;letter-spacing:-.035em;}
@@ -32,14 +32,14 @@
 .seo-related{display:grid;gap:8px;margin-top:14px;}
 .seo-related a{color:var(--e-teal);font-size:.88rem;text-decoration:none;overflow-wrap:anywhere;}
 .seo-related a:hover{text-decoration:underline;}
-.seo-authority{background:#F3F8F8;}
+.seo-authority{background:#E3EBEE;}
 .seo-authority-grid{display:grid;grid-template-columns:.8fr 1.2fr;gap:56px;align-items:start;}
 .seo-authority-copy p{margin:0;color:var(--e-ink-soft);line-height:1.7;}
 .seo-authority-copy p+p{margin-top:14px;}
 .seo-authority-links{display:grid;gap:10px;margin-top:18px;}
 .seo-authority-links a{color:var(--e-teal);font-size:.88rem;text-decoration:none;overflow-wrap:anywhere;}
 .seo-authority-links a:hover{text-decoration:underline;}
-.seo-local-note{margin-top:18px;color:#81796e;font-size:.84rem;line-height:1.6;}
+.seo-local-note{margin-top:18px;color:#617680;font-size:.84rem;line-height:1.6;}
 .editorial-service-card .editorial-card-link{display:inline-flex;margin-top:18px;color:var(--e-teal);font-size:.86rem;font-weight:600;text-decoration:none;}
 .editorial-service-card .editorial-card-link:hover{text-decoration:underline;}
 .editorial-site iframe[title^="Mapa de Dememoria"]{display:block;width:100%;max-width:100%;}
@@ -65,7 +65,7 @@
 
 /* Retrato en la explicación del enfoque clínico. */
 /* El archivo actual es de 540 px. Limitar su ampliación hasta disponer del original de alta resolución. */
-.seo-professional-photo{width:100%;max-width:360px;margin:24px 0 26px;overflow:hidden;border-radius:16px;background:#f1f3f1}
+.seo-professional-photo{width:100%;max-width:360px;margin:24px 0 26px;overflow:hidden;border-radius:16px;background:#EDEDED}
 .seo-professional-photo img{display:block;width:100%;height:auto;aspect-ratio:2/3;object-fit:cover}
 
 /* Fotografías reales de la consulta: proporciones sin recortes forzados y carga diferida. */
