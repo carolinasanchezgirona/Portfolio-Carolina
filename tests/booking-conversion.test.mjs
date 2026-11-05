@@ -39,11 +39,13 @@ test("los eventos de conversión no añaden datos identificativos", () => {
   assert.match(analytics, /consent === "accepted"/);
 });
 
-test("el botón móvil deja libres las preferencias de cookies", () => {
+test("la reserva sigue accesible en la navegación sin botón fijo en móviles", () => {
+  const shell = get("app/components/site-shell.tsx");
   const style = get("app/components/conversion.css");
-  assert.match(style, /mobile-booking-shortcut/);
-  assert.match(style, /analytics-consent-settings/);
-  assert.match(style, /analytics-consent\)/);
+  assert.match(shell, /className="nav-cta site-booking-cta" href="\/cita\/"/);
+  assert.match(shell, /className="site-mobile-booking" href="\/cita\/"/);
+  assert.doesNotMatch(shell, /mobile-booking-shortcut/);
+  assert.doesNotMatch(style, /mobile-booking-shortcut/);
 });
 
 test("el panel de marketing muestra recuentos sin solicitar datos personales", () => {
