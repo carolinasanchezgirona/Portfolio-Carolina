@@ -1,16 +1,15 @@
-"""End-to-end browser test of the exported Entre Sesiones mood evolution chart.
+"""Mobile browser regression for Entre Sesiones after retiring the Wellness tab.
 
-Uses the real compiled React page, but all session/profile responses and mood
-records are fictional and intercepted locally. It never contacts patient APIs.
+Loads the exported patient portal with fictional, intercepted responses. Verifies
+that an old Wellness URL safely resolves to Today and that the current patient
+navigation works on narrow screens without accessing real patient APIs.
 """
 from __future__ import annotations
 
-from datetime import datetime, timedelta
 from functools import partial
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from threading import Thread
-from zoneinfo import ZoneInfo
 import json
 import shutil
 
@@ -18,11 +17,10 @@ from playwright.sync_api import sync_playwright
 
 ROOT = Path(__file__).resolve().parents[1]
 OUTPUT = ROOT / "out"
-SCOPE = "0123456789abcdef01234567"
 
 
-def check(value, message):
-    if not value:
+def check(condition, message):
+    if not condition:
         raise AssertionError(message)
 
 
@@ -36,23 +34,14 @@ def launch_options():
 
 
 def run_browser(base):
-    date = datetime.now(ZoneInfo("Europe/Madrid")).date()
-    # Three invented days in a fortnight: two consecutive, one isolated.
-    entries = [
-        {"date": (date-timedelta(days=9)).isoformat(), "rating": 2, "energy": 3, "energy_scale": 5},
-        {"date": (date-timedelta(days=8)).isoformat(), "rating": 4, "energy": 1, "energy_scale": 5},
-        {"date": date.isoformat(), "rating": 5, "energy": 1, "energy_scale": 5},
-    ]
-    scope_key = "wellness_mood_checkins_v1:" + SCOPE
     with sync_playwright() as p:
         browser = p.chromium.launch(**launch_options())
         for width in (360, 390):
-            context = browser.new_context(viewport={"width": width, "height": 800},
+            context = browser.new_context(
+                viewport={"width": width, "height": 800},
                 device_scale_factor=2, is_mobile=True, has_touch=True,
-                locale="es-ES", timezone_id="Europe/Madrid")
-            context.add_init_script(
-                "localStorage.setItem(" + json.dumps(scope_key) + ", " +
-                json.dumps(json.dumps(entries, ensure_ascii=False)) + ");")
+                locale="es-ES", timezone_id="Europe/Madrid",
+            )
             page = context.new_page()
             errors = []
             page.on("pageerror", lambda error: errors.append(str(error)))
@@ -66,7 +55,7 @@ def run_browser(base):
                     }))
                 elif "/api/patient-portal/preferences" in url:
                     route.fulfill(status=200, content_type="application/json", body=json.dumps({
-                        "storage_scope": SCOPE, "avatar_id": "adult-woman"
+                        "storage_scope": "0123456789abcdef01234567", "avatar_id": "adult-woman"
                     }))
                 elif "/api/" in url:
                     route.fulfill(status=401, content_type="application/json", body='{"error":"ficticio"}')
@@ -76,64 +65,27 @@ def run_browser(base):
             page.route("**/api/**", intercept)
             page.goto(base + "/entre-sesiones/app/espacio/?vista=wellness",
                       wait_until="domcontentloaded", timeout=30000)
-            page.locator(".mood-evolution-scroll svg").wait_for(timeout=20000)
-            page.locator(".mood-chart-point").first.wait_for()
-            check(page.locator(".mood-periods button[aria-pressed=true]").inner_text() == "90 días",
-                  "Default period should show the complete 90-day history")
-            page.get_by_role("button", name="14 días", exact=True).click()
-            check(page.locator(".mood-periods button[aria-pressed=true]").inner_text() == "14 días",
-                  "Selected period does not show the scattered fortnight")
+            page.locator("#space-shell").wait_for(state="visible", timeout=20000)
 
-            plot = page.locator(".mood-evolution-scroll")
-            # ResizeObserver commits the physical mobile width on the next frame.
-            page.wait_for_function("""() => {
-                const el = document.querySelector('.mood-evolution-scroll');
-                const svg = el?.querySelector('svg');
-                return el && svg && svg.getBoundingClientRect().width <= el.clientWidth + 2;
-            }""", timeout=6000)
-            check(page.locator(".mood-chart-point").count() == 3,
-                  "Three synthetic non-daily mood records were not plotted")
-            # Only 9 and 8 days ago are consecutive; today remains an isolated point.
-            check(page.locator(".mood-evolution-scroll polyline").count() == 2,
-                  "Lines should connect only consecutive dates without inventing gaps")
-            rects = page.evaluate("""() => {
-              const viewport = document.querySelector('.mood-evolution-scroll').getBoundingClientRect();
-              const points = [...document.querySelectorAll('.mood-chart-point')].map(node => {
-                const marker = node.querySelector('circle[stroke="#078e88"]');
-                const shape = marker || node.querySelector('circle');
-                const rect = shape.getBoundingClientRect();
-                return { left: rect.left, right: rect.right, width: rect.width };
-              });
-              return {
-                left: viewport.left, right: viewport.right,
-                scrollWidth: document.querySelector('.mood-evolution-scroll').scrollWidth,
-                clientWidth: document.querySelector('.mood-evolution-scroll').clientWidth,
-                points
-              };
-            }""")
-            check(rects["scrollWidth"] <= rects["clientWidth"]+2,
-                  "Fortnight chart still clips values behind horizontal scrolling")
-            check(all(point["width"] >= 8 and point["left"] >= rects["left"]-2 and
-                      point["right"] <= rects["right"]+2 for point in rects["points"]),
-                  "Mood dot is off-screen or too small on mobile: " + str(rects))
-            check(not errors, "Compiled React page errors: " + str(errors))
-            print(f"PASS {width}px: scattered records visible without horizontal scroll; "
-                  "2 distinct day-series and isolated point, no API data")
+            check(page.locator('[data-space-panel="today"]').is_visible(),
+                  "Legacy Wellness URL must fall back to the Today view")
+            check(page.locator('[data-space-panel="wellness"]').count() == 0,
+                  "Retired Wellness panel is still part of the patient UI")
+            check(page.locator("#wellness-interactive").count() == 0,
+                  "Retired interactive Wellness tools are still visible")
+            nav = page.locator(".esapp-bottom-nav")
+            nav.wait_for(state="visible", timeout=10000)
+            check(nav.locator("a").count() == 3,
+                  "Mobile patient navigation must have only Inicio, Mi terapia and Cuenta")
 
-            page.get_by_role("button", name="7 días").click()
-            check(page.locator(".mood-chart-point").count() == 1,
-                  "Single-day week should show one standalone mood dot")
-            check(page.locator(".mood-evolution-scroll polyline").count() == 0,
-                  "Single isolated day falsely connected to an empty date")
-            print(f"PASS {width}px: one check-in remains visible as a dot without a fictional line")
+            nav.locator('a[href*="vista=terapia"]').click()
+            page.locator('[data-space-panel="therapy"]').wait_for(state="visible", timeout=5000)
+            nav.locator('a[href*="vista=configuracion"]').click()
+            page.locator('[data-space-panel="account"]').wait_for(state="visible", timeout=5000)
 
-            page.get_by_role("button", name="30 días").click()
-            page.wait_for_function(
-                "() => {const el=document.querySelector('.mood-evolution-scroll'); return el.scrollLeft > 0;}",
-                timeout=5000)
-            check(page.locator(".mood-chart-point").count() == 3,
-                  "Switching to 30 days dropped valid check-ins")
-            print(f"PASS {width}px: 30-day chart starts with latest dates visible")
+            check(not errors, "Compiled portal JavaScript errors: " + str(errors))
+            print(f"PASS {width}px: retired Wellness URL falls back to Today; "
+                  "three-tab mobile navigation works with fictional patient data")
             context.close()
         browser.close()
 
@@ -150,4 +102,4 @@ if __name__ == "__main__":
     finally:
         server.shutdown()
         server.server_close()
-    print("PASS mood chart: no patient data accessed.")
+    print("PASS patient mobile navigation: no real patient API data accessed.")
