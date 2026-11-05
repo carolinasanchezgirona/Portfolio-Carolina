@@ -121,10 +121,10 @@ export default function HomePage() {
         <div className="editorial-wrap">
           <div className="editorial-section-head">
             <p className="editorial-section-eyebrow">Cómo trabajo</p>
-            <h2 id="metodo-title">Cada historia necesita una valoración propia.</h2>
+            <h2 id="metodo-title">Evaluar, comprender y acompañar.</h2>
             <p className="editorial-method-intro">
-              Cada dificultad tiene una historia y un contexto. Escuchar, evaluar y formular hipótesis
-              clínicas permite definir objetivos de intervención ajustados a cada persona.
+              El proceso comienza escuchando el motivo de consulta y comprendiendo su contexto.
+              A partir de la evaluación clínica, definimos objetivos y revisamos la evolución.
             </p>
           </div>
 
@@ -142,19 +142,19 @@ export default function HomePage() {
             <div className="editorial-method-list" aria-label="Fases del proceso clínico">
               <div className="editorial-method-item">
                 <span className="editorial-method-number" aria-hidden="true">01</span>
-                <div><h3>Comprender</h3><p>Historia, motivo de consulta y contexto personal.</p></div>
+                <div><h3>Comprender</h3><p>Explorar el motivo de consulta, la historia clínica y el contexto.</p></div>
               </div>
               <div className="editorial-method-item">
                 <span className="editorial-method-number" aria-hidden="true">02</span>
-                <div><h3>Formular</h3><p>Integrar la información y elaborar hipótesis clínicas.</p></div>
+                <div><h3>Formular</h3><p>Integrar los datos y formular hipótesis clínicas fundamentadas.</p></div>
               </div>
               <div className="editorial-method-item">
                 <span className="editorial-method-number" aria-hidden="true">03</span>
-                <div><h3>Intervenir</h3><p>Definir objetivos y estrategias ajustadas al caso.</p></div>
+                <div><h3>Intervenir</h3><p>Acordar objetivos y seleccionar intervenciones ajustadas.</p></div>
               </div>
               <div className="editorial-method-item">
                 <span className="editorial-method-number" aria-hidden="true">04</span>
-                <div><h3>Revisar</h3><p>Evaluar los cambios y adaptar los siguientes pasos.</p></div>
+                <div><h3>Revisar</h3><p>Revisar la evolución y ajustar el plan cuando sea necesario.</p></div>
               </div>
             </div>
           </div>
@@ -210,13 +210,14 @@ export default function HomePage() {
             <p className="editorial-role">Psicóloga General Sanitaria · Neuropsicóloga</p>
             <div className="editorial-about-copy">
               <p>
-                Mi práctica integra psicología sanitaria y neuropsicología clínica, especialmente en
-                adultos, deterioro cognitivo y demencias. Trabajo desde la evaluación estructurada,
-                el razonamiento clínico y unos objetivos terapéuticos ajustados a cada persona.
+                Trabajo en psicología sanitaria y neuropsicología clínica con personas adultas.
+                Mi experiencia incluye la evaluación de la memoria, el deterioro cognitivo
+                y las demencias. Integro entrevista clínica, evaluación estructurada y
+                análisis del funcionamiento cotidiano para orientar cada intervención.
               </p>
               <p>
-                También participo en divulgación profesional, con publicaciones en la revista PsiAra
-                del Col·legi Oficial de Psicologia de Catalunya.
+                Participo también en divulgación profesional y he publicado en PsiAra,
+                la revista del Col·legi Oficial de Psicologia de Catalunya.
               </p>
             </div>
             <a className="editorial-about-more" href="/sobre-mi/">Conocer mi trayectoria profesional →</a>
