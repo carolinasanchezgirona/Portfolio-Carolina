@@ -258,37 +258,6 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="editorial-section home-question-card" aria-labelledby="home-question-title">
-        <div className="editorial-wrap home-question-grid">
-          <div>
-            <p className="editorial-section-eyebrow">Un espacio para tus dudas</p>
-            <h2 id="home-question-title">Tu Consulta</h2>
-            <figure className="home-question-photo">
-              <Image
-                src="/carolina-sanchez-tu-consulta-2026.avif"
-                alt="Carolina Sánchez, psicóloga y neuropsicóloga, frente al ordenador en un espacio luminoso"
-                width={640}
-                height={640}
-                sizes="(max-width: 680px) calc(100vw - 36px), (max-width: 920px) 370px, 340px"
-                loading="lazy"
-              />
-            </figure>
-          </div>
-          <div className="home-question-copy">
-            <p>
-              Puedes enviarme una pregunta general sobre psicología, relaciones, memoria o neuropsicología. Revisaré
-              las consultas y publicaré respuestas claras y profesionales, siempre de forma anonimizada.
-            </p>
-            <div className="home-question-points" aria-label="Características del buzón">
-              <span><strong>Privado</strong>Tu pregunta original no se publica.</span>
-              <span><strong>Revisado</strong>Cada respuesta pasa por revisión profesional.</span>
-              <span><strong>Divulgativo</strong>Orientación general, no diagnóstico individual.</span>
-            </div>
-            <a className="editorial-btn editorial-btn-primary home-question-link" href="/pregunta-a-carolina/">Enviar una pregunta <Arrow /></a>
-          </div>
-        </div>
-      </section>
-
       <section className="editorial-section" aria-labelledby="podcast-home-title">
         <div className="editorial-wrap editorial-podcast-card">
           <p className="editorial-section-eyebrow editorial-podcast-eyebrow">Podcast · Psicología Incómoda</p>
