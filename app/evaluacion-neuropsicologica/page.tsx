@@ -163,7 +163,7 @@ export default function NeuropsychAssessmentPage() {
 
       <footer className="editorial-footer">
         <div className="editorial-wrap editorial-footer-inner">
-          <div><p className="editorial-footer-brand">Carolina Sánchez | Psicóloga</p><p>Dememoria · Consulta de Psicología y Neuropsicología</p></div>
+          <div><p className="editorial-footer-brand">Carolina Sánchez | Psicóloga</p><p>Consulta de Psicología Sanitaria y Neuropsicología</p></div>
           <div><p>Arenys de Mar · Atención online</p><p>© 2026 Carolina Sánchez Girona</p></div>
         </div>
       </footer>
