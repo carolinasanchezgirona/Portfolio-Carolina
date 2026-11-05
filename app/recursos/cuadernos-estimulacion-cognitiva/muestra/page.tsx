@@ -6,7 +6,7 @@ export const metadata: Metadata = {
   description: "Prueba dos ejercicios originales imprimibles de estimulación cognitiva para adultos: atención selectiva con doble regla y planificación de recados cotidianos.",
   alternates: { canonical: "/recursos/cuadernos-estimulacion-cognitiva/muestra/" },
   openGraph: {
-    title: "Muestra gratuita | Cuadernos Dememòria",
+    title: "Muestra gratuita | Cuadernos Carolina Sánchez Girona",
     description: "Dos actividades completas y corregidas de atención y planificación, preparadas para imprimir.",
     url: "https://carolinasanchezgirona.com/recursos/cuadernos-estimulacion-cognitiva/muestra/",
     type: "article",
@@ -48,7 +48,7 @@ export default function MuestraPage() {
       <div className="editorial-wrap cog-sample">
         <div className="cog-sample-top">
           <a className="editorial-btn editorial-btn-secondary" href="/recursos/cuadernos-estimulacion-cognitiva/">← Volver a la colección</a>
-          <span className="cog-sample-eyebrow">Dememòria · Muestra sin registro</span>
+          <span className="cog-sample-eyebrow">Carolina Sánchez Girona · Muestra sin registro</span>
         </div>
         <div className="cog-sample-intro">
           <p className="cog-eyebrow">Material de demostración · No estandarizado</p>
