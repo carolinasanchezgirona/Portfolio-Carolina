@@ -1183,7 +1183,7 @@
 .editorial-site .editorial-about-grid.editorial-about-refined {
   display:grid;
   grid-template-columns:minmax(240px,.72fr) minmax(0,1.28fr);
-  grid-template-areas:"portrait content";
+  grid-template-areas:"content portrait";
   gap:clamp(35px,5vw,80px);
   align-items:center;
 }
@@ -1251,6 +1251,115 @@
   }
   .editorial-site .editorial-about-refined .editorial-about-photo{
     width:min(100%,310px);
+    justify-self:start;
+  }
+}
+
+
+/* Revisión focalizada: ritmo tipográfico y columnas de las dos secciones clínicas.
+   El texto y la foto de Sobre mí permanecen a izquierda y derecha, respectivamente. */
+.editorial-site .editorial-method .editorial-section-head{
+  max-width:750px;
+  margin-bottom:30px;
+}
+.editorial-site .editorial-method .editorial-section-head h2{
+  max-width:29ch;
+}
+.editorial-site .editorial-method .editorial-method-intro{
+  max-width:66ch;
+  font-size:1rem;
+  line-height:1.62;
+}
+.editorial-site .editorial-method .editorial-method-editorial-layout{
+  display:grid;
+  grid-template-columns:minmax(0,310px) minmax(0,1fr);
+  align-items:center;
+  gap:clamp(30px,5vw,70px);
+}
+.editorial-site .editorial-method .editorial-method-portrait{
+  margin:0;
+  max-width:310px;
+  width:100%;
+  justify-self:start;
+}
+.editorial-site .editorial-method .editorial-method-portrait img{
+  width:100%;
+  max-height:390px;
+  aspect-ratio:4/5;
+  object-fit:cover;
+  object-position:center 30%;
+}
+.editorial-site .editorial-method .editorial-method-list{
+  list-style:none;
+  border-top:1px solid #BFCBD0;
+  min-width:0;
+}
+.editorial-site .editorial-method .editorial-method-item{
+  display:grid;
+  grid-template-columns:38px minmax(0,1fr);
+  gap:17px;
+  padding:15px 0;
+  border-bottom:1px solid #BFCBD0;
+}
+.editorial-site .editorial-method .editorial-method-item h3{
+  font-size:1.4rem;
+  line-height:1.2;
+  margin:0 0 4px;
+}
+.editorial-site .editorial-method .editorial-method-item p{
+  font-size:.96rem;
+  line-height:1.5;
+}
+.editorial-site .editorial-about-grid.editorial-about-refined{
+  grid-template-areas:"content portrait";
+  grid-template-columns:minmax(0,1.2fr) minmax(250px,.8fr);
+  gap:clamp(38px,5.2vw,84px);
+  align-items:center;
+}
+.editorial-site .editorial-about-refined .editorial-about-content{
+  max-width:610px;
+}
+.editorial-site .editorial-about-refined .editorial-about-content h2{
+  font-size:clamp(2.05rem,2.7vw,2.45rem);
+}
+.editorial-site .editorial-about-refined .editorial-role{margin:10px 0 20px;}
+.editorial-site .editorial-about-refined .editorial-about-copy{max-width:56ch;}
+.editorial-site .editorial-about-refined .editorial-about-copy p{
+  font-size:1rem;
+  line-height:1.6;
+}
+.editorial-site .editorial-about-refined .editorial-about-photo{
+  max-width:325px;
+  justify-self:center;
+}
+.editorial-site .editorial-about-refined .editorial-about-photo img{
+  max-height:410px;
+  aspect-ratio:4/5;
+  object-fit:cover;
+}
+@media (max-width:900px){
+  .editorial-site .editorial-method .editorial-method-editorial-layout{
+    grid-template-columns:minmax(0,255px) minmax(0,1fr);
+    gap:25px;
+  }
+  .editorial-site .editorial-about-grid.editorial-about-refined{
+    grid-template-columns:minmax(0,1fr) minmax(220px,.65fr);
+    gap:28px;
+  }
+}
+@media (max-width:720px){
+  .editorial-site .editorial-method .editorial-method-editorial-layout{
+    grid-template-columns:1fr;
+    gap:24px;
+  }
+  .editorial-site .editorial-method .editorial-method-portrait{max-width:240px;}
+  .editorial-site .editorial-about-grid.editorial-about-refined{
+    grid-template-columns:1fr;
+    grid-template-areas:"content" "portrait";
+    gap:24px;
+  }
+  .editorial-site .editorial-about-refined .editorial-about-photo{
+    width:min(100%,280px);
     justify-self:start;
   }
 }
