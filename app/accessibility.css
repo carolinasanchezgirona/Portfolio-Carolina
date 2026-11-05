@@ -14,7 +14,7 @@
 .skip-link:focus{transform:translateY(0);}
 
 :where(a,button,input,select,textarea,summary,[tabindex]):focus-visible{
-  outline:3px solid #405A65;
+  outline:3px solid #708793;
   outline-offset:3px;
 }
 
@@ -50,7 +50,7 @@
 .first-visit-note strong,
 .privacy-check a,
 .form-message-success{
-  color:#405A65!important;
+  color:#304750!important;
 }
 
 /* The Dememoria block now uses the darker brand teal. Light text restores
@@ -65,14 +65,14 @@
 .editorial-step span{color:#536B77!important;}
 
 .form-field input:focus{
-  border-color:#405A65!important;
+  border-color:#708793!important;
   box-shadow:0 0 0 3px rgba(64,90,101,.16)!important;
 }
 
 .site-crisis-note{
   border-top:1px solid #D9DDDE;
   background:#F2EFE7;
-  color:#405A65;
+  color:#304750;
 }
 .site-crisis-note-inner{
   width:min(1040px,calc(100% - 36px));
@@ -82,7 +82,7 @@
   line-height:1.55;
 }
 .site-crisis-note p{margin:0;}
-.site-crisis-note a{color:#405A65;text-decoration:underline;text-underline-offset:2px;}
+.site-crisis-note a{color:#304750;text-decoration:underline;text-underline-offset:2px;}
 
 @media (prefers-reduced-motion: reduce){
   html{scroll-behavior:auto!important;}
@@ -98,9 +98,9 @@
   .site-crisis-note-inner{font-size:.76rem;}
 }
 
-/* Contraste accesible para botones: el azul pizarra #708793 con
-   texto blanco no alcanzaba 4,5:1 para texto normal.
-   Se usa su tono oscuro complementario, ya empleado en la tipografía. */
+/* Botones: usar exactamente los colores oficiales de Carolina.
+   Base azul pizarra #708793; hover azul niebla #809DA8.
+   Contraste de la tipografía y tamaño a revisar en controles pequeños. */
 .editorial-btn-primary,
 .editorial-site .nav a.nav-cta,
 .global-shell .site-booking-cta,
@@ -109,8 +109,8 @@
 .calendar-day.is-selected,
 .time-option:hover,
 .time-option.is-selected{
-  background:#405A65!important;
-  border-color:#405A65!important;
+  background:#708793!important;
+  border-color:#708793!important;
   color:#fff!important;
 }
 .editorial-btn-primary:hover,
@@ -118,8 +118,8 @@
 .global-shell .site-booking-cta:hover,
 .article-cta a:hover,
 .booking-submit:hover:not(:disabled){
-  background:#304750!important;
-  border-color:#304750!important;
+  background:#809DA8!important;
+  border-color:#809DA8!important;
   color:#fff!important;
 }
 

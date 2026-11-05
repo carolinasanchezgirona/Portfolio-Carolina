@@ -32,7 +32,7 @@
 .seo-related{display:grid;gap:8px;margin-top:14px;}
 .seo-related a{color:var(--e-teal);font-size:.88rem;text-decoration:none;overflow-wrap:anywhere;}
 .seo-related a:hover{text-decoration:underline;}
-.seo-authority{background:#E3EBEE;}
+.seo-authority{background:#EDEDED;}
 .seo-authority-grid{display:grid;grid-template-columns:.8fr 1.2fr;gap:56px;align-items:start;}
 .seo-authority-copy p{margin:0;color:var(--e-ink-soft);line-height:1.7;}
 .seo-authority-copy p+p{margin-top:14px;}
@@ -101,7 +101,7 @@
   margin:19px 0 0;
   font-size:1.075rem;
   line-height:1.65;
-  color:#405A65;
+  color:#304750;
 }
 .editorial-site.psychology-page .psychology-hero-facts{
   display:flex;
@@ -140,11 +140,11 @@
 }
 .editorial-site.psychology-page .psychology-section-heading>p:last-child{
   margin:0;
-  color:#405A65;
+  color:#304750;
   font-size:1rem;
   line-height:1.6;
 }
-.editorial-site.psychology-page .psychology-reasons{background:#E3EBEE;}
+.editorial-site.psychology-page .psychology-reasons{background:#EDEDED;}
 .editorial-site.psychology-page .psychology-reason-grid{
   display:grid;
   grid-template-columns:repeat(3,minmax(0,1fr));
@@ -172,14 +172,14 @@
 }
 .editorial-site.psychology-page .psychology-reason p{
   margin:0;
-  color:#405A65;
+  color:#304750;
   line-height:1.55;
   font-size:.94rem;
 }
 .editorial-site.psychology-page .psychology-reason a{
   margin-top:auto;
   padding-top:18px;
-  color:#405A65;
+  color:#304750;
   font-size:.82rem;
   line-height:1.45;
   font-weight:600;
@@ -222,7 +222,7 @@
 .editorial-site.psychology-page .psychology-approach-copy>p:not(.editorial-section-eyebrow){
   max-width:59ch;
   margin:0;
-  color:#405A65;
+  color:#304750;
   font-size:1rem;
   line-height:1.65;
 }
@@ -238,7 +238,7 @@
   gap:16px;
   padding:13px 0;
   border-bottom:1px solid #BFCBD0;
-  color:#405A65;
+  color:#304750;
   font-size:.94rem;
   line-height:1.5;
 }
@@ -246,7 +246,7 @@
 .editorial-site.psychology-page .psychology-approach-copy>.editorial-card-link{
   display:inline-flex;
   margin-top:20px;
-  color:#405A65;
+  color:#304750;
   font-weight:600;
   font-size:.9rem;
   text-decoration:none;
@@ -268,7 +268,7 @@
 .editorial-site.psychology-page .psychology-visit-grid>div:first-child>p:last-child{
   max-width:58ch;
   margin:0;
-  color:#405A65;
+  color:#304750;
   font-size:1rem;
   line-height:1.65;
 }
@@ -285,7 +285,7 @@
   border-bottom:1px solid #BFCBD0;
   font-size:.92rem;
   line-height:1.5;
-  color:#405A65;
+  color:#304750;
 }
 .editorial-site.psychology-page .psychology-visit-details strong{color:#304750;}
 .editorial-site.psychology-page .psychology-visit-details span{text-align:right;}

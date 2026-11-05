@@ -2,13 +2,13 @@
 
 :root {
   --clinical-primary: #708793;
-  --clinical-primary-dark: #405A65;
-  --clinical-primary-soft: #E3EBEE;
+  --clinical-primary-dark: #708793;
+  --clinical-primary-soft: #EDEDED;
   --clinical-data: #809DA8;
-  --clinical-data-dark: #526C78;
+  --clinical-data-dark: #708793;
   --clinical-data-soft: #EDEDED;
   --clinical-ink: #304750;
-  --clinical-text: #405A65;
+  --clinical-text: #304750;
   --clinical-muted: #617680;
   --clinical-border: #D9DDDE;
   --clinical-surface: #ffffff;

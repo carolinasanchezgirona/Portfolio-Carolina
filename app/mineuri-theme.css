@@ -1,16 +1,16 @@
 :root {
   --mineuri-primary: #708793;
-  --mineuri-primary-dark: #526C78;
-  --mineuri-primary-light: #E3EBEE;
+  --mineuri-primary-dark: #708793;
+  --mineuri-primary-light: #EDEDED;
   --mineuri-turquoise: #809DA8;
-  --mineuri-turquoise-light: #E3EBEE;
+  --mineuri-turquoise-light: #EDEDED;
   --mineuri-coral: #A0A0A0;
   --mineuri-coral-dark: #708793;
   --mineuri-coral-light: #EDEDED;
   --mineuri-yellow: #A0A0A0;
   --mineuri-yellow-light: #F2EFE7;
   --mineuri-ink: #304750;
-  --mineuri-text: #405A65;
+  --mineuri-text: #304750;
   --mineuri-muted: #617680;
   --mineuri-border: #D9DDDE;
   --mineuri-soft: #F2EFE7;
@@ -111,7 +111,7 @@ main {
   background:
     radial-gradient(circle at 88% 15%, rgba(112,135,147,.11), transparent 26%),
     radial-gradient(circle at 8% 86%, rgba(128,157,168,.10), transparent 27%),
-    linear-gradient(135deg, #ffffff 0%, #ffffff 54%, #E3EBEE 100%);
+    linear-gradient(135deg, #ffffff 0%, #ffffff 54%, #EDEDED 100%);
 }
 
 .eyebrow,
@@ -281,7 +281,7 @@ main {
 }
 
 .service-card-dark .service-note {
-  color: #E3EBEE;
+  color: #EDEDED;
 }
 
 .method-steps {
