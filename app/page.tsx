@@ -192,21 +192,19 @@ export default function HomePage() {
       </section>
 
       <section className="editorial-section editorial-local" aria-labelledby="local-title">
-        <div className="editorial-wrap editorial-local-grid">
-          <div>
+        <div className="editorial-wrap">
+          <div className="editorial-local-heading">
             <p className="editorial-section-eyebrow">Consulta en el Maresme</p>
             <h2 id="local-title">Psicología y neuropsicología en Arenys de Mar.</h2>
           </div>
-          <div className="editorial-local-copy">
-            <p>
-              La consulta está en Carrer Barcelona 8, Local, en Arenys de Mar. Puedes revisar cómo es la primera visita,
-              las áreas de atención y la información práctica antes de reservar.
-            </p>
+          <div className="editorial-local-grid">
             <a className="editorial-local-photo" href="/psicologa-arenys-de-mar/" aria-label="Ver fotografías de la consulta en Arenys de Mar">
-              <Image src="/consulta-carolina-sanchez-despacho.webp" alt="Interior de la consulta de psicología y neuropsicología de Carolina Sánchez en Arenys de Mar" width={1448} height={1086} sizes="(max-width: 680px) calc(100vw - 36px), (max-width: 900px) 560px, 480px" loading="lazy" />
+              <Image src="/consulta-carolina-sanchez-despacho.webp" alt="Interior de la consulta de psicología y neuropsicología de Carolina Sánchez en Arenys de Mar" width={1448} height={1086} sizes="(max-width: 680px) calc(100vw - 36px), (max-width: 900px) 560px, 520px" loading="lazy" />
             </a>
-            <div className="editorial-actions">
-              <a className="editorial-btn editorial-btn-secondary" href="/psicologa-arenys-de-mar/">Ver la consulta y cómo llegar <Arrow /></a>
+            <div className="editorial-local-copy">
+              <p>Mi consulta está en Carrer Barcelona 8, Local, en Arenys de Mar.</p>
+              <p>Un espacio para la atención psicológica, la evaluación neuropsicológica y el acompañamiento a personas adultas y familias.</p>
+              <a className="editorial-card-link" href="/psicologa-arenys-de-mar/">Ver la consulta y cómo llegar <Arrow /></a>
             </div>
           </div>
         </div>
