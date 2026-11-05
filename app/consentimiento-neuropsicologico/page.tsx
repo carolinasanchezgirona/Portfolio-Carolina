@@ -137,7 +137,7 @@ export default function NeuropsychologicalConsentPage() {
         <section>
           <h2>8. Consentimiento</h2>
           <p>Declaro haber leído y comprendido la información contenida en este documento. Se me han explicado los objetivos, beneficios, riesgos y limitaciones de la intervención neuropsicológica. He tenido la oportunidad de formular preguntas y todas han sido respondidas satisfactoriamente.</p>
-          <p>Autorizo voluntariamente a la consulta de Carolina Sánchez Girona y al profesional responsable a llevar a cabo la intervención neuropsicológica descrita.</p>
+          <p>Autorizo voluntariamente a Carolina Sánchez Girona, como profesional responsable a llevar a cabo la intervención neuropsicológica descrita.</p>
           <p><strong>Firma del paciente o representante legal</strong></p>
           <p>Firma: __________________________</p>
           <p>Fecha: __________________________</p>
