@@ -6,7 +6,7 @@
   transform:translateY(-140%);
   padding:10px 14px;
   border-radius:8px;
-  background:#1C2320;
+  background:#304750;
   color:#fff;
   font-weight:700;
   text-decoration:none;
@@ -14,7 +14,7 @@
 .skip-link:focus{transform:translateY(0);}
 
 :where(a,button,input,select,textarea,summary,[tabindex]):focus-visible{
-  outline:3px solid #087A8F;
+  outline:3px solid #405A65;
   outline-offset:3px;
 }
 
@@ -52,7 +52,7 @@
 .first-visit-note strong,
 .privacy-check a,
 .form-message-success{
-  color:#087A8F!important;
+  color:#405A65!important;
 }
 
 .editorial-btn-primary,
@@ -62,8 +62,8 @@
 .calendar-day.is-selected,
 .time-option:hover,
 .time-option.is-selected{
-  background:#087A8F!important;
-  border-color:#087A8F!important;
+  background:#405A65!important;
+  border-color:#405A65!important;
   color:#fff!important;
 }
 
@@ -71,31 +71,31 @@
 .editorial-site .nav a.nav-cta:hover,
 .article-cta a:hover,
 .booking-submit:hover:not(:disabled){
-  background:#066B7D!important;
-  border-color:#066B7D!important;
+  background:#304750!important;
+  border-color:#304750!important;
   color:#fff!important;
 }
 
 /* The Dememoria block now uses the darker brand teal. Light text restores
    AA contrast after that palette change. */
-.editorial-dememoria{color:#F8F5F0!important;}
-.editorial-dememoria h2{color:#F8F5F0!important;}
-.editorial-dememoria .editorial-section-eyebrow{color:#F8F5F0!important;}
-.editorial-dememoria p:last-child{color:#F8F5F0!important;}
+.editorial-dememoria{color:#F2EFE7!important;}
+.editorial-dememoria h2{color:#F2EFE7!important;}
+.editorial-dememoria .editorial-section-eyebrow{color:#F2EFE7!important;}
+.editorial-dememoria p:last-child{color:#F2EFE7!important;}
 
 /* Step numbers are small text, so they need the same stronger neutral used
    for other secondary copy. */
-.editorial-step span{color:#6F675D!important;}
+.editorial-step span{color:#536B77!important;}
 
 .form-field input:focus{
-  border-color:#087A8F!important;
-  box-shadow:0 0 0 3px rgba(8,122,143,.16)!important;
+  border-color:#405A65!important;
+  box-shadow:0 0 0 3px rgba(64,90,101,.16)!important;
 }
 
 .site-crisis-note{
-  border-top:1px solid #E4E0D8;
-  background:#FBF9F5;
-  color:#52605A;
+  border-top:1px solid #D9DDDE;
+  background:#F2EFE7;
+  color:#405A65;
 }
 .site-crisis-note-inner{
   width:min(1040px,calc(100% - 36px));
@@ -105,7 +105,7 @@
   line-height:1.55;
 }
 .site-crisis-note p{margin:0;}
-.site-crisis-note a{color:#087A8F;text-decoration:underline;text-underline-offset:2px;}
+.site-crisis-note a{color:#405A65;text-decoration:underline;text-underline-offset:2px;}
 
 @media (prefers-reduced-motion: reduce){
   html{scroll-behavior:auto!important;}
