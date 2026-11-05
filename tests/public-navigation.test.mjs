@@ -1,30 +1,28 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { readFileSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 
 const shell = readFileSync(new URL("../app/components/site-shell.tsx", import.meta.url), "utf8");
 const styles = readFileSync(new URL("../app/editorial.css", import.meta.url), "utf8");
+const sitemap = readFileSync(new URL("../app/sitemap.ts", import.meta.url), "utf8");
+const podcast = readFileSync(new URL("../app/podcast/page.tsx", import.meta.url), "utf8");
 
-test("main public menu uses the agreed architecture", () => {
+test("public navigation retains services and resources without Tu Consulta", () => {
   assert.match(shell, /<summary>Servicios <ChevronIcon \/>/);
-  assert.match(shell, /href="\/pregunta-a-carolina\/".*Tu Consulta<\/a>/);
-  assert.doesNotMatch(shell, /<summary>Recursos <ChevronIcon \/>/);
+  assert.match(shell, /<summary>Recursos <ChevronIcon \/>/);
   assert.match(shell, /href="\/sobre-mi\/"/);
   assert.match(shell, /href="\/mi-espacio\/"/);
   assert.match(shell, /site-booking-cta.*href="\/cita\/"/);
-  assert.doesNotMatch(shell, /const mainNavigation/);
+  assert.doesNotMatch(shell, /pregunta-a-carolina|Tu Consulta/);
 });
 
-test("service and editorial links remain, without promoting the resources section", () => {
-  for (const href of [
-    "/psicologia/", "/neuropsicologia/", "/residencias/",
-    "/articulos/", "/pregunta-a-carolina/"
-  ]) {
+test("public materials stay reachable without promoting the retired questions page", () => {
+  for (const href of ["/psicologia/", "/neuropsicologia/", "/articulos/", "/recursos/", "/podcast/"]) {
     assert.ok(shell.includes('href: "' + href + '"') || shell.includes('href="' + href + '"'), href);
   }
-  assert.doesNotMatch(shell, /resourceNavigation|resourcesActive/);
-  assert.doesNotMatch(shell, /href="\/recursos\/"/);
-  assert.doesNotMatch(shell, /href="\/suscribete\/"/);
+  assert.doesNotMatch(sitemap, /pregunta-a-carolina|questionsLastModified/);
+  assert.doesNotMatch(podcast, /pregunta-a-carolina|Tu Consulta/);
+  assert.equal(existsSync(new URL("../app/pregunta-a-carolina/page.tsx", import.meta.url)), false);
 });
 
 test("mobile navigation provides expandable groups and accessible touch targets", () => {
