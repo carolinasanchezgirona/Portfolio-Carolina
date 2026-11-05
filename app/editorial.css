@@ -771,3 +771,83 @@
   line-height:1.45;
   font-weight:650;
 }
+
+
+/* Dirección de arte editorial · segunda pasada (portada pública únicamente). */
+.editorial-site .editorial-hero{
+  padding-block:clamp(42px,5vw,72px);
+}
+.editorial-site .editorial-hero-grid{
+  grid-template-columns:minmax(0,1.15fr) minmax(270px,.75fr);
+  align-items:center;
+  gap:clamp(32px,5vw,76px);
+}
+.editorial-site .editorial-hero h1{
+  max-width:15ch;
+  font-size:clamp(2.8rem,4.65vw,4.8rem);
+  line-height:1.035;
+}
+.editorial-site .editorial-hero-statement{
+  max-width:35ch;
+  font-size:clamp(1.25rem,1.7vw,1.65rem);
+  line-height:1.28;
+}
+.editorial-site .editorial-hero .editorial-lead{
+  max-width:55ch;
+  line-height:1.64;
+  margin-top:16px;
+  margin-bottom:23px;
+}
+.editorial-site .editorial-hero .editorial-actions{margin-bottom:19px;}
+.editorial-site .editorial-hero .editorial-photo {
+  max-width:370px;
+  width:100%;
+  justify-self:end;
+}
+.editorial-site .editorial-hero .editorial-photo-image{
+  aspect-ratio:4/5;
+  width:100%;
+  object-fit:cover;
+  object-position:center 32%;
+  border-radius:12px;
+}
+.editorial-site .editorial-trust-grid>div{padding-block:15px;}
+.editorial-site .editorial-service-grid{gap:20px;}
+.editorial-site .editorial-service-card{
+  padding:clamp(22px,2.2vw,32px);
+  border-radius:12px;
+  border-color:#D9DDDE;
+}
+.editorial-site .editorial-service-card .editorial-card-hook{
+  max-width:32ch;
+  font-size:clamp(1.25rem,1.6vw,1.55rem);
+}
+.editorial-site .editorial-service-card .editorial-card-copy{
+  max-width:59ch;
+  font-size:.96rem;
+  line-height:1.64;
+}
+.editorial-site .editorial-about-photo img {
+  aspect-ratio:4/5;
+  object-fit:cover;
+  object-position:center 30%;
+  border-radius:12px;
+}
+.editorial-site .home-question-photo{max-width:310px; margin-top:20px;}
+.editorial-site .home-question-points span{padding:13px 15px;background:#F2EFE7;color:#405A65;}
+.editorial-site .editorial-podcast-card{background:#EDEDED;}
+.editorial-site .editorial-podcast-card h2{max-width:23ch!important;}
+.editorial-site .editorial-podcast-card>p:not(.editorial-section-eyebrow){max-width:58ch!important;}
+.editorial-site .editorial-closing-cta{background:#E3EBEE;}
+@media(max-width:900px){
+  .editorial-site .editorial-hero-grid{grid-template-columns:1fr;gap:28px;}
+  .editorial-site .editorial-hero .editorial-photo{max-width:390px;justify-self:start;}
+}
+@media(max-width:680px){
+  .editorial-site .editorial-hero{padding-block:36px 42px;}
+  .editorial-site .editorial-hero h1{font-size:clamp(2.3rem,10.5vw,3.2rem);}
+  .editorial-site .editorial-hero .editorial-photo{max-width:340px;}
+  .editorial-site .editorial-hero .editorial-photo-image{aspect-ratio:4/5;}
+  .editorial-site .editorial-trust-grid>div{padding-block:13px;}
+  .editorial-site .editorial-service-card{padding:23px;}
+}
