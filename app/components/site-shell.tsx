@@ -170,6 +170,7 @@ function SiteFooter() {
           <a href="/podcast/">Psicología Incómoda · Podcast</a>
           <a href="/mi-espacio/">Mi espacio</a>
           <a href="/psicologa-arenys-de-mar/">Psicóloga en Arenys de Mar</a>
+          <a href="/psicologa-maresme/">Psicóloga en el Maresme</a>
           <a href="/cita/">Pedir cita</a>
         </nav>
       </div>
