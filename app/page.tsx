@@ -88,12 +88,14 @@ export default function HomePage() {
               <h3>Psicología</h3>
               <p className="editorial-card-hook">Cuando lo que sientes empieza a afectar a tu vida.</p>
               <p className="editorial-card-copy">
-                <a href="/ansiedad/">Ansiedad</a> que interfiere en tu día a día, dificultades en las relaciones,
-                cambios en el estado de ánimo, <a href="/duelo/">pérdidas</a> o situaciones que te cuesta gestionar.
-                Trabajaremos para comprender lo que ocurre y definir objetivos terapéuticos concretos.
+                Atención a dificultades de <a href="/ansiedad/">ansiedad</a>, estado de ánimo,
+                relaciones, <a href="/duelo/">duelo</a> y cambios vitales. Un espacio para
+                comprender el malestar y trabajar con objetivos concretos.
               </p>
-              <p className="editorial-card-price">Sesión de psicología · 60 € / 60 minutos</p>
-              <a className="editorial-card-link" href="/psicologia/">Conocer el servicio de psicología →</a>
+              <div className="editorial-card-bottom">
+                <p className="editorial-card-price">60 € <span>· Sesión de 60 minutos</span></p>
+                <a className="editorial-card-link" href="/psicologia/">Conocer psicología →</a>
+              </div>
             </article>
 
             <article className="editorial-service-card editorial-service-coral" id="neuropsicologia">
@@ -102,10 +104,9 @@ export default function HomePage() {
               <h3>Neuropsicología</h3>
               <p className="editorial-card-hook">Cuando aparecen cambios en la memoria, la atención o la conducta.</p>
               <p className="editorial-card-copy">
-                ¿Olvidos cada vez más frecuentes o dificultades en tareas que antes eran sencillas?
-                Estudio los <a href="/problemas-de-memoria/">cambios cognitivos</a> y su repercusión cotidiana,
-                con especial atención al <a href="/deterioro-cognitivo/">deterioro cognitivo</a>,
-                las demencias y la orientación a familiares y cuidadores.
+                Evaluación de <a href="/problemas-de-memoria/">memoria</a>, atención, lenguaje y
+                funciones ejecutivas, así como de cambios cognitivos relacionados con distintas
+                condiciones clínicas. Estudio su repercusión en la vida cotidiana.
               </p>
               <div className="editorial-card-bottom">
                 <p className="editorial-card-price">75 € <span>· Sesión de 60 minutos</span></p>
