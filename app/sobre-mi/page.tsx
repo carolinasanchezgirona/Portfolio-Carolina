@@ -11,7 +11,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Carolina Sánchez Girona | Psicóloga General Sanitaria y Neuropsicóloga",
     description:
-      "Psicología General Sanitaria y Neuropsicología en Arenys de Mar. Clínica de adultos, deterioro cognitivo, demencias y evaluación neuropsicológica.",
+      "Psicología sanitaria y neuropsicología clínica de adultos en Arenys de Mar. Evaluación cognitiva, atención psicológica y acompañamiento individualizado.",
     url: "https://carolinasanchezgirona.com/sobre-mi/",
   },
 };
@@ -55,25 +55,13 @@ const profileSchema = {
 export default function AboutPage() {
   return (
     <main className="editorial-site">
-      <header className="site-header">
-        <a className="brand" href="/" aria-label="Carolina Sánchez, inicio">
-          <span className="brand-name">Carolina Sánchez</span>
-          <span className="brand-sub">Psicóloga · Neuropsicóloga</span>
-        </a>
-        <nav className="nav" aria-label="Navegación principal">
-          <a href="/psicologia/">Psicología</a>
-          <a href="/neuropsicologia/">Neuropsicología</a>
-          <a className="nav-cta" href="/cita/">Pedir cita</a>
-        </nav>
-      </header>
-
       <section className="seo-hero">
         <div className="editorial-wrap seo-hero-inner">
           <p className="seo-breadcrumbs"><a href="/">Inicio</a><span>·</span><span>Sobre mí</span></p>
           <p className="editorial-eyebrow">Psicóloga General Sanitaria · Neuropsicóloga</p>
           <h1>Carolina Sánchez Girona</h1>
           <p className="seo-lead">
-            Trabajo en psicología clínica de adultos y neuropsicología, con especial experiencia en evaluación cognitiva, deterioro cognitivo, demencias y acompañamiento psicológico. Mi forma de trabajar parte de comprender a la persona en su contexto, no solo de describir síntomas o puntuaciones.
+            Trabajo en psicología sanitaria y neuropsicología clínica con personas adultas. Atiendo dificultades emocionales y realizo evaluaciones de memoria, atención y otras funciones cognitivas, teniendo en cuenta el contexto y las necesidades de cada persona.
           </p>
           <div className="seo-actions">
             <a className="editorial-btn editorial-btn-primary" href="/cita/">Pedir cita</a>
@@ -87,7 +75,7 @@ export default function AboutPage() {
           <section>
             <h2>Trayectoria clínica</h2>
             <p>
-              Soy Psicóloga General Sanitaria y Neuropsicóloga. Mi trayectoria profesional se ha desarrollado entre la consulta clínica, el trabajo con personas mayores, residencias y centros de día, con especial vinculación al deterioro cognitivo, las demencias y el funcionamiento cognitivo en la vida cotidiana.
+              Mi trayectoria profesional combina la consulta clínica, la evaluación neuropsicológica y la atención a personas adultas en distintos contextos asistenciales. He trabajado también con personas mayores, residencias y centros de día, incluyendo el deterioro cognitivo y las demencias.
             </p>
             <p>
               En la práctica con adultos trabajo también con ansiedad, estado de ánimo, duelo, relaciones, sobrecarga y procesos de cambio. El objetivo no es aplicar una técnica de forma automática, sino construir una formulación clínica que permita decidir qué puede resultar útil para esa persona y en ese momento.
@@ -95,7 +83,7 @@ export default function AboutPage() {
           </section>
 
           <section>
-            <h2>Psicología y neuropsicología dentro de una misma mirada clínica</h2>
+            <h2>Una mirada clínica que integra psicología y neuropsicología</h2>
             <figure className="seo-professional-photo">
               <Image
                 src="/carolina-sanchez-enfoque.webp"
@@ -121,7 +109,7 @@ export default function AboutPage() {
           <section>
             <h2>Dememoria</h2>
             <p>
-              Dememoria es mi consulta de Psicología y Neuropsicología en Arenys de Mar. Desde aquí realizo atención psicológica a adultos, evaluación e intervención neuropsicológica y trabajo relacionado con deterioro cognitivo y demencias.
+              Dememoria es mi consulta de psicología y neuropsicología en Arenys de Mar. Ofrezco atención psicológica a adultos, evaluación del funcionamiento cognitivo e intervención neuropsicológica según las necesidades de cada caso.
             </p>
             <p>
               La consulta busca mantener un formato clínico individualizado, con objetivos claros y una comunicación comprensible. Cuando es necesario, el trabajo puede coordinarse con otros profesionales sanitarios o incorporar informes previos para construir una visión más completa del caso.
@@ -200,13 +188,6 @@ export default function AboutPage() {
           </div>
         </div>
       </section>
-
-      <footer className="editorial-footer">
-        <div className="editorial-wrap editorial-footer-inner">
-          <div><p className="editorial-footer-brand">Carolina Sánchez | Psicóloga</p><p>Dememoria · Consulta de Psicología y Neuropsicología</p></div>
-          <div><p>Arenys de Mar · Atención online</p><p>© 2026 Carolina Sánchez Girona</p></div>
-        </div>
-      </footer>
 
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(profileSchema) }} />
     </main>
