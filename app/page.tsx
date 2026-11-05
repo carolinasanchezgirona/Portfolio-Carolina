@@ -68,7 +68,7 @@ export default function HomePage() {
       <section className="editorial-trust" aria-label="Información profesional y práctica">
         <div className="editorial-wrap editorial-trust-grid">
           <div><strong>COPC 24892</strong><span>Psicóloga General Sanitaria</span></div>
-          <div><strong>5,0 / 5</strong><span>20 reseñas en Google</span></div>
+          <div><strong>5,0 / 5</strong><span>27 reseñas en Google</span></div>
           <div><strong>Arenys de Mar</strong><span>Consulta presencial</span></div>
           <div><strong>Reserva online</strong><span>Disponibilidad en tiempo real</span></div>
         </div>
@@ -173,7 +173,7 @@ export default function HomePage() {
         <div className="editorial-wrap editorial-reviews-grid">
           <div>
             <p className="editorial-section-eyebrow">Valoraciones en Google</p>
-            <h2 id="google-reviews-title">5,0 de 5 · 20 reseñas</h2>
+            <h2 id="google-reviews-title">5,0 de 5 · 27 reseñas</h2>
           </div>
           <div className="editorial-reviews-copy">
             <p>
