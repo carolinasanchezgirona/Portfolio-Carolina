@@ -2215,6 +2215,18 @@ export default {
   async fetch(request: Request, env: Env): Promise<Response> {
     const url = new URL(request.url);
 
+    // Retired public offer: do not expose former centres/residences pages.
+    // The protected /admin/residencia workspace remains fully operational.
+    if (url.pathname === "/residencias" || url.pathname.startsWith("/residencias/")) {
+      return new Response(null, {
+        status: 410,
+        headers: {
+          "X-Robots-Tag": "noindex, nofollow, noarchive",
+          "Cache-Control": "public, max-age=3600",
+        },
+      });
+    }
+
     // Give legacy category links a filtered static page, including without JavaScript.
     const articleCategory = url.searchParams.get("categoria");
     if (["GET", "HEAD"].includes(request.method) && ["/articulos", "/articulos/"].includes(url.pathname)
