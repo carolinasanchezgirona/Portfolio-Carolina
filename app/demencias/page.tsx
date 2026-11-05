@@ -39,7 +39,7 @@ export default function DementiaPage() {
         </a>
         <nav className="nav" aria-label="Navegación principal">
           <a href="/neuropsicologia/">Neuropsicología</a>
-          <a href="/deterioro-cognitivo/">Deterioro cognitivo</a>
+          <a href="/evaluacion-memoria-deterioro-cognitivo/">Deterioro cognitivo</a>
               <a href="/alzheimer-primeros-sintomas-y-evaluacion/">Alzheimer: primeros síntomas y evaluación</a>
               <a href="/estimulacion-cognitiva/">Estimulación cognitiva</a>
               <a href="/familiares-y-cuidadores-de-personas-con-demencia/">Familiares y cuidadores</a>
@@ -142,7 +142,7 @@ export default function DementiaPage() {
           <section>
             <h2>Relación con deterioro cognitivo y problemas de memoria</h2>
             <p>
-              No toda queja de memoria ni todo deterioro cognitivo implica una demencia. Cuando la principal preocupación son olvidos sin un diagnóstico previo, puede ser más útil empezar por la información sobre <a href="/problemas-de-memoria/">problemas de memoria</a> o <a href="/deterioro-cognitivo/">deterioro cognitivo</a>.
+              No toda queja de memoria ni todo deterioro cognitivo implica una demencia. Cuando la principal preocupación son olvidos sin un diagnóstico previo, puede ser más útil empezar por la información sobre <a href="/problemas-de-memoria/">problemas de memoria</a> o <a href="/evaluacion-memoria-deterioro-cognitivo/">deterioro cognitivo</a>.
             </p>
             <div className="seo-callout">
               <strong>El diagnóstico no define por completo el funcionamiento de una persona.</strong>
@@ -168,7 +168,7 @@ export default function DementiaPage() {
               <a href="/neuropsicologia/">Neuropsicología</a>
               <a href="/evaluacion-neuropsicologica/">Evaluación neuropsicológica</a>
               <a href="/problemas-de-memoria/">Problemas de memoria</a>
-              <a href="/deterioro-cognitivo/">Deterioro cognitivo</a>
+              <a href="/evaluacion-memoria-deterioro-cognitivo/">Deterioro cognitivo</a>
             </div>
           </div>
         </aside>
