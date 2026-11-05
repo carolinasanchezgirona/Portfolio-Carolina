@@ -29,8 +29,8 @@
 }
 
 .editorial-site .site-header{
-  position:sticky;
-  top:0;
+  position:relative;
+  top:auto;
   z-index:20;
   width:min(1040px,calc(100% - 64px));
   min-height:74px;
@@ -718,4 +718,15 @@
   .editorial-site .editorial-method-photo-layout .editorial-step {padding:20px;}
   .editorial-site .editorial-about-photo {max-width:310px;}
   .editorial-site .editorial-podcast-card {padding:24px 20px;}
+}
+
+
+/* Cabecera en flujo normal: nunca sticky/fixed durante el scroll. */
+.editorial-site.global-shell > header.site-header.site-global-header {
+  position:relative !important;
+  top:auto !important;
+  left:auto !important;
+  right:auto !important;
+  bottom:auto !important;
+  transform:none !important;
 }
