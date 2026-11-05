@@ -101,7 +101,7 @@ const serviceSchema = {
   url: baseUrl,
   description:
     "Evaluación de TDAH en adultos con precio cerrado, sesiones clínicas, informe y devolución incluidos. Modalidad diagnóstica y ampliada según indicación.",
-  provider: { "@id": "https://carolinasanchezgirona.com/#dememoria" },
+  provider: { "@id": "https://carolinasanchezgirona.com/#consulta" },
   areaServed: ["Arenys de Mar", "Maresme", "Barcelona"],
   hasOfferCatalog: {
     "@type": "OfferCatalog",
