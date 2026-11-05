@@ -9,6 +9,7 @@ import "./coherence.css";
 import "./hero-soft.css";
 import "./editorial.css";
 import "./accessibility.css";
+import "./public-type-scale.css";
 
 const inter = Inter({
   subsets: ["latin"],
