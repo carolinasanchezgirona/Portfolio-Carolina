@@ -23,7 +23,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${base}/neuropsicologia/`, lastModified: refreshedLastModified, changeFrequency: "monthly", priority: 0.9 },
     { url: `${base}/evaluacion-tdah-adultos/`, lastModified: new Date("2026-11-04T09:12:00+01:00"), changeFrequency: "monthly", priority: 0.92 },
     { url: `${base}/evaluacion-tea-adultos/`, lastModified: new Date("2026-11-04T00:00:00+01:00"), changeFrequency: "monthly", priority: 0.92 },
-    { url: `${base}/evaluacion-memoria-deterioro-cognitivo/`, lastModified: new Date("2026-11-04T23:00:00+01:00"), changeFrequency: "monthly", priority: 0.9 },
     { url: `${base}/evaluacion-altas-capacidades-adultos/`, lastModified: new Date("2026-11-04T23:00:00+01:00"), changeFrequency: "monthly", priority: 0.88 },
     { url: `${base}/sobre-mi/`, lastModified: staticLastModified, changeFrequency: "monthly", priority: 0.85 },
     { url: `${base}/ansiedad/`, lastModified: staticLastModified, changeFrequency: "monthly", priority: 0.82 },

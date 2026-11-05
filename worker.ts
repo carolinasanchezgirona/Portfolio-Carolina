@@ -2218,8 +2218,8 @@ export default {
     // The former general cognitive impairment page now belongs to the
     // focused memory/neuropsychological assessment service.
     if (["GET", "HEAD"].includes(request.method) &&
-        ["/deterioro-cognitivo", "/deterioro-cognitivo/"].includes(url.pathname)) {
-      return Response.redirect(new URL("/evaluacion-memoria-deterioro-cognitivo/", url), 301);
+        ["/deterioro-cognitivo", "/deterioro-cognitivo/", "/evaluacion-memoria-deterioro-cognitivo", "/evaluacion-memoria-deterioro-cognitivo/"].includes(url.pathname)) {
+      return Response.redirect(new URL("/evaluacion-neuropsicologica/", url), 301);
     }
 
     // Retired public offer: do not expose former centres/residences pages.

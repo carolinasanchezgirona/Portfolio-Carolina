@@ -6,7 +6,7 @@ import "../evaluacion-tdah-adultos/tdah.css";
 const canonical = "/evaluacion-altas-capacidades-adultos/";
 export const metadata: Metadata = {
   title: "Evaluación de altas capacidades intelectuales en adultos | Arenys de Mar",
-  description: "Evaluación de altas capacidades en adultos en Arenys de Mar: perfil cognitivo 450 € y valoración ampliada 600 €, con pruebas, informe y devolución.",
+  description: "Evaluación de altas capacidades en adultos en Arenys de Mar: evaluación del perfil intelectual y modalidad ampliada, con pruebas, informe y devolución.",
   alternates: { canonical },
   openGraph: {
     title: "Altas capacidades en adultos: evaluación | Carolina Sánchez",
@@ -37,7 +37,6 @@ export default function AdultHighAbilitiesAssessmentPage() {
       modalities={[
         {
           title: "Evaluación del perfil intelectual",
-          price: 450,
           time: "Orientativamente, 2–3 sesiones · Precio cerrado",
           description: "Valoración psicométrica de capacidades intelectuales y análisis de su perfil, con integración del motivo de consulta y los antecedentes relevantes.",
           features: [
@@ -49,7 +48,6 @@ export default function AdultHighAbilitiesAssessmentPage() {
         },
         {
           title: "Evaluación cognitiva ampliada",
-          price: 600,
           time: "Orientativamente, 3–4 sesiones · Precio cerrado",
           description: "Añade una exploración individualizada de otros procesos cognitivos y factores clínicos cuando existe una necesidad concreta de diagnóstico diferencial o comprensión del funcionamiento.",
           features: [
@@ -60,7 +58,6 @@ export default function AdultHighAbilitiesAssessmentPage() {
           ],
         },
       ]}
-      difference={150}
       steps={[
         { title: "Entrevista", detail: "Motivo de consulta, historia académica, laboral y desarrollo." },
         { title: "Pruebas", detail: "Instrumentos psicométricos seleccionados según la pregunta clínica." },
@@ -70,7 +67,7 @@ export default function AdultHighAbilitiesAssessmentPage() {
       caution="Las altas capacidades no son un diagnóstico del DSM-5-TR ni de la CIE-11. No existe una única puntuación universal que resuma todos los perfiles, y los criterios de identificación pueden variar según el contexto. La valoración de un adulto no equivale automáticamente a una acreditación educativa o administrativa."
       faqs={[
         { question: "¿Se pueden evaluar altas capacidades por primera vez en la edad adulta?", answer: "Sí. Es posible estudiar el funcionamiento intelectual en adultos aunque no existiera identificación en la infancia. La interpretación debe considerar trayectoria, contexto y propiedades psicométricas de las pruebas." },
-        { question: "¿Qué diferencia hay entre la modalidad de 450 € y la de 600 €?", answer: "La primera se centra en el perfil intelectual. La ampliada añade exploración cognitiva selectiva si existen preguntas sobre atención, funciones ejecutivas, memoria u otros procesos. Más pruebas no significan necesariamente una identificación más válida." },
+        { question: "¿Qué diferencia hay entre las dos modalidades?", answer: "La primera se centra en el perfil intelectual. La ampliada añade exploración cognitiva selectiva si existen preguntas sobre atención, funciones ejecutivas, memoria u otros procesos. Más pruebas no significan necesariamente una identificación más válida." },
         { question: "¿Puedo saber si también existe TDAH o TEA?", answer: "Una evaluación de altas capacidades no sustituye un protocolo diagnóstico de TDAH o TEA. Si el motivo de consulta lo justifica, se propondrá una valoración diferencial específica." },
         { question: "¿El resultado sirve como certificación oficial?", answer: "Recibirás un informe psicológico profesional. La aceptación del documento en procesos académicos, administrativos o de selección depende de los criterios de cada organismo y no puede garantizarse." },
         { question: "¿Incluye informe y devolución?", answer: "Sí. Las dos modalidades incluyen informe escrito, explicación de resultados y recomendaciones adaptadas al motivo de consulta." },

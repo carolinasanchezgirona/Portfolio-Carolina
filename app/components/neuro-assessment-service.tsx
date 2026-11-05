@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 
-type Modality = { title: string; price: number; time: string; description: string; features: string[] };
+type Modality = { title: string; time: string; description: string; features: string[] };
 type Step = { title: string; detail: string };
 type FAQ = { question: string; answer: string };
 type Props = {
@@ -8,7 +8,7 @@ type Props = {
   imageUrl: string; imageAlt: string; requestSubject: string;
   introTitle: string; intro: string[]; asideTitle: string; asideBody: string;
   modalityIntro: string; modalities: Modality[]; steps: Step[];
-  faqs: FAQ[]; difference: number; caution: string;
+  faqs: FAQ[]; caution: string;
   closingTitle: string; closingBody: string;
 };
 
@@ -29,8 +29,7 @@ export default function NeuroAssessmentService(props: Props): ReactNode {
       "@type": "OfferCatalog",
       name: "Modalidades de evaluación",
       itemListElement: props.modalities.map((item) => ({
-        "@type": "Offer", name: item.title, price: String(item.price),
-        priceCurrency: "EUR", url,
+        "@type": "Offer", name: item.title, url,
       })),
     },
   };
@@ -46,7 +45,7 @@ export default function NeuroAssessmentService(props: Props): ReactNode {
             <p className="seo-lead">{props.lead}</p>
             <div className="seo-actions">
               <a className="editorial-btn editorial-btn-primary" href={requestUrl}>Solicitar valoración</a>
-              <a className="editorial-btn editorial-btn-secondary" href="#modalidades">Ver modalidades y precios</a>
+              <a className="editorial-btn editorial-btn-secondary" href="#modalidades">Ver modalidades</a>
             </div>
             <p className="tdah-hero-note">Atención presencial en Arenys de Mar · Psicóloga General Sanitaria y Neuropsicóloga · COPC 24892</p>
           </div>
@@ -71,14 +70,13 @@ export default function NeuroAssessmentService(props: Props): ReactNode {
           </section>
 
           <section id="modalidades">
-            <h2>Modalidades y precios</h2>
+            <h2>Modalidades de evaluación</h2>
             <p>{props.modalityIntro}</p>
             <div className="tdah-modalities">
               {props.modalities.map((item) => (
                 <article className="tdah-modality" key={item.title}>
                   <div className="tdah-modality-top">
                     <h3>{item.title}</h3>
-                    <strong className="tdah-price">{item.price} €</strong>
                   </div>
                   <p className="tdah-time">{item.time}</p>
                   <p>{item.description}</p>
@@ -89,10 +87,11 @@ export default function NeuroAssessmentService(props: Props): ReactNode {
             <div className="tdah-choice">
               <div>
                 <h3>¿Y si es conveniente ampliar la evaluación?</h3>
-                <p>La modalidad se acuerda según el motivo de consulta. Si durante el mismo proceso está indicado ampliar el estudio y se puede aprovechar la evaluación realizada, solo se abona la diferencia de <strong>{props.difference} €</strong>, antes de realizar pruebas adicionales.</p>
+                <p>La modalidad se acuerda según el motivo de consulta. Si durante el proceso resulta indicada una ampliación, sus condiciones y el posible ajuste de honorarios se comunicarán antes de realizar nuevas pruebas.</p>
               </div>
             </div>
-            <p className="tdah-price-summary"><strong>Precio cerrado.</strong> Ambas opciones incluyen sesiones de evaluación, pruebas pertinentes, interpretación clínica, informe escrito y devolución. Los tratamientos posteriores se contratan aparte.</p>
+            <p className="tdah-price-summary">Ambas modalidades incluyen las sesiones acordadas, pruebas pertinentes, interpretación clínica, informe escrito y devolución. Los tratamientos posteriores se contratan aparte.</p>
+            <p className="tdah-tariffs-link"><a className="editorial-card-link" href="/tarifas-evaluaciones-adultos.pdf" download="Tarifas_evaluaciones_Carolina_Sanchez.pdf" type="application/pdf">Descargar modalidades y tarifas (PDF) →</a></p>
           </section>
 
           <section>

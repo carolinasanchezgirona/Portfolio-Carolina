@@ -8,7 +8,7 @@ const baseUrl = "https://carolinasanchezgirona.com/evaluacion-tdah-adultos/";
 export const metadata: Metadata = {
   title: "Evaluación del TDAH en adultos en Arenys de Mar y Maresme",
   description:
-    "Evaluación de TDAH adulto en Arenys de Mar. Precio cerrado: 450 € o 600 €, con sesiones de evaluación, informe y devolución incluidos.",
+    "Evaluación de TDAH adulto en Arenys de Mar. Dos modalidades clínicas, con sesiones de evaluación, informe y devolución incluidos.",
   alternates: { canonical: "/evaluacion-tdah-adultos/" },
   openGraph: {
     title: "Evaluación del TDAH en adultos | Carolina Sánchez",
@@ -27,7 +27,6 @@ export const metadata: Metadata = {
 const modalities = [
   {
     title: "Evaluación diagnóstica del TDAH",
-    price: 450,
     time: "Orientativamente, 2–3 sesiones · Precio cerrado",
     description:
       "Una evaluación clínica completa para determinar si las dificultades cumplen criterios de TDAH, valorar otras posibles explicaciones y obtener conclusiones diagnósticas fundamentadas.",
@@ -40,7 +39,6 @@ const modalities = [
   },
   {
     title: "Evaluación neuropsicológica ampliada",
-    price: 600,
     time: "Orientativamente, 3–4 sesiones · Precio cerrado",
     description:
       "Incorpora la evaluación diagnóstica y una exploración más extensa del funcionamiento cognitivo cuando existe una indicación clínica concreta.",
@@ -61,7 +59,7 @@ const faq = [
   },
   {
     question: "¿Puedo ampliar la evaluación si resulta necesario?",
-    answer: "Sí. Si durante el proceso se identifica una indicación clínica para ampliar la exploración, podrás pasar de la modalidad diagnóstica a la neuropsicológica ampliada abonando únicamente la diferencia de 150 €, siempre que sea el mismo proceso y pueda aprovecharse la evaluación realizada. Lo acordaremos contigo antes de aplicar pruebas adicionales.",
+    answer: "Sí. Si durante el proceso se identifica una indicación clínica para ampliar la exploración, podrás pasar de la modalidad diagnóstica a la neuropsicológica ampliada abonando únicamente la diferencia indicada en la guía de tarifas, siempre que sea el mismo proceso y pueda aprovecharse la evaluación realizada. Lo acordaremos contigo antes de aplicar pruebas adicionales.",
   },
   {
     question: "¿Cuántas sesiones necesitaré?",
@@ -69,7 +67,7 @@ const faq = [
   },
   {
     question: "¿Las sesiones se cobran aparte?",
-    answer: "No. Los 450 € o 600 € son precios cerrados que incluyen las sesiones necesarias para completar la evaluación acordada, las pruebas, el informe escrito y la devolución. Los tratamientos o seguimientos posteriores se contratan por separado.",
+    answer: "No. Las modalidades tienen los importes indicados en el PDF descargable que incluyen las sesiones necesarias para completar la evaluación acordada, las pruebas, el informe escrito y la devolución. Los tratamientos o seguimientos posteriores se contratan por separado.",
   },
   {
     question: "¿Puedo tener TDAH aunque nunca me diagnosticaran en la infancia?",
@@ -109,8 +107,6 @@ const serviceSchema = {
     itemListElement: modalities.map((item) => ({
       "@type": "Offer",
       name: item.title,
-      price: String(item.price),
-      priceCurrency: "EUR",
       availability: "https://schema.org/InStock",
       url: baseUrl,
     })),
@@ -136,7 +132,7 @@ export default function AdultAdhdAssessmentPage() {
           </p>
           <div className="seo-actions">
             <a className="editorial-btn editorial-btn-primary" href="mailto:contact@carolinasanchezgirona.com?subject=Solicitud%20de%20evaluacion%20TDAH%20adulto">Solicitar valoración de TDAH</a>
-            <a className="editorial-btn editorial-btn-secondary" href="#modalidades">Ver modalidades y precios</a>
+            <a className="editorial-btn editorial-btn-secondary" href="#modalidades">Ver modalidades</a>
           </div>
           <p className="tdah-hero-note">Atención presencial en Arenys de Mar · Psicóloga General Sanitaria y Neuropsicóloga · COPC 24892</p>
           </div>
@@ -164,7 +160,7 @@ export default function AdultAdhdAssessmentPage() {
           </section>
 
           <section id="modalidades">
-            <h2>Modalidades y precios</h2>
+            <h2>Modalidades de evaluación</h2>
             <p>
               Ambas modalidades ofrecen una evaluación completa para su finalidad. No necesitas elegir por tu cuenta:
               te orientaré sobre cuál se ajusta mejor a tu motivo de consulta antes de iniciar el proceso.
@@ -174,7 +170,6 @@ export default function AdultAdhdAssessmentPage() {
                 <article className="tdah-modality" key={item.title}>
                   <div className="tdah-modality-top">
                     <h3>{item.title}</h3>
-                    <strong className="tdah-price">{item.price} €</strong>
                   </div>
                   <p className="tdah-time">{item.time}</p>
                   <p>{item.description}</p>
@@ -188,10 +183,11 @@ export default function AdultAdhdAssessmentPage() {
             <div className="tdah-choice">
               <div>
                 <h3>¿No sabes cuál necesitas?</h3>
-                <p>La modalidad se acuerda contigo según la indicación clínica. Si procede ampliar la valoración dentro del mismo proceso, solo abonarás la diferencia de <strong>150 €</strong>, antes de realizar pruebas adicionales.</p>
+                <p>La modalidad se acuerda contigo según la indicación clínica. Si procede ampliar la valoración dentro del mismo proceso, se aplicará la diferencia indicada en el PDF de tarifas, antes de realizar pruebas adicionales.</p>
               </div>
             </div>
-            <p className="tdah-price-summary"><strong>Precio cerrado, todo incluido.</strong> Sesiones de evaluación, pruebas, interpretación clínica, informe escrito y devolución. Los tratamientos posteriores se contratan por separado.</p>
+            <p className="tdah-price-summary">Las modalidades incluyen sesiones de evaluación, pruebas, interpretación clínica, informe escrito y devolución. Los tratamientos posteriores se contratan por separado.</p>
+            <p className="tdah-tariffs-link"><a className="editorial-card-link" href="/tarifas-evaluaciones-adultos.pdf" download="Tarifas_evaluaciones_Carolina_Sanchez.pdf" type="application/pdf">Descargar modalidades y tarifas (PDF) →</a></p>
           </section>
 
           <section>
@@ -209,9 +205,9 @@ export default function AdultAdhdAssessmentPage() {
               <figure className="tdah-download-photo"><img src="/tdah-evaluacion-proceso-v2.svg" alt="Cuaderno con lista de tareas y temporizador, relacionados con las funciones ejecutivas y la gestión del tiempo" width="640" height="260" loading="lazy" /></figure>
               <div className="tdah-download-text">
                 <h3>Información sobre el proceso de evaluación</h3>
-                <p>Modalidades, procedimiento, precios y condiciones de contratación.</p>
+                <p>Modalidades, honorarios y condiciones de contratación en un documento descargable.</p>
               </div>
-              <a className="editorial-btn editorial-btn-secondary" href="/informacion-evaluacion-tdah-adultos.pdf" download="Informacion_evaluacion_TDAH_adultos.pdf" type="application/pdf">Descargar PDF</a>
+              <a className="editorial-btn editorial-btn-secondary" href="/tarifas-evaluaciones-adultos.pdf" download="Tarifas_evaluaciones_Carolina_Sanchez.pdf" type="application/pdf">Descargar PDF</a>
             </div>
           </section>
 

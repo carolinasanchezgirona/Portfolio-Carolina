@@ -6,7 +6,7 @@ const baseUrl = "https://carolinasanchezgirona.com/evaluacion-tea-adultos/";
 
 export const metadata: Metadata = {
   title: "Evaluación del TEA en adultos en Arenys de Mar | Carolina Sánchez",
-  description: "Evaluación clínica del autismo (TEA) en adultos en Arenys de Mar: modalidad diagnóstica 550 € y neuropsicológica ampliada 750 €, con informe y devolución.",
+  description: "Evaluación clínica del autismo (TEA) en adultos en Arenys de Mar: modalidad clínica diagnóstica y neuropsicológica ampliada, con informe y devolución.",
   alternates: { canonical: "/evaluacion-tea-adultos/" },
   openGraph: {
     title: "Evaluación del autismo (TEA) en adultos | Carolina Sánchez",
@@ -19,7 +19,6 @@ export const metadata: Metadata = {
 const modalities = [
   {
     title: "Evaluación clínica diagnóstica del TEA",
-    price: 550,
     time: "Orientativamente, 3–4 sesiones · Precio cerrado",
     description: "Exploración clínica integral para determinar si la trayectoria evolutiva y el funcionamiento actual son compatibles con los criterios diagnósticos del espectro autista, considerando otras explicaciones posibles.",
     features: [
@@ -32,7 +31,6 @@ const modalities = [
   },
   {
     title: "Evaluación neuropsicológica ampliada",
-    price: 750,
     time: "Orientativamente, 4–5 sesiones · Precio cerrado",
     description: "Incluye la evaluación diagnóstica y una exploración individualizada de funciones cognitivas y funcionamiento adaptativo cuando existe una pregunta clínica que justifica ampliar el estudio.",
     features: [
@@ -56,7 +54,7 @@ const faq = [
   },
   {
     question: "¿Puedo ampliar la evaluación después?",
-    answer: "Sí. Si surge una indicación clínica durante el mismo proceso, puedes ampliar de la modalidad diagnóstica a la neuropsicológica abonando la diferencia de 200 €, siempre que se aproveche el trabajo realizado. Se acordará antes de administrar pruebas adicionales.",
+    answer: "Sí. Si surge una indicación clínica durante el mismo proceso, puedes ampliar de la modalidad diagnóstica a la neuropsicológica abonando la diferencia indicada en la guía de tarifas, siempre que se aproveche el trabajo realizado. Se acordará antes de administrar pruebas adicionales.",
   },
   {
     question: "¿Qué ocurre si no tengo informes de la infancia?",
@@ -72,7 +70,7 @@ const faq = [
   },
   {
     question: "¿Las sesiones se cobran aparte?",
-    answer: "No. Los precios publicados incluyen las sesiones de evaluación acordadas, pruebas, interpretación, informe y devolución. Los tratamientos posteriores se contratan por separado.",
+    answer: "No. Los honorarios del PDF incluyen las sesiones de evaluación acordadas, pruebas, interpretación, informe y devolución. Los tratamientos posteriores se contratan por separado.",
   },
 ];
 
@@ -90,8 +88,6 @@ const serviceSchema = {
     itemListElement: modalities.map((item) => ({
       "@type": "Offer",
       name: item.title,
-      price: String(item.price),
-      priceCurrency: "EUR",
       url: baseUrl,
     })),
   },
@@ -118,7 +114,7 @@ export default function AdultAutismAssessmentPage() {
             </p>
             <div className="seo-actions">
               <a className="editorial-btn editorial-btn-primary" href="mailto:contact@carolinasanchezgirona.com?subject=Solicitud%20de%20evaluacion%20TEA%20adulto">Solicitar valoración de TEA</a>
-              <a className="editorial-btn editorial-btn-secondary" href="#modalidades">Ver modalidades y precios</a>
+              <a className="editorial-btn editorial-btn-secondary" href="#modalidades">Ver modalidades</a>
             </div>
             <p className="tdah-hero-note">Atención presencial en Arenys de Mar · Psicóloga General Sanitaria y Neuropsicóloga · COPC 24892</p>
           </div>
@@ -144,14 +140,13 @@ export default function AdultAutismAssessmentPage() {
           </section>
 
           <section id="modalidades" >
-            <h2>Modalidades y precios</h2>
+            <h2>Modalidades de evaluación</h2>
             <p>Ambas modalidades incluyen una evaluación clínica diagnóstica del TEA. La ampliada añade exploración neuropsicológica cuando está justificada, no un diagnóstico más válido por acumular pruebas.</p>
             <div className="tdah-modalities">
               {modalities.map((item) => (
                 <article className="tdah-modality" key={item.title}>
                   <div className="tdah-modality-top">
                     <h3>{item.title}</h3>
-                    <strong className="tdah-price">{item.price} €</strong>
                   </div>
                   <p className="tdah-time">{item.time}</p>
                   <p>{item.description}</p>
@@ -162,10 +157,11 @@ export default function AdultAutismAssessmentPage() {
             <div className="tdah-choice">
               <div>
                 <h3>¿Necesitas ampliar la valoración?</h3>
-                <p>Si resulta clínicamente indicado durante el mismo proceso, podrás pasar a la modalidad ampliada abonando solamente la diferencia de <strong>200 €</strong>, antes de realizar las pruebas adicionales.</p>
+                <p>Si resulta clínicamente indicado durante el mismo proceso, podrás pasar a la modalidad ampliada abonando la diferencia indicada en el PDF de tarifas, antes de realizar las pruebas adicionales.</p>
               </div>
             </div>
-            <p className="tdah-price-summary"><strong>Precios cerrados.</strong> Incluyen sesiones de evaluación, pruebas pertinentes, integración clínica, informe y devolución.</p>
+            <p className="tdah-price-summary">Las modalidades incluyen sesiones de evaluación, pruebas pertinentes, integración clínica, informe y devolución.</p>
+            <p className="tdah-tariffs-link"><a className="editorial-card-link" href="/tarifas-evaluaciones-adultos.pdf" download="Tarifas_evaluaciones_Carolina_Sanchez.pdf" type="application/pdf">Descargar modalidades y tarifas (PDF) →</a></p>
           </section>
 
           <section >

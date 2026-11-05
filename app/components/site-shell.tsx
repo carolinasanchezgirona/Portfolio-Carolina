@@ -33,7 +33,6 @@ const serviceNavigation = [
   { href: "/psicologia/", label: "Psicología" },
   { href: "/neuropsicologia/", label: "Neuropsicología" },
   { href: "/evaluacion-neuropsicologica/", label: "Evaluación neuropsicológica" },
-  { href: "/evaluacion-memoria-deterioro-cognitivo/", label: "Memoria y deterioro cognitivo" },
   { href: "/evaluacion-tdah-adultos/", label: "Evaluación de TDAH en adultos" },
   { href: "/evaluacion-tea-adultos/", label: "Evaluación de TEA en adultos" },
   { href: "/evaluacion-altas-capacidades-adultos/", label: "Altas capacidades en adultos" },
@@ -41,7 +40,7 @@ const serviceNavigation = [
 
 const servicePaths = [
   "/psicologia/", "/neuropsicologia/", "/ansiedad/",
-  "/duelo/", "/evaluacion-neuropsicologica/", "/evaluacion-tdah-adultos/", "/evaluacion-tea-adultos/", "/evaluacion-memoria-deterioro-cognitivo/", "/evaluacion-altas-capacidades-adultos/",
+  "/duelo/", "/evaluacion-neuropsicologica/", "/evaluacion-tdah-adultos/", "/evaluacion-tea-adultos/", "/evaluacion-altas-capacidades-adultos/",
   "/problemas-de-memoria/", "/psicologa-arenys-de-mar/",
 ];
 
@@ -163,7 +162,6 @@ function SiteFooter() {
           <p className="site-footer-heading">Neuropsicología</p>
           <a href="/neuropsicologia/">Neuropsicología</a>
           <a href="/evaluacion-neuropsicologica/">Evaluación neuropsicológica</a>
-          <a href="/evaluacion-memoria-deterioro-cognitivo/">Evaluación de memoria y deterioro cognitivo</a>
         </nav>
 
         <nav className="site-footer-column" aria-label="Consulta">

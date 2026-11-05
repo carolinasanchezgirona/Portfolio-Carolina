@@ -71,7 +71,7 @@ export default function NeuropsychAssessmentPage() {
           <section>
             <h2>Qué funciones pueden explorarse</h2>
             <ul>
-              <li>Memoria y aprendizaje.</li>
+              <li>Memoria y aprendizaje, incluyendo quejas de memoria o sospecha de deterioro cognitivo.</li>
               <li>Atención y velocidad de procesamiento.</li>
               <li>Lenguaje y acceso léxico.</li>
               <li>Funciones ejecutivas: planificación, flexibilidad, inhibición y resolución de problemas.</li>
@@ -143,15 +143,14 @@ export default function NeuropsychAssessmentPage() {
               <li><span>Área</span><strong>Neuropsicología</strong></li>
             </ul>
             <a className="editorial-btn editorial-btn-primary" href="/cita/">Consultar disponibilidad</a>
-            <p className="seo-local-note">La sesión de neuropsicología dura 60 minutos y cuesta 75 €. Las evaluaciones completas que requieran varias sesiones, pruebas específicas o informe se presupuestan aparte.</p>
+            <p className="seo-local-note">La sesión de neuropsicología dura 60 minutos y cuesta 75 €. Las evaluaciones completas se ofrecen en modalidades según el motivo de consulta.</p>
+            <p className="seo-local-note"><a className="editorial-card-link" href="/tarifas-evaluaciones-adultos.pdf" download="Tarifas_evaluaciones_Carolina_Sanchez.pdf" type="application/pdf">Descargar modalidades y tarifas (PDF) →</a></p>
           </div>
           <div className="seo-card">
             <h3>Relacionados</h3>
             <div className="seo-related">
               <a href="/neuropsicologia/">Neuropsicología</a>
-              <a href="/evaluacion-memoria-deterioro-cognitivo/">Deterioro cognitivo</a>
-              <a href="/evaluacion-memoria-deterioro-cognitivo/">Valoración de memoria · 350 € / 500 €</a>
-              <a href="/evaluacion-altas-capacidades-adultos/">Altas capacidades en adultos · 450 € / 600 €</a>
+              <a href="/evaluacion-altas-capacidades-adultos/">Evaluación de altas capacidades en adultos</a>
               <a href="/ictus-y-dano-cerebral-adquirido/">Ictus y daño cerebral adquirido</a>
               <a href="/parkinson-y-cambios-cognitivos/">Parkinson y cambios cognitivos</a>
               <a href="/rehabilitacion-neuropsicologica/">Rehabilitación neuropsicológica</a>
