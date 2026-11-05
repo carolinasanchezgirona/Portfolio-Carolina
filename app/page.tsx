@@ -110,7 +110,6 @@ export default function HomePage() {
               </p>
               <p className="editorial-card-price">Sesión de neuropsicología · 75 € / 60 minutos</p>
               <p className="editorial-card-note">Las evaluaciones completas se presupuestan según las necesidades.</p>
-              <p className="editorial-card-note"><a href="/evaluacion-tdah-adultos/">Nuevo: evaluación del TDAH en adultos, con informe, desde 450 € →</a></p>
               <a className="editorial-card-link" href="/neuropsicologia/">Conocer el servicio de neuropsicología →</a>
             </article>
           </div>
@@ -123,7 +122,7 @@ export default function HomePage() {
             <p className="editorial-section-eyebrow">Cómo trabajo</p>
             <h2 id="metodo-title">Cada historia necesita una valoración propia.</h2>
             <p className="editorial-method-intro">
-              No todos los problemas de memoria indican una demencia, ni toda dificultad de concentración es un TDAH.
+              Una misma dificultad cognitiva o emocional puede tener causas diferentes.
               Dos personas con síntomas parecidos pueden necesitar intervenciones diferentes. Por eso comienzo
               escuchando, evaluando y formulando hipótesis clínicas antes de establecer objetivos.
             </p>
