@@ -14,6 +14,21 @@
   --public-lead:clamp(1rem,1.2vw,1.075rem);
 }
 
+/* Baseline also covers newer public landing pages without page-specific rules.
+   All overrides remain confined to the public site, never form/admin screens. */
+.global-shell .site-public-content h1{
+  font-size:var(--public-display);
+  line-height:1.10;
+}
+.global-shell .site-public-content h2{
+  font-size:var(--public-h2);
+  line-height:1.18;
+}
+.global-shell .site-public-content h3{
+  font-size:var(--public-h3);
+  line-height:1.27;
+}
+
 /* Common public hero types, including special landing pages. */
 .global-shell .site-public-content .editorial-hero h1,
 .global-shell .site-public-content .seo-hero h1,
