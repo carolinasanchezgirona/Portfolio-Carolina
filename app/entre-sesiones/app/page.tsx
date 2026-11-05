@@ -18,5 +18,5 @@ export const viewport: Viewport = {
 };
 
 export default function EntreSesionesAppPage() {
-  redirect("/entre-sesiones/app/espacio/?vista=wellness&seccion=inicio#wellness-mi-momento");
+  redirect("/entre-sesiones/app/espacio/?vista=panel");
 }
