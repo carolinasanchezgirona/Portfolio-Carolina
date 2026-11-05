@@ -198,6 +198,7 @@ export default function HomePage() {
               <p>Mi consulta está en Carrer Barcelona 8, Local, en Arenys de Mar.</p>
               <p>Un espacio para la atención psicológica, la evaluación neuropsicológica y el acompañamiento a personas adultas y familias.</p>
               <a className="editorial-card-link" href="/psicologa-arenys-de-mar/">Ver la consulta y cómo llegar <Arrow /></a>
+              <a className="editorial-card-link" href="/psicologa-maresme/">Atención psicológica en el Maresme <Arrow /></a>
             </div>
           </div>
         </div>
