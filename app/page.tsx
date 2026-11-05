@@ -211,9 +211,10 @@ export default function HomePage() {
             <div className="editorial-about-copy">
               <p>
                 Trabajo en psicología sanitaria y neuropsicología clínica con personas adultas.
-                Mi experiencia incluye la evaluación de la memoria, el deterioro cognitivo
-                y las demencias. Integro entrevista clínica, evaluación estructurada y
-                análisis del funcionamiento cotidiano para orientar cada intervención.
+                Atiendo dificultades emocionales y del comportamiento, y realizo evaluaciones
+                del funcionamiento cognitivo, incluyendo memoria, atención y funciones ejecutivas.
+                Integro la entrevista clínica, la evaluación estructurada y el contexto personal
+                para orientar cada intervención.
               </p>
               <p>
                 Participo también en divulgación profesional y he publicado en PsiAra,
