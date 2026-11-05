@@ -13,14 +13,14 @@ export default function PrivacyPage() {
     <section id="responsable">
       <h2>1. Responsable del tratamiento</h2>
       <div className="legal-data">
-        <p><strong>Responsable:</strong> Carolina Sánchez Girona, que ejerce bajo el nombre comercial Dememoria.</p>
+        <p><strong>Responsable:</strong> Carolina Sánchez Girona.</p>
         <p><strong>NIF:</strong> 53067189W.</p>
         <p><strong>Domicilio profesional:</strong> Carrer Barcelona 8, Local, 08350 Arenys de Mar, Barcelona, España.</p>
         <p><strong>Contacto y derechos:</strong> <a href="mailto:contact@carolinasanchezgirona.com">contact@carolinasanchezgirona.com</a>.</p>
         <p><strong>Teléfono:</strong> <a href="tel:+34604974857">604 974 857</a>.</p>
         <p><strong>Profesional:</strong> Psicóloga General Sanitaria y neuropsicóloga. Colegiada COPC núm. 24892.</p>
       </div>
-      <p>Esta información se dirige a visitantes, personas que solicitan cita, pacientes, compradores de recursos y suscriptores. Dememoria es el nombre de la consulta; no identifica a un responsable distinto.</p>
+      <p>Esta información se dirige a visitantes, personas que solicitan cita, pacientes, compradores de recursos y suscriptores. La responsable del tratamiento de datos es Carolina Sánchez Girona.</p>
     </section>
     <section id="tratamientos">
       <h2>2. Qué datos se tratan y para qué</h2>
