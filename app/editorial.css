@@ -1032,3 +1032,97 @@
   .editorial-site .editorial-about-photo{max-width:290px;}
   .editorial-site .editorial-podcast-card{padding:24px 21px;}
 }
+
+
+/* Método clínico: composición editorial, sin tarjetas sobredimensionadas. */
+.editorial-site .editorial-method .editorial-section-head{
+  max-width:860px;
+  margin-bottom:26px;
+}
+.editorial-site .editorial-method-intro{
+  max-width:72ch;
+  margin:13px 0 0;
+  font-size:1rem;
+  line-height:1.63;
+  color:#405A65;
+}
+.editorial-site .editorial-method-editorial-layout{
+  display:grid;
+  grid-template-columns:minmax(220px,.54fr) minmax(0,1fr);
+  gap:clamp(30px,5.5vw,78px);
+  align-items:center;
+}
+.editorial-site .editorial-method-portrait{
+  margin:0;
+  width:100%;
+  max-width:320px;
+  justify-self:start;
+  overflow:hidden;
+  border-radius:12px;
+  background:#EDEDED;
+}
+.editorial-site .editorial-method-portrait img{
+  display:block;
+  width:100%;
+  height:auto;
+  aspect-ratio:4/5;
+  object-fit:cover;
+  object-position:center 28%;
+}
+.editorial-site .editorial-method-list{
+  list-style:none;
+  padding:0;
+  margin:0;
+  border-top:1px solid #BFCBD0;
+}
+.editorial-site .editorial-method-item{
+  display:grid;
+  grid-template-columns:44px minmax(0,1fr);
+  column-gap:18px;
+  padding:17px 0;
+  border-bottom:1px solid #BFCBD0;
+  align-items:start;
+}
+.editorial-site .editorial-method-number{
+  display:block;
+  padding-top:4px;
+  color:#536B77;
+  font-size:.8rem;
+  font-weight:600;
+  line-height:1.4;
+  letter-spacing:.07em;
+}
+.editorial-site .editorial-method-item h3{
+  margin:0 0 5px;
+  color:#304750;
+  font-family:var(--font-newsreader),Georgia,serif;
+  font-size:clamp(1.23rem,1.75vw,1.55rem);
+  font-weight:500;
+  line-height:1.18;
+}
+.editorial-site .editorial-method-item p{
+  margin:0;
+  max-width:57ch;
+  color:#405A65;
+  font-size:.96rem;
+  line-height:1.53;
+}
+@media(max-width:900px){
+  .editorial-site .editorial-method-editorial-layout{
+    grid-template-columns:minmax(185px,.52fr) minmax(0,1fr);
+    gap:26px;
+  }
+  .editorial-site .editorial-method-portrait{max-width:270px;}
+}
+@media(max-width:680px){
+  .editorial-site .editorial-method-editorial-layout{
+    grid-template-columns:1fr;
+    gap:24px;
+  }
+  .editorial-site .editorial-method-portrait{max-width:250px;}
+  .editorial-site .editorial-method-item{
+    grid-template-columns:35px minmax(0,1fr);
+    column-gap:12px;
+    padding:15px 0;
+  }
+}
