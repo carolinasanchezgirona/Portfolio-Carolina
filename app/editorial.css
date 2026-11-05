@@ -560,3 +560,28 @@
   -webkit-backdrop-filter:none;
   isolation:isolate;
 }
+
+
+/* Revisión de maquetación pública: identidad CS y lectura fluida en móvil. */
+.global-shell, .editorial-site, .site-public-content { min-width:0; }
+.editorial-wrap, .editorial-hero-copy, .seo-copy, .editorial-service-card, .seo-card { min-width:0; }
+.editorial-site h1, .editorial-site h2, .editorial-site h3,
+.seo-hero h1, .seo-copy h2, .seo-copy h3 { overflow-wrap:break-word; }
+.editorial-site img, .seo-copy img { max-width:100%; }
+.editorial-actions, .seo-actions { row-gap:12px; }
+.site-global-header .brand { max-width:min(100%,310px); }
+.site-global-header .site-brand-identity { min-width:0; }
+.site-global-header .brand-name { line-height:1.12; }
+.editorial-service-card, .seo-card, .editorial-step { box-shadow:none; }
+@media (max-width:680px) {
+  .editorial-wrap { width:calc(100% - 36px); }
+  .editorial-hero-grid, .editorial-service-grid, .seo-layout { min-width:0; }
+  .editorial-actions .editorial-btn, .seo-actions .editorial-btn { max-width:100%; }
+  .editorial-site p, .seo-copy p, .seo-copy li { overflow-wrap:break-word; }
+  .site-global-header .brand { max-width:calc(100% - 144px); }
+  .site-global-header .site-brand-monogram { width:34px; height:34px; }
+}
+@media (max-width:420px) {
+  .site-global-header .brand { max-width:calc(100% - 108px); }
+  .site-global-header .brand-name { font-size:.98rem; letter-spacing:-.02em; }
+}
