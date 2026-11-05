@@ -1,0 +1,129 @@
+/*
+ * PUBLIC TYPOGRAPHY · consolidated scale (2026-11-05)
+ * Applied only inside SiteShell's public chrome, never inside admin,
+ * patient portals, clinical tools, private apps or consent/booking flows.
+ *
+ * The previous page-local CSS allowed headings up to 5–7rem, so unrelated
+ * pages appeared to belong to different design systems. Reduce display
+ * sizes while keeping body copy comfortably readable (16px baseline).
+ */
+.global-shell .site-public-content{
+  --public-display:clamp(2.25rem,3.45vw,3.35rem);
+  --public-h2:clamp(1.73rem,2.38vw,2.20rem);
+  --public-h3:clamp(1.18rem,1.5vw,1.47rem);
+  --public-lead:clamp(1rem,1.2vw,1.075rem);
+}
+
+/* Common public hero types, including special landing pages. */
+.global-shell .site-public-content .editorial-hero h1,
+.global-shell .site-public-content .seo-hero h1,
+.global-shell .site-public-content .resources-hero h1,
+.global-shell .site-public-content .cog-hero h1,
+.global-shell .site-public-content .cog-sample h1,
+.global-shell .site-public-content .articles-hero h1,
+.global-shell .site-public-content .article-detail h1,
+.global-shell .site-public-content .podcast-hero h1,
+.global-shell .site-public-content .podcast-single h1,
+.global-shell .site-public-content .question-hero h1,
+.global-shell .site-public-content .resources-success-card h1,
+.global-shell .site-public-content .tdah-page .seo-hero h1,
+.global-shell .site-public-content .psychology-page .psychology-hero h1{
+  font-size:var(--public-display);
+  line-height:1.10;
+  letter-spacing:-.026em;
+}
+
+/* Shared sections and category headings. */
+.global-shell .site-public-content .editorial-section h2,
+.global-shell .site-public-content .seo-copy h2,
+.global-shell .site-public-content .seo-authority h2,
+.global-shell .site-public-content .resources-free h2,
+.global-shell .site-public-content .resources-heading h2,
+.global-shell .site-public-content .cog-section h2,
+.global-shell .site-public-content .cog-final h2,
+.global-shell .site-public-content .cog-sample h2,
+.global-shell .site-public-content .podcast-introduction h2,
+.global-shell .site-public-content .podcast-bottom h2,
+.global-shell .site-public-content .podcast-section-heading h2,
+.global-shell .site-public-content .podcast-article h2,
+.global-shell .site-public-content .question-archive h2,
+.global-shell .site-public-content .psychology-page .psychology-section-heading h2,
+.global-shell .site-public-content .psychology-page .psychology-approach-copy h2,
+.global-shell .site-public-content .psychology-page .psychology-visit h2{
+  font-size:var(--public-h2);
+  line-height:1.18;
+  letter-spacing:-.018em;
+}
+
+/* Small panels, cards and explanatory subheadings. */
+.global-shell .site-public-content .editorial-service-card h3,
+.global-shell .site-public-content .seo-copy h3,
+.global-shell .site-public-content .seo-card h2,
+.global-shell .site-public-content .seo-card h3,
+.global-shell .site-public-content .resource-card h2,
+.global-shell .site-public-content .articles-card h2,
+.global-shell .site-public-content .question-form-heading h2,
+.global-shell .site-public-content .podcast-feature-grid h3,
+.global-shell .site-public-content .psychology-page .psychology-reason h3{
+  font-size:var(--public-h3);
+  line-height:1.27;
+  letter-spacing:-.012em;
+}
+
+/* Featured titles can be distinctive without becoming oversized. */
+.global-shell .site-public-content .podcast-feature-grid h3{
+  font-size:clamp(1.48rem,2vw,1.9rem);
+}
+.global-shell .site-public-content .articles-card.featured h2{
+  font-size:clamp(1.45rem,1.9vw,1.82rem);
+}
+.global-shell .site-public-content .article-subtitle{
+  font-size:clamp(1.22rem,1.8vw,1.55rem);
+  line-height:1.42;
+}
+
+/* Comfortable body text, no shrinking paragraph copy below the 16px baseline. */
+.global-shell .site-public-content .editorial-lead,
+.global-shell .site-public-content .seo-lead,
+.global-shell .site-public-content .resources-lead,
+.global-shell .site-public-content .articles-lead,
+.global-shell .site-public-content .podcast-lead,
+.global-shell .site-public-content .question-intro,
+.global-shell .site-public-content .psychology-page .psychology-intro{
+  font-size:var(--public-lead);
+  line-height:1.65;
+}
+.global-shell .site-public-content .seo-copy p,
+.global-shell .site-public-content .seo-copy li{
+  line-height:1.65;
+}
+
+/* Especially compact editorial homepage headings without changing columns. */
+.global-shell .site-public-content .editorial-about-refined .editorial-about-content h2{
+  font-size:clamp(1.85rem,2.35vw,2.24rem);
+}
+.global-shell .site-public-content .editorial-method .editorial-method-item h3{
+  font-size:clamp(1.14rem,1.4vw,1.35rem);
+}
+.global-shell .site-public-content .editorial-closing-cta h2{
+  font-size:var(--public-h2);
+}
+
+/* Small viewport headings use consistent min/max sizes, avoiding 11–14vw outliers. */
+@media(max-width:720px){
+  .global-shell .site-public-content{
+    --public-display:clamp(2.06rem,7.4vw,2.62rem);
+    --public-h2:clamp(1.6rem,5.6vw,1.93rem);
+    --public-h3:clamp(1.15rem,4.25vw,1.33rem);
+    --public-lead:1rem;
+  }
+  .global-shell .site-public-content .podcast-feature-grid h3{
+    font-size:clamp(1.35rem,5vw,1.7rem);
+  }
+  .global-shell .site-public-content .articles-card.featured h2{
+    font-size:clamp(1.3rem,4.7vw,1.58rem);
+  }
+  .global-shell .site-public-content .editorial-about-refined .editorial-about-content h2{
+    font-size:clamp(1.7rem,5.6vw,1.95rem);
+  }
+}
