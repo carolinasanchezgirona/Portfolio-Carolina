@@ -4,11 +4,11 @@ import "./cuadernos.css";
 const canonical = "https://carolinasanchezgirona.com/recursos/cuadernos-estimulacion-cognitiva/";
 
 export const metadata: Metadata = {
-  title: "Cuadernos de estimulación cognitiva para adultos | Dememòria",
+  title: "Cuadernos de estimulación cognitiva para adultos | Carolina Sánchez Girona",
   description: "Colección de cuadernos de estimulación cognitiva para adultos: actividades imprimibles de memoria, atención, lenguaje y funciones ejecutivas. Ediciones para particulares, profesionales y centros.",
   alternates: { canonical: "/recursos/cuadernos-estimulacion-cognitiva/" },
   openGraph: {
-    title: "Cuadernos Dememòria | Estimulación cognitiva para adultos",
+    title: "Cuadernos Carolina Sánchez Girona | Estimulación cognitiva para adultos",
     description: "Una colección original de actividades cognitivas graduadas, accesibles y pensadas para personas adultas.",
     url: canonical,
     type: "website",
@@ -83,7 +83,7 @@ export default function CuadernosPage() {
           </nav>
           <div className="cog-hero-grid">
             <div>
-              <p className="cog-eyebrow">Colección Cuadernos Dememòria · En preparación</p>
+              <p className="cog-eyebrow">Colección Cuadernos Carolina Sánchez Girona · En preparación</p>
               <h1>Entrenar la mente merece algo más que rellenar fichas.</h1>
               <p className="cog-lead">Materiales de estimulación cognitiva para personas adultas: actividades originales, variados niveles de exigencia y una maquetación diseñada para entender, trabajar y responder sin obstáculos.</p>
               <div className="cog-actions">
@@ -92,8 +92,8 @@ export default function CuadernosPage() {
               </div>
               <p className="cog-quiet">Sin registro · Ejercicios de muestra · Versión imprimible</p>
             </div>
-            <div className="cog-cover" aria-label="Representación ilustrativa de la portada de la colección Cuadernos Dememòria">
-              <div className="cog-cover-top"><span>DEMEmòria</span><span>CUADERNOS · 01</span></div>
+            <div className="cog-cover" aria-label="Representación ilustrativa de la portada de la colección Cuadernos Carolina Sánchez Girona">
+              <div className="cog-cover-top"><span>CAROLINA SÁNCHEZ</span><span>CUADERNOS · 01</span></div>
               <div className="cog-cover-body"><small>ESTIMULACIÓN COGNITIVA</small><strong>La mente en la vida cotidiana.</strong><span>Atención · Memoria · Flexibilidad</span></div>
               <div className="cog-cover-art" aria-hidden="true">
                 <span>△</span><span>●</span><span>◇</span><span>▣</span><span>◯</span><span>△</span><span>▣</span><span>◆</span><span>○</span>
@@ -172,7 +172,7 @@ export default function CuadernosPage() {
           <div><p className="cog-eyebrow">Conoce la colección</p><h2>Empieza por una muestra, no por una promesa.</h2><p>Dos actividades completas y sus criterios de corrección. Puedes imprimirlas para revisar el nivel, el espacio de respuesta y la utilidad de las instrucciones.</p></div>
           <div className="cog-final-actions">
             <a className="editorial-btn editorial-btn-primary" href="/recursos/cuadernos-estimulacion-cognitiva/muestra/">Abrir muestra gratuita</a>
-            <a className="editorial-btn editorial-btn-secondary" href="mailto:contact@carolinasanchezgirona.com?subject=Consulta%20sobre%20licencias%20Cuadernos%20Dememoria">Consultar licencias para centros</a>
+            <a className="editorial-btn editorial-btn-secondary" href="mailto:contact@carolinasanchezgirona.com?subject=Consulta%20sobre%20licencias%20Cuadernos%20de%20estimulacion%20cognitiva">Consultar licencias para centros</a>
           </div>
         </div>
       </section>
