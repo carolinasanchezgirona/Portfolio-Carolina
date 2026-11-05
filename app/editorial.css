@@ -851,3 +851,55 @@
   .editorial-site .editorial-trust-grid>div{padding-block:13px;}
   .editorial-site .editorial-service-card{padding:23px;}
 }
+
+
+/* Escala editorial compacta 2026: solo páginas públicas.
+   Conserva el texto de lectura a 15–16px y la jerarquía SEO. */
+.editorial-site .editorial-hero h1 {
+  font-size:clamp(2.65rem,4.1vw,3.625rem);
+  line-height:1.09;
+  letter-spacing:-.035em;
+}
+.editorial-site .editorial-section h2,
+.editorial-site .editorial-closing-cta h2,
+.editorial-site .seo-copy h2 {
+  font-size:clamp(1.9rem,2.65vw,2.375rem);
+  line-height:1.17;
+  letter-spacing:-.025em;
+}
+.editorial-site .seo-hero h1,
+.editorial-site .resources-hero h1 {
+  font-size:clamp(2.45rem,3.9vw,3.5rem);
+  line-height:1.1;
+}
+.editorial-site .editorial-service-card h3,
+.editorial-site .resource-card h2 {
+  font-size:clamp(1.5rem,2.05vw,1.75rem);
+  line-height:1.19;
+}
+.editorial-site .editorial-hero-statement {
+  font-size:clamp(1.15rem,1.55vw,1.45rem);
+  line-height:1.32;
+}
+.editorial-site .editorial-step h3,
+.editorial-site .seo-copy h3 {
+  font-size:clamp(1.12rem,1.4vw,1.3rem);
+  line-height:1.3;
+}
+.editorial-site .editorial-section-head{margin-bottom:24px;}
+.editorial-site .editorial-section{padding-block:clamp(40px,4.2vw,56px);}
+.editorial-site .editorial-hero .editorial-lead,
+.editorial-site .editorial-service-card .editorial-card-copy,
+.editorial-site .seo-copy p,
+.editorial-site .seo-copy li {font-size:1rem;line-height:1.63;}
+@media(max-width:680px){
+  .editorial-site .editorial-hero h1 {font-size:clamp(2.15rem,8.5vw,2.75rem);}
+  .editorial-site .seo-hero h1,
+  .editorial-site .resources-hero h1 {font-size:clamp(2.05rem,8vw,2.65rem);}
+  .editorial-site .editorial-section h2,
+  .editorial-site .editorial-closing-cta h2,
+  .editorial-site .seo-copy h2 {font-size:clamp(1.65rem,6.5vw,2.15rem);}
+  .editorial-site .editorial-service-card h3,
+  .editorial-site .resource-card h2 {font-size:1.5rem;}
+  .editorial-site .editorial-section{padding-block:40px;}
+}
