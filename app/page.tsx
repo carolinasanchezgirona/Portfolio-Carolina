@@ -128,43 +128,35 @@ export default function HomePage() {
             </p>
           </div>
 
-          <div className="editorial-method-photo-layout">
-            <div className="editorial-step-grid">
-              <article className="editorial-step editorial-step-teal">
-                <div className="editorial-accent" />
-                <span>01</span>
-                <h3>Comprender</h3>
-                <p>Historia, motivo de consulta y contexto personal.</p>
-              </article>
-              <article className="editorial-step editorial-step-teal">
-                <div className="editorial-accent" />
-                <span>02</span>
-                <h3>Formular</h3>
-                <p>Integrar la información y elaborar hipótesis clínicas.</p>
-              </article>
-              <article className="editorial-step editorial-step-coral">
-                <div className="editorial-accent" />
-                <span>03</span>
-                <h3>Intervenir</h3>
-                <p>Definir objetivos y estrategias ajustadas al caso.</p>
-              </article>
-              <article className="editorial-step editorial-step-coral">
-                <div className="editorial-accent" />
-                <span>04</span>
-                <h3>Revisar</h3>
-                <p>Evaluar los cambios y adaptar los siguientes pasos.</p>
-              </article>
-            </div>
-            <figure className="editorial-method-photo">
+          <div className="editorial-method-editorial-layout">
+            <figure className="editorial-method-portrait">
               <Image
                 src="/carolina-sanchez-como-trabajo.webp"
                 alt="Carolina Sánchez trabajando con una libreta"
                 width={540}
                 height={960}
-                sizes="(max-width: 680px) 260px, (max-width: 900px) 300px, 300px"
+                sizes="(max-width: 680px) 240px, (max-width: 900px) 270px, 310px"
                 loading="lazy"
               />
             </figure>
+            <div className="editorial-method-list" aria-label="Fases del proceso clínico">
+              <div className="editorial-method-item">
+                <span className="editorial-method-number" aria-hidden="true">01</span>
+                <div><h3>Comprender</h3><p>Historia, motivo de consulta y contexto personal.</p></div>
+              </div>
+              <div className="editorial-method-item">
+                <span className="editorial-method-number" aria-hidden="true">02</span>
+                <div><h3>Formular</h3><p>Integrar la información y elaborar hipótesis clínicas.</p></div>
+              </div>
+              <div className="editorial-method-item">
+                <span className="editorial-method-number" aria-hidden="true">03</span>
+                <div><h3>Intervenir</h3><p>Definir objetivos y estrategias ajustadas al caso.</p></div>
+              </div>
+              <div className="editorial-method-item">
+                <span className="editorial-method-number" aria-hidden="true">04</span>
+                <div><h3>Revisar</h3><p>Evaluar los cambios y adaptar los siguientes pasos.</p></div>
+              </div>
+            </div>
           </div>
         </div>
       </section>
