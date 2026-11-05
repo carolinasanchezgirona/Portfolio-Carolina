@@ -121,27 +121,30 @@
   .site-crisis-note-inner{font-size:.76rem;}
 }
 
-/* CTA adaptados a la paleta original, conservando estados de foco visibles. */
+/* Contraste accesible para botones: el azul pizarra #708793 con
+   texto blanco no alcanzaba 4,5:1 para texto normal.
+   Se usa su tono oscuro complementario, ya empleado en la tipografía. */
 .editorial-btn-primary,
 .editorial-site .nav a.nav-cta,
+.global-shell .site-booking-cta,
 .article-cta a,
 .booking-submit,
 .calendar-day.is-selected,
 .time-option:hover,
-.time-option.is-selected {
-  background:#708793!important;
-  border-color:#708793!important;
+.time-option.is-selected{
+  background:#405A65!important;
+  border-color:#405A65!important;
   color:#fff!important;
 }
 .editorial-btn-primary:hover,
 .editorial-site .nav a.nav-cta:hover,
+.global-shell .site-booking-cta:hover,
 .article-cta a:hover,
 .booking-submit:hover:not(:disabled){
-  background:#809DA8!important;
-  border-color:#809DA8!important;
-  color:#243840!important;
+  background:#304750!important;
+  border-color:#304750!important;
+  color:#fff!important;
 }
-
 
 /* Preferencias de cookies: discreto, legible, accesible, solo sitio público. */
 body:has(.global-shell) .analytics-consent-settings,
