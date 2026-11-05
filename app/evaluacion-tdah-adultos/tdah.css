@@ -19,7 +19,7 @@
 .tdah-page .seo-card a:not(.editorial-btn){overflow-wrap:anywhere}
 @media(max-width:680px){.tdah-modality{padding:21px}.tdah-modality-top{align-items:flex-start}.tdah-price{font-size:1.85rem}.tdah-modality .tdah-modality-top h3{font-size:1.35rem}}
 
-.tdah-included{margin:20px 0 0;padding:22px 24px;background:#E3EBEE;border:1px solid var(--e-line);border-left:4px solid var(--e-teal);border-radius:12px}
+.tdah-included{margin:20px 0 0;padding:22px 24px;background:#EDEDED;border:1px solid var(--e-line);border-left:4px solid var(--e-teal);border-radius:12px}
 .tdah-included h3{margin:0 0 10px;font-size:1.2rem}
 .tdah-included p{margin:0 0 12px;line-height:1.65}
 .tdah-included p:last-child{margin-bottom:0}
@@ -50,8 +50,8 @@
 .tdah-page .seo-actions a.editorial-btn-primary:hover,
 .tdah-page .seo-actions a.editorial-btn-primary:focus-visible {
   color:#fff;
-  background:#405A65;
-  border-color:#405A65;
+  background:#809DA8;
+  border-color:#809DA8;
   text-decoration:none;
 }
 .tdah-page a.editorial-btn:focus-visible {
@@ -64,7 +64,7 @@
 .tdah-download p{margin:0;line-height:1.55}
 .tdah-page .seo-copy .tdah-download a.editorial-btn-secondary{color:var(--e-ink);background:#fff;border:1px solid var(--e-line);text-decoration:none;flex-shrink:0}
 .tdah-page .seo-copy .tdah-download a.editorial-btn-secondary:hover,
-.tdah-page .seo-copy .tdah-download a.editorial-btn-secondary:focus-visible{color:var(--e-ink);background:#E3EBEE;border-color:var(--e-teal);text-decoration:none}
+.tdah-page .seo-copy .tdah-download a.editorial-btn-secondary:focus-visible{color:var(--e-ink);background:#EDEDED;border-color:var(--e-teal);text-decoration:none}
 @media(max-width:680px){.tdah-download{flex-direction:column;align-items:stretch;padding:20px}.tdah-download a.editorial-btn{width:100%}}
 
 
