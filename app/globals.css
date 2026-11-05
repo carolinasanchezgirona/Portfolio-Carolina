@@ -1,13 +1,13 @@
 :root {
-  --ivory: #f5f1e9;
-  --ivory-2: #ece6dc;
-  --sand: #d8ccbc;
-  --smoke: #78857d;
-  --smoke-dark: #52615a;
-  --graphite: #2d322f;
-  --taupe: #7b7167;
-  --white: #fffdf9;
-  --line: rgba(45, 50, 47, 0.14);
+  --ivory: #F2EFE7;
+  --ivory-2: #EDEDED;
+  --sand: #A0A0A0;
+  --smoke: #809DA8;
+  --smoke-dark: #526C78;
+  --graphite: #304750;
+  --taupe: #617680;
+  --white: #FFFFFF;
+  --line: rgba(48, 71, 80, 0.14);
 }
 
 * {
