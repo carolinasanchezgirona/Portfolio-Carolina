@@ -104,7 +104,7 @@ export default function MemoryProblemsPage() {
               Algunas personas perciben cambios de memoria sin que la exploración muestre un deterioro objetivo. En otros casos aparecen dificultades medibles que todavía no comprometen de forma importante la autonomía. Cuando los cambios son persistentes y empiezan a afectar al funcionamiento cotidiano, puede ser necesario ampliar la valoración y coordinar el seguimiento con otros profesionales sanitarios.
             </p>
             <p>
-              La evaluación neuropsicológica aporta información sobre el perfil cognitivo, pero no sustituye la valoración médica cuando existe sospecha de una enfermedad neurológica. Si ya hay cambios funcionales relevantes o un diagnóstico previo, puedes consultar la página específica sobre <a href="/evaluacion-memoria-deterioro-cognitivo/">deterioro cognitivo</a>.
+              La evaluación neuropsicológica aporta información sobre el perfil cognitivo, pero no sustituye la valoración médica cuando existe sospecha de una enfermedad neurológica. Si ya hay cambios funcionales relevantes o un diagnóstico previo, puedes consultar la información sobre <a href="/evaluacion-neuropsicologica/">evaluación neuropsicológica</a>.
             </p>
           </section>
 
@@ -166,8 +166,8 @@ export default function MemoryProblemsPage() {
             <div className="seo-related">
               <a href="/neuropsicologia/">Neuropsicología</a>
               <a href="/evaluacion-neuropsicologica/">Evaluación neuropsicológica</a>
-              <a href="/evaluacion-memoria-deterioro-cognitivo/">Evaluación de memoria y deterioro cognitivo · modalidades y precios</a>
-              <a href="/evaluacion-memoria-deterioro-cognitivo/">Deterioro cognitivo</a>
+              <a href="/evaluacion-neuropsicologica/">Evaluación neuropsicológica: memoria y otras funciones cognitivas</a>
+              <a href="/evaluacion-neuropsicologica/">Evaluación neuropsicológica</a>
                             <a href="/demencias/">Demencias y Alzheimer</a>
               <a href="/familiares-y-cuidadores-de-personas-con-demencia/">Familiares y cuidadores</a>
               <a href="/evaluacion-neuropsicologica/">Problemas de atención y concentración</a>
