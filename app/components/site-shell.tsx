@@ -37,11 +37,10 @@ const serviceNavigation = [
   { href: "/evaluacion-tdah-adultos/", label: "Evaluación de TDAH en adultos" },
   { href: "/evaluacion-tea-adultos/", label: "Evaluación de TEA en adultos" },
   { href: "/evaluacion-altas-capacidades-adultos/", label: "Altas capacidades en adultos" },
-  { href: "/residencias/", label: "Para centros y residencias" },
 ] as const;
 
 const servicePaths = [
-  "/psicologia/", "/neuropsicologia/", "/residencias/", "/ansiedad/",
+  "/psicologia/", "/neuropsicologia/", "/ansiedad/",
   "/duelo/", "/evaluacion-neuropsicologica/", "/evaluacion-tdah-adultos/", "/evaluacion-tea-adultos/", "/evaluacion-memoria-deterioro-cognitivo/", "/evaluacion-altas-capacidades-adultos/", "/deterioro-cognitivo/",
   "/problemas-de-memoria/", "/psicologa-arenys-de-mar/",
 ];
@@ -57,7 +56,7 @@ function PatientIcon() {
 function SiteHeader({ pathname }: { pathname: string }) {
   const currentPath = pathname === "/" || pathname.endsWith("/") ? pathname : pathname + "/";
   const currentPage = (href: string) => currentPath === href ? "page" as const : undefined;
-  const servicesActive = servicePaths.some(href => currentPath === href || (href === "/residencias/" && currentPath.startsWith(href)));
+  const servicesActive = servicePaths.some(href => currentPath === href);
 
   return (
     <header className="site-header site-global-header">
@@ -166,7 +165,6 @@ function SiteFooter() {
           <a href="/evaluacion-neuropsicologica/">Evaluación neuropsicológica</a>
           <a href="/evaluacion-memoria-deterioro-cognitivo/">Evaluación de memoria y deterioro cognitivo</a>
           <a href="/deterioro-cognitivo/">Deterioro cognitivo y memoria</a>
-          <a href="/residencias/">Programas para residencias</a>
         </nav>
 
         <nav className="site-footer-column" aria-label="Consulta">
