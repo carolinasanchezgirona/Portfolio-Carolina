@@ -2,11 +2,10 @@ import LegalLinks from "../components/legal-links";
 import type { Metadata } from "next";
 import Script from "next/script";
 import "./mi-espacio.css";
-import MoodTracker, { MoodAvatarSettings } from "./mood-tracker";
 
 export const metadata: Metadata = {
   title: "Mi espacio",
-  description: "Área personal de bienestar y trabajo entre sesiones de Carolina Sánchez.",
+  description: "Área privada de ejercicios y seguimiento terapéutico entre sesiones de Carolina Sánchez.",
   robots: { index: false, follow: false, nocache: true },
 };
 
@@ -87,20 +86,18 @@ export default function MiEspacioPage() {
           <div>
             <p className="space-eyebrow">Tu espacio personal</p>
             <h1>Mi espacio</h1>
-            <p className="space-sidebar-copy">Bienestar, trabajo entre sesiones y herramientas para el día a día.</p>
+            <p className="space-sidebar-copy">Tus ejercicios, materiales y seguimiento terapéutico en un espacio privado.</p>
           </div>
 
           <nav className="space-nav" aria-label="Secciones">
-            <button type="button" data-space-view="today">Hoy</button>
+            <button className="is-active" type="button" data-space-view="today">Hoy</button>
             <button type="button" data-space-view="therapy">Mi terapia</button>
-            <button className="is-active" type="button" data-space-view="wellness">Wellness</button>
-            <button type="button" data-space-view="progress">Mi progreso</button>
             <button type="button" data-space-view="account">Configuración</button>
           </nav>
 
           <div className="space-sidebar-note">
-            <strong>Un espacio, dos funciones</strong>
-            <span>La parte clínica y Wellness están separadas para proteger tu intimidad.</span>
+            <strong>Acceso privado</strong>
+            <span>Solo tú puedes consultar los materiales que se han compartido contigo.</span>
           </div>
         </aside>
 
@@ -110,11 +107,6 @@ export default function MiEspacioPage() {
               <p className="space-eyebrow">Hoy</p>
               <h2 id="space-today-title">Un espacio para ti</h2>
               <p>Tu recorrido, paso a paso y recursos para continuar lo trabajado en consulta, a tu ritmo.</p>
-            </div>
-
-            <div className="space-moment-shortcut">
-              <div><p className="space-eyebrow">MI MOMENTO</p><h3>¿Cómo te sientes hoy?</h3><p>Tu personaje, tu ánimo y tu energía están ahora juntos en Wellness, con tus registros anteriores.</p></div>
-              <button type="button" className="space-primary" data-space-view="wellness">Ver mi momento →</button>
             </div>
 
             <div className="space-quick-start">
@@ -175,23 +167,8 @@ export default function MiEspacioPage() {
 
             <aside className="space-membership-note">
               <strong>Acceso incluido durante la terapia</strong>
-              <p>Mientras estés en tratamiento, Wellness y tus materiales están incluidos. Al finalizar, podrás continuar con las herramientas digitales mediante una suscripción voluntaria cuando esté disponible.</p>
+              <p>Durante tu proceso terapéutico puedes acceder a los ejercicios y documentos que se compartan contigo.</p>
             </aside>
-
-            <div className="space-needs-heading">
-              <div><p className="space-eyebrow">A tu ritmo</p><h3>¿Qué necesitas ahora?</h3></div>
-              <span>Elige según lo que te apetezca trabajar.</span>
-            </div>
-            <div className="space-needs" aria-label="Necesidades de hoy">
-              <button type="button" data-need="calmarme"><span aria-hidden="true">◌</span><strong>Calmarme</strong><small>Bajar activación</small></button>
-              <button type="button" data-need="rumiacion"><span aria-hidden="true">↻</span><strong>Dejar de darle vueltas</strong><small>Salir del bucle</small></button>
-              <button type="button" data-need="entender"><span aria-hidden="true">◇</span><strong>Entender lo que siento</strong><small>Ponerle palabras</small></button>
-              <button type="button" data-need="energia"><span aria-hidden="true">↟</span><strong>Recuperar energía</strong><small>Empezar pequeño</small></button>
-              <button type="button" data-need="orden"><span aria-hidden="true">☷</span><strong>Ordenar mi cabeza</strong><small>Menos ruido, siguiente paso</small></button>
-              <button type="button" data-need="concentrarme"><span aria-hidden="true">◎</span><strong>Concentrarme</strong><small>Volver a una tarea</small></button>
-              <button type="button" data-need="limites"><span aria-hidden="true">⊣</span><strong>Poner un límite</strong><small>Claridad sin pelea</small></button>
-              <button type="button" data-need="desconectar"><span aria-hidden="true">☾</span><strong>Desconectar</strong><small>Cerrar el día</small></button>
-            </div>
 
             <div className="space-grid space-dashboard-grid">
               <article className="space-card space-card-therapy">
@@ -203,25 +180,8 @@ export default function MiEspacioPage() {
                 <button id="space-between-link" className="space-primary" type="button" data-go-therapy>Ver mi terapia</button>
               </article>
 
-              <article className="space-card">
-                <p className="space-kicker">Wellness</p>
-                <h3>Tu herramienta de hoy</h3>
-                <p>Una intervención breve, práctica y sin necesidad de convertir cada mal día en un problema clínico.</p>
-                <button className="space-secondary" type="button" data-open-featured>Ver recomendación</button>
-              </article>
             </div>
 
-            <section className="space-section">
-              <div className="space-section-heading">
-                <div><p className="space-eyebrow">Rutinas</p><h3>Cuando no quieres pensar qué elegir</h3></div>
-              </div>
-              <div className="space-routines">
-                <button type="button" data-routine="cabeza-llena"><strong>Tengo la cabeza llena</strong><span>6 min · descargar + priorizar</span></button>
-                <button type="button" data-routine="desconectar-trabajo"><strong>Quiero desconectar del trabajo</strong><span>7 min · cierre + transición</span></button>
-                <button type="button" data-routine="antes-empezar"><strong>No consigo empezar</strong><span>5 min · activación + foco</span></button>
-                <button type="button" data-routine="bajar-revoluciones"><strong>Voy demasiado acelerada</strong><span>6 min · cuerpo + atención</span></button>
-              </div>
-            </section>
           </section>
 
           <section className="space-view" data-space-panel="therapy" hidden>
@@ -271,196 +231,15 @@ export default function MiEspacioPage() {
 
             <aside className="space-info-note">
               <strong>Privacidad por diseño</strong>
-              <p>Tu actividad libre en Wellness no se incorpora automáticamente a tu historia clínica. Cuando una herramienta sea prescrita en terapia, definiremos de forma explícita qué dato se comparte y cuál permanece privado.</p>
+              <p>Tus respuestas solo se comparten con Carolina cuando eliges «Compartir respuestas». También puedes guardar un borrador y continuar más adelante.</p>
             </aside>
-          </section>
-
-          <section className="space-view wellness-experience" data-space-panel="wellness">
-            <nav className="wellness-subnav" aria-label="Elegir una sección de Wellness">
-              <button className="is-active" type="button" data-wellness-tab="inicio" aria-pressed="true">Para hoy</button>
-              <button type="button" data-wellness-tab="explorar" aria-pressed="false">Explorar</button>
-              <button type="button" data-wellness-tab="guardadas" aria-pressed="false">Guardadas</button>
-            </nav>
-
-            <div className="wellness-subpanel" data-wellness-section="inicio">
-            <div className="wellness-primary-grid">
-            <div id="wellness-mi-momento" className="wellness-moment-section">
-              <MoodTracker />
-            </div>
-
-              <section className="wellness-need-section" aria-labelledby="wellness-need-heading">
-              <div className="wellness-section-title">
-                <div><p className="space-eyebrow">A TU RITMO</p><h3 id="wellness-need-heading">¿Qué necesitas ahora?</h3></div>
-                <p>Puedes cambiar de opción cuando quieras.</p>
-              </div>
-              <div className="wellness-needs wellness-needs-editorial" aria-label="Elegir una necesidad">
-                <button type="button" data-need="calmarme" className="wellness-need-1">
-                  <span className="wellness-art" aria-hidden="true" />
-                  <span className="wellness-need-copy"><strong>Bajar revoluciones</strong><small>Volver al presente</small></span>
-                  <span className="wellness-arrow" aria-hidden="true">›</span>
-                </button>
-                <button type="button" data-need="rumiacion" className="wellness-need-2">
-                  <span className="wellness-art" aria-hidden="true" />
-                  <span className="wellness-need-copy"><strong>Menos vueltas</strong><small>Soltar la rumiación</small></span>
-                  <span className="wellness-arrow" aria-hidden="true">›</span>
-                </button>
-                <button type="button" data-need="energia" className="wellness-need-3">
-                  <span className="wellness-art" aria-hidden="true" />
-                  <span className="wellness-need-copy"><strong>Poca energía</strong><small>Hacerlo más sencillo</small></span>
-                  <span className="wellness-arrow" aria-hidden="true">›</span>
-                </button>
-                <button type="button" data-need="entender" className="wellness-need-4">
-                  <span className="wellness-art" aria-hidden="true" />
-                  <span className="wellness-need-copy"><strong>Entenderme</strong><small>Poner nombre a lo que siento</small></span>
-                  <span className="wellness-arrow" aria-hidden="true">›</span>
-                </button>
-                <button type="button" data-need="concentrarme" className="wellness-need-5">
-                  <span className="wellness-art" aria-hidden="true" />
-                  <span className="wellness-need-copy"><strong>Recuperar foco</strong><small>Una cosa cada vez</small></span>
-                  <span className="wellness-arrow" aria-hidden="true">›</span>
-                </button>
-                <button type="button" data-need="limites" className="wellness-need-6">
-                  <span className="wellness-art" aria-hidden="true" />
-                  <span className="wellness-need-copy"><strong>Poner límites</strong><small>Expresarme con claridad</small></span>
-                  <span className="wellness-arrow" aria-hidden="true">›</span>
-                </button>
-                <button type="button" data-need="desconectar" className="wellness-need-7">
-                  <span className="wellness-art" aria-hidden="true" />
-                  <span className="wellness-need-copy"><strong>Desconectar</strong><small>Descanso y transición</small></span>
-                  <span className="wellness-arrow" aria-hidden="true">›</span>
-                </button>
-                <button type="button" data-need="orden" className="wellness-need-8">
-                  <span className="wellness-art" aria-hidden="true" />
-                  <span className="wellness-need-copy"><strong>Ordenar ideas</strong><small>Menos carga mental</small></span>
-                  <span className="wellness-arrow" aria-hidden="true">›</span>
-                </button>
-              </div>
-            </section>
-
-            </div>
-
-            <div id="wellness-evolution-full" className="wellness-evolution-full" />
-
-            <section className="wellness-quick-section" aria-labelledby="wellness-quick-heading">
-              <div className="wellness-section-title">
-                <div>
-                  <p className="space-eyebrow">SIN COMPLICARTE</p>
-                  <h3 id="wellness-quick-heading">Empieza con algo pequeño</h3>
-                  <p className="wellness-quick-intro">Elige solo una práctica según lo que necesites hoy. Son ejercicios guiados de 3 o 4 minutos que puedes hacer aquí, a tu ritmo y sin tener que conseguir ningún resultado concreto.</p>
-                </div>
-              </div>
-              <div className="wellness-quick-grid">
-                <button type="button" data-wellness-start="aterrizar-presente">
-                  <span className="wellness-quick-icon" aria-hidden="true">01</span>
-                  <strong>Volver al presente</strong>
-                  <span className="wellness-quick-description">Si tienes demasiadas cosas en la cabeza, dirige la atención a lo que ves, oyes y notas a tu alrededor.</span>
-                  <span className="wellness-quick-footer"><small>3 min · Atención al entorno</small><span className="wellness-quick-go">Empezar <span aria-hidden="true">↗</span></span></span>
-                </button>
-                <button type="button" data-wellness-start="primer-paso">
-                  <span className="wellness-quick-icon" aria-hidden="true">02</span>
-                  <strong>Solo el primer paso</strong>
-                  <span className="wellness-quick-description">Si una tarea te bloquea, descubre cómo reducirla a una primera acción pequeña y concreta.</span>
-                  <span className="wellness-quick-footer"><small>3 min · Empezar una tarea</small><span className="wellness-quick-go">Empezar <span aria-hidden="true">↗</span></span></span>
-                </button>
-                <button type="button" data-wellness-start="descanso-sin-culpa">
-                  <span className="wellness-quick-icon" aria-hidden="true">03</span>
-                  <strong>Descansar sin negociar</strong>
-                  <span className="wellness-quick-description">Si te cuesta parar sin sentir culpa, prueba a elegir una pausa sin tener que justificarla ni aprovecharla.</span>
-                  <span className="wellness-quick-footer"><small>4 min · Descanso sin exigencia</small><span className="wellness-quick-go">Empezar <span aria-hidden="true">↗</span></span></span>
-                </button>
-              </div>
-              <p className="wellness-quick-note">No hace falta hacerlas todas. Puedes detenerte o cambiar de práctica cuando quieras.</p>
-            </section>
-
-            <section className="wellness-routines" aria-labelledby="wellness-routines-heading">
-              <div className="wellness-section-title">
-                <div><p className="space-eyebrow">SECUENCIAS GUIADAS</p><h3 id="wellness-routines-heading">Cuando no quieres decidir qué hacer</h3></div>
-              </div>
-              <div className="wellness-routine-grid">
-                <button type="button" data-routine="cabeza-llena"><span aria-hidden="true">☷</span><strong>Tengo la cabeza llena</strong><small>Descargar y priorizar</small></button>
-                <button type="button" data-routine="desconectar-trabajo"><span aria-hidden="true">☾</span><strong>Cerrar el día</strong><small>Dejar el trabajo atrás</small></button>
-                <button type="button" data-routine="antes-empezar"><span aria-hidden="true">↗</span><strong>Me cuesta empezar</strong><small>Un paso posible</small></button>
-                <button type="button" data-routine="bajar-revoluciones"><span aria-hidden="true">◉</span><strong>Estoy acelerada</strong><small>Orientar la atención</small></button>
-              </div>
-            </section>
-
-            <details className="wellness-journey-disclosure">
-              <summary><span><small>SI TE APETECE PROFUNDIZAR</small><strong>Construye tu recorrido personal</strong><em>Un objetivo y cuatro etapas, sin plazos obligatorios.</em></span><span aria-hidden="true">＋</span></summary>
-              <div id="wellness-journey" aria-live="polite" />
-            </details>
-            </div>
-
-            <div className="wellness-subpanel" data-wellness-section="explorar" hidden>
-              <section className="wellness-interactive-section" aria-labelledby="wellness-interactive-heading">
-              <div className="wellness-section-title">
-                <div>
-                  <p className="space-eyebrow">PRÁCTICAS INTERACTIVAS</p>
-                  <h3 id="wellness-interactive-heading">Hazlo aquí, no solo lo leas.</h3>
-                </div>
-                <p>Siete prácticas guiadas: decisiones cotidianas, tarjetas para ordenar, atención visual y registros descriptivos sin puntuaciones.</p>
-              </div>
-              <div id="wellness-interactive" aria-label="Herramientas interactivas de bienestar">
-                <p className="wellness-interactive-loading" role="status">Preparando tus prácticas interactivas…</p>
-              </div>
-            </section>
-
-            <section className="wellness-library" aria-labelledby="wellness-library-heading">
-              <div className="wellness-filter-context" id="wellness-context" role="status" aria-live="polite" hidden />
-              <button className="wellness-reset" type="button" data-wellness-reset hidden>Quitar filtro y ver todas</button>
-              <button className="wellness-all-tools" type="button" data-wellness-go-explore hidden>Ver todas las herramientas</button>
-              <div className="wellness-section-title">
-                <div><p className="space-eyebrow">TU BIBLIOTECA</p><h3 id="wellness-library-heading">Herramientas para distintos momentos</h3></div>
-                <span id="wellness-count" className="wellness-count" aria-live="polite">Cargando herramientas…</span>
-              </div>
-              <div className="wellness-library-controls">
-                <div className="wellness-filters" aria-label="Filtrar herramientas">
-                  <button type="button" className="is-active" aria-pressed="true" data-wellness-filter="all">Todas</button>
-                  <button type="button" aria-pressed="false" data-wellness-filter="emocional">Emociones</button>
-                  <button type="button" aria-pressed="false" data-wellness-filter="cognitivo">Atención y organización</button>
-                  <button type="button" aria-pressed="false" data-wellness-filter="autocuidado">Autocuidado</button>
-                </div>
-                <label className="wellness-search-label" htmlFor="wellness-search">
-                  <span className="wellness-search-icon" aria-hidden="true">⌕</span>
-                  <input id="wellness-search" type="search" placeholder="Buscar una herramienta…" autoComplete="off" />
-                </label>
-              </div>
-              <div id="wellness-list" className="space-wellness-list" aria-live="polite" />
-            </section>
-
-            </div>
-
-            <aside className="wellness-privacy">
-              <strong>Un espacio personal, no una evaluación clínica.</strong>
-              <p>Estas prácticas son recursos generales de autocuidado. Tus notas y decisiones interactivas no se guardan. Solo se registra la fecha y el nombre de una práctica cuando decides terminarla. Los favoritos, objetivos y registros se mantienen en este dispositivo, separados por cuenta, y no se comparten automáticamente con Carolina.</p>
-            </aside>
-          </section>
-
-          <section className="space-view" data-space-panel="progress" hidden>
-            <div className="space-hero">
-              <p className="space-eyebrow">Mi progreso</p>
-              <h2>Una mirada útil, no una nota sobre cómo “deberías” estar</h2>
-              <p>Puedes revisar las herramientas utilizadas y tus favoritos en este dispositivo. Se guardan por separado para cada cuenta. No se calculan diagnósticos ni porcentajes de bienestar.</p>
-            </div>
-
-            <div className="space-summary">
-              <article><strong id="progress-total">0</strong><span>Actividades completadas</span></article>
-              <article><strong id="progress-week">0</strong><span>Esta semana</span></article>
-              <article><strong id="progress-favorites">0</strong><span>Favoritos</span></article>
-            </div>
-
-            <section className="space-section">
-              <div className="space-section-heading">
-                <div><p className="space-eyebrow">Actividad reciente</p><h3>Lo que has utilizado</h3></div>
-              </div>
-              <div id="progress-history" className="space-history" />
-            </section>
           </section>
 
           <section className="space-view" data-space-panel="account" hidden>
             <div className="space-hero">
               <p className="space-eyebrow">Cuenta y privacidad</p>
               <h2>Mi configuración y privacidad</h2><LegalLinks />
-              <p>La separación entre Wellness y terapia es intencionada. La elección del personaje se guarda en tu cuenta y tus registros libres de bienestar permanecen en este dispositivo, separados por paciente.</p>
+              <p>Los documentos clínicos se muestran únicamente tras identificarte. Los ajustes de lectura se guardan en este dispositivo, separados por cuenta.</p>
             </div>
 
             <section className="space-reading-preferences" aria-labelledby="space-reading-title">
@@ -489,14 +268,8 @@ export default function MiEspacioPage() {
               <p id="space-reading-feedback" role="status" aria-live="polite" className="space-small" />
             </section>
 
-            <MoodAvatarSettings />
 
             <div className="space-grid space-feature-grid">
-              <article className="space-card">
-                <p className="space-kicker">Wellness personal</p>
-                <h3>Privado en este dispositivo</h3>
-                <p>Tus favoritos, actividades realizadas y registros de ánimo están separados por cuenta dentro de este dispositivo. No se comparten automáticamente con Carolina.</p>
-              </article>
               <article className="space-card">
                 <p className="space-kicker">Mi terapia</p>
                 <h3>Acceso protegido</h3>
@@ -510,7 +283,7 @@ export default function MiEspacioPage() {
             </div>
 
             <div className="space-account-actions">
-              <button id="space-clear-local" className="space-danger-link" type="button">Borrar registros locales de Wellness y preferencias de lectura</button>
+              <button id="space-clear-local" className="space-danger-link" type="button">Borrar datos locales anteriores y preferencias de lectura</button>
               <button id="space-logout" className="space-danger-link" type="button">Cerrar sesión de Mi espacio</button>
             </div>
             <p id="space-clear-message" className="space-small" role="status" />
@@ -518,30 +291,14 @@ export default function MiEspacioPage() {
         </section>
       </div>
 
-      <dialog id="wellness-dialog" className="wellness-dialog">
-        <div className="wellness-dialog-inner">
-          <button id="wellness-dialog-close" className="wellness-close" type="button" aria-label="Cerrar">×</button>
-          <p id="wellness-dialog-type" className="space-eyebrow" />
-          <h2 id="wellness-dialog-title">Herramienta</h2>
-          <p id="wellness-dialog-intro" className="wellness-intro" />
-          <ol id="wellness-dialog-steps" className="wellness-steps" />
-          <p id="wellness-dialog-note" className="wellness-note" />
-          <div className="wellness-dialog-actions">
-            <button id="wellness-favorite" className="space-secondary" type="button">Guardar en favoritos</button>
-            <button id="wellness-complete" className="space-primary" type="button">Marcar como realizada</button>
-          </div>
-        </div>
-      </dialog>
-
       <aside className="space-safety">
-        <strong>Wellness no es un servicio de urgencias.</strong>
+        <strong>Este espacio no es un servicio de urgencias.</strong>
         <span>Si existe una emergencia, llama al 112. Si hay riesgo o ideación suicida, puedes contactar con el 024.</span>
       </aside>
 
       <Script src="/patient-video.js?v=20261009-1" strategy="afterInteractive" />
-      <Script src="/mi-espacio.js?v=20261018-wellness-home-1" strategy="afterInteractive" />
+      <Script src="/mi-espacio.js?v=20261105-clinical-only-1" strategy="afterInteractive" />
       <Script src="/session-prep.js?v=20261017-1" strategy="afterInteractive" />
-      <Script src="/wellness-interactive.js?v=20261017-visual-2" strategy="afterInteractive" />
     </main>
   );
 }
