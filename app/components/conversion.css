@@ -16,15 +16,15 @@
     margin: 0;
     padding: 12px 18px;
     border-radius: 999px;
-    background: #173a5e;
+    background: #405A65;
     color: #fff;
     text-decoration: none;
     text-align: center;
     font-size: 15px;
     font-weight: 700;
-    box-shadow: 0 6px 24px rgba(23,58,94,.22);
+    box-shadow: 0 6px 24px rgba(48,71,80,.22);
   }
-  .mobile-booking-shortcut:focus-visible { outline: 3px solid #08a6a0; outline-offset: 3px; }
+  .mobile-booking-shortcut:focus-visible { outline: 3px solid #809DA8; outline-offset: 3px; }
   /* El enlace no se solapa con el botón para cambiar las cookies. */
   body:has(.analytics-consent-settings) .mobile-booking-shortcut {
     bottom: calc(62px + env(safe-area-inset-bottom, 0px));
