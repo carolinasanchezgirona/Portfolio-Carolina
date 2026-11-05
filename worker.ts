@@ -2215,6 +2215,13 @@ export default {
   async fetch(request: Request, env: Env): Promise<Response> {
     const url = new URL(request.url);
 
+    // The former general cognitive impairment page now belongs to the
+    // focused memory/neuropsychological assessment service.
+    if (["GET", "HEAD"].includes(request.method) &&
+        ["/deterioro-cognitivo", "/deterioro-cognitivo/"].includes(url.pathname)) {
+      return Response.redirect(new URL("/evaluacion-memoria-deterioro-cognitivo/", url), 301);
+    }
+
     // Retired public offer: do not expose former centres/residences pages.
     // The protected /admin/residencia workspace remains fully operational.
     if (url.pathname === "/residencias" || url.pathname.startsWith("/residencias/")) {
