@@ -15,8 +15,8 @@ test("home weekly plan uses only actual protected session materials", () => {
   assert.match(home, /item\.patient_response_status === "draft"/);
   assert.match(home, /item\.review_due_at/);
   assert.match(home, /weeklyMaterials\.length \? weeklyMaterials\.map/);
-  assert.match(home, /WELLNESS · SI TE APETECE/);
-  assert.match(home, /No es una tarea prescrita/);
+  assert.match(home, /UNA PROPUESTA SIN OBLIGACIONES/);
+  assert.match(home, /MIS EJERCICIOS/);
   assert.match(home, /const prepareSession = "\/entre-sesiones\/app\/espacio\/\?vista=panel#space-session-prep"/);
   assert.match(homeCss, /\.esapp-weekly-plan/);
 });
