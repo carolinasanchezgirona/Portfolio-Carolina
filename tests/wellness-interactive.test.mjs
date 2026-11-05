@@ -7,10 +7,10 @@ const ui = readFileSync("public/wellness-interactive.js", "utf8");
 const portal = readFileSync("public/mi-espacio.js", "utf8");
 const styles = readFileSync("app/mi-espacio/mi-espacio.css", "utf8");
 
-test("seven interactive Wellness tools are reachable from the patient view", () => {
-  assert.match(page, /data-space-panel="wellness"/);
-  assert.match(page, /id="wellness-interactive"/);
-  assert.match(page, /src="\/wellness-interactive\.js\?v=/);
+test("retired Wellness tools are not exposed in the patient view", () => {
+  assert.doesNotMatch(page, /data-space-panel="wellness"/);
+  assert.doesNotMatch(page, /id="wellness-interactive"/);
+  assert.doesNotMatch(page, /src="\/wellness-interactive\.js\?v=/);
   for (const id of ["wi-decision", "wi-energy", "wi-priorities", "wi-focus", "wi-sequence", "wi-visual", "wi-moment"]) {
     assert.match(ui, new RegExp('id: "' + id + '"'));
   }
@@ -57,7 +57,7 @@ test("guided moment remains transient and is discarded on navigation or authenti
   assert.match(ui, /const answers = \["", "", "", ""\]/);
   assert.match(ui, /answers\.fill\(""\)/);
   assert.match(ui, /wellness:interactive-reset/);
-  assert.match(portal, /if \(name !== "wellness"\) document\.dispatchEvent\(new Event\("wellness:interactive-reset"\)\)/);
+  assert.doesNotMatch(page, /data-space-panel="wellness"/);
   assert.match(portal, /function showAccessGate\(checking = false\) \{[\s\S]*?document\.dispatchEvent\(new Event\("patient-portal-locked"\)\);\s*document\.dispatchEvent\(new Event\("wellness:interactive-reset"\)\)/);
   assert.match(portal, /"wi-sequence": "Pon las ideas en orden"/);
   assert.match(portal, /"wi-visual": "Encuentra la figura"/);
