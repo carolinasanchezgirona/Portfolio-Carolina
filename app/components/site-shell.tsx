@@ -82,7 +82,6 @@ function SiteHeader({ pathname }: { pathname: string }) {
             <a href="/recursos/" aria-current={currentPage("/recursos/")}>Materiales y cuadernos</a>
             <a href="/articulos/" aria-current={currentPage("/articulos/")}>Artículos</a>
             <a href="/podcast/" aria-current={currentPage("/podcast/")}>Pódcast</a>
-            <a href="/pregunta-a-carolina/" aria-current={currentPage("/pregunta-a-carolina/")}>Tu Consulta</a>
           </div>
         </details>
         <a href="/sobre-mi/" aria-current={currentPage("/sobre-mi/")}>Sobre mí</a>
@@ -112,7 +111,6 @@ function SiteHeader({ pathname }: { pathname: string }) {
                 <a href="/recursos/" aria-current={currentPage("/recursos/")}>Materiales y cuadernos</a>
                 <a href="/articulos/" aria-current={currentPage("/articulos/")}>Artículos</a>
                 <a href="/podcast/" aria-current={currentPage("/podcast/")}>Pódcast</a>
-                <a href="/pregunta-a-carolina/" aria-current={currentPage("/pregunta-a-carolina/")}>Tu Consulta</a>
               </div>
             </details>
             <a href="/sobre-mi/" aria-current={currentPage("/sobre-mi/")}>Sobre mí</a>
@@ -169,7 +167,6 @@ function SiteFooter() {
           <a href="/sobre-mi/">Sobre mí</a>
           <a href="/recursos/">Recursos y materiales</a>
           <a href="/articulos/">Artículos</a>
-          <a href="/pregunta-a-carolina/">Tu Consulta</a>
           <a href="/podcast/">Psicología Incómoda · Podcast</a>
           <a href="/mi-espacio/">Mi espacio</a>
           <a href="/psicologa-arenys-de-mar/">Psicóloga en Arenys de Mar</a>
