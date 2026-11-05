@@ -23,8 +23,6 @@ type AppStatus = "checking" | "ready" | "logged-out" | "error";
 type InstallEvent = Event & { prompt(): Promise<void>; userChoice: Promise<{ outcome: string }> };
 
 const workspace = "/entre-sesiones/app/espacio/?vista=terapia";
-const wellness = "/entre-sesiones/app/espacio/?vista=wellness";
-const progress = "/entre-sesiones/app/espacio/?vista=progreso";
 const prepareSession = "/entre-sesiones/app/espacio/?vista=panel#space-session-prep";
 const sessionEndpoint = "/api/patient-portal/session";
 
@@ -208,8 +206,6 @@ export default function EntreSesionesApp() {
       <nav className="esapp-quicknav" aria-label="Secciones del espacio personal">
         <a href="/entre-sesiones/app/" className="is-current" aria-current="page">Inicio</a>
         <a href={workspace}>Ejercicios</a>
-        <a href={wellness}>Wellness</a>
-        <a href={progress}>Progreso</a>
         <a href="#mensajes">Mensajes</a>
       </nav>
       <section className="esapp-welcome" aria-labelledby="esapp-welcome-title">
@@ -245,7 +241,7 @@ export default function EntreSesionesApp() {
           <div>
             <p className="esapp-overline">UNA PROPUESTA SIN OBLIGACIONES</p>
             <h2 id="esapp-weekly-plan-title">Tu semana, a tu ritmo.</h2>
-            <p>Accede a tus materiales y elige una pausa. Las actividades de consulta son las que te ha asignado Carolina; Wellness es opcional.</p>
+            <p>Accede a los materiales y ejercicios que hemos acordado trabajar en consulta.</p>
           </div>
           <span className="esapp-weekly-count">{weeklyMaterials.length} {weeklyMaterials.length === 1 ? "material disponible" : "materiales para empezar"}</span>
         </div>
@@ -261,31 +257,15 @@ export default function EntreSesionesApp() {
                   item.review_due_at ? `Revisión prevista: ${readableDate(item.review_due_at)}` : "Material asignado en consulta"}</small>
               </span>
               <span aria-hidden="true" className="esapp-weekly-arrow">↗</span>
-            </a>) : <div className="esapp-weekly-empty">No tienes ejercicios pendientes. Puedes consultar Wellness cuando te apetezca.</div>}
+            </a>) : <div className="esapp-weekly-empty">No tienes ejercicios pendientes. Puedes consultar los materiales ya revisados.</div>}
             <a className="esapp-weekly-text-link" href={workspace}>Ver todos mis materiales <span aria-hidden="true">→</span></a>
           </div>
-          <a className="esapp-weekly-care" href={wellness}>
-            <span className="esapp-weekly-category">WELLNESS · SI TE APETECE</span>
-            <span className="esapp-weekly-care-glyph" aria-hidden="true">◉</span>
-            <strong>Una pausa para ti</strong>
-            <span>Elige una práctica breve de atención o autocuidado. No es una tarea prescrita.</span>
-            <small>Explorar mis herramientas ↗</small>
-          </a>
         </div>
         <a className="esapp-weekly-prepare" href={prepareSession}>
           <span className="esapp-weekly-prepare-symbol" aria-hidden="true">✎</span>
           <span><strong>Antes de tu próxima sesión</strong><small>Tres preguntas para pensar qué quieres comentar. El texto es privado hasta que decidas compartirlo.</small></span>
           <span aria-hidden="true" className="esapp-weekly-arrow">↗</span>
         </a>
-      </section>}
-
-      {status === "ready" && <section className="esapp-wellness-entry" aria-labelledby="esapp-wellness-entry-title">
-        <span className="esapp-wellness-entry-symbol" aria-hidden="true">◌</span>
-        <div><p className="esapp-overline">WELLNESS · A TU RITMO</p>
-          <h2 id="esapp-wellness-entry-title">¿Qué necesitas hoy?</h2>
-          <p>Regulación emocional, atención, autocuidado y actividades breves. Tus respuestas no se comparten automáticamente con tu profesional.</p>
-        </div>
-        <a href={wellness} className="esapp-wellness-entry-link">Explorar Wellness <span aria-hidden="true">↗</span></a>
       </section>}
 
       {installHint && !isStandalone && <aside className="esapp-hint" role="status">
@@ -360,8 +340,6 @@ export default function EntreSesionesApp() {
       <nav className="esapp-home-bottom-nav" aria-label="Navegación de Entre Sesiones">
         <a href="/entre-sesiones/app/" aria-current="page"><span aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="m3 10 9-7 9 7v11h-6v-7H9v7H3z"/></svg></span>Inicio</a>
         <a href={workspace}><span aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><rect x="5" y="3" width="14" height="18" rx="1.5"/><path d="M8 8h8M8 12h8M8 16h6"/></svg></span>Mi terapia</a>
-        <a href={wellness}><span aria-hidden="true"><svg className="esapp-nav-heart" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" strokeWidth="1.3" strokeLinejoin="round"><path d="M20.8 4.7a5.4 5.4 0 0 0-7.7 0L12 5.8l-1.1-1.1a5.4 5.4 0 0 0-7.7 7.7L12 21l8.8-8.6a5.4 5.4 0 0 0 0-7.7z"/></svg></span>Wellness</a>
-        <a href={progress}><span aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round"><path d="m3 17 7-7 4 4 7-8"/><path d="M15 6h6v6"/></svg></span>Progreso</a>
         <a href="/entre-sesiones/app/espacio/?vista=configuracion"><span aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21v-2a8 8 0 0 1 16 0v2"/></svg></span>Cuenta</a>
       </nav>
 
