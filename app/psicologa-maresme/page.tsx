@@ -6,7 +6,7 @@ import "./maresme.css";
 const pageUrl = "https://carolinasanchezgirona.com/psicologa-maresme/";
 
 export const metadata: Metadata = {
-  title: "Psicóloga en el Maresme para adultos | Carolina Sánchez",
+  title: "Psicóloga en el Maresme para adultos",
   description:
     "Psicóloga General Sanitaria y neuropsicóloga en Arenys de Mar, Maresme. Psicoterapia para adultos, evaluación neuropsicológica y atención online.",
   alternates: { canonical: "/psicologa-maresme/" },
