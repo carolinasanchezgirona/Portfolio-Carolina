@@ -168,6 +168,7 @@ export default function AboutPage() {
               <a href="/psicologia/">Psicología General Sanitaria</a>
               <a href="/neuropsicologia/">Neuropsicología</a>
               <a href="/evaluacion-neuropsicologica/">Evaluación neuropsicológica</a>
+              <a href="https://www.copc.cat/es/contacte/carolina-sanchez-girona-56949" target="_blank" rel="noopener noreferrer">Verificar colegiación COPC 24892 ↗</a>
             </div>
           </div>
         </aside>
