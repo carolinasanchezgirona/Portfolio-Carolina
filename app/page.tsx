@@ -296,8 +296,8 @@ export default function HomePage() {
       </section>
 
       <section className="editorial-section" aria-labelledby="podcast-home-title">
-        <div className="editorial-wrap" style={{background:"#fff3ee",borderRadius:16,padding:"clamp(24px,5vw,52px)",display:"grid",gap:18}}>
-          <p className="editorial-section-eyebrow" style={{margin:0,color:"#aa4e4a"}}>Podcast · Psicología Incómoda</p>
+        <div className="editorial-wrap editorial-podcast-card">
+          <p className="editorial-section-eyebrow editorial-podcast-eyebrow">Podcast · Psicología Incómoda</p>
           <h2 id="podcast-home-title" style={{margin:0,maxWidth:"19ch"}}>Preguntas incómodas. Psicología sin frases vacías.</h2>
           <p style={{margin:0,maxWidth:"62ch",lineHeight:1.7}}>Una nueva serie de divulgación con Carolina Sánchez Girona: relaciones, emociones, ciencia y humor. Empieza con «No quiero volver, pero quiero que me busque».</p>
           <div className="editorial-actions" style={{marginTop:4}}>
