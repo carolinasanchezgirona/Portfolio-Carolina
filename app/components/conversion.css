@@ -1,38 +1,3 @@
-/* Reserva visible en móviles, sin tapar las preferencias de privacidad. */
-.mobile-booking-shortcut { display: none; }
-@media (max-width: 760px) {
-  .global-shell { padding-bottom: calc(72px + env(safe-area-inset-bottom, 0px)); }
-  .mobile-booking-shortcut {
-    display: flex;
-    position: fixed;
-    left: 16px;
-    right: 16px;
-    bottom: calc(12px + env(safe-area-inset-bottom, 0px));
-    z-index: 40;
-    width: auto;
-    min-height: 52px;
-    align-items: center;
-    justify-content: center;
-    margin: 0;
-    padding: 12px 18px;
-    border-radius: 999px;
-    background: #708793;
-    color: #fff;
-    text-decoration: none;
-    text-align: center;
-    font-size: 15px;
-    font-weight: 700;
-    box-shadow: 0 6px 24px rgba(48,71,80,.22);
-  }
-  .mobile-booking-shortcut:focus-visible { outline: 3px solid #809DA8; outline-offset: 3px; }
-  /* El enlace no se solapa con el botón para cambiar las cookies. */
-  body:has(.analytics-consent-settings) .mobile-booking-shortcut {
-    bottom: calc(62px + env(safe-area-inset-bottom, 0px));
-  }
-  /* La elección de cookies debe estar libre de obstáculos. */
-  body:has(.analytics-consent) .mobile-booking-shortcut { display: none; }
-}
-
 /* Identidad personal CS: cabecera pública, sin alterar áreas administrativas. */
 .site-global-header .brand {
   display: inline-flex;
