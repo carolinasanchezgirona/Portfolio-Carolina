@@ -34,6 +34,7 @@ const profileSchema = {
     sameAs: [
       "https://www.instagram.com/carolina_tupsicologa/",
       "https://www.linkedin.com/in/carolina-s%C3%A1nchez-girona-43b3b94a/",
+      "https://www.copc.cat/es/contacte/carolina-sanchez-girona-56949",
     ],
     memberOf: {
       "@type": "Organization",
