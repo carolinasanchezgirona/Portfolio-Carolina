@@ -148,7 +148,7 @@ function SiteFooter() {
           <p className="editorial-footer-brand">Carolina Sánchez | Psicóloga</p>
           <p>Psicóloga General Sanitaria · Neuropsicóloga</p>
           <p>Col·legiada COPC núm. 24892</p>
-          <p>Dememoria · Consulta de Psicología y Neuropsicología</p>
+          <p>Consulta de Psicología Sanitaria y Neuropsicología</p>
           <p>Arenys de Mar · Atención presencial y online</p>
         </div>
 
