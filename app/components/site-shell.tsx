@@ -200,7 +200,6 @@ export default function SiteShell({ children }: { children: ReactNode }) {
         <a className="skip-link" href="#contenido-principal">Saltar al contenido principal</a>
         <div id="contenido-principal" tabIndex={-1}>{children}</div>
         <LegalLinks />
-        <a className="mobile-booking-shortcut" href="/cita/">Pedir cita</a>
         <CrisisNotice />
       </div>
     );
@@ -212,7 +211,6 @@ export default function SiteShell({ children }: { children: ReactNode }) {
       <SiteHeader pathname={pathname} />
       <div id="contenido-principal" className="site-public-content" tabIndex={-1}>{children}</div>
       <SiteFooter />
-      <a className="mobile-booking-shortcut" href="/cita/">Pedir cita</a>
       <CrisisNotice />
     </div>
   );
