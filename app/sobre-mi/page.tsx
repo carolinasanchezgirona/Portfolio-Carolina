@@ -112,8 +112,9 @@ export default function AboutPage() {
               Dememoria es mi consulta de psicología y neuropsicología en Arenys de Mar. Ofrezco atención psicológica a adultos, evaluación del funcionamiento cognitivo e intervención neuropsicológica según las necesidades de cada caso.
             </p>
             <p>
-              La consulta busca mantener un formato clínico individualizado, con objetivos claros y una comunicación comprensible. Cuando es necesario, el trabajo puede coordinarse con otros profesionales sanitarios o incorporar informes previos para construir una visión más completa del caso.
+              La atención es individualizada, con objetivos claros y comunicación comprensible. Cuando es necesario, integro informes previos y coordino la intervención con otros profesionales sanitarios.
             </p>
+            <p><a href="/psicologa-arenys-de-mar/">Conocer la consulta y cómo llegar →</a></p>
           </section>
 
           <section>
@@ -151,7 +152,7 @@ export default function AboutPage() {
             <h2>Datos profesionales</h2>
             <ul className="seo-facts">
               <li><span>Profesión</span><strong>Psicóloga General Sanitaria</strong></li>
-              <li><span>Especialidad</span><strong>Neuropsicología</strong></li>
+              <li><span>Área clínica</span><strong>Neuropsicología</strong></li>
               <li><span>Colegiada</span><strong>COPC 24892</strong></li>
               <li><span>Consulta</span><strong>Arenys de Mar</strong></li>
               <li><span>Modalidad</span><strong>Presencial y online</strong></li>
@@ -170,24 +171,6 @@ export default function AboutPage() {
           </div>
         </aside>
       </div>
-
-      <section className="editorial-section seo-authority">
-        <div className="editorial-wrap seo-authority-grid">
-          <div>
-            <p className="editorial-section-eyebrow">Consulta clínica</p>
-            <h2>Dememoria · Arenys de Mar</h2>
-          </div>
-          <div className="seo-authority-copy">
-            <p>
-              Atención psicológica para adultos y neuropsicología clínica con cita previa. Sesiones de 60 minutos, atención presencial en Arenys de Mar y modalidad online cuando resulta adecuada para el caso.
-            </p>
-            <div className="seo-authority-links">
-              <a href="/psicologa-arenys-de-mar/">Ver información de la consulta →</a>
-              <a href="/cita/">Pedir cita →</a>
-            </div>
-          </div>
-        </div>
-      </section>
 
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(profileSchema) }} />
     </main>
