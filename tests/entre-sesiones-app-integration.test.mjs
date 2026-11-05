@@ -23,14 +23,14 @@ test("protected patient portal is reused inside the installable application's sc
 
 test("home and portal navigation use only installed-app scope", () => {
   assert.match(app, /const workspace = "\/entre-sesiones\/app\/espacio\/\?vista=terapia"/);
-  assert.match(app, /const wellness = "\/entre-sesiones\/app\/espacio\/\?vista=wellness"/);
-  assert.match(app, /const progress = "\/entre-sesiones\/app\/espacio\/\?vista=progreso"/);
+  assert.doesNotMatch(app, /const wellness = |const progress = /);
+  assert.doesNotMatch(app, /href=\{wellness\}|href=\{progress\}/);
   assert.match(app, /className="esapp-home-bottom-nav"/);
   assert.match(route, /className="esapp-bottom-nav"/);
   assert.match(css, /safe-area-inset-bottom/);
   assert.match(css, /@media\(max-width:760px\)/);
   assert.match(appCss, /esapp-home-bottom-nav/);
-  for (const view of ["terapia", "wellness", "progreso", "configuracion"]) {
+  for (const view of ["terapia", "configuracion"]) {
     assert.match(route, new RegExp('base \\+ "' + view + '"'));
   }
 });
@@ -40,9 +40,10 @@ test("existing public login keeps separate-tab behavior but installed app stays 
   assert.match(portal, /insideEntreSesionesApp \? null : window\.open\("about:blank", "_blank"\)/);
   assert.match(portal, /if \(insideEntreSesionesApp\) \{\s*renderPatientPortal\(session\)/);
   assert.match(portal, /if \(newTab && !newTab\.closed\) \{\s*newTab\.location\.replace\(url\)/);
-  assert.match(portal, /const requestedPanels = \{ terapia: "therapy", wellness: "wellness", progreso: "progress"/);
-  assert.match(portal, /if \(name !== "wellness"\) document\.dispatchEvent\(new Event\("wellness:interactive-reset"\)\)/);
+  assert.match(portal, /const requestedPanels = \{ panel: "today", terapia: "therapy", configuracion: "account"/);
+  assert.doesNotMatch(portal, /if \(name !== "wellness"\) document\.dispatchEvent/);
   assert.match(portalPage, /src="\/mi-espacio\.js\?v=[0-9]{8}-[a-z0-9-]+"/);
+  assert.match(portal, /openPortal\(requestedPanels\[requestedView\] \|\| "today"\)/);
 });
 
 test("patient confidentiality and underlying portal features remain unchanged", () => {
@@ -50,10 +51,10 @@ test("patient confidentiality and underlying portal features remain unchanged", 
   assert.match(portal, /credentials: "include"/);
   assert.match(portal, /fetch\("\/api\/patient-portal\/response"/);
   assert.match(portalPage, /id="space-login-form"/);
-  assert.match(portalPage, /id="wellness-interactive"/);
+  assert.doesNotMatch(portalPage, /id="wellness-interactive"/);
   assert.match(portalPage, /data-space-panel="therapy"/);
-  assert.match(portalPage, /data-space-panel="wellness"/);
-  assert.match(portalPage, /data-space-panel="progress"/);
+  assert.doesNotMatch(portalPage, /data-space-panel="wellness"/);
+  assert.doesNotMatch(portalPage, /data-space-panel="progress"/);
 });
 
 
@@ -75,12 +76,12 @@ test("Home and protected portal use consistent SVG navigation", () => {
   const homeNav = app.match(/<nav className="esapp-home-bottom-nav"[\s\S]*?<\/nav>/)?.[0];
   const portalNav = route.match(/<nav className="esapp-bottom-nav"[\s\S]*?<\/nav>/)?.[0];
   assert.ok(homeNav && portalNav, "Both navigation bars must exist");
-  assert.equal((homeNav.match(/<svg\b/g) || []).length, 5);
-  assert.equal((portalNav.match(/<svg\b/g) || []).length, 5);
-  for (const label of ["Inicio", "Mi terapia", "Wellness", "Progreso", "Cuenta"]) {
+  assert.equal((homeNav.match(/<svg\b/g) || []).length, 3);
+  assert.equal((portalNav.match(/<svg\b/g) || []).length, 3);
+  for (const label of ["Inicio", "Mi terapia", "Cuenta"]) {
     assert.ok(homeNav.includes(label) && portalNav.includes(label), label + " missing from navigation");
   }
-  assert.match(homeNav, /esapp-nav-heart/);
-  assert.match(portalNav, /esapp-nav-heart/);
+  assert.doesNotMatch(homeNav, /esapp-nav-heart|Wellness|Progreso/);
+  assert.doesNotMatch(portalNav, /esapp-nav-heart|Wellness|Progreso/);
   assert.doesNotMatch(homeNav, /<span aria-hidden="true">[⌂▤◉☷]/);
 });
