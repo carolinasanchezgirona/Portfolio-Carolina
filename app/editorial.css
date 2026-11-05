@@ -948,3 +948,87 @@
   .editorial-site .editorial-local-photo{max-width:520px;}
   .editorial-site .editorial-local-copy{max-width:65ch;}
 }
+
+
+/* Ajuste de composición: Sobre mí, primera visita y pódcast. */
+.editorial-site .editorial-about-grid {
+  grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);
+  gap:clamp(28px,4.5vw,64px);
+  align-items:center;
+}
+.editorial-site .editorial-about-grid > div:first-child{
+  min-width:0;
+}
+.editorial-site .editorial-about-photo {
+  max-width:320px;
+  margin-top:20px;
+}
+.editorial-site .editorial-about-photo img {
+  width:100%;
+  height:auto;
+  aspect-ratio:4/4.7;
+  object-fit:cover;
+  object-position:center 29%;
+}
+.editorial-site .editorial-about-copy {
+  max-width:54ch;
+  align-self:center;
+}
+.editorial-site .editorial-first-visit-grid {
+  display:grid;
+  grid-template-columns:minmax(0,.94fr) minmax(0,1.06fr);
+  gap:clamp(28px,4.5vw,64px);
+  align-items:start;
+}
+.editorial-site .editorial-first-visit-grid h2{max-width:18ch;}
+.editorial-site .editorial-first-visit-copy{max-width:55ch;}
+.editorial-site .editorial-first-visit-copy p{
+  margin:0;
+  color:#405A65;
+  font-size:1rem;
+  line-height:1.65;
+}
+.editorial-site .editorial-first-visit-copy .editorial-card-link{
+  margin-top:18px;
+  font-size:.93rem;
+}
+.editorial-site .editorial-podcast-section{background:#F2EFE7;}
+.editorial-site .editorial-podcast-card {
+  display:grid;
+  grid-template-columns:minmax(0,1.03fr) minmax(0,.97fr);
+  align-items:center;
+  gap:clamp(28px,4.5vw,60px);
+  padding:clamp(26px,3vw,42px);
+  border-radius:12px;
+  background:#EDEDED;
+}
+.editorial-site .editorial-podcast-card h2 {
+  margin:0;
+  max-width:19ch;
+}
+.editorial-site .editorial-podcast-copy{max-width:49ch;}
+.editorial-site .editorial-podcast-copy p {
+  margin:0;
+  color:#405A65;
+  font-size:1rem;
+  line-height:1.65;
+}
+.editorial-site .editorial-podcast-copy .editorial-card-link{
+  margin-top:17px;
+  font-size:.93rem;
+}
+@media(max-width:900px){
+  .editorial-site .editorial-about-grid,
+  .editorial-site .editorial-first-visit-grid,
+  .editorial-site .editorial-podcast-card {
+    grid-template-columns:1fr;
+    gap:24px;
+  }
+  .editorial-site .editorial-about-copy{max-width:65ch;}
+  .editorial-site .editorial-about-photo{max-width:310px;}
+  .editorial-site .editorial-podcast-card h2{max-width:24ch;}
+}
+@media(max-width:680px){
+  .editorial-site .editorial-about-photo{max-width:290px;}
+  .editorial-site .editorial-podcast-card{padding:24px 21px;}
+}
