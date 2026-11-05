@@ -107,9 +107,9 @@ export default function AboutPage() {
           </section>
 
           <section>
-            <h2>Dememoria</h2>
+            <h2>Mi consulta en Arenys de Mar</h2>
             <p>
-              Dememoria es mi consulta de psicología y neuropsicología en Arenys de Mar. Ofrezco atención psicológica a adultos, evaluación del funcionamiento cognitivo e intervención neuropsicológica según las necesidades de cada caso.
+              En mi consulta de Arenys de Mar ofrezco atención psicológica a adultos, evaluación del funcionamiento cognitivo e intervención neuropsicológica según las necesidades de cada caso.
             </p>
             <p>
               La atención es individualizada, con objetivos claros y comunicación comprensible. Cuando es necesario, integro informes previos y coordino la intervención con otros profesionales sanitarios.
