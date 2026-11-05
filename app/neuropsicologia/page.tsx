@@ -121,7 +121,7 @@ export default function NeuropsychologyPage() {
               En personas mayores, la valoración neuropsicológica puede ayudar a distinguir entre cambios esperables asociados a la edad, dificultades relacionadas con factores emocionales o médicos y patrones que requieren una exploración más profunda.
             </p>
             <p>
-              En situaciones de deterioro cognitivo o demencia, el trabajo no termina en el diagnóstico. También puede incluir seguimiento, estimulación o rehabilitación cognitiva, adaptación de estrategias para la vida diaria, orientación a familiares y coordinación con el resto del equipo sanitario. <a href="/deterioro-cognitivo/">Más información sobre deterioro cognitivo y problemas de memoria.</a> Para el entorno cercano, puedes consultar también la <a href="/familiares-y-cuidadores-de-personas-con-demencia/">atención a familiares y cuidadores de personas con demencia</a>.
+              En situaciones de deterioro cognitivo o demencia, el trabajo no termina en el diagnóstico. También puede incluir seguimiento, estimulación o rehabilitación cognitiva, adaptación de estrategias para la vida diaria, orientación a familiares y coordinación con el resto del equipo sanitario. <a href="/evaluacion-memoria-deterioro-cognitivo/">Más información sobre deterioro cognitivo y problemas de memoria.</a> Para el entorno cercano, puedes consultar también la <a href="/familiares-y-cuidadores-de-personas-con-demencia/">atención a familiares y cuidadores de personas con demencia</a>.
             </p>
           </section>
 
@@ -157,7 +157,7 @@ export default function NeuropsychologyPage() {
               <a href="/evaluacion-memoria-deterioro-cognitivo/">Evaluación de memoria y deterioro cognitivo · 350 € / 500 €</a>
               <a href="/evaluacion-altas-capacidades-adultos/">Altas capacidades en adultos · 450 € / 600 €</a>
               <a href="/problemas-de-memoria/">Problemas de memoria y olvidos</a>
-              <a href="/deterioro-cognitivo/">Deterioro cognitivo</a>
+              <a href="/evaluacion-memoria-deterioro-cognitivo/">Deterioro cognitivo</a>
               <a href="/demencias/">Demencias y Alzheimer</a>
               <a href="/estimulacion-cognitiva/">Estimulación cognitiva</a>
               <a href="/familiares-y-cuidadores-de-personas-con-demencia/">Familiares y cuidadores</a>
