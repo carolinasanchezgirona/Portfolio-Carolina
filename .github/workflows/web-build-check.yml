@@ -185,6 +185,7 @@ jobs:
             python3 -m playwright install chromium
           fi
           python3 tests/mood-chart-mobile-browser.py
+          python3 tests/public-questions-retirement-browser.py
 
       - name: Verificar salida estática
         run: |
