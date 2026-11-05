@@ -170,7 +170,7 @@ export default function HomePage() {
           </div>
           <div className="editorial-reviews-copy">
             <p>
-              Las reseñas corresponden a Dememòria, nombre con el que también se conoce mi consulta en Arenys de Mar. La atención profesional la presta Carolina Sánchez Girona.
+              Puedes consultar las opiniones publicadas en Google sobre la atención recibida en mi consulta de Arenys de Mar.
             </p>
             <a
               className="editorial-card-link"
