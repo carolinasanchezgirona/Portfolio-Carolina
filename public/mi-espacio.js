@@ -646,12 +646,10 @@
   }
 
   const viewSlug = Object.freeze({
-    today: "panel", therapy: "terapia", wellness: "wellness",
-    progress: "progreso", account: "configuracion"
+    today: "panel", therapy: "terapia", account: "configuracion"
   });
   const slugView = Object.freeze({
-    panel: "today", terapia: "therapy", wellness: "wellness",
-    progreso: "progress", configuracion: "account"
+    panel: "today", terapia: "therapy", configuracion: "account"
   });
 
   function currentViewFromUrl() {
@@ -694,8 +692,7 @@
   }
 
   function showView(name) {
-    const previousView = panels.find(panel => !panel.hidden)?.dataset.spacePanel;
-    if (name !== "wellness") document.dispatchEvent(new Event("wellness:interactive-reset"));
+    if (!panels.some(panel => panel.dataset.spacePanel === name)) name = "today";
     panels.forEach(panel => {
       panel.hidden = panel.dataset.spacePanel !== name;
     });
@@ -712,17 +709,6 @@
         else link.removeAttribute("aria-current");
       });
     }
-    if (name === "wellness") {
-      // Restaurar la sección solicitada al volver con Atrás/Adelante en Android.
-      // El acceso por necesidad la conserva hasta mostrar resultados.
-      const section = insideEntreSesionesApp
-        ? new URLSearchParams(window.location.search).get("seccion") : null;
-      const requestedTab = ["explorar", "guardadas"].includes(section) ? section : "inicio";
-      if (state.need) renderWellness();
-      else if (previousView !== "wellness" || wellnessActiveTab !== requestedTab) setWellnessTab(requestedTab);
-      else renderWellness();
-    }
-    if (name === "progress") renderProgress();
     if (name === "therapy" && window.location.hash.startsWith("#space-material-")) {
       focusPatientMaterialFromHash();
       return;
@@ -1527,7 +1513,7 @@
         return;
       }
       const requestedView = new URLSearchParams(window.location.search).get("vista");
-      const allowedViews = ["terapia", "wellness", "progreso", "configuracion"];
+      const allowedViews = ["terapia", "configuracion"];
       const url = allowedViews.includes(requestedView)
         ? "/mi-espacio/?vista=" + requestedView
         : "/mi-espacio/?vista=panel";
@@ -1889,6 +1875,7 @@
   });
 
   function renderProgress() {
+    if (!document.getElementById("progress-total")) return;
     const now = Date.now();
     const sevenDays = 7 * 24 * 60 * 60 * 1000;
     const week = state.completed.filter(item => {
@@ -2099,7 +2086,7 @@
   }));
   openPanelButton?.addEventListener("click", () => {
     const requestedView = new URLSearchParams(window.location.search).get("vista");
-    const allowedViews = ["terapia", "wellness", "progreso", "configuracion"];
+    const allowedViews = ["terapia", "configuracion"];
     const url = allowedViews.includes(requestedView)
         ? "/mi-espacio/?vista=" + requestedView
         : "/mi-espacio/?vista=panel";
@@ -2124,6 +2111,13 @@
   });
 
   if (insideEntreSesionesApp) {
+    // La navegación de la PWA tampoco muestra entradas antiguas de Wellness.
+    const bottomNav = document.querySelector(".esapp-bottom-nav");
+    bottomNav?.querySelectorAll("a").forEach(link => {
+      const view = new URL(link.href, window.location.origin).searchParams.get("vista");
+      if (view === "wellness" || view === "progreso") link.remove();
+    });
+    if (bottomNav) bottomNav.style.gridTemplateColumns = "repeat(3, minmax(0, 1fr))";
     window.addEventListener("hashchange", focusPatientMaterialFromHash);
     document.querySelectorAll(".esapp-bottom-nav a").forEach(link => {
       const destination = new URL(link.href, window.location.origin);
