@@ -19,7 +19,7 @@
 .tdah-page .seo-card a:not(.editorial-btn){overflow-wrap:anywhere}
 @media(max-width:680px){.tdah-modality{padding:21px}.tdah-modality-top{align-items:flex-start}.tdah-price{font-size:1.85rem}.tdah-modality .tdah-modality-top h3{font-size:1.35rem}}
 
-.tdah-included{margin:20px 0 0;padding:22px 24px;background:#f3f9f8;border:1px solid var(--e-line);border-left:4px solid var(--e-teal);border-radius:12px}
+.tdah-included{margin:20px 0 0;padding:22px 24px;background:#E3EBEE;border:1px solid var(--e-line);border-left:4px solid var(--e-teal);border-radius:12px}
 .tdah-included h3{margin:0 0 10px;font-size:1.2rem}
 .tdah-included p{margin:0 0 12px;line-height:1.65}
 .tdah-included p:last-child{margin-bottom:0}
@@ -50,12 +50,12 @@
 .tdah-page .seo-actions a.editorial-btn-primary:hover,
 .tdah-page .seo-actions a.editorial-btn-primary:focus-visible {
   color:#fff;
-  background:#065D70;
-  border-color:#065D70;
+  background:#405A65;
+  border-color:#405A65;
   text-decoration:none;
 }
 .tdah-page a.editorial-btn:focus-visible {
-  outline:3px solid #1C2320;
+  outline:3px solid #304750;
   outline-offset:3px;
 }
 
@@ -64,14 +64,14 @@
 .tdah-download p{margin:0;line-height:1.55}
 .tdah-page .seo-copy .tdah-download a.editorial-btn-secondary{color:var(--e-ink);background:#fff;border:1px solid var(--e-line);text-decoration:none;flex-shrink:0}
 .tdah-page .seo-copy .tdah-download a.editorial-btn-secondary:hover,
-.tdah-page .seo-copy .tdah-download a.editorial-btn-secondary:focus-visible{color:var(--e-ink);background:#edf6f6;border-color:var(--e-teal);text-decoration:none}
+.tdah-page .seo-copy .tdah-download a.editorial-btn-secondary:focus-visible{color:var(--e-ink);background:#E3EBEE;border-color:var(--e-teal);text-decoration:none}
 @media(max-width:680px){.tdah-download{flex-direction:column;align-items:stretch;padding:20px}.tdah-download a.editorial-btn{width:100%}}
 
 
 /* Reequilibrio editorial TDAH: se conservan tipografías y paleta de la web */
 .tdah-page .tdah-hero-grid{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(250px,.72fr);gap:50px;align-items:center}
 .tdah-hero-copy{min-width:0}
-.tdah-hero-photo,.tdah-consultation-photo{margin:0;overflow:hidden;border:1px solid var(--e-line);border-radius:16px;background:#f1f3f1}
+.tdah-hero-photo,.tdah-consultation-photo{margin:0;overflow:hidden;border:1px solid var(--e-line);border-radius:16px;background:#EDEDED}
 .tdah-hero-photo{max-width:360px;justify-self:end;width:100%}
 .tdah-hero-photo img{display:block;width:100%;height:auto;aspect-ratio:2/3;object-fit:cover}
 .tdah-main{padding-top:54px;padding-bottom:68px}
@@ -181,7 +181,7 @@
   justify-self:end;
   border:1px solid var(--e-line);
   border-radius:16px;
-  background:#f1f3f1;
+  background:#EDEDED;
   overflow:hidden;
 }
 .tdah-page .tdah-hero-photo img{
