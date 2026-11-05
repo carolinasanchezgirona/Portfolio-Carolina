@@ -1177,3 +1177,80 @@
   .editorial-site .editorial-method .editorial-step-grid{grid-template-columns:1fr;}
   .editorial-site .editorial-method .editorial-method-photo{max-width:240px;}
 }
+
+
+/* Sobre mí: fotografía y presentación forman un único bloque editorial. */
+.editorial-site .editorial-about-grid.editorial-about-refined {
+  display:grid;
+  grid-template-columns:minmax(240px,.72fr) minmax(0,1.28fr);
+  grid-template-areas:"portrait content";
+  gap:clamp(35px,5vw,80px);
+  align-items:center;
+}
+.editorial-site .editorial-about-refined .editorial-about-content {
+  grid-area:content;
+  min-width:0;
+  max-width:650px;
+}
+.editorial-site .editorial-about-refined .editorial-about-content h2 {
+  max-width:none;
+  margin:0;
+  font-size:clamp(2rem,2.75vw,2.65rem);
+  line-height:1.12;
+}
+.editorial-site .editorial-about-refined .editorial-role {
+  margin:9px 0 21px;
+  font-size:.86rem;
+  line-height:1.45;
+}
+.editorial-site .editorial-about-refined .editorial-about-copy {
+  max-width:57ch;
+  margin:0;
+}
+.editorial-site .editorial-about-refined .editorial-about-copy p{
+  margin:0;
+  font-size:1rem;
+  line-height:1.65;
+}
+.editorial-site .editorial-about-refined .editorial-about-copy p+p{margin-top:14px;}
+.editorial-site .editorial-about-refined .editorial-about-more{
+  display:inline-flex;
+  width:fit-content;
+  margin-top:18px;
+  color:#405A65;
+  text-decoration:none;
+  font-size:.92rem;
+  font-weight:600;
+  line-height:1.5;
+}
+.editorial-site .editorial-about-refined .editorial-about-more:hover{text-decoration:underline;}
+.editorial-site .editorial-about-refined .editorial-about-social{margin-top:17px;}
+.editorial-site .editorial-about-refined .editorial-about-photo {
+  grid-area:portrait;
+  width:100%;
+  max-width:345px;
+  margin:0;
+  justify-self:center;
+  overflow:hidden;
+  border-radius:12px;
+}
+.editorial-site .editorial-about-refined .editorial-about-photo img{
+  display:block;
+  width:100%;
+  height:auto;
+  aspect-ratio:4/5;
+  object-fit:cover;
+  object-position:center 30%;
+}
+@media(max-width:800px){
+  .editorial-site .editorial-about-grid.editorial-about-refined {
+    grid-template-columns:1fr;
+    grid-template-areas:"content" "portrait";
+    align-items:start;
+    gap:25px;
+  }
+  .editorial-site .editorial-about-refined .editorial-about-photo{
+    width:min(100%,310px);
+    justify-self:start;
+  }
+}
