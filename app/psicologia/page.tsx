@@ -138,6 +138,7 @@ export default function PsychologyPage() {
             <p><strong>Precio</strong><span>60 €</span></p>
             <p><strong>Modalidad</strong><span>En Arenys de Mar u online, según el caso</span></p>
             <a className="editorial-btn editorial-btn-primary" href="/cita/">Consultar disponibilidad</a>
+            <a className="editorial-card-link" href="/psicologa-maresme/">Consulta de psicología en el Maresme →</a>
           </div>
         </div>
       </section>
