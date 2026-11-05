@@ -78,7 +78,15 @@ function SiteHeader({ pathname }: { pathname: string }) {
             )}
           </div>
         </details>
-        <a className="site-nav-feature" href="/pregunta-a-carolina/" aria-current={currentPage("/pregunta-a-carolina/")}>Tu Consulta</a>
+        <details className="site-nav-group">
+          <summary>Recursos <ChevronIcon /></summary>
+          <div className="site-nav-submenu">
+            <a href="/recursos/" aria-current={currentPage("/recursos/")}>Materiales y cuadernos</a>
+            <a href="/articulos/" aria-current={currentPage("/articulos/")}>Artículos</a>
+            <a href="/podcast/" aria-current={currentPage("/podcast/")}>Pódcast</a>
+            <a href="/pregunta-a-carolina/" aria-current={currentPage("/pregunta-a-carolina/")}>Tu Consulta</a>
+          </div>
+        </details>
         <a href="/sobre-mi/" aria-current={currentPage("/sobre-mi/")}>Sobre mí</a>
       </nav>
 
@@ -100,7 +108,15 @@ function SiteHeader({ pathname }: { pathname: string }) {
                 )}
               </div>
             </details>
-            <a className="site-mobile-feature" href="/pregunta-a-carolina/" aria-current={currentPage("/pregunta-a-carolina/")}>Tu Consulta</a>
+            <details className="site-mobile-nav-section">
+              <summary>Recursos <ChevronIcon /></summary>
+              <div className="site-mobile-nav-items">
+                <a href="/recursos/" aria-current={currentPage("/recursos/")}>Materiales y cuadernos</a>
+                <a href="/articulos/" aria-current={currentPage("/articulos/")}>Artículos</a>
+                <a href="/podcast/" aria-current={currentPage("/podcast/")}>Pódcast</a>
+                <a href="/pregunta-a-carolina/" aria-current={currentPage("/pregunta-a-carolina/")}>Tu Consulta</a>
+              </div>
+            </details>
             <a href="/sobre-mi/" aria-current={currentPage("/sobre-mi/")}>Sobre mí</a>
             <a className="site-mobile-patient" href="/mi-espacio/">Mi espacio · Acceso de pacientes</a>
             <a className="site-mobile-booking" href="/cita/">Pedir cita</a>
@@ -156,6 +172,7 @@ function SiteFooter() {
         <nav className="site-footer-column" aria-label="Consulta">
           <p className="site-footer-heading">Consulta</p>
           <a href="/sobre-mi/">Sobre mí</a>
+          <a href="/recursos/">Recursos y materiales</a>
           <a href="/articulos/">Artículos</a>
           <a href="/pregunta-a-carolina/">Tu Consulta</a>
           <a href="/podcast/">Psicología Incómoda · Podcast</a>
