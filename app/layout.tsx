@@ -112,9 +112,8 @@ const structuredData = {
     },
     {
       "@type": "ProfessionalService",
-      "@id": "https://carolinasanchezgirona.com/#dememoria",
+      "@id": "https://carolinasanchezgirona.com/#consulta",
       name: "Carolina Sánchez | Psicóloga y Neuropsicóloga",
-      alternateName: "Dememoria",
       url: "https://carolinasanchezgirona.com",
       image: "https://carolinasanchezgirona.com/carolina-sanchez-portada-720.webp",
       email: "contact@carolinasanchezgirona.com",
