@@ -166,6 +166,7 @@ export default function NeuropsychologyPage() {
               <a href="/rehabilitacion-neuropsicologica/">Rehabilitación neuropsicológica</a>
                             <a href="/alzheimer-primeros-sintomas-y-evaluacion/">Alzheimer: primeros síntomas y evaluación</a>
               <a href="/psicologa-arenys-de-mar/">Consulta en Arenys de Mar</a>
+              <a href="/psicologa-maresme/">Atención neuropsicológica en el Maresme</a>
               <a href="/psicologia/">Psicología General Sanitaria</a>
             </div>
           </div>
