@@ -903,3 +903,48 @@
   .editorial-site .resource-card h2 {font-size:1.5rem;}
   .editorial-site .editorial-section{padding-block:40px;}
 }
+
+
+/* Consulta en el Maresme: titular completo y fotografía con texto a su lado. */
+.editorial-site .editorial-local-heading{margin-bottom:26px;max-width:850px;}
+.editorial-site .editorial-local-heading h2{max-width:24ch;}
+.editorial-site .editorial-local-grid{
+  display:grid;
+  grid-template-columns:minmax(0,1.06fr) minmax(0,.94fr);
+  align-items:center;
+  gap:clamp(28px,5vw,64px);
+}
+.editorial-site .editorial-local-photo{
+  display:block;
+  width:100%;
+  max-width:520px;
+  margin:0;
+  overflow:hidden;
+  border:1px solid #D9DDDE;
+  border-radius:12px;
+}
+.editorial-site .editorial-local-photo img{
+  display:block;
+  width:100%;
+  height:auto;
+  aspect-ratio:4/3;
+  object-fit:cover;
+}
+.editorial-site .editorial-local-copy{max-width:49ch;}
+.editorial-site .editorial-local-copy p{
+  margin:0 0 15px;
+  font-size:1rem;
+  line-height:1.65;
+  color:#405A65;
+}
+.editorial-site .editorial-local-copy .editorial-card-link{
+  display:inline-flex;
+  margin-top:14px;
+  font-size:.92rem;
+  line-height:1.5;
+}
+@media(max-width:900px){
+  .editorial-site .editorial-local-grid{grid-template-columns:1fr;gap:23px;}
+  .editorial-site .editorial-local-photo{max-width:520px;}
+  .editorial-site .editorial-local-copy{max-width:65ch;}
+}
