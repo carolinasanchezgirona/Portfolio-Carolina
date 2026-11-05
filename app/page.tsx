@@ -108,9 +108,11 @@ export default function HomePage() {
                 con especial atención al <a href="/deterioro-cognitivo/">deterioro cognitivo</a>,
                 las demencias y la orientación a familiares y cuidadores.
               </p>
-              <p className="editorial-card-price">Sesión de neuropsicología · 75 € / 60 minutos</p>
-              <p className="editorial-card-note">Las evaluaciones completas se presupuestan según las necesidades.</p>
-              <a className="editorial-card-link" href="/neuropsicologia/">Conocer el servicio de neuropsicología →</a>
+              <div className="editorial-card-bottom">
+                <p className="editorial-card-price">75 € <span>· Sesión de 60 minutos</span></p>
+                <p className="editorial-card-note">Las evaluaciones completas tienen un presupuesto específico.</p>
+                <a className="editorial-card-link" href="/neuropsicologia/">Conocer neuropsicología →</a>
+              </div>
             </article>
           </div>
         </div>
