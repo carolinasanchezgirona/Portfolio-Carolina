@@ -730,3 +730,44 @@
   bottom:auto !important;
   transform:none !important;
 }
+
+
+/* Tarjeta de neuropsicología: precio y llamada a la acción con jerarquía clara. */
+.editorial-site .editorial-service-card {
+  display:flex;
+  flex-direction:column;
+  align-items:stretch;
+}
+.editorial-site .editorial-service-card .editorial-card-bottom {
+  margin-top:auto;
+  padding-top:20px;
+  display:flex;
+  flex-direction:column;
+  align-items:flex-start;
+  gap:8px;
+}
+.editorial-site .editorial-card-bottom .editorial-card-price {
+  margin:0;
+  color:#304750;
+  font-size:1.18rem;
+  font-weight:700;
+  line-height:1.35;
+}
+.editorial-site .editorial-card-bottom .editorial-card-price span {
+  font-size:.84rem;
+  font-weight:500;
+  color:#405A65;
+}
+.editorial-site .editorial-card-bottom .editorial-card-note {
+  margin:0;
+  max-width:45ch;
+  font-size:.83rem;
+  line-height:1.5;
+  color:#536B77;
+}
+.editorial-site .editorial-card-bottom .editorial-card-link {
+  margin-top:8px;
+  font-size:.9rem;
+  line-height:1.45;
+  font-weight:650;
+}
