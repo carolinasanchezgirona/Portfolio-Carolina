@@ -141,3 +141,41 @@
   border-color:#809DA8!important;
   color:#243840!important;
 }
+
+
+/* Preferencias de cookies: discreto, legible, accesible, solo sitio público. */
+body:has(.global-shell) .analytics-consent-settings,
+body:has(.public-page-shell) .analytics-consent-settings {
+  position:fixed;
+  right:18px;
+  bottom:18px;
+  z-index:999;
+  min-height:42px;
+  padding:10px 15px;
+  border:1px solid #D9DDDE;
+  border-radius:999px;
+  background:#F2EFE7;
+  color:#304750;
+  box-shadow:0 4px 14px rgba(48,71,80,.10);
+  font-size:.79rem;
+  font-weight:600;
+  line-height:1.15;
+}
+body:has(.global-shell) .analytics-consent-settings:hover,
+body:has(.public-page-shell) .analytics-consent-settings:hover {
+  background:#EDEDED;
+  border-color:#809DA8;
+}
+body:has(.global-shell) .analytics-consent-settings:focus-visible,
+body:has(.public-page-shell) .analytics-consent-settings:focus-visible {
+  outline:3px solid #708793;
+  outline-offset:3px;
+}
+@media (max-width:680px) {
+  body:has(.global-shell) .analytics-consent-settings,
+  body:has(.public-page-shell) .analytics-consent-settings {
+    right:12px;
+    bottom:12px;
+    min-height:42px;
+  }
+}
