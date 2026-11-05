@@ -61,8 +61,11 @@ function SiteHeader({ pathname }: { pathname: string }) {
   return (
     <header className="site-header site-global-header">
       <a className="brand" href="/" aria-label="Carolina Sánchez, volver al inicio">
-        <span className="brand-name">Carolina Sánchez</span>
-        <span className="brand-sub">Psicóloga · Neuropsicóloga</span>
+        <img className="site-brand-monogram" src="/icon.svg" width="46" height="46" alt="" aria-hidden="true" />
+        <span className="site-brand-identity">
+          <span className="brand-name">Carolina Sánchez</span>
+          <span className="brand-sub">Psicóloga · Neuropsicóloga</span>
+        </span>
       </a>
 
       <nav className="nav site-global-nav" aria-label="Navegación principal">
