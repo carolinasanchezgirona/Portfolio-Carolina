@@ -64,8 +64,8 @@ export default function PodcastPage() {
         </section>
 
         <section className="podcast-bottom" aria-label="Más recursos">
-          <div><h2>¿Quieres seguir explorando?</h2><p>En los artículos encontrarás información complementaria y en Tu Consulta puedes proponer preguntas generales para próximos contenidos.</p></div>
-          <div className="podcast-bottom-links"><a href="/articulos/">Ver artículos ↗</a><a href="/pregunta-a-carolina/">Ir a Tu Consulta ↗</a></div>
+          <div><h2>¿Quieres seguir explorando?</h2><p>En los artículos encontrarás información complementaria a los temas tratados en el pódcast.</p></div>
+          <div className="podcast-bottom-links"><a href="/articulos/">Ver artículos ↗</a></div>
         </section>
       </div>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(seriesData) }} />
