@@ -1,20 +1,20 @@
 /* Capa final de coherencia visual para la home clínica */
 
 :root {
-  --clinical-primary: #4c5bff;
-  --clinical-primary-dark: #3442d9;
-  --clinical-primary-soft: #eef0ff;
-  --clinical-data: #1bcfc9;
-  --clinical-data-dark: #0d8f8b;
-  --clinical-data-soft: #e8fbfa;
-  --clinical-ink: #1d2333;
-  --clinical-text: #343d55;
-  --clinical-muted: #66718b;
-  --clinical-border: #e2e6f1;
+  --clinical-primary: #708793;
+  --clinical-primary-dark: #405A65;
+  --clinical-primary-soft: #E3EBEE;
+  --clinical-data: #809DA8;
+  --clinical-data-dark: #526C78;
+  --clinical-data-soft: #EDEDED;
+  --clinical-ink: #304750;
+  --clinical-text: #405A65;
+  --clinical-muted: #617680;
+  --clinical-border: #D9DDDE;
   --clinical-surface: #ffffff;
-  --clinical-soft: #f7f8fc;
-  --clinical-dark: #18223c;
-  --brand-gradient: linear-gradient(90deg, #4c5bff 0%, #1bcfc9 52%, #ff6f61 100%);
+  --clinical-soft: #F2EFE7;
+  --clinical-dark: #304750;
+  --brand-gradient: linear-gradient(90deg, #708793 0%, #809DA8 52%, #A0A0A0 100%);
 }
 
 /* Jerarquía tipográfica */
