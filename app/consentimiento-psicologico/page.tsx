@@ -3,7 +3,7 @@ import "../legal.css";
 
 export const metadata: Metadata = {
   title: "Consentimiento informado psicológico | Carolina Sánchez Girona",
-  description: "Consentimiento informado para intervención psicológica en Dememoria.",
+  description: "Consentimiento informado para intervención psicológica en la consulta de Carolina Sánchez Girona.",
   robots: {
     index: false,
     follow: true,
@@ -23,7 +23,7 @@ export default function PsychologicalConsentPage() {
 
       <section className="legal-hero">
         <div className="legal-wrap">
-          <p className="legal-eyebrow">Dememoria · Consentimiento informado</p>
+          <p className="legal-eyebrow">Carolina Sánchez Girona · Consentimiento informado</p>
           <h1>Consentimiento informado para intervención psicológica</h1>
         </div>
       </section>
@@ -39,13 +39,13 @@ export default function PsychologicalConsentPage() {
             <p><strong>Correo electrónico:</strong> __________________________</p>
             <p><strong>Fecha de la firma:</strong> __________________________</p>
             <p><strong>Nombre del profesional:</strong> Carolina Sánchez Girona</p>
-            <p><strong>Centro:</strong> Dememoria – Consulta de Psicología y Neuropsicología</p>
+            <p><strong>Centro:</strong> Consulta de Psicología y Neuropsicología de Carolina Sánchez Girona</p>
           </div>
         </section>
 
         <section>
           <h2>1. Introducción</h2>
-          <p>Este documento tiene como objetivo proporcionar información clara y detallada sobre la intervención psicológica que se llevará a cabo en Dememoria. La firma de este consentimiento indica que el paciente ha comprendido la información y acepta voluntariamente el tratamiento propuesto.</p>
+          <p>Este documento tiene como objetivo proporcionar información clara y detallada sobre la intervención psicológica que se llevará a cabo en la consulta de Carolina Sánchez Girona. La firma de este consentimiento indica que el paciente ha comprendido la información y acepta voluntariamente el tratamiento propuesto.</p>
         </section>
 
         <section>
@@ -125,7 +125,7 @@ export default function PsychologicalConsentPage() {
         <section>
           <h2>8. Consentimiento</h2>
           <p>Declaro haber leído y comprendido la información contenida en este documento. Se me han explicado los objetivos, beneficios, riesgos y limitaciones de la intervención psicológica. He tenido la oportunidad de formular preguntas y todas han sido respondidas satisfactoriamente.</p>
-          <p>Autorizo voluntariamente a Dememoria y al profesional responsable a llevar a cabo la intervención psicológica descrita.</p>
+          <p>Autorizo voluntariamente a la consulta de Carolina Sánchez Girona y al profesional responsable a llevar a cabo la intervención psicológica descrita.</p>
           <p><strong>Firma del paciente o representante legal</strong></p>
           <p>Firma: __________________________</p>
           <p>Fecha: __________________________</p>
@@ -136,7 +136,7 @@ export default function PsychologicalConsentPage() {
       </article>
 
       <footer className="legal-footer">
-        <div className="legal-wrap">© 2026 Carolina Sánchez Girona · Dememoria</div>
+        <div className="legal-wrap">© 2026 Carolina Sánchez Girona</div>
       </footer>
     </main>
   );
