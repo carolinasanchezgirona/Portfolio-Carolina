@@ -167,7 +167,7 @@ export default function LocalPsychologistPage() {
           <div className="seo-card">
             <p className="editorial-section-eyebrow">Valoraciones en Google</p>
             <h3>5,0 de 5 · 27 reseñas</h3>
-            <p>Estas reseñas están publicadas en el perfil de Google de Dememòria, el nombre con el que también se conoce mi consulta de Arenys de Mar. La atención clínica la presta Carolina Sánchez Girona.</p>
+            <p>Estas opiniones pueden consultarse en Google y corresponden a la atención profesional prestada en mi consulta de Arenys de Mar.</p>
             <div className="seo-related">
               <a
                 href="https://maps.app.goo.gl/ubCSFYZRgbv7vpqF9"
@@ -193,7 +193,7 @@ export default function LocalPsychologistPage() {
         <div className="editorial-wrap">
           <div className="editorial-section-head">
             <p className="editorial-section-eyebrow">Dónde está la consulta</p>
-            <h2 id="consulta-map-title">Dememoria · Arenys de Mar</h2>
+            <h2 id="consulta-map-title">Carolina Sánchez Girona · Arenys de Mar</h2>
             <p style={{ color: "var(--e-ink-soft)", lineHeight: 1.7, marginTop: "14px" }}>
               Carrer Barcelona 8, Local · Arenys de Mar. Puedes abrir la ficha de Google para consultar la ubicación y las indicaciones para llegar.
             </p>
@@ -207,7 +207,7 @@ export default function LocalPsychologistPage() {
             </a>
           </div>
           <figure className="consultation-exterior-photo">
-            <Image src="/consulta-carolina-sanchez-fachada.webp" alt="Fachada de Dememòria, consulta de psicología y neuropsicología en Carrer Barcelona, Arenys de Mar" width={1122} height={1402} sizes="(max-width: 720px) calc(100vw - 36px), (max-width: 1100px) 55vw, 480px" loading="lazy" />
+            <Image src="/consulta-carolina-sanchez-fachada.webp" alt="Fachada del local de consulta de psicología y neuropsicología en Carrer Barcelona, Arenys de Mar" width={1122} height={1402} sizes="(max-width: 720px) calc(100vw - 36px), (max-width: 1100px) 55vw, 480px" loading="lazy" />
             <figcaption>Entrada a la consulta</figcaption>
           </figure>
           <div style={{ overflow: "hidden", border: "1px solid var(--e-line)", borderRadius: "14px", background: "#fff" }}>
@@ -219,7 +219,7 @@ export default function LocalPsychologistPage() {
               allowFullScreen
               loading="lazy"
               referrerPolicy="strict-origin-when-cross-origin"
-              title="Mapa de Dememoria, consulta de Carolina Sánchez en Arenys de Mar"
+              title="Mapa de la consulta de Carolina Sánchez en Arenys de Mar"
             />
           </div>
         </div>
@@ -249,7 +249,7 @@ export default function LocalPsychologistPage() {
 
       <footer className="editorial-footer">
         <div className="editorial-wrap editorial-footer-inner">
-          <div><p className="editorial-footer-brand">Carolina Sánchez | Psicóloga</p><p>Dememoria · Consulta de Psicología y Neuropsicología</p></div>
+          <div><p className="editorial-footer-brand">Carolina Sánchez | Psicóloga</p><p>Consulta de Psicología Sanitaria y Neuropsicología</p></div>
           <div><p>Arenys de Mar · Atención online</p><p>© 2026 Carolina Sánchez Girona</p></div>
         </div>
       </footer>
