@@ -585,3 +585,79 @@
   .site-global-header .brand { max-width:calc(100% - 108px); }
   .site-global-header .brand-name { font-size:.98rem; letter-spacing:-.02em; }
 }
+
+
+/* Paleta oficial de Carolina, muestreada de la referencia original:
+   #809DA8 · #708793 · #A0A0A0 · #F2EFE7 · #EDEDED
+   Solo el color de tinta utiliza una variante más oscura para lectura accesible. */
+:root, .editorial-site, .global-shell {
+  --cs-blue: #809DA8;
+  --cs-slate: #708793;
+  --cs-stone: #A0A0A0;
+  --cs-ivory: #F2EFE7;
+  --cs-pearl: #EDEDED;
+  --e-bg: var(--cs-ivory);
+  --e-teal: var(--cs-slate);
+  --e-teal-tint: var(--cs-pearl);
+  --e-indigo: var(--cs-slate);
+  --e-coral: var(--cs-stone);
+  --e-coral-tint: var(--cs-pearl);
+  --e-line: #D9DDDE;
+  --e-ink: #304750;
+  --e-ink-soft: #405A65;
+}
+.global-shell > .site-header.site-global-header {
+  background:var(--cs-ivory);
+  border-bottom:1px solid #D9DDDE;
+  box-shadow:none;
+  backdrop-filter:none;
+}
+.global-shell > .site-global-header .brand {
+  display:flex;
+  flex-direction:row;
+  align-items:center;
+  gap:12px;
+  max-width:min(100%,360px);
+  min-width:0;
+}
+.global-shell > .site-global-header .site-brand-monogram {
+  display:block;
+  width:54px;
+  height:54px;
+  flex:0 0 54px;
+}
+.global-shell > .site-global-header .site-brand-identity {
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  min-width:0;
+}
+.global-shell > .site-global-header .brand-name {font-size:1.12rem;line-height:1.16;}
+.global-shell > .site-global-header .brand-sub {font-size:.64rem;line-height:1.35;letter-spacing:.045em;}
+.global-shell .site-header-actions .site-booking-cta,
+.editorial-site .site-header-actions .site-booking-cta,
+.editorial-site .editorial-btn-primary {
+  background:var(--cs-slate);
+  border-color:var(--cs-slate);
+  color:#fff;
+  box-shadow:none;
+}
+.global-shell .site-header-actions .site-booking-cta:hover,
+.editorial-site .site-header-actions .site-booking-cta:hover,
+.editorial-site .editorial-btn-primary:hover {
+  background:var(--cs-blue);
+  border-color:var(--cs-blue);
+  color:#243840;
+}
+.global-shell .site-mobile-nav summary {background:#fff;border-color:#D9DDDE;color:#304750;}
+.global-shell .site-patient-link {color:#405A65;}
+.editorial-site .editorial-card-link, .editorial-site .editorial-section-eyebrow {color:#405A65;}
+@media(max-width:680px){
+  .global-shell > .site-global-header .brand{gap:8px;max-width:calc(100% - 146px);}
+  .global-shell > .site-global-header .site-brand-monogram{width:38px;height:38px;flex-basis:38px;}
+  .global-shell > .site-global-header .brand-name{font-size:.98rem;}
+  .global-shell > .site-global-header .brand-sub{font-size:.55rem;letter-spacing:.01em;}
+}
+@media(max-width:420px){
+  .global-shell > .site-global-header .brand{max-width:calc(100% - 115px);}
+}
