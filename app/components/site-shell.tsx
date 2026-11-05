@@ -32,9 +32,10 @@ function usesGlobalChrome(pathname: string) {
 const serviceNavigation = [
   { href: "/psicologia/", label: "Psicología" },
   { href: "/neuropsicologia/", label: "Neuropsicología" },
+  { href: "/evaluacion-neuropsicologica/", label: "Evaluación neuropsicológica" },
+  { href: "/evaluacion-memoria-deterioro-cognitivo/", label: "Memoria y deterioro cognitivo" },
   { href: "/evaluacion-tdah-adultos/", label: "Evaluación de TDAH en adultos" },
   { href: "/evaluacion-tea-adultos/", label: "Evaluación de TEA en adultos" },
-  { href: "/evaluacion-memoria-deterioro-cognitivo/", label: "Evaluación de memoria y deterioro cognitivo" },
   { href: "/evaluacion-altas-capacidades-adultos/", label: "Altas capacidades en adultos" },
   { href: "/residencias/", label: "Para centros y residencias" },
 ] as const;
@@ -147,10 +148,7 @@ function SiteFooter() {
           <p className="site-footer-heading">Neuropsicología</p>
           <a href="/neuropsicologia/">Neuropsicología</a>
           <a href="/evaluacion-neuropsicologica/">Evaluación neuropsicológica</a>
-          <a href="/evaluacion-tdah-adultos/">Evaluación de TDAH en adultos</a>
-          <a href="/evaluacion-tea-adultos/">Evaluación de TEA en adultos</a>
           <a href="/evaluacion-memoria-deterioro-cognitivo/">Evaluación de memoria y deterioro cognitivo</a>
-          <a href="/evaluacion-altas-capacidades-adultos/">Altas capacidades en adultos</a>
           <a href="/deterioro-cognitivo/">Deterioro cognitivo y memoria</a>
           <a href="/residencias/">Programas para residencias</a>
         </nav>
