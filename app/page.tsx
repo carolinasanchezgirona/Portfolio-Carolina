@@ -243,26 +243,28 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="editorial-section" aria-labelledby="first-visit-home-title">
-        <div className="editorial-wrap">
-          <div className="editorial-section-head">
+      <section className="editorial-section editorial-first-visit" aria-labelledby="first-visit-home-title">
+        <div className="editorial-wrap editorial-first-visit-grid">
+          <div>
             <p className="editorial-section-eyebrow">Antes de venir</p>
             <h2 id="first-visit-home-title">¿Cómo será nuestra primera sesión?</h2>
+          </div>
+          <div className="editorial-first-visit-copy">
             <p>La primera sesión dura 60 minutos. Hablaremos de lo que te preocupa, revisaremos los antecedentes relevantes y valoraremos los siguientes pasos. Puedes traer informes previos si dispones de ellos.</p>
-            <div className="editorial-actions">
-              <a className="editorial-btn editorial-btn-secondary" href="/psicologa-arenys-de-mar/">Cómo llegar y preparar la visita <Arrow /></a>
-            </div>
+            <a className="editorial-card-link" href="/psicologa-arenys-de-mar/">Cómo llegar y preparar la visita <Arrow /></a>
           </div>
         </div>
       </section>
 
-      <section className="editorial-section" aria-labelledby="podcast-home-title">
+      <section className="editorial-section editorial-podcast-section" aria-labelledby="podcast-home-title">
         <div className="editorial-wrap editorial-podcast-card">
-          <p className="editorial-section-eyebrow editorial-podcast-eyebrow">Podcast · Psicología Incómoda</p>
-          <h2 id="podcast-home-title" style={{margin:0,maxWidth:"19ch"}}>Preguntas incómodas. Psicología sin frases vacías.</h2>
-          <p style={{margin:0,maxWidth:"62ch",lineHeight:1.7}}>Una nueva serie de divulgación con Carolina Sánchez Girona: relaciones, emociones, ciencia y humor. Empieza con «No quiero volver, pero quiero que me busque».</p>
-          <div className="editorial-actions" style={{marginTop:4}}>
-            <a className="editorial-btn editorial-btn-secondary" href="/podcast/">Conocer el pódcast <Arrow /></a>
+          <div className="editorial-podcast-heading">
+            <p className="editorial-section-eyebrow editorial-podcast-eyebrow">Pódcast · Psicología Incómoda</p>
+            <h2 id="podcast-home-title">Preguntas incómodas. Psicología sin frases vacías.</h2>
+          </div>
+          <div className="editorial-podcast-copy">
+            <p>Una serie de divulgación sobre relaciones, emociones, ciencia y humor. Empieza con «No quiero volver, pero quiero que me busque».</p>
+            <a className="editorial-card-link" href="/podcast/">Conocer el pódcast <Arrow /></a>
           </div>
         </div>
       </section>
