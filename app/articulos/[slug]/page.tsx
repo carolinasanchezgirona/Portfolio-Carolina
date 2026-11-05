@@ -163,7 +163,7 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
       "@id": "https://carolinasanchezgirona.com/#carolina-sanchez-girona",
     },
     publisher: {
-      "@id": "https://carolinasanchezgirona.com/#dememoria",
+      "@id": "https://carolinasanchezgirona.com/#consulta",
     },
     mainEntityOfPage: {
       "@type": "WebPage",
