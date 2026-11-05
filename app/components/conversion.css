@@ -32,3 +32,31 @@
   /* La elección de cookies debe estar libre de obstáculos. */
   body:has(.analytics-consent) .mobile-booking-shortcut { display: none; }
 }
+
+/* Identidad personal CS: cabecera pública, sin alterar áreas administrativas. */
+.site-global-header .brand {
+  display: inline-flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+  text-decoration: none;
+}
+.site-global-header .site-brand-monogram {
+  width: 46px;
+  height: 46px;
+  object-fit: contain;
+  flex: 0 0 auto;
+}
+.site-global-header .site-brand-identity {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  line-height: 1.15;
+}
+@media (max-width: 480px) {
+  .site-global-header .brand { gap: 7px; }
+  .site-global-header .site-brand-monogram { width: 36px; height: 36px; }
+  .site-global-header .brand-name { font-size: 1rem; }
+  .site-global-header .brand-sub { font-size: .56rem; letter-spacing: .03em; }
+}
