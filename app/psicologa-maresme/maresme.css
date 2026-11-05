@@ -1,0 +1,78 @@
+/* Página local comarcal: estilo compacto y paleta existente. */
+.editorial-site.maresme-page .maresme-hero-grid{
+  display:grid;grid-template-columns:minmax(0,1.4fr) minmax(230px,.6fr);
+  align-items:center;gap:clamp(25px,4vw,56px);
+}
+.editorial-site.maresme-page .seo-hero h1{
+  max-width:19ch;font-size:clamp(2.2rem,3.75vw,3.45rem);
+  line-height:1.1;letter-spacing:-.027em;
+}
+.editorial-site.maresme-page .seo-lead{max-width:59ch;font-size:1.02rem;line-height:1.65;}
+.editorial-site.maresme-page .maresme-intro{
+  max-width:60ch;margin:14px 0 0;line-height:1.64;font-size:.96rem;
+}
+.editorial-site.maresme-page .maresme-hero-facts{
+  font-size:.81rem;margin:20px 0 0;color:#708793;line-height:1.55;
+}
+.editorial-site.maresme-page .maresme-hero-photo{
+  max-width:340px;margin:0;justify-self:end;
+}
+.editorial-site.maresme-page .maresme-hero-photo img{
+  display:block;width:100%;height:auto;max-height:390px;
+  border-radius:14px;object-fit:cover;object-position:center 52%;
+}
+.editorial-site.maresme-page figure figcaption{
+  margin-top:9px;font-size:.78rem;color:#708793;line-height:1.45;
+}
+.editorial-site.maresme-page .editorial-section-head h2{
+  max-width:25ch;font-size:clamp(1.8rem,2.7vw,2.4rem);
+}
+.editorial-site.maresme-page .maresme-service-grid{
+  display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;
+}
+.editorial-site.maresme-page .maresme-service-card{
+  display:flex;flex-direction:column;padding:27px;
+  border:1px solid #A0A0A0;border-radius:14px;background:#EDEDED;
+}
+.editorial-site.maresme-page .maresme-service-card h3{
+  margin:5px 0 12px;font-size:clamp(1.3rem,2vw,1.63rem);line-height:1.22;
+}
+.editorial-site.maresme-page .maresme-service-card>p:not(.editorial-section-eyebrow){
+  margin:0 0 20px;line-height:1.65;font-size:.93rem;
+}
+.editorial-site.maresme-page .maresme-service-card .editorial-card-link{
+  margin-top:auto;font-weight:600;font-size:.86rem;
+}
+.editorial-site.maresme-page .maresme-detail{padding-top:42px;padding-bottom:62px;}
+.editorial-site.maresme-page .seo-copy h2{font-size:clamp(1.67rem,2.4vw,2.08rem);}
+.editorial-site.maresme-page .seo-copy h3{font-size:1.18rem;}
+.editorial-site.maresme-page .seo-copy section+section{margin-top:32px;padding-top:32px;}
+.editorial-site.maresme-page .maresme-card-note{margin-top:15px;}
+.editorial-site.maresme-page .maresme-final-cta{background:#EDEDED;}
+.editorial-site.maresme-page .maresme-final-inner{
+  display:grid;grid-template-columns:minmax(0,1fr) minmax(170px,245px);
+  align-items:center;gap:clamp(24px,5vw,80px);
+}
+.editorial-site.maresme-page .maresme-final-inner h2{
+  max-width:22ch;font-size:clamp(1.75rem,2.8vw,2.55rem);
+}
+.editorial-site.maresme-page .maresme-final-inner p:not(.editorial-section-eyebrow){
+  max-width:48ch;line-height:1.65;margin-bottom:20px;
+}
+.editorial-site.maresme-page .maresme-exterior-photo{margin:0;max-width:245px;}
+.editorial-site.maresme-page .maresme-exterior-photo img{
+  display:block;width:100%;height:auto;max-height:300px;object-fit:cover;
+  border-radius:14px;
+}
+@media(max-width:760px){
+  .editorial-site.maresme-page .maresme-hero-grid,
+  .editorial-site.maresme-page .maresme-service-grid,
+  .editorial-site.maresme-page .maresme-final-inner{grid-template-columns:1fr;}
+  .editorial-site.maresme-page .maresme-hero-photo{
+    max-width:300px;justify-self:start;
+  }
+  .editorial-site.maresme-page .maresme-hero-photo img{max-height:310px;}
+  .editorial-site.maresme-page .seo-hero h1{font-size:clamp(2rem,8.6vw,2.85rem);}
+  .editorial-site.maresme-page .maresme-service-card{padding:22px;}
+  .editorial-site.maresme-page .maresme-exterior-photo{max-width:190px;}
+}
