@@ -128,43 +128,35 @@ export default function HomePage() {
             </p>
           </div>
 
-          <div className="editorial-method-photo-layout">
-          <div className="editorial-step-grid">
-            <article className="editorial-step editorial-step-teal">
-              <div className="editorial-accent" />
-              <span>01</span>
-              <h3>Comprender</h3>
-              <p>Historia, motivo de consulta, contexto actual y factores relevantes.</p>
-            </article>
-            <article className="editorial-step editorial-step-teal">
-              <div className="editorial-accent" />
-              <span>02</span>
-              <h3>Formular</h3>
-              <p>Organizar la información para construir una hipótesis clínica útil.</p>
-            </article>
-            <article className="editorial-step editorial-step-coral">
-              <div className="editorial-accent" />
-              <span>03</span>
-              <h3>Intervenir</h3>
-              <p>Definir objetivos concretos y seleccionar estrategias ajustadas al caso.</p>
-            </article>
-            <article className="editorial-step editorial-step-coral">
-              <div className="editorial-accent" />
-              <span>04</span>
-              <h3>Revisar</h3>
-              <p>Valorar cambios, dificultades y siguientes pasos sin automatismos.</p>
-            </article>
-          </div>
-          <figure className="editorial-method-photo">
-            <Image
-              src="/carolina-sanchez-como-trabajo.webp"
-              alt="Carolina Sánchez con una libreta durante la preparación de su trabajo clínico"
-              width={540}
-              height={960}
-              sizes="(max-width: 680px) min(calc(100vw - 36px), 420px), (max-width: 900px) 440px, 340px"
-              loading="lazy"
-            />
-          </figure>
+          <div className="editorial-method-editorial-layout">
+            <figure className="editorial-method-portrait">
+              <Image
+                src="/carolina-sanchez-como-trabajo.webp"
+                alt="Carolina Sánchez trabajando con una libreta"
+                width={540}
+                height={960}
+                sizes="(max-width: 680px) 260px, (max-width: 900px) 300px, 320px"
+                loading="lazy"
+              />
+            </figure>
+            <ol className="editorial-method-list">
+              <li className="editorial-method-item">
+                <span className="editorial-method-number">01</span>
+                <div><h3>Comprender</h3><p>Historia, motivo de consulta y contexto personal.</p></div>
+              </li>
+              <li className="editorial-method-item">
+                <span className="editorial-method-number">02</span>
+                <div><h3>Formular</h3><p>Integrar la información y elaborar hipótesis clínicas.</p></div>
+              </li>
+              <li className="editorial-method-item">
+                <span className="editorial-method-number">03</span>
+                <div><h3>Intervenir</h3><p>Definir objetivos y estrategias ajustadas a cada caso.</p></div>
+              </li>
+              <li className="editorial-method-item">
+                <span className="editorial-method-number">04</span>
+                <div><h3>Revisar</h3><p>Evaluar los cambios y adaptar los siguientes pasos.</p></div>
+              </li>
+            </ol>
           </div>
         </div>
       </section>
