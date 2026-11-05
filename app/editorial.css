@@ -1034,183 +1034,116 @@
 }
 
 
-/* Método clínico: composición editorial, sin tarjetas sobredimensionadas. */
-.editorial-site .editorial-method .editorial-section-head{
-  max-width:860px;
-  margin-bottom:26px;
+
+/* HOME · sistema consolidado de composición (2026-11).
+   Sustituye los antiguos parches sucesivos de método y presentación. */
+.editorial-site .editorial-method .editorial-section-head {
+  max-width:760px;
+  margin-bottom:28px;
 }
-.editorial-site .editorial-method-intro{
-  max-width:72ch;
-  margin:13px 0 0;
+.editorial-site .editorial-method .editorial-section-head h2{max-width:27ch;}
+.editorial-site .editorial-method .editorial-method-intro{
+  max-width:66ch;
+  margin:14px 0 0;
   font-size:1rem;
-  line-height:1.63;
+  line-height:1.6;
   color:#405A65;
 }
-.editorial-site .editorial-method-editorial-layout{
+.editorial-site .editorial-method .editorial-method-editorial-layout{
   display:grid;
-  grid-template-columns:minmax(220px,.54fr) minmax(0,1fr);
-  gap:clamp(30px,5.5vw,78px);
+  grid-template-columns:minmax(0,300px) minmax(0,1fr);
+  gap:clamp(32px,4.8vw,66px);
   align-items:center;
 }
-.editorial-site .editorial-method-portrait{
+.editorial-site .editorial-method .editorial-method-portrait{
+  display:block;
   margin:0;
   width:100%;
-  max-width:320px;
+  max-width:300px;
   justify-self:start;
   overflow:hidden;
   border-radius:12px;
   background:#EDEDED;
 }
-.editorial-site .editorial-method-portrait img{
+.editorial-site .editorial-method .editorial-method-portrait img{
   display:block;
   width:100%;
   height:auto;
   aspect-ratio:4/5;
+  max-height:375px;
   object-fit:cover;
   object-position:center 28%;
 }
-.editorial-site .editorial-method-list{
-  list-style:none;
-  padding:0;
+.editorial-site .editorial-method .editorial-method-list{
+  display:block;
+  min-width:0;
   margin:0;
+  padding:0;
+  list-style:none;
   border-top:1px solid #BFCBD0;
 }
-.editorial-site .editorial-method-item{
+.editorial-site .editorial-method .editorial-method-item{
   display:grid;
-  grid-template-columns:44px minmax(0,1fr);
+  grid-template-columns:35px minmax(0,1fr);
   column-gap:18px;
-  padding:17px 0;
-  border-bottom:1px solid #BFCBD0;
   align-items:start;
+  padding:16px 0;
+  border-bottom:1px solid #BFCBD0;
 }
-.editorial-site .editorial-method-number{
+.editorial-site .editorial-method .editorial-method-number{
   display:block;
-  padding-top:4px;
+  padding-top:3px;
   color:#536B77;
-  font-size:.8rem;
+  font-size:.79rem;
   font-weight:600;
-  line-height:1.4;
-  letter-spacing:.07em;
+  line-height:1.35;
+  letter-spacing:.06em;
 }
-.editorial-site .editorial-method-item h3{
-  margin:0 0 5px;
-  color:#304750;
+.editorial-site .editorial-method .editorial-method-item h3{
+  margin:0 0 4px;
   font-family:var(--font-newsreader),Georgia,serif;
-  font-size:clamp(1.23rem,1.75vw,1.55rem);
   font-weight:500;
-  line-height:1.18;
+  font-size:clamp(1.2rem,1.5vw,1.42rem);
+  line-height:1.22;
 }
-.editorial-site .editorial-method-item p{
+.editorial-site .editorial-method .editorial-method-item p{
   margin:0;
-  max-width:57ch;
+  max-width:52ch;
   color:#405A65;
   font-size:.96rem;
-  line-height:1.53;
+  line-height:1.5;
 }
-@media(max-width:900px){
-  .editorial-site .editorial-method-editorial-layout{
-    grid-template-columns:minmax(185px,.52fr) minmax(0,1fr);
-    gap:26px;
-  }
-  .editorial-site .editorial-method-portrait{max-width:270px;}
-}
-@media(max-width:680px){
-  .editorial-site .editorial-method-editorial-layout{
-    grid-template-columns:1fr;
-    gap:24px;
-  }
-  .editorial-site .editorial-method-portrait{max-width:250px;}
-  .editorial-site .editorial-method-item{
-    grid-template-columns:35px minmax(0,1fr);
-    column-gap:12px;
-    padding:15px 0;
-  }
-}
-
-
-/* Corrección de seguridad: mantener el método en la maqueta comprobada. */
-.editorial-site .editorial-method .editorial-method-photo-layout{
+.editorial-site .editorial-about-grid.editorial-about-refined{
   display:grid;
-  grid-template-columns:minmax(0,1fr) minmax(220px,300px);
-  gap:28px;
-  align-items:center;
-}
-.editorial-site .editorial-method .editorial-step-grid{
-  display:grid;
-  grid-template-columns:repeat(2,minmax(0,1fr));
-  gap:14px;
-  min-width:0;
-}
-.editorial-site .editorial-method .editorial-step{
-  min-width:0;
-  padding:19px 21px;
-  border-radius:12px;
-  list-style:none;
-}
-.editorial-site .editorial-method .editorial-step p{font-size:.94rem;line-height:1.5;}
-.editorial-site .editorial-method .editorial-method-photo{
-  display:block;
-  width:100%;
-  max-width:300px;
-  margin:0;
-  justify-self:end;
-  overflow:hidden;
-  border-radius:12px;
-}
-.editorial-site .editorial-method .editorial-method-photo img{
-  display:block;
-  width:100%;
-  height:auto;
-  max-height:440px;
-  aspect-ratio:3/4;
-  object-fit:cover;
-  object-position:center 27%;
-}
-@media(max-width:900px){
-  .editorial-site .editorial-method .editorial-method-photo-layout{
-    grid-template-columns:1fr;
-    gap:22px;
-  }
-  .editorial-site .editorial-method .editorial-method-photo{justify-self:start;max-width:260px;}
-}
-@media(max-width:580px){
-  .editorial-site .editorial-method .editorial-step-grid{grid-template-columns:1fr;}
-  .editorial-site .editorial-method .editorial-method-photo{max-width:240px;}
-}
-
-
-/* Sobre mí: fotografía y presentación forman un único bloque editorial. */
-.editorial-site .editorial-about-grid.editorial-about-refined {
-  display:grid;
-  grid-template-columns:minmax(240px,.72fr) minmax(0,1.28fr);
+  grid-template-columns:minmax(0,1.2fr) minmax(0,.8fr);
   grid-template-areas:"content portrait";
-  gap:clamp(35px,5vw,80px);
+  gap:clamp(35px,5vw,72px);
   align-items:center;
 }
-.editorial-site .editorial-about-refined .editorial-about-content {
+.editorial-site .editorial-about-refined .editorial-about-content{
   grid-area:content;
   min-width:0;
-  max-width:650px;
+  max-width:610px;
 }
-.editorial-site .editorial-about-refined .editorial-about-content h2 {
-  max-width:none;
+.editorial-site .editorial-about-refined .editorial-about-content h2{
   margin:0;
-  font-size:clamp(2rem,2.75vw,2.65rem);
-  line-height:1.12;
+  max-width:24ch;
+  font-size:clamp(2rem,2.65vw,2.45rem);
+  line-height:1.14;
 }
-.editorial-site .editorial-about-refined .editorial-role {
-  margin:9px 0 21px;
-  font-size:.86rem;
+.editorial-site .editorial-about-refined .editorial-role{
+  margin:11px 0 20px;
+  font-size:.87rem;
   line-height:1.45;
 }
-.editorial-site .editorial-about-refined .editorial-about-copy {
+.editorial-site .editorial-about-refined .editorial-about-copy{
   max-width:57ch;
   margin:0;
 }
 .editorial-site .editorial-about-refined .editorial-about-copy p{
   margin:0;
   font-size:1rem;
-  line-height:1.65;
+  line-height:1.62;
 }
 .editorial-site .editorial-about-refined .editorial-about-copy p+p{margin-top:14px;}
 .editorial-site .editorial-about-refined .editorial-about-more{
@@ -1221,14 +1154,14 @@
   text-decoration:none;
   font-size:.92rem;
   font-weight:600;
-  line-height:1.5;
+  line-height:1.45;
 }
 .editorial-site .editorial-about-refined .editorial-about-more:hover{text-decoration:underline;}
 .editorial-site .editorial-about-refined .editorial-about-social{margin-top:17px;}
-.editorial-site .editorial-about-refined .editorial-about-photo {
+.editorial-site .editorial-about-refined .editorial-about-photo{
   grid-area:portrait;
   width:100%;
-  max-width:345px;
+  max-width:325px;
   margin:0;
   justify-self:center;
   overflow:hidden;
@@ -1238,128 +1171,46 @@
   display:block;
   width:100%;
   height:auto;
+  max-height:405px;
   aspect-ratio:4/5;
   object-fit:cover;
   object-position:center 30%;
 }
-@media(max-width:800px){
-  .editorial-site .editorial-about-grid.editorial-about-refined {
-    grid-template-columns:1fr;
-    grid-template-areas:"content" "portrait";
-    align-items:start;
-    gap:25px;
-  }
-  .editorial-site .editorial-about-refined .editorial-about-photo{
-    width:min(100%,310px);
-    justify-self:start;
-  }
-}
-
-
-/* Revisión focalizada: ritmo tipográfico y columnas de las dos secciones clínicas.
-   El texto y la foto de Sobre mí permanecen a izquierda y derecha, respectivamente. */
-.editorial-site .editorial-method .editorial-section-head{
-  max-width:750px;
-  margin-bottom:30px;
-}
-.editorial-site .editorial-method .editorial-section-head h2{
-  max-width:29ch;
-}
-.editorial-site .editorial-method .editorial-method-intro{
-  max-width:66ch;
-  font-size:1rem;
-  line-height:1.62;
-}
-.editorial-site .editorial-method .editorial-method-editorial-layout{
-  display:grid;
-  grid-template-columns:minmax(0,310px) minmax(0,1fr);
-  align-items:center;
-  gap:clamp(30px,5vw,70px);
-}
-.editorial-site .editorial-method .editorial-method-portrait{
-  margin:0;
-  max-width:310px;
-  width:100%;
-  justify-self:start;
-}
-.editorial-site .editorial-method .editorial-method-portrait img{
-  width:100%;
-  max-height:390px;
-  aspect-ratio:4/5;
-  object-fit:cover;
-  object-position:center 30%;
-}
-.editorial-site .editorial-method .editorial-method-list{
-  list-style:none;
-  border-top:1px solid #BFCBD0;
-  min-width:0;
-}
-.editorial-site .editorial-method .editorial-method-item{
-  display:grid;
-  grid-template-columns:38px minmax(0,1fr);
-  gap:17px;
-  padding:15px 0;
-  border-bottom:1px solid #BFCBD0;
-}
-.editorial-site .editorial-method .editorial-method-item h3{
-  font-size:1.4rem;
-  line-height:1.2;
-  margin:0 0 4px;
-}
-.editorial-site .editorial-method .editorial-method-item p{
-  font-size:.96rem;
-  line-height:1.5;
-}
-.editorial-site .editorial-about-grid.editorial-about-refined{
-  grid-template-areas:"content portrait";
-  grid-template-columns:minmax(0,1.2fr) minmax(250px,.8fr);
-  gap:clamp(38px,5.2vw,84px);
-  align-items:center;
-}
-.editorial-site .editorial-about-refined .editorial-about-content{
-  max-width:610px;
-}
-.editorial-site .editorial-about-refined .editorial-about-content h2{
-  font-size:clamp(2.05rem,2.7vw,2.45rem);
-}
-.editorial-site .editorial-about-refined .editorial-role{margin:10px 0 20px;}
-.editorial-site .editorial-about-refined .editorial-about-copy{max-width:56ch;}
-.editorial-site .editorial-about-refined .editorial-about-copy p{
-  font-size:1rem;
-  line-height:1.6;
-}
-.editorial-site .editorial-about-refined .editorial-about-photo{
-  max-width:325px;
-  justify-self:center;
-}
-.editorial-site .editorial-about-refined .editorial-about-photo img{
-  max-height:410px;
-  aspect-ratio:4/5;
-  object-fit:cover;
-}
-@media (max-width:900px){
+/* Elementos editoriales comunes: un mismo ritmo y controles consistentes. */
+.editorial-site .editorial-section{padding-block:clamp(42px,4.4vw,60px);}
+.editorial-site .editorial-section-head{margin-bottom:26px;}
+.editorial-site .editorial-section .editorial-section-eyebrow{font-size:.78rem;}
+.editorial-site .editorial-service-card{border-radius:12px;}
+.editorial-site .editorial-card-link,
+.editorial-site .editorial-about-more{transition:color .18s ease;}
+.editorial-site .editorial-card-link:hover,
+.editorial-site .editorial-about-more:hover{color:#304750;}
+.editorial-site .editorial-local-photo img{aspect-ratio:4/3;object-fit:cover;}
+@media(max-width:960px){
   .editorial-site .editorial-method .editorial-method-editorial-layout{
     grid-template-columns:minmax(0,255px) minmax(0,1fr);
-    gap:25px;
-  }
-  .editorial-site .editorial-about-grid.editorial-about-refined{
-    grid-template-columns:minmax(0,1fr) minmax(220px,.65fr);
     gap:28px;
   }
+  .editorial-site .editorial-about-grid.editorial-about-refined{
+    grid-template-columns:minmax(0,1fr) minmax(0,245px);
+    gap:30px;
+  }
 }
-@media (max-width:720px){
+@media(max-width:720px){
   .editorial-site .editorial-method .editorial-method-editorial-layout{
     grid-template-columns:1fr;
-    gap:24px;
+    gap:22px;
   }
-  .editorial-site .editorial-method .editorial-method-portrait{max-width:240px;}
+  .editorial-site .editorial-method .editorial-method-portrait{max-width:245px;}
+  .editorial-site .editorial-method .editorial-method-portrait img{max-height:305px;}
   .editorial-site .editorial-about-grid.editorial-about-refined{
     grid-template-columns:1fr;
     grid-template-areas:"content" "portrait";
-    gap:24px;
+    gap:22px;
   }
   .editorial-site .editorial-about-refined .editorial-about-photo{
-    width:min(100%,280px);
+    max-width:275px;
     justify-self:start;
   }
+  .editorial-site .editorial-about-refined .editorial-about-photo img{max-height:345px;}
 }
