@@ -39,7 +39,7 @@ export default function CognitiveStimulationPage() {
         </a>
         <nav className="nav" aria-label="Navegación principal">
           <a href="/neuropsicologia/">Neuropsicología</a>
-          <a href="/deterioro-cognitivo/">Deterioro cognitivo</a>
+          <a href="/evaluacion-memoria-deterioro-cognitivo/">Deterioro cognitivo</a>
           <a className="nav-cta" href="/cita/">Pedir cita</a>
         </nav>
       </header>
@@ -131,7 +131,7 @@ export default function CognitiveStimulationPage() {
           <section>
             <h2>Relación con evaluación y deterioro cognitivo</h2>
             <p>
-              Si todavía no está claro qué está ocurriendo a nivel cognitivo, puede ser más adecuado empezar por una <a href="/evaluacion-neuropsicologica/">evaluación neuropsicológica</a>. Si ya existe un patrón de cambios persistentes, puedes consultar también la información sobre <a href="/deterioro-cognitivo/">deterioro cognitivo</a> o <a href="/demencias/">demencias y Alzheimer</a>.
+              Si todavía no está claro qué está ocurriendo a nivel cognitivo, puede ser más adecuado empezar por una <a href="/evaluacion-neuropsicologica/">evaluación neuropsicológica</a>. Si ya existe un patrón de cambios persistentes, puedes consultar también la información sobre <a href="/evaluacion-memoria-deterioro-cognitivo/">deterioro cognitivo</a> o <a href="/demencias/">demencias y Alzheimer</a>.
             </p>
             <div className="seo-callout">
               <strong>La intervención cognitiva debe responder a objetivos concretos.</strong>
@@ -156,7 +156,7 @@ export default function CognitiveStimulationPage() {
             <div className="seo-related">
               <a href="/neuropsicologia/">Neuropsicología</a>
               <a href="/evaluacion-neuropsicologica/">Evaluación neuropsicológica</a>
-              <a href="/deterioro-cognitivo/">Deterioro cognitivo</a>
+              <a href="/evaluacion-memoria-deterioro-cognitivo/">Deterioro cognitivo</a>
               <a href="/demencias/">Demencias y Alzheimer</a>
               <a href="/familiares-y-cuidadores-de-personas-con-demencia/">Familiares y cuidadores</a>
               <a href="/ictus-y-dano-cerebral-adquirido/">Ictus y daño cerebral adquirido</a>
