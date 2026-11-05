@@ -34,9 +34,8 @@ export default function HomePage() {
             <h1>Psicóloga sanitaria y neuropsicóloga en Arenys de Mar.</h1>
             <p className="editorial-hero-statement">Comprender qué te ocurre es el primer paso para abordarlo.</p>
             <p className="editorial-lead">
-              Soy Carolina Sánchez Girona. Acompaño a personas que atraviesan dificultades emocionales y a familias
-              preocupadas por cambios en la memoria o el funcionamiento cognitivo. Mi trabajo combina evaluación
-              clínica, intervención psicológica y orientación práctica, con una atención adaptada a cada persona.
+              Ofrezco atención psicológica y neuropsicológica a personas adultas y familias. Combino
+              evaluación clínica, intervención y orientación práctica adaptadas a cada situación.
             </p>
             <div className="editorial-actions">
               <a className="editorial-btn editorial-btn-primary" href="/cita/">Pedir cita <Arrow /></a>
@@ -124,9 +123,8 @@ export default function HomePage() {
             <p className="editorial-section-eyebrow">Cómo trabajo</p>
             <h2 id="metodo-title">Cada historia necesita una valoración propia.</h2>
             <p className="editorial-method-intro">
-              Una misma dificultad cognitiva o emocional puede tener causas diferentes.
-              Dos personas con síntomas parecidos pueden necesitar intervenciones diferentes. Por eso comienzo
-              escuchando, evaluando y formulando hipótesis clínicas antes de establecer objetivos.
+              Cada dificultad tiene una historia y un contexto. Escuchar, evaluar y formular hipótesis
+              clínicas permite definir objetivos de intervención ajustados a cada persona.
             </p>
           </div>
 
@@ -208,8 +206,7 @@ export default function HomePage() {
               <Image src="/consulta-carolina-sanchez-despacho.webp" alt="Interior de la consulta de psicología y neuropsicología de Carolina Sánchez en Arenys de Mar" width={1448} height={1086} sizes="(max-width: 680px) calc(100vw - 36px), (max-width: 900px) 560px, 480px" loading="lazy" />
             </a>
             <div className="editorial-actions">
-              <a className="editorial-btn editorial-btn-primary" href="/cita/">Consultar disponibilidad</a>
-              <a className="editorial-btn editorial-btn-secondary" href="/psicologa-arenys-de-mar/">Ver consulta en Arenys de Mar</a>
+              <a className="editorial-btn editorial-btn-secondary" href="/psicologa-arenys-de-mar/">Ver la consulta y cómo llegar <Arrow /></a>
             </div>
           </div>
         </div>
@@ -234,18 +231,15 @@ export default function HomePage() {
           </div>
           <div className="editorial-about-copy">
             <p>
-              Soy psicóloga general sanitaria y neuropsicóloga. Mi experiencia está especialmente vinculada
-              a la clínica de adultos, el deterioro cognitivo y las demencias. Me interesa una psicología que
-              escuche, explique y ayude a tomar decisiones sin respuestas automáticas.
+              Mi práctica integra psicología sanitaria y neuropsicología clínica, especialmente en
+              adultos, deterioro cognitivo y demencias. Trabajo desde la evaluación estructurada,
+              el razonamiento clínico y unos objetivos terapéuticos ajustados a cada persona.
             </p>
             <p>
-              Combino razonamiento clínico, evaluación estructurada y objetivos terapéuticos concretos, con una atención centrada en las necesidades y el funcionamiento cotidiano de cada persona.
-            </p>
-            <p>
-              Participo también en divulgación profesional en psicología sanitaria y neuropsicología, con publicaciones en la revista PsiAra del Col·legi Oficial de Psicologia de Catalunya.
+              También participo en divulgación profesional, con publicaciones en la revista PsiAra
+              del Col·legi Oficial de Psicologia de Catalunya.
             </p>
             <p><a href="/sobre-mi/">Conocer mi trayectoria profesional →</a></p>
-            <p><a href="/psicologa-arenys-de-mar/">Consulta de Psicología y Neuropsicología en Arenys de Mar →</a></p>
             <SocialLinks className="editorial-about-social" />
           </div>
         </div>
@@ -256,10 +250,9 @@ export default function HomePage() {
           <div className="editorial-section-head">
             <p className="editorial-section-eyebrow">Antes de venir</p>
             <h2 id="first-visit-home-title">¿Cómo será nuestra primera sesión?</h2>
-            <p>Disponemos de 60 minutos para hablar de lo que te preocupa, revisar antecedentes relevantes y valorar qué ayuda necesitas. No necesitas preparar nada especial. Si tienes informes previos, puedes traerlos, pero no hace falta enviarlos durante la reserva.</p>
+            <p>La primera sesión dura 60 minutos. Hablaremos de lo que te preocupa, revisaremos los antecedentes relevantes y valoraremos los siguientes pasos. Puedes traer informes previos si dispones de ellos.</p>
             <div className="editorial-actions">
-              <a className="editorial-btn editorial-btn-primary" href="/cita/">Consultar horarios y reservar <Arrow /></a>
-              <a className="editorial-btn editorial-btn-secondary" href="/psicologa-arenys-de-mar/">Ver el espacio y cómo llegar</a>
+              <a className="editorial-btn editorial-btn-secondary" href="/psicologa-arenys-de-mar/">Cómo llegar y preparar la visita <Arrow /></a>
             </div>
           </div>
         </div>
@@ -302,8 +295,7 @@ export default function HomePage() {
           <h2 id="podcast-home-title" style={{margin:0,maxWidth:"19ch"}}>Preguntas incómodas. Psicología sin frases vacías.</h2>
           <p style={{margin:0,maxWidth:"62ch",lineHeight:1.7}}>Una nueva serie de divulgación con Carolina Sánchez Girona: relaciones, emociones, ciencia y humor. Empieza con «No quiero volver, pero quiero que me busque».</p>
           <div className="editorial-actions" style={{marginTop:4}}>
-            <a className="editorial-btn editorial-btn-primary" href="/podcast/no-quiero-volver-pero-quiero-que-me-busque/">Ver episodio 01 ↗</a>
-            <a className="editorial-btn editorial-btn-secondary" href="/podcast/">Conocer el podcast</a>
+            <a className="editorial-btn editorial-btn-secondary" href="/podcast/">Conocer el pódcast <Arrow /></a>
           </div>
         </div>
       </section>
