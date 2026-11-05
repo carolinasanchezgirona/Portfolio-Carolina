@@ -211,35 +211,35 @@ export default function HomePage() {
       </section>
 
       <section className="editorial-section editorial-about" id="sobre-mi" aria-labelledby="about-title">
-        <div className="editorial-wrap editorial-about-grid">
-          <div>
+        <div className="editorial-wrap editorial-about-grid editorial-about-refined">
+          <div className="editorial-about-content">
             <p className="editorial-section-eyebrow">Sobre mí</p>
             <h2 id="about-title">Carolina Sánchez Girona</h2>
             <p className="editorial-role">Psicóloga General Sanitaria · Neuropsicóloga</p>
-            <figure className="editorial-about-photo">
-              <Image
-                src="/carolina-sanchez-sobre-mi.webp"
-                alt="Carolina Sánchez sentada en una terraza luminosa rodeada de plantas"
-                width={540}
-                height={810}
-                sizes="(max-width: 680px) calc(100vw - 36px), (max-width: 900px) 480px, 340px"
-                loading="lazy"
-              />
-            </figure>
-          </div>
-          <div className="editorial-about-copy">
-            <p>
-              Mi práctica integra psicología sanitaria y neuropsicología clínica, especialmente en
-              adultos, deterioro cognitivo y demencias. Trabajo desde la evaluación estructurada,
-              el razonamiento clínico y unos objetivos terapéuticos ajustados a cada persona.
-            </p>
-            <p>
-              También participo en divulgación profesional, con publicaciones en la revista PsiAra
-              del Col·legi Oficial de Psicologia de Catalunya.
-            </p>
-            <p><a href="/sobre-mi/">Conocer mi trayectoria profesional →</a></p>
+            <div className="editorial-about-copy">
+              <p>
+                Mi práctica integra psicología sanitaria y neuropsicología clínica, especialmente en
+                adultos, deterioro cognitivo y demencias. Trabajo desde la evaluación estructurada,
+                el razonamiento clínico y unos objetivos terapéuticos ajustados a cada persona.
+              </p>
+              <p>
+                También participo en divulgación profesional, con publicaciones en la revista PsiAra
+                del Col·legi Oficial de Psicologia de Catalunya.
+              </p>
+            </div>
+            <a className="editorial-about-more" href="/sobre-mi/">Conocer mi trayectoria profesional →</a>
             <SocialLinks className="editorial-about-social" />
           </div>
+          <figure className="editorial-about-photo">
+            <Image
+              src="/carolina-sanchez-sobre-mi.webp"
+              alt="Carolina Sánchez sentada en una terraza luminosa rodeada de plantas"
+              width={540}
+              height={810}
+              sizes="(max-width: 680px) min(100vw - 36px, 300px), (max-width: 900px) 320px, 345px"
+              loading="lazy"
+            />
+          </figure>
         </div>
       </section>
 
