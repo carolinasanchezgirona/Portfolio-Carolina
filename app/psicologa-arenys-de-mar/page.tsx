@@ -212,7 +212,7 @@ export default function LocalPsychologistPage() {
           </figure>
           <div style={{ overflow: "hidden", border: "1px solid var(--e-line)", borderRadius: "14px", background: "#fff" }}>
             <iframe
-              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2984.1022207147844!2d2.5429863999999998!3d41.588671299999994!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x12bb370f7cb10fdd%3A0x163145da43e6593b!2sDememoria%20-%20Psic.%20Carolina%20S%C3%A1nchez!5e0!3m2!1ses!2ses!4v1789232018184!5m2!1ses!2ses"
+              src="https://www.google.com/maps?q=Carrer%20Barcelona%208%2C%2008350%20Arenys%20de%20Mar&output=embed"
               width="100%"
               height="420"
               style={{ display: "block", border: 0 }}
