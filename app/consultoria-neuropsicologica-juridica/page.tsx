@@ -64,31 +64,49 @@ export default function ConsultoriaNeuropsicologicaJuridicaPage() {
           </div>
         </div>
       </section>
+      <section id="servicios" className="consultoria-services">
+        <div className="editorial-wrap">
+          <div className="consultoria-services-intro">
+            <div>
+              <p className="consultoria-section-kicker">SERVICIOS</p>
+              <h2>Dos formas de acompañar cada caso</h2>
+            </div>
+            <p>Un servicio ajustado a lo que necesitas: una valoración neuropsicológica en el ámbito jurídico o una segunda revisión técnica para orientar decisiones profesionales.</p>
+          </div>
+          <div className="consultoria-service-grid">
+            <article className="consultoria-service-card">
+              <div className="consultoria-service-top"><span>01</span><span>PARTICULARES Y FAMILIAS</span></div>
+              <h3>Valoración neuropsicológica en el ámbito jurídico</h3>
+              <p>Exploración del funcionamiento cognitivo y de su repercusión en situaciones concretas con implicaciones jurídicas.</p>
+              <ul>
+                <li>Entrevista y revisión de antecedentes</li>
+                <li>Evaluación cognitiva y funcional individualizada</li>
+                <li>Conclusiones e informe técnico o pericial, según el encargo</li>
+              </ul>
+              <a href="mailto:contact@carolinasanchezgirona.com?subject=Valoraci%C3%B3n%20neuropsicol%C3%B3gica%20jur%C3%ADdica">Consultar una valoración <span aria-hidden="true">→</span></a>
+            </article>
+            <article className="consultoria-service-card">
+              <div className="consultoria-service-top"><span>02</span><span>PSICÓLOGOS Y OTROS PROFESIONALES</span></div>
+              <h3>Consultoría neuropsicológica preliminar</h3>
+              <p>Revisión especializada de documentación para identificar indicadores relevantes y orientar los siguientes pasos del caso.</p>
+              <ul>
+                <li>Análisis documental y coherencia clínica</li>
+                <li>Valoración funcional y viabilidad pericial preliminar</li>
+                <li>Documento escrito de conclusiones (1–2 páginas)</li>
+              </ul>
+              <a href="mailto:contact@carolinasanchezgirona.com?subject=Consultor%C3%ADa%20para%20profesionales">Solicitar consultoría <span aria-hidden="true">→</span></a>
+            </article>
+          </div>
+          <div className="consultoria-service-footer">
+            <span>La revisión preliminar no equivale a una evaluación directa ni a un informe pericial judicial.</span>
+            <a href="/tarifas-consultoria-neuropsicologica.pdf" download>Consultar tarifas y condiciones (PDF) <span aria-hidden="true">↗</span></a>
+          </div>
+        </div>
+      </section>
       <div className="editorial-wrap seo-layout">
         <article className="seo-copy">
-          <section id="servicios" className="consultoria-section">
-            <div className="consultoria-section-heading">
-              <p className="consultoria-section-kicker">MODALIDADES DE SERVICIO</p>
-              <h2>Consultoría para particulares y profesionales</h2>
-              <p>Dos modalidades diferenciadas según la finalidad de la consulta y el alcance del encargo.</p>
-            </div>
-            <div className="consultoria-areas-grid">
-              <div className="consultoria-area-card">
-                <span className="consultoria-area-number">01 / PARTICULARES Y FAMILIAS</span>
-                <h3>Valoración neuropsicológica en el ámbito jurídico</h3>
-                <p>Evaluación individualizada del funcionamiento cognitivo, la autonomía y las habilidades relacionadas con decisiones concretas, cuando sean relevantes en un contexto jurídico. Según el encargo, puede comprender revisión de antecedentes, entrevista, pruebas neuropsicológicas e informe técnico o pericial.</p>
-                <p>Se delimita previamente el objeto de valoración, las actuaciones necesarias y las limitaciones de las conclusiones.</p>
-              </div>
-              <div className="consultoria-area-card">
-                <span className="consultoria-area-number">02 / PROFESIONALES</span>
-                <h3>Consultoría neuropsicológica preliminar</h3>
-                <p>Para psicólogos y otros profesionales sanitarios o jurídicos que necesitan una segunda revisión técnica del caso. Incluye análisis documental y de coherencia clínica, evolución, indicadores neuropsicológicos, funcionamiento y orientación sobre los pasos siguientes.</p>
-                <p>Se entrega un documento breve de conclusiones (1–2 páginas). Esta revisión no constituye una evaluación directa ni un informe pericial judicial.</p>
-              </div>
-            </div>
-          </section>
           <section>
-            <h2>Una valoración clínica para preguntas jurídicas concretas</h2>
+            <h2>Valoración rigurosa para preguntas concretas</h2>
             <p>Los cambios en memoria, juicio, lenguaje o funciones ejecutivas pueden tener repercusiones distintas según la situación personal y las decisiones implicadas. Una evaluación neuropsicológica rigurosa ayuda a describir capacidades preservadas, dificultades y su impacto funcional, sin reducir a la persona a un diagnóstico o una puntuación.</p>
             <p>El servicio se dirige a despachos de abogados, otros profesionales jurídicos, familias y particulares. Cada encargo se delimita de manera individual, respetando la independencia técnica, la confidencialidad y los derechos de la persona evaluada.</p>
           </section>
