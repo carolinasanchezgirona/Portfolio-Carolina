@@ -165,7 +165,7 @@ const structuredData = {
             "@type": "Offer",
             itemOffered: {
               "@type": "Service",
-              name: "Consultoría neuropsicológica en el ámbito jurídico",
+              name: "Consultoría neuropsicológica",
               url: "https://carolinasanchezgirona.com/consultoria-neuropsicologica-juridica/",
             },
           },
