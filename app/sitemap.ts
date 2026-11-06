@@ -36,6 +36,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${base}/toc-obsesiones-y-compulsiones/`, lastModified: staticLastModified, changeFrequency: "monthly", priority: 0.82 },
     { url: `${base}/trauma-psicologico-y-estres-postraumatico/`, lastModified: staticLastModified, changeFrequency: "monthly", priority: 0.82 },
     { url: `${base}/evaluacion-neuropsicologica/`, lastModified: staticLastModified, changeFrequency: "monthly", priority: 0.85 },
+    { url: `${base}/consultoria-neuropsicologica-juridica/`, lastModified: new Date("2026-11-06T12:00:00+01:00"), changeFrequency: "monthly", priority: 0.88 },
     { url: `${base}/problemas-de-memoria/`, lastModified: staticLastModified, changeFrequency: "monthly", priority: 0.86 },
     { url: `${base}/ictus-y-dano-cerebral-adquirido/`, lastModified: staticLastModified, changeFrequency: "monthly", priority: 0.84 },
     { url: `${base}/parkinson-y-cambios-cognitivos/`, lastModified: new Date("2026-11-06T08:00:00+01:00"), changeFrequency: "monthly", priority: 0.83 },
