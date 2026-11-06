@@ -38,7 +38,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${base}/evaluacion-neuropsicologica/`, lastModified: staticLastModified, changeFrequency: "monthly", priority: 0.85 },
     { url: `${base}/problemas-de-memoria/`, lastModified: staticLastModified, changeFrequency: "monthly", priority: 0.86 },
     { url: `${base}/ictus-y-dano-cerebral-adquirido/`, lastModified: staticLastModified, changeFrequency: "monthly", priority: 0.84 },
-    { url: `${base}/parkinson-y-cambios-cognitivos/`, lastModified: staticLastModified, changeFrequency: "monthly", priority: 0.83 },
+    { url: `${base}/parkinson-y-cambios-cognitivos/`, lastModified: new Date("2026-11-06T08:00:00+01:00"), changeFrequency: "monthly", priority: 0.83 },
     { url: `${base}/rehabilitacion-neuropsicologica/`, lastModified: staticLastModified, changeFrequency: "monthly", priority: 0.85 },
     { url: `${base}/alzheimer-primeros-sintomas-y-evaluacion/`, lastModified: staticLastModified, changeFrequency: "monthly", priority: 0.86 },
     { url: `${base}/demencias/`, lastModified: staticLastModified, changeFrequency: "monthly", priority: 0.86 },
