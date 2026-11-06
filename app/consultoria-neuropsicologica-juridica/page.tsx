@@ -6,7 +6,7 @@ const url = "https://carolinasanchezgirona.com/consultoria-neuropsicologica-juri
 
 export const metadata: Metadata = {
   title: "Consultoría neuropsicológica en Barcelona y Maresme",
-  description: "Evaluación neuropsicológica y asesoramiento técnico para abogados, familias y procedimientos judiciales: deterioro cognitivo, autonomía y necesidades de apoyo.",
+  description: "Consultoría neuropsicológica para particulares, psicólogos y profesionales: evaluación en el ámbito jurídico y revisión técnica preliminar de casos.",
   alternates: { canonical: "/consultoria-neuropsicologica-juridica/" },
   openGraph: {
     title: "Consultoría neuropsicológica | Carolina Sánchez",
@@ -20,7 +20,7 @@ const schema = {
   "@context": "https://schema.org",
   "@type": "Service",
   name: "Consultoría neuropsicológica",
-  serviceType: "Evaluación neuropsicológica y asesoramiento técnico para procedimientos judiciales",
+  serviceType: "Evaluación neuropsicológica en el ámbito jurídico y consultoría técnica para profesionales",
   provider: { "@id": "https://carolinasanchezgirona.com/#carolina-sanchez-girona" },
   areaServed: ["Arenys de Mar", "Maresme", "Barcelona", "Cataluña"],
   url,
@@ -51,9 +51,10 @@ export default function ConsultoriaNeuropsicologicaJuridicaPage() {
             <div className="consultoria-hero-copy">
               <p className="editorial-eyebrow">Neuropsicología clínica · Asesoramiento técnico</p>
               <h1>Consultoría neuropsicológica</h1>
-              <p className="seo-lead">Evaluación del funcionamiento cognitivo, la autonomía y las necesidades de apoyo para aportar información técnica rigurosa en procedimientos judiciales.</p>
+              <p className="seo-lead">Valoraciones neuropsicológicas en el ámbito jurídico y revisión técnica especializada de casos para particulares y profesionales.</p>
               <div className="seo-actions">
-                <a className="editorial-btn editorial-btn-primary" href="mailto:contact@carolinasanchezgirona.com?subject=Consulta%20sobre%20valoraci%C3%B3n%20neuropsicol%C3%B3gica%20jur%C3%ADdica">Solicitar información y presupuesto</a>
+                <a className="editorial-btn editorial-btn-primary" href="mailto:contact@carolinasanchezgirona.com?subject=Consulta%20sobre%20valoraci%C3%B3n%20neuropsicol%C3%B3gica%20jur%C3%ADdica">Solicitar información</a>
+                <a className="editorial-btn editorial-btn-secondary" href="/tarifas-consultoria-neuropsicologica.pdf" download>Consultar tarifas (PDF)</a>
               </div>
             </div>
             <figure className="consultoria-hero-photo">
@@ -68,6 +69,27 @@ export default function ConsultoriaNeuropsicologicaJuridicaPage() {
             <h2>Una valoración clínica para preguntas jurídicas concretas</h2>
             <p>Los cambios en memoria, juicio, lenguaje o funciones ejecutivas pueden tener repercusiones distintas según la situación personal y las decisiones implicadas. Una evaluación neuropsicológica rigurosa ayuda a describir capacidades preservadas, dificultades y su impacto funcional, sin reducir a la persona a un diagnóstico o una puntuación.</p>
             <p>El servicio se dirige a despachos de abogados, otros profesionales jurídicos, familias y particulares. Cada encargo se delimita de manera individual, respetando la independencia técnica, la confidencialidad y los derechos de la persona evaluada.</p>
+          </section>
+          <section id="servicios" className="consultoria-section">
+            <div className="consultoria-section-heading">
+              <p className="consultoria-section-kicker">MODALIDADES DE SERVICIO</p>
+              <h2>Consultoría para particulares y profesionales</h2>
+              <p>Dos modalidades diferenciadas según la finalidad de la consulta y el alcance del encargo.</p>
+            </div>
+            <div className="consultoria-areas-grid">
+              <div className="consultoria-area-card">
+                <span className="consultoria-area-number">01 / PARTICULARES Y FAMILIAS</span>
+                <h3>Valoración neuropsicológica en el ámbito jurídico</h3>
+                <p>Evaluación individualizada del funcionamiento cognitivo, la autonomía y las habilidades relacionadas con decisiones concretas, cuando sean relevantes en un contexto jurídico. Según el encargo, puede comprender revisión de antecedentes, entrevista, pruebas neuropsicológicas e informe técnico o pericial.</p>
+                <p>Se delimita previamente el objeto de valoración, las actuaciones necesarias y las limitaciones de las conclusiones.</p>
+              </div>
+              <div className="consultoria-area-card">
+                <span className="consultoria-area-number">02 / PROFESIONALES</span>
+                <h3>Consultoría neuropsicológica preliminar</h3>
+                <p>Para psicólogos y otros profesionales sanitarios o jurídicos que necesitan una segunda revisión técnica del caso. Incluye análisis documental y de coherencia clínica, evolución, indicadores neuropsicológicos, funcionamiento y orientación sobre los pasos siguientes.</p>
+                <p>Se entrega un documento breve de conclusiones (1–2 páginas). Esta revisión no constituye una evaluación directa ni un informe pericial judicial.</p>
+              </div>
+            </div>
           </section>
           <section id="ambitos" className="consultoria-section">
             <div className="consultoria-section-heading">
@@ -110,21 +132,23 @@ export default function ConsultoriaNeuropsicologicaJuridicaPage() {
             </div>
           </section>
           <section>
-            <h2>Presupuesto adaptado a cada caso</h2>
-            <p>El presupuesto se establece tras conocer el objeto del encargo, la documentación existente, la complejidad clínica, las pruebas necesarias y las actuaciones solicitadas. No se aplica automáticamente la tarifa de una visita clínica ordinaria a un trabajo de consultoría jurídica.</p>
-            <p>La información inicial puede solicitarse sin remitir documentación clínica sensible por correo electrónico. Se acordará un canal adecuado para su intercambio cuando proceda.</p>
+            <h2>Tarifas y condiciones del servicio</h2>
+            <p>Las tarifas se presentan en un documento descargable, con apartados diferenciados para particulares y profesionales. Los presupuestos de las evaluaciones jurídicas dependen del objeto del encargo, la complejidad y las actuaciones necesarias.</p>
+            <p>La consultoría preliminar para profesionales se abona por adelantado. El plazo orientativo de entrega es de 3 a 5 días hábiles desde la recepción completa de la documentación. La información inicial puede solicitarse sin remitir documentación clínica sensible por correo electrónico; se acordará un canal adecuado cuando proceda.</p>
+            <div className="seo-actions consultoria-prices-action"><a className="editorial-btn editorial-btn-primary" href="/tarifas-consultoria-neuropsicologica.pdf" download>Descargar tarifas (PDF)</a></div>
           </section>
         </article>
         <aside className="seo-sidebar" aria-label="Información práctica">
           <div className="seo-card">
             <h2>Consultoría especializada</h2>
             <ul className="seo-facts">
-              <li><span>Dirigido a</span><strong>Abogados y particulares</strong></li>
+              <li><span>Dirigido a</span><strong>Particulares y profesionales</strong></li>
               <li><span>Especialidad</span><strong>Neuropsicología clínica</strong></li>
               <li><span>Ámbito</span><strong>Barcelona y Maresme</strong></li>
-              <li><span>Honorarios</span><strong>Presupuesto individual</strong></li>
+              <li><span>Tarifas</span><strong>Disponibles en PDF</strong></li>
             </ul>
             <a className="editorial-btn editorial-btn-primary" href="mailto:contact@carolinasanchezgirona.com?subject=Consultor%C3%ADa%20neuropsicol%C3%B3gica%20jur%C3%ADdica">Consultar el caso</a>
+            <a className="editorial-btn editorial-btn-secondary" href="/tarifas-consultoria-neuropsicologica.pdf" download>Descargar tarifas (PDF)</a>
             <p className="seo-local-note">Atención presencial en Arenys de Mar y asesoramiento online cuando sea clínicamente apropiado.</p>
           </div>
           <div className="seo-card">
