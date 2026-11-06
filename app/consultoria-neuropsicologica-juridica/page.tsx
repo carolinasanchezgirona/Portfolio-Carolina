@@ -54,22 +54,18 @@ export default function ConsultoriaNeuropsicologicaJuridicaPage() {
               <p className="seo-lead">Valoraciones neuropsicológicas en el ámbito jurídico y revisión técnica especializada de casos para particulares y profesionales.</p>
               <div className="seo-actions">
                 <a className="editorial-btn editorial-btn-primary" href="mailto:contact@carolinasanchezgirona.com?subject=Consulta%20sobre%20valoraci%C3%B3n%20neuropsicol%C3%B3gica%20jur%C3%ADdica">Solicitar información</a>
-                <a className="editorial-btn editorial-btn-secondary" href="/tarifas-consultoria-neuropsicologica.pdf" download>Consultar tarifas (PDF)</a>
+                <a className="editorial-btn editorial-btn-secondary" href="#servicios">Ver servicios</a>
+                <a className="consultoria-text-link" href="/tarifas-consultoria-neuropsicologica.pdf" download>Descargar tarifas (PDF)</a>
               </div>
             </div>
             <figure className="consultoria-hero-photo">
-              <img src="https://images.unsplash.com/photo-1711843250836-5d3869042f3d?auto=format&fit=crop&w=1100&q=85" alt="Profesional revisando documentación y tomando notas sobre un escritorio" width="880" height="924" loading="eager" decoding="async" />
+              <img src="https://images.unsplash.com/photo-1758691463198-dc663b8a64e4?auto=format&fit=crop&w=1100&q=85" alt="Consulta clínica presencial con una profesional y una paciente conversando" width="880" height="924" loading="eager" decoding="async" />
             </figure>
           </div>
         </div>
       </section>
       <div className="editorial-wrap seo-layout">
         <article className="seo-copy">
-          <section>
-            <h2>Una valoración clínica para preguntas jurídicas concretas</h2>
-            <p>Los cambios en memoria, juicio, lenguaje o funciones ejecutivas pueden tener repercusiones distintas según la situación personal y las decisiones implicadas. Una evaluación neuropsicológica rigurosa ayuda a describir capacidades preservadas, dificultades y su impacto funcional, sin reducir a la persona a un diagnóstico o una puntuación.</p>
-            <p>El servicio se dirige a despachos de abogados, otros profesionales jurídicos, familias y particulares. Cada encargo se delimita de manera individual, respetando la independencia técnica, la confidencialidad y los derechos de la persona evaluada.</p>
-          </section>
           <section id="servicios" className="consultoria-section">
             <div className="consultoria-section-heading">
               <p className="consultoria-section-kicker">MODALIDADES DE SERVICIO</p>
@@ -90,6 +86,11 @@ export default function ConsultoriaNeuropsicologicaJuridicaPage() {
                 <p>Se entrega un documento breve de conclusiones (1–2 páginas). Esta revisión no constituye una evaluación directa ni un informe pericial judicial.</p>
               </div>
             </div>
+          </section>
+          <section>
+            <h2>Una valoración clínica para preguntas jurídicas concretas</h2>
+            <p>Los cambios en memoria, juicio, lenguaje o funciones ejecutivas pueden tener repercusiones distintas según la situación personal y las decisiones implicadas. Una evaluación neuropsicológica rigurosa ayuda a describir capacidades preservadas, dificultades y su impacto funcional, sin reducir a la persona a un diagnóstico o una puntuación.</p>
+            <p>El servicio se dirige a despachos de abogados, otros profesionales jurídicos, familias y particulares. Cada encargo se delimita de manera individual, respetando la independencia técnica, la confidencialidad y los derechos de la persona evaluada.</p>
           </section>
           <section id="ambitos" className="consultoria-section">
             <div className="consultoria-section-heading">
