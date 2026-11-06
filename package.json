@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "prebuild": "node scripts/build-assessment-price-pdf.mjs",
+    "prebuild": "node scripts/build-assessment-price-pdf.mjs && node scripts/build-consultoria-price-pdf.mjs",
     "build": "next build",
     "start": "next start"
   },
