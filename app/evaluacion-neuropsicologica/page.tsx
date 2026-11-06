@@ -42,7 +42,7 @@ export default function NeuropsychAssessmentPage() {
       </header>
 
       <section className="seo-hero">
-        <div className="editorial-wrap seo-hero-inner">
+        <div className="editorial-wrap seo-hero-inner service-hero-grid"><div className="service-hero-copy">
           <p className="seo-breadcrumbs"><a href="/">Inicio</a><span>·</span><a href="/neuropsicologia/">Neuropsicología</a><span>·</span><span>Evaluación</span></p>
           <p className="editorial-eyebrow">Neuropsicología clínica</p>
           <h1>Evaluación neuropsicológica en Arenys de Mar</h1>
@@ -53,7 +53,7 @@ export default function NeuropsychAssessmentPage() {
             <a className="editorial-btn editorial-btn-primary" href="/cita/">Pedir primera visita</a>
             <a className="editorial-btn editorial-btn-secondary" href="#proceso">Cómo es la evaluación</a>
           </div>
-        </div>
+        </div><figure className="service-hero-visual"><img src="/carolina-sanchez-tu-consulta.webp" alt="Espacio profesional de consulta para la evaluación neuropsicológica" width="720" height="850" loading="eager" decoding="async" /></figure></div>
       </section>
 
       <div className="editorial-wrap seo-layout">
