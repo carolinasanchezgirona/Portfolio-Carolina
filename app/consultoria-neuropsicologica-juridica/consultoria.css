@@ -1,0 +1,11 @@
+/* Cabecera editorial exclusiva de consultoría neuropsicológica */
+.consultoria-hero .seo-hero-inner{max-width:1180px}
+.consultoria-hero-grid{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr);gap:clamp(28px,5vw,76px);align-items:center}
+.consultoria-hero-copy{min-width:0}
+.consultoria-hero .seo-hero h1,.consultoria-hero h1{max-width:13ch;font-size:clamp(2.6rem,4.4vw,4.1rem)}
+.consultoria-hero .seo-lead{max-width:44ch;font-size:clamp(1rem,1.3vw,1.13rem);line-height:1.6}
+.consultoria-hero-photo{margin:0;min-width:0;aspect-ratio:4/4.2;overflow:hidden;border-radius:22px;background:#EDEDED}
+.consultoria-hero-photo img{display:block;width:100%;height:100%;object-fit:cover;object-position:center}
+.consultoria-hero .seo-actions{margin-top:25px}
+@media(max-width:800px){.consultoria-hero-grid{grid-template-columns:1fr;gap:28px}.consultoria-hero-photo{aspect-ratio:4/3;max-height:440px}.consultoria-hero h1{max-width:16ch}}
+@media(max-width:520px){.consultoria-hero-photo{aspect-ratio:5/4;border-radius:16px}.consultoria-hero .seo-lead{font-size:1rem}}
