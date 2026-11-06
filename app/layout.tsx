@@ -10,6 +10,7 @@ import "./hero-soft.css";
 import "./editorial.css";
 import "./accessibility.css";
 import "./public-type-scale.css";
+import "./service-visual-balance.css";
 
 const inter = Inter({
   subsets: ["latin"],
