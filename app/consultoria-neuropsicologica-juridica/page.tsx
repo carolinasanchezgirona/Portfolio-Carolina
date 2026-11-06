@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "../seo-pages.css";
+import "./consultoria.css";
 
 const url = "https://carolinasanchezgirona.com/consultoria-neuropsicologica-juridica/";
 
@@ -43,15 +44,21 @@ const steps = [
 export default function ConsultoriaNeuropsicologicaJuridicaPage() {
   return (
     <main className="editorial-site">
-      <section className="seo-hero">
+      <section className="seo-hero consultoria-hero">
         <div className="editorial-wrap seo-hero-inner">
           <p className="seo-breadcrumbs"><a href="/">Inicio</a><span>·</span><span>Consultoría neuropsicológica</span></p>
-          <p className="editorial-eyebrow">Neuropsicología clínica · Asesoramiento técnico</p>
-          <h1>Consultoría neuropsicológica</h1>
-          <p className="seo-lead">Evaluación especializada del funcionamiento cognitivo, la autonomía y las necesidades de apoyo para aportar información técnica rigurosa en procedimientos judiciales y decisiones jurídicas.</p>
-          <div className="seo-actions">
-            <a className="editorial-btn editorial-btn-primary" href="mailto:contact@carolinasanchezgirona.com?subject=Consulta%20sobre%20valoraci%C3%B3n%20neuropsicol%C3%B3gica%20jur%C3%ADdica">Solicitar información y presupuesto</a>
-            <a className="editorial-btn editorial-btn-secondary" href="#ambitos">Ámbitos de actuación</a>
+          <div className="consultoria-hero-grid">
+            <div className="consultoria-hero-copy">
+              <p className="editorial-eyebrow">Neuropsicología clínica · Asesoramiento técnico</p>
+              <h1>Consultoría neuropsicológica</h1>
+              <p className="seo-lead">Evaluación del funcionamiento cognitivo, la autonomía y las necesidades de apoyo para aportar información técnica rigurosa en procedimientos judiciales.</p>
+              <div className="seo-actions">
+                <a className="editorial-btn editorial-btn-primary" href="mailto:contact@carolinasanchezgirona.com?subject=Consulta%20sobre%20valoraci%C3%B3n%20neuropsicol%C3%B3gica%20jur%C3%ADdica">Solicitar información y presupuesto</a>
+              </div>
+            </div>
+            <figure className="consultoria-hero-photo">
+              <img src="https://images.unsplash.com/photo-1711843250836-5d3869042f3d?auto=format&fit=crop&w=1100&q=85" alt="Profesional revisando documentación y tomando notas sobre un escritorio" width="880" height="924" loading="eager" decoding="async" />
+            </figure>
           </div>
         </div>
       </section>
