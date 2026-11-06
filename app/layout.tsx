@@ -161,6 +161,14 @@ const structuredData = {
               url: "https://carolinasanchezgirona.com/neuropsicologia/",
             },
           },
+          {
+            "@type": "Offer",
+            itemOffered: {
+              "@type": "Service",
+              name: "Consultoría neuropsicológica en el ámbito jurídico",
+              url: "https://carolinasanchezgirona.com/consultoria-neuropsicologica-juridica/",
+            },
+          },
         ],
       },
     },
