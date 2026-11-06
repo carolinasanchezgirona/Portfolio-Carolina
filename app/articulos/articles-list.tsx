@@ -77,7 +77,7 @@ export default function ArticlesList({ articles, category = "all" }: { articles:
           })}
         </section>
       </div>
-      <Script src="/articles-public.js?v=20261027-category-2" strategy="afterInteractive" />
+      <Script src="/articles-public.js?v=20261106-seo-cleanup" strategy="afterInteractive" />
     </main>
   );
 }
