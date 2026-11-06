@@ -29,3 +29,10 @@
  .tdah-page .visual-method-grid>.visual-method-image img{max-height:260px}
  .editorial-site .seo-copy section+section{margin-top:34px;padding-top:34px}
 }
+
+/* Cabeceras de neuropsicología: lectura y fotografía en dos columnas. */
+.editorial-site .seo-hero-inner.service-hero-grid{max-width:1180px;display:grid;grid-template-columns:minmax(0,1.12fr) minmax(250px,.72fr);gap:clamp(24px,5vw,68px);align-items:center}
+.editorial-site .service-hero-copy{min-width:0}
+.editorial-site .service-hero-visual{margin:0;min-width:0;border-radius:15px;overflow:hidden;background:#EDEDED}
+.editorial-site .service-hero-visual img{display:block;width:100%;height:auto;aspect-ratio:4/3;max-height:370px;object-fit:cover}
+@media(max-width:720px){.editorial-site .seo-hero-inner.service-hero-grid{grid-template-columns:1fr}.editorial-site .service-hero-visual{max-width:540px}.editorial-site .service-hero-visual img{max-height:270px}}
