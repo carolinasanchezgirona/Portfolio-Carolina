@@ -265,19 +265,6 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="editorial-section editorial-podcast-section" aria-labelledby="podcast-home-title">
-        <div className="editorial-wrap editorial-podcast-card">
-          <div className="editorial-podcast-heading">
-            <p className="editorial-section-eyebrow editorial-podcast-eyebrow">Pódcast · Psicología Incómoda</p>
-            <h2 id="podcast-home-title">Preguntas incómodas. Psicología sin frases vacías.</h2>
-          </div>
-          <div className="editorial-podcast-copy">
-            <p>Una serie de divulgación sobre relaciones, emociones, ciencia y humor. Empieza con «No quiero volver, pero quiero que me busque».</p>
-            <a className="editorial-card-link" href="/podcast/">Conocer el pódcast <Arrow /></a>
-          </div>
-        </div>
-      </section>
-
       <section className="editorial-section editorial-closing-cta" aria-labelledby="closing-cta-title">
         <div className="editorial-wrap editorial-closing-cta-inner">
           <div>
