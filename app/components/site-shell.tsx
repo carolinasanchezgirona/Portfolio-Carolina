@@ -36,7 +36,7 @@ const serviceNavigation = [
   { href: "/evaluacion-tdah-adultos/", label: "Evaluación de TDAH en adultos" },
   { href: "/evaluacion-tea-adultos/", label: "Evaluación de TEA en adultos" },
   { href: "/evaluacion-altas-capacidades-adultos/", label: "Altas capacidades en adultos" },
-  { href: "/consultoria-neuropsicologica-juridica/", label: "Consultoría neuropsicológica jurídica" },
+  { href: "/consultoria-neuropsicologica-juridica/", label: "Consultoría neuropsicológica" },
 ] as const;
 
 const servicePaths = [
@@ -161,7 +161,7 @@ function SiteFooter() {
           <p className="site-footer-heading">Neuropsicología</p>
           <a href="/neuropsicologia/">Neuropsicología</a>
           <a href="/evaluacion-neuropsicologica/">Evaluación neuropsicológica</a>
-          <a href="/consultoria-neuropsicologica-juridica/">Consultoría neuropsicológica jurídica</a>
+          <a href="/consultoria-neuropsicologica-juridica/">Consultoría neuropsicológica</a>
         </nav>
 
         <nav className="site-footer-column" aria-label="Consulta">
