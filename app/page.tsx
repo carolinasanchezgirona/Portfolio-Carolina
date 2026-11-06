@@ -119,7 +119,7 @@ export default function HomePage() {
             <article className="editorial-service-card" style={{maxWidth:"100%",border:"1px solid #A0A0A0",background:"#F2EFE7"}}>
               <div className="editorial-accent" style={{background:"#809DA8"}} />
               <p className="editorial-card-kicker">Asesoramiento técnico especializado</p>
-              <h3>Consultoría neuropsicológica jurídica</h3>
+              <h3>Consultoría neuropsicológica</h3>
               <p className="editorial-card-hook">Cuando una cuestión jurídica necesita una valoración rigurosa del funcionamiento cognitivo.</p>
               <p className="editorial-card-copy">Evaluaciones e informes neuropsicológicos, autonomía y necesidades de apoyo, y asesoramiento técnico a despachos de abogados, familias y particulares.</p>
               <div className="editorial-card-bottom">
