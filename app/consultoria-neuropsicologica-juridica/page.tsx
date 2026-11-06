@@ -4,11 +4,11 @@ import "../seo-pages.css";
 const url = "https://carolinasanchezgirona.com/consultoria-neuropsicologica-juridica/";
 
 export const metadata: Metadata = {
-  title: "Neuropsicología jurídica en Barcelona y Maresme",
+  title: "Consultoría neuropsicológica en Barcelona y Maresme",
   description: "Evaluación neuropsicológica y asesoramiento técnico para abogados, familias y procedimientos judiciales: deterioro cognitivo, autonomía y necesidades de apoyo.",
   alternates: { canonical: "/consultoria-neuropsicologica-juridica/" },
   openGraph: {
-    title: "Neuropsicología jurídica | Carolina Sánchez",
+    title: "Consultoría neuropsicológica | Carolina Sánchez",
     description: "Valoraciones cognitivas y funcionales e informes técnicos para profesionales jurídicos y particulares.",
     url,
     type: "website",
@@ -18,7 +18,7 @@ export const metadata: Metadata = {
 const schema = {
   "@context": "https://schema.org",
   "@type": "Service",
-  name: "Neuropsicología jurídica",
+  name: "Consultoría neuropsicológica",
   serviceType: "Evaluación neuropsicológica y asesoramiento técnico para procedimientos judiciales",
   provider: { "@id": "https://carolinasanchezgirona.com/#carolina-sanchez-girona" },
   areaServed: ["Arenys de Mar", "Maresme", "Barcelona", "Cataluña"],
@@ -45,9 +45,9 @@ export default function ConsultoriaNeuropsicologicaJuridicaPage() {
     <main className="editorial-site">
       <section className="seo-hero">
         <div className="editorial-wrap seo-hero-inner">
-          <p className="seo-breadcrumbs"><a href="/">Inicio</a><span>·</span><span>Neuropsicología jurídica</span></p>
+          <p className="seo-breadcrumbs"><a href="/">Inicio</a><span>·</span><span>Consultoría neuropsicológica</span></p>
           <p className="editorial-eyebrow">Neuropsicología clínica · Asesoramiento técnico</p>
-          <h1>Neuropsicología jurídica</h1>
+          <h1>Consultoría neuropsicológica</h1>
           <p className="seo-lead">Evaluación especializada del funcionamiento cognitivo, la autonomía y las necesidades de apoyo para aportar información técnica rigurosa en procedimientos judiciales y decisiones jurídicas.</p>
           <div className="seo-actions">
             <a className="editorial-btn editorial-btn-primary" href="mailto:contact@carolinasanchezgirona.com?subject=Consulta%20sobre%20valoraci%C3%B3n%20neuropsicol%C3%B3gica%20jur%C3%ADdica">Solicitar información y presupuesto</a>
