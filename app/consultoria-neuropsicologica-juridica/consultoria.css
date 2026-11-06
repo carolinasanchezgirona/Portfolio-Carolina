@@ -54,3 +54,26 @@
 .consultoria-page .consultoria-process-note{background:var(--consultoria-perla)!important;border-left-color:var(--consultoria-niebla)!important}
 .consultoria-page .seo-callout{background:var(--consultoria-perla);border-left-color:var(--consultoria-niebla)}
 .consultoria-page .seo-related a{color:var(--consultoria-pizarra)}
+
+/* Refinamiento cromático: superficies homogéneas, sin efecto damero. */
+.consultoria-page .consultoria-area-card,
+.consultoria-page .consultoria-area-card:nth-child(even){
+  background:#EDEDED;
+  border:1px solid rgba(112,135,147,.24);
+  box-shadow:none;
+}
+.consultoria-page .consultoria-area-number{
+  color:#708793!important;
+}
+.consultoria-page .seo-sidebar .seo-card{
+  background:#EDEDED;
+  border:1px solid rgba(112,135,147,.24);
+  box-shadow:none;
+}
+.consultoria-page .consultoria-process-step,
+.consultoria-page .consultoria-process-step:first-child{
+  border-color:rgba(112,135,147,.24)!important;
+}
+.consultoria-page .seo-facts li{
+  border-top-color:rgba(112,135,147,.24);
+}
