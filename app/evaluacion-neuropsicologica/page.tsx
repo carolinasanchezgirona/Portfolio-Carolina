@@ -53,7 +53,7 @@ export default function NeuropsychAssessmentPage() {
             <a className="editorial-btn editorial-btn-primary" href="/cita/">Pedir primera visita</a>
             <a className="editorial-btn editorial-btn-secondary" href="#proceso">Cómo es la evaluación</a>
           </div>
-        </div><figure className="service-hero-visual"><img src="/carolina-sanchez-tu-consulta.webp" alt="Espacio profesional de consulta para la evaluación neuropsicológica" width="720" height="850" loading="eager" decoding="async" /></figure></div>
+        </div><figure className="service-hero-visual"><img src="https://images.pexels.com/photos/8430297/pexels-photo-8430297.jpeg?auto=compress&cs=tinysrgb&w=1200" alt="Profesional tomando notas durante una entrevista de evaluación clínica" width="720" height="850" loading="eager" decoding="async" /></figure></div>
       </section>
 
       <div className="editorial-wrap seo-layout">
