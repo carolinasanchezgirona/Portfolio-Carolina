@@ -142,7 +142,8 @@ export default function AdultAdhdAssessmentPage() {
 
       <div className="editorial-wrap tdah-main">
         <article className="seo-copy">
-          <section className="tdah-method-grid">
+          <section className="tdah-method-grid visual-method-grid">
+            <figure className="visual-method-image"><Image src="/tdah-adulto-organizacion.webp" alt="Organización de tareas y materiales cotidianos en una evaluación de dificultades atencionales en adultos" width={960} height={720} sizes="(max-width: 720px) 100vw, 35vw" loading="lazy" /></figure>
             <div>
             <h2>Una evaluación clínica, no solo un cuestionario</h2>
             <p>
