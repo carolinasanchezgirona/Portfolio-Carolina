@@ -69,24 +69,37 @@ export default function ConsultoriaNeuropsicologicaJuridicaPage() {
             <p>Los cambios en memoria, juicio, lenguaje o funciones ejecutivas pueden tener repercusiones distintas según la situación personal y las decisiones implicadas. Una evaluación neuropsicológica rigurosa ayuda a describir capacidades preservadas, dificultades y su impacto funcional, sin reducir a la persona a un diagnóstico o una puntuación.</p>
             <p>El servicio se dirige a despachos de abogados, otros profesionales jurídicos, familias y particulares. Cada encargo se delimita de manera individual, respetando la independencia técnica, la confidencialidad y los derechos de la persona evaluada.</p>
           </section>
-          <section id="ambitos">
-            <h2>Ámbitos de actuación</h2>
-            {areas.map((area) => (
-              <div key={area.title}>
-                <h3>{area.title}</h3>
-                <p>{area.description}</p>
-              </div>
-            ))}
+          <section id="ambitos" className="consultoria-section">
+            <div className="consultoria-section-heading">
+              <p className="consultoria-section-kicker">ÁREAS DE ESPECIALIZACIÓN</p>
+              <h2>Ámbitos de actuación</h2>
+              <p>Un análisis individualizado de las capacidades cognitivas y funcionales, según las cuestiones concretas del encargo.</p>
+            </div>
+            <div className="consultoria-areas-grid">
+              {areas.map((area, index) => (
+                <div className="consultoria-area-card" key={area.title}>
+                  <span className="consultoria-area-number" aria-hidden="true">{String(index + 1).padStart(2, "0")}</span>
+                  <h3>{area.title}</h3>
+                  <p>{area.description}</p>
+                </div>
+              ))}
+            </div>
           </section>
-          <section id="proceso">
-            <h2>Cómo se desarrolla el trabajo</h2>
-            {steps.map((step, index) => (
-              <div key={step.title}>
-                <h3>{index + 1}. {step.title}</h3>
-                <p>{step.description}</p>
-              </div>
-            ))}
-            <p>Cuando resulte pertinente, puede realizarse una explicación técnica del informe a quien haya contratado el servicio, dentro del alcance acordado y con las garantías de confidencialidad aplicables.</p>
+          <section id="proceso" className="consultoria-section">
+            <div className="consultoria-section-heading">
+              <p className="consultoria-section-kicker">METODOLOGÍA</p>
+              <h2>Cómo se desarrolla el trabajo</h2>
+              <p>Un proceso estructurado, con criterios clínicos explícitos y conclusiones ajustadas a los datos disponibles.</p>
+            </div>
+            <ol className="consultoria-process-list">
+              {steps.map((step, index) => (
+                <li className="consultoria-process-step" key={step.title}>
+                  <span className="consultoria-process-number" aria-hidden="true">{String(index + 1).padStart(2, "0")}</span>
+                  <div><h3>{step.title}</h3><p>{step.description}</p></div>
+                </li>
+              ))}
+            </ol>
+            <p className="consultoria-process-note">Cuando resulte pertinente, puede realizarse una explicación técnica del informe a quien haya contratado el servicio, dentro del alcance acordado y con las garantías de confidencialidad aplicables.</p>
           </section>
           <section>
             <h2>Rigor, independencia y límites de la evaluación</h2>
