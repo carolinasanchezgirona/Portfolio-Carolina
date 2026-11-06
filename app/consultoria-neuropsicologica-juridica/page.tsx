@@ -59,7 +59,7 @@ export default function ConsultoriaNeuropsicologicaJuridicaPage() {
               </div>
             </div>
             <figure className="consultoria-hero-photo">
-              <img src="https://images.unsplash.com/photo-1758691463198-dc663b8a64e4?auto=format&fit=crop&w=1100&q=85" alt="Consulta clínica presencial con una profesional y una paciente conversando" width="880" height="924" loading="eager" decoding="async" />
+              <img src="https://images.unsplash.com/photo-1589829545856-d10d557cf95f?auto=format&fit=crop&w=1100&q=85" alt="Documentación jurídica y elementos de trabajo legal asociados al análisis técnico de casos" width="880" height="924" loading="eager" decoding="async" />
             </figure>
           </div>
         </div>
