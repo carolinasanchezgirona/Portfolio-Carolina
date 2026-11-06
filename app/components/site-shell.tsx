@@ -36,12 +36,13 @@ const serviceNavigation = [
   { href: "/evaluacion-tdah-adultos/", label: "Evaluación de TDAH en adultos" },
   { href: "/evaluacion-tea-adultos/", label: "Evaluación de TEA en adultos" },
   { href: "/evaluacion-altas-capacidades-adultos/", label: "Altas capacidades en adultos" },
+  { href: "/consultoria-neuropsicologica-juridica/", label: "Consultoría neuropsicológica jurídica" },
 ] as const;
 
 const servicePaths = [
   "/psicologia/", "/neuropsicologia/", "/ansiedad/",
   "/duelo/", "/evaluacion-neuropsicologica/", "/evaluacion-tdah-adultos/", "/evaluacion-tea-adultos/", "/evaluacion-altas-capacidades-adultos/",
-  "/problemas-de-memoria/", "/psicologa-arenys-de-mar/",
+  "/problemas-de-memoria/", "/psicologa-arenys-de-mar/", "/consultoria-neuropsicologica-juridica/",
 ];
 
 function ChevronIcon() {
@@ -160,6 +161,7 @@ function SiteFooter() {
           <p className="site-footer-heading">Neuropsicología</p>
           <a href="/neuropsicologia/">Neuropsicología</a>
           <a href="/evaluacion-neuropsicologica/">Evaluación neuropsicológica</a>
+          <a href="/consultoria-neuropsicologica-juridica/">Consultoría neuropsicológica jurídica</a>
         </nav>
 
         <nav className="site-footer-column" aria-label="Consulta">
