@@ -107,10 +107,10 @@ export default function PsychologyPage() {
       <section className="editorial-section psychology-approach" aria-labelledby="psychology-approach-title">
         <div className="editorial-wrap psychology-approach-grid">
           <figure className="psychology-approach-photo">
-            <Image src="/carolina-sanchez-enfoque.webp"
-              alt="Carolina Sánchez, psicóloga general sanitaria"
+            <img src="https://images.pexels.com/photos/7176323/pexels-photo-7176323.jpeg?auto=compress&cs=tinysrgb&w=1200"
+              alt="Detalle de una sesión de psicoterapia con entrevista y registro de notas"
               width={540} height={810}
-              sizes="(max-width: 720px) 260px, 320px" loading="lazy" />
+              loading="lazy" decoding="async" />
           </figure>
           <div className="psychology-approach-copy">
             <p className="editorial-section-eyebrow">Mi forma de trabajar</p>
