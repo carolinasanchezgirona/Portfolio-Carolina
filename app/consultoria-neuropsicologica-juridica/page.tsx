@@ -43,7 +43,7 @@ const steps = [
 
 export default function ConsultoriaNeuropsicologicaJuridicaPage() {
   return (
-    <main className="editorial-site">
+    <main className="editorial-site consultoria-page">
       <section className="seo-hero consultoria-hero">
         <div className="editorial-wrap seo-hero-inner">
           <p className="seo-breadcrumbs"><a href="/">Inicio</a><span>·</span><span>Consultoría neuropsicológica</span></p>
