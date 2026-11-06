@@ -91,3 +91,9 @@
   border:1px solid #A0A0A0;
   box-shadow:0 3px 12px rgba(112,135,147,.08);
 }
+
+/* Accesos visibles y sin saturar el encabezado. */
+.consultoria-hero .seo-actions{display:flex;align-items:center;flex-wrap:wrap;gap:12px}
+.consultoria-text-link{font-size:.94rem;font-weight:650;color:#708793;text-decoration:underline;text-underline-offset:4px}
+.consultoria-text-link:hover{color:#809DA8}
+.consultoria-page #servicios{scroll-margin-top:96px}
