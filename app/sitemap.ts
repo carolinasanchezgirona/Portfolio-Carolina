@@ -1,6 +1,5 @@
 import type { MetadataRoute } from "next";
 import { getPublishedArticles, isArticleVisible } from "./articulos/articles-data";
-import { episodes } from "./podcast/episodes";
 
 const base = "https://carolinasanchezgirona.com";
 const staticLastModified = new Date("2026-10-02T09:45:00+02:00");
@@ -47,7 +46,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${base}/familiares-y-cuidadores-de-personas-con-demencia/`, lastModified: staticLastModified, changeFrequency: "monthly", priority: 0.84 },
     { url: `${base}/articulos/`, lastModified: new Date("2026-10-27T00:00:00+01:00"), changeFrequency: "weekly", priority: 0.88 },
     { url: `${base}/recursos/`, lastModified: staticLastModified, changeFrequency: "weekly", priority: 0.78 },
-    { url: `${base}/podcast/`, lastModified: new Date("2026-10-11T12:00:00+02:00"), changeFrequency: "weekly", priority: 0.8 },
     { url: `${base}/recursos/cuadernos-estimulacion-cognitiva/`, lastModified: new Date("2026-10-11T12:00:00+02:00"), changeFrequency: "monthly", priority: 0.8 },
     { url: `${base}/recursos/cuadernos-estimulacion-cognitiva/muestra/`, lastModified: new Date("2026-10-11T12:00:00+02:00"), changeFrequency: "monthly", priority: 0.74 },
     { url: `${base}/cita/`, lastModified: staticLastModified, changeFrequency: "daily", priority: 0.9 },
@@ -64,12 +62,5 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: article.featured ? 0.82 : 0.75,
     }));
 
-  const podcastPages = episodes.map((episode) => ({
-    url: `${base}/podcast/${episode.slug}/`,
-    lastModified: new Date(episode.date + "T12:00:00+02:00"),
-    changeFrequency: "monthly" as const,
-    priority: 0.76,
-  }));
-
-  return [...staticPages, ...articleCategories, ...articles, ...podcastPages];
+  return [...staticPages, ...articleCategories, ...articles];
 }
