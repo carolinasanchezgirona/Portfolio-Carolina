@@ -50,7 +50,7 @@ export function isArticleVisible(article: PublicArticle, now = Date.now()) {
 
 export function getAutomaticRelatedPage(article: PublicArticle) {
   if (article.related_page && !["/psicologia/", "/neuropsicologia/"].includes(article.related_page)) {
-    return article.related_page;
+    return article.related_page === "/deterioro-cognitivo/" ? "/evaluacion-neuropsicologica/" : article.related_page;
   }
 
   const searchable = [article.title, article.subtitle, article.excerpt, ...(article.tags || [])]
@@ -66,7 +66,7 @@ export function getAutomaticRelatedPage(article: PublicArticle) {
   if (/alzheimer/.test(searchable)) return "/alzheimer-primeros-sintomas-y-evaluacion/";
   if (/demencia|demencias/.test(searchable)) return "/demencias/";
   if (/memoria|olvidos/.test(searchable)) return "/problemas-de-memoria/";
-  if (/deterioro cognitivo/.test(searchable)) return "/deterioro-cognitivo/";
+  if (/deterioro cognitivo/.test(searchable)) return "/evaluacion-neuropsicologica/";
   if (/evaluaci[oó]n neuropsicol[oó]gica|test neuropsicol[oó]gic|perfil cognitivo/.test(searchable)) return "/evaluacion-neuropsicologica/";
-  return article.related_page || (article.category === "neuropsicologia" ? "/neuropsicologia/" : "/psicologia/");
+  return (article.related_page === "/deterioro-cognitivo/" ? "/evaluacion-neuropsicologica/" : article.related_page) || (article.category === "neuropsicologia" ? "/neuropsicologia/" : "/psicologia/");
 }
