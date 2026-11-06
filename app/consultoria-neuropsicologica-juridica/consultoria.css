@@ -77,3 +77,21 @@
 .consultoria-page .seo-facts li{
   border-top-color:rgba(112,135,147,.24);
 }
+
+/* Contraste real de superficie: marfil de página frente a tarjetas azul niebla. */
+.consultoria-page .consultoria-area-card,
+.consultoria-page .consultoria-area-card:nth-child(even){
+  background:#809DA8;
+  border:1px solid #708793;
+  box-shadow:0 4px 14px rgba(112,135,147,.10);
+}
+.consultoria-page .consultoria-area-card h3,
+.consultoria-page .consultoria-area-card p{
+  color:#243B47;
+}
+.consultoria-page .consultoria-area-number{color:#243B47!important}
+.consultoria-page .seo-sidebar .seo-card{
+  background:#EDEDED;
+  border:1px solid #A0A0A0;
+  box-shadow:0 3px 12px rgba(112,135,147,.08);
+}
