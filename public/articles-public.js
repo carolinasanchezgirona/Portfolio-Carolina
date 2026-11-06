@@ -76,6 +76,9 @@
     try {
       const rows = await request(`articles?select=${encodeURIComponent(select)}&status=eq.published&order=featured.desc,published_at.desc`);
       const visible = rows.filter(isPublishedNow);
+      if (!visible.some((article) => article.category === "neuropsicologia") && category !== "neuropsicologia") {
+        document.querySelector('.articles-filters a[data-category="neuropsicologia"]')?.remove();
+      }
       const articles = category === "psicologia" || category === "neuropsicologia" ? visible.filter((a) => a.category === category) : visible;
       grid.replaceChildren();
       if (!articles.length) { status.textContent = emptyMessage; status.hidden = false; return; }
@@ -176,7 +179,7 @@
 
       const related = document.querySelector("#article-related");
       const relatedLink = document.querySelector("#article-related-link");
-      if (article.related_page) { relatedLink.href = article.related_page; relatedLink.textContent = `Ver ${relatedLabel(article.related_page)} →`; related.hidden = false; }
+      if (article.related_page) { const target = article.related_page === "/deterioro-cognitivo/" ? "/evaluacion-neuropsicologica/" : article.related_page; relatedLink.href = target; relatedLink.textContent = `Ver ${relatedLabel(target)} →`; related.hidden = false; }
 
       const schema = document.createElement("script"); schema.type = "application/ld+json";
       schema.textContent = JSON.stringify({ "@context": "https://schema.org", "@type": "Article", headline: article.title, description, datePublished: article.published_at || undefined, dateModified: article.updated_at, author: { "@type": "Person", name: "Carolina Sánchez Girona", url: "https://carolinasanchezgirona.com/sobre-mi/" }, mainEntityOfPage: canonical, image: article.image_url || "https://carolinasanchezgirona.com/carolina-sanchez-retrato.jpg", keywords: Array.isArray(article.tags) ? article.tags.join(", ") : undefined });
