@@ -54,7 +54,7 @@ export default function NeuropsychologyPage() {
             <a className="editorial-btn editorial-btn-primary" href="/cita/">Pedir cita</a>
             <a className="editorial-btn editorial-btn-secondary" href="#cuando-consultar">Cuándo consultar</a>
           </div>
-        </div><figure className="service-hero-visual"><img src="/carolina-sanchez-como-trabajo.webp" alt="Carolina Sánchez trabajando en la consulta, en un contexto de valoración neuropsicológica" width="720" height="850" loading="eager" decoding="async" /></figure></div>
+        </div><figure className="service-hero-visual"><img src="https://images.pexels.com/photos/9572660/pexels-photo-9572660.jpeg?auto=compress&cs=tinysrgb&w=1200" alt="Persona adulta mayor realizando una actividad de escritura y concentración" width="720" height="850" loading="eager" decoding="async" /></figure></div>
       </section>
 
       <div className="editorial-wrap seo-layout">
