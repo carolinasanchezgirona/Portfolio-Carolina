@@ -9,3 +9,12 @@
 .consultoria-hero .seo-actions{margin-top:25px}
 @media(max-width:800px){.consultoria-hero-grid{grid-template-columns:1fr;gap:28px}.consultoria-hero-photo{aspect-ratio:4/3;max-height:440px}.consultoria-hero h1{max-width:16ch}}
 @media(max-width:520px){.consultoria-hero-photo{aspect-ratio:5/4;border-radius:16px}.consultoria-hero .seo-lead{font-size:1rem}}
+
+/* Ficha de información práctica: evita columnas estrechas y roturas de palabras. */
+.consultoria-page .seo-card{min-width:0}
+.consultoria-page .seo-facts{gap:0;margin-top:18px}
+.consultoria-page .seo-facts li{display:grid;grid-template-columns:1fr;gap:5px;padding:14px 0;min-width:0}
+.consultoria-page .seo-facts li>span{display:block;color:#708793;font-size:.84rem;line-height:1.35}
+.consultoria-page .seo-facts strong{display:block;min-width:0;color:var(--e-ink);font-size:.95rem;line-height:1.4;text-align:left;overflow-wrap:normal;word-break:normal}
+.consultoria-page .seo-card h2{font-size:clamp(1.45rem,2.1vw,1.9rem);overflow-wrap:normal}
+@media(min-width:1100px){.consultoria-page .seo-layout{grid-template-columns:minmax(0,1.45fr) minmax(320px,.75fr);gap:clamp(30px,4vw,56px)}}
