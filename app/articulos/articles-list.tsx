@@ -27,6 +27,8 @@ function readingMinutes(html: string) {
 
 export default function ArticlesList({ articles, category = "all" }: { articles: PublicArticle[]; category?: "all" | "psicologia" | "neuropsicologia" }) {
 
+  const showNeuroCategory = category === "neuropsicologia" || articles.some((article) => article.category === "neuropsicologia");
+
   return (
     <main className="articles-page" data-articles-view="list" data-article-filter={category}>
       <section className="articles-hero">
@@ -41,7 +43,7 @@ export default function ArticlesList({ articles, category = "all" }: { articles:
           <div className="articles-filters" aria-label="Filtrar artículos">
             <a data-category="all" className={category === "all" ? "active" : undefined} aria-current={category === "all" ? "page" : undefined} href="/articulos/">Todos</a>
             <a data-category="psicologia" className={category === "psicologia" ? "active" : undefined} aria-current={category === "psicologia" ? "page" : undefined} href="/articulos/categoria/psicologia/">Psicología</a>
-            <a data-category="neuropsicologia" className={category === "neuropsicologia" ? "active" : undefined} aria-current={category === "neuropsicologia" ? "page" : undefined} href="/articulos/categoria/neuropsicologia/">Neuropsicología</a>
+            {showNeuroCategory ? <a data-category="neuropsicologia" className={category === "neuropsicologia" ? "active" : undefined} aria-current={category === "neuropsicologia" ? "page" : undefined} href="/articulos/categoria/neuropsicologia/">Neuropsicología</a> : null}
           </div>
         </div>
 
