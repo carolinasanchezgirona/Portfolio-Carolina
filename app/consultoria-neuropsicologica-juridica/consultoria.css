@@ -81,7 +81,7 @@
 /* Tarjetas azul niebla suavizado con marfil: contraste sin saturación. */
 .consultoria-page .consultoria-area-card,
 .consultoria-page .consultoria-area-card:nth-child(even){
-  background:#CED3CE;
+  background:#CAD2D1;
   background:color-mix(in srgb,#809DA8 35%,#F2EFE7 65%);
   border:1px solid color-mix(in srgb,#708793 45%,#F2EFE7 55%);
   box-shadow:0 4px 14px rgba(112,135,147,.07);
