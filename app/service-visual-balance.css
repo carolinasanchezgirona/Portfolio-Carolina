@@ -1,0 +1,31 @@
+/* Equilibrio editorial de las páginas públicas de servicios.
+   Mantiene los colores establecidos de la identidad visual. */
+.editorial-site .seo-copy>section{min-width:0}
+.editorial-site .seo-copy>section>h2{max-width:26ch}
+.editorial-site .seo-copy>section>p{max-width:72ch}
+.editorial-site .seo-copy p,.editorial-site .seo-copy li{line-height:1.65}
+.editorial-site .seo-copy section+section{margin-top:42px;padding-top:42px}
+.editorial-site .seo-copy .seo-callout{background:#F2EFE7;border-left-color:#809DA8}
+.editorial-site .seo-card{background:#EDEDED;border-color:#A0A0A0}
+.editorial-site .seo-card .editorial-btn{max-width:100%}
+.editorial-site .seo-copy img{max-width:100%}
+.editorial-site .seo-copy figure{margin-inline:0}
+.editorial-site .seo-copy figure img{display:block;width:100%;height:auto;object-fit:cover}
+.editorial-site .seo-copy figure figcaption{margin-top:9px;font-size:.82rem;color:#708793}
+.tdah-page .visual-method-grid{grid-template-columns:minmax(220px,.8fr) minmax(0,1.2fr);align-items:center;gap:24px 36px}
+.tdah-page .visual-method-grid>.visual-method-image{grid-column:1;grid-row:1;margin:0;min-width:0;overflow:hidden;border-radius:14px;background:#EDEDED}
+.tdah-page .visual-method-grid>.visual-method-image img{display:block;width:100%;height:100%;max-height:320px;aspect-ratio:4/3;object-fit:cover}
+.tdah-page .visual-method-grid>div:nth-child(2){grid-column:2;grid-row:1}
+.tdah-page .visual-method-grid>.tdah-method-aside{grid-column:1/-1;grid-row:2;padding:19px 24px;background:#F2EFE7;border-color:#A0A0A0}
+.tdah-page .visual-method-grid>.tdah-method-aside h3{font-size:1.25rem}
+.consultoria-page .consultoria-hero-photo img{object-fit:cover}
+.psychology-page .psychology-reason{background:#F2EFE7}
+.psychology-page .psychology-reasons{background:#EDEDED}
+@media(max-width:720px){
+ .tdah-page .visual-method-grid{grid-template-columns:1fr;gap:22px}
+ .tdah-page .visual-method-grid>.visual-method-image,
+ .tdah-page .visual-method-grid>div:nth-child(2),
+ .tdah-page .visual-method-grid>.tdah-method-aside{grid-column:1;grid-row:auto}
+ .tdah-page .visual-method-grid>.visual-method-image img{max-height:260px}
+ .editorial-site .seo-copy section+section{margin-top:34px;padding-top:34px}
+}
