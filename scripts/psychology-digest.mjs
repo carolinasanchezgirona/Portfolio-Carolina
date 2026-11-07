@@ -1,7 +1,7 @@
 import { appendFile, readFile, writeFile } from 'node:fs/promises';
 import { setTimeout } from 'node:timers/promises';
 import { fileURLToPath } from 'node:url';
-import { isPsychologyDigestWorkflow } from '../github-actions-digest-auth.ts';
+import { checkPsychologyDigestToken } from '../github-actions-digest-auth.ts';
 
 const endpoint = 'https://carolinasanchezgirona.com/api/automation/psychology-digest';
 const madridDate = new Intl.DateTimeFormat('sv-SE', { timeZone: 'Europe/Madrid' });
@@ -43,7 +43,7 @@ async function waitForDeployment() {
   const deadline = Date.now() + 15 * 60_000;
   while (Date.now() < deadline) {
     const response = await fetch(endpoint, { signal: AbortSignal.timeout(10_000), redirect: 'error' }).catch(() => null);
-    if (response?.status === 405 && response.headers.get('X-Psychology-Digest') === '1') return;
+    if (response?.status === 405 && response.headers.get('X-Psychology-Digest') === '2') return;
     await setTimeout(25_000);
   }
   throw new Error('El servicio del boletín aún no está desplegado.');
@@ -62,29 +62,14 @@ async function research(recentUrls) {
 
   const response = await fetch(endpoint, {
     method: 'POST',
-    headers: { Authorization: `Bearer ${value}`, 'Content-Type': 'application/json' },
+    headers: { 'X-Psychology-Digest-Token': value, 'Content-Type': 'application/json' },
     body: JSON.stringify({ recentUrls }),
     signal: AbortSignal.timeout(320_000), redirect: 'error',
   });
   const result = await response.json().catch(() => ({}));
-  if (response.status === 401) {
-    const [headerPart, claimsPart] = value.split('.');
-    const header = JSON.parse(Buffer.from(headerPart, 'base64url').toString('utf8'));
-    const claims = JSON.parse(Buffer.from(claimsPart, 'base64url').toString('utf8'));
-    const now = Math.floor(Date.now() / 1000);
-    const checks = {
-      alg: header.alg === 'RS256', kid: Boolean(header.kid),
-      issuer: claims.iss === 'https://token.actions.githubusercontent.com', audience: claims.aud === endpoint,
-      repository: claims.repository === 'carolinasanchezgirona/Portfolio-Carolina', repository_id: claims.repository_id === '1363891704',
-      ref: claims.ref === 'refs/heads/main', workflow_ref: claims.workflow_ref === 'carolinasanchezgirona/Portfolio-Carolina/.github/workflows/psychology-digest.yml@refs/heads/main',
-      event: ['schedule', 'workflow_dispatch', 'push'].includes(claims.event_name),
-      expiration: typeof claims.exp === 'number' && claims.exp > now, nbf: typeof claims.nbf === 'number' && claims.nbf <= now + 30,
-      issued: typeof claims.iat === 'number' && claims.iat <= now + 30, lifetime: claims.exp - claims.iat <= 600,
-      local_signature: await isPsychologyDigestWorkflow(`Bearer ${value}`),
-    };
-    console.log('Validación local de credencial (sin valores):', JSON.stringify(checks));
-  }
   if (!response.ok || !Array.isArray(result.items)) {
+    const authStage = response.headers.get('X-Digest-Auth-Stage');
+    if (authStage) console.log(`Validación de credencial: Worker ${authStage}, GitHub ${await checkPsychologyDigestToken(value)}.`);
     throw new Error(result.error || `El servicio no pudo preparar el boletín (HTTP ${response.status}).`);
   }
   return result.items;

@@ -1,4 +1,4 @@
-import { isPsychologyDigestWorkflow } from "./github-actions-digest-auth";
+import { checkPsychologyDigestToken } from "./github-actions-digest-auth";
 
 const madridDate = new Intl.DateTimeFormat('sv-SE', { timeZone: 'Europe/Madrid' });
 const kinds = ['noticia', 'formación'] as const;
@@ -123,12 +123,16 @@ Excluye los ítems ya enviados y duplicados sobre el mismo estudio o curso. URLs
 }
 
 export async function handlePsychologyDigest(request: Request, apiKey?: string): Promise<Response> {
-  const headers = { 'Cache-Control': 'no-store', 'X-Psychology-Digest': '1' };
+  const headers = { 'Cache-Control': 'no-store', 'X-Psychology-Digest': '2' };
   if (request.method !== 'POST') {
     return new Response(null, { status: 405, headers: { ...headers, Allow: 'POST' } });
   }
-  if (!await isPsychologyDigestWorkflow(request.headers.get('Authorization'))) {
-    return Response.json({ error: 'No autorizado.' }, { status: 401, headers });
+  const auth = await checkPsychologyDigestToken(request.headers.get('X-Psychology-Digest-Token'));
+  if (auth !== 'ok') {
+    return Response.json({ error: 'No autorizado.' }, {
+      status: auth === 'key-service' ? 503 : 401,
+      headers: { ...headers, 'X-Digest-Auth-Stage': auth },
+    });
   }
   if (!apiKey) {
     return Response.json({ error: 'La API de búsqueda no está configurada en el servidor.' }, { status: 503, headers });
