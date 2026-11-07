@@ -61,7 +61,7 @@ export default function BookingPage() {
           </fieldset>
 
           <div className="service-fixed"><div><strong id="selected-service-name">Psicología General Sanitaria</strong><small>60 minutos</small></div><b id="selected-service-price">60 €</b></div>
-          <p className="form-help">Psicología General Sanitaria: 60 € por 60 minutos. Neuropsicología: 75 € por 60 minutos. Si solicitas una <a href="/evaluacion-tdah-adultos/">evaluación de TDAH</a> o <a href="/evaluacion-tea-adultos/">TEA en adultos</a>, elige Neuropsicóloga para la primera visita. Consulta las modalidades y los honorarios de las evaluaciones completas en el <a href="/tarifas-evaluaciones-adultos.pdf" target="_blank" rel="noopener noreferrer">PDF de tarifas</a>. Antes de comenzar el proceso, se explicará el presupuesto y cómo se aplica el pago de esta primera cita.</p>
+          <p className="form-help">Psicología General Sanitaria: 60 € por 60 minutos. Neuropsicología: 75 € por 60 minutos. Si llegas desde la <a href="/evaluacion-tdah-adultos/">evaluación de TDAH</a> o <a href="/evaluacion-tea-adultos/">TEA en adultos</a>, la primera visita de Neuropsicología ya aparece seleccionada. Si has entrado por otra vía, elige Neuropsicóloga. Consulta las modalidades y los honorarios de las evaluaciones completas en el <a href="/tarifas-evaluaciones-adultos.pdf" target="_blank" rel="noopener noreferrer">PDF de tarifas</a>. Antes de comenzar el proceso, se explicará el presupuesto y cómo se aplica el pago de esta primera cita.</p>
 
           <fieldset className="patient-type-fieldset">
             <legend>¿Es tu primera visita?</legend>
