@@ -61,7 +61,7 @@ export default function BookingPage() {
           </fieldset>
 
           <div className="service-fixed"><div><strong id="selected-service-name">Psicología General Sanitaria</strong><small>60 minutos</small></div><b id="selected-service-price">60 €</b></div>
-          <p className="form-help">Psicología General Sanitaria: 60 € por 60 minutos. Neuropsicología: 75 € por 60 minutos. Si solicitas una evaluación de <a href="/evaluacion-tdah-adultos/">TDAH en adultos</a>, elige Neuropsicóloga para la primera visita. Las evaluaciones completas que requieren varias sesiones, pruebas o informe se presupuestan por separado. Antes de comenzar el proceso, se explicarán las modalidades disponibles, el presupuesto y cómo se aplica el pago de esta primera cita.</p>
+          <p className="form-help">Psicología General Sanitaria: 60 € por 60 minutos. Neuropsicología: 75 € por 60 minutos. Si solicitas una <a href="/evaluacion-tdah-adultos/">evaluación de TDAH</a> o <a href="/evaluacion-tea-adultos/">TEA en adultos</a>, elige Neuropsicóloga para la primera visita. Consulta las modalidades y los honorarios de las evaluaciones completas en el <a href="/tarifas-evaluaciones-adultos.pdf" target="_blank" rel="noopener noreferrer">PDF de tarifas</a>. Antes de comenzar el proceso, se explicará el presupuesto y cómo se aplica el pago de esta primera cita.</p>
 
           <fieldset className="patient-type-fieldset">
             <legend>¿Es tu primera visita?</legend>
@@ -128,7 +128,7 @@ export default function BookingPage() {
 
       <footer className="editorial-footer booking-footer"><div className="editorial-wrap editorial-footer-inner"><div><p className="editorial-footer-brand">Carolina Sánchez | Psicóloga</p><p>Consulta de Psicología Sanitaria y Neuropsicología</p><LegalLinks /></div><div><p>Arenys de Mar · Atención online</p><p>© 2026 Carolina Sánchez Girona</p></div></div></footer>
 
-      <Script src="/booking.js?v=20261018-captacion-1" strategy="afterInteractive" />
+      <Script src="/booking.js?v=20261107-neuro-1" strategy="afterInteractive" />
       <Script src="/booking-calendar.js?v=20260913-calendar-1" strategy="afterInteractive" />
       <Script src="/pwa.js" strategy="afterInteractive" />
     </main>
