@@ -189,7 +189,7 @@ export default function AdultAutismAssessmentPage() {
           <div><p className="editorial-section-eyebrow">Atención individualizada</p><h2>Comprender antes de concluir</h2></div>
           <div className="seo-authority-copy">
             <p>El objetivo es ofrecer una comprensión clínica fundamentada del funcionamiento de cada persona y orientar decisiones útiles. Cuando no hay evidencia suficiente para una conclusión diagnóstica, se explican los límites y los pasos que se recomiendan.</p>
-            <div className="seo-authority-links"><a href="mailto:contact@carolinasanchezgirona.com?subject=Solicitud%20de%20evaluacion%20TEA%20adulto">Solicitar valoración de TEA →</a></div>
+            <div className="seo-authority-links"><a href="/cita/#neuropsicologia">Ver disponibilidad y reservar primera visita →</a></div>
           </div>
         </div>
       </section>
