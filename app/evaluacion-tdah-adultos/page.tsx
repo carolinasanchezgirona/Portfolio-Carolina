@@ -135,6 +135,7 @@ export default function AdultAdhdAssessmentPage() {
             <a className="editorial-btn editorial-btn-secondary" href="#modalidades">Ver modalidades</a>
           </div>
           <p className="tdah-hero-note">Atención presencial en Arenys de Mar · Psicóloga General Sanitaria y Neuropsicóloga · COPC 24892</p>
+            <p className="tdah-hero-note"><a href="/orientacion-tdah-tea-adultos/">¿No sabes si tus dificultades tienen relación con TDAH, TEA u otra causa? Consulta la orientación previa →</a></p>
           </div>
           <figure className="tdah-hero-photo"><img src="/tdah-adulto-contexto-v2.webp" alt="Adulto ante múltiples tareas, agenda y temporizador, ilustración de dificultades de atención, planificación y organización" width="888" height="756" fetchPriority="high" decoding="async" /></figure>
         </div>
