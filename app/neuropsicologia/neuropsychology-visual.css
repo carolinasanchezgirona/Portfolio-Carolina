@@ -1,0 +1,16 @@
+/* Neuropsicología: composición editorial con imágenes clínicas y tarjetas. */
+.editorial-site .seo-copy .neuro-illustrated{display:flow-root}
+.editorial-site .neuro-section-photo{width:42%;margin:4px 0 18px;overflow:hidden;border-radius:14px;background:#EDEDED;border:1px solid #EDEDED}
+.editorial-site .neuro-section-photo img{display:block;width:100%;height:auto;aspect-ratio:4/5;object-fit:cover}
+.editorial-site .neuro-illustrated-right .neuro-section-photo{float:right;margin-left:23px}
+.editorial-site .neuro-illustrated-left .neuro-section-photo{float:left;margin-right:23px}
+.editorial-site .seo-copy .neuro-reasons-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:22px 0 24px;padding:0;list-style:none}
+.editorial-site .seo-copy .neuro-reasons-grid li{margin:0;padding:18px 19px;border:1px solid #D6DEE1;border-radius:12px;background:#FFFFFF;color:#304750;font-size:.94rem;line-height:1.55}
+.editorial-site .seo-copy .neuro-reasons-grid li:nth-child(3n+2){background:#EDEDED}
+.editorial-site .seo-copy .neuro-consult-section>p:last-child{margin-top:20px}
+@media(max-width:700px){
+ .editorial-site .neuro-section-photo,.editorial-site .neuro-illustrated-right .neuro-section-photo,.editorial-site .neuro-illustrated-left .neuro-section-photo{float:none;width:100%;max-width:540px;margin:0 0 22px}
+ .editorial-site .neuro-section-photo img{aspect-ratio:5/3;object-position:center}
+ .editorial-site .seo-copy .neuro-reasons-grid{grid-template-columns:1fr;gap:10px}
+ .editorial-site .seo-copy .neuro-reasons-grid li{padding:15px 17px}
+}

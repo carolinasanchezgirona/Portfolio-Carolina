@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "../seo-pages.css";
+import "./neuropsychology-visual.css";
 
 export const metadata: Metadata = {
   title: "Neuropsicóloga en Arenys de Mar y Maresme",
@@ -59,8 +60,9 @@ export default function NeuropsychologyPage() {
 
       <div className="editorial-wrap seo-layout">
         <article className="seo-copy">
-          <section>
+          <section className="neuro-illustrated neuro-illustrated-right">
             <h2>¿Qué evalúa la neuropsicología?</h2>
+            <figure className="neuro-section-photo"><img src="/images/neuro-evaluacion.webp" alt="Ejemplo ilustrativo de una evaluación cognitiva con ejercicios de lápiz y papel" width="706" height="718" loading="lazy" decoding="async" /></figure>
             <p>
               La neuropsicología estudia cómo funcionan procesos cognitivos como la memoria, la atención, el lenguaje, la planificación, la velocidad de procesamiento o la regulación de la conducta, y cómo ese funcionamiento se relaciona con la vida cotidiana de la persona.
             </p>
@@ -69,9 +71,9 @@ export default function NeuropsychologyPage() {
             </p>
           </section>
 
-          <section id="cuando-consultar">
+          <section id="cuando-consultar" className="neuro-consult-section">
             <h2>Cuándo puede ser útil una valoración neuropsicológica</h2>
-            <ul>
+            <ul className="neuro-reasons-grid">
               <li>Olvidos o cambios de memoria que generan preocupación.</li>
               <li>Dificultades para mantener la atención o seguir tareas complejas, incluido el estudio clínico del <a href="/evaluacion-tdah-adultos/">TDAH en adultos</a> cuando corresponda.</li>
               <li>Consulta sobre posibles características del espectro autista en la edad adulta: <a href="/evaluacion-tea-adultos/">evaluación del TEA en adultos</a>.</li>
@@ -85,8 +87,9 @@ export default function NeuropsychologyPage() {
             </p>
           </section>
 
-          <section>
+          <section className="neuro-illustrated neuro-illustrated-left">
             <h2>Cómo es una evaluación neuropsicológica</h2>
+            <figure className="neuro-section-photo"><img src="/images/neuro-entrevista.webp" alt="Escena ilustrativa de entrevista clínica entre profesional y paciente" width="706" height="718" loading="lazy" decoding="async" /></figure>
             <h3>1. Entrevista clínica</h3>
             <p>
               Se revisa el motivo de consulta, la evolución de los cambios, antecedentes médicos y neurológicos, medicación, funcionamiento diario y cualquier información relevante. Cuando es útil y la persona lo autoriza, puede incorporarse información de familiares o cuidadores.
@@ -115,8 +118,9 @@ export default function NeuropsychologyPage() {
             </p>
           </section>
 
-          <section>
+          <section className="neuro-illustrated neuro-illustrated-right">
             <h2>Deterioro cognitivo y demencias</h2>
+            <figure className="neuro-section-photo"><img src="/images/neuro-familia.webp" alt="Dos generaciones de mujeres conversan en un entorno familiar, imagen ilustrativa del acompañamiento" width="706" height="718" loading="lazy" decoding="async" /></figure>
             <p>
               En personas mayores, la valoración neuropsicológica puede ayudar a distinguir entre cambios esperables asociados a la edad, dificultades relacionadas con factores emocionales o médicos y patrones que requieren una exploración más profunda.
             </p>
