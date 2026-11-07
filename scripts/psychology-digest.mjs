@@ -1,6 +1,7 @@
 import { appendFile, readFile, writeFile } from 'node:fs/promises';
 import { setTimeout } from 'node:timers/promises';
 import { fileURLToPath } from 'node:url';
+import { isPsychologyDigestWorkflow } from '../github-actions-digest-auth.ts';
 
 const endpoint = 'https://carolinasanchezgirona.com/api/automation/psychology-digest';
 const madridDate = new Intl.DateTimeFormat('sv-SE', { timeZone: 'Europe/Madrid' });
@@ -66,6 +67,23 @@ async function research(recentUrls) {
     signal: AbortSignal.timeout(320_000), redirect: 'error',
   });
   const result = await response.json().catch(() => ({}));
+  if (response.status === 401) {
+    const [headerPart, claimsPart] = value.split('.');
+    const header = JSON.parse(Buffer.from(headerPart, 'base64url').toString('utf8'));
+    const claims = JSON.parse(Buffer.from(claimsPart, 'base64url').toString('utf8'));
+    const now = Math.floor(Date.now() / 1000);
+    const checks = {
+      alg: header.alg === 'RS256', kid: Boolean(header.kid),
+      issuer: claims.iss === 'https://token.actions.githubusercontent.com', audience: claims.aud === endpoint,
+      repository: claims.repository === 'carolinasanchezgirona/Portfolio-Carolina', repository_id: claims.repository_id === '1363891704',
+      ref: claims.ref === 'refs/heads/main', workflow_ref: claims.workflow_ref === 'carolinasanchezgirona/Portfolio-Carolina/.github/workflows/psychology-digest.yml@refs/heads/main',
+      event: ['schedule', 'workflow_dispatch', 'push'].includes(claims.event_name),
+      expiration: typeof claims.exp === 'number' && claims.exp > now, nbf: typeof claims.nbf === 'number' && claims.nbf <= now + 30,
+      issued: typeof claims.iat === 'number' && claims.iat <= now + 30, lifetime: claims.exp - claims.iat <= 600,
+      local_signature: await isPsychologyDigestWorkflow(`Bearer ${value}`),
+    };
+    console.log('Validación local de credencial (sin valores):', JSON.stringify(checks));
+  }
   if (!response.ok || !Array.isArray(result.items)) {
     throw new Error(result.error || `El servicio no pudo preparar el boletín (HTTP ${response.status}).`);
   }
