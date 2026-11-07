@@ -132,6 +132,22 @@ export default function HomePage() {
         </div>
       </section>
 
+
+      <section className="captacion-section" aria-labelledby="orientacion-title">
+        <div className="editorial-wrap">
+          <p className="editorial-section-eyebrow">Orientación antes de evaluar</p>
+          <h2 id="orientacion-title">¿Dudas entre TDAH, TEA u otra explicación?</h2>
+          <p className="captacion-intro">La falta de concentración, las dificultades para organizarse o la sensación de no encajar pueden tener distintas explicaciones, incluso coexistentes. Una entrevista clínica ayuda a decidir qué valoración tiene sentido antes de comenzar un proceso de evaluación.</p>
+          <div className="captacion-grid">
+            <article className="captacion-card"><span className="captacion-index">TDAH ADULTO</span><h3>Atención, impulsividad y organización</h3><p>Explorar síntomas persistentes, antecedentes y repercusión funcional sin asumir un diagnóstico de entrada.</p><a href="/evaluacion-tdah-adultos/">Conocer la evaluación →</a></article>
+            <article className="captacion-card"><span className="captacion-index">TEA ADULTO</span><h3>Comunicación, interacción y perfil sensorial</h3><p>Comprender la trayectoria evolutiva y las características del funcionamiento actual.</p><a href="/evaluacion-tea-adultos/">Conocer la evaluación →</a></article>
+            <article className="captacion-card"><span className="captacion-index">DIAGNÓSTICO DIFERENCIAL</span><h3>No todo es TDAH o TEA</h3><p>Ansiedad, sueño, estado de ánimo y otros factores pueden explicar parte de las dificultades.</p><a href="/orientacion-tdah-tea-adultos/">Ayuda para orientarte →</a></article>
+          </div>
+          <div className="captacion-actions"><a className="editorial-btn editorial-btn-primary" href="/orientacion-tdah-tea-adultos/">No sé qué evaluación necesito →</a><a className="editorial-btn editorial-btn-secondary" href="https://wa.me/34604974857?text=Hola%2C%20quisiera%20informaci%C3%B3n%20administrativa%20sobre%20una%20primera%20visita." target="_blank" rel="noopener noreferrer">Consultar por WhatsApp</a></div>
+          <p className="captacion-disclaimer">WhatsApp exclusivamente para información sobre horarios y reserva. No envíes datos clínicos ni informes por este canal.</p>
+        </div>
+      </section>
+
       <section className="editorial-section editorial-method" id="como-trabajo" aria-labelledby="metodo-title">
         <div className="editorial-wrap">
           <div className="editorial-section-head">
@@ -198,6 +214,26 @@ export default function HomePage() {
         </div>
       </section>
 
+
+      <section className="captacion-section" aria-labelledby="testimonios-title">
+        <div className="editorial-wrap">
+          <p className="editorial-section-eyebrow">Opiniones publicadas</p>
+          <h2 id="testimonios-title">La experiencia de quienes han acudido a consulta</h2>
+          <p className="captacion-intro">Fragmentos breves de opiniones reales publicadas voluntariamente en Doctoralia, reproducidos sin datos identificativos. Las experiencias individuales no garantizan resultados similares.</p>
+          <div className="captacion-review-grid">
+            <figure className="captacion-quote">
+              <blockquote>“Se nota el tiempo que invierte en preparar cada visita”</blockquote>
+              <figcaption>Opinión pública · Doctoralia · octubre de 2025</figcaption>
+            </figure>
+            <figure className="captacion-quote">
+              <blockquote lang="ca">“Mai m’he sentit un número, sinó una persona cuidada”</blockquote>
+              <figcaption>Opinión pública · Doctoralia · mayo de 2026</figcaption>
+            </figure>
+          </div>
+          <div className="captacion-actions"><a className="editorial-card-link" href="https://www.doctoralia.es/carolina-sanchez-girona/psicologo/arenys-de-mar" target="_blank" rel="noopener noreferrer">Consultar opiniones originales en Doctoralia →</a><a className="editorial-card-link" href="https://maps.app.goo.gl/ubCSFYZRgbv7vpqF9" target="_blank" rel="noopener noreferrer">Ver las 27 reseñas de Google →</a></div>
+        </div>
+      </section>
+
       <section className="editorial-section editorial-local" aria-labelledby="local-title">
         <div className="editorial-wrap">
           <div className="editorial-local-heading">
@@ -237,7 +273,9 @@ export default function HomePage() {
                 la revista del Col·legi Oficial de Psicologia de Catalunya.
               </p>
             </div>
+            <div className="captacion-trust-strip" aria-label="Referencias profesionales"><span>Psicóloga General Sanitaria · COPC 24892</span><span>Experiencia en clínica de adultos y demencias</span><span>Publicaciones en PsiAra e ICAB</span></div>
             <a className="editorial-about-more" href="/sobre-mi/">Conocer mi trayectoria profesional →</a>
+            <p><a className="editorial-card-link" href="https://psiara.cat/2026/08/05/la-capacitat-per-testar-en-el-dret-civil-catala-des-duna-perspectiva-neuropsicologica/" target="_blank" rel="noopener noreferrer">Leer una publicación profesional en PsiAra →</a></p>
             <SocialLinks className="editorial-about-social" />
           </div>
           <figure className="editorial-about-photo">
