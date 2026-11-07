@@ -4,7 +4,7 @@ import { getPublishedArticles, isArticleVisible } from "./articulos/articles-dat
 const base = "https://carolinasanchezgirona.com";
 const staticLastModified = new Date("2026-10-02T09:45:00+02:00");
 const refreshedLastModified = new Date("2026-10-08T00:00:00+02:00");
-const homepageLastModified = new Date("2026-11-06T00:00:00+01:00");
+const homepageLastModified = new Date("2026-11-07T17:00:00+01:00");
 
 export const dynamic = "force-static";
 
@@ -13,12 +13,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${base}/`, lastModified: homepageLastModified, changeFrequency: "weekly", priority: 1 },
     { url: `${base}/psicologa-arenys-de-mar/`, lastModified: new Date("2026-11-07T08:00:00+01:00"), changeFrequency: "monthly", priority: 0.95 },
     { url: `${base}/psicologa-maresme/`, lastModified: new Date("2026-11-05T00:00:00+01:00"), changeFrequency: "monthly", priority: 0.9 },
-    { url: `${base}/psicologia/`, lastModified: new Date("2026-11-05T00:00:00+01:00"), changeFrequency: "monthly", priority: 0.9 },
-    { url: `${base}/neuropsicologia/`, lastModified: new Date("2026-11-05T00:00:00+01:00"), changeFrequency: "monthly", priority: 0.9 },
-    { url: `${base}/evaluacion-tdah-adultos/`, lastModified: new Date("2026-11-04T09:12:00+01:00"), changeFrequency: "monthly", priority: 0.92 },
-    { url: `${base}/evaluacion-tea-adultos/`, lastModified: new Date("2026-11-04T00:00:00+01:00"), changeFrequency: "monthly", priority: 0.92 },
+    { url: `${base}/psicologia/`, lastModified: new Date("2026-11-07T17:00:00+01:00"), changeFrequency: "monthly", priority: 0.9 },
+    { url: `${base}/neuropsicologia/`, lastModified: new Date("2026-11-07T17:00:00+01:00"), changeFrequency: "monthly", priority: 0.9 },
+    { url: `${base}/evaluacion-tdah-adultos/`, lastModified: new Date("2026-11-07T17:00:00+01:00"), changeFrequency: "monthly", priority: 0.92 },
+    { url: `${base}/evaluacion-tea-adultos/`, lastModified: new Date("2026-11-07T17:00:00+01:00"), changeFrequency: "monthly", priority: 0.92 },
+    { url: `${base}/orientacion-tdah-tea-adultos/`, lastModified: new Date("2026-11-07T17:00:00+01:00"), changeFrequency: "monthly", priority: 0.89 },
     { url: `${base}/evaluacion-altas-capacidades-adultos/`, lastModified: new Date("2026-11-04T23:00:00+01:00"), changeFrequency: "monthly", priority: 0.88 },
-    { url: `${base}/sobre-mi/`, lastModified: staticLastModified, changeFrequency: "monthly", priority: 0.85 },
+    { url: `${base}/sobre-mi/`, lastModified: new Date("2026-11-07T17:00:00+01:00"), changeFrequency: "monthly", priority: 0.85 },
     { url: `${base}/ansiedad/`, lastModified: staticLastModified, changeFrequency: "monthly", priority: 0.82 },
     { url: `${base}/ataques-de-panico/`, lastModified: staticLastModified, changeFrequency: "monthly", priority: 0.82 },
     { url: `${base}/depresion/`, lastModified: staticLastModified, changeFrequency: "monthly", priority: 0.83 },
