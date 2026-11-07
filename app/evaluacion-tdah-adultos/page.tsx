@@ -131,7 +131,7 @@ export default function AdultAdhdAssessmentPage() {
             y valorar su repercusión en tu vida diaria, sin dar por hecho ningún diagnóstico.
           </p>
           <div className="seo-actions">
-            <a className="editorial-btn editorial-btn-primary" href="mailto:contact@carolinasanchezgirona.com?subject=Solicitud%20de%20evaluacion%20TDAH%20adulto">Solicitar valoración de TDAH</a>
+            <a className="editorial-btn editorial-btn-primary" href="/cita/#neuropsicologia">Pedir primera visita</a>
             <a className="editorial-btn editorial-btn-secondary" href="#modalidades">Ver modalidades</a>
           </div>
           <p className="tdah-hero-note">Atención presencial en Arenys de Mar · Psicóloga General Sanitaria y Neuropsicóloga · COPC 24892</p>
