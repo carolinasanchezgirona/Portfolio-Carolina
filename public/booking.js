@@ -277,6 +277,13 @@
   });
   document.querySelectorAll('input[name="service_code"]').forEach((input) => input.addEventListener("change", updateServiceChoice));
 
+  // Al llegar desde las páginas de evaluación, se selecciona neuropsicología.
+  // El fragmento de URL no se transmite al servidor ni añade datos clínicos a la reserva.
+  if (window.location.hash === "#neuropsicologia") {
+    const choice = document.querySelector('input[name="service_code"][value="neuropsicologia"]');
+    if (choice) choice.checked = true;
+  }
+
   form.addEventListener("submit", async (event) => {
     event.preventDefault();
     const data = new FormData(form);
