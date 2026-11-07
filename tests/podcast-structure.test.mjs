@@ -1,23 +1,19 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { readFileSync } from "node:fs";
-const read = (path) => readFileSync(new URL("../" + path, import.meta.url), "utf8");
-test("podcast stays under Recursos in mobile and desktop, not top-level", () => {
-  const shell = read("app/components/site-shell.tsx");
-  assert.match(shell, /href: "\/podcast\/", label: "Psicología Incómoda · Podcast"/);
-  assert.match(shell, /currentPath\.startsWith\("\/podcast\/"\)/);
-  assert.match(shell, /resourceNavigation\.map/);
+import { existsSync, readFileSync } from "node:fs";
+
+const file = path => new URL("../" + path, import.meta.url);
+const read = path => readFileSync(file(path), "utf8");
+
+test("the retired podcast stays out of public navigation, resources and the legal notice", () => {
+  for (const path of ["app/components/site-shell.tsx", "app/recursos/page.tsx", "app/aviso-legal/page.tsx"]) {
+    assert.doesNotMatch(read(path), /\bp[oó]dcast\b|Psicología Incómoda/i, path);
+  }
 });
-test("podcast landing, episode and SEO routes exist", () => {
-  assert.match(read("app/podcast/page.tsx"), /PodcastSeries/);
-  assert.match(read("app/podcast/[slug]/page.tsx"), /generateStaticParams/);
-  assert.match(read("app/podcast/[slug]/page.tsx"), /PodcastEpisode/);
-  assert.match(read("app/sitemap.ts"), /episodes\.map/);
-});
-test("podcast player never loads a third-party iframe before interaction", () => {
-  const player = read("app/podcast/episode-player.tsx");
-  assert.match(player, /showSpotify/);
-  assert.match(player, /setShowSpotify\(true\)/);
-  assert.match(player, /getSpotifyEpisodeId/);
-  assert.match(player, /Tu navegador no admite/);
+
+test("the retired podcast has no public routes, cover or sitemap entry", () => {
+  for (const path of ["app/podcast/page.tsx", "app/podcast/[slug]/page.tsx", "public/podcast/episodio-01.avif"]) {
+    assert.equal(existsSync(file(path)), false, path);
+  }
+  assert.doesNotMatch(read("app/sitemap.ts"), /\bpodcast\b/i);
 });
