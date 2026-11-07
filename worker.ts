@@ -7,6 +7,7 @@ import { adminAppointmentVideo, patientAppointmentVideo } from './appointment-vi
 import { dailyTest } from "./daily-test";
 import { adminPushRequest, runAdminPushCron } from "./admin-webpush";
 import { containsDirectPatientIdentifiers, CLINICAL_IDENTIFIERS_ERROR } from "./clinical-privacy";
+import { handlePsychologyDigest } from "./psychology-digest-research";
 
 interface Env {
   DAILY_API_KEY?: string;
@@ -2349,6 +2350,7 @@ export default {
       if (!await verifyEditorialOwner(request)) return editorialJson({ error: "Sesión no autorizada." }, 401);
       return editorialJson({ configured: Boolean(env.OPENAI_API_KEY) });
     }
+    if (url.pathname === "/api/automation/psychology-digest") return handlePsychologyDigest(request, env.OPENAI_API_KEY);
     if (url.pathname === "/api/editorial/generate" || url.pathname === "/api/editorial/generate/") return editorialRequest(request, env, "content");
     if (url.pathname === "/api/editorial/image" || url.pathname === "/api/editorial/image/") return editorialRequest(request, env, "image");
     if (url.pathname === "/api/residence/organization-document" || url.pathname === "/api/residence/organization-document/") return residenceOrganizationDocument(request, verifyEditorialOwner);

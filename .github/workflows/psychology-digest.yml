@@ -1,6 +1,13 @@
 name: Boletín de psicología y neuropsicología
 
 on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/psychology-digest.yml
+      - scripts/psychology-digest.mjs
+      - github-actions-digest-auth.ts
+      - psychology-digest-research.ts
   schedule:
     # Start research before the target delivery time and avoid the hourly queue peak.
     - cron: "52 8 * * *"
@@ -14,6 +21,7 @@ on:
 
 permissions:
   contents: read
+  id-token: write
 
 concurrency:
   group: psychology-digest
@@ -23,7 +31,7 @@ jobs:
   digest:
     if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-24.04
-    timeout-minutes: 20
+    timeout-minutes: 24
     steps:
       - uses: actions/checkout@v4
         with:
@@ -43,7 +51,6 @@ jobs:
       - name: Buscar, verificar y preparar el boletín
         id: digest
         env:
-          OPENAI_API_KEY: ${{ secrets.PSYCHOLOGY_DIGEST_OPENAI_API_KEY }}
           TELEGRAM_BOT_TOKEN: ${{ secrets.CLINICAL_BACKUP_TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.CLINICAL_BACKUP_TELEGRAM_CHAT_ID }}
           SEND_DIGEST: ${{ github.event_name == 'schedule' || inputs.send }}
