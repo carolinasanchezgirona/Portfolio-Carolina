@@ -15,6 +15,13 @@ test("la reserva es breve y no pide consentimientos clínicos prematuros", () =>
   assert.doesNotMatch(booking, /p_signer_name|p_informed_consent_accepted/);
 });
 
+test("la reserva mantiene los precios de consulta y reserva las tarifas de evaluación para el PDF", () => {
+  const page = get("app/cita/page.tsx");
+  assert.match(page, /Psicología General Sanitaria: 60 €/);
+  assert.match(page, /Neuropsicología: 75 €/);
+  assert.doesNotMatch(page, /450\s*€|600\s*€/);
+});
+
 test("la llamada a reservar transmite únicamente los campos administrativos", () => {
   const script = get("public/booking.js");
   const start = script.indexOf('rpc("create_public_booking_quick", {');
