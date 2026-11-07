@@ -104,9 +104,10 @@ export default function HomePage() {
               <h3>Neuropsicología</h3>
               <p className="editorial-card-hook">Cuando aparecen cambios en la memoria, la atención o la conducta.</p>
               <p className="editorial-card-copy">
-                Evaluación de <a href="/problemas-de-memoria/">memoria</a>, atención, lenguaje y
-                funciones ejecutivas, así como de cambios cognitivos relacionados con distintas
-                condiciones clínicas. Estudio su repercusión en la vida cotidiana.
+                Evaluación de <a href="/problemas-de-memoria/">memoria</a>, atención y funciones ejecutivas,
+                así como de cambios cognitivos. También realizo
+                <a href="/evaluacion-tdah-adultos/"> evaluaciones de TDAH en adultos</a> y
+                <a href="/evaluacion-tea-adultos/"> evaluaciones de TEA en adultos</a>, según la indicación clínica.
               </p>
               <div className="editorial-card-bottom">
                 <p className="editorial-card-price">75 € <span>· Sesión de 60 minutos</span></p>
