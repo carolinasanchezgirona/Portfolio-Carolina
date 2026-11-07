@@ -79,7 +79,7 @@ export default function BookingPage() {
           <p className="form-help">
             ¿No aparecen horarios o necesitas ayuda con la reserva? Puedes escribir a{" "}
             <a href="mailto:contact@carolinasanchezgirona.com?subject=Consulta%20sobre%20disponibilidad">contact@carolinasanchezgirona.com</a>.
-            Indica solo que deseas consultar disponibilidad, sin incluir datos de salud. El correo no confirma ninguna cita.
+            También puedes <a href="https://wa.me/34604974857?text=Hola%2C%20quisiera%20informaci%C3%B3n%20administrativa%20sobre%20una%20primera%20visita." target="_blank" rel="noopener noreferrer">consultar por WhatsApp</a> si necesitas orientación sobre horarios o el proceso de reserva. No envíes datos de salud, síntomas ni documentos clínicos por correo o WhatsApp. Ninguno de estos mensajes confirma una cita.
           </p>
           <div id="first-available" className="first-available" hidden />
           <button id="toggle-calendar" className="text-button" type="button" hidden>Elegir otra fecha</button>
