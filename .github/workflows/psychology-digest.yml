@@ -1,0 +1,57 @@
+name: Boletín de psicología y neuropsicología
+
+on:
+  schedule:
+    - cron: "0 9 * * *"
+      timezone: Europe/Madrid
+  workflow_dispatch:
+    inputs:
+      send:
+        description: Enviar al chat habitual de Telegram
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: psychology-digest
+  cancel-in-progress: false
+
+jobs:
+  digest:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+
+      - name: Recuperar historial de envíos
+        uses: actions/cache/restore@v4
+        with:
+          path: ${{ runner.temp }}/psychology-digest.json
+          key: psychology-digest-v1-${{ github.run_id }}-${{ github.run_attempt }}
+          restore-keys: psychology-digest-v1-
+
+      - name: Buscar, verificar y preparar el boletín
+        id: digest
+        env:
+          OPENAI_API_KEY: ${{ secrets.PSYCHOLOGY_DIGEST_OPENAI_API_KEY }}
+          TELEGRAM_BOT_TOKEN: ${{ secrets.CLINICAL_BACKUP_TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.CLINICAL_BACKUP_TELEGRAM_CHAT_ID }}
+          SEND_DIGEST: ${{ github.event_name == 'schedule' || inputs.send }}
+          DIGEST_STATE_PATH: ${{ runner.temp }}/psychology-digest.json
+        run: node scripts/psychology-digest.mjs
+
+      - name: Guardar historial de envíos
+        if: steps.digest.outputs.sent == 'true'
+        uses: actions/cache/save@v4
+        with:
+          path: ${{ runner.temp }}/psychology-digest.json
+          key: psychology-digest-v1-${{ github.run_id }}-${{ github.run_attempt }}
