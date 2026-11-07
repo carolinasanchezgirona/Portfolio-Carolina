@@ -117,6 +117,7 @@ export default function AdultAutismAssessmentPage() {
               <a className="editorial-btn editorial-btn-secondary" href="#modalidades">Ver modalidades</a>
             </div>
             <p className="tdah-hero-note">Atención presencial en Arenys de Mar · Psicóloga General Sanitaria y Neuropsicóloga · COPC 24892</p>
+            <p className="tdah-hero-note"><a href="/orientacion-tdah-tea-adultos/">¿No sabes si tus dificultades tienen relación con TDAH, TEA u otra causa? Consulta la orientación previa →</a></p>
           </div>
           <figure className="tdah-hero-photo">
             <img src="https://images.pexels.com/photos/7584238/pexels-photo-7584238.jpeg?auto=compress&amp;cs=tinysrgb&amp;w=1200" alt="Persona adulta leyendo junto a una ventana en un entorno tranquilo de trabajo" width="1200" height="800" fetchPriority="high" decoding="async" />
