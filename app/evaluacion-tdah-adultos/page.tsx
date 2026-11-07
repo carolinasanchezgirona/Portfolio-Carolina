@@ -236,7 +236,7 @@ export default function AdultAdhdAssessmentPage() {
           </div>
           <div className="seo-authority-copy">
             <p>El objetivo es responder a la pregunta clínica con rigor y traducir las conclusiones en información útil para la vida diaria, la intervención psicológica o, cuando corresponda, la coordinación con otros profesionales sanitarios.</p>
-            <div className="seo-authority-links"><a href="mailto:contact@carolinasanchezgirona.com?subject=Solicitud%20de%20evaluacion%20TDAH%20adulto">Solicitar valoración de TDAH →</a></div>
+            <div className="seo-authority-links"><a href="/cita/#neuropsicologia">Ver disponibilidad y reservar primera visita →</a></div>
           </div>
         </div>
       </section>
