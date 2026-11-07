@@ -104,6 +104,21 @@ export default function PsychologyPage() {
         </div>
       </section>
 
+
+      <section className="captacion-section" aria-labelledby="situaciones-psicologia">
+        <div className="editorial-wrap">
+          <p className="editorial-section-eyebrow">Situaciones frecuentes en consulta</p>
+          <h2 id="situaciones-psicologia">¿Cómo saber si merece la pena pedir ayuda?</h2>
+          <p className="captacion-intro">No necesitas un diagnóstico previo. Algunas señales para plantear una consulta son que el malestar se mantenga, se repita o esté interfiriendo en decisiones, relaciones, descanso o funcionamiento cotidiano.</p>
+          <div className="captacion-grid">
+            <article className="captacion-card"><span className="captacion-index">PENSAMIENTOS RECURRENTES</span><h3>«No puedo dejar de darle vueltas»</h3><p>Preocupación anticipatoria, rumiación, tensión o evitación que acaba condicionando tu día a día.</p><a href="/ansiedad/">Ansiedad y preocupación →</a></article>
+            <article className="captacion-card"><span className="captacion-index">DESGASTE SOSTENIDO</span><h3>«Sigo funcionando, pero estoy agotada»</h3><p>Sobrecarga, dificultad para descansar, exigencia continua y sensación de no llegar a todo.</p><a href="/estres-y-sobrecarga/">Estrés y sobrecarga →</a></article>
+            <article className="captacion-card"><span className="captacion-index">PATRONES RELACIONALES</span><h3>«Me cuesta poner límites sin culpa»</h3><p>Conflictos repetidos, autocuestionamiento, miedo a decepcionar o dificultad para tomar decisiones.</p><a href="/limites-y-relaciones-dificiles/">Relaciones y límites →</a></article>
+          </div>
+          <p className="captacion-disclaimer">Estos ejemplos no son pruebas diagnósticas. La indicación de psicoterapia se valora individualmente durante la primera consulta.</p>
+        </div>
+      </section>
+
       <section className="editorial-section psychology-approach" aria-labelledby="psychology-approach-title">
         <div className="editorial-wrap psychology-approach-grid">
           <figure className="psychology-approach-photo">
