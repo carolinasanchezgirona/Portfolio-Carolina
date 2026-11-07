@@ -17,3 +17,11 @@ test("the retired podcast has no public routes, cover or sitemap entry", () => {
   }
   assert.doesNotMatch(read("app/sitemap.ts"), /\bpodcast\b/i);
 });
+
+test("podcast player never loads a third-party iframe before interaction", () => {
+  const player = read("app/podcast/episode-player.tsx");
+  assert.match(player, /showSpotify/);
+  assert.match(player, /setShowSpotify\(true\)/);
+  assert.match(player, /getSpotifyEpisodeId/);
+  assert.match(player, /Tu navegador no admite/);
+});
