@@ -17,13 +17,15 @@ export default function OrientacionNeurodesarrolloAdultos() {
   return (
     <main className="editorial-site captacion-page-main">
       <section className="seo-hero">
-        <div className="editorial-wrap seo-hero-inner">
+        <div className="editorial-wrap seo-hero-inner captacion-pathway-hero-grid"><div className="captacion-pathway-hero-copy">
           <p className="seo-breadcrumbs"><a href="/">Inicio</a><span>·</span><a href="/neuropsicologia/">Neuropsicología</a><span>·</span>Orientación antes de evaluar</p>
           <p className="editorial-eyebrow">Neurodesarrollo en adultos · Primera orientación</p>
           <h1>¿TDAH, autismo u otra explicación?</h1>
           <p className="seo-lead">Hay dificultades de atención, organización, interacción social o regulación emocional que pueden parecerse entre sí. No tienes que identificar por tu cuenta qué diagnóstico las explica antes de pedir una primera valoración.</p>
           <div className="seo-actions"><a className="editorial-btn editorial-btn-primary" href="/cita/">Consultar primera visita</a><a className="editorial-btn editorial-btn-secondary" href={whatsapp} target="_blank" rel="noopener noreferrer">Consultar por WhatsApp</a></div>
           <p className="captacion-disclaimer">WhatsApp solo para disponibilidad y dudas administrativas. No envíes síntomas, informes ni datos de salud por este medio. No es un canal de urgencias.</p>
+          </div>
+          <figure className="captacion-pathway-photo"><img src="/images/neuro-entrevista.webp" alt="Escena ilustrativa de una entrevista clínica para orientar la evaluación neuropsicológica" width="706" height="718" loading="eager" decoding="async" /></figure>
         </div>
       </section>
       <div className="editorial-wrap">
