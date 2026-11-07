@@ -22,6 +22,7 @@ interface Env {
   OPENAI_TEXT_MODEL?: string;
   OPENAI_CLINICAL_MODEL?: string;
   OPENAI_IMAGE_MODEL?: string;
+  PSYCHOLOGY_DIGEST_SIGNING_KEY?: string;
   ASSETS: {
     fetch(request: Request): Promise<Response>;
   };
@@ -2350,7 +2351,9 @@ export default {
       if (!await verifyEditorialOwner(request)) return editorialJson({ error: "Sesión no autorizada." }, 401);
       return editorialJson({ configured: Boolean(env.OPENAI_API_KEY) });
     }
-    if (url.pathname === "/api/automation/psychology-digest") return handlePsychologyDigest(request, env.OPENAI_API_KEY);
+    if (url.pathname === "/api/automation/psychology-digest") {
+      return handlePsychologyDigest(request, env.OPENAI_API_KEY, env.PSYCHOLOGY_DIGEST_SIGNING_KEY);
+    }
     if (url.pathname === "/api/editorial/generate" || url.pathname === "/api/editorial/generate/") return editorialRequest(request, env, "content");
     if (url.pathname === "/api/editorial/image" || url.pathname === "/api/editorial/image/") return editorialRequest(request, env, "image");
     if (url.pathname === "/api/residence/organization-document" || url.pathname === "/api/residence/organization-document/") return residenceOrganizationDocument(request, verifyEditorialOwner);

@@ -88,13 +88,31 @@ jobs:
           test -f out/admin-notifications.js
           test -f out/admin-agenda-view-switcher.js
 
+      - name: Preparar la clave de firma exclusiva del boletín
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.CLINICAL_BACKUP_TELEGRAM_BOT_TOKEN }}
+        run: |
+          node --input-type=module <<'NODE'
+          import { writeFileSync } from 'node:fs';
+          import { join } from 'node:path';
+          import { digestSigningKey } from './scripts/psychology-digest.mjs';
+          const key = process.env.TELEGRAM_BOT_TOKEN ? digestSigningKey(process.env.TELEGRAM_BOT_TOKEN) : '';
+          if (key) console.log('::add-mask::' + key);
+          const bindings = key ? { PSYCHOLOGY_DIGEST_SIGNING_KEY: key } : {};
+          writeFileSync(join(process.env.RUNNER_TEMP, 'psychology-digest-secrets.json'), JSON.stringify(bindings), { mode: 0o600 });
+          NODE
+
       - name: Publicar Worker y archivos estáticos en Cloudflare
         id: deploy
         uses: cloudflare/wrangler-action@v4
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          command: deploy
+          command: deploy --secrets-file "${{ runner.temp }}/psychology-digest-secrets.json"
+
+      - name: Limpiar la clave temporal del despliegue
+        if: always()
+        run: rm -f -- "$RUNNER_TEMP/psychology-digest-secrets.json"
 
       - name: Inicializar Web Push sin exponer claves ni rotarlas
         shell: bash

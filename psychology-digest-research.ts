@@ -1,5 +1,3 @@
-import { checkPsychologyDigestToken } from "./github-actions-digest-auth";
-
 const madridDate = new Intl.DateTimeFormat('sv-SE', { timeZone: 'Europe/Madrid' });
 const kinds = ['noticia', 'formación'] as const;
 
@@ -122,27 +120,45 @@ Excluye los ítems ya enviados y duplicados sobre el mismo estudio o curso. URLs
   return selectItems(result, day, recentUrls);
 }
 
-export async function handlePsychologyDigest(request: Request, apiKey?: string): Promise<Response> {
-  const headers = { 'Cache-Control': 'no-store', 'X-Psychology-Digest': '2' };
+export async function handlePsychologyDigest(request: Request, apiKey?: string, signingKey?: string): Promise<Response> {
+  const headers = { 'Cache-Control': 'no-store', 'X-Psychology-Digest': '3' };
   if (request.method !== 'POST') {
     return new Response(null, { status: 405, headers: { ...headers, Allow: 'POST' } });
   }
-  const auth = await checkPsychologyDigestToken(request.headers.get('X-Psychology-Digest-Token'));
-  if (auth !== 'ok') {
-    return Response.json({ error: 'No autorizado.' }, {
-      status: auth === 'key-service' ? 503 : 401,
-      headers: { ...headers, 'X-Digest-Auth-Stage': auth },
-    });
+  const signed = /^(\d{10})\.([a-f0-9]{64})$/.exec(request.headers.get('X-Psychology-Digest-Signature') || '');
+  if (!signed || Math.abs(Math.floor(Date.now() / 1000) - Number(signed[1])) > 180) {
+    return Response.json({ error: 'No autorizado.' }, { status: 401, headers });
+  }
+  if (!signingKey) {
+    return Response.json({ error: 'La firma del boletín no está configurada en el servidor.' }, { status: 503, headers });
+  }
+  const maximumBytes = 72_000;
+  if (!request.body || Number(request.headers.get('Content-Length')) > maximumBytes) {
+    return Response.json({ error: 'Tamaño de solicitud no válido.' }, { status: 413, headers });
+  }
+  const reader = request.body.getReader();
+  const decoder = new TextDecoder();
+  let text = '';
+  let bytes = 0;
+  for (;;) {
+    const { value, done } = await reader.read();
+    if (done) break;
+    bytes += value.byteLength;
+    if (bytes > maximumBytes) {
+      await reader.cancel();
+      return Response.json({ error: 'Tamaño de solicitud no válido.' }, { status: 413, headers });
+    }
+    text += decoder.decode(value, { stream: true });
+  }
+  text += decoder.decode();
+  const encoder = new TextEncoder();
+  const key = await crypto.subtle.importKey('raw', encoder.encode(signingKey), { name: 'HMAC', hash: 'SHA-256' }, false, ['verify']);
+  const signature = Uint8Array.from(signed[2].match(/../g) ?? [], byte => Number.parseInt(byte, 16));
+  if (!await crypto.subtle.verify('HMAC', key, signature, encoder.encode(`${signed[1]}\n${text}`))) {
+    return Response.json({ error: 'No autorizado.' }, { status: 401, headers });
   }
   if (!apiKey) {
     return Response.json({ error: 'La API de búsqueda no está configurada en el servidor.' }, { status: 503, headers });
-  }
-  if (Number(request.headers.get('Content-Length') || 0) > 72_000) {
-    return Response.json({ error: 'Historial demasiado grande.' }, { status: 413, headers });
-  }
-  const text = await request.text().catch(() => '');
-  if (!text || text.length > 72_000) {
-    return Response.json({ error: 'Historial inválido.' }, { status: 400, headers });
   }
   let body: { recentUrls?: unknown } | null = null;
   try { body = JSON.parse(text) as { recentUrls?: unknown }; } catch { /* Handled below. */ }
@@ -150,7 +166,6 @@ export async function handlePsychologyDigest(request: Request, apiKey?: string):
     return Response.json({ error: 'Historial inválido.' }, { status: 400, headers });
   }
   const recentUrls = body.recentUrls.map(publicUrl).filter((url): url is string => url !== null);
-  const encoder = new TextEncoder();
   const abort = new AbortController();
   const stream = new ReadableStream<Uint8Array>({
     start(controller) {

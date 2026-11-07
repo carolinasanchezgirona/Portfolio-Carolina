@@ -1,7 +1,7 @@
 import { appendFile, readFile, writeFile } from 'node:fs/promises';
+import { createHmac } from 'node:crypto';
 import { setTimeout } from 'node:timers/promises';
 import { fileURLToPath } from 'node:url';
-import { checkPsychologyDigestToken } from '../github-actions-digest-auth.ts';
 
 const endpoint = 'https://carolinasanchezgirona.com/api/automation/psychology-digest';
 const madridDate = new Intl.DateTimeFormat('sv-SE', { timeZone: 'Europe/Madrid' });
@@ -43,33 +43,28 @@ async function waitForDeployment() {
   const deadline = Date.now() + 15 * 60_000;
   while (Date.now() < deadline) {
     const response = await fetch(endpoint, { signal: AbortSignal.timeout(10_000), redirect: 'error' }).catch(() => null);
-    if (response?.status === 405 && response.headers.get('X-Psychology-Digest') === '2') return;
+    if (response?.status === 405 && response.headers.get('X-Psychology-Digest') === '3') return;
     await setTimeout(25_000);
   }
   throw new Error('El servicio del boletín aún no está desplegado.');
 }
 
-async function research(recentUrls) {
-  const tokenUrl = new URL(process.env.ACTIONS_ID_TOKEN_REQUEST_URL);
-  tokenUrl.searchParams.set('audience', endpoint);
-  const tokenResponse = await fetch(tokenUrl, {
-    headers: { Authorization: `Bearer ${process.env.ACTIONS_ID_TOKEN_REQUEST_TOKEN}` },
-    signal: AbortSignal.timeout(10_000), redirect: 'error',
-  });
-  if (!tokenResponse.ok) throw new Error(`GitHub no pudo autorizar la búsqueda (HTTP ${tokenResponse.status}).`);
-  const { value } = await tokenResponse.json();
-  if (!value) throw new Error('GitHub no emitió la credencial temporal.');
+export function digestSigningKey(botToken) {
+  return createHmac('sha256', botToken).update('portfolio-carolina/psychology-digest/signing/v1').digest('hex');
+}
 
+async function research(botToken, recentUrls) {
+  const body = JSON.stringify({ recentUrls });
+  const timestamp = Math.floor(Date.now() / 1000);
+  const signature = createHmac('sha256', digestSigningKey(botToken)).update(`${timestamp}\n${body}`).digest('hex');
   const response = await fetch(endpoint, {
     method: 'POST',
-    headers: { 'X-Psychology-Digest-Token': value, 'Content-Type': 'application/json' },
-    body: JSON.stringify({ recentUrls }),
+    headers: { 'X-Psychology-Digest-Signature': `${timestamp}.${signature}`, 'Content-Type': 'application/json' },
+    body,
     signal: AbortSignal.timeout(320_000), redirect: 'error',
   });
   const result = await response.json().catch(() => ({}));
   if (!response.ok || !Array.isArray(result.items)) {
-    const authStage = response.headers.get('X-Digest-Auth-Stage');
-    if (authStage) console.log(`Validación de credencial: Worker ${authStage}, GitHub ${await checkPsychologyDigestToken(value)}.`);
     throw new Error(result.error || `El servicio no pudo preparar el boletín (HTTP ${response.status}).`);
   }
   return result.items;
@@ -108,7 +103,7 @@ async function main() {
 
   const recent = history.filter(entry => entry.day >= previousDate(day, 14));
   if (process.env.GITHUB_EVENT_NAME === 'push') await waitForDeployment();
-  const items = await research(recent.flatMap(entry => entry.urls));
+  const items = await research(TELEGRAM_BOT_TOKEN, recent.flatMap(entry => entry.urls));
   const message = renderDigest(day, items);
   if (!send) {
     const chat = await telegram(TELEGRAM_BOT_TOKEN, 'getChat', { chat_id: TELEGRAM_CHAT_ID });
