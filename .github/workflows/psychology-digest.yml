@@ -2,7 +2,8 @@ name: Boletín de psicología y neuropsicología
 
 on:
   schedule:
-    - cron: "0 9 * * *"
+    # Start research before the target delivery time and avoid the hourly queue peak.
+    - cron: "52 8 * * *"
       timezone: Europe/Madrid
   workflow_dispatch:
     inputs:
@@ -22,7 +23,7 @@ jobs:
   digest:
     if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-24.04
-    timeout-minutes: 10
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
         with:
@@ -46,6 +47,7 @@ jobs:
           TELEGRAM_BOT_TOKEN: ${{ secrets.CLINICAL_BACKUP_TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.CLINICAL_BACKUP_TELEGRAM_CHAT_ID }}
           SEND_DIGEST: ${{ github.event_name == 'schedule' || inputs.send }}
+          WAIT_FOR_DELIVERY_TIME: ${{ github.event_name == 'schedule' }}
           DIGEST_STATE_PATH: ${{ runner.temp }}/psychology-digest.json
         run: node scripts/psychology-digest.mjs
 

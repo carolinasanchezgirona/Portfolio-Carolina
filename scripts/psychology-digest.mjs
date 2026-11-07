@@ -1,7 +1,11 @@
 import { appendFile, readFile, writeFile } from 'node:fs/promises';
+import { setTimeout } from 'node:timers/promises';
 import { fileURLToPath } from 'node:url';
 
 const madridDate = new Intl.DateTimeFormat('sv-SE', { timeZone: 'Europe/Madrid' });
+const madridTime = new Intl.DateTimeFormat('en-GB', {
+  timeZone: 'Europe/Madrid', hourCycle: 'h23', hour: '2-digit', minute: '2-digit', second: '2-digit',
+});
 const groups = [
   ['noticia', 'Noticias internacionales', 'Hoy no hay novedades con fuente primaria verificable.'],
   ['formación', 'Formación online en español e inglés', 'Hoy no hay nuevas convocatorias verificadas.'],
@@ -34,6 +38,12 @@ function previousDate(day, days) {
   const date = new Date(`${day}T00:00:00Z`);
   date.setUTCDate(date.getUTCDate() - days);
   return date.toISOString().slice(0, 10);
+}
+
+export function millisecondsUntilDelivery(now) {
+  const [hour, minute, second] = madridTime.format(now).split(':').map(Number);
+  const secondsUntilNine = (9 - hour) * 3600 - minute * 60 - second;
+  return Math.max(0, secondsUntilNine * 1000 - now.getMilliseconds());
 }
 
 function publicUrl(value) {
@@ -162,6 +172,7 @@ async function main() {
     return;
   }
 
+  if (process.env.WAIT_FOR_DELIVERY_TIME === 'true') await setTimeout(millisecondsUntilDelivery(new Date()));
   await sendTelegram(TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID, message);
   await writeFile(DIGEST_STATE_PATH, JSON.stringify([...recent, { day, urls: items.map(item => item.url) }]));
   await appendFile(GITHUB_OUTPUT, 'sent=true\n');
