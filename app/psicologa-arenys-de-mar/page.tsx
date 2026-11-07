@@ -5,7 +5,7 @@ import Image from "next/image";
 export const metadata: Metadata = {
   title: "Psicóloga en Arenys de Mar",
   description:
-    "Psicóloga en Arenys de Mar, Maresme: ansiedad, duelo y terapia para adultos. Neuropsicología, memoria y deterioro cognitivo. Consulta presencial y online.",
+    "Psicóloga en Arenys de Mar: terapia para adultos, ansiedad y duelo. Neuropsicología, memoria y evaluación del TDAH y TEA adulto. Consulta presencial.",
   alternates: { canonical: "/psicologa-arenys-de-mar/" },
   openGraph: {
     title: "Psicóloga en Arenys de Mar | Carolina Sánchez Girona",
@@ -15,15 +15,28 @@ export const metadata: Metadata = {
   },
 };
 
+const breadcrumbSchema = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: [
+    { "@type": "ListItem", position: 1, name: "Inicio", item: "https://carolinasanchezgirona.com/" },
+    { "@type": "ListItem", position: 2, name: "Psicóloga en Arenys de Mar", item: "https://carolinasanchezgirona.com/psicologa-arenys-de-mar/" },
+  ],
+};
+
 const serviceSchema = {
   "@context": "https://schema.org",
   "@type": "Service",
+  "@id": "https://carolinasanchezgirona.com/psicologa-arenys-de-mar/#servicios",
   name: "Psicología y Neuropsicología en Arenys de Mar",
   provider: {
-    "@id": "https://carolinasanchezgirona.com/#carolina-sanchez-girona",
+    "@id": "https://carolinasanchezgirona.com/#consulta",
   },
-  areaServed: ["Arenys de Mar", "Maresme", "Barcelona"],
-  serviceType: ["Psicología General Sanitaria", "Neuropsicología"],
+  areaServed: [
+    { "@type": "Place", name: "Arenys de Mar" },
+    { "@type": "AdministrativeArea", name: "Maresme" },
+  ],
+  serviceType: ["Psicología General Sanitaria para adultos", "Evaluación neuropsicológica de adultos"],
   url: "https://carolinasanchezgirona.com/psicologa-arenys-de-mar/",
 };
 
@@ -101,6 +114,10 @@ export default function LocalPsychologistPage() {
               <li>Dificultades en relaciones, límites y toma de decisiones.</li>
               <li>Sobrecarga, estrés y etapas de cambio vital.</li>
             </ul>
+            <p>
+              Puedes consultar más información sobre la <a href="/ansiedad/">atención psicológica en ansiedad</a>
+              y el <a href="/duelo/">acompañamiento psicológico en procesos de duelo</a>.
+            </p>
             <div className="seo-callout">
               <strong>La terapia empieza por comprender el problema, no por encajarlo en una etiqueta.</strong>
               <span>La formulación clínica orienta los objetivos y el tipo de intervención que puede ser más útil en cada caso.</span>
@@ -124,6 +141,12 @@ export default function LocalPsychologistPage() {
               <a href="/problemas-de-memoria/"> cuándo conviene valorar los olvidos</a>,
               <a href="/evaluacion-neuropsicologica/"> cómo es una evaluación neuropsicológica</a> y
               <a href="/familiares-y-cuidadores-de-personas-con-demencia/"> qué apoyo pueden recibir las familias</a>.
+            </p>
+            <p>
+              También realizo <a href="/evaluacion-tdah-adultos/">evaluaciones del TDAH en adultos</a> y
+              <a href="/evaluacion-tea-adultos/"> evaluaciones del TEA en adultos</a>.
+              Estas valoraciones incluyen una exploración clínica y un diagnóstico diferencial ajustados
+              a cada caso: las dificultades de concentración, por sí solas, no permiten establecer un diagnóstico.
             </p>
           </section>
 
@@ -255,6 +278,7 @@ export default function LocalPsychologistPage() {
       </footer>
 
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(serviceSchema) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }} />
     </main>
   );
 }
