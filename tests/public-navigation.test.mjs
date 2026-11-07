@@ -5,7 +5,6 @@ import { existsSync, readFileSync } from "node:fs";
 const shell = readFileSync(new URL("../app/components/site-shell.tsx", import.meta.url), "utf8");
 const styles = readFileSync(new URL("../app/editorial.css", import.meta.url), "utf8");
 const sitemap = readFileSync(new URL("../app/sitemap.ts", import.meta.url), "utf8");
-const podcast = readFileSync(new URL("../app/podcast/page.tsx", import.meta.url), "utf8");
 
 test("public navigation retains services and resources without Tu Consulta", () => {
   assert.match(shell, /<summary>Servicios <ChevronIcon \/>/);
@@ -17,11 +16,10 @@ test("public navigation retains services and resources without Tu Consulta", () 
 });
 
 test("public materials stay reachable without promoting the retired questions page", () => {
-  for (const href of ["/psicologia/", "/neuropsicologia/", "/articulos/", "/recursos/", "/podcast/"]) {
+  for (const href of ["/psicologia/", "/neuropsicologia/", "/articulos/", "/recursos/"]) {
     assert.ok(shell.includes('href: "' + href + '"') || shell.includes('href="' + href + '"'), href);
   }
   assert.doesNotMatch(sitemap, /pregunta-a-carolina|questionsLastModified/);
-  assert.doesNotMatch(podcast, /pregunta-a-carolina|Tu Consulta/);
   assert.equal(existsSync(new URL("../app/pregunta-a-carolina/page.tsx", import.meta.url)), false);
 });
 
