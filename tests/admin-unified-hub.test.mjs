@@ -24,6 +24,7 @@ test("one central admin route for all six management sections",()=>{
   ]) assert.ok(page.includes(link),"Missing "+link);
   for(const id of [
     "admin-home","admin-home-loading","admin-home-date",
+    "admin-home-next-appointment","admin-home-messages",
     "admin-home-priorities","admin-home-today","admin-home-economy",
     "admin-home-editorial","admin-home-commerce",
     "admin-home-refresh","admin-home-logout"
@@ -52,7 +53,9 @@ test("private content remains hidden until Supabase verifies owner identity",()=
 test("partial failures do not hide the other live indicators and failed queries never show fake zeroes",()=>{
   assert.match(client,/Promise\.allSettled\(/);
   assert.match(client,/result\.status === "fulfilled"/);
-  assert.match(client,/ready\(a\)\?numberFormat\.format\(todayActive\.length\):"—"/);
+  assert.match(client,/else unavailable\("#admin-home-today"\)/);
+  assert.match(client,/Agenda sin actualizar/);
+  assert.match(client,/Bandeja sin actualizar/);
   assert.match(client,/Hay "\+fails\+" áreas sin actualizar/);
   assert.match(client,/billing_invoices\?select/);
   assert.match(client,/billing_receipts\?select/);
@@ -77,4 +80,14 @@ test("responsive, legible dashboard with keyboard focus",()=>{
   assert.match(css,/@media\(max-width:570px\)/);
   assert.match(css,/:focus-visible/);
   assert.match(css,/prefers-reduced-motion/);
+});
+
+test("daily actions lead to the existing private views before administrative summaries", () => {
+  const daily = page.slice(page.indexOf('id="admin-hub-daily-title"'), page.indexOf('id="admin-hub-details-title"'));
+  assert.match(daily, /href="\/admin\/clinica\/\?panel=1&amp;view=patients">\s*<AdminIcon[^>]+\/><strong>Buscar un paciente/);
+  assert.match(daily, /href="\/admin\/mensajes\/"/);
+  assert.match(daily, /href="\/admin\/residencia\/"/);
+  assert.match(client, /status=in\.\(confirmed,pending,rescheduled\)&order=starts_at.asc&limit=1/);
+  assert.match(client, /patient_email.neq.bloqueo@agenda.interno/);
+  assert.match(client, /\/api\/admin\/patient-messages\?unread=1/);
 });

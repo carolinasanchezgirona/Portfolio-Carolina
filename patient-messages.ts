@@ -13,11 +13,12 @@ export async function patientMessages(request: Request, deps: Dependencies): Pro
   const reply = deps.json;
   if (!["GET", "POST", "PATCH"].includes(request.method)) return reply({ error: "Método no permitido." }, 405);
   if (request.method !== "GET" && !deps.origin(request)) return reply({ error: "Origen no permitido." }, 403);
-  const admin = new URL(request.url).pathname.startsWith("/api/admin/");
+  const url = new URL(request.url);
+  const admin = url.pathname.startsWith("/api/admin/");
   let patientId = "";
   if (admin) {
     if (!await deps.owner(request)) return reply({ error: "Inicia sesión en el panel profesional." }, 401);
-    patientId = new URL(request.url).searchParams.get("patient_id") || "";
+    patientId = url.searchParams.get("patient_id") || "";
     if (patientId && !uuid.test(patientId)) return reply({ error: "Paciente no válido." }, 400);
   } else {
     const session = await deps.session(request);
@@ -32,6 +33,11 @@ export async function patientMessages(request: Request, deps: Dependencies): Pro
     }
     const base = "patient_internal_messages";
     if (request.method === "GET") {
+      if (admin && !patientId && url.searchParams.get("unread") === "1") {
+        const res = await deps.query(base + "?select=id,clinical_patients!inner(id)&clinical_patients.status=neq.archived&sender=eq.patient&read_at=is.null&limit=1");
+        if (!res.ok) throw new Error("read");
+        return reply({ hasUnread: (await res.json() as unknown[]).length > 0 });
+      }
       const select = admin && !patientId ? "id,patient_id,sender,created_at,read_at,patient:clinical_patients(full_name)" : "id,patient_id,sender,body,created_at,read_at";
       const res = await deps.query(base + "?select=" + select + (patientId ? "&patient_id=eq." + patientId : "") + "&order=created_at.desc,id.desc&limit=" + (patientId ? "200" : "1000"));
       if (!res.ok) throw new Error("read");

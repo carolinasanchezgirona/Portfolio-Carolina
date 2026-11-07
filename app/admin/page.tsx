@@ -29,11 +29,11 @@ function AdminIcon({ name }: { name: IconName }) {
 }
 
 const sections: { href: string; icon: IconName; eyebrow: string; title: string; detail: string; secondary: string; tone: string }[] = [
-  { href: "/admin/tareas/", icon: "editorial", eyebrow: "Organización personal", title: "Mi agenda profesional", detail: "Mis tareas, prioridades, recordatorios y bloc de notas general.", secondary: "Abrir mi agenda profesional", tone: "navy" },
+  { href: "/admin/tareas/", icon: "editorial", eyebrow: "Organización personal", title: "Tareas y notas", detail: "Mis tareas, prioridades, recordatorios y bloc de notas general.", secondary: "Abrir tareas y notas", tone: "navy" },
   { href: "/admin/residencia/", icon: "clinical", eyebrow: "Atención residencial", title: "Residencia", detail: "Residentes, valoraciones semestrales, informes, actividades, seguimientos y objetivos PIAI.", secondary: "Abrir residencia", tone: "turquoise" },
   { href: "/admin/mensajes/", icon: "questions", eyebrow: "Entre Sesiones", title: "Mensajes de pacientes", detail: "Leer mensajes privados, revisar pendientes de lectura y responder a tus pacientes.", secondary: "Abrir mensajes", tone: "turquoise" },
   { href: "/admin/clinica/?panel=1", icon: "clinical", eyebrow: "Atención sanitaria", title: "Gestión clínica", detail: "Pacientes, sesiones, informes, actividades y Mi espacio.", secondary: "Abrir gestión clínica", tone: "navy" },
-  { href: "/admin/agenda/", icon: "calendar", eyebrow: "Organización", title: "Agenda", detail: "Citas, disponibilidad, cambios, confirmaciones y recordatorios.", secondary: "Abrir agenda", tone: "turquoise" },
+  { href: "/admin/agenda/", icon: "calendar", eyebrow: "Organización", title: "Agenda de citas", detail: "Citas, disponibilidad, cambios, confirmaciones y recordatorios.", secondary: "Abrir agenda", tone: "turquoise" },
   { href: "/admin/notificaciones/", icon: "bell", eyebrow: "Actividad", title: "Centro de avisos", detail: "Nuevas reservas, actividades entregadas, tareas y facturas pendientes.", secondary: "Revisar avisos", tone: "navy" },
   { href: "/admin/economia/", icon: "economy", eyebrow: "Administración", title: "Contabilidad", detail: "Facturas, cobros, gastos, importaciones y exportaciones.", secondary: "Abrir contabilidad", tone: "coral" },
   { href: "/admin/articulos/", icon: "editorial", eyebrow: "Comunicación", title: "Centro editorial", detail: "Artículos, contenidos web y publicaciones de Instagram.", secondary: "Abrir centro editorial", tone: "navy" },
@@ -52,7 +52,7 @@ export default function AdminHomePage() {
           <a href="/admin/" className="admin-hub-sidebar-brand"><strong>Carolina Sánchez</strong><span>Psicología · Neuropsicología</span></a>
           <nav aria-label="Navegación del panel">
             <a href="/admin/" aria-current="page"><AdminIcon name="home" />Resumen</a>
-            <a href="/admin/agenda/"><AdminIcon name="calendar" />Agenda</a>
+            <a href="/admin/agenda/"><AdminIcon name="calendar" />Agenda de citas</a>
             <a href="/admin/clinica/?panel=1&amp;view=patients"><AdminIcon name="patients" />Pacientes</a>
             <a href="/admin/residencia/"><AdminIcon name="clinical" />Residencia</a>
             <a href="/admin/economia/"><AdminIcon name="economy" />Contabilidad</a>
@@ -80,31 +80,53 @@ export default function AdminHomePage() {
             <div>
               <p className="admin-home-eyebrow">Mi consulta</p>
               <h1>Hola, Carol</h1>
-              <p className="admin-hub-welcome">Tu jornada, con claridad.</p>
               <p id="admin-home-date" className="admin-hub-date">Consulta y administración desde un mismo lugar.</p>
             </div>
-            <a className="admin-hub-main-action" href="/admin/agenda/"><AdminIcon name="calendar" /> Abrir agenda <AdminIcon name="arrow" /></a>
           </div>
 
-          <section className="admin-hub-priority-section" aria-labelledby="admin-hub-priorities-title">
+          <section className="admin-hub-priority-section" aria-labelledby="admin-hub-daily-title">
             <div className="admin-hub-section-heading">
-              <div><p className="admin-home-eyebrow">Vista general</p><h2 id="admin-hub-priorities-title">De un vistazo</h2></div>
+              <h2 id="admin-hub-daily-title">Tu consulta hoy</h2>
               <p id="admin-home-status" className="admin-home-status" role="status" aria-live="polite" />
             </div>
-            <div id="admin-home-priorities" className="admin-home-priorities" aria-label="Indicadores actuales">
-              <div className="admin-home-empty">Cargando indicadores…</div>
+            <nav className="admin-home-priorities admin-home-daily" aria-label="Acciones de consulta">
+              <a className="admin-home-priority" href="/admin/agenda/">
+                <AdminIcon name="calendar" /><strong>Próxima cita</strong>
+                <span id="admin-home-next-appointment">Consultando la agenda…</span>
+              </a>
+              <a className="admin-home-priority" href="/admin/clinica/?panel=1&amp;view=patients">
+                <AdminIcon name="patients" /><strong>Buscar un paciente</strong>
+                <span>Abrir el buscador de fichas clínicas</span>
+              </a>
+              <a className="admin-home-priority" href="/admin/mensajes/">
+                <AdminIcon name="questions" /><strong>Mensajes de pacientes</strong>
+                <span id="admin-home-messages">Consultando la bandeja…</span>
+              </a>
+            </nav>
+            <nav className="admin-hub-shortcuts" aria-label="Otros accesos de trabajo">
+              <a href="/admin/residencia/">Residencia</a>
+              <a href="/admin/tareas/">Tareas y notas</a>
+              <a href="/admin/notificaciones/">Centro de avisos</a>
+            </nav>
+          </section>
+
+          <section className="admin-home-panel admin-hub-appointments" aria-labelledby="admin-hub-appointments-title">
+            <div className="admin-home-panel-heading">
+              <h3 id="admin-hub-appointments-title">Citas de hoy</h3>
+              <a href="/admin/agenda/">Ver agenda</a>
             </div>
+            <div id="admin-home-today" className="admin-home-list"><p className="admin-home-empty">Cargando…</p></div>
           </section>
 
           <section className="admin-hub-details" aria-labelledby="admin-hub-details-title">
             <div className="admin-hub-section-heading">
-              <div><p className="admin-home-eyebrow">Seguimiento diario</p><h2 id="admin-hub-details-title">Lo que requiere tu atención</h2></div>
+              <h2 id="admin-hub-details-title">Administración y contenidos</h2>
+              <a href="/admin/economia/?tab=invoices&amp;nuevo=1">Crear borrador de factura</a>
+            </div>
+            <div id="admin-home-priorities" className="admin-home-priorities" aria-label="Indicadores administrativos">
+              <div className="admin-home-empty">Cargando indicadores…</div>
             </div>
             <div className="admin-home-grid">
-              <section className="admin-home-panel">
-                <div className="admin-home-panel-heading"><div><p className="admin-home-eyebrow">Consulta</p><h3>Citas de hoy</h3></div><a href="/admin/agenda/">Ver agenda</a></div>
-                <div id="admin-home-today" className="admin-home-list"><p className="admin-home-empty">Cargando…</p></div>
-              </section>
               <section className="admin-home-panel">
                 <div className="admin-home-panel-heading"><div><p className="admin-home-eyebrow">Economía</p><h3>Facturas y cobros</h3></div><a href="/admin/economia/">Abrir contabilidad</a></div>
                 <div id="admin-home-economy" className="admin-home-list"><p className="admin-home-empty">Cargando…</p></div>
@@ -118,21 +140,6 @@ export default function AdminHomePage() {
                 <div id="admin-home-commerce" className="admin-home-list"><p className="admin-home-empty">Cargando…</p></div>
               </section>
             </div>
-          </section>
-          <section className="admin-hub-shortcut-area" aria-labelledby="admin-hub-shortcut-title">
-            <div className="admin-hub-section-heading">
-              <div><p className="admin-home-eyebrow">Acceso directo</p><h2 id="admin-hub-shortcut-title">Lo que más utilizas</h2></div>
-            </div>
-            <nav className="admin-hub-shortcuts" aria-label="Acciones rápidas">
-              <a href="/admin/agenda/">Ver las citas</a>
-              <a href="/admin/residencia/">Residencia</a>
-              <a href="/admin/tareas/">Tareas y notas</a>
-              <a href="/admin/notificaciones/">Centro de avisos</a>
-              <a href="/admin/clinica/?panel=1">Buscar un paciente</a>
-              <a href="/admin/economia/?tab=invoices&amp;nuevo=1">Crear un borrador de factura</a>
-              <a href="/admin/articulos/">Preparar contenido</a>
-              <a href="#admin-hub-tools">Todas las herramientas ↓</a>
-            </nav>
           </section>
           <section id="admin-hub-tools" className="admin-hub-modules" aria-labelledby="admin-hub-modules-title">
             <div className="admin-hub-section-heading">
@@ -157,7 +164,7 @@ export default function AdminHomePage() {
         </div>
       </section>
       <Script src="/clinic-pwa.js?v=20261020-android-native-1" strategy="afterInteractive" />
-      <Script src="/admin-dashboard.js?v=20261104-remove-clinical-tasks-1" strategy="afterInteractive" />
+      <Script src="/admin-dashboard.js?v=20261107-daily-hub-1" strategy="afterInteractive" />
     </main>
   );
 }

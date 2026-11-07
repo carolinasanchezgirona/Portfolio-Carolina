@@ -43,3 +43,23 @@ test('rate limit and database failure do not claim successful delivery',async()=
  const {deps}=mock({query:async(path)=>Response.json(path.startsWith('clinical_patients')?[{id:patient}]:Array(10).fill({id:nonce}))});assert.equal((await patientMessages(req('POST',{body:'Hola',nonce}),deps)).status,429);
  const broken=mock({query:async()=>new Response('',{status:500})});assert.equal((await patientMessages(req(),broken.deps)).status,503);
 });
+
+test('the dashboard unread indicator is private and returns only whether active patients have unread messages', async () => {
+ const request = req('GET', null, true, '?unread=1');
+ const unauthenticated = mock();
+ assert.equal((await patientMessages(request, unauthenticated.deps)).status, 401);
+ assert.equal(unauthenticated.calls.length, 0);
+ for (const hasUnread of [false, true]) {
+  const { deps } = mock({
+   owner: async () => true,
+   query: async path => {
+    assert.match(path, /clinical_patients!inner\(id\)&clinical_patients.status=neq.archived/);
+    assert.match(path, /sender=eq.patient&read_at=is.null&limit=1$/);
+    return Response.json(hasUnread ? [{ id: nonce }] : []);
+   },
+  });
+  const response = await patientMessages(request, deps);
+  assert.equal(response.status, 200);
+  assert.deepEqual(await response.json(), { hasUnread });
+ }
+});
