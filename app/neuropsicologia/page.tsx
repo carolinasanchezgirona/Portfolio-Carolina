@@ -54,7 +54,7 @@ export default function NeuropsychologyPage() {
             <a className="editorial-btn editorial-btn-primary" href="/cita/">Pedir cita</a>
             <a className="editorial-btn editorial-btn-secondary" href="#cuando-consultar">Cuándo consultar</a>
           </div>
-        </div><figure className="service-hero-visual"><img src="https://images.pexels.com/photos/8899557/pexels-photo-8899557.jpeg?auto=compress&cs=tinysrgb&w=1200" alt="Persona mayor resolviendo un ejercicio de palabras y atención" width="720" height="850" loading="eager" decoding="async" /></figure></div>
+        </div><figure className="service-hero-visual"><img src="/images/neuropsicologia-hero.webp" alt="Material de evaluación neuropsicológica en una consulta: modelo cerebral y pruebas cognitivas" width="720" height="850" loading="eager" decoding="async" /></figure></div>
       </section>
 
       <div className="editorial-wrap seo-layout">
