@@ -87,6 +87,18 @@ export default function NeuropsychologyPage() {
             </p>
           </section>
 
+
+          <section className="captacion-feature" aria-labelledby="neuro-utilidad-clinica">
+            <p className="editorial-section-eyebrow">Más allá de las puntuaciones</p>
+            <h2 id="neuro-utilidad-clinica">¿En qué situaciones aporta valor una evaluación?</h2>
+            <div className="captacion-grid two">
+              <div className="captacion-card"><h3>Cuando hay una duda clínica concreta</h3><p>Por ejemplo, distinguir dificultades atencionales relacionadas con el estado emocional de un patrón más persistente, caracterizar cambios de memoria o estudiar sus posibles causas junto al seguimiento médico.</p></div>
+              <div className="captacion-card"><h3>Cuando el funcionamiento diario ha cambiado</h3><p>Ayuda a describir el impacto en la autonomía, la organización, el trabajo o la vida familiar, y a identificar capacidades preservadas, apoyos y estrategias útiles.</p></div>
+              <div className="captacion-card"><h3>Cuando es necesario establecer un punto de partida</h3><p>Permite comparar resultados en revisiones posteriores, interpretar la evolución y orientar decisiones clínicas o funcionales.</p></div>
+              <div className="captacion-card"><h3>Cuando se necesita un informe fundamentado</h3><p>La integración de entrevista, pruebas estandarizadas y contexto funcional permite elaborar conclusiones con sus límites e indicaciones.</p></div>
+            </div>
+            <p>Si las dudas giran en torno a características del <a href="/evaluacion-tdah-adultos/">TDAH</a>, el <a href="/evaluacion-tea-adultos/">TEA</a> o condiciones que pueden parecerse, consulta la <a href="/orientacion-tdah-tea-adultos/">orientación previa para adultos</a>.</p>
+          </section>
           <section className="neuro-illustrated neuro-illustrated-left">
             <h2>Cómo es una evaluación neuropsicológica</h2>
             <figure className="neuro-section-photo"><img src="/images/neuro-entrevista.webp" alt="Escena ilustrativa de entrevista clínica entre profesional y paciente" width="706" height="718" loading="lazy" decoding="async" /></figure>
@@ -129,6 +141,13 @@ export default function NeuropsychologyPage() {
             </p>
           </section>
 
+
+          <section className="captacion-feature" aria-labelledby="neuro-coordinacion">
+            <p className="editorial-section-eyebrow">Atención ajustada a cada caso</p>
+            <h2 id="neuro-coordinacion">Coordinación interdisciplinar cuando está indicada</h2>
+            <p>La evaluación neuropsicológica complementa, pero no sustituye, la valoración médica. Ante sospecha de enfermedad neurológica, necesidad de revisar tratamientos o cuestiones psiquiátricas que requieran seguimiento específico, puedo recomendar la valoración por medicina de familia, neurología o psiquiatría, y coordinar información clínica pertinente con los profesionales implicados.</p>
+            <p>Estas actuaciones se plantean según la necesidad clínica y con el consentimiento correspondiente. No supone que todos los casos requieran derivación ni que estos profesionales formen parte de la plantilla de la consulta.</p>
+          </section>
           <section>
             <h2>Qué traer a la primera visita</h2>
             <p>
@@ -186,9 +205,10 @@ export default function NeuropsychologyPage() {
           </div>
           <div className="seo-authority-copy">
             <p>
-              Mi experiencia está especialmente vinculada al deterioro cognitivo, las demencias y el trabajo clínico con personas y familias. Integro evaluación estructurada, funcionamiento cotidiano y contexto para que los resultados tengan utilidad práctica.
+              Mi experiencia profesional abarca la evaluación neuropsicológica en adultos y personas mayores, el trabajo en consulta, residencias y centros de día y el abordaje del deterioro cognitivo y las demencias. Integro historia clínica, pruebas estandarizadas, repercusión funcional y seguimiento para emitir conclusiones clínicamente útiles. Soy Psicóloga General Sanitaria, colegiada COPC 24892 y autora de publicaciones de divulgación profesional en PsiAra.
             </p>
             <div className="seo-authority-links">
+              <a href="/sobre-mi/">Trayectoria y referencias profesionales →</a>
               <a href="https://psiara.cat/2026/08/05/la-capacitat-per-testar-en-el-dret-civil-catala-des-duna-perspectiva-neuropsicologica/" target="_blank" rel="noopener noreferrer">Leer publicación en PsiAra sobre capacidad y evaluación neuropsicológica ↗</a>
               <a href="https://www.linkedin.com/in/carolina-s%C3%A1nchez-girona-43b3b94a/" target="_blank" rel="noopener noreferrer">Perfil profesional en LinkedIn ↗</a>
             </div>
