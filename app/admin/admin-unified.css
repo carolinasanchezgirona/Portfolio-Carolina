@@ -1,14 +1,14 @@
 /* Unified admin software UI: shared density and visual language */
 :root{
-  --admin-bg:#f3f8f8;
+  --admin-bg:#F2EFE7;
   --admin-surface:#ffffff;
-  --admin-line:#c8dfe0;
-  --admin-line-strong:#c8dfe0;
-  --admin-text:#183d4c;
-  --admin-muted:#536e78;
-  --admin-navy:#0e5c7c;
-  --admin-accent:#19b6be;
-  --admin-soft:#f4f9f9;
+  --admin-line:#A0A0A0;
+  --admin-line-strong:#A0A0A0;
+  --admin-text:#304750;
+  --admin-muted:#708793;
+  --admin-navy:#708793;
+  --admin-accent:#809DA8;
+  --admin-soft:#EDEDED;
   --admin-radius:8px;
 }
 
@@ -47,7 +47,7 @@
 }
 .admin-eyebrow,.articles-eyebrow,.questions-admin-eyebrow,.resources-eyebrow{
   margin:0 0 3px!important;
-  color:#536e78!important;
+  color:#708793!important;
   font-size:.62rem!important;
   letter-spacing:.07em!important;
 }
@@ -89,7 +89,7 @@
   color:var(--admin-navy)!important;
 }
 .admin-text,.articles-text,.resources-text{
-  color:#536e78!important;
+  color:#708793!important;
 }
 .admin-danger,.articles-danger,.resources-danger,.questions-admin-footer .danger{
   border-radius:7px!important;
@@ -113,7 +113,7 @@
   border:0!important;
   border-radius:6px!important;
   background:transparent!important;
-  color:#536e78!important;
+  color:#708793!important;
   font-size:.75rem!important;
 }
 .admin-view-tabs button.active{
@@ -149,7 +149,7 @@
 .calendar-day-head{
   padding:9px 10px!important;
   border-color:var(--admin-line)!important;
-  background:#f4f9f9!important;
+  background:#EDEDED!important;
 }
 .calendar-day-body{padding:7px!important;gap:6px!important}
 .appointment-card{
@@ -166,7 +166,7 @@
   margin:10px 0 0!important;
   padding:8px 10px!important;
   border-radius:7px!important;
-  background:#f4f9f9!important;
+  background:#EDEDED!important;
   font-size:.72rem!important;
 }
 
@@ -213,7 +213,7 @@
   padding:5px!important;
   border:1px solid var(--admin-line)!important;
   border-radius:7px!important;
-  background:#f4f9f9!important;
+  background:#EDEDED!important;
 }
 .editor-toolbar select,.editor-toolbar button{
   min-height:29px!important;
