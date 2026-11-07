@@ -83,6 +83,17 @@ export default function AboutPage() {
             </p>
           </section>
 
+
+          <section className="captacion-feature" aria-labelledby="areas-experiencia">
+            <p className="editorial-section-eyebrow">Experiencia clínica</p>
+            <h2 id="areas-experiencia">Ámbitos en los que he desarrollado mi trabajo</h2>
+            <div className="captacion-grid">
+              <div className="captacion-card"><h3>Consulta de adultos</h3><p>Atención psicológica ante ansiedad, dificultades del estado de ánimo, duelo, relaciones y situaciones de sobrecarga.</p></div>
+              <div className="captacion-card"><h3>Evaluación neuropsicológica</h3><p>Estudio de memoria, atención, lenguaje y funciones ejecutivas, con interpretación de su repercusión cotidiana y orientación posterior.</p></div>
+              <div className="captacion-card"><h3>Personas mayores y familias</h3><p>Experiencia en residencias y centros de día, deterioro cognitivo y demencias, y orientación sobre necesidades de apoyo.</p></div>
+            </div>
+            <p><a href="/neuropsicologia/#cuando-consultar">Ver cuándo puede aportar valor una evaluación neuropsicológica →</a></p>
+          </section>
           <section>
             <h2>Una mirada clínica que integra psicología y neuropsicología</h2>
             <figure className="seo-professional-photo">
@@ -113,7 +124,7 @@ export default function AboutPage() {
               En mi consulta de Arenys de Mar ofrezco atención psicológica a adultos, evaluación del funcionamiento cognitivo e intervención neuropsicológica según las necesidades de cada caso.
             </p>
             <p>
-              La atención es individualizada, con objetivos claros y comunicación comprensible. Cuando es necesario, integro informes previos y coordino la intervención con otros profesionales sanitarios.
+              La atención es individualizada, con objetivos claros y comunicación comprensible. Cuando la situación lo indica, integro informes previos y, con consentimiento, coordino información pertinente con profesionales de medicina de familia, neurología, psiquiatría u otras áreas. La consulta es independiente y esta coordinación no implica disponer de un equipo médico propio.
             </p>
             <p><a href="/psicologa-arenys-de-mar/">Conocer la consulta y cómo llegar →</a></p>
           </section>
@@ -123,6 +134,7 @@ export default function AboutPage() {
             <p>
               Formo parte del Grupo de Trabajo de Neuropsicología y Salud Mental del Col·legi Oficial de Psicologia de Catalunya. También participo en divulgación profesional sobre psicología sanitaria, neuropsicología, deterioro cognitivo y cuestiones en las que el funcionamiento psicológico y cognitivo se cruza con otros ámbitos de la salud y la sociedad.
             </p>
+            <p>Mi actividad profesional incluye publicaciones en PsiAra, la revista digital del COPC, y una contribución publicada en Món Jurídic, del ICAB. Estas referencias permiten consultar directamente parte de mi trabajo.</p>
             <h3>Publicaciones seleccionadas</h3>
             <div className="seo-authority-links">
               <a href="https://psiara.cat/2026/08/06/cuando-el-dolor-no-encuentra-un-lugar/" target="_blank" rel="noopener noreferrer">
