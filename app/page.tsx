@@ -215,24 +215,7 @@ export default function HomePage() {
       </section>
 
 
-      <section className="captacion-section" aria-labelledby="testimonios-title">
-        <div className="editorial-wrap">
-          <p className="editorial-section-eyebrow">Opiniones publicadas</p>
-          <h2 id="testimonios-title">La experiencia de quienes han acudido a consulta</h2>
-          <p className="captacion-intro">Fragmentos breves de opiniones reales publicadas voluntariamente en Doctoralia, reproducidos sin datos identificativos. Las experiencias individuales no garantizan resultados similares.</p>
-          <div className="captacion-review-grid">
-            <figure className="captacion-quote">
-              <blockquote>“Se nota el tiempo que invierte en preparar cada visita”</blockquote>
-              <figcaption>Opinión pública · Doctoralia · octubre de 2025</figcaption>
-            </figure>
-            <figure className="captacion-quote">
-              <blockquote lang="ca">“Mai m’he sentit un número, sinó una persona cuidada”</blockquote>
-              <figcaption>Opinión pública · Doctoralia · mayo de 2026</figcaption>
-            </figure>
-          </div>
-          <div className="captacion-actions"><a className="editorial-card-link" href="https://www.doctoralia.es/carolina-sanchez-girona/psicologo/arenys-de-mar" target="_blank" rel="noopener noreferrer">Consultar opiniones originales en Doctoralia →</a><a className="editorial-card-link" href="https://maps.app.goo.gl/ubCSFYZRgbv7vpqF9" target="_blank" rel="noopener noreferrer">Ver las 27 reseñas de Google →</a></div>
-        </div>
-      </section>
+
 
       <section className="editorial-section editorial-local" aria-labelledby="local-title">
         <div className="editorial-wrap">
