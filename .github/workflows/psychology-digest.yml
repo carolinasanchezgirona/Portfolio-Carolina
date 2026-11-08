@@ -8,9 +8,12 @@ on:
       - scripts/psychology-digest.mjs
       - psychology-digest-research.ts
   schedule:
-    # Start research before the target delivery time and avoid the hourly queue peak.
-    - cron: "52 8 * * *"
-      timezone: Europe/Madrid
+    # Inicio a las 08:52 de Madrid y segundo intento a las 09:12.
+    # GitHub interpreta estos disparos en UTC. Se seleccionan según el huso local.
+    - cron: "52 6 * * *"
+    - cron: "52 7 * * *"
+    - cron: "12 7 * * *"
+    - cron: "12 8 * * *"
   workflow_dispatch:
     inputs:
       send:
@@ -31,15 +34,34 @@ jobs:
     runs-on: ubuntu-24.04
     timeout-minutes: 24
     steps:
+      - name: Seleccionar el disparo de Madrid
+        id: cadence
+        shell: bash
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          SCHEDULE: ${{ github.event.schedule }}
+        run: |
+          if [[ "$EVENT_NAME" == schedule ]]; then
+            OFFSET="$(TZ=Europe/Madrid date +%z)"
+            case "$OFFSET:$SCHEDULE" in
+              "+0200:52 6 * * *"|"+0100:52 7 * * *"|"+0200:12 7 * * *"|"+0100:12 8 * * *") ;;
+              *) echo "run=false" >> "$GITHUB_OUTPUT"; exit 0 ;;
+            esac
+          fi
+          echo "run=true" >> "$GITHUB_OUTPUT"
+
       - uses: actions/checkout@v4
+        if: steps.cadence.outputs.run == 'true'
         with:
           persist-credentials: false
 
       - uses: actions/setup-node@v4
+        if: steps.cadence.outputs.run == 'true'
         with:
           node-version: 24
 
       - name: Recuperar historial de envíos
+        if: steps.cadence.outputs.run == 'true'
         uses: actions/cache/restore@v4
         with:
           path: ${{ runner.temp }}/psychology-digest.json
@@ -48,10 +70,11 @@ jobs:
 
       - name: Buscar, verificar y preparar el boletín
         id: digest
+        if: steps.cadence.outputs.run == 'true'
         env:
           TELEGRAM_BOT_TOKEN: ${{ secrets.CLINICAL_BACKUP_TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.CLINICAL_BACKUP_TELEGRAM_CHAT_ID }}
-          SEND_DIGEST: ${{ github.event_name == 'schedule' || inputs.send }}
+          SEND_DIGEST: ${{ github.event_name == 'schedule' || inputs.send || (github.event_name == 'push' && contains(github.event.head_commit.message, '[enviar-boletin]')) }}
           WAIT_FOR_DELIVERY_TIME: ${{ github.event_name == 'schedule' }}
           DIGEST_STATE_PATH: ${{ runner.temp }}/psychology-digest.json
         run: node scripts/psychology-digest.mjs
