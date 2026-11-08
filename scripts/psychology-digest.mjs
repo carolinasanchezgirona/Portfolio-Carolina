@@ -43,7 +43,7 @@ async function waitForDeployment() {
   const deadline = Date.now() + 15 * 60_000;
   while (Date.now() < deadline) {
     const response = await fetch(endpoint, { signal: AbortSignal.timeout(10_000), redirect: 'error' }).catch(() => null);
-    if (response?.status === 405 && response.headers.get('X-Psychology-Digest') === '3') return;
+    if (response?.status === 405 && response.headers.get('X-Psychology-Digest') === '4') return;
     await setTimeout(25_000);
   }
   throw new Error('El servicio del boletín aún no está desplegado.');
@@ -103,12 +103,15 @@ async function main() {
 
   const recent = history.filter(entry => entry.day >= previousDate(day, 14));
   if (process.env.GITHUB_EVENT_NAME === 'push') await waitForDeployment();
-  const items = await research(TELEGRAM_BOT_TOKEN, recent.flatMap(entry => entry.urls));
-  const message = renderDigest(day, items);
   if (!send) {
     const chat = await telegram(TELEGRAM_BOT_TOKEN, 'getChat', { chat_id: TELEGRAM_CHAT_ID });
     if (!Number.isSafeInteger(chat.id)) throw new Error('Telegram no confirmó el chat habitual.');
-    console.log(`Vista previa validada. Ítems verificados: ${items.length}. Chat de Telegram confirmado sin enviar mensaje.`);
+    console.log('Chat de Telegram confirmado sin enviar mensaje.');
+  }
+  const items = await research(TELEGRAM_BOT_TOKEN, recent.flatMap(entry => entry.urls));
+  const message = renderDigest(day, items);
+  if (!send) {
+    console.log(`Vista previa validada. Ítems verificados: ${items.length}.`);
     return;
   }
 
