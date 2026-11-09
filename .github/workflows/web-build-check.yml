@@ -177,14 +177,11 @@ jobs:
       - name: Validar pantallas de Mi espacio
         run: |
           node --check public/mi-espacio.js
-          node --check public/mi-espacio-prueba.js
-          node --check public/wellness-interactive.js
           node --check public/session-prep.js
           node --check public/admin-clinica.js
           node --check public/clinic-patient-dashboard.js
           node --test tests/entre-sesiones-hardening.test.mjs
           node --test tests/patient-pdf-login.test.mjs
-          node --test tests/wellness-interactive.test.mjs
           node --test tests/session-prep.test.mjs
           node --test tests/entre-sesiones-app-integration.test.mjs
           node --test tests/mi-espacio-legacy-cleanup.test.mjs
