@@ -98,6 +98,7 @@
   .admin-hub-mobile-menu>summary::-webkit-details-marker{display:none}
   .admin-hub-mobile-menu>summary::marker{content:""}
   .admin-hub-mobile-menu[open]>summary{background:var(--admin-soft)}
+  .admin-hub-mobile-menu:not([open])>nav{display:none}
   .admin-hub-mobile-menu>nav{display:grid;position:absolute;top:calc(100% + 4px);left:12px;right:12px;z-index:60;max-height:min(70dvh,620px);overflow-y:auto;grid-template-columns:1fr;gap:2px;padding:10px;background:var(--admin-surface);border:1px solid var(--admin-line);border-radius:12px;box-shadow:0 15px 35px #193f5026}
   .admin-hub-mobile-menu>nav>a{min-height:44px;width:100%;padding:11px 12px;flex-shrink:0}
   .admin-hub-mobile-menu>summary:focus-visible{outline:3px solid var(--admin-action);outline-offset:3px}
