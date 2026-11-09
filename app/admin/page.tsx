@@ -28,36 +28,52 @@ function AdminIcon({ name }: { name: IconName }) {
   );
 }
 
-const sections: { href: string; icon: IconName; eyebrow: string; title: string; detail: string; secondary: string; tone: string }[] = [
-  { href: "/admin/tareas/", icon: "editorial", eyebrow: "Organización personal", title: "Tareas y notas", detail: "Mis tareas, prioridades, recordatorios y bloc de notas general.", secondary: "Abrir tareas y notas", tone: "navy" },
-  { href: "/admin/residencia/", icon: "clinical", eyebrow: "Atención residencial", title: "Residencia", detail: "Residentes, valoraciones semestrales, informes, actividades, seguimientos y objetivos PIAI.", secondary: "Abrir residencia", tone: "turquoise" },
-  { href: "/admin/mensajes/", icon: "questions", eyebrow: "Entre Sesiones", title: "Mensajes de pacientes", detail: "Leer mensajes privados, revisar pendientes de lectura y responder a tus pacientes.", secondary: "Abrir mensajes", tone: "turquoise" },
-  { href: "/admin/clinica/?panel=1", icon: "clinical", eyebrow: "Atención sanitaria", title: "Gestión clínica", detail: "Pacientes, sesiones, informes, actividades y Mi espacio.", secondary: "Abrir gestión clínica", tone: "navy" },
-  { href: "/admin/agenda/", icon: "calendar", eyebrow: "Organización", title: "Agenda de citas", detail: "Citas, disponibilidad, cambios, confirmaciones y recordatorios.", secondary: "Abrir agenda", tone: "turquoise" },
-  { href: "/admin/notificaciones/", icon: "bell", eyebrow: "Actividad", title: "Centro de avisos", detail: "Nuevas reservas, actividades entregadas, tareas y facturas pendientes.", secondary: "Revisar avisos", tone: "navy" },
-  { href: "/admin/economia/", icon: "economy", eyebrow: "Administración", title: "Contabilidad", detail: "Facturas, cobros, gastos, importaciones y exportaciones.", secondary: "Abrir contabilidad", tone: "coral" },
-  { href: "/admin/articulos/", icon: "editorial", eyebrow: "Comunicación", title: "Centro editorial", detail: "Artículos, contenidos web y publicaciones de Instagram.", secondary: "Abrir centro editorial", tone: "navy" },
-  { href: "/admin/clinica/materiales-externos/", icon: "resources", eyebrow: "Herramientas clínicas", title: "Biblioteca clínica", detail: "Añadir, editar, clasificar, descargar, archivar y asignar materiales a pacientes.", secondary: "Gestionar biblioteca", tone: "turquoise" },
-  { href: "/admin/marketing/", icon: "editorial", eyebrow: "Marketing", title: "Marketing", detail: "Suscriptores, captación y conexión con Brevo.", secondary: "Ver captación", tone: "coral" },
-  { href: "/admin/recursos/", icon: "resources", eyebrow: "Materiales digitales", title: "Recursos", detail: "Publicación, materiales gratuitos y de pago, pedidos y descargas.", secondary: "Administrar recursos", tone: "turquoise" },
+
+const adminLinks: { href: string; icon: IconName; label: string }[] = [
+  { href: "/admin/", icon: "home", label: "Inicio" },
+  { href: "/admin/agenda/", icon: "calendar", label: "Agenda de citas" },
+  { href: "/admin/clinica/?panel=1&amp;view=patients", icon: "patients", label: "Pacientes" },
+  { href: "/admin/clinica/?panel=1", icon: "clinical", label: "Gestión clínica" },
+  { href: "/admin/residencia/", icon: "clinical", label: "Residencia" },
+  { href: "/admin/mensajes/", icon: "questions", label: "Mensajes de pacientes" },
+  { href: "/admin/tareas/", icon: "editorial", label: "Tareas y notas" },
+  { href: "/admin/notificaciones/", icon: "bell", label: "Centro de avisos" },
+  { href: "/admin/economia/", icon: "economy", label: "Contabilidad" },
+  { href: "/admin/articulos/", icon: "editorial", label: "Centro editorial" },
+  { href: "/admin/clinica/materiales-externos/", icon: "resources", label: "Biblioteca clínica" },
+  { href: "/admin/clinica/documentacion/", icon: "resources", label: "Documentación" },
+  { href: "/admin/recursos/", icon: "resources", label: "Recursos" },
+  { href: "/admin/marketing/", icon: "editorial", label: "Marketing" },
+  { href: "/admin-authenticator.html", icon: "shield", label: "Authenticator" },
+  { href: "/downloads/mi-clinica-1.0.0.apk", icon: "more", label: "App Android" },
 ];
+
+function AdminSidebarLinks() {
+  return (
+    <>
+      {adminLinks.map(({ href, icon, label }) => (
+        <a key={href} href={href} aria-current={href === "/admin/" ? "page" : undefined}>
+          <AdminIcon name={icon} />{label}
+        </a>
+      ))}
+    </>
+  );
+}
 
 export default function AdminHomePage() {
   return (
-    <main className="admin-hub-page">
+    <main className="admin-hub-page" id="admin-main-content">
       <div id="admin-home-loading" className="admin-hub-access" role="status">Comprobando acceso a la administración…</div>
       <section id="admin-home" className="admin-home" hidden>
         <aside className="admin-hub-sidebar" aria-label="Menú del área profesional">
           <a href="/admin/" className="admin-hub-sidebar-brand"><strong>Carolina Sánchez</strong><span>Psicología · Neuropsicología</span></a>
-          <nav aria-label="Navegación del panel">
-            <a href="/admin/" aria-current="page"><AdminIcon name="home" />Resumen</a>
-            <a href="/admin/agenda/"><AdminIcon name="calendar" />Agenda de citas</a>
-            <a href="/admin/clinica/?panel=1&amp;view=patients"><AdminIcon name="patients" />Pacientes</a>
-            <a href="/admin/residencia/"><AdminIcon name="clinical" />Residencia</a>
-            <a href="/admin/economia/"><AdminIcon name="economy" />Contabilidad</a>
-            <a href="/admin/clinica/materiales-externos/"><AdminIcon name="resources" />Biblioteca clínica</a>
-            <a href="#admin-hub-tools"><AdminIcon name="more" />Todas las herramientas</a>
+          <nav aria-label="Navegación lateral del panel" className="admin-hub-desktop-navigation">
+            <AdminSidebarLinks />
           </nav>
+          <details className="admin-hub-mobile-menu">
+            <summary><AdminIcon name="more" /> Menú de administración</summary>
+            <nav aria-label="Secciones de administración"><AdminSidebarLinks /></nav>
+          </details>
           <p className="admin-hub-sidebar-footer"><AdminIcon name="shield" />Área profesional</p>
         </aside>
         <div className="admin-hub-workspace">
@@ -68,26 +84,20 @@ export default function AdminHomePage() {
             </a>
             <div className="admin-hub-top-actions">
               <span className="admin-hub-private"><AdminIcon name="shield" /> Acceso privado</span>
-              <a className="admin-hub-outline" href="/admin-authenticator.html"><AdminIcon name="shield" /> Authenticator</a>
-              <a className="admin-hub-outline" href="/downloads/mi-clinica-1.0.0.apk" download data-android-download>Descargar app Android</a>
               <button id="admin-home-refresh" className="admin-hub-outline" type="button">Actualizar</button>
               <button id="admin-home-logout" className="admin-hub-outline" type="button">Cerrar sesión</button>
             </div>
           </header>
 
-          <div className="admin-hub-intro">
-            <div>
-              <p className="admin-home-eyebrow">Mi consulta</p>
-              <h1>Hola, Carol</h1>
-              <p id="admin-home-date" className="admin-hub-date">Consulta y administración desde un mismo lugar.</p>
-            </div>
-          </div>
-
           <section className="admin-hub-priority-section" aria-labelledby="admin-hub-daily-title">
-            <div className="admin-hub-section-heading">
-              <h2 id="admin-hub-daily-title">Tu consulta hoy</h2>
-              <p id="admin-home-status" className="admin-home-status" role="status" aria-live="polite" />
+            <div className="admin-hub-intro">
+              <div>
+                <p className="admin-home-eyebrow">Mi consulta</p>
+                <h1 id="admin-hub-daily-title">Tu consulta hoy</h1>
+                <p id="admin-home-date" className="admin-hub-date">Cargando fecha…</p>
+              </div>
             </div>
+            <p id="admin-home-status" className="admin-home-status" role="status" aria-live="polite" />
             <nav className="admin-home-priorities admin-home-daily" aria-label="Acciones de consulta">
               <a className="admin-home-priority" href="/admin/agenda/">
                 <AdminIcon name="calendar" /><strong>Próxima cita</strong>
@@ -102,68 +112,18 @@ export default function AdminHomePage() {
                 <span id="admin-home-messages">Consultando la bandeja…</span>
               </a>
             </nav>
-            <nav className="admin-hub-shortcuts" aria-label="Otros accesos de trabajo">
-              <a href="/admin/residencia/">Residencia</a>
-              <a href="/admin/tareas/">Tareas y notas</a>
-              <a href="/admin/notificaciones/">Centro de avisos</a>
-            </nav>
-          </section>
-
-          <section className="admin-home-panel admin-hub-appointments" aria-labelledby="admin-hub-appointments-title">
-            <div className="admin-home-panel-heading">
-              <h3 id="admin-hub-appointments-title">Citas de hoy</h3>
-              <a href="/admin/agenda/">Ver agenda</a>
-            </div>
-            <div id="admin-home-today" className="admin-home-list"><p className="admin-home-empty">Cargando…</p></div>
-          </section>
-
-          <section className="admin-hub-details" aria-labelledby="admin-hub-details-title">
-            <div className="admin-hub-section-heading">
-              <h2 id="admin-hub-details-title">Administración y contenidos</h2>
-              <a href="/admin/economia/?tab=invoices&amp;nuevo=1">Crear borrador de factura</a>
-            </div>
-            <div id="admin-home-priorities" className="admin-home-priorities" aria-label="Indicadores administrativos">
-              <div className="admin-home-empty">Cargando indicadores…</div>
-            </div>
-            <div className="admin-home-grid">
-              <section className="admin-home-panel">
-                <div className="admin-home-panel-heading"><div><p className="admin-home-eyebrow">Economía</p><h3>Facturas y cobros</h3></div><a href="/admin/economia/">Abrir contabilidad</a></div>
-                <div id="admin-home-economy" className="admin-home-list"><p className="admin-home-empty">Cargando…</p></div>
-              </section>
-              <section className="admin-home-panel">
-                <div className="admin-home-panel-heading"><div><p className="admin-home-eyebrow">Publicaciones</p><h3>Contenido editorial</h3></div><a href="/admin/articulos/">Abrir editor</a></div>
-                <div id="admin-home-editorial" className="admin-home-list"><p className="admin-home-empty">Cargando…</p></div>
-              </section>
-              <section className="admin-home-panel">
-                <div className="admin-home-panel-heading"><div><p className="admin-home-eyebrow">Productos digitales</p><h3>Ventas de recursos</h3></div><a href="/admin/recursos/">Abrir recursos</a></div>
-                <div id="admin-home-commerce" className="admin-home-list"><p className="admin-home-empty">Cargando…</p></div>
-              </section>
+            <div className="admin-home-panel admin-hub-appointments">
+              <div className="admin-home-panel-heading">
+                <h2 id="admin-hub-appointments-title">Citas de hoy</h2>
+                <a href="/admin/agenda/">Ver agenda</a>
+              </div>
+              <div id="admin-home-today" className="admin-home-list"><p className="admin-home-empty">Cargando…</p></div>
             </div>
           </section>
-          <section id="admin-hub-tools" className="admin-hub-modules" aria-labelledby="admin-hub-modules-title">
-            <div className="admin-hub-section-heading">
-              <div><p className="admin-home-eyebrow">Herramientas</p><h2 id="admin-hub-modules-title">Todas tus áreas de trabajo</h2></div>
-              <p>Selecciona el apartado en el que quieras trabajar.</p>
-            </div>
-            <label className="admin-hub-tool-search" htmlFor="admin-tool-search">Buscar una herramienta<input id="admin-tool-search" type="search" placeholder="Residentes, facturas, informes, materiales…" autoComplete="off" /></label>
-            <p id="admin-tool-search-status" role="status" aria-live="polite" />
-            <nav className="admin-hub-module-grid" aria-label="Módulos de administración">
-              {sections.map(section => (
-                <a key={section.href} href={section.href} className={"admin-hub-module admin-hub-tone-" + section.tone}>
-                  <span className="admin-hub-module-icon"><AdminIcon name={section.icon} /></span>
-                  <span className="admin-hub-module-label">{section.eyebrow}</span>
-                  <strong>{section.title}</strong>
-                  <span className="admin-hub-module-description">{section.detail}</span>
-                  <span className="admin-hub-module-open">{section.secondary}<AdminIcon name="arrow" /></span>
-                </a>
-              ))}
-            </nav>
-          </section>
-          <p className="admin-hub-footer-note">Panel exclusivo de la consulta. Las ventas de recursos digitales se muestran por separado de la facturación de servicios sanitarios.</p>
         </div>
       </section>
       <Script src="/clinic-pwa.js?v=20261020-android-native-1" strategy="afterInteractive" />
-      <Script src="/admin-dashboard.js?v=20261109-daily-hub-2" strategy="afterInteractive" />
+      <Script src="/admin-dashboard.js?v=20261109-only-daily-1" strategy="afterInteractive" />
     </main>
   );
 }
