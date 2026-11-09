@@ -84,3 +84,15 @@ test("leaving patient record respects unfinished report and unrelated consents d
   assert.match(main,/if \(els\.reportDialog\?\.open && !closeReportEditor\(\{ force \}\)\) return false/);
   assert.match(main,/#clinic-consent-grid,.clinic-goals-manager,.clinic-task-box,.clinic-scale-trends/);
 });
+
+
+test("patient record section buttons have balanced horizontal spacing on desktop and mobile", () => {
+  const styles = file("app/admin/clinica/patient-workspace.css");
+  assert.match(styles, /#clinic-patient-dialog \.clinic-patient-workspace-nav\{/);
+  assert.match(styles, /margin-inline:clamp\(12px,1\.8vw,22px\)/);
+  assert.match(styles, /padding-inline:12px/);
+  assert.match(styles, /@media\(max-width:720px\)/);
+  assert.match(styles, /margin-inline:10px/);
+  assert.match(styles, /scroll-padding-inline:9px/);
+  assert.match(styles, /overflow-x:auto/);
+});
