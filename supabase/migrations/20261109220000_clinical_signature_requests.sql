@@ -24,7 +24,7 @@ create table if not exists public.clinical_signature_requests (
  updated_at timestamptz not null default now()
 );
 create index if not exists clinical_signature_requests_patient_idx on public.clinical_signature_requests(patient_id,requested_at desc);
-create index if not exists clinical_signature_requests_pending_idx on public.clinical_signature_requests(patient_id,kind)
+create unique index if not exists clinical_signature_requests_pending_idx on public.clinical_signature_requests(patient_id,kind)
  where status in ('preparing','draft','sent','delivered','unknown','completed_unarchived');
 alter table public.clinical_signature_requests enable row level security;
 -- Solo el backend con service_role puede acceder. NO crear policies para anon/authenticated.
