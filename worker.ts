@@ -3,6 +3,7 @@ import { residenceMaterialAi } from "./residence-material-ai";
 import { notifyPatientMessages } from "./patient-message-email";
 import { billingInvoiceEmail } from "./billing-invoice-email";
 import { clinicalConsentPacket } from "./clinical-consent-packet";
+import { clinicalSignatures,clinicalSignaturesConnect } from "./clinical-signature-workflow";
 import { manualPatientDocumentsEmail } from "./manual-patient-documents-email";
 import { patientMessages } from "./patient-messages";
 import { adminAppointmentVideo, patientAppointmentVideo } from './appointment-video';
@@ -16,6 +17,15 @@ export { WhatsAppQuota } from "./whatsapp-webhook";
 interface Env extends WhatsAppEnv {
   DAILY_API_KEY?: string;
   BREVO_API_KEY?: string;
+  DOCUSIGN_INTEGRATION_KEY?: string;
+  DOCUSIGN_IMPERSONATED_USER_ID?: string;
+  DOCUSIGN_RSA_PRIVATE_KEY?: string;
+  DOCUSIGN_ACCOUNT_ID?: string;
+  DOCUSIGN_IDV_WORKFLOW_ID?: string;
+  DOCUSIGN_ENVIRONMENT?: string;
+  DOCUSIGN_DPA_APPROVED?: string;
+  DOCUSIGN_PRODUCTION_APPROVED?: string;
+  DOCUSIGN_CONNECT_HMAC_KEY?: string;
   STRIPE_WEBHOOK_SECRET: string;
   STRIPE_WEBHOOK_SECRET_TEST?: string;
   STRIPE_SECRET_KEY?: string;
@@ -2281,6 +2291,8 @@ export default {
     }
 
     if (url.pathname.replace(/\/$/, "") === "/api/admin/invoices/email") return billingInvoiceEmail(request, env, verifyEditorialOwner);
+    if (url.pathname.replace(/\/$/, "") === "/api/admin/clinical-signatures") return clinicalSignatures(request,env,verifyEditorialOwner,patientPortalSameOrigin);
+    if (url.pathname.replace(/\/$/, "") === "/api/docusign/connect") return clinicalSignaturesConnect(request,env);
     if (url.pathname.replace(/\/$/, "") === "/api/admin/patient-documents-email") return manualPatientDocumentsEmail(request, env, verifyEditorialOwner, patientPortalSameOrigin);
     if (url.pathname.replace(/\/$/, "") === "/api/admin/clinical-consent-packet") return clinicalConsentPacket(request, env, verifyEditorialOwner, patientPortalSameOrigin);
 
