@@ -168,6 +168,39 @@ async function sendNeutralEmail(env:Env,email:string):Promise<{accepted:boolean;
  const data=await res.json().catch(()=>({})) as {messageId?:string};
  return {accepted:true,messageId:typeof data.messageId==="string"?data.messageId:null};
 }
+/** Completa de forma idempotente un archivo pendiente SIN volver a pedir ni simular firma. */
+async function finalizeRecorded(env:Env,row:Consent,patient:Patient){
+ if(row.status!=="recording"||!row.accepted_at||!row.accepted_by||!row.accepted_session_id||
+   !row.original_path||!row.original_sha256)throw Error("Faltan evidencias de la declaración.");
+ const original=await storageGet(env,row.original_path);
+ if(await sha(original)!==row.original_sha256)throw Error("El PDF original no coincide con su huella.");
+ const path="simple-consents/"+row.id+"/evidence.pdf";
+ const url=SUPA+"/storage/v1/object/authenticated/"+BUCKET+"/"+path;
+ const response=await fetch(url,{headers:{apikey:env.SUPABASE_SERVICE_ROLE_KEY||"",
+  Authorization:"Bearer "+(env.SUPABASE_SERVICE_ROLE_KEY||"")},cache:"no-store"});
+ let evidence:Uint8Array;
+ if(response.status===404){
+  const session:PatientSession={patient_id:row.patient_id,id:row.accepted_session_id,fresh_password:true};
+  evidence=evidencePdf(row,patient,session,row.accepted_at,row.accepted_by);
+  try{await storagePut(env,path,evidence);}
+  catch{
+   // Puede haberse creado el mismo archivo en una llamada concurrente.
+   evidence=await storageGet(env,path);
+  }
+ }else if(response.ok){
+  evidence=new Uint8Array(await response.arrayBuffer());
+  if(evidence.length<500||evidence.length>20_000_000||new TextDecoder().decode(evidence.subarray(0,5))!=="%PDF-")
+   throw Error("El acta custodiada no es un PDF válido.");
+ }else throw Error("No se puede comprobar el acta de evidencias.");
+ const evidenceHash=await sha(evidence);
+ await registerDoc(env,row,row.original_path,row.original_sha256,"original");
+ await registerDoc(env,row,path,evidenceHash,"evidence");
+ const archivedAt=new Date().toISOString();
+ await patch(env,row.id,{status:"archived",evidence_path:path,evidence_sha256:evidenceHash,
+  archived_at:archivedAt},"&status=eq.recording");
+ return {status:"archived",archived_at:archivedAt};
+}
+
 export async function clinicalSimpleAdmin(request:Request,env:Env,
  verifyOwner:(r:Request)=>Promise<boolean>,sameOrigin:(r:Request)=>boolean):Promise<Response>{
  if(!["GET","POST"].includes(request.method))return json({error:"Método no permitido."},405);
@@ -184,6 +217,14 @@ export async function clinicalSimpleAdmin(request:Request,env:Env,
   const current=await rows<Consent>(env,table+"?select=*&patient_id=eq."+id+"&order=created_at.desc&limit=30");
   if(request.method==="GET")return json({email:patient.email||"",portal_enabled:patient.portal_access_enabled,
    available:!!env.BREVO_API_KEY,requests:current.map(publicConsent)});
+  if(body.action==="repair"){
+   if(typeof body.request_id!=="string"||!UUID.test(body.request_id))
+    return json({error:"Solicitud no válida."},400);
+   const recording=current.find(row=>row.id===body.request_id&&row.status==="recording");
+   if(!recording)return json({error:"No hay ninguna aceptación pendiente de archivo en esta ficha."},404);
+   try{return json(await finalizeRecorded(env,recording,patient));}
+   catch{return json({error:"No se ha podido verificar o recuperar el archivo. Es necesaria una revisión técnica; nunca solicites una nueva firma por este error."},503);}
+  }
   if(body.action!=="send")return json({error:"Acción no válida."},400);
   if(!patient.portal_access_enabled)return json({error:"Activa manualmente Mi espacio para este paciente antes de enviar una firma."},409);
   if(!isAdult(patient.birth_date))return json({error:"Solo está habilitada la firma de adultos. Menores y representación precisan un circuito distinto."},409);
@@ -290,13 +331,8 @@ export async function clinicalSimplePatient(request:Request,env:Env,
   const rowsUpdated=await updated.json() as unknown[];
   if(!Array.isArray(rowsUpdated)||rowsUpdated.length!==1)return json({error:"Este documento acaba de cambiar. Actualiza la página antes de continuar."},409);
   try{
-   const evidence=evidencePdf(row,patient,session,acceptedAt,typed);
-   const evidenceHash=await sha(evidence),evidencePath="simple-consents/"+row.id+"/evidence.pdf";
-   await storagePut(env,evidencePath,evidence);
-   await registerDoc(env,row,row.original_path!,row.original_sha256!,"original");
-   await registerDoc(env,row,evidencePath,evidenceHash,"evidence");
-   await patch(env,row.id,{status:"archived",evidence_path:evidencePath,
-    evidence_sha256:evidenceHash,archived_at:new Date().toISOString()},"&status=eq.recording");
+   await finalizeRecorded(env,{...row,status:"recording",accepted_by:typed,accepted_at:acceptedAt,
+    accepted_session_id:session.id},patient);
    return json({ok:true,status:"archived",
     message:"Tu aceptación electrónica simple consta en el expediente. Conservamos el documento original y el acta probatoria."});
   }catch{return json({error:"Se ha registrado tu decisión, pero el archivo probatorio requiere revisión profesional. No vuelvas a firmar.",status:"recording"},503);}
