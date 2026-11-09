@@ -40,6 +40,7 @@ export default function ClinicaLayout({ children }: Readonly<{ children: React.R
       <Script src="/clinic-deferred-consent.js?v=20261018-1" strategy="afterInteractive" />
       <Script src="/clinic-manual-documents-email.js?v=20261109-1" strategy="afterInteractive" />
       <Script src="/clinic-electronic-signature.js?v=20261109-1" strategy="afterInteractive" />
+      <Script src="/clinic-docusign-workflow.js?v=20261109-1" strategy="afterInteractive" />
       <Script src="/clinic-docusign-consents.js?v=20261109-1" strategy="afterInteractive" />
       <Script src="/clinic-adhd-assessments.js?v=20261104-6" strategy="afterInteractive" />
       <Script src="/clinic-adhd-assessment-planner.js?v=20261104-3" strategy="afterInteractive" />
