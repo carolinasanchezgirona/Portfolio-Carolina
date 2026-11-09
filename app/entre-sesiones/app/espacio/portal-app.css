@@ -1,5 +1,5 @@
 
-/* Ruta protegida de Mi espacio dentro del alcance de la PWA Entre Sesiones.
+/* Ruta protegida de Mi espacio dentro del alcance de la PWA Mi espacio.
    La fuente de los ejercicios, Wellness y respuestas sigue siendo MiEspacioPage. */
 .esapp-portal-app{--font-newsreader:var(--esapp-font-editorial);--space-ink:#173a5e;--space-accent:#245c77;--space-accent-soft:#e8f4f9;background:linear-gradient(140deg,#f8fcfe,#eef7fb 55%,#fffaf7);min-height:100dvh;padding-bottom:80px}
 .esapp-portal-app .esapp-portal-identity{
@@ -8,9 +8,8 @@
 }
 .esapp-portal-app .esapp-portal-home{display:inline-flex;align-items:center;gap:10px;color:#173a5e;font:550 clamp(1.45rem,3vw,2rem)/1 var(--esapp-font-editorial),Georgia,serif;letter-spacing:-.045em}
 .esapp-portal-app .esapp-portal-brand-mark{
-  width:40px;height:40px;flex-shrink:0;display:block;background:url('/entre-sesiones-icon-es.svg') center/contain no-repeat;
+  width:40px;height:40px;flex-shrink:0;display:block;background:url('/icon.svg') center/contain no-repeat;
 }
-.esapp-portal-app .esapp-portal-brand-navy,.esapp-portal-app .esapp-portal-brand-coral{display:none}
 .esapp-portal-app .esapp-portal-subtitle{font-size:.79rem;color:#6c8190;font-weight:750}
 .esapp-portal-app .space-page{background:transparent;min-height:calc(100dvh - 140px);color:#173a5e}
 .esapp-portal-app .space-topbar{display:none}

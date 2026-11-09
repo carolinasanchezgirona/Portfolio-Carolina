@@ -190,8 +190,8 @@ export default function EntreSesionesApp() {
 
   return <main className="esapp">
     <header className="esapp-top">
-      <div className="esapp-logo"><Image src="/entre-sesiones-icon-es.svg" alt="Entre Sesiones" width={48} height={48} priority /></div>
-      <div className="esapp-brand"><strong>Entre Sesiones</strong><span>Carolina Sánchez · Psicología y neuropsicología</span></div>
+      <div className="esapp-logo"><Image src="/icon.svg" alt="CS, Carolina Sánchez" width={48} height={48} priority /></div>
+      <div className="esapp-brand"><strong>Mi espacio</strong><span>Carolina Sánchez · Psicología y neuropsicología</span></div>
       <div className="esapp-head-actions">
         {status === "ready" && <button className="esapp-light" type="button" disabled={loggingOut} onClick={logout}>{loggingOut ? "Saliendo…" : "Cerrar sesión"}</button>}
         {!isStandalone && <button type="button" className="esapp-install" onClick={install}><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true" strokeLinecap="round" strokeLinejoin="round"><path d="M12 3v12m-4-4 4 4 4-4M5 17v3h14v-3"/></svg><span>Instalar</span></button>}
@@ -212,7 +212,7 @@ export default function EntreSesionesApp() {
         <div className="esapp-welcome-copy">
           <p className="esapp-overline">{status === "ready" && data?.patient?.first_name
             ? `TU ESPACIO · HOLA, ${data.patient.first_name}`
-            : "MI TERAPIA · ENTRE SESIONES"}</p>
+            : "MI TERAPIA · CAROLINA SÁNCHEZ"}</p>
           <h1 id="esapp-welcome-title">Tu trabajo<br />entre sesiones</h1>
           <p>Ejercicios, herramientas y materiales para aplicar en tu día a día, a tu ritmo.</p>
         </div>
@@ -337,13 +337,13 @@ export default function EntreSesionesApp() {
         </aside>
       </div>}
 
-      <nav className="esapp-home-bottom-nav" aria-label="Navegación de Entre Sesiones">
+      <nav className="esapp-home-bottom-nav" aria-label="Navegación de Mi espacio">
         <a href="/entre-sesiones/app/" aria-current="page"><span aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="m3 10 9-7 9 7v11h-6v-7H9v7H3z"/></svg></span>Inicio</a>
         <a href={workspace}><span aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><rect x="5" y="3" width="14" height="18" rx="1.5"/><path d="M8 8h8M8 12h8M8 16h6"/></svg></span>Mi terapia</a>
         <a href="/entre-sesiones/app/espacio/?vista=configuracion"><span aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21v-2a8 8 0 0 1 16 0v2"/></svg></span>Cuenta</a>
       </nav>
 
-      <footer className="esapp-footer"><p>Entre Sesiones es una herramienta complementaria a la atención profesional. No es un canal de urgencias.</p><a href="/admin/clinica/">Acceso profesional</a></footer>
+      <footer className="esapp-footer"><p>Mi espacio es una herramienta complementaria a la atención profesional. No es un canal de urgencias.</p><a href="/admin/clinica/">Acceso profesional</a></footer>
     </div>
   </main>;
 }

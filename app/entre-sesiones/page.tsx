@@ -3,7 +3,7 @@ import Script from "next/script";
 import "./entre-sesiones.css";
 
 export const metadata: Metadata = {
-  title: "Entre Sesiones",
+  title: "Mis materiales · Mi espacio",
   description: "Espacio privado para consultar el material terapéutico acordado en sesión.",
   robots: { index: false, follow: false, nocache: true },
 };
@@ -15,7 +15,7 @@ export default function EntreSesionesPage() {
         <div className="between-wrap">
           <a className="between-back" href="/mi-espacio/">← Mi espacio</a>
           <p className="between-eyebrow">Carolina Sánchez · Área privada</p>
-          <h1>Entre Sesiones</h1>
+          <h1>Mis materiales</h1>
           <p className="between-lead">
             Aquí encontrarás únicamente los ejercicios y materiales que hemos acordado trabajar.
             No necesitas completar todo lo que aparezca: sigue las indicaciones dadas en sesión.

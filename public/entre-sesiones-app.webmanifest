@@ -1,23 +1,23 @@
 {
   "id": "/entre-sesiones/app/",
-  "name": "Entre Sesiones · Carolina Sánchez",
-  "short_name": "Entre Sesiones",
-  "description": "App de materiales y seguimiento entre sesiones integrada con Mi espacio.",
+  "name": "Mi espacio · Carolina Sánchez",
+  "short_name": "Mi espacio",
+  "description": "Espacio privado de ejercicios y seguimiento terapéutico de Carolina Sánchez.",
   "lang": "es",
   "start_url": "/entre-sesiones/app/",
   "scope": "/entre-sesiones/app/",
   "display": "standalone",
   "background_color": "#FCFBF7",
-  "theme_color": "#173A5E",
+  "theme_color": "#708793",
   "icons": [
     {
-      "src": "/entre-sesiones-icon-es.svg",
+      "src": "/cs-app-icon.svg",
       "sizes": "any",
       "type": "image/svg+xml",
       "purpose": "any"
     },
     {
-      "src": "/entre-sesiones-icon-maskable.svg",
+      "src": "/cs-app-icon-maskable.svg",
       "sizes": "any",
       "type": "image/svg+xml",
       "purpose": "maskable"

@@ -1,4 +1,4 @@
-/* Entre Sesiones · interfaz de aplicación v0.4
+/* Mi espacio · interfaz de aplicación v0.4
    Todos los estilos se limitan a la app; nada de estilos globales de consulta. */
 .esapp{
   --es-ink:#173a5e;
@@ -193,7 +193,7 @@
 }
 
 
-/* Entre Sesiones · identidad aprobada, composición editorial azul hielo y coral.
+/* Mi espacio · identidad aprobada, composición editorial azul hielo y coral.
    Alcance exclusivo de /entre-sesiones/app/. */
 .esapp{--es-ink:#153858;--es-teal:#245c77;--es-coral:#f08072;--es-bg:#f5f9fb;--es-line:#dce9ef;--es-muted:#536b7d;background:linear-gradient(155deg,#fbfdfd,#eff8fc 48%,#fffaf6)}
 .esapp .esapp-top{background:rgba(255,255,255,.97);border-bottom-color:#e0e9ed;box-shadow:0 8px 28px rgba(13,49,78,.04)}
@@ -321,7 +321,7 @@
 @media(max-width:390px){.esapp .esapp-home-bottom-nav a{font-size:.61rem}}
 
 
-/* Entre Sesiones · plan semanal de materiales reales + preparación voluntaria */
+/* Mi espacio · plan semanal de materiales reales + preparación voluntaria */
 .esapp .esapp-weekly-plan{margin-top:20px;padding:clamp(19px,3.2vw,32px);border:1px solid #dcebf0;border-radius:26px;background:#fff;box-shadow:0 10px 34px rgba(19,53,84,.045)}
 .esapp .esapp-weekly-head{display:flex;justify-content:space-between;align-items:flex-start;gap:18px;margin-bottom:22px}
 .esapp .esapp-weekly-head h2{color:#173a5e;font-size:clamp(27px,3.5vw,41px);line-height:1.08;margin:0 0 9px;letter-spacing:-.055em}
