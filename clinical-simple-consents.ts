@@ -6,7 +6,7 @@
  * No se devuelven URLs de Storage ni datos de otros pacientes.
  */
 import { jsPDF } from "jspdf";
-import { buildClinicalConsentPdf, CONSENT_VERSION, type ConsentKind } from "./clinical-consent-pdf";
+import { buildClinicalConsentPdf, CONSENT_VERSION, type ConsentKind } from "./clinical-consent-pdf.ts";
 
 type Env={SUPABASE_SERVICE_ROLE_KEY?:string;BREVO_API_KEY?:string};
 type PatientSession={patient_id:string;id:string;fresh_password:boolean};
