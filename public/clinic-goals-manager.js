@@ -59,7 +59,7 @@
         <button id="clinic-goal-share-close" type="button" class="clinic-close" aria-label="Cerrar">×</button>
       </div>
       <p class="clinic-note">Solo se compartirá el título y la explicación que escribas aquí. Nunca se enviarán notas clínicas, formulación ni diagnóstico. Puedes retirar el acceso posteriormente.</p>
-      <label>Título para el paciente<input id="clinic-goal-share-title" type="text" maxlength="220" required></label>
+      <label>Título para el paciente<input id="clinic-goal-share-title" type="text" maxlength="220" placeholder="Redacta un título específico para compartir" required></label>
       <label>Explicación para el paciente<textarea id="clinic-goal-share-description" rows="4" maxlength="2000" placeholder="Qué vamos a trabajar y con qué finalidad, en lenguaje comprensible."></textarea></label>
       <p class="clinic-message" id="clinic-goal-share-message" role="status"></p>
       <div class="clinic-dialog-actions">
@@ -246,7 +246,7 @@
     if (!publishingAvailable || !loadedPatientId || loadedPatientId !== patientIdField.value) return;
     const previous = publications.get(row.id);
     selectedGoalId = row.id;
-    shareTitle.value = previous?.display_title || row.title || "";
+    shareTitle.value = previous?.display_title || "";
     shareDescription.value = previous?.description || "";
     shareMessage.textContent = "";
     shareDialog.showModal();
