@@ -2,6 +2,7 @@ import Script from "next/script";
 import type { Metadata } from "next";
 import "./admin.css";
 import "./month-view.css";
+import "./waitlist.css";
 import AdminWorkspaceNav from "../workspace-nav";
 
 export const metadata: Metadata = {

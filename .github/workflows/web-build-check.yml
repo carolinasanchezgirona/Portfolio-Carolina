@@ -113,10 +113,11 @@ jobs:
         run: |
           node --check public/admin-agenda-view-switcher.js
           node --check public/admin-month-view.js
+          node --check public/admin-waitlist.js
           node --check public/admin-notifications.js
           node --check public/sw.js
           node --check scripts/ensure-vapid.mjs
-          node --test tests/admin-agenda-notifications.test.mjs tests/admin-month-stability.test.mjs tests/admin-webpush.test.mjs
+          node --test tests/admin-agenda-notifications.test.mjs tests/admin-month-stability.test.mjs tests/admin-agenda-safety-ui.test.mjs tests/admin-webpush.test.mjs
 
       - name: Verificar facturación privada y generación de facturas
         run: |
