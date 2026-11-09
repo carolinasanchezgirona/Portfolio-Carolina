@@ -136,9 +136,9 @@ def run():
             page.get_by_role("button", name="Preparar documento de consolidación").click()
             expect(page.locator("#clinic-report-dialog")).to_have_attribute("open", "")
             expect(page.locator("#clinic-report-type")).to_have_value("clinical_summary")
-            expect(page.locator("#clinic-report-evolution")).to_contain_text(
+            expect(page.locator("#clinic-report-evolution")).to_have_value(
                 "Perspectiva sintética revisada")
-            expect(page.locator("#clinic-report-current")).to_contain_text(
+            expect(page.locator("#clinic-report-current")).to_have_value(
                 "Plan de mantenimiento ficticio")
             expect(page.locator("#clinic-report-purpose")).to_have_value(
                 "Resumen asistencial de revisión, consolidación y continuidad")
