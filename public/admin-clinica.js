@@ -1837,7 +1837,7 @@
     };
     stat("Próxima consulta",upcoming?date(upcoming.starts_at)+" · "+timeFormat.format(new Date(upcoming.starts_at)):"No programada",upcoming?"Abrir sesión":"Ver agenda",()=>upcoming?openSession(patient,upcoming):navigate("sesiones"));
     stat("Última sesión",last?date(last.session_date):"Sin registro","Consultar",()=>navigate("sesiones"));
-    stat("Objetivos activos",String(goals.filter(g=>g.status!=="completed"&&g.status!=="archived").length),"Ver tratamiento",()=>navigate("tratamiento"));
+    stat("Objetivos activos",String(goals.length),"Ver tratamiento",()=>navigate("tratamiento"));
     stat("Ejercicios pendientes",String(pendingExercises.length),"Revisar",()=>navigate("tratamiento"));
     stat("Informes borrador",String(openReports.length),"Ver informes",()=>navigate("documentos"));
     wrapper.append(stats);
@@ -1898,6 +1898,16 @@
         holder.append(details);
       }
     };
+    // The clinician sees active goal titles here; patient sharing is always a separate action.
+    if (goals.length) {
+      const goalsPanel = panel("Objetivos clínicos activos");
+      goals.slice(0, 5).forEach(goal => detail(
+        goalsPanel,
+        goal.status === "review" ? "Pendiente de revisión" : "En trabajo",
+        goal.title,
+      ));
+      goalsPanel.append(action("Revisar y compartir objetivos", () => navigate("tratamiento")));
+    }
     const focusPanel=panel("Foco clínico documentado");
     preview(focusPanel,focus);
     detail(focusPanel,"Origen",patient.next_session_focus?"Ficha clínica":last?.next_session_note?"Última sesión aprobada":"Sin registrar");
