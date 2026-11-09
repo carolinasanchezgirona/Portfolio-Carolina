@@ -352,7 +352,7 @@ export default function AdminClinicaPage() {
               </select>
               <div className="clinic-electronic-signature-actions">
                 <button id="clinic-signature-prepare" className="clinic-secondary" type="button">Preparar PDF individualizado</button>
-                <a href="https://www.signaturit.com/es/" target="_blank" rel="noopener noreferrer">Acceder a proveedor de firma electrónica</a>
+                <a href="https://firmaelectronica.gob.es/descargas" target="_blank" rel="noopener noreferrer">AutoFirma oficial · firma con certificado</a>
               </div>
               <p id="clinic-signature-message" className="clinic-message" role="status" aria-live="polite" />
 
@@ -376,7 +376,7 @@ export default function AdminClinicaPage() {
                   <li>Después de recibir la firma, descarga el <strong>PDF firmado y el certificado de evidencias o audit trail</strong>. Comprueba que corresponden al mismo documento y paciente.</li>
                   <li>Archiva ambos archivos por separado en esta ficha, dentro de «Documentos y archivos compartidos», categoría «Consentimiento» y <strong>sin activar «Publicar en Mi espacio»</strong>.</li>
                 </ol>
-                <p className="clinic-note">Antes de usar un prestador con pacientes reales, formaliza el correspondiente contrato de encargado del tratamiento y verifica medidas de seguridad, conservación y subencargados. La generación del PDF no es una firma ni modifica el estado del consentimiento.</p>
+                <p className="clinic-note">Alternativa con certificado digital: el paciente firma el PDF descargado mediante AutoFirma. Antes de archivarlo, comprueba la identidad, la validez de la firma y la integridad del documento. Herramienta pública: <a href="https://valide.redsara.es/valide/" target="_blank" rel="noopener noreferrer">VALIDe</a>. No envíes documentación sanitaria a verificadores externos sin valorar antes sus garantías de privacidad. La mera generación del PDF no equivale a una firma.</p>
               </div>
               <button id="clinic-signature-archive" className="clinic-secondary" type="button">Archivar documento firmado o certificado probatorio</button>
             </div>
