@@ -12,7 +12,7 @@ export const metadata: Metadata = {
   appleWebApp: { capable: true, statusBarStyle: "default", title: "Mi espacio" },
 };
 
-export const viewport: Viewport = { themeColor: "#708793", width: "device-width", initialScale: 1 };
+export const viewport: Viewport = { themeColor: "#F2EFE7", width: "device-width", initialScale: 1 };
 
 const base = "/entre-sesiones/app/espacio/?vista=";
 

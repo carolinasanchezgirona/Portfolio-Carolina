@@ -59,3 +59,44 @@
 .esapp-portal-app .esapp-bottom-nav a>span svg{display:block;width:23px;height:23px}
 .esapp-portal-app .esapp-bottom-nav a:not([aria-current="page"]) .esapp-nav-heart{opacity:.65}
 .esapp-portal-app .esapp-bottom-nav a[aria-current="page"] .esapp-nav-heart{color:#173a5e}
+
+
+/* Portal instalado: extensión exacta de la estética CS del sitio público. */
+.esapp.esapp-portal-app{
+  --space-ink:#304750;--space-muted:#617680;
+  --space-accent:#708793;--space-accent-soft:#EDEDED;
+  background:linear-gradient(160deg,#F2EFE7,#EDEDED);
+}
+.esapp-portal-app .esapp-portal-identity{
+  background:#FFFFFF;border-bottom:1px solid rgba(48,71,80,.15);
+}
+.esapp-portal-app .esapp-portal-home{color:#304750;
+  font-family:var(--font-newsreader),Georgia,serif}
+.esapp-portal-app .esapp-portal-subtitle{color:#617680}
+.esapp-portal-app .space-page{background:transparent;color:#304750}
+.esapp-portal-app .space-sidebar{
+  background:rgba(255,255,255,.90);border-right-color:rgba(48,71,80,.16);
+}
+.esapp-portal-app .space-nav button.is-active,
+.esapp-portal-app .space-primary{background:#304750;border-color:#304750;color:#FFFFFF}
+.esapp-portal-app .space-nav button:hover{background:#EDEDED;color:#304750}
+.esapp-portal-app .space-nav button.is-active:hover{background:#304750;color:#FFFFFF}
+.esapp-portal-app .space-page .space-access-card{
+  background:#FFFFFF;border-color:rgba(48,71,80,.16);
+  box-shadow:0 16px 40px rgba(48,71,80,.05);
+}
+.esapp-portal-app .esapp-bottom-nav{
+  background:rgba(255,255,255,.97);
+  border-top-color:rgba(48,71,80,.16);
+  box-shadow:0 -6px 20px rgba(48,71,80,.04);
+}
+.esapp-portal-app .esapp-bottom-nav a{color:#617680}
+.esapp-portal-app .esapp-bottom-nav a[aria-current="page"]{
+  background:#EDEDED;color:#304750;
+}
+.esapp-portal-app .esapp-bottom-nav a[aria-current="page"] .esapp-nav-heart{
+  color:#304750;
+}
+.esapp-portal-app :is(a,button,input,textarea):focus-visible{
+  outline-color:#708793;
+}

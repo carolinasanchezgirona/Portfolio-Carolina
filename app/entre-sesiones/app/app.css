@@ -375,3 +375,97 @@
 .esapp .esapp-home-bottom-nav a>span{display:grid;place-items:center;width:26px;height:26px;line-height:1}
 .esapp .esapp-home-bottom-nav a>span svg{display:block;width:23px;height:23px}
 .esapp .esapp-home-bottom-nav a:not([aria-current="page"]) .esapp-nav-heart{opacity:.65}
+
+
+/* Identidad clínica CS: mismos colores y jerarquía visual que la web pública.
+   Sin cambios de estructura, estado ni funcionalidad de las pantallas. */
+.esapp{
+  --es-ink:#304750;--es-teal:#708793;--es-coral:#809DA8;
+  --es-bg:#F2EFE7;--es-line:rgba(48,71,80,.15);
+  --es-muted:#617680;--es-white:#FFFFFF;
+  background:linear-gradient(155deg,#F2EFE7 0%,#EDEDED 100%);
+  color:#304750;
+  font-family:var(--font-inter),Inter,system-ui,sans-serif;
+}
+.esapp :is(h1,h2,h3),.esapp .esapp-brand strong,.esapp .esapp-stats strong,
+.esapp .esapp-feature-copy strong,.esapp .esapp-weekly-care>strong{
+  font-family:var(--font-newsreader),Georgia,serif;color:#304750;
+}
+.esapp :is(a,button,input,textarea,select):focus-visible{outline:3px solid #708793;outline-offset:3px}
+.esapp .esapp-top{background:#FFFFFF;border-bottom-color:rgba(48,71,80,.15);box-shadow:none}
+.esapp .esapp-brand span,.esapp .esapp-overline,.esapp .esapp-weekly-category{color:#708793}
+.esapp :is(.esapp-install,.esapp-light,.esapp-quiet-action){
+  background:#EDEDED;border-color:rgba(48,71,80,.16);color:#304750;
+}
+.esapp :is(.esapp-primary,.esapp-feature-link,.esapp-quicknav a.is-current,.esapp .esapp-primary){
+  background:#304750;border-color:#304750;color:#FFFFFF!important;
+}
+.esapp :is(.esapp-primary,.esapp-feature-link):hover{background:#617680;border-color:#617680;color:#FFFFFF!important}
+.esapp .esapp-quicknav a{background:#FFFFFF;border-color:rgba(48,71,80,.15);color:#304750;box-shadow:none}
+.esapp .esapp-quicknav a:hover{border-color:#809DA8}
+.esapp .esapp-welcome{
+  background:linear-gradient(125deg,#F2EFE7 0%,#EDEDED 78%,#FFFFFF 100%);
+  border-color:rgba(48,71,80,.16);box-shadow:0 12px 32px rgba(48,71,80,.055);
+}
+.esapp .esapp-welcome::before{background:rgba(255,255,255,.35)}
+.esapp .esapp-welcome::after{background:rgba(128,157,168,.16)}
+.esapp .esapp-welcome-copy>p:last-child,
+.esapp .esapp-weekly-head p:not(.esapp-overline),.esapp .esapp-feature-copy>span,
+.esapp .esapp-smallcard p,.esapp .esapp-note p:not(.esapp-overline),
+.esapp .esapp-material p,.esapp .esapp-material small,
+.esapp .esapp-weekly-task-copy small,.esapp .esapp-weekly-prepare small,
+.esapp .esapp-weekly-empty,.esapp .esapp-footer,.esapp .esapp-stats small{color:#617680}
+.esapp :is(.esapp-access,.esapp-panel,.esapp-smallcard,.esapp-weekly-plan,.esapp-stats>div){
+  background:#FFFFFF;border-color:rgba(48,71,80,.15);box-shadow:0 8px 24px rgba(48,71,80,.035);
+}
+.esapp .esapp-access-icon,.esapp .esapp-material-icon,.esapp .esapp-weekly-task-mark,
+.esapp .esapp-weekly-care-glyph{background:#EDEDED;color:#304750}
+.esapp :is(.esapp-note,.esapp-hint,.esapp-weekly-tasks){
+  background:#F2EFE7;border-color:rgba(48,71,80,.15);color:#304750;
+}
+.esapp :is(.esapp-note a,.esapp-inline-link,.esapp-quiet-action,.esapp-reviewed-row span,
+.esapp-weekly-arrow,.esapp-weekly-text-link){color:#304750}
+.esapp .esapp-feature{
+  background:linear-gradient(110deg,#EDEDED,#F2EFE7);
+  border-color:rgba(48,71,80,.15);box-shadow:none;
+}
+.esapp .esapp-feature::after{background:rgba(128,157,168,.20)}
+.esapp .esapp-feature-copy .esapp-overline{color:#708793}
+.esapp .esapp-feature-link span{background:#809DA8;color:#304750}
+.esapp .esapp-weekly-count,.esapp .esapp-sectionhead>span,
+.esapp .esapp-status,.esapp .esapp-status.shared,.esapp .esapp-status.draft{
+  background:#EDEDED;color:#304750;border:1px solid rgba(48,71,80,.12);
+}
+.esapp .esapp-weekly-task{
+  background:#FFFFFF;color:#304750;border-color:rgba(48,71,80,.14);
+}
+.esapp .esapp-weekly-task:hover{background:#F2EFE7;border-color:#809DA8}
+.esapp .esapp-weekly-care{
+  background:linear-gradient(140deg,#EDEDED,#F2EFE7);
+  border-color:rgba(48,71,80,.15);color:#304750;
+}
+.esapp .esapp-weekly-care .esapp-weekly-category,
+.esapp .esapp-weekly-care>small,.esapp .esapp-weekly-care>span:not(.esapp-weekly-category):not(.esapp-weekly-care-glyph){color:#617680}
+.esapp .esapp-weekly-prepare{
+  background:linear-gradient(120deg,#F2EFE7,#EDEDED);
+  border-color:rgba(48,71,80,.15);color:#304750;
+}
+.esapp .esapp-weekly-prepare-symbol{background:#FFFFFF;color:#708793}
+.esapp .esapp-home-bottom-nav{
+  background:#FFFFFF;border-top-color:rgba(48,71,80,.16);box-shadow:0 -4px 18px rgba(48,71,80,.04);
+}
+.esapp .esapp-home-bottom-nav a{color:#617680}
+.esapp .esapp-home-bottom-nav a[aria-current="page"]{
+  color:#304750;background:#EDEDED;
+}
+.esapp .esapp-wellness-entry{
+  background:linear-gradient(120deg,#F2EFE7,#EDEDED);
+  border-color:rgba(48,71,80,.15);box-shadow:none;
+}
+.esapp .esapp-wellness-entry :is(.esapp-wellness-entry-symbol,.esapp-wellness-entry-link){
+  background:#EDEDED;color:#304750;border-color:rgba(48,71,80,.15);
+}
+.esapp .esapp-connectivity{background:#F2EFE7;border-color:#A0A0A0;color:#304750}
+.esapp .esapp-connectivity strong{color:#304750}
+/* La señalización de error sí conserva su contraste de seguridad. */
+.esapp .esapp-connectivity-error{background:#fff0ee;border-color:#b85a51;color:#853f3b}

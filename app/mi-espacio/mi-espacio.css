@@ -1307,3 +1307,123 @@
   .wellness-experience .wellness-evolution-full .mood-history{padding:16px;border-radius:18px}
   .wellness-experience .wellness-primary-grid .mood-friend-panel{min-height:230px}
 }
+
+
+/* Sistema CS, sincronizado con los tokens de carolinasanchezgirona.com.
+   El cambio es visual: conserva clases, estados, respuestas y accesibilidad. */
+.space-page{
+  --space-ink:#304750;
+  --space-muted:#617680;
+  --space-line:rgba(48,71,80,.15);
+  --space-bg:#F2EFE7;
+  --space-card:#FFFFFF;
+  --space-accent:#708793;
+  --space-accent-soft:#EDEDED;
+  --space-coral:#809DA8;
+  color:#304750;
+  background:linear-gradient(160deg,#F2EFE7 0%,#EDEDED 100%);
+  font-family:var(--font-inter),Inter,system-ui,sans-serif;
+}
+.space-page :is(h1,h2,h3,h4),.space-page .space-brand-name,
+.space-page .wellness-section-title h3,.space-page .mood-tracker-heading h3{
+  color:#304750;font-family:var(--font-newsreader),Georgia,serif;
+}
+.space-page :is(.space-eyebrow,.space-kicker,.space-card-type,
+.wellness-card-type,.wellness-section-title .space-eyebrow){color:#708793}
+.space-page :is(.space-sidebar-copy,.space-hero>p:last-child,.space-card p,
+.space-routines span,.space-small,.space-history-item span,.space-summary span,
+.space-wellness-list p,.space-safety,.space-session-prep-head>p){color:#617680}
+.space-page :is(.space-topbar,.space-sidebar){
+  background:rgba(255,255,255,.92);border-color:rgba(48,71,80,.15);
+}
+.space-page .space-nav button{color:#304750}
+.space-page .space-nav button:hover{background:#EDEDED}
+.space-page :is(.space-nav button.is-active,.space-filter-row button.is-active,
+.space-primary,.space-material-download-button,.space-print-patient-material){
+  background:#304750;color:#FFFFFF;border-color:#304750;
+}
+.space-page .space-primary:hover{background:#617680;border-color:#617680;color:#FFFFFF}
+.space-page :is(.space-secondary,.space-filter-row button,
+.space-reading-preferences button,.space-needs button){
+  background:#FFFFFF;color:#304750;border-color:rgba(48,71,80,.20);
+}
+.space-page :is(.space-secondary,.space-filter-row button,.space-needs button):hover{
+  border-color:#809DA8;background:#F2EFE7;
+}
+.space-page :is(.space-card,.space-summary article,.space-routines button,
+.space-history-item,.space-empty,.space-access-card,.space-sidebar-note,
+.wellness-card,.space-patient-material,.space-patient-response,
+.space-patient-shared-file,.space-learning-card,.space-guided-record,
+.space-session-prep-form,.space-session-prep-transfer,.space-quick-start){
+  background:#FFFFFF;border-color:rgba(48,71,80,.15);
+  box-shadow:0 8px 28px rgba(48,71,80,.035);
+}
+.space-page :is(.space-card-therapy,.space-info-note,.space-context,
+.space-moment-shortcut,.space-card-active,.space-needs button>span,
+.space-pill,.space-guided-field){
+  background:#EDEDED;border-color:rgba(48,71,80,.16);color:#304750;
+}
+.space-page .space-card-therapy{background:linear-gradient(120deg,#F2EFE7,#FFFFFF)}
+.space-page .space-info-note{border-left:4px solid #809DA8}
+.space-page .space-needs button>span{color:#304750}
+.space-page :is(.space-filter-row button,.space-routines button,.space-needs button,
+.space-patient-material):focus-visible{outline:3px solid #708793;outline-offset:3px}
+.space-page :is(input,textarea,select):focus-visible{outline:2px solid #708793;outline-offset:2px}
+.space-page .space-access-form input{border-color:rgba(48,71,80,.23);background:#FFFFFF;color:#304750}
+.space-page .space-access-form input:focus{border-color:#708793}
+.space-page .space-topbar-dot{background:#809DA8}
+.space-page .space-history-item time{color:#617680}
+/* Componentes y tarjetas de autoconocimiento: marfil, perla y azul niebla,
+   manteniendo legibles textos, indicadores y contenidos de cada actividad. */
+.space-page .wellness-experience{
+  --space-accent:#708793;
+  --space-ink:#304750;
+  --space-accent-soft:#EDEDED;
+  background:transparent;color:#304750;
+}
+.space-page .wellness-experience :is(.wellness-hero,.wellness-need-section,
+.wellness-moment-section,.wellness-routine-grid,.wellness-evolution-full,
+.wellness-journey-disclosure,.wellness-moment-shortcut){
+  border-color:rgba(48,71,80,.15);
+}
+.space-page .wellness-experience :is(.wellness-hero,.wellness-need-section,
+.wellness-moment-section,.wellness-journey-disclosure){
+  background:linear-gradient(130deg,#F2EFE7,#FFFFFF);
+  box-shadow:0 10px 32px rgba(48,71,80,.04);
+}
+.space-page .wellness-experience .wellness-needs-editorial button{
+  border-color:rgba(48,71,80,.16);
+  background:#FFFFFF;color:#304750;
+  box-shadow:0 7px 22px rgba(48,71,80,.05);
+}
+.space-page .wellness-experience .wellness-needs-editorial button:nth-child(even){
+  background:#F2EFE7;
+}
+.space-page .wellness-experience .wellness-needs-editorial button:hover{
+  border-color:#809DA8;box-shadow:0 10px 24px rgba(48,71,80,.09);
+}
+.space-page .wellness-experience .wellness-needs-editorial :is(.wellness-need-copy strong,
+.wellness-need-copy small){color:#304750}
+.space-page .wellness-experience .wellness-need-copy small{color:#617680}
+.space-page .wellness-experience :is(.wellness-subnav,.wellness-filters,
+.wellness-section-title){border-color:rgba(48,71,80,.15)}
+.space-page .wellness-experience :is(.wellness-subnav a,.wellness-filters button){
+  color:#304750;border-color:rgba(48,71,80,.16);
+}
+.space-page .wellness-experience :is(.wellness-subnav a.is-active,
+.wellness-filters button.is-active){background:#304750;color:#FFFFFF;border-color:#304750}
+.space-page .wellness-experience :is(.wi-card,.wellness-card,.space-learning-card,
+.wellness-routine-grid>*){
+  background:#FFFFFF;border-color:rgba(48,71,80,.16);color:#304750;
+}
+.space-page .wellness-experience :is(.wi-button,.wellness-fav-mini){color:#304750}
+.space-page .wellness-experience .wellness-evolution-full .mood-history{
+  background:#FFFFFF;border-color:rgba(48,71,80,.16);
+  box-shadow:0 10px 28px rgba(48,71,80,.04);
+}
+/* El registro emocional conserva codificaciones de estado diferenciables. */
+.space-page .mood-tracker{--mood-ink:#304750;background:#FFFFFF;
+  border-color:rgba(48,71,80,.16);box-shadow:0 10px 30px rgba(48,71,80,.04)}
+.space-page .mood-tracker-heading h3{color:#304750}
+.space-page .mood-tracker-private{background:#EDEDED;color:#304750}
+.space-page .mood-friend-panel{border-color:rgba(48,71,80,.16)}

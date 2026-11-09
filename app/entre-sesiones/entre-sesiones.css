@@ -72,3 +72,23 @@
   .between-exercise-content{border:0;padding:0}
   .between-exercise-actions{display:none}
 }
+
+/* Página histórica de materiales: coherencia con Mi espacio y la web CS. */
+.between-page{
+  --between-ink:#304750;--between-muted:#617680;
+  --between-line:rgba(48,71,80,.15);
+  --between-bg:#F2EFE7;--between-card:#FFFFFF;
+  --between-accent:#708793;--between-soft:#EDEDED;
+  background:linear-gradient(160deg,#F2EFE7,#EDEDED);color:#304750;
+}
+.between-page :is(.between-hero h1,.between-state-card h2,.between-portal-head h2){
+  font-family:var(--font-newsreader),Georgia,serif;color:#304750;
+}
+.between-page :is(.between-state-card,.between-portal-head,.between-exercise){
+  background:#FFFFFF;border-color:rgba(48,71,80,.15);
+  box-shadow:0 10px 25px rgba(48,71,80,.04);
+}
+.between-page :is(.between-note,.between-access-chip){background:#EDEDED;color:#304750}
+.between-page .between-note{border-left-color:#809DA8}
+.between-page :is(.between-eyebrow,.between-kicker){color:#708793}
+.between-page .between-error{background:#fff0ee;border-color:#b85a51}

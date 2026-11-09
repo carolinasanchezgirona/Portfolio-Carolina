@@ -7,8 +7,8 @@
   "start_url": "/entre-sesiones/app/",
   "scope": "/entre-sesiones/app/",
   "display": "standalone",
-  "background_color": "#FCFBF7",
-  "theme_color": "#708793",
+  "background_color": "#F2EFE7",
+  "theme_color": "#F2EFE7",
   "icons": [
     {
       "src": "/cs-app-icon.svg",

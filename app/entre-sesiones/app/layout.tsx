@@ -1,17 +1,11 @@
-import { DM_Sans, Fraunces } from "next/font/google";
+import type { CSSProperties } from "react";
 
-const interfaz = DM_Sans({
-  subsets: ["latin"],
-  display: "swap",
-  variable: "--esapp-font-interfaz",
-});
+/* La app usa las fuentes de la web pública, ya cargadas por el layout raíz. */
+const typography = {
+  "--esapp-font-interfaz": "var(--font-inter)",
+  "--esapp-font-editorial": "var(--font-newsreader)",
+} as CSSProperties;
 
-const editorial = Fraunces({
-  subsets: ["latin"],
-  display: "swap",
-  variable: "--esapp-font-editorial",
-});
-
-export default function EntreSesionesLayout({children}: Readonly<{children: React.ReactNode}>) {
-  return <div className={`${interfaz.variable} ${editorial.variable}`}>{children}</div>;
+export default function MiEspacioLayout({children}: Readonly<{children: React.ReactNode}>) {
+  return <div style={typography}>{children}</div>;
 }
