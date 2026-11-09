@@ -340,6 +340,35 @@ export default function AdminClinicaPage() {
             </div>
           </details>
 
+          <details id="clinic-electronic-signature" className="clinic-record-section clinic-electronic-signature">
+            <summary><span>Firma electrónica y archivo digital</span><small>Preparar consentimiento individualizado · Custodia sin papel</small></summary>
+            <div className="clinic-record-section-body">
+              <p>El consentimiento debe ser informado, específico y libre. Prepara el PDF con los datos de esta ficha y tramita la firma con un proveedor de confianza, previa verificación de identidad y representación cuando proceda.</p>
+              <label htmlFor="clinic-signature-kind">Documento para firma electrónica</label>
+              <select id="clinic-signature-kind" defaultValue="psicologico">
+                <option value="psicologico">Consentimiento para atención psicológica</option>
+                <option value="neuro_evaluacion">Consentimiento para evaluación neuropsicológica</option>
+                <option value="neuro_intervencion">Consentimiento para intervención neuropsicológica</option>
+              </select>
+              <div className="clinic-electronic-signature-actions">
+                <button id="clinic-signature-prepare" className="clinic-secondary" type="button">Preparar PDF individualizado</button>
+                <a href="https://www.signaturit.com/es/" target="_blank" rel="noopener noreferrer">Acceder a proveedor de firma electrónica</a>
+              </div>
+              <p id="clinic-signature-message" className="clinic-message" role="status" aria-live="polite" />
+              <div className="clinic-electronic-signature-steps">
+                <h4>Procedimiento sin papel</h4>
+                <ol>
+                  <li>Revisa con el paciente la finalidad, riesgos y alternativas, y verifica su capacidad para consentir o la representación acreditada.</li>
+                  <li>Descarga el PDF individualizado. Comprueba su contenido y envíalo <strong>manualmente</strong> desde un prestador que ofrezca firma avanzada con verificación adecuada, sellado temporal y documento probatorio.</li>
+                  <li>Después de recibir la firma, descarga el <strong>PDF firmado y el certificado de evidencias o audit trail</strong>. Comprueba que corresponden al mismo documento y paciente.</li>
+                  <li>Archiva ambos archivos por separado en esta ficha, dentro de «Documentos y archivos compartidos», categoría «Consentimiento» y <strong>sin activar «Publicar en Mi espacio»</strong>.</li>
+                </ol>
+                <p className="clinic-note">Antes de usar un prestador con pacientes reales, formaliza el correspondiente contrato de encargado del tratamiento y verifica medidas de seguridad, conservación y subencargados. La generación del PDF no es una firma ni modifica el estado del consentimiento.</p>
+              </div>
+              <button id="clinic-signature-archive" className="clinic-secondary" type="button">Archivar documento firmado o certificado probatorio</button>
+            </div>
+          </details>
+
           <section id="clinic-section-materials" className="clinic-exercises-section">
             <div className="clinic-goals-heading"><div><p className="clinic-eyebrow">Continuidad terapéutica</p><h3>Material entre sesiones</h3></div><button id="clinic-new-exercise" className="clinic-secondary" type="button">Asignar material</button></div>
             <div id="clinic-exercise-suggestions" className="clinic-exercise-suggestions" />
