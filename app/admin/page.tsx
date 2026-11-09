@@ -97,20 +97,7 @@ export default function AdminHomePage() {
                 <p id="admin-home-date" className="admin-hub-date">Cargando fecha…</p>
               </div>
             </div>
-            <nav className="admin-home-priorities admin-home-daily" aria-label="Acciones de consulta">
-              <a className="admin-home-priority" href="/admin/agenda/">
-                <AdminIcon name="calendar" /><strong>Próxima cita</strong>
-                <span id="admin-home-next-appointment">Consultando la agenda…</span>
-              </a>
-              <a className="admin-home-priority" href="/admin/clinica/?panel=1&amp;view=patients">
-                <AdminIcon name="patients" /><strong>Buscar un paciente</strong>
-                <span>Abrir el buscador de fichas clínicas</span>
-              </a>
-              <a className="admin-home-priority" href="/admin/mensajes/">
-                <AdminIcon name="questions" /><strong>Mensajes de pacientes</strong>
-                <span id="admin-home-messages">Consultando la bandeja…</span>
-              </a>
-            </nav>
+            <p id="admin-home-status" className="admin-home-status" role="status" aria-live="polite" />
             <div className="admin-home-panel admin-hub-appointments">
               <div className="admin-home-panel-heading">
                 <h2 id="admin-hub-appointments-title">Citas de hoy</h2>
@@ -122,7 +109,7 @@ export default function AdminHomePage() {
         </div>
       </section>
       <Script src="/clinic-pwa.js?v=20261020-android-native-1" strategy="afterInteractive" />
-      <Script src="/admin-dashboard.js?v=20261109-only-daily-1" strategy="afterInteractive" />
+      <Script src="/admin-dashboard.js?v=20261109-today-only-2" strategy="afterInteractive" />
     </main>
   );
 }
