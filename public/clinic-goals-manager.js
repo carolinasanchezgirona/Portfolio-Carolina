@@ -36,8 +36,8 @@
       </div>
       <label>Título del objetivo<input id="clinic-goal-title" type="text" maxlength="220" required placeholder="Ej. Reducir evitación en situaciones sociales"></label>
       <div class="clinic-form-grid">
-        <label>Prioridad<select id="clinic-goal-priority"><option value="high">Alta</option><option value="normal" selected>Normal</option><option value="low">Baja</option></select></label>
-        <label>Estado<select id="clinic-goal-status"><option value="active">Activo</option><option value="review">En revisión</option><option value="paused">Pausado</option><option value="completed">Conseguido / cerrado</option></select></label>
+        <label>Prioridad<select id="clinic-goal-priority"><option value="current" selected>Actual</option><option value="secondary">Secundaria</option><option value="observation">En observación</option></select></label>
+        <label>Estado<select id="clinic-goal-status"><option value="active">Activo</option><option value="review">En revisión</option><option value="paused">Pausado</option><option value="achieved">Conseguido</option><option value="closed">Cerrado</option></select></label>
       </div>
       <p class="clinic-note">Los objetivos son una guía de trabajo y pueden revisarse o reformularse. El cambio de estado queda fechado automáticamente.</p>
       <p id="clinic-goal-message" class="clinic-message" role="status"></p>
@@ -47,6 +47,27 @@
       </div>
     </form>`;
   document.body.append(dialog);
+
+  // Sharing is opt-in and uses a distinct patient-facing copy of each goal.
+  const shareDialog = document.createElement("dialog");
+  shareDialog.id = "clinic-goal-share-dialog";
+  shareDialog.className = "clinic-dialog clinic-small-dialog";
+  shareDialog.innerHTML = `
+    <form id="clinic-goal-share-form" class="clinic-dialog-content">
+      <div class="clinic-dialog-heading">
+        <div><p class="clinic-eyebrow">Entre Sesiones</p><h2>Compartir objetivo con el paciente</h2></div>
+        <button id="clinic-goal-share-close" type="button" class="clinic-close" aria-label="Cerrar">×</button>
+      </div>
+      <p class="clinic-note">Solo se compartirá el título y la explicación que escribas aquí. Nunca se enviarán notas clínicas, formulación ni diagnóstico. Puedes retirar el acceso posteriormente.</p>
+      <label>Título para el paciente<input id="clinic-goal-share-title" type="text" maxlength="220" placeholder="Redacta un título específico para compartir" required></label>
+      <label>Explicación para el paciente<textarea id="clinic-goal-share-description" rows="4" maxlength="2000" placeholder="Qué vamos a trabajar y con qué finalidad, en lenguaje comprensible."></textarea></label>
+      <p class="clinic-message" id="clinic-goal-share-message" role="status"></p>
+      <div class="clinic-dialog-actions">
+        <button id="clinic-goal-share-cancel" class="clinic-secondary" type="button">Cancelar</button>
+        <button class="clinic-primary" type="submit">Publicar en Entre Sesiones</button>
+      </div>
+    </form>`;
+  document.body.append(shareDialog);
 
   const style = document.createElement("style");
   style.textContent = `
@@ -64,6 +85,11 @@
     .clinic-goal-empty{padding:18px;border:1px dashed var(--admin-line);border-radius:11px;color:var(--admin-muted);text-align:center;font-size:.82rem}
     @media(max-width:620px){.clinic-goals-manager-heading{align-items:stretch;flex-direction:column}.clinic-goals-manager-heading button{width:100%}.clinic-goal-row{grid-template-columns:1fr}.clinic-goal-actions{justify-content:flex-start}.clinic-goal-actions button{flex:1}}
   `;
+  style.textContent += `
+    .clinic-goal-publication{font-size:.7rem;color:var(--admin-muted);margin-top:6px}
+    .clinic-goal-actions .clinic-goal-share{border-color:var(--admin-line)}
+    #clinic-goal-share-description{min-height:95px}
+  `;
   document.head.append(style);
 
   const list = section.querySelector("#clinic-goals-manager-list");
@@ -77,9 +103,17 @@
   const goalMessage = dialog.querySelector("#clinic-goal-message");
   const dialogTitle = dialog.querySelector("#clinic-goal-dialog-title");
   let rows = [];
+  let publications = new Map();
+  let publishingAvailable = false;
+  let selectedGoalId = "";
+  let loadedPatientId = "";
+  const shareForm = shareDialog.querySelector("#clinic-goal-share-form");
+  const shareTitle = shareDialog.querySelector("#clinic-goal-share-title");
+  const shareDescription = shareDialog.querySelector("#clinic-goal-share-description");
+  const shareMessage = shareDialog.querySelector("#clinic-goal-share-message");
 
-  const statusLabels = { active:"Activo", review:"En revisión", paused:"Pausado", completed:"Conseguido" };
-  const priorityLabels = { high:"Alta", normal:"Normal", low:"Baja" };
+  const statusLabels = { active:"Activo", review:"En revisión", paused:"Pausado", achieved:"Conseguido", closed:"Cerrado" };
+  const priorityLabels = { current:"Actual", secondary:"Secundaria", observation:"En observación" };
 
   function getSession(){try{return JSON.parse(sessionStorage.getItem(SESSION_KEY)||"null");}catch{return null;}}
   function headers(extra={}){return {apikey:KEY,Authorization:`Bearer ${getSession()?.access_token||""}`,"Content-Type":"application/json",...extra};}
@@ -93,13 +127,33 @@
     const patientId = patientIdField.value;
     if(!patientId || !!patientDialog.hidden) return;
     statusText.textContent = "Cargando objetivos…";
+    publishingAvailable = false;
+    publications = new Map();
+    loadedPatientId = "";
     try{
       const res = await fetch(`${REST_URL}/clinical_goals?select=id,patient_id,title,status,priority,last_reviewed_at,created_at,updated_at&patient_id=eq.${encodeURIComponent(patientId)}&order=created_at.asc`,{headers:headers(),cache:"no-store"});
       const body = await res.json().catch(()=>[]);
       if(!res.ok) throw new Error(body?.message || "No se han podido cargar los objetivos.");
-      rows = body || [];
+      if (patientIdField.value !== patientId || patientDialog.hidden) return;
+      rows = Array.isArray(body) ? body : [];
+      loadedPatientId = patientId;
+      // Fail closed: a missing publication table or network error never implies "unshared".
+      try {
+        const sharingResponse = await fetch(
+          `${REST_URL}/clinical_goal_publications?select=goal_id,patient_id,display_title,description,published_at,revoked_at&patient_id=eq.${encodeURIComponent(patientId)}&limit=500`,
+          { headers: headers(), cache:"no-store" },
+        );
+        if (!sharingResponse.ok) throw new Error("No se ha podido consultar qué objetivos están compartidos.");
+        const publishedRows = await sharingResponse.json();
+        if (!Array.isArray(publishedRows)) throw new Error("Respuesta de compartición no válida.");
+        if (patientIdField.value !== patientId || patientDialog.hidden) return;
+        publications = new Map(publishedRows.map(item => [item.goal_id, item]));
+        publishingAvailable = true;
+        statusText.textContent = "";
+      } catch {
+        statusText.textContent = "Los objetivos clínicos están disponibles, pero no se puede verificar su publicación para el paciente. La compartición está desactivada.";
+      }
       render();
-      statusText.textContent = "";
     }catch(error){statusText.textContent = error instanceof Error ? error.message : "No se han podido cargar los objetivos.";}
   }
 
@@ -108,21 +162,45 @@
     if(!rows.length){
       const empty=document.createElement("div"); empty.className="clinic-goal-empty"; empty.textContent="Todavía no hay objetivos terapéuticos registrados."; list.append(empty); return;
     }
-    const order={active:0,review:1,paused:2,completed:3};
+    const order={active:0,review:1,paused:2,achieved:3,closed:4};
     [...rows].sort((a,b)=>(order[a.status]??9)-(order[b.status]??9) || new Date(a.created_at)-new Date(b.created_at)).forEach(row=>{
       const article=document.createElement("article");
+      article.dataset.goalId=row.id;
       article.className=`clinic-goal-row is-${row.status || "active"}`;
       const main=document.createElement("div"); main.className="clinic-goal-main";
       const strong=document.createElement("strong"); strong.textContent=row.title;
       const meta=document.createElement("div"); meta.className="clinic-goal-meta";
-      const p=document.createElement("span"); p.className=`clinic-goal-chip priority-${row.priority || "normal"}`; p.textContent=`Prioridad ${priorityLabels[row.priority] || "Normal"}`;
+      const p=document.createElement("span"); p.className=`clinic-goal-chip priority-${row.priority || "current"}`; p.textContent=`Prioridad ${priorityLabels[row.priority] || "Actual"}`;
       const s=document.createElement("span"); s.className=`clinic-goal-chip status-${row.status || "active"}`; s.textContent=statusLabels[row.status] || row.status;
       meta.append(p,s);
       if(row.last_reviewed_at){const r=document.createElement("span");r.className="clinic-goal-chip";r.textContent=`Revisado ${fmt(row.last_reviewed_at)}`;meta.append(r);}
+      const publication = publications.get(row.id);
+      const isPublished = Boolean(publication?.published_at && !publication?.revoked_at);
+      if (publishingAvailable) {
+        const visibility = document.createElement("span");
+        visibility.className = "clinic-goal-chip";
+        visibility.textContent = isPublished ? "Visible en Entre Sesiones" : "Solo profesional";
+        meta.append(visibility);
+      }
       main.append(strong,meta);
       const actions=document.createElement("div"); actions.className="clinic-goal-actions";
       const edit=document.createElement("button"); edit.type="button"; edit.className="clinic-secondary"; edit.textContent="Editar"; edit.addEventListener("click",()=>openEdit(row));
       actions.append(edit);
+      const shareButton = document.createElement("button");
+      shareButton.type = "button";
+      shareButton.className = "clinic-secondary clinic-goal-share";
+      shareButton.textContent = isPublished ? "Editar lo compartido" : "Compartir con paciente";
+      shareButton.disabled = !publishingAvailable;
+      shareButton.addEventListener("click", () => openShare(row));
+      actions.append(shareButton);
+      if (isPublished) {
+        const revoke = document.createElement("button");
+        revoke.type = "button";
+        revoke.className = "clinic-text";
+        revoke.textContent = "Retirar acceso";
+        revoke.addEventListener("click", () => revokeShare(row));
+        actions.append(revoke);
+      }
       if(["active","review"].includes(row.status)){
         const reviewed=document.createElement("button"); reviewed.type="button"; reviewed.className="clinic-text"; reviewed.textContent="Marcar revisado"; reviewed.addEventListener("click",()=>markReviewed(row)); actions.append(reviewed);
       }
@@ -131,10 +209,10 @@
   }
 
   function openNew(){
-    goalId.value=""; goalTitle.value=""; goalPriority.value="normal"; goalStatus.value="active"; goalMessage.textContent=""; dialogTitle.textContent="Nuevo objetivo"; dialog.showModal(); goalTitle.focus();
+    goalId.value=""; goalTitle.value=""; goalPriority.value="current"; goalStatus.value="active"; goalMessage.textContent=""; dialogTitle.textContent="Nuevo objetivo"; dialog.showModal(); goalTitle.focus();
   }
   function openEdit(row){
-    goalId.value=row.id; goalTitle.value=row.title || ""; goalPriority.value=row.priority || "normal"; goalStatus.value=row.status || "active"; goalMessage.textContent=""; dialogTitle.textContent="Editar objetivo"; dialog.showModal();
+    goalId.value=row.id; goalTitle.value=row.title || ""; goalPriority.value=row.priority || "current"; goalStatus.value=row.status || "active"; goalMessage.textContent=""; dialogTitle.textContent="Editar objetivo"; dialog.showModal();
   }
 
   async function markReviewed(row){
@@ -162,6 +240,69 @@
       dialog.close(); render(); refreshDashboard();
     }catch(error){goalMessage.textContent=error instanceof Error?error.message:"No se ha podido guardar el objetivo.";}
   });
+
+
+  function openShare(row) {
+    if (!publishingAvailable || !loadedPatientId || loadedPatientId !== patientIdField.value) return;
+    const previous = publications.get(row.id);
+    selectedGoalId = row.id;
+    shareTitle.value = previous?.display_title || "";
+    shareDescription.value = previous?.description || "";
+    shareMessage.textContent = "";
+    shareDialog.showModal();
+    shareTitle.focus();
+  }
+
+  async function revokeShare(row) {
+    if (!publishingAvailable || loadedPatientId !== patientIdField.value) return;
+    if (!window.confirm("¿Retirar este objetivo de Entre Sesiones? Se conservará en el expediente clínico.")) return;
+    const publication = publications.get(row.id);
+    if (!publication || publication.revoked_at) return;
+    const patientId = loadedPatientId;
+    try {
+      const result = await fetch(
+        `${REST_URL}/clinical_goal_publications?goal_id=eq.${encodeURIComponent(row.id)}&patient_id=eq.${encodeURIComponent(patientId)}&revoked_at=is.null&select=goal_id,patient_id,display_title,description,published_at,revoked_at`,
+        { method: "PATCH", headers: headers({ Prefer:"return=representation" }), body: JSON.stringify({ revoked_at:new Date().toISOString(), updated_at:new Date().toISOString() }) },
+      );
+      const data = await result.json().catch(() => []);
+      if (!result.ok || !Array.isArray(data) || data.length !== 1) throw new Error("No se ha podido confirmar la retirada del acceso.");
+      if (patientIdField.value !== patientId) return;
+      publications.set(row.id, data[0]);
+      render();
+      statusText.textContent = "Objetivo retirado del espacio del paciente.";
+    } catch (error) {
+      statusText.textContent = error instanceof Error ? error.message : "No se ha podido retirar el acceso.";
+    }
+  }
+
+  shareForm.addEventListener("submit", async event => {
+    event.preventDefault();
+    const goalIdToPublish = selectedGoalId;
+    const patientId = loadedPatientId;
+    if (!publishingAvailable || !goalIdToPublish || patientId !== patientIdField.value || !rows.some(x => x.id === goalIdToPublish)) return;
+    const title = shareTitle.value.trim();
+    const description = shareDescription.value.trim();
+    if (!title || title.length > 220 || description.length > 2000) return;
+    shareMessage.textContent = "Publicando…";
+    const now = new Date().toISOString();
+    try {
+      const response = await fetch(`${REST_URL}/clinical_goal_publications?on_conflict=goal_id&select=goal_id,patient_id,display_title,description,published_at,revoked_at`, {
+        method:"POST", headers:headers({ Prefer:"resolution=merge-duplicates,return=representation" }),
+        body:JSON.stringify({ goal_id:goalIdToPublish, patient_id:patientId, display_title:title, description, published_at:now, revoked_at:null, updated_at:now }),
+      });
+      const data = await response.json().catch(() => []);
+      if (!response.ok || !Array.isArray(data) || data.length !== 1) throw new Error("No se ha podido confirmar la publicación.");
+      if (patientIdField.value !== patientId) return;
+      publications.set(goalIdToPublish, data[0]);
+      shareDialog.close();
+      render();
+      statusText.textContent = "Objetivo publicado. El paciente podrá verlo al actualizar Entre Sesiones.";
+    } catch (error) {
+      shareMessage.textContent = error instanceof Error ? error.message : "No se ha podido publicar el objetivo.";
+    }
+  });
+  shareDialog.querySelector("#clinic-goal-share-close").addEventListener("click", () => shareDialog.close());
+  shareDialog.querySelector("#clinic-goal-share-cancel").addEventListener("click", () => shareDialog.close());
 
   newButton.addEventListener("click",openNew);
   dialog.querySelector("#clinic-goal-close").addEventListener("click",()=>dialog.close());

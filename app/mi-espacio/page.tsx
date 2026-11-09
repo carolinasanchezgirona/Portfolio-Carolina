@@ -2,6 +2,7 @@ import LegalLinks from "../components/legal-links";
 import type { Metadata } from "next";
 import Script from "next/script";
 import "./mi-espacio.css";
+import "./patient-goals.css";
 
 export const metadata: Metadata = {
   title: "Mi espacio",
@@ -191,6 +192,16 @@ export default function MiEspacioPage() {
               <p>Consulta tus ejercicios, rellena tus respuestas aquí mismo y decide cuándo compartirlas con Carolina. Las notas clínicas internas permanecen fuera de esta zona.</p>
             </div>
 
+            <section className="space-section space-goals-section" aria-labelledby="space-goals-title">
+              <div className="space-section-heading">
+                <div><p className="space-eyebrow">Mi proceso</p><h3 id="space-goals-title">En qué estamos trabajando</h3></div>
+                <span className="space-pill">Objetivos acordados</span>
+              </div>
+              <p>Estos son los objetivos que hemos revisado conjuntamente y que Carolina ha compartido contigo. Pueden cambiar a medida que avance el proceso.</p>
+              <div id="space-goals-list" className="space-goals-list" aria-live="polite" />
+              <p id="space-goals-message" className="space-small" role="status" aria-live="polite" />
+            </section>
+
             <section className="space-section space-materials-section">
               <div className="space-section-heading">
                 <div><p className="space-eyebrow">Entre sesiones</p><h3>Mis ejercicios y materiales</h3></div>
@@ -299,6 +310,7 @@ export default function MiEspacioPage() {
       <Script src="/patient-video.js?v=20261009-1" strategy="afterInteractive" />
       <Script src="/mi-espacio.js?v=20261105-clinical-only-1" strategy="afterInteractive" />
       <Script src="/session-prep.js?v=20261017-1" strategy="afterInteractive" />
+      <Script src="/patient-goal-process.js?v=20261109-1" strategy="afterInteractive" />
     </main>
   );
 }

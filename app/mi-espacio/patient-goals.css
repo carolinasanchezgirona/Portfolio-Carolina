@@ -1,0 +1,31 @@
+.space-goals-section .space-goals-list {
+  display: grid;
+  gap: 12px;
+  margin-top: 18px;
+}
+.space-clinical-goal {
+  padding: 18px 20px;
+  border: 1px solid var(--space-line, #d8e0e5);
+  border-radius: 14px;
+  background: var(--space-card, #fff);
+}
+.space-clinical-goal h4 {
+  font: inherit;
+  font-size: 1rem;
+  font-weight: 700;
+  line-height: 1.4;
+  margin: 0 0 6px;
+}
+.space-clinical-goal p {
+  margin: 0;
+  font-size: .92rem;
+  line-height: 1.6;
+  white-space: pre-line;
+  overflow-wrap: anywhere;
+}
+#space-goals-message {
+  margin: 10px 0 0;
+}
+@media (max-width: 640px) {
+  .space-clinical-goal { padding: 15px; }
+}

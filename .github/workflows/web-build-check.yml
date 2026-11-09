@@ -82,6 +82,12 @@ jobs:
           node --check public/clinic-pwa.js
           node --test tests/clinic-admin-workspace.test.mjs tests/clinic-navigation.test.mjs
 
+      - name: Validar publicación controlada de objetivos del paciente
+        run: |
+          node --check public/clinic-goals-manager.js
+          node --check public/patient-goal-process.js
+          node --test tests/clinical-patient-goals.test.mjs
+
       - name: Validar ficha clínica única y preparación de sesiones
         run: |
           node --check public/clinic-patient-workspace.js
