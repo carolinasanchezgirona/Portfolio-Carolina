@@ -48,11 +48,11 @@ export default function AdminAgendaPage() {
           </div>
           <div className="admin-agenda-header-actions">
             <button id="admin-new" className="admin-primary" type="button">+ Nueva cita</button>
+            <button id="admin-block" className="admin-secondary" type="button" aria-haspopup="dialog" aria-controls="block-dialog">Bloqueos</button>
             <a className="admin-agenda-notice-link" href="/admin/notificaciones/" aria-label="Centro de avisos">Avisos</a>
             <details className="admin-agenda-tools">
               <summary>Más acciones</summary>
               <div className="admin-agenda-tool-list">
-              <button id="admin-block" className="admin-secondary" type="button">Bloquear horario</button>
               <button id="admin-print" className="admin-secondary" type="button">Imprimir semana</button>
               <button id="pwa-install" className="admin-secondary" type="button" hidden>Instalar app</button>
               <button id="admin-access" className="admin-secondary" type="button">Acceso y contraseña</button>
@@ -63,6 +63,7 @@ export default function AdminAgendaPage() {
         </header>
         <AdminWorkspaceNav active="agenda" />
 
+        <p id="agenda-block-feedback" className="admin-block-feedback" role="status" hidden />
         <p id="pwa-install-hint" className="admin-muted" hidden />
 
         <div className="admin-agenda-view-picker">
@@ -200,15 +201,40 @@ export default function AdminAgendaPage() {
         </form>
       </dialog>
 
-      <dialog id="block-dialog" className="appointment-dialog">
+      <dialog id="block-dialog" className="appointment-dialog" aria-labelledby="block-title">
+        <div className="dialog-heading block-dialog-heading">
+          <div><p className="admin-eyebrow">Disponibilidad</p><h2 id="block-title">Bloqueos de agenda</h2></div>
+          <button id="block-close" className="dialog-close" type="button" aria-label="Cerrar bloqueos">×</button>
+        </div>
         <form id="block-form">
-          <div className="dialog-heading"><div><p className="admin-eyebrow">Disponibilidad</p><h2>Bloquear horario</h2></div><button id="block-close" className="dialog-close" type="button" aria-label="Cerrar">×</button></div>
-          <div className="form-grid two-cols"><label>Fecha<input id="block-date" type="date" required /></label><label>Motivo<input id="block-reason" type="text" maxLength={120} placeholder="Personal, reunión…" /></label></div>
-          <div className="form-grid two-cols"><label>Desde<input id="block-start" type="time" step="1800" required /></label><label>Hasta<input id="block-end" type="time" step="1800" required /></label></div>
-          <p className="admin-note">La franja dejará de aparecer inmediatamente en la reserva pública. No modifica citas ya existentes.</p>
-          <p id="block-message" className="admin-message" role="status" />
-          <div className="dialog-actions"><button id="block-cancel" className="admin-secondary" type="button">Cerrar</button><button className="admin-primary" type="submit">Bloquear</button></div>
+          <fieldset id="block-fields">
+            <label>
+              Qué quieres bloquear
+              <select id="block-mode" defaultValue="hours">
+                <option value="hours">Franja horaria</option>
+                <option value="day">Día completo</option>
+                <option value="period">Varios días completos</option>
+              </select>
+            </label>
+            <div className="form-grid two-cols">
+              <label><span id="block-date-label">Fecha</span><input id="block-date" type="date" required /></label>
+              <label id="block-last-date-field" hidden>Último día, incluido<input id="block-last-date" type="date" disabled /></label>
+            </div>
+            <div id="block-hours" className="form-grid two-cols">
+              <label>Desde<input id="block-start" type="time" required /></label>
+              <label>Hasta<input id="block-end" type="time" required /></label>
+            </div>
+            <label>Motivo opcional<input id="block-reason" type="text" maxLength={120} placeholder="Personal, reunión…" /></label>
+          </fieldset>
+          <p className="admin-note">El bloqueo impide nuevas reservas online durante ese horario. Las citas ya reservadas se conservan.</p>
+          <p id="block-message" className="admin-block-feedback" role="status" />
+          <div className="dialog-actions"><button id="block-save" className="admin-primary" type="submit">Guardar bloqueo</button></div>
         </form>
+        <section className="block-list-section" aria-labelledby="block-list-title">
+          <h3 id="block-list-title">Bloqueos activos y próximos</h3>
+          <p id="block-list-status" className="admin-block-feedback" role="status" />
+          <div id="block-list" className="block-list" />
+        </section>
       </dialog>
 
       <dialog id="access-dialog" className="appointment-dialog">
@@ -223,8 +249,8 @@ export default function AdminAgendaPage() {
         </form>
       </dialog>
 
-      <Script src="/admin-agenda-v3.js?v=20261021-ux-1" strategy="afterInteractive" />
-      <Script src="/admin-agenda-enhancement.js?v=20261018-hide-cancelled-1" strategy="afterInteractive" />
+      <Script src="/admin-agenda-v3.js?v=20261109-blocks-1" strategy="afterInteractive" />
+      <Script src="/admin-agenda-enhancement.js?v=20261109-blocks-1" strategy="afterInteractive" />
       <Script src="/pwa.js?v=20260915-admin-2" strategy="afterInteractive" />
     </main>
   );

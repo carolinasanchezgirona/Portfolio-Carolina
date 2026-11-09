@@ -32,21 +32,30 @@
     todayTitle: $("#today-title"), todaySummary: $("#today-summary"), todayList: $("#today-list"),
     tomorrowTitle: $("#tomorrow-title"), tomorrowSummary: $("#tomorrow-summary"), tomorrowList: $("#tomorrow-list"),
     patientSearch: $("#patient-search"), patientSearchStatus: $("#patient-search-status"), patientResults: $("#patient-results"),
-    blockDialog: $("#block-dialog"), blockForm: $("#block-form"), blockClose: $("#block-close"), blockCancel: $("#block-cancel"),
-    blockDate: $("#block-date"), blockStart: $("#block-start"), blockEnd: $("#block-end"), blockReason: $("#block-reason"), blockMessage: $("#block-message"),
+    blockDialog: $("#block-dialog"), blockForm: $("#block-form"), blockClose: $("#block-close"), blockSave: $("#block-save"),
+    blockFields: $("#block-fields"), blockMode: $("#block-mode"), blockDateLabel: $("#block-date-label"), blockDate: $("#block-date"),
+    blockLastDateField: $("#block-last-date-field"), blockLastDate: $("#block-last-date"), blockHours: $("#block-hours"),
+    blockStart: $("#block-start"), blockEnd: $("#block-end"), blockReason: $("#block-reason"), blockMessage: $("#block-message"),
+    blockList: $("#block-list"), blockListStatus: $("#block-list-status"), blockFeedback: $("#agenda-block-feedback"),
   };
 
   let session = null;
   let currentUser = null;
   let appointments = [];
   let scheduleBlocks = [];
+  let weekRequest = 0;
+  let blockListRequest = 0;
+  let blockBusy = false;
+  let blockSaved = false;
+  let pendingBlock = null;
   let currentAppointment = null;
   let weekStartKey = mondayKey(todayKey());
 
   const dateLong = new Intl.DateTimeFormat("es-ES", { weekday: "long", day: "numeric", month: "long", timeZone: ZONE });
+  const blockDateFmt = new Intl.DateTimeFormat("es-ES", { day: "numeric", month: "long", year: "numeric", timeZone: ZONE });
   const dayShort = new Intl.DateTimeFormat("es-ES", { weekday: "short", day: "numeric", month: "short", timeZone: ZONE });
   const monthYear = new Intl.DateTimeFormat("es-ES", { month: "long", year: "numeric", timeZone: ZONE });
-  const timeFmt = new Intl.DateTimeFormat("es-ES", { hour: "2-digit", minute: "2-digit", hour12: false, timeZone: ZONE });
+  const timeFmt = new Intl.DateTimeFormat("es-ES", { hour: "2-digit", minute: "2-digit", hourCycle: "h23", timeZone: ZONE });
 
   function todayKey() {
     const parts = new Intl.DateTimeFormat("en-CA", { year: "numeric", month: "2-digit", day: "2-digit", timeZone: ZONE }).formatToParts(new Date());
@@ -69,7 +78,7 @@
 
   function zoneOffsetMs(date) {
     const parts = new Intl.DateTimeFormat("en-US", {
-      timeZone: ZONE, hour12: false, year: "numeric", month: "2-digit", day: "2-digit",
+      timeZone: ZONE, hourCycle: "h23", year: "numeric", month: "2-digit", day: "2-digit",
       hour: "2-digit", minute: "2-digit", second: "2-digit",
     }).formatToParts(date);
     const p = Object.fromEntries(parts.map((part) => [part.type, part.value]));
@@ -129,7 +138,11 @@
   }
 
   const cancelFutureButton = ensureFutureCancelButton();
-  function setBlockMessage(text) { if (els.blockMessage) els.blockMessage.textContent = text || ""; }
+  function setBlockMessage(element, message, error = false) {
+    element.textContent = message;
+    element.classList.toggle("is-error", error);
+    if (element === els.blockFeedback) element.hidden = !message;
+  }
 
   function setView(name) {
     const views = { today: els.todayView, tomorrow: els.tomorrowView, week: els.weekView, patients: els.patientsView };
@@ -235,6 +248,7 @@
   }
 
   async function loadWeek() {
+    const request = ++weekRequest;
     setStatus("Cargando agenda…");
     const start = madridLocalToIso(weekStartKey, "00:00");
     const end = madridLocalToIso(addDaysKey(weekStartKey, 7), "00:00");
@@ -250,8 +264,10 @@
     }
     const body = await response.json().catch(() => []);
     if (!response.ok) throw new Error(body.message || "No se ha podido cargar la agenda.");
+    const blocks = blocksResponse.ok ? await blocksResponse.json() : [];
+    if (request !== weekRequest) return;
     appointments = body;
-    scheduleBlocks = blocksResponse.ok ? await blocksResponse.json() : [];
+    scheduleBlocks = blocks;
     renderWeek();
     renderToday();
     renderTomorrow();
@@ -274,7 +290,7 @@
       const key = addDaysKey(weekStartKey, i);
       const instant = new Date(madridLocalToIso(key, "12:00"));
       const dayAppointments = appointments.filter((a) => keyFromIso(a.starts_at) === key && !["cancelled", "canceled"].includes(a.status));
-      const dayBlocks = scheduleBlocks.filter((b) => keyFromIso(b.starts_at) === key);
+      const dayBlocks = blocksForDay(key);
       const column = document.createElement("article");
       column.className = "calendar-day-column";
       const head = document.createElement("div");
@@ -285,7 +301,7 @@
       if (!dayAppointments.length) {
         const empty = document.createElement("div"); empty.className = "empty-day"; empty.textContent = "Sin citas"; body.append(empty);
       }
-      dayBlocks.forEach((block) => body.append(createBlockCard(block)));
+      dayBlocks.forEach((block) => body.append(createBlockCard(block, key)));
       dayAppointments.forEach((appointment) => {
         const button = document.createElement("button");
         button.type = "button";
@@ -391,11 +407,40 @@
     return card;
   }
 
-  function createBlockCard(block) {
+  function blocksForDay(key) {
+    const start = Date.parse(madridLocalToIso(key, "00:00"));
+    const end = Date.parse(madridLocalToIso(addDaysKey(key, 1), "00:00"));
+    return scheduleBlocks.filter((block) => Date.parse(block.starts_at) < end && Date.parse(block.ends_at) > start);
+  }
+
+  function describeBlock(block, dayKey) {
+    const start = new Date(block.starts_at);
+    const end = new Date(block.ends_at);
+    const startKey = keyFromIso(start);
+    const endKey = keyFromIso(end);
+    const startTime = timeFmt.format(start);
+    const endTime = timeFmt.format(end);
+    if (dayKey) {
+      const from = dayKey === startKey ? startTime : "00:00";
+      const to = dayKey === endKey ? endTime : "24:00";
+      return from === "00:00" && to === "24:00" ? "Día completo" : `${from}–${to}`;
+    }
+    if (startTime === "00:00" && endTime === "00:00" && startKey !== endKey) {
+      const lastDay = new Date(end.getTime() - 1);
+      if (keyFromIso(lastDay) === startKey) return `${blockDateFmt.format(start)} · Día completo`;
+      return `Del ${blockDateFmt.format(start)} al ${blockDateFmt.format(lastDay)}`;
+    }
+    if (startKey === endKey) return `${blockDateFmt.format(start)} · ${startTime}–${endTime}`;
+    return `Del ${blockDateFmt.format(start)} a las ${startTime} al ${blockDateFmt.format(end)} a las ${endTime}`;
+  }
+
+  function createBlockCard(block, dayKey) {
     const card = document.createElement("article");
     card.className = "schedule-block-card";
-    card.innerHTML = `<div><time>${timeFmt.format(new Date(block.starts_at))}–${timeFmt.format(new Date(block.ends_at))}</time><strong>${escapeHtml(block.reason || "Horario bloqueado")}</strong></div><button type="button" aria-label="Eliminar bloqueo">Liberar</button>`;
-    card.querySelector("button").addEventListener("click", () => deleteBlock(block));
+    card.innerHTML = `<div><time>${escapeHtml(describeBlock(block, dayKey))}</time><strong>${escapeHtml(block.reason || "Horario bloqueado")}</strong></div><button type="button">Liberar</button>`;
+    const button = card.querySelector("button");
+    button.setAttribute("aria-label", `Liberar bloqueo: ${describeBlock(block)}`);
+    button.addEventListener("click", () => deleteBlock(block, button));
     return card;
   }
 
@@ -405,9 +450,10 @@
     titleEl.textContent = dateLong.format(new Date(madridLocalToIso(key, "12:00")));
     summaryEl.innerHTML = `<article><strong>${active.length}</strong><span>Citas activas</span></article><article><strong>${active.filter((a) => a.status === "confirmed").length}</strong><span>Confirmadas</span></article><article><strong>${active.filter((a) => a.status === "pending").length}</strong><span>Pendientes</span></article>`;
     listEl.replaceChildren();
-    scheduleBlocks.filter((b) => keyFromIso(b.starts_at) === key).forEach((b) => listEl.append(createBlockCard(b)));
+    const dayBlocks = blocksForDay(key);
+    dayBlocks.forEach((block) => listEl.append(createBlockCard(block, key)));
     dayAppointments.forEach((a) => listEl.append(createDayAppointmentCard(a, allowQuickActions)));
-    if (!dayAppointments.length && !scheduleBlocks.some((b) => keyFromIso(b.starts_at) === key)) {
+    if (!dayAppointments.length && !dayBlocks.length) {
       listEl.innerHTML = `<div class="empty-today"><strong>No hay citas ${emptyLabel}</strong><span>Puedes añadir una cita o bloquear una franja.</span></div>`;
     }
   }
@@ -651,38 +697,114 @@
     }
   }
 
+  function updateBlockFields() {
+    const hours = els.blockMode.value === "hours";
+    const period = els.blockMode.value === "period";
+    els.blockDateLabel.textContent = period ? "Primer día" : "Fecha";
+    els.blockHours.hidden = !hours;
+    els.blockStart.disabled = els.blockEnd.disabled = !hours;
+    els.blockLastDateField.hidden = !period;
+    els.blockLastDate.disabled = !period;
+    els.blockLastDate.required = period;
+    els.blockLastDate.min = els.blockDate.value;
+    if (period && (!els.blockLastDate.value || els.blockLastDate.value < els.blockDate.value)) {
+      els.blockLastDate.value = els.blockDate.value;
+    }
+  }
+
   function openBlock() {
+    if (blockBusy) return;
     els.blockForm.reset();
-    els.blockDate.value = todayKey();
+    els.blockDate.value = els.tomorrowView.hidden ? todayKey() : addDaysKey(todayKey(), 1);
     els.blockStart.value = "09:00";
     els.blockEnd.value = "10:00";
-    setBlockMessage("");
+    pendingBlock = null;
+    blockSaved = false;
+    setBlockBusy(false);
+    updateBlockFields();
+    setBlockMessage(els.blockMessage, "");
+    setBlockMessage(els.blockFeedback, "");
     els.blockDialog.showModal();
+    els.blockMode.focus();
+    loadBlockList();
+  }
+
+  async function loadBlockList() {
+    const request = ++blockListRequest;
+    const now = encodeURIComponent(new Date().toISOString());
+    els.blockList.replaceChildren();
+    setBlockMessage(els.blockListStatus, "Cargando bloqueos…");
+    try {
+      const response = await fetch(`${REST_URL}/appointment_schedule_blocks?select=id,starts_at,ends_at,reason&ends_at=gt.${now}&order=starts_at.asc,id.asc`, {
+        headers: authHeaders(), cache: "no-store",
+      });
+      if (!response.ok) throw new Error();
+      const blocks = await response.json();
+      if (request !== blockListRequest) return;
+      els.blockList.replaceChildren(...blocks.map((block) => createBlockCard(block)));
+      setBlockMessage(els.blockListStatus, blocks.length ? "" : "No hay bloqueos activos ni próximos.");
+    } catch {
+      if (request === blockListRequest) setBlockMessage(els.blockListStatus, "No se han podido cargar los bloqueos. Vuelve a abrir este apartado para reintentar.", true);
+    }
   }
 
   async function createBlock() {
-    const startsAt = madridLocalToIso(els.blockDate.value, els.blockStart.value);
-    const endsAt = madridLocalToIso(els.blockDate.value, els.blockEnd.value);
-    if (new Date(endsAt) <= new Date(startsAt)) throw new Error("La hora final debe ser posterior a la inicial.");
+    const date = els.blockDate.value;
+    const mode = els.blockMode.value;
+    const hours = mode === "hours";
+    const endDate = hours ? date : addDaysKey(mode === "period" ? els.blockLastDate.value : date, 1);
+    const from = hours ? els.blockStart.value : "00:00";
+    const to = hours ? els.blockEnd.value : "00:00";
+    const startsAt = madridLocalToIso(date, from);
+    const endsAt = madridLocalToIso(endDate, to);
+    if (hours && (timeFmt.format(new Date(startsAt)) !== from || timeFmt.format(new Date(endsAt)) !== to)) {
+      throw new Error("Alguna de las horas elegidas no existe ese día por el cambio de hora.");
+    }
+    if (endsAt <= startsAt) throw new Error("La hora final debe ser posterior a la inicial.");
+    const block = { starts_at: startsAt, ends_at: endsAt, reason: els.blockReason.value.trim() || null };
+    const data = JSON.stringify(block);
+    if (pendingBlock?.data !== data) pendingBlock = { data, id: crypto.randomUUID() };
     const response = await fetch(`${REST_URL}/appointment_schedule_blocks`, {
       method: "POST",
-      headers: { ...authHeaders(), Prefer: "return=minimal" },
-      body: JSON.stringify({ starts_at: startsAt, ends_at: endsAt, reason: els.blockReason.value.trim() || null }),
+      headers: { ...authHeaders(), Prefer: "resolution=ignore-duplicates,return=minimal" },
+      body: JSON.stringify({ id: pendingBlock.id, ...block }),
     });
-    const body = await response.json().catch(() => ({}));
-    if (!response.ok) throw new Error(body.message || "No se ha podido bloquear el horario.");
+    if (!response.ok) throw new Error("No se ha podido guardar el bloqueo. Comprueba que tu sesión sigue activa y vuelve a intentarlo.");
+    pendingBlock = null;
   }
 
-  async function deleteBlock(block) {
-    if (!window.confirm(`¿Liberar el bloqueo de ${timeFmt.format(new Date(block.starts_at))} a ${timeFmt.format(new Date(block.ends_at))}?`)) return;
-    setStatus("Liberando horario…");
-    const response = await fetch(`${REST_URL}/appointment_schedule_blocks?id=eq.${encodeURIComponent(block.id)}`, { method: "DELETE", headers: authHeaders() });
-    if (!response.ok) {
-      const body = await response.json().catch(() => ({}));
-      setStatus(body.message || "No se ha podido liberar el horario.");
-      return;
+  function setBlockBusy(busy) {
+    blockBusy = busy;
+    els.blockFields.disabled = busy;
+    els.blockSave.disabled = busy || blockSaved;
+    els.blockClose.disabled = busy;
+  }
+
+  function refreshBlocks() {
+    window.dispatchEvent(new Event("agenda:blocks-changed"));
+    loadWeek().catch((error) => setStatus(error.message));
+    if (els.blockDialog.open) loadBlockList();
+  }
+
+  async function deleteBlock(block, button) {
+    if (blockBusy || !window.confirm(`¿Liberar este bloqueo? ${describeBlock(block)}`)) return;
+    const feedback = els.blockDialog.open ? els.blockMessage : els.blockFeedback;
+    setBlockBusy(true);
+    button.disabled = true;
+    setBlockMessage(feedback, "Liberando horario…");
+    try {
+      const response = await fetch(`${REST_URL}/appointment_schedule_blocks?id=eq.${encodeURIComponent(block.id)}&select=id`, {
+        method: "DELETE", headers: { ...authHeaders(), Prefer: "return=representation" },
+      });
+      if (!response.ok || !(await response.json()).some((row) => row.id === block.id)) throw new Error();
+      setBlockMessage(feedback, "Bloqueo liberado.");
+      refreshBlocks();
+    } catch {
+      setBlockMessage(feedback, "No se ha podido liberar el bloqueo. Actualiza la agenda para comprobar su estado.", true);
+    } finally {
+      button.disabled = false;
+      setBlockBusy(false);
     }
-    await loadWeek();
   }
 
   let searchTimer = null;
@@ -816,7 +938,17 @@
   els.finalizeFollowup?.addEventListener("click", () => finalizeFollowup(currentAppointment));
   cancelFutureButton?.addEventListener("click", cancelFutureAppointments);
   els.blockClose?.addEventListener("click", () => els.blockDialog.close());
-  els.blockCancel?.addEventListener("click", () => els.blockDialog.close());
+  els.blockDialog?.addEventListener("cancel", (event) => {
+    if (blockBusy) event.preventDefault();
+  });
+  els.blockForm?.addEventListener("input", () => {
+    if (!blockSaved) return;
+    blockSaved = false;
+    els.blockSave.disabled = blockBusy;
+    setBlockMessage(els.blockMessage, "");
+  });
+  els.blockMode?.addEventListener("change", updateBlockFields);
+  els.blockDate?.addEventListener("change", updateBlockFields);
   els.accessClose?.addEventListener("click", () => els.accessDialog.close());
   els.accessCancel?.addEventListener("click", () => els.accessDialog.close());
 
@@ -842,15 +974,21 @@
 
   els.blockForm?.addEventListener("submit", async (event) => {
     event.preventDefault();
-    if (!els.blockForm.reportValidity()) return;
-    setBlockMessage("Guardando bloqueo…");
+    if (blockBusy || blockSaved || !els.blockForm.reportValidity()) return;
+    setBlockBusy(true);
+    setBlockMessage(els.blockMessage, "Guardando bloqueo…");
     try {
       await createBlock();
+      blockSaved = true;
+      els.blockReason.value = "";
       window.adminUX?.saved("block-form");
-      els.blockDialog.close();
-      weekStartKey = mondayKey(els.blockDate.value);
-      await loadWeek();
-    } catch (error) { setBlockMessage(error.message); }
+      setBlockMessage(els.blockMessage, "Bloqueo guardado.");
+      refreshBlocks();
+    } catch (error) {
+      setBlockMessage(els.blockMessage, error.message, true);
+    } finally {
+      setBlockBusy(false);
+    }
   });
 
   els.accessForm?.addEventListener("submit", async (event) => {

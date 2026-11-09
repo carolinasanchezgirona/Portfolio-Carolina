@@ -24,6 +24,7 @@
   let slots = [];
   let availabilityReady = false;
   let monthRequestId = 0;
+  let availabilityRequestId = 0;
   const sessionToken = () => {
     try { return JSON.parse(sessionStorage.getItem("dememoria_admin_session") || "null")?.access_token || ""; }
     catch { return ""; }
@@ -85,6 +86,7 @@
     });
   }
   async function loadAvailability() {
+    const request = ++availabilityRequestId;
     try {
       const response = await fetch(REST + "/rpc/get_public_appointment_starts", {
         method: "POST", headers: { apikey: KEY, "Content-Type": "application/json" },
@@ -93,9 +95,11 @@
       if (!response.ok) throw new Error("Error HTTP " + response.status);
       const result = await response.json();
       if (!Array.isArray(result)) throw new Error("Formato incorrecto");
+      if (request !== availabilityRequestId) return;
       slots = result.filter((s) => s && s.starts_at && s.ends_at);
       availabilityReady = true;
     } catch (error) {
+      if (request !== availabilityRequestId) return;
       slots = []; availabilityReady = false;
       console.error("[agenda] No se pudo obtener disponibilidad", error);
     }
@@ -213,6 +217,7 @@
     refreshPending = true;
     queueMicrotask(() => { refreshPending = false; showFreePanels(); });
   }).observe(weekGrid, { childList: true });
+  window.addEventListener("agenda:blocks-changed", loadAvailability);
   const app = $("#admin-app");
   const start = () => {
     if (app.hidden) return;

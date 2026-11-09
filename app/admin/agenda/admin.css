@@ -93,3 +93,31 @@
 .agenda-month-toolbar{margin-bottom:12px}
 @media(max-width:800px){.agenda-month-calendar{gap:3px}.agenda-month-cell{min-height:90px;padding:5px}.agenda-month-cell>span,.agenda-month-cell>em{font-size:.62rem}.agenda-month-hours button{font-size:.61rem;padding:3px}.agenda-month-dayname{padding:6px}}
 @media(max-width:480px){.agenda-month-calendar{grid-template-columns:repeat(7,minmax(0,1fr))}.agenda-month-cell{min-height:75px}.agenda-month-cell>span,.agenda-month-cell>em{font-size:.56rem;overflow-wrap:anywhere}.agenda-month-cell>strong{font-size:.85rem}.agenda-month-hours{max-height:60px}}
+
+.admin-page .admin-agenda-header-actions > #admin-block {
+  min-height: 40px;
+  padding: 8px 12px;
+  border-radius: 9px;
+  color: var(--admin-action);
+  font-size: .84rem;
+}
+
+.block-dialog-heading { padding: 24px 26px 0; }
+#block-form { padding-top: 0; }
+#block-fields { min-width: 0; margin: 0; padding: 0; border: 0; }
+#block-dialog [hidden] { display: none; }
+#block-dialog .dialog-actions { margin-top: 12px; }
+.block-list-section { padding: 18px 26px 26px; border-top: 1px solid var(--admin-line); }
+.block-list-section h3 { margin: 0 0 10px; font-size: 1rem; }
+.block-list { display: grid; gap: 8px; }
+.admin-block-feedback { color: var(--admin-muted); font-size: .85rem; }
+.admin-block-feedback:empty { margin: 0; }
+.admin-block-feedback.is-error { color: #9b3516; }
+.schedule-block-card strong { overflow-wrap: anywhere; }
+.schedule-block-card button { min-height: 36px; }
+
+@media (max-width: 620px) {
+  .admin-page .admin-topbar .admin-agenda-header-actions { justify-content: flex-start; flex-wrap: wrap; }
+  .block-dialog-heading { padding: 18px 18px 0; }
+  .block-list-section { padding: 16px 18px 18px; }
+}
