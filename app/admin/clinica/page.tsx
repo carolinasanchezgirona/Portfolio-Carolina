@@ -5,6 +5,7 @@ import NeuroFollowup from "./neuro-followup";
 import "./clinica.css";
 import "./clinic-navigation.css";
 import "./patient-ux.css";
+import "./patient-workspace.css";
 
 export const metadata: Metadata = {
   title: "Gestión clínica | Carolina Sánchez",
