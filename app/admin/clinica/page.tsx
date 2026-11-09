@@ -355,6 +355,15 @@ export default function AdminClinicaPage() {
                 <a href="https://www.signaturit.com/es/" target="_blank" rel="noopener noreferrer">Acceder a proveedor de firma electrónica</a>
               </div>
               <p id="clinic-signature-message" className="clinic-message" role="status" aria-live="polite" />
+              <div className="clinic-signature-docusign" aria-label="Firma electrónica avanzada con verificación de identidad">
+                <h4>Firma verificada · envío exclusivamente manual</h4>
+                <p id="clinic-signature-provider-status" className="clinic-message" role="status">Consultando configuración del proveedor…</p>
+                <p>Destinatario: <strong id="clinic-signature-recipient">Pendiente de verificar</strong></p>
+                <label className="clinic-signature-adult-check"><input id="clinic-signature-self-adult" type="checkbox" /> Confirmo que he informado al paciente, que es mayor de edad y que firma por sí mismo (sin representante).</label>
+                <button id="clinic-signature-send" className="clinic-primary" type="button" disabled>Enviar solicitud de firma verificada</button>
+                <div id="clinic-signature-requests" className="clinic-signature-requests" aria-live="polite" />
+                <p className="clinic-note">No se envía con la reserva ni con los recordatorios. «Firmado y archivado» exige el PDF firmado y el certificado de finalización del proveedor, guardados en el expediente privado.</p>
+              </div>
               <div className="clinic-electronic-signature-steps">
                 <h4>Procedimiento sin papel</h4>
                 <ol>

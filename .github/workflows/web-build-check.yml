@@ -203,6 +203,11 @@ jobs:
       - name: Verificar categorías de artículos y redirecciones SEO
         run: node --test tests/articles-categories.test.mjs
 
+      - name: Validar seguridad de la firma electrónica y la custodia digital
+        run: |
+          node --check public/clinic-docusign-consents.js
+          node --experimental-strip-types --test tests/clinical-signature-docusign.test.mjs
+
       - name: Compilar y exportar web
         run: npm run build
 
