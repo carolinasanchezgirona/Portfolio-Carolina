@@ -27,8 +27,13 @@ export function encodePdf(bytes:Uint8Array):string{
   for(let i=0;i<bytes.length;i+=8192) result+=String.fromCharCode(...bytes.subarray(i,i+8192));
   return btoa(result);
 }
+export function exactBuffer(bytes:Uint8Array):ArrayBuffer{
+ const buffer=new ArrayBuffer(bytes.byteLength);
+ new Uint8Array(buffer).set(bytes);
+ return buffer;
+}
 export async function sha256(bytes:Uint8Array):Promise<string>{
- const digest=new Uint8Array(await crypto.subtle.digest("SHA-256",bytes));
+ const digest=new Uint8Array(await crypto.subtle.digest("SHA-256",exactBuffer(bytes)));
  return Array.from(digest,b=>b.toString(16).padStart(2,"0")).join("");
 }
 async function signedJwt(env:DocusignEnv){
@@ -129,6 +134,6 @@ export async function verifyDocusignHmac(body:Uint8Array,secret:string,header:st
  const key=await crypto.subtle.importKey("raw",utf8(secret),{name:"HMAC",hash:"SHA-256"},false,["verify"]);
  try {
   const provided=Uint8Array.from(atob(header),c=>c.charCodeAt(0));
-  return await crypto.subtle.verify("HMAC",key,provided,body);
+  return await crypto.subtle.verify("HMAC",key,exactBuffer(provided),exactBuffer(body));
  }catch{return false;}
 }
