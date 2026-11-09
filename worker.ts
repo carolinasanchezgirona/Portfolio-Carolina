@@ -8,8 +8,10 @@ import { dailyTest } from "./daily-test";
 import { adminPushRequest, runAdminPushCron } from "./admin-webpush";
 import { containsDirectPatientIdentifiers, CLINICAL_IDENTIFIERS_ERROR } from "./clinical-privacy";
 import { handlePsychologyDigest } from "./psychology-digest-research";
+import { whatsappWebhook, type WhatsAppEnv } from "./whatsapp-webhook";
+export { WhatsAppQuota } from "./whatsapp-webhook";
 
-interface Env {
+interface Env extends WhatsAppEnv {
   DAILY_API_KEY?: string;
   BREVO_API_KEY?: string;
   STRIPE_WEBHOOK_SECRET: string;
@@ -2216,6 +2218,8 @@ async function residenceClinicalAnalysis(request: Request, env: Env): Promise<Re
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
     const url = new URL(request.url);
+
+    if (url.pathname === "/api/whatsapp/webhook" || url.pathname === "/api/whatsapp/webhook/") return whatsappWebhook(request, env);
 
     // The former general cognitive impairment page now belongs to the
     // focused memory/neuropsychological assessment service.

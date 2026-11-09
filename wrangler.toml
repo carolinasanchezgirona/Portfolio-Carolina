@@ -12,6 +12,14 @@ command = "npm run build"
 [triggers]
 crons = ["*/10 * * * *"]
 
+[[durable_objects.bindings]]
+name = "WHATSAPP_QUOTA"
+class_name = "WhatsAppQuota"
+
+[[migrations]]
+tag = "whatsapp-quota-v1"
+new_sqlite_classes = ["WhatsAppQuota"]
+
 [assets]
 directory = "./out"
 binding = "ASSETS"
