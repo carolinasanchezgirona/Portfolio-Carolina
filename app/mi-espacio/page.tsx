@@ -294,7 +294,7 @@ export default function MiEspacioPage() {
             </div>
 
             <div className="space-account-actions">
-              <button id="space-clear-local" className="space-danger-link" type="button">Borrar datos locales anteriores y preferencias de lectura</button>
+              <button id="space-clear-local" className="space-danger-link" type="button">Restablecer preferencias de lectura</button>
               <button id="space-logout" className="space-danger-link" type="button">Cerrar sesión de Mi espacio</button>
             </div>
             <p id="space-clear-message" className="space-small" role="status" />

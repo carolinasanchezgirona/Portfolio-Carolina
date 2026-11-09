@@ -5,423 +5,7 @@
   // The existing public Mi espacio login continues opening a separate tab.
   const insideEntreSesionesApp = window.location.pathname.startsWith("/entre-sesiones/app/espacio");
   const LEGACY_BETWEEN_KEY = "between_sessions_access_token";
-  const FAVORITES_KEY = "wellness_favorites_v1";
-  const COMPLETED_KEY = "wellness_completed_v1";
   const READING_KEY = "patient_reading_preferences_v1";
-
-  const activities = [
-    {
-      id: "bajar-revoluciones",
-      title: "Bajar revoluciones",
-      type: "emocional",
-      duration: "4 min",
-      needs: ["calmarme"],
-      summary: "Reducir activación antes de intentar pensar con claridad.",
-      intro: "Cuando el cuerpo va por delante, empezar por el cuerpo suele ser más útil que discutir con cada pensamiento.",
-      steps: [
-        "Apoya bien los pies y deja que los hombros bajen un poco.",
-        "Haz cinco respiraciones cómodas, procurando que la salida del aire dure algo más que la entrada. No fuerces el ritmo.",
-        "Mira alrededor y localiza tres cosas concretas que puedas ver ahora mismo.",
-        "Pregúntate: “¿Qué necesita mi cuerpo durante los próximos diez minutos?” Elige una respuesta pequeña y posible."
-      ],
-      note: "Si respirar de forma consciente te resulta incómodo o aumenta tu malestar, omite ese paso y céntrate solo en el contacto con el entorno."
-    },
-    {
-      id: "aterrizar-presente",
-      title: "Volver al presente",
-      type: "emocional",
-      duration: "3 min",
-      needs: ["calmarme", "rumiacion"],
-      summary: "Sacar atención del torbellino mental y llevarla al entorno.",
-      intro: "No se trata de dejar la mente en blanco. Solo de cambiar durante unos minutos el lugar al que estás prestando atención.",
-      steps: [
-        "Nombra cinco cosas que ves, sin valorarlas.",
-        "Identifica cuatro sensaciones físicas: apoyo de los pies, temperatura, ropa, contacto con la silla.",
-        "Escucha tres sonidos, incluso si son muy pequeños.",
-        "Busca dos colores y una textura.",
-        "Termina diciendo en voz baja dónde estás y qué estás haciendo ahora."
-      ],
-      note: "Puedes repetirlo sin intentar hacerlo perfecto. El objetivo es orientar la atención, no conseguir una sensación concreta."
-    },
-    {
-      id: "problema-o-prediccion",
-      title: "¿Problema o predicción?",
-      type: "emocional",
-      duration: "5 min",
-      needs: ["rumiacion", "orden"],
-      summary: "Separar lo que requiere una acción de lo que tu mente intenta anticipar.",
-      intro: "Pensar mucho no siempre significa estar resolviendo. Esta herramienta ayuda a distinguir acción de anticipación.",
-      steps: [
-        "Formula la preocupación en una sola frase.",
-        "Pregunta: “¿Hay algo concreto que pueda hacer respecto a esto hoy?”",
-        "Si la respuesta es sí, define una única acción observable y cuándo la harás.",
-        "Si la respuesta es no, etiqueta el contenido como una predicción, una duda o una posibilidad, no como una tarea pendiente.",
-        "Vuelve a la siguiente acción real que tengas delante."
-      ],
-      note: "No necesitas demostrar que la preocupación es falsa. Basta con decidir si ahora exige acción."
-    },
-    {
-      id: "pensamiento-no-orden",
-      title: "Un pensamiento no es una orden",
-      type: "emocional",
-      duration: "4 min",
-      needs: ["rumiacion", "entender"],
-      summary: "Tomar algo de distancia respecto a pensamientos insistentes.",
-      intro: "La mente puede producir mensajes muy convincentes. Que aparezcan no obliga a obedecerlos ni a resolverlos.",
-      steps: [
-        "Elige el pensamiento que más se repite.",
-        "Añade delante: “Estoy teniendo el pensamiento de que…”",
-        "Después añade: “Mi mente me cuenta que…”",
-        "Observa si cambia ligeramente la distancia con el contenido.",
-        "Decide qué acción quieres hacer tú durante los próximos cinco minutos, aunque el pensamiento siga presente."
-      ],
-      note: "La meta no es eliminar el pensamiento, sino reducir el poder que tiene para dirigir automáticamente tu conducta."
-    },
-    {
-      id: "poner-nombre",
-      title: "Ponerle nombre a lo que siento",
-      type: "emocional",
-      duration: "5 min",
-      needs: ["entender"],
-      summary: "Ordenar una experiencia emocional sin convertirla en un interrogatorio.",
-      intro: "Nombrar con precisión puede ayudar más que intentar decidir si una emoción es correcta o incorrecta.",
-      steps: [
-        "Elige una o dos palabras aproximadas: enfado, tristeza, miedo, vergüenza, culpa, frustración, alivio, soledad u otra.",
-        "Pregúntate qué ocurrió justo antes de que apareciera.",
-        "Distingue entre emoción, pensamiento y necesidad. No son lo mismo.",
-        "Completa mentalmente: “Ahora siento… y probablemente necesito…”",
-        "Elige una necesidad que puedas atender de forma realista hoy."
-      ],
-      note: "Si no encuentras la palabra exacta, no pasa nada. “Mal”, “raro” o “mezclado” también pueden ser un comienzo."
-    },
-    {
-      id: "pausa-enfado",
-      title: "Pausa antes de responder",
-      type: "emocional",
-      duration: "4 min",
-      needs: ["entender", "limites", "calmarme"],
-      summary: "Crear unos minutos entre el enfado y la respuesta impulsiva.",
-      intro: "No busca quitarte razón. Busca que la forma de responder no te cree un problema adicional.",
-      steps: [
-        "No envíes todavía el mensaje ni continúes la discusión.",
-        "Identifica qué te ha dolido, molestado o asustado detrás del enfado.",
-        "Escribe mentalmente la frase que dirías si quisieras ser clara sin castigar.",
-        "Reduce la frase a un hecho, una necesidad y una petición.",
-        "Vuelve a leerla después de unos minutos antes de decidir si la envías."
-      ],
-      note: "Posponer una respuesta no significa ceder. Puede ser una forma de proteger mejor lo que quieres expresar."
-    },
-    {
-      id: "energia-minima",
-      title: "Versión mínima del día",
-      type: "autocuidado",
-      duration: "4 min",
-      needs: ["energia"],
-      summary: "Ajustar expectativas cuando la energía está baja.",
-      intro: "Hay días para avanzar y días para conservar recursos. Reducir la exigencia puede ser una decisión funcional.",
-      steps: [
-        "Elige tres cosas que hoy serían suficientes, no ideales.",
-        "Marca una como imprescindible, una como conveniente y una como prescindible.",
-        "Reduce la imprescindible a su versión más pequeña posible.",
-        "Decide qué vas a dejar expresamente para otro momento.",
-        "Al terminar lo mínimo, vuelve a valorar energía antes de añadir más."
-      ],
-      note: "Hacer menos de forma deliberada es diferente de abandonar. Puede ser una estrategia de regulación de carga."
-    },
-    {
-      id: "primer-paso",
-      title: "Solo el primer paso",
-      type: "cognitivo",
-      duration: "3 min",
-      needs: ["energia", "orden", "concentrarme"],
-      summary: "Reducir una tarea hasta que sea suficientemente pequeña para empezar.",
-      intro: "Cuando una tarea parece enorme, el cerebro puede reaccionar ante todo el proyecto a la vez.",
-      steps: [
-        "Nombra la tarea que estás evitando.",
-        "Pregúntate cuál sería la primera acción física visible.",
-        "Hazla tan pequeña que pueda completarse en menos de cinco minutos.",
-        "Pon el resto de la tarea fuera de foco por ahora.",
-        "Cuando termines, decide de nuevo. No te obligues a prometer toda la tarea antes de empezar."
-      ],
-      note: "Empezar pequeño sirve para crear movimiento, no para engañarte y acabar haciendo veinte cosas."
-    },
-    {
-      id: "descarga-mental",
-      title: "Descarga mental",
-      type: "cognitivo",
-      duration: "6 min",
-      needs: ["orden", "rumiacion"],
-      summary: "Sacar pendientes de la memoria de trabajo y convertirlos en un mapa manejable.",
-      intro: "Intentar recordar a la vez todo lo pendiente consume recursos. Externalizar reduce carga.",
-      steps: [
-        "Anota todo lo que ocupa espacio mental, sin ordenar todavía.",
-        "Separa después en tres grupos: requiere acción, puede esperar y no depende de mí.",
-        "De lo que requiere acción, elige solo tres asuntos.",
-        "Define el siguiente paso de cada uno en una frase.",
-        "Escoge cuál va primero. El resto deja de competir por tu atención durante este bloque."
-      ],
-      note: "No conviertas la descarga en una lista infinita de obligaciones. Su función es liberar memoria, no fabricar culpa."
-    },
-    {
-      id: "bloque-foco",
-      title: "Bloque de foco realista",
-      type: "cognitivo",
-      duration: "5 min",
-      needs: ["concentrarme", "orden"],
-      summary: "Preparar las condiciones para una única tarea.",
-      intro: "La concentración no depende solo de fuerza de voluntad. También depende de reducir decisiones y distractores.",
-      steps: [
-        "Elige una sola tarea y define qué significa terminar este bloque.",
-        "Retira o silencia una fuente principal de distracción.",
-        "Deja a mano únicamente lo que necesitas.",
-        "Decide un bloque breve de trabajo que puedas sostener.",
-        "Al acabar, para y revisa si continúas, cambias o descansas."
-      ],
-      note: "Un bloque útil no tiene que ser largo. La calidad del foco importa más que acumular minutos."
-    },
-    {
-      id: "memoria-externa",
-      title: "No obligues a tu memoria a hacerlo todo",
-      type: "cognitivo",
-      duration: "4 min",
-      needs: ["orden", "concentrarme"],
-      summary: "Elegir una ayuda externa para reducir olvidos cotidianos.",
-      intro: "Usar apoyos externos no es hacer trampa. Es descargar funciones para reservar recursos mentales.",
-      steps: [
-        "Elige una cosa que estés intentando recordar repetidamente.",
-        "Decide el mejor soporte externo: alarma, calendario, nota visible, lista o ubicación fija.",
-        "Coloca la señal exactamente donde ocurrirá la acción.",
-        "Evita duplicar el mismo recordatorio en cinco sitios.",
-        "Comprueba durante unos días si esa ayuda reduce el esfuerzo de recordar."
-      ],
-      note: "Si los fallos de memoria son nuevos, importantes o interfieren claramente con tu vida diaria, una herramienta Wellness no sustituye una valoración profesional."
-    },
-    {
-      id: "frase-limite",
-      title: "Preparar un límite",
-      type: "emocional",
-      duration: "5 min",
-      needs: ["limites"],
-      summary: "Construir una frase clara sin justificarte durante cinco párrafos.",
-      intro: "Un límite comunica qué harás, qué necesitas o qué no puedes asumir. No necesita una defensa infinita.",
-      steps: [
-        "Describe el hecho sin interpretar intenciones.",
-        "Nombra tu necesidad en una frase corta.",
-        "Formula el límite o la petición de forma concreta.",
-        "Elimina explicaciones repetidas que solo intentan evitar que la otra persona se moleste.",
-        "Ensaya la frase una vez con tono neutro."
-      ],
-      note: "Que otra persona no esté de acuerdo con tu límite no significa automáticamente que lo hayas expresado mal."
-    },
-    {
-      id: "culpa-limite",
-      title: "Después de poner un límite",
-      type: "emocional",
-      duration: "4 min",
-      needs: ["limites", "rumiacion"],
-      summary: "Distinguir culpa de haber hecho algo incorrecto.",
-      intro: "A veces la incomodidad aparece precisamente porque estás haciendo algo diferente a lo habitual.",
-      steps: [
-        "Pregunta: “¿He hecho daño deliberadamente o simplemente he dicho que no?”",
-        "Separa la reacción de la otra persona de la validez automática de tu decisión.",
-        "Recuerda qué necesidad estabas protegiendo.",
-        "Evita corregir el límite inmediatamente solo para dejar de sentir culpa.",
-        "Date un tiempo antes de volver a decidir."
-      ],
-      note: "Sentir culpa no es una prueba. Es información emocional que necesita contexto."
-    },
-    {
-      id: "cierre-trabajo",
-      title: "Cerrar el día de trabajo",
-      type: "autocuidado",
-      duration: "6 min",
-      needs: ["desconectar", "orden"],
-      summary: "Ayudar al cerebro a dejar de mantener pendientes abiertos fuera de horario.",
-      intro: "Desconectar es más fácil cuando los asuntos pendientes quedan localizados y no flotando en la cabeza.",
-      steps: [
-        "Anota en una sola lista lo que queda abierto.",
-        "Escribe cuál será el primer paso de mañana.",
-        "Cierra físicamente las herramientas de trabajo que puedas cerrar.",
-        "Haz una transición breve: cambiarte, caminar, ducharte o preparar otra actividad.",
-        "Si reaparece un pendiente, recuérdate dónde está anotado."
-      ],
-      note: "La transición no necesita ser especial. Lo importante es que marque un cambio de contexto."
-    },
-    {
-      id: "bajar-noche",
-      title: "Bajar el volumen antes de dormir",
-      type: "autocuidado",
-      duration: "7 min",
-      needs: ["desconectar", "calmarme"],
-      summary: "Cerrar asuntos pendientes sin intentar obligarte a dormir.",
-      intro: "Dormir no funciona bien como una orden. Esta rutina busca preparar condiciones de menor activación.",
-      steps: [
-        "Anota cualquier pendiente que estés intentando retener.",
-        "Reduce luz y estimulación si puedes.",
-        "Evita resolver conversaciones o decisiones importantes desde la cama.",
-        "Haz una actividad repetitiva y de baja demanda durante unos minutos.",
-        "Si aparecen pensamientos, vuelve a la idea: “Esto puede esperar a mañana”."
-      ],
-      note: "Si el sueño es un problema persistente o grave, estas pautas generales no sustituyen una valoración específica."
-    },
-    {
-      id: "voz-critica",
-      title: "Cambiar de posición ante la voz crítica",
-      type: "emocional",
-      duration: "5 min",
-      needs: ["entender", "rumiacion"],
-      summary: "Observar autocrítica sin convertirla automáticamente en una descripción objetiva.",
-      intro: "La autocrítica suele hablar en tono de sentencia. Cambiar de posición permite examinarla con más contexto.",
-      steps: [
-        "Escribe mentalmente la frase crítica exacta.",
-        "Pregúntate si describe un hecho o emite un juicio global sobre ti.",
-        "Busca qué intenta evitar o controlar esa voz: error, rechazo, vergüenza, fracaso.",
-        "Reformula la frase para que sea específica y útil, sin necesidad de convertirla en una frase positiva.",
-        "Elige una acción que responda al problema real, no al insulto."
-      ],
-      note: "El objetivo no es convencerte de que todo está bien, sino sustituir castigo global por información más precisa."
-    },
-    {
-      id: "descanso-sin-culpa",
-      title: "Descansar sin negociar",
-      type: "autocuidado",
-      duration: "4 min",
-      needs: ["energia", "desconectar"],
-      summary: "Reservar una pausa sin convertirla en otra tarea que cumplir.",
-      intro: "Descansar no requiere haber agotado antes toda tu lista. Puedes elegir una pausa deliberada y breve.",
-      steps: [
-        "Observa si estás cansada, saturada o simplemente necesitas cambiar de actividad. No hace falta justificarlo.",
-        "Escoge una pausa sencilla que esté a tu alcance: levantarte, beber agua, sentarte o mirar por la ventana.",
-        "Decide cuánto tiempo dedicarás sin revisar tareas pendientes durante ese rato.",
-        "Cuando aparezca el pensamiento «debería estar haciendo algo», reconócelo sin empezar una negociación con él.",
-        "Al terminar, comprueba qué necesitas a continuación, sin evaluar la pausa como buena o mala."
-      ],
-      note: "Si necesitas descansar más, esta práctica no te exige volver a producir ni sustituye un descanso suficiente."
-    },
-    {
-      id: "decision-suficiente",
-      title: "Una decisión suficientemente buena",
-      type: "cognitivo",
-      duration: "5 min",
-      needs: ["orden", "rumiacion", "concentrarme"],
-      summary: "Reducir las vueltas a decisiones cotidianas de bajo riesgo.",
-      intro: "No todas las decisiones necesitan el mismo nivel de análisis. A veces seguir buscando certeza añade carga sin mejorar la elección.",
-      steps: [
-        "Elige una decisión cotidiana, reversible y de poca importancia.",
-        "Escribe las dos o tres condiciones que realmente importan para elegir.",
-        "Limita las opciones a un máximo de tres.",
-        "Escoge la opción que cumpla lo suficiente, aunque no sea perfecta.",
-        "Continúa con la acción elegida. Si aparece una nueva duda, anótala solo si cambia algo relevante."
-      ],
-      note: "No utilices este ejercicio para decisiones clínicas, legales, económicas o vitales de alto impacto."
-    },
-    {
-      id: "pausa-pantalla",
-      title: "Una pausa de pantalla",
-      type: "autocuidado",
-      duration: "3 min",
-      needs: ["desconectar", "concentrarme"],
-      summary: "Interrumpir el desplazamiento automático y recuperar una elección.",
-      intro: "No se trata de prohibirte el móvil. Se trata de comprobar si quieres seguir utilizándolo.",
-      steps: [
-        "Deja el dispositivo unos segundos sobre una superficie, sin desbloquearlo de nuevo.",
-        "Observa qué ibas a hacer y si llegaste a hacerlo.",
-        "Pregunta: «¿Quiero seguir aquí, o estoy intentando evitar otra cosa?»",
-        "Decide conscientemente si continúas, cierras una aplicación o haces una pausa breve.",
-        "Si eliges seguir, hazlo sin reprocharte la decisión."
-      ],
-      note: "La utilidad está en recuperar margen para elegir, no en contar minutos de pantalla."
-    },
-    {
-      id: "conexion-pequena",
-      title: "Un gesto de conexión",
-      type: "emocional",
-      duration: "5 min",
-      needs: ["entender", "energia", "limites"],
-      summary: "Buscar cercanía de un modo pequeño y compatible con tu energía.",
-      intro: "Conectar no siempre significa mantener una conversación larga o explicar todo lo que sientes.",
-      steps: [
-        "Piensa en una persona con quien te resulte seguro y agradable contactar.",
-        "Elige qué te gustaría: un saludo, compartir algo cotidiano o pedir una conversación.",
-        "Redacta un mensaje sencillo que no exija respuesta inmediata.",
-        "Comprueba que enviarlo es una elección, no una obligación.",
-        "Si hoy prefieres no contactar, considera otra forma amable de acompañarte."
-      ],
-      note: "No necesitas acercarte a personas con quienes no te sientas segura. No todas las relaciones son reparadoras."
-    },
-    {
-      id: "soltar-comparacion",
-      title: "Salir de la comparación",
-      type: "emocional",
-      duration: "4 min",
-      needs: ["rumiacion", "entender"],
-      summary: "Reconocer cuándo una comparación te está alejando de tus prioridades.",
-      intro: "La comparación puede ofrecer información, pero también convertirse en una medida injusta de tu propio valor.",
-      steps: [
-        "Identifica con quién o con qué te estás comparando.",
-        "Distingue qué información conoces realmente y qué parte estás suponiendo.",
-        "Pregunta qué aspecto concreto te importa en el fondo: descanso, reconocimiento, tiempo, seguridad o una meta.",
-        "Convierte esa necesidad en un paso realista que dependa de ti.",
-        "Vuelve a tu criterio, aunque sigas notando la comparación."
-      ],
-      note: "No se trata de prohibir compararte, sino de no convertir un fragmento de la vida ajena en una sentencia sobre la tuya."
-    },
-  ];
-
-  const routines = {
-    "cabeza-llena": {
-      title: "Tengo la cabeza llena",
-      type: "Rutina emocional + cognitiva",
-      intro: "Una secuencia corta para sacar pendientes de la cabeza y recuperar una dirección concreta.",
-      steps: [
-        "Haz una descarga mental de todo lo que tienes abierto.",
-        "Separa qué requiere acción y qué puede esperar.",
-        "Elige una sola prioridad.",
-        "Define el siguiente paso visible.",
-        "Antes de empezar, haz una pausa breve para bajar activación."
-      ],
-      note: "No tienes que terminar todo. La rutina termina cuando sabes qué va primero."
-    },
-    "desconectar-trabajo": {
-      title: "Quiero desconectar del trabajo",
-      type: "Rutina de autocuidado",
-      intro: "Cierra el contexto laboral para que tu cabeza no tenga que mantenerlo abierto toda la tarde.",
-      steps: [
-        "Anota lo que queda pendiente.",
-        "Deja escrito el primer paso de mañana.",
-        "Cierra herramientas de trabajo.",
-        "Haz una acción física de transición.",
-        "Empieza una actividad que pertenezca claramente a tu tiempo personal."
-      ],
-      note: "Si vuelve un pendiente, no necesitas resolverlo: recuerda dónde ha quedado anotado."
-    },
-    "antes-empezar": {
-      title: "No consigo empezar",
-      type: "Rutina cognitiva",
-      intro: "Reduce fricción y convierte una tarea grande en un comienzo concreto.",
-      steps: [
-        "Elige una sola tarea.",
-        "Define el primer paso de menos de cinco minutos.",
-        "Retira una distracción.",
-        "Haz solo ese primer paso.",
-        "Después decide si continúas. No antes."
-      ],
-      note: "Empezar es el objetivo de esta rutina. Terminar todo no forma parte del contrato."
-    },
-    "bajar-revoluciones": {
-      title: "Voy demasiado acelerada",
-      type: "Rutina emocional",
-      intro: "Primero baja el volumen del cuerpo y después decide qué hacer.",
-      steps: [
-        "Apoya pies y espalda.",
-        "Alarga suavemente la salida del aire durante varias respiraciones cómodas.",
-        "Nombra tres cosas que ves y dos sonidos que escuchas.",
-        "Relaja una zona que estés tensando sin darte cuenta.",
-        "Elige solo qué necesitas durante los próximos diez minutos."
-      ],
-      note: "No busques quedarte perfectamente tranquila. Basta con recuperar un poco de margen."
-    }
-  };
 
   // Clinical drafts never enter localStorage: compare in-memory snapshots only.
   const materialSavedSnapshots = new WeakMap();
@@ -429,12 +13,6 @@
   // Ningún texto clínico se copia a almacenamiento persistente.
   let portalSessionEpoch = 0;
   const state = {
-    currentActivity: null,
-    filter: "all",
-    need: null,
-    search: "",
-    favorites: [],
-    completed: [],
     storageScope: null,
     storageScopeVersion: 0,
     portalAuthenticated: false,
@@ -445,66 +23,6 @@
 
   const panels = [...document.querySelectorAll("[data-space-panel]")];
   const navButtons = [...document.querySelectorAll("[data-space-view]")];
-  const wellnessList = document.getElementById("wellness-list");
-  const wellnessContext = document.getElementById("wellness-context");
-
-  // Una sola navegación dentro de Wellness: entrar, explorar o volver a guardados.
-  let wellnessActiveTab = "inicio";
-  function setWellnessTab(tab, { preserveFilters = false, scroll = false, historyMode = null } = {}) {
-    const next = ["inicio", "explorar", "guardadas"].includes(tab) ? tab : "inicio";
-    wellnessActiveTab = next;
-    // En la app, cada apartado es una entrada real en el historial de Android.
-    // La necesidad elegida no se incorpora a la URL por privacidad.
-    if (insideEntreSesionesApp && state.portalAuthenticated &&
-        currentViewFromUrl() === "wellness" && ["push", "replace"].includes(historyMode)) {
-      const url = new URL(window.location.href);
-      if (next === "inicio") url.searchParams.delete("seccion");
-      else url.searchParams.set("seccion", next);
-      const destination = url.pathname + url.search + url.hash;
-      const current = window.location.pathname + window.location.search + window.location.hash;
-      if (destination !== current) {
-        const method = historyMode === "replace" ? "replaceState" : "pushState";
-        window.history[method]({ entreSesionesTab: "wellness", wellnessSection: next }, "", destination);
-      }
-    }
-    const view = document.querySelector('[data-space-panel="wellness"]');
-    if (view) view.dataset.wellnessActive = next;
-    document.querySelectorAll("[data-wellness-tab]").forEach(button => {
-      const active = button.dataset.wellnessTab === next;
-      button.classList.toggle("is-active", active);
-      button.setAttribute("aria-pressed", String(active));
-    });
-    document.querySelectorAll("[data-wellness-section]").forEach(panel => {
-      panel.hidden = panel.dataset.wellnessSection !== (next === "inicio" ? "inicio" : "explorar");
-    });
-    if (!preserveFilters) {
-      state.need = null;
-      state.filter = next === "guardadas" ? "favoritos" : "all";
-      state.search = "";
-      const search = document.getElementById("wellness-search");
-      if (search) {
-        search.value = "";
-        search.placeholder = next === "guardadas" ? "Buscar entre mis guardadas…" : "Buscar una herramienta…";
-      }
-    }
-    const heading = document.getElementById("wellness-library-heading");
-    if (heading) heading.textContent = next === "guardadas" ? "Mis herramientas guardadas" : "Herramientas para distintos momentos";
-    const goExplore = document.querySelector("[data-wellness-go-explore]");
-    if (goExplore) goExplore.hidden = next !== "guardadas";
-    renderWellness();
-    if (scroll && view && !view.hidden) {
-      document.querySelector(".wellness-subnav")?.scrollIntoView({ block: "start", behavior: "auto" });
-    }
-  }
-
-  const dialog = document.getElementById("wellness-dialog");
-  const dialogType = document.getElementById("wellness-dialog-type");
-  const dialogTitle = document.getElementById("wellness-dialog-title");
-  const dialogIntro = document.getElementById("wellness-dialog-intro");
-  const dialogSteps = document.getElementById("wellness-dialog-steps");
-  const dialogNote = document.getElementById("wellness-dialog-note");
-  const favoriteButton = document.getElementById("wellness-favorite");
-  const completeButton = document.getElementById("wellness-complete");
   const accessGate = document.getElementById("space-access");
   const sessionCheck = document.getElementById("space-session-check");
   const shell = document.getElementById("space-shell");
@@ -525,16 +43,7 @@
   const patientMaterials = document.getElementById("space-patient-materials");
   const patientFiles = document.getElementById("space-shared-files");
 
-  function loadJson(key, fallback) {
-    try {
-      const parsed = JSON.parse(localStorage.getItem(key) || "null");
-      return Array.isArray(parsed) ? parsed : fallback;
-    } catch {
-      return fallback;
-    }
-  }
-
-  function scopedWellnessKey(base) {
+  function scopedPatientKey(base) {
     return state.storageScope ? base + ":" + state.storageScope : null;
   }
 
@@ -561,7 +70,7 @@
     readingSettings = { size: "normal", simple: false, quiet: false };
     if (!state.storageScope) { applyReadingSettings(); return; }
     try {
-      const value = JSON.parse(localStorage.getItem(scopedWellnessKey(READING_KEY)) || "{}");
+      const value = JSON.parse(localStorage.getItem(scopedPatientKey(READING_KEY)) || "{}");
       if (value && typeof value === "object") {
         readingSettings.size = ["normal", "large", "extra"].includes(value.size) ? value.size : "normal";
         readingSettings.simple = value.simple === true;
@@ -580,7 +89,7 @@
     };
     applyReadingSettings();
     try {
-      localStorage.setItem(scopedWellnessKey(READING_KEY), JSON.stringify(readingSettings));
+      localStorage.setItem(scopedPatientKey(READING_KEY), JSON.stringify(readingSettings));
       if (readingFeedback) readingFeedback.textContent = "Preferencias guardadas solo en este dispositivo.";
     } catch {
       if (readingFeedback) readingFeedback.textContent = "Se ha aplicado el ajuste, pero este navegador no permite guardarlo.";
@@ -591,30 +100,15 @@
     control?.addEventListener("change", saveReadingSettings);
   });
 
-  function useWellnessStorage(scope) {
+  function usePatientStorageScope(scope) {
+    // Preserva el aislamiento por cuenta de las preferencias de lectura.
     state.storageScope = scope || null;
     loadReadingSettings();
-    const legacyGuest = scope === "guest";
-    state.favorites = scope ? loadJson(scopedWellnessKey(FAVORITES_KEY), legacyGuest ? loadJson(FAVORITES_KEY, []) : []) : [];
-    state.completed = scope ? loadJson(scopedWellnessKey(COMPLETED_KEY), legacyGuest ? loadJson(COMPLETED_KEY, []) : []) : [];
-    if (legacyGuest) {
-      try {
-        const favoritesKey = scopedWellnessKey(FAVORITES_KEY);
-        const completedKey = scopedWellnessKey(COMPLETED_KEY);
-        if (favoritesKey && !localStorage.getItem(favoritesKey)) localStorage.setItem(favoritesKey, JSON.stringify(state.favorites));
-        if (completedKey && !localStorage.getItem(completedKey)) localStorage.setItem(completedKey, JSON.stringify(state.completed));
-        localStorage.removeItem(FAVORITES_KEY);
-        localStorage.removeItem(COMPLETED_KEY);
-      } catch {}
-    }
-    loadJourney();
-    renderWellness();
-    renderProgress();
   }
 
-  async function loadPatientWellnessStorage() {
+  async function loadPatientStorageScope() {
     const revision = ++state.storageScopeVersion;
-    useWellnessStorage(null);
+    usePatientStorageScope(null);
     try {
       const response = await fetch("/api/patient-portal/preferences", {
         credentials: "include", cache: "no-store"
@@ -624,24 +118,10 @@
       const scope = typeof body.storage_scope === "string" && /^[a-f0-9]{24}$/.test(body.storage_scope)
         ? body.storage_scope : null;
       if (revision === state.storageScopeVersion && state.portalAuthenticated && scope) {
-        useWellnessStorage(scope);
+        usePatientStorageScope(scope);
       }
     } catch {
-      // Nunca reutilizamos los favoritos de otra cuenta si falla la identificación.
-    }
-  }
-
-  function saveState() {
-    const favoritesKey = scopedWellnessKey(FAVORITES_KEY);
-    const completedKey = scopedWellnessKey(COMPLETED_KEY);
-    if (!favoritesKey || !completedKey) return false;
-    try {
-      localStorage.setItem(favoritesKey, JSON.stringify(state.favorites));
-      localStorage.setItem(completedKey, JSON.stringify(state.completed.slice(-100)));
-      return true;
-    } catch {
-      // No confirmamos persistencia si el navegador bloquea el almacenamiento local.
-      return false;
+      // Si la identificación falla, nunca se heredan preferencias de otra cuenta.
     }
   }
 
@@ -726,7 +206,6 @@
       const url = new URL(window.location.href);
       const current = url.pathname + url.search + url.hash;
       url.searchParams.set("vista", nextSlug);
-      url.searchParams.delete("seccion"); // Entrar por navegación principal siempre empieza en Para hoy.
       url.hash = ""; // La actividad previa no debe enfocar otra sección.
       const destination = url.pathname + url.search + url.hash;
       if (destination !== current) {
@@ -760,17 +239,14 @@
     state.portalAuthenticated = false;
     state.portalData = null;
     state.storageScopeVersion++;
-    useWellnessStorage(null);
+    usePatientStorageScope(null);
     patientMaterials?.replaceChildren();
     patientFiles?.replaceChildren();
     const quickCount = document.getElementById("space-quick-material-count");
     if (quickCount) quickCount.textContent = "Inicia sesión para ver los materiales de tu cuenta.";
     const privateCount = document.getElementById("space-material-count");
     if (privateCount) privateCount.textContent = "Acceso privado";
-    if (dialog?.open) dialog.close();
-    state.currentActivity = null;
     document.dispatchEvent(new Event("patient-portal-locked"));
-    document.dispatchEvent(new Event("wellness:interactive-reset"));
     if (insideEntreSesionesApp) {
       const tabs = document.querySelector(".esapp-bottom-nav");
       if (tabs) tabs.hidden = true;
@@ -1380,7 +856,7 @@
     }
 
     window.dispatchEvent(new Event("patient-portal-session-ready"));
-    void loadPatientWellnessStorage();
+    void loadPatientStorageScope();
     const requestedView = new URLSearchParams(window.location.search).get("vista");
     const requestedPanels = { panel: "today", terapia: "therapy", configuracion: "account" };
     openPortal(requestedPanels[requestedView] || "today");
@@ -1597,329 +1073,6 @@
     showAccessGate();
   }
 
-  function typeLabel(type) {
-    if (type === "emocional") return "Wellness emocional";
-    if (type === "cognitivo") return "Wellness cognitivo";
-    return "Autocuidado";
-  }
-
-  function isFavorite(id) {
-    return state.favorites.includes(id);
-  }
-
-
-  const JOURNEY_KEY = "wellness_journey_v1";
-  const routes = [
-    ["Ansiedad y preocupación", "Responder con más flexibilidad a la preocupación", ["poner-nombre", "problema-o-prediccion", "pensamiento-no-orden", "aterrizar-presente"]],
-    ["Descanso y sobrecarga", "Hacer espacio para descansar", ["descarga-mental", "energia-minima", "cierre-trabajo", "frase-limite"]],
-    ["Autoestima y autoexigencia", "Tratarme con menos exigencia", ["poner-nombre", "voz-critica", "primer-paso", "culpa-limite"]],
-    ["Relaciones y límites", "Expresar mis necesidades y sostener límites", ["poner-nombre", "frase-limite", "culpa-limite", "pausa-enfado"]],
-    ["Regulación emocional", "Elegir cómo responder cuando me desbordo", ["poner-nombre", "bajar-revoluciones", "pausa-enfado", "aterrizar-presente"]],
-    ["Cambios y pérdidas", "Cuidarme mientras me adapto a un cambio", ["poner-nombre", "energia-minima", "pensamiento-no-orden", "primer-paso"]],
-    ["Hábitos cotidianos", "Organizarme con pasos realistas", ["descarga-mental", "primer-paso", "bloque-foco", "cierre-trabajo"]],
-    ["Bienestar cognitivo", "Organizar mi atención y mis apoyos cotidianos", ["descarga-mental", "bloque-foco", "memoria-externa", "primer-paso"]]
-  ];
-  const stages = ["Reconocer", "Practicar", "Aplicar", "Mantener"];
-  let journey = null;
-  let journeyDraft = null;
-  let question = 0;
-  let journeyNotice = "";
-  function loadJourney() {
-    journey = null; journeyDraft = null; question = 0;
-    try {
-      const value = JSON.parse(localStorage.getItem(scopedWellnessKey(JOURNEY_KEY)) || "null");
-      if (value && Number.isInteger(value.route) && routes[value.route] && Number.isInteger(value.step) && value.step >= 0 && value.step <= 4 && Array.isArray(value.seen)) journey = value;
-    } catch {}
-  }
-  function saveJourney() {
-    const key = scopedWellnessKey(JOURNEY_KEY);
-    if (!key) return;
-    try { localStorage.setItem(key, JSON.stringify(journey)); journeyNotice = ""; }
-    catch { journeyNotice = "No se ha podido guardar en este dispositivo. Tus cambios se mantienen solo mientras esta página esté abierta."; }
-  }
-  function currentJourneyActivity() { return routes[journey.route][2][journey.step]; }
-  function element(tag, text, parent) {
-    const node = document.createElement(tag); node.textContent = text; parent.append(node); return node;
-  }
-  function action(label, parent, handler) {
-    const button = element("button", label, parent); button.type = "button"; button.className = "space-secondary"; button.addEventListener("click", handler); return button;
-  }
-  function renderJourney() {
-    const root = document.getElementById("wellness-journey");
-    if (!root) return;
-    root.replaceChildren();
-    if (!state.storageScope) { element("p", "Preparando tu espacio personal…", root); return; }
-    if (journeyNotice) element("p", journeyNotice, root);
-    if (!journey || journeyDraft) {
-      if (!journeyDraft) journeyDraft = { route: 0, secondary: "", situation: "", goal: "", tried: "", time: "5 minutos", format: "Combinación" };
-      const questions = ["¿Qué te gustaría trabajar primero?", "¿Quieres añadir un objetivo complementario?", "¿En qué situaciones te cuesta más?", "¿Qué te gustaría poder hacer al terminar?", "¿Qué has probado y cómo te ha resultado?", "¿Cuánto tiempo puedes dedicar a una práctica?", "¿Cómo prefieres trabajar?", "Esta es tu propuesta"];
-      element("p", `Paso ${question + 1} de 8 · Puedes revisar tus respuestas`, root);
-      const heading = element("h3", questions[question], root); heading.tabIndex = -1;
-      const form = element("form", "", root);
-      let input;
-      const field = ["route", "secondary", "situation", "goal", "tried", "time", "format"][question];
-      if ([0,1,5,6].includes(question)) {
-        input = element("select", "", form); input.setAttribute("aria-label", questions[question]);
-        const choices = question <= 1 ? (question === 1 ? [["", "Solo un objetivo por ahora"], ...routes.map((r,i) => [String(i),r[0]]).filter(([i]) => Number(i) !== journeyDraft.route)] : routes.map((r,i) => [String(i), r[0]])) : (question === 5 ? ["2 minutos", "5 minutos", "10 minutos", "15 minutos"] : ["Texto", "Audio", "Ejercicios interactivos", "Combinación"]).map(v => [v,v]);
-        choices.forEach(([value,label]) => { const option = element("option",label,input); option.value = value; });
-        input.value = String(journeyDraft[field]);
-      } else if (question < 7) {
-        input = element("textarea", "", form); input.maxLength = 1000; input.rows = 3; input.setAttribute("aria-label", questions[question]); input.value = journeyDraft[field];
-        if (question === 3) input.placeholder = routes[journeyDraft.route][1];
-        element("p", "Puedes dejarlo en blanco y concretarlo más adelante. Evita nombres o datos de otras personas.", form);
-      } else {
-        element("p", "Tu objetivo: " + (journeyDraft.goal || routes[journeyDraft.route][1]), form);
-        if (journeyDraft.secondary !== "") element("p", "Después podrás explorar: " + routes[Number(journeyDraft.secondary)][0], form);
-        element("p", "Reconocer → Practicar → Aplicar → Mantener. Cada etapa se propone para dos semanas; puedes repetirla o avanzar a tu ritmo.",form);
-        element("p", "Empezarás con una herramienta breve. El formato elegido queda anotado; esta primera versión ofrece ejercicios de lectura y práctica. Los objetivos acordados con tu profesional tienen prioridad.",form);
-      }
-      const controls = element("div", "", form); controls.className = "journey-actions";
-      if (question > 0) action("Anterior",controls,() => { capture(); question--; renderWellness(); root.querySelector("h3")?.focus(); });
-      if (journey) action("Cancelar cambios", controls, () => { journeyDraft = null; renderWellness(); });
-      const next = element("button", question === 7 ? "Confirmar mi recorrido" : "Continuar",controls); next.type = "submit"; next.className = "space-primary";
-      function capture() { if(input) journeyDraft[field] = question === 0 ? Number(input.value) : input.value.trim(); if (String(journeyDraft.route) === journeyDraft.secondary) journeyDraft.secondary = ""; }
-      form.addEventListener("submit", event => {
-        event.preventDefault(); capture();
-        if(question < 7) question++;
-        else { journey = {...journeyDraft, step:0, seen:[], reviews:[], doubts: journey?.doubts || ""}; journeyDraft = null; question = 0; saveJourney(); }
-        renderWellness(); root.querySelector("h3")?.focus();
-      });
-      element("p", "Se guarda en este dispositivo, separado por cuenta. No se envía automáticamente a tu historia clínica.",root);
-      return;
-    }
-    element("p", "Mi objetivo",root); element("h3",journey.goal || routes[journey.route][1],root);
-    const map = element("ol","",root); map.className = "journey-map";
-    stages.forEach((name,i) => { const li = element("li", `${name}${i === journey.step ? " · Ahora" : i < journey.step ? " · Trabajada" : " · Más adelante"}`,map); if(i === journey.step) li.setAttribute("aria-current","step"); });
-    if(journey.step < 4) {
-      element("h4", "Mi siguiente paso · " + stages[journey.step],root);
-      element("p", "Durante las próximas dos semanas, prueba esta herramienta en situaciones de tu día a día. No necesitas usarla a diario.",root);
-      const current = activities.find(a => a.id === currentJourneyActivity());
-      action("Abrir: " + current.title,root,() => openActivity(current));
-      const review = element("form","",root);
-      const label = element("label", "¿Qué te ha ayudado y qué sigue costando?",review);
-      const answer = element("textarea","",label); answer.rows = 3; answer.maxLength = 1000;
-      const controls = element("div","",review); controls.className = "journey-actions";
-      action("Seguir practicando",controls,() => { journey.reviews.push({step:journey.step, text:answer.value.trim(),at:new Date().toISOString()}); saveJourney(); element("p","Puedes repetir la práctica o probarla en otra situación.",review); });
-      const next = element("button","Continuar a la siguiente etapa",controls); next.className = "space-primary"; next.type = "submit";
-      review.addEventListener("submit",event => { event.preventDefault(); if(!journey.seen.includes(current.id)) journey.seen.push(current.id); journey.reviews.push({step:journey.step,text:answer.value.trim(),at:new Date().toISOString()}); journey.step++; saveJourney(); renderWellness(); });
-    } else {
-      element("h4","Recorrido revisado",root); element("p","Puedes volver a tus herramientas, repetir el recorrido o elegir otro objetivo. Haber completado etapas no significa que la dificultad esté resuelta.",root);
-      if(journey.secondary !== "") action("Trabajar mi objetivo complementario",root,() => { journeyDraft = {...journey,route:Number(journey.secondary),secondary:"",goal:""}; question=7; renderWellness(); });
-    }
-    const doubts = element("details","",root); element("summary","Mis dudas",doubts);
-    const label = element("label","Anota lo que quieras revisar en tu próxima sesión",doubts);
-    const input = element("textarea","",label); input.rows=3; input.maxLength=2000; input.value=journey.doubts || "";
-    action("Guardar mis dudas",doubts,() => { journey.doubts=input.value.trim(); saveJourney(); element("p",journeyNotice || "Guardado en este dispositivo. No se envía a tu profesional.",doubts); });
-    const past = element("details","",root); element("summary","Mis revisiones anteriores",past);
-    (journey.reviews || []).forEach(r => element("p", stages[r.step] + ": " + (r.text || "Sin anotación"),past));
-    action("Revisar mis objetivos",root,() => { journeyDraft={...journey}; question=0; renderWellness(); });
-    element("h4","Mis herramientas disponibles",root);
-  }
-
-  function filteredActivities() {
-    const query = state.search.trim().toLocaleLowerCase("es");
-    return activities.filter(activity => {
-      if (state.filter === "favoritos" && !isFavorite(activity.id)) return false;
-      if (!["all", "favoritos"].includes(state.filter) && activity.type !== state.filter) return false;
-      if (state.need && !activity.needs.includes(state.need)) return false;
-      if (query && ![activity.title, activity.summary, activity.intro, typeLabel(activity.type)]
-        .some(value => String(value).toLocaleLowerCase("es").includes(query))) return false;
-      return true;
-    });
-  }
-
-  function renderWellness() {
-    if (!wellnessList) return;
-    renderJourney();
-    const items = filteredActivities();
-    wellnessList.replaceChildren();
-    const wellnessView = document.querySelector('[data-space-panel="wellness"]');
-    if (wellnessView) wellnessView.dataset.wellnessFocused = state.need ? "true" : "false";
-    const resetButton = document.querySelector("[data-wellness-reset]");
-    if (resetButton) resetButton.hidden = !state.need;
-    const count = document.getElementById("wellness-count");
-    if (count) count.textContent = items.length === 1 ? "1 herramienta" : items.length + " herramientas";
-    document.querySelectorAll("[data-wellness-filter]").forEach(button => {
-      const selected = button.dataset.wellnessFilter === state.filter;
-      button.classList.toggle("is-active", selected);
-      button.setAttribute("aria-pressed", String(selected));
-    });
-    document.querySelectorAll(".wellness-needs [data-need]").forEach(button => {
-      const selected = button.dataset.need === state.need;
-      button.classList.toggle("is-active", selected);
-      button.setAttribute("aria-pressed", String(selected));
-    });
-    if (!state.storageScope) {
-      if (wellnessContext) wellnessContext.hidden = true;
-      const unavailable = document.createElement("div");
-      unavailable.className = "space-empty";
-      unavailable.textContent = "Preparando tu biblioteca privada. Si no se carga, vuelve a entrar en Mi espacio.";
-      wellnessList.append(unavailable);
-      return;
-    }
-
-    if (state.need) {
-      const labels = {
-        calmarme: "Herramientas para bajar activación",
-        rumiacion: "Herramientas para salir del bucle mental",
-        entender: "Herramientas para entender lo que sientes",
-        energia: "Herramientas para días con poca energía",
-        orden: "Herramientas para ordenar la cabeza",
-        concentrarme: "Herramientas para recuperar foco",
-        limites: "Herramientas para preparar y sostener límites",
-        desconectar: "Herramientas para cerrar y desconectar"
-      };
-      wellnessContext.textContent = labels[state.need] || "";
-      wellnessContext.hidden = false;
-    } else {
-      wellnessContext.hidden = true;
-    }
-
-    if (!items.length) {
-      const empty = document.createElement("div");
-      empty.className = "space-empty";
-      empty.textContent = state.filter === "favoritos" && !state.search && !state.need
-        ? "Todavía no tienes favoritas. Guarda cualquiera de las herramientas con el corazón."
-        : "No hay resultados con estos filtros. Prueba otra necesidad, categoría o búsqueda.";
-      wellnessList.append(empty);
-      return;
-    }
-
-    items.forEach(activity => {
-      const card = document.createElement("article");
-      card.className = "wellness-card wellness-card--" + activity.type;
-      card.innerHTML = `
-        <div class="wellness-card-top">
-          <span class="wellness-card-type">${typeLabel(activity.type)}</span>
-          <button class="wellness-fav-mini ${isFavorite(activity.id) ? "is-favorite" : ""}" type="button" aria-label="${isFavorite(activity.id) ? "Quitar de favoritos" : "Guardar en favoritos"}" data-favorite-id="${activity.id}">♥</button>
-        </div>
-        <h3></h3>
-        <p></p>
-        <div class="wellness-card-meta"><span>${activity.duration}</span><button type="button" data-activity-id="${activity.id}">Abrir herramienta</button></div>
-      `;
-      card.querySelector("h3").textContent = activity.title;
-      card.querySelector("p").textContent = activity.summary;
-      wellnessList.append(card);
-    });
-  }
-
-  function openActivity(activity) {
-    state.currentActivity = activity;
-    favoriteButton.hidden = false;
-    completeButton.hidden = false;
-    dialogType.textContent = typeLabel(activity.type);
-    dialogTitle.textContent = activity.title;
-    dialogIntro.textContent = activity.intro;
-    dialogSteps.replaceChildren();
-    activity.steps.forEach(step => {
-      const li = document.createElement("li");
-      li.textContent = step;
-      dialogSteps.append(li);
-    });
-    dialogNote.textContent = activity.note || "";
-    favoriteButton.textContent = isFavorite(activity.id) ? "Quitar de favoritos" : "Guardar en favoritos";
-    completeButton.textContent = "Marcar como realizada";
-    dialog.showModal();
-  }
-
-  function openRoutine(routine) {
-    state.currentActivity = null;
-    dialogType.textContent = routine.type;
-    dialogTitle.textContent = routine.title;
-    dialogIntro.textContent = routine.intro;
-    dialogSteps.replaceChildren();
-    routine.steps.forEach(step => {
-      const li = document.createElement("li");
-      li.textContent = step;
-      dialogSteps.append(li);
-    });
-    dialogNote.textContent = routine.note || "";
-    favoriteButton.hidden = true;
-    completeButton.hidden = true;
-    dialog.showModal();
-  }
-
-  function toggleFavorite(id) {
-    if (isFavorite(id)) state.favorites = state.favorites.filter(item => item !== id);
-    else state.favorites.push(id);
-    saveState();
-    renderWellness();
-    renderProgress();
-  }
-
-  function completeActivity(id) {
-    state.completed.push({ id, at: new Date().toISOString() });
-    saveState();
-    completeButton.textContent = "Realizada ✓";
-    renderProgress();
-  }
-
-  // Registro local: solo identificador de práctica y fecha; nunca respuestas personales.
-  const interactiveActivityLabels = Object.freeze({
-    "wi-decision": "¿Problema o posibilidad?",
-    "wi-energy": "Mi energía, mi margen",
-    "wi-priorities": "Ordenar la cabeza",
-    "wi-focus": "Cambiar de criterio",
-    "wi-sequence": "Pon las ideas en orden",
-    "wi-visual": "Encuentra la figura",
-    "wi-moment": "Ordenar un momento"
-  });
-  document.addEventListener("wellness:interactive-completed", event => {
-    const detail = event.detail;
-    if (!detail || !state.portalAuthenticated || !state.storageScope ||
-        !Object.prototype.hasOwnProperty.call(interactiveActivityLabels, detail.id)) return;
-    state.completed.push({ id: detail.id, at: new Date().toISOString() });
-    const saved = saveState();
-    renderProgress();
-    detail.saved = saved;
-  });
-
-  function renderProgress() {
-    if (!document.getElementById("progress-total")) return;
-    const now = Date.now();
-    const sevenDays = 7 * 24 * 60 * 60 * 1000;
-    const week = state.completed.filter(item => {
-      const when = new Date(item.at).getTime();
-      return Number.isFinite(when) && now - when <= sevenDays;
-    });
-
-    document.getElementById("progress-total").textContent = String(state.completed.length);
-    document.getElementById("progress-week").textContent = String(week.length);
-    document.getElementById("progress-favorites").textContent = String(state.favorites.length);
-
-    const history = document.getElementById("progress-history");
-    history.replaceChildren();
-    const recent = [...state.completed].reverse().slice(0, 12);
-    if (!recent.length) {
-      const empty = document.createElement("div");
-      empty.className = "space-empty";
-      empty.textContent = "Todavía no has marcado ninguna actividad como realizada.";
-      history.append(empty);
-      return;
-    }
-
-    recent.forEach(item => {
-      const activity = activities.find(entry => entry.id === item.id);
-      const interactiveTitle = Object.prototype.hasOwnProperty.call(interactiveActivityLabels, item.id)
-        ? interactiveActivityLabels[item.id] : null;
-      if (!activity && !interactiveTitle) return;
-      const row = document.createElement("div");
-      row.className = "space-history-item";
-      const left = document.createElement("div");
-      const title = document.createElement("strong");
-      title.textContent = activity ? activity.title : interactiveTitle;
-      const type = document.createElement("span");
-      type.textContent = activity ? typeLabel(activity.type) : "Práctica interactiva · solo actividad registrada";
-      left.append(title, type);
-      const time = document.createElement("time");
-      const date = new Date(item.at);
-      time.dateTime = item.at;
-      time.textContent = new Intl.DateTimeFormat("es-ES", { day: "numeric", month: "short" }).format(date);
-      row.append(left, time);
-      history.append(row);
-    });
-  }
-
   function clearLegacyAccessToken() {
     // Old URL tokens never grant clinical access. Remove them from browser URL and storage.
     const url = new URL(window.location.href);
@@ -1939,124 +1092,24 @@
         setAccessMessage("Para ver tu terapia, inicia sesión con tu correo y contraseña.");
         return;
       }
-      state.need = null;
       navigateToView(view);
     });
   });
 
-  document.querySelectorAll("[data-wellness-tab]").forEach(button => {
-    button.addEventListener("click", () => setWellnessTab(button.dataset.wellnessTab, {
-      scroll: true, historyMode: "push"
-    }));
-  });
-  document.querySelector("[data-wellness-go-explore]")?.addEventListener("click", () => {
-    setWellnessTab("explorar", { scroll: true, historyMode: "push" });
-  });
-
-  document.querySelectorAll("[data-need]").forEach(button => {
-    button.addEventListener("click", () => {
-      state.need = button.dataset.need;
-      state.filter = "all";
-      state.search = "";
-      const search = document.getElementById("wellness-search");
-      if (search) search.value = "";
-      const previousView = panels.find(panel => !panel.hidden)?.dataset.spacePanel;
-      navigateToView("wellness");
-      // Desde Hoy se vuelve a Hoy; dentro de Wellness, Atrás regresa a Para hoy.
-      setWellnessTab("explorar", {
-        preserveFilters: true, scroll: true,
-        historyMode: previousView === "wellness" ? "push" : "replace"
-      });
-    });
-  });
-
-  document.querySelectorAll("[data-wellness-filter]").forEach(button => {
-    button.addEventListener("click", () => {
-      state.filter = button.dataset.wellnessFilter;
-      state.need = null;
-      renderWellness();
-    });
-  });
-
-  document.querySelector("[data-wellness-reset]")?.addEventListener("click", () => {
-    state.need = null;
-    state.filter = "all";
-    state.search = "";
-    const search = document.getElementById("wellness-search");
-    if (search) search.value = "";
-    renderWellness();
-  });
-  document.getElementById("wellness-search")?.addEventListener("input", event => {
-    state.search = String(event.target.value || "").slice(0,120);
-    renderWellness();
-  });
-  document.querySelectorAll("[data-wellness-start]").forEach(button => {
-    button.addEventListener("click", () => {
-      if (!state.storageScope) return;
-      const activity = activities.find(item => item.id === button.dataset.wellnessStart);
-      if (activity) openActivity(activity);
-    });
-  });
-
-  wellnessList?.addEventListener("click", event => {
-    const open = event.target.closest("[data-activity-id]");
-    if (open) {
-      const activity = activities.find(item => item.id === open.dataset.activityId);
-      if (activity) openActivity(activity);
+  document.getElementById("space-clear-local")?.addEventListener("click", () => {
+    if (!state.portalAuthenticated || !state.storageScope) return;
+    if (!window.confirm("¿Restablecer las preferencias de lectura guardadas en este dispositivo? Tus ejercicios y respuestas clínicas no se modificarán.")) return;
+    const key = scopedPatientKey(READING_KEY);
+    try {
+      if (key) localStorage.removeItem(key);
+    } catch {
+      const message = document.getElementById("space-clear-message");
+      if (message) message.textContent = "El navegador no ha permitido borrar las preferencias de lectura.";
       return;
     }
-    const fav = event.target.closest("[data-favorite-id]");
-    if (fav) toggleFavorite(fav.dataset.favoriteId);
-  });
-
-  document.querySelectorAll("[data-routine]").forEach(button => {
-    button.addEventListener("click", () => {
-      const routine = routines[button.dataset.routine];
-      if (routine) openRoutine(routine);
-    });
-  });
-
-  document.querySelector("[data-open-featured]")?.addEventListener("click", () => {
-    const featured = activities.find(item => item.id === "problema-o-prediccion");
-    if (featured) openActivity(featured);
-  });
-
-  document.getElementById("wellness-dialog-close")?.addEventListener("click", () => dialog.close());
-  dialog?.addEventListener("click", event => {
-    if (event.target === dialog) dialog.close();
-  });
-
-  favoriteButton?.addEventListener("click", () => {
-    if (!state.currentActivity) return;
-    toggleFavorite(state.currentActivity.id);
-    favoriteButton.textContent = isFavorite(state.currentActivity.id) ? "Quitar de favoritos" : "Guardar en favoritos";
-  });
-
-  completeButton?.addEventListener("click", () => {
-    if (state.currentActivity) completeActivity(state.currentActivity.id);
-  });
-
-  document.getElementById("space-clear-local")?.addEventListener("click", () => {
-    const ok = window.confirm("¿Borrar de este dispositivo tus registros de ánimo, objetivos de Wellness, favoritos, actividades realizadas y preferencias de lectura? No se borrarán los ejercicios clínicos ni tu cuenta.");
-    if (!ok) return;
-    state.favorites = [];
-    state.completed = [];
-    const favoritesKey = scopedWellnessKey(FAVORITES_KEY);
-    const completedKey = scopedWellnessKey(COMPLETED_KEY);
-    const journeyKey = scopedWellnessKey(JOURNEY_KEY);
-    const readingKey = scopedWellnessKey(READING_KEY);
-    for (const key of [favoritesKey, completedKey, journeyKey, readingKey]) {
-      if (key) try { localStorage.removeItem(key); } catch { /* El navegador puede bloquear los datos locales. */ }
-    }
-    document.dispatchEvent(new Event("patient-local-wellness-cleared"));
     loadReadingSettings();
-    journey = null;
-    journeyDraft = null;
-    question = 0;
-    renderProgress();
-    renderWellness();
     const message = document.getElementById("space-clear-message");
-    if (message) message.textContent = "Se han solicitado el borrado de tus datos locales de Wellness y el restablecimiento de la lectura. Comprueba este navegador si bloquea el almacenamiento.";
+    if (message) message.textContent = "Preferencias de lectura restablecidas en este dispositivo.";
   });
 
   emailForm?.addEventListener("submit", requestPatientLink);
@@ -2111,13 +1164,6 @@
   });
 
   if (insideEntreSesionesApp) {
-    // La navegación de la PWA tampoco muestra entradas antiguas de Wellness.
-    const bottomNav = document.querySelector(".esapp-bottom-nav");
-    bottomNav?.querySelectorAll("a").forEach(link => {
-      const view = new URL(link.href, window.location.origin).searchParams.get("vista");
-      if (view === "wellness" || view === "progreso") link.remove();
-    });
-    if (bottomNav) bottomNav.style.gridTemplateColumns = "repeat(3, minmax(0, 1fr))";
     window.addEventListener("hashchange", focusPatientMaterialFromHash);
     document.querySelectorAll(".esapp-bottom-nav a").forEach(link => {
       const destination = new URL(link.href, window.location.origin);
@@ -2135,14 +1181,11 @@
     window.addEventListener("popstate", () => {
       if (!state.portalAuthenticated) return;
       // Los filtros de una visita anterior no deben contaminar la sección restaurada.
-      state.need = null;
       showView(currentViewFromUrl());
     });
   }
 
   clearLegacyAccessToken();
-  renderWellness();
-  renderProgress();
   const configuringPassword = verifySetupLinkFromUrl();
   // Even /mi-espacio/ and /entre-sesiones/app/espacio/ without a vista
   // must validate an existing session before rendering the login screen.

@@ -111,7 +111,7 @@ const AVATARS: AvatarOption[] = [
   { id: "senior-man", label: "Hombre mayor", stage: "Edad avanzada", hair: "#d2d8e0", skin: "#e1b28e" },
   { id: "senior-woman", label: "Mujer mayor", stage: "Edad avanzada", hair: "#d4cfd4", skin: "#bd8d70" },
 ];
-const AVATAR_CHANGE_EVENT = "wellness-companion-avatar-changed";
+const AVATAR_CHANGE_EVENT = "patient-companion-avatar-changed";
 const SESSION_READY_EVENT = "patient-portal-session-ready";
 const DEFAULT_AVATAR = AVATARS[0];
 
@@ -333,21 +333,8 @@ export default function MoodTracker() {
   const scopedMoodKey = scope ? STORAGE_KEY + ":" + scope : null;
   useEffect(() => {
     // El historial se dibuja fuera de las columnas, a todo el ancho disponible.
-    setChartHost(document.getElementById("wellness-evolution-full"));
+    setChartHost(document.getElementById("mood-evolution-full"));
   }, []);
-  useEffect(() => {
-    const clearWithWellness = () => {
-      if (!scopedMoodKey) return;
-      try { localStorage.removeItem(scopedMoodKey); } catch { /* Almacenamiento bloqueado. */ }
-      setEntries([]);
-      setSelected(null);
-      setEnergy(2);
-      setMessage("Se ha solicitado borrar el historial de ánimo de este dispositivo.");
-    };
-    document.addEventListener("patient-local-wellness-cleared", clearWithWellness);
-    return () => document.removeEventListener("patient-local-wellness-cleared", clearWithWellness);
-  }, [scopedMoodKey]);
-
   useEffect(() => {
     setLoaded(false);
     setEntries([]);

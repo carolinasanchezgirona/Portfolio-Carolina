@@ -1,3 +1,4 @@
+
 .space-page{
   --space-ink:#173A5E;
   --space-muted:#637485;
@@ -81,17 +82,6 @@
 .space-filter-row button{border:1px solid var(--space-line);background:#fff;color:var(--space-ink);border-radius:999px;padding:8px 12px;font:inherit;font-size:.78rem;font-weight:750;cursor:pointer}
 .space-filter-row button.is-active{background:var(--space-ink);border-color:var(--space-ink);color:#fff}
 .space-context{padding:13px 15px;border:1px solid #bee1df;background:#f1fbfa;border-radius:12px;color:#335b60;font-size:.83rem;line-height:1.5;margin-bottom:18px}
-.space-wellness-list{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
-.wellness-card{border:1px solid var(--space-line);background:#fff;border-radius:16px;padding:18px;display:flex;flex-direction:column;min-height:188px}
-.wellness-card-top{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}
-.wellness-card-type{font-size:.7rem;text-transform:uppercase;letter-spacing:.07em;font-weight:820;color:var(--space-accent)}
-.wellness-fav-mini{border:0;background:transparent;color:#8598a6;font-size:1.15rem;cursor:pointer;line-height:1;padding:0}
-.wellness-fav-mini.is-favorite{color:var(--space-coral)}
-.wellness-card h3{margin:9px 0 7px;color:var(--space-ink);font-size:1rem}
-.wellness-card p{margin:0;color:var(--space-muted);font-size:.79rem;line-height:1.5}
-.wellness-card-meta{margin-top:auto;padding-top:16px;display:flex;align-items:center;justify-content:space-between;gap:12px}
-.wellness-card-meta span{font-size:.7rem;color:#758894}
-.wellness-card-meta button{border:0;background:transparent;color:var(--space-ink);font:inherit;font-size:.76rem;font-weight:820;cursor:pointer;padding:4px 0}
 .space-empty{grid-column:1/-1;padding:26px;border:1px dashed #b7cad8;border-radius:15px;background:#fff;color:var(--space-muted);font-size:.86rem;line-height:1.6}
 .space-summary{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:32px}
 .space-summary article{border:1px solid var(--space-line);background:#fff;border-radius:16px;padding:20px;display:grid;gap:5px}
@@ -104,48 +94,34 @@
 .space-history-item time{font-size:.72rem;color:#7f909b;white-space:nowrap}
 .space-danger-link{margin-top:24px;border:0;background:transparent;color:#9b443d;font:inherit;font-size:.8rem;font-weight:800;padding:0;cursor:pointer}
 .space-small{font-size:.76rem;color:var(--space-muted)}
-.wellness-dialog{width:min(660px,calc(100% - 28px));max-height:88vh;border:0;border-radius:20px;padding:0;box-shadow:0 30px 90px rgba(18,43,62,.22)}
-.wellness-dialog::backdrop{background:rgba(21,40,54,.42);backdrop-filter:blur(3px)}
-.wellness-dialog-inner{position:relative;padding:clamp(24px,5vw,38px);overflow:auto;max-height:88vh}
-.wellness-close{position:absolute;right:18px;top:16px;width:36px;height:36px;border-radius:50%;border:1px solid var(--space-line);background:#fff;color:var(--space-ink);font-size:1.35rem;cursor:pointer}
-.wellness-dialog h2{margin:0 44px 0 0;color:var(--space-ink);font-family:var(--font-newsreader),Georgia,serif;font-size:2rem;font-weight:550}
-.wellness-intro{color:var(--space-muted);line-height:1.65;font-size:.9rem;margin:12px 0 20px}
-.wellness-steps{padding-left:22px;margin:0;display:grid;gap:12px}
-.wellness-steps li{padding-left:4px;color:#334b5b;font-size:.88rem;line-height:1.6}
-.wellness-note{margin:20px 0 0;padding:13px 15px;border-radius:11px;background:#f5f8fa;color:#5d707d;font-size:.78rem;line-height:1.5}
-.wellness-dialog-actions{display:flex;flex-wrap:wrap;gap:9px;margin-top:22px}
 .space-safety{max-width:1120px;margin:0 auto 34px;padding:15px 20px;border-top:1px solid var(--space-line);display:flex;justify-content:space-between;gap:20px;color:#637583;font-size:.73rem;line-height:1.5}
 .space-safety strong{color:var(--space-ink)}
 @media(max-width:1080px){
-  .space-shell{grid-template-columns:220px minmax(0,1fr)}
-  .space-needs{grid-template-columns:repeat(2,minmax(0,1fr))}
-  .space-routines{grid-template-columns:repeat(2,minmax(0,1fr))}
-  .space-wellness-list{grid-template-columns:repeat(2,minmax(0,1fr))}
+.space-shell{grid-template-columns:220px minmax(0,1fr)}
+.space-needs{grid-template-columns:repeat(2,minmax(0,1fr))}
+.space-routines{grid-template-columns:repeat(2,minmax(0,1fr))}
 }
 @media(max-width:760px){
-  .space-topbar{position:relative;padding:13px 18px}
-  .space-shell{display:block}
-  .space-sidebar{padding:20px 18px 14px;border-right:0;border-bottom:1px solid var(--space-line);gap:14px}
-  .space-sidebar>div:first-child,.space-sidebar-note{display:none}
-  .space-nav{display:flex;overflow-x:auto;gap:6px;padding-bottom:2px}
-  .space-nav button{white-space:nowrap;border:1px solid var(--space-line);background:#fff;padding:9px 12px;font-size:.78rem}
-  .space-content{padding:28px 18px 44px}
-  .space-dashboard-grid,.space-feature-grid{grid-template-columns:1fr}
-  .space-wellness-list{grid-template-columns:1fr}
-  .space-safety{margin:0 18px 26px;display:grid}
+.space-topbar{position:relative;padding:13px 18px}
+.space-shell{display:block}
+.space-sidebar{padding:20px 18px 14px;border-right:0;border-bottom:1px solid var(--space-line);gap:14px}
+.space-sidebar>div:first-child,.space-sidebar-note{display:none}
+.space-nav{display:flex;overflow-x:auto;gap:6px;padding-bottom:2px}
+.space-nav button{white-space:nowrap;border:1px solid var(--space-line);background:#fff;padding:9px 12px;font-size:.78rem}
+.space-content{padding:28px 18px 44px}
+.space-dashboard-grid,.space-feature-grid{grid-template-columns:1fr}
+.space-safety{margin:0 18px 26px;display:grid}
 }
 @media(max-width:520px){
-  .space-brand-sub{display:none}
-  .space-topbar-title{font-size:.76rem}
-  .space-needs{grid-template-columns:1fr 1fr;gap:8px}
-  .space-needs button{padding:14px;grid-template-columns:1fr;gap:5px}
-  .space-needs button>span{grid-row:auto;width:30px;height:30px}
-  .space-routines{grid-template-columns:1fr}
-  .space-summary{grid-template-columns:1fr}
-  .space-history-item{align-items:flex-start}
+.space-brand-sub{display:none}
+.space-topbar-title{font-size:.76rem}
+.space-needs{grid-template-columns:1fr 1fr;gap:8px}
+.space-needs button{padding:14px;grid-template-columns:1fr;gap:5px}
+.space-needs button>span{grid-row:auto;width:30px;height:30px}
+.space-routines{grid-template-columns:1fr}
+.space-summary{grid-template-columns:1fr}
+.space-history-item{align-items:flex-start}
 }
-
-
 .space-access{
   min-height:calc(100vh - 74px);
   padding:clamp(32px,8vw,80px) 18px;
@@ -229,18 +205,6 @@
   flex:1;
   background:var(--space-line);
 }
-.space-wellness-guest{
-  width:100%;
-  min-height:42px;
-  border:1px solid #bfd1dc;
-  border-radius:999px;
-  background:#fff;
-  color:var(--space-ink);
-  font:inherit;
-  font-size:.82rem;
-  font-weight:800;
-  cursor:pointer;
-}
 .space-access-foot{
   margin:15px 0 0;
   color:#7b8b96;
@@ -307,12 +271,13 @@
   font-size:.82rem;
   line-height:1.6;
 }
-
 .space-patient-downloads{display:flex;align-items:center;flex-wrap:wrap;gap:10px;margin:17px 0 22px;padding:16px;border:1px solid #cbe8e5;border-radius:13px;background:#f1fbfa}
 .space-material-download-button{min-height:42px;white-space:nowrap;border-color:#9dccca}
 .space-material-download-button:disabled{opacity:.55;cursor:progress}
 .space-material-download-status{flex:1 1 170px;font-size:.76rem;line-height:1.5;color:#496777}
-@media(max-width:520px){.space-patient-downloads{align-items:stretch;flex-direction:column}.space-material-download-button{width:100%}}
+@media(max-width:520px){
+.space-patient-downloads{align-items:stretch;flex-direction:column}
+.space-material-download-button{width:100%}}
 .space-patient-response{
   margin-top:16px;
   padding:16px;
@@ -386,32 +351,24 @@
   font-weight:800;
 }
 @media(max-width:520px){
-  .space-access{padding-top:24px}
-  .space-access-card{padding:24px 18px}
-  .space-patient-material summary{padding:15px}
-  .space-patient-material-body{padding:0 15px 15px}
+.space-access{padding-top:24px}
+.space-access-card{padding:24px 18px}
+.space-patient-material summary{padding:15px}
+.space-patient-material-body{padding:0 15px 15px}
 }
-
-/* El atributo hidden debe prevalecer sobre los componentes display:grid/flex. */
-.space-access-form[hidden],
-.space-primary[hidden],
-.space-access[hidden],
-.space-shell[hidden] { display:none !important; }
-
-.space-access-form h2 { margin:0 0 4px; color:var(--space-ink); font-size:1.3rem; }
-.space-access-form input { width:100%; }
-.space-access-form input[type="password"] { letter-spacing:.05em; }
-.space-access-form input[type="password"]::placeholder { letter-spacing:normal; }
-.space-text-action {
+.space-access-form[hidden],.space-primary[hidden],.space-access[hidden],.space-shell[hidden]{ display:none !important; }
+.space-access-form h2{ margin:0 0 4px; color:var(--space-ink); font-size:1.3rem; }
+.space-access-form input{ width:100%; }
+.space-access-form input[type="password"]{ letter-spacing:.05em; }
+.space-access-form input[type="password"]::placeholder{ letter-spacing:normal; }
+.space-text-action{
   padding:6px 0; border:0; background:transparent;
   color:#096e83; text-decoration:underline; text-underline-offset:3px;
   font:inherit; font-size:.84rem; font-weight:650; cursor:pointer;
   text-align:left;
 }
-.space-text-action:hover { color:#173a5e; }
-.space-text-action:focus-visible { outline:3px solid #08a6a0; outline-offset:3px; border-radius:4px; }
-
-/* Patient-facing editorial redesign. Built on existing semantic sections and authentication. */
+.space-text-action:hover{ color:#173a5e; }
+.space-text-action:focus-visible{ outline:3px solid #08a6a0; outline-offset:3px; border-radius:4px; }
 .space-page{background:linear-gradient(160deg,#f5fafb 0%,#f8fbfc 42%,#f4f8f9 100%)}
 .space-topbar{border-bottom-color:#dcecef;box-shadow:0 2px 18px rgba(22,58,83,.03)}
 .space-content{padding-top:clamp(22px,3vw,40px)}
@@ -463,36 +420,29 @@
 .space-guided-field textarea{width:100%;min-height:64px;padding:11px;border:1px solid #bfd7df;border-radius:11px;background:white;color:#294657;font:inherit;resize:vertical}
 .space-guided-actions{display:flex;align-items:center;gap:14px;margin-top:13px;flex-wrap:wrap}
 .space-guided-actions .space-small{line-height:1.5}
-@media(max-width:1080px){.space-needs{grid-template-columns:repeat(2,minmax(0,1fr))}}
-@media(max-width:760px){.space-quick-start{align-items:stretch;flex-direction:column;gap:14px;padding:18px}.space-quick-start .space-primary{align-self:flex-start}.space-learning-flow{grid-template-columns:1fr}.space-learning-flow span{text-align:left}.space-materials-section .space-section-heading{flex-wrap:wrap}}
-@media(max-width:520px){.space-needs{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.space-needs button{min-height:145px;padding:13px}.space-needs strong{font-size:.86rem}.space-needs-heading{align-items:flex-start;flex-direction:column;gap:5px}.space-needs-heading>span{font-size:.74rem}.space-quick-start .space-primary{width:100%}.space-learning-card>summary{padding:15px}.space-learning-body{padding:0 15px 18px}}
-
-/* Subscription access notice; no checkout is shown until entitlements are deployed. */
+@media(max-width:1080px){
+.space-needs{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:760px){
+.space-quick-start{align-items:stretch;flex-direction:column;gap:14px;padding:18px}
+.space-quick-start .space-primary{align-self:flex-start}
+.space-learning-flow{grid-template-columns:1fr}
+.space-learning-flow span{text-align:left}
+.space-materials-section .space-section-heading{flex-wrap:wrap}}
+@media(max-width:520px){
+.space-needs{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+.space-needs button{min-height:145px;padding:13px}
+.space-needs strong{font-size:.86rem}
+.space-needs-heading{align-items:flex-start;flex-direction:column;gap:5px}
+.space-needs-heading>span{font-size:.74rem}
+.space-quick-start .space-primary{width:100%}
+.space-learning-card>summary{padding:15px}
+.space-learning-body{padding:0 15px 18px}}
 .space-membership-note{display:flex;flex-direction:column;gap:6px;margin:0 0 25px;padding:15px 20px;border:1px solid #f3dfbc;border-radius:16px;background:linear-gradient(110deg,#fff6e5,#fffaf1);color:#173a5e}
 .space-membership-note strong{font-size:.88rem}
 .space-membership-note p{margin:0;color:#647584;font-size:.77rem;line-height:1.55}
-
-#wellness-journey{background:#fff;border:1px solid var(--space-line);border-radius:18px;padding:clamp(18px,4vw,30px);margin-bottom:20px;font-size:1rem;line-height:1.6}
-#wellness-journey h3{font-size:1.5rem;color:var(--space-ink)}
-#wellness-journey select,#wellness-journey textarea{display:block;width:100%;box-sizing:border-box;font:inherit;color:var(--space-ink);padding:12px;border:1px solid #8198aa;border-radius:10px;margin:12px 0;background:white}
-#wellness-journey label{display:block;margin-top:18px}
-.journey-actions{display:flex;flex-wrap:wrap;gap:12px;margin:18px 0}
-.journey-map{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;list-style:none;padding:0}.journey-map li{padding:12px;background:#eaf6fb;border-radius:10px}.journey-map [aria-current]{background:#173a5e;color:white}
-#wellness-journey details{margin:20px 0}#wellness-journey summary{cursor:pointer;font-weight:700}
-@media(max-width:640px){.journey-map{grid-template-columns:repeat(2,minmax(0,1fr))}}
-/* Calm, focused journey: one working step with a compact route overview. */
-#wellness-journey{padding:clamp(22px,4vw,38px);border-radius:24px;box-shadow:0 12px 36px rgba(23,58,94,.06);border-color:#d5e5ed;max-width:980px}
-#wellness-journey>p:first-child{font-size:.8rem;text-transform:uppercase;letter-spacing:.09em;font-weight:800;color:#078e88;margin:0 0 8px}
-#wellness-journey h3{font-family:var(--font-newsreader),Georgia,serif;font-weight:550;font-size:clamp(1.5rem,2.5vw,2rem);line-height:1.25;margin:8px 0 24px;max-width:760px}
-#wellness-journey h4{font-size:1.12rem;margin:25px 0 10px;color:#173a5e}
-#wellness-journey>p{max-width:720px;font-size:1rem;margin:12px 0 18px;color:#526d80}
-.journey-map{gap:10px;margin:24px 0 28px;counter-reset:journey}.journey-map li{position:relative;font-size:.88rem;line-height:1.45;padding:15px 12px;background:#f0f6fa;border:1px solid #e0eaf0;counter-increment:journey;display:flex;flex-direction:column;gap:7px}.journey-map li:before{content:'0' counter(journey);font-size:.75rem;font-weight:800;letter-spacing:.08em;color:#6b8495}.journey-map [aria-current]{background:#173a5e;box-shadow:0 5px 14px rgba(23,58,94,.15)}.journey-map [aria-current]:before{color:#79dad4}
-#wellness-journey form{padding:20px 0 6px;max-width:720px}#wellness-journey form label{font-size:.95rem;font-weight:650;color:#173a5e}#wellness-journey textarea{background:#f8fbfd;border-color:#c5d8e4;min-height:110px}#wellness-journey textarea:focus,#wellness-journey select:focus{outline:3px solid #bde7e4;border-color:#078e88}
-#wellness-journey details{padding:15px 18px;background:#f5f9fc;border:1px solid #dbe7ee;border-radius:12px}#wellness-journey button{font-size:.95rem;min-height:44px}#wellness-journey>button:first-of-type{background:#e5f5f3;border-color:#99d4cc;color:#126962;padding:12px 20px}
-@media(max-width:640px){#wellness-journey{padding:20px 16px}.journey-map{gap:8px}.journey-map li{font-size:.85rem;padding:12px}.space-hero h2{font-size:clamp(1.6rem,7vw,2.2rem)}}
-
-/* Securely shared documents and audio (patient portal). */
-.space-patient-shared-file {
+@media(max-width:640px){
+.space-hero h2{font-size:clamp(1.6rem,7vw,2.2rem)}}
+.space-patient-shared-file{
   padding: 1.25rem;
   background: #fff;
   border: 1px solid #dceaf0;
@@ -501,15 +451,12 @@
   gap: .65rem;
   min-width: 0;
 }
-.space-patient-shared-file h4 { margin: 0; color: #173a5e; font-size: 1.1rem; }
-.space-patient-shared-file p { margin: 0; line-height: 1.5; }
-.space-patient-shared-file-kind { font-size: .8rem; color: #237d87; font-weight: 700; }
-.space-patient-shared-file audio { display: block; width: 100%; max-width: 100%; }
-.space-patient-shared-actions { display: flex; flex-wrap: wrap; gap: .65rem; }
-.space-patient-shared-actions a { text-decoration: none; display: inline-flex; align-items: center; justify-content: center; }
-
-
-/* Material para pacientes: fichas legibles, recursos junto a cada ejercicio y respuesta editable. */
+.space-patient-shared-file h4{ margin: 0; color: #173a5e; font-size: 1.1rem; }
+.space-patient-shared-file p{ margin: 0; line-height: 1.5; }
+.space-patient-shared-file-kind{ font-size: .8rem; color: #237d87; font-weight: 700; }
+.space-patient-shared-file audio{ display: block; width: 100%; max-width: 100%; }
+.space-patient-shared-actions{ display: flex; flex-wrap: wrap; gap: .65rem; }
+.space-patient-shared-actions a{ text-decoration: none; display: inline-flex; align-items: center; justify-content: center; }
 .space-neuro-workbook{display:grid;gap:24px;margin:20px 0 26px}
 .space-neuro-workbook-intro{margin:0;color:#456879;line-height:1.7;max-width:70ch}
 .space-neuro-task{border:1px solid #d8e6ec;border-radius:16px;background:white;padding:clamp(18px,3vw,28px);display:grid;gap:17px;box-shadow:0 3px 14px rgba(23,58,94,.035)}
@@ -531,11 +478,11 @@
 .space-neuro-task-answer{display:grid;gap:9px;font-weight:700;color:#173a5e;margin:6px 0 0}
 .space-neuro-task-answer textarea{width:100%;min-height:112px;padding:14px;border:1px solid #bacfd9;border-radius:10px;font:inherit;line-height:1.7;resize:vertical;background:white;color:#173a5e}
 .space-neuro-task-answer textarea:focus-visible{outline:3px solid #08a6a0;outline-offset:2px}
-@media(max-width:650px){.space-neuro-workbook{gap:17px}.space-neuro-task{padding:17px;gap:14px}.space-neuro-visual{padding:10px}.space-neuro-table-scroll th,.space-neuro-table-scroll td{padding:12px 9px}}
-
-
-/* Entre Sesiones · Mi terapia comparte identidad con la aplicación instalada.
-   Sólo se aplican estas reglas en el panel de terapia. */
+@media(max-width:650px){
+.space-neuro-workbook{gap:17px}
+.space-neuro-task{padding:17px;gap:14px}
+.space-neuro-visual{padding:10px}
+.space-neuro-table-scroll th,.space-neuro-table-scroll td{padding:12px 9px}}
 .space-page [data-space-panel="therapy"]{--space-ink:#153858;--space-muted:#536b7d;--space-line:#dbe8ef;--space-accent:#bc6258;--space-accent-soft:#e4f5fa;color:#153858}
 .space-page [data-space-panel="therapy"] .space-hero{position:relative;isolation:isolate;overflow:hidden;max-width:none;min-height:230px;margin:0 0 22px;border:1px solid #d2e6ee;border-radius:26px;padding:clamp(24px,4vw,43px);background:radial-gradient(ellipse 56% 97% at 112% 15%,rgba(255,245,233,.94) 0 48%,transparent 49%),radial-gradient(ellipse 62% 112% at 108% 100%,rgba(84,149,180,.22) 0 55%,transparent 56%),linear-gradient(126deg,#e1f3f9,#f1fafd 66%,#fffaf7)}
 .space-page [data-space-panel="therapy"] .space-hero::before{content:"";position:absolute;z-index:-1;width:220px;height:280px;right:-105px;top:12px;transform:rotate(26deg);background:rgba(43,98,134,.15);border-radius:45% 54% 38% 54%}
@@ -577,303 +524,18 @@
 .space-page [data-space-panel="therapy"] .space-card-guide{background:#e6f4fa;border-color:#d1e8f1}
 .space-page [data-space-panel="therapy"] .space-info-note{border:1px solid #cfe2ec;border-left:4px solid #f08072;border-radius:16px;background:#f0f8fc}
 @media(max-width:700px){
- .space-page [data-space-panel="therapy"] .space-hero{padding:26px 22px 29px;min-height:0;border-radius:21px}
- .space-page [data-space-panel="therapy"] .space-hero h2{font-size:clamp(2.3rem,9vw,3.1rem);max-width:320px}
- .space-page [data-space-panel="therapy"] .space-hero>p:last-child{font-size:.92rem;max-width:390px}
- .space-page [data-space-panel="therapy"] .space-section-heading{align-items:flex-start;flex-wrap:wrap}
- .space-page [data-space-panel="therapy"] .space-patient-material>summary{padding:16px 14px}
- .space-page [data-space-panel="therapy"] .space-patient-material-body{padding:1px 15px 17px}
- .space-page [data-space-panel="therapy"] .space-patient-material>summary::before{width:40px;height:40px;flex-basis:40px}
- .space-page [data-space-panel="therapy"] .space-patient-downloads{flex-direction:column;align-items:stretch}
- .space-page [data-space-panel="therapy"] .space-material-download-button{width:100%}
- .space-page [data-space-panel="therapy"] .space-patient-response-actions{display:grid;grid-template-columns:minmax(0,1fr)}
- .space-page [data-space-panel="therapy"] .space-patient-response-actions button{width:100%}
+.space-page [data-space-panel="therapy"] .space-hero{padding:26px 22px 29px;min-height:0;border-radius:21px}
+.space-page [data-space-panel="therapy"] .space-hero h2{font-size:clamp(2.3rem,9vw,3.1rem);max-width:320px}
+.space-page [data-space-panel="therapy"] .space-hero>p:last-child{font-size:.92rem;max-width:390px}
+.space-page [data-space-panel="therapy"] .space-section-heading{align-items:flex-start;flex-wrap:wrap}
+.space-page [data-space-panel="therapy"] .space-patient-material>summary{padding:16px 14px}
+.space-page [data-space-panel="therapy"] .space-patient-material-body{padding:1px 15px 17px}
+.space-page [data-space-panel="therapy"] .space-patient-material>summary::before{width:40px;height:40px;flex-basis:40px}
+.space-page [data-space-panel="therapy"] .space-patient-downloads{flex-direction:column;align-items:stretch}
+.space-page [data-space-panel="therapy"] .space-material-download-button{width:100%}
+.space-page [data-space-panel="therapy"] .space-patient-response-actions{display:grid;grid-template-columns:minmax(0,1fr)}
+.space-page [data-space-panel="therapy"] .space-patient-response-actions button{width:100%}
 }
-
-
-/* Wellness 2026 · continuación visual de Entre Sesiones.
-   Composición editorial y catálogo accesible, sin modificar terapia ni progreso. */
-.wellness-experience{--wellness-navy:#173a5e;--wellness-ice:#e2f3f9;--wellness-coral:#ee8174;--wellness-muted:#526e82;max-width:1120px}
-.wellness-experience :is(button,input):focus-visible{outline:3px solid #357893;outline-offset:3px}
-.wellness-experience .wellness-hero{
-  min-height:245px;max-width:none;position:relative;isolation:isolate;overflow:hidden;
-  padding:clamp(29px,4.3vw,51px);margin-bottom:34px;border:1px solid #cee4ee;
-  border-radius:28px;
-  background:
-    radial-gradient(ellipse 65% 100% at 106% 112%,rgba(43,116,153,.20) 0 49%,transparent 50%),
-    radial-gradient(ellipse 55% 80% at 111% 3%,rgba(255,245,236,.96) 0 51%,transparent 52%),
-    linear-gradient(118deg,#dcf2f9 0%,#ecf8fb 62%,#fcf9f5 100%);
-}
-.wellness-experience .wellness-hero::before{
-  content:"";position:absolute;pointer-events:none;z-index:-1;right:-103px;top:55px;
-  height:265px;width:227px;border-radius:46% 32% 56% 42%;transform:rotate(-37deg);
-  background:rgba(37,99,132,.17)
-}
-.wellness-experience .wellness-hero::after{
-  content:"";position:absolute;pointer-events:none;z-index:-1;right:8%;top:-104px;
-  height:167px;width:145px;border-radius:38% 60% 35% 56%;transform:rotate(29deg);
-  background:rgba(241,136,116,.38)
-}
-.wellness-experience .wellness-hero .space-eyebrow{letter-spacing:.18em;color:#285a75;font-size:.74rem}
-.wellness-experience .wellness-hero h2{
-  font-size:clamp(2.7rem,5vw,4.5rem);line-height:1.03;letter-spacing:-.055em;
-  max-width:580px;font-weight:550;color:#153858;
-}
-.wellness-experience .wellness-hero>p:last-of-type{
-  margin-top:21px;font-size:clamp(.96rem,1.7vw,1.09rem);max-width:565px;
-  line-height:1.7;color:#46667b;
-}
-.wellness-experience .wellness-hero-decoration{position:absolute;pointer-events:none;right:12%;bottom:-62px;width:100px;height:143px;transform:rotate(26deg);border-radius:39% 58% 34% 46%;background:rgba(255,255,255,.33)}
-.wellness-experience .wellness-section-title{display:flex;align-items:end;justify-content:space-between;gap:15px;margin-bottom:17px}
-.wellness-experience .wellness-section-title .space-eyebrow{color:#a35d54;font-size:.69rem;letter-spacing:.16em;margin-bottom:8px}
-.wellness-experience .wellness-section-title h3{margin:0;font:550 clamp(1.75rem,3.3vw,2.35rem)/1.12 var(--font-newsreader),Georgia,serif;letter-spacing:-.04em;color:#173a5e}
-.wellness-experience .wellness-section-title>p{margin:0 0 3px;color:#627a8b;font-size:.79rem;line-height:1.5}
-.wellness-experience :is(.wellness-need-section,.wellness-quick-section,.wellness-library,.wellness-routines){margin:0 0 37px}
-.wellness-experience .wellness-needs:not(.wellness-needs-editorial){display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:11px}
-.wellness-experience .wellness-needs:not(.wellness-needs-editorial) button{
-  min-width:0;min-height:130px;display:flex;align-items:flex-start;flex-direction:column;
-  text-align:left;gap:6px;padding:19px 18px;background:#fff;color:#173a5e;
-  border:1px solid #deeaf0;border-radius:19px;cursor:pointer;font:inherit;
-  box-shadow:0 6px 24px rgba(19,57,81,.035);
-  transition:border-color .15s,background .15s,transform .15s
-}
-.wellness-experience .wellness-needs:not(.wellness-needs-editorial) button:hover{border-color:#a2c8d9;transform:translateY(-2px)}
-.wellness-experience .wellness-needs:not(.wellness-needs-editorial) button.is-active{border-color:#376e8d;background:#e8f4f9;box-shadow:inset 0 0 0 1px #376e8d}
-.wellness-experience .wellness-needs:not(.wellness-needs-editorial) button>span{width:36px;height:36px;display:grid;place-items:center;background:#e6f3f9;border-radius:11px;color:#265c78;font-size:1.17rem;font-weight:750;margin-bottom:6px}
-.wellness-experience .wellness-needs:not(.wellness-needs-editorial) button:nth-child(4n+2)>span{background:#ffebe5;color:#ad6356}
-.wellness-experience .wellness-needs:not(.wellness-needs-editorial) button strong{font-size:.92rem;font-weight:790;line-height:1.3}
-.wellness-experience .wellness-needs:not(.wellness-needs-editorial) button small{font-size:.75rem;color:#677f8f;line-height:1.4}
-.wellness-experience .wellness-filter-context{margin-top:15px;padding:12px 17px;border-radius:13px;background:#e9f5fa;color:#174967;font-weight:750;font-size:.88rem}
-.wellness-experience .wellness-reset{display:inline-flex;margin-top:10px;padding:9px 0;gap:8px;background:transparent;border:0;color:#17536e;font-size:.82rem;font-weight:800;cursor:pointer}
-.wellness-experience .wellness-reset[hidden]{display:none!important}
-.wellness-experience .wellness-quick-intro{max-width:720px;margin:10px 0 0;color:#5a7183;font-size:.92rem;line-height:1.55;letter-spacing:normal}
-.wellness-experience .wellness-quick-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px}
-.wellness-experience .wellness-quick-grid button{
-  position:relative;min-width:0;min-height:233px;display:flex;align-items:flex-start;flex-direction:column;
-  gap:10px;text-align:left;padding:22px 21px;border:1px solid #e3e7e9;border-radius:22px;
-  background:linear-gradient(137deg,#fffaf6,#f6fbfd);color:#173a5e;cursor:pointer;
-  font:inherit;box-shadow:0 9px 25px rgba(19,57,81,.035);
-  transition:border-color .16s,box-shadow .16s,transform .16s
-}
-.wellness-experience .wellness-quick-grid button:nth-child(2){background:linear-gradient(137deg,#eaf7fa,#fff)}
-.wellness-experience .wellness-quick-grid button:nth-child(3){background:linear-gradient(137deg,#ffede7,#fffaf5)}
-.wellness-experience .wellness-quick-grid button:hover{border-color:#a5c7d6;box-shadow:0 12px 30px rgba(19,57,81,.085);transform:translateY(-2px)}
-.wellness-experience .wellness-quick-grid button:focus-visible{outline:3px solid #267b9c;outline-offset:3px}
-.wellness-experience .wellness-quick-icon{display:grid;place-items:center;width:33px;height:33px;border-radius:50%;background:#e6eff3;color:#285b76;font-size:.77rem;font-weight:850;margin-bottom:4px}
-.wellness-experience .wellness-quick-grid button:nth-child(3) .wellness-quick-icon{background:#f7cfc3;color:#914a3c}
-.wellness-experience .wellness-quick-grid strong{font:570 clamp(1.23rem,2.1vw,1.48rem)/1.13 var(--font-newsreader),Georgia,serif;letter-spacing:-.025em}
-.wellness-experience .wellness-quick-description{font-size:.85rem;color:#526d7c;line-height:1.48}
-.wellness-experience .wellness-quick-footer{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:7px 14px;width:100%;margin-top:auto;padding-top:12px;border-top:1px solid rgba(47,94,118,.13)}
-.wellness-experience .wellness-quick-footer small{font-size:.74rem;color:#647d8c;line-height:1.4}
-.wellness-experience .wellness-quick-go{font-size:.76rem;font-weight:800;color:#255a76;white-space:nowrap}
-.wellness-experience .wellness-quick-go span{margin-left:2px}
-.wellness-experience .wellness-quick-note{margin:13px 0 0;font-size:.79rem;line-height:1.55;color:#688092}
-.wellness-experience .wellness-library{padding:clamp(19px,3vw,31px);border:1px solid #dfebf0;background:#fbfdfd;border-radius:25px}
-.wellness-experience .wellness-count{background:#e5f3f8;border-radius:999px;padding:9px 12px;color:#285c76;font-size:.75rem;white-space:nowrap;font-weight:750}
-.wellness-experience .wellness-library-controls{display:flex;align-items:center;justify-content:space-between;gap:13px;margin:19px 0 21px;flex-wrap:wrap}
-.wellness-experience .wellness-filters{display:flex;align-items:center;flex-wrap:wrap;gap:7px}
-.wellness-experience .wellness-filters button{min-height:39px;padding:9px 12px;border:1px solid #d8e7ef;border-radius:999px;background:#fff;color:#355a72;font:inherit;font-size:.78rem;font-weight:750;cursor:pointer}
-.wellness-experience .wellness-filters button.is-active{background:#173a5e;color:#fff;border-color:#173a5e}
-.wellness-experience .wellness-search-label{display:flex;align-items:center;gap:7px;padding:0 12px;background:#fff;border:1px solid #d5e3eb;border-radius:13px;min-height:42px;min-width:185px;flex:1 1 200px;max-width:290px}
-.wellness-experience .wellness-search-icon{font-size:1.2rem;color:#67869a}
-.wellness-experience #wellness-search{min-width:0;width:100%;border:0;outline:none;background:transparent;color:#173a5e;font-size:.82rem}
-.wellness-experience #wellness-search:focus-visible{outline:none}
-.wellness-experience .wellness-search-label:focus-within{outline:3px solid #b8dfe8;outline-offset:2px}
-.wellness-experience .space-wellness-list{grid-template-columns:repeat(2,minmax(0,1fr));gap:13px}
-.wellness-experience .wellness-card{min-height:212px;padding:22px 23px;border:1px solid #e0e8ed;border-radius:19px;box-shadow:0 7px 19px rgba(14,47,70,.035);background:white}
-.wellness-experience .wellness-card--emocional{border-top:3px solid #ef998d}
-.wellness-experience .wellness-card--cognitivo{border-top:3px solid #8cc2d7}
-.wellness-experience .wellness-card--autocuidado{border-top:3px solid #9cb7a6}
-.wellness-experience .wellness-card-type{color:#4d687c;font-size:.69rem;letter-spacing:.09em}
-.wellness-experience .wellness-card h3{font:570 clamp(1.2rem,2.2vw,1.5rem)/1.14 var(--font-newsreader),Georgia,serif;color:#153858;letter-spacing:-.027em;margin:13px 0 9px}
-.wellness-experience .wellness-card p{font-size:.82rem;line-height:1.65;color:#577082}
-.wellness-experience .wellness-card-meta{padding-top:19px}
-.wellness-experience .wellness-card-meta span{font-size:.78rem;font-weight:700}
-.wellness-experience .wellness-card-meta button{background:#e5f4f9;padding:9px 12px;border-radius:10px;color:#174d6b;font-weight:800;font-size:.78rem}
-.wellness-experience .wellness-card-meta button:hover{background:#d4ebf4}
-.wellness-experience .wellness-fav-mini{font-size:1.45rem;padding:5px 8px;border-radius:9px;min-width:36px;min-height:36px;line-height:1}
-.wellness-experience .wellness-fav-mini.is-favorite{color:#d86f62;background:#fff0ea}
-.wellness-experience .wellness-routine-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:11px}
-.wellness-experience .wellness-routine-grid button{display:flex;flex-direction:column;align-items:flex-start;gap:8px;text-align:left;min-height:150px;cursor:pointer;padding:21px 18px;border:1px solid #d9e8ed;background:linear-gradient(145deg,#f1f9fc,#fff);color:#173a5e;border-radius:18px}
-.wellness-experience .wellness-routine-grid button>span{display:grid;place-items:center;width:36px;height:36px;border-radius:12px;background:#d9eef5;color:#245e7c;font-size:1.25rem;margin-bottom:7px}
-.wellness-experience .wellness-routine-grid button strong{font-size:.95rem;line-height:1.3}
-.wellness-experience .wellness-routine-grid button small{font-size:.76rem;color:#667e90;line-height:1.45}
-.wellness-experience .wellness-journey-disclosure{margin-top:36px;border:1px solid #e6dcd6;border-radius:22px;background:linear-gradient(125deg,#fff7f3,#fcfaf8)}
-.wellness-experience .wellness-journey-disclosure>summary{display:flex;justify-content:space-between;align-items:center;gap:16px;list-style:none;cursor:pointer;padding:22px 26px}
-.wellness-experience .wellness-journey-disclosure>summary::-webkit-details-marker{display:none}
-.wellness-experience .wellness-journey-disclosure>summary>span:first-child{display:grid;gap:7px}
-.wellness-experience .wellness-journey-disclosure>summary small{font-weight:800;letter-spacing:.15em;color:#ad6256;font-size:.67rem}
-.wellness-experience .wellness-journey-disclosure>summary strong{font:570 clamp(1.45rem,2.8vw,2rem)/1.12 var(--font-newsreader),Georgia,serif;color:#173a5e}
-.wellness-experience .wellness-journey-disclosure>summary em{font-style:normal;color:#617b89;font-size:.81rem;line-height:1.5}
-.wellness-experience .wellness-journey-disclosure>summary>span:last-child{display:grid;place-items:center;font-size:1.6rem;width:42px;height:42px;flex:0 0 42px;border-radius:50%;background:#ffe4da;color:#a55e51}
-.wellness-experience .wellness-journey-disclosure[open]>summary>span:last-child{transform:rotate(45deg)}
-.wellness-experience #wellness-journey{max-width:none;margin:0 16px 16px;border-radius:16px;box-shadow:none}
-.wellness-experience .wellness-privacy{padding:16px 19px;margin-top:20px;border-left:3px solid #87b8c9;color:#4b6b7d;background:#f1f8fb;border-radius:12px}
-.wellness-experience .wellness-privacy strong{font-size:.83rem;color:#204c68}
-.wellness-experience .wellness-privacy p{margin:6px 0 0;font-size:.77rem;line-height:1.65}
-@media(max-width:1000px){
-  .wellness-experience .wellness-needs:not(.wellness-needs-editorial){grid-template-columns:repeat(2,minmax(0,1fr))}
-  .wellness-experience .wellness-routine-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
-}
-@media(max-width:760px){
-  .wellness-experience .wellness-hero{padding:28px 23px 34px;min-height:0;border-radius:23px}
-  .wellness-experience .wellness-hero h2{font-size:clamp(2.5rem,9vw,3.1rem);max-width:340px}
-  .wellness-experience .wellness-hero>p:last-of-type{max-width:370px;font-size:.94rem}
-  .wellness-experience .wellness-section-title{align-items:flex-start;flex-direction:column}
-  .wellness-experience .wellness-quick-grid{grid-template-columns:1fr}
-  .wellness-experience .wellness-quick-grid button{min-height:0;padding:19px}
-  .wellness-experience .space-wellness-list{grid-template-columns:1fr}
-  .wellness-experience .wellness-library{padding:19px 15px;border-radius:19px}
-  .wellness-experience .wellness-library-controls{align-items:stretch;flex-direction:column}
-  .wellness-experience .wellness-search-label{max-width:none;min-width:0;width:100%;flex:none}
-  .wellness-experience .wellness-routine-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
-  .wellness-experience .wellness-routine-grid button{min-height:142px;padding:16px}
-  .wellness-experience #wellness-journey{margin:0 10px 10px;padding:17px}
-}
-@media(max-width:440px){
-  .wellness-experience .wellness-needs:not(.wellness-needs-editorial){gap:8px}
-  .wellness-experience .wellness-needs:not(.wellness-needs-editorial) button{min-height:138px;padding:15px 13px;border-radius:15px}
-  .wellness-experience .wellness-needs:not(.wellness-needs-editorial) button strong{font-size:.85rem}
-  .wellness-experience .wellness-needs:not(.wellness-needs-editorial) button small{font-size:.72rem}
-  .wellness-experience .wellness-needs:not(.wellness-needs-editorial) button>span{width:31px;height:31px}
-  .wellness-experience .wellness-routine-grid{gap:9px}
-  .wellness-experience .wellness-routine-grid button strong{font-size:.84rem}
-}
-@media(prefers-reduced-motion:reduce){
-  .wellness-experience .wellness-needs:not(.wellness-needs-editorial) button,
-  .wellness-experience .wellness-quick-grid button{transition:none}
-  .wellness-experience .wellness-needs:not(.wellness-needs-editorial) button:hover,
-  .wellness-experience .wellness-quick-grid button:hover{transform:none}
-}
-
-
-/* Laboratorio Wellness: interacción real, datos de texto solo en memoria. */
-.wellness-experience .wellness-interactive-section{margin:0 0 37px}
-.wellness-experience .wi-cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px}
-.wellness-experience .wi-card{display:flex;flex-direction:column;min-width:0;min-height:225px;gap:8px;padding:23px 24px;border:1px solid #ddeaf0;border-radius:22px;background:#fff;box-shadow:0 7px 23px rgba(18,55,83,.04)}
-.wellness-experience .wi-card:nth-child(4n+1){background:linear-gradient(135deg,#eff9fc,#fff)}
-.wellness-experience .wi-card:nth-child(4n+2){background:linear-gradient(135deg,#fff2eb,#fff)}
-.wellness-experience .wi-card:nth-child(4n+3){background:linear-gradient(135deg,#f3f8f2,#fff)}
-.wellness-experience .wi-card:nth-child(4n+4){background:linear-gradient(135deg,#f1f5fd,#fff)}
-.wellness-experience .wi-index{display:grid;place-items:center;width:39px;height:39px;margin-bottom:7px;border-radius:13px;background:#dceef5;color:#245977;font-size:.82rem;font-weight:850}
-.wellness-experience .wi-card:nth-child(4n+2) .wi-index{background:#f7d7ca;color:#9b5147}
-.wellness-experience .wi-card:nth-child(4n+3) .wi-index{background:#e0efdd;color:#4f7257}
-.wellness-experience .wi-card:nth-child(4n+4) .wi-index{background:#dfe7f7;color:#455f86}
-.wellness-experience .wi-label{display:block;font-size:.69rem;letter-spacing:.09em;text-transform:uppercase;color:#6a7f8e;font-weight:800}
-.wellness-experience .wi-card h4{margin:0;font:570 clamp(1.43rem,2.4vw,1.8rem)/1.14 var(--font-newsreader),Georgia,serif;letter-spacing:-.035em;color:#173a5e}
-.wellness-experience .wi-card p{margin:0 0 13px;font-size:.82rem;color:#5e7686;line-height:1.65}
-.wellness-experience .wi-open{align-self:flex-start;margin-top:auto;min-height:42px;padding:9px 17px;background:#173a5e;border:1px solid #173a5e;border-radius:12px;color:#fff;font:inherit;font-size:.84rem;font-weight:800;cursor:pointer}
-.wellness-experience .wi-open[aria-pressed="true"]{background:#e5f2f9;border-color:#9abecf;color:#173a5e}
-.wellness-experience .wi-workspace{margin-top:17px;border:1px solid #bedbe8;border-radius:24px;padding:clamp(19px,3.5vw,33px);background:linear-gradient(128deg,#f5fbfe,#fff 62%);box-shadow:0 12px 33px rgba(21,58,88,.045)}
-.wellness-experience .wi-workspace[hidden],.wellness-experience .wi-result[hidden]{display:none!important}
-.wellness-experience .wi-workspace-heading{display:flex;justify-content:space-between;align-items:start;gap:16px;border-bottom:1px solid #e0eaf0;padding-bottom:18px}
-.wellness-experience .wi-workspace-title{margin:6px 0 0;font:560 clamp(1.75rem,3.4vw,2.4rem)/1.14 var(--font-newsreader),Georgia,serif;letter-spacing:-.04em;color:#173a5e}
-.wellness-experience .wi-stage{padding-top:19px}
-.wellness-experience .wi-prompt{font-size:.95rem;color:#516c7f;line-height:1.7;margin:0 0 17px}
-.wellness-experience .wi-question{font-size:clamp(1.07rem,2vw,1.27rem);line-height:1.45;color:#183d5b;font-weight:760;margin:12px 0 16px}
-.wellness-experience .wi-choice-grid,.wellness-experience .wi-focus-choices{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px}
-.wellness-experience .wi-button{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:11px 15px;background:#fff;border:1px solid #bcd4df;border-radius:12px;color:#204c6b;font:inherit;font-size:.84rem;font-weight:770;text-align:center;cursor:pointer;line-height:1.4}
-.wellness-experience .wi-button:hover:not(:disabled){background:#ecf7fc;border-color:#80b2c7}
-.wellness-experience .wi-button:disabled{opacity:.65;cursor:default}
-.wellness-experience .wi-button-primary{background:#173a5e;color:#fff;border-color:#173a5e}
-.wellness-experience .wi-button-primary:hover:not(:disabled){background:#245274;color:#fff}
-.wellness-experience .wi-button-secondary{background:#fff;color:#536b7d}
-.wellness-experience .wi-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:17px}
-.wellness-experience .wi-result{margin-top:18px;padding:19px;background:#fff;border:1px solid #d9e9f0;border-radius:16px}
-.wellness-experience .wi-result h5,.wellness-experience .wi-focus-task h5{margin:0 0 10px;font-size:1.08rem;line-height:1.4;color:#173a5e}
-.wellness-experience .wi-result p{font-size:.9rem;line-height:1.65;color:#4e687b;margin:0 0 12px}
-.wellness-experience .wi-secondary{font-size:.79rem;line-height:1.6;color:#668091;margin:12px 0}
-.wellness-experience .wi-field{display:grid;gap:9px;margin-top:12px;color:#254b67;font-size:.88rem;font-weight:760}
-.wellness-experience .wi-field textarea{width:100%;min-height:90px;border:1px solid #bacfdc;border-radius:12px;resize:vertical;padding:13px 15px;font:inherit;font-size:1rem;line-height:1.55;color:#1d405b;background:#fff}
-.wellness-experience .wi-data-note{font-size:.76rem;color:#607b8d;line-height:1.7;margin:21px 0 0;border-top:1px solid #e2ecf1;padding-top:14px}
-.wellness-experience .wi-feedback,.wellness-experience .wi-finish-state{font-size:.87rem;line-height:1.6;color:#315f75;margin:12px 0 0}
-.wellness-experience .wi-energy-options{display:flex;gap:11px;flex-wrap:wrap}
-.wellness-experience .wi-energy-choice{display:grid;place-items:center;width:56px;height:60px;border:1px solid #c1d9e3;border-radius:14px;background:#fff;color:#173a5e;font-size:1.16rem;font-weight:850;cursor:pointer}
-.wellness-experience .wi-energy-choice[aria-pressed="true"]{background:#173a5e;color:#fff;border-color:#173a5e}
-.wellness-experience .wi-energy-display{display:flex;gap:6px;margin:12px 0 16px}
-.wellness-experience .wi-energy-display span{width:33px;height:14px;border:1px solid #b0c8d4;border-radius:4px;background:#e8f0f4}
-.wellness-experience .wi-energy-display span.filled{background:#2e7895;border-color:#2e7895}
-.wellness-experience .wi-priority-list{display:grid;gap:10px;margin-top:20px}
-.wellness-experience .wi-entry{padding:14px 15px;border:1px solid #d6e6ec;border-radius:14px;background:#fff}
-.wellness-experience .wi-entry.now{border-left:4px solid #438ca7}
-.wellness-experience .wi-entry.later{border-left:4px solid #e4a081}
-.wellness-experience .wi-entry.outside{border-left:4px solid #8ba69e}
-.wellness-experience .wi-entry-text{margin:0 0 12px;color:#244966;overflow-wrap:anywhere;font-size:.94rem;line-height:1.5}
-.wellness-experience .wi-entry-actions{display:flex;flex-wrap:wrap;gap:7px}
-.wellness-experience .wi-mini-choice{border:1px solid #d6e4eb;border-radius:10px;background:#f8fbfc;padding:8px 10px;font:inherit;font-size:.76rem;font-weight:750;color:#31566d;cursor:pointer}
-.wellness-experience .wi-mini-choice[aria-pressed="true"]{background:#173a5e;color:#fff;border-color:#173a5e}
-.wellness-experience .wi-mini-choice.wi-remove{color:#9a504a;background:#fff8f5;border-color:#f0dfd6}
-.wellness-experience .wi-focus-task{margin-top:7px}
-.wellness-experience .wi-focus-task .wi-feedback{margin:16px 0}
-.wellness-experience .wellness-interactive-loading{padding:20px;border-radius:12px;color:#58788d;background:#e7f3f7}
-@media(max-width:900px){
-  .wellness-experience .wi-choice-grid,.wellness-experience .wi-focus-choices{grid-template-columns:1fr}
-}
-@media(max-width:700px){
-  .wellness-experience .wi-cards{grid-template-columns:1fr}
-  .wellness-experience .wi-card{min-height:0;padding:20px}
-  .wellness-experience .wi-workspace-heading{flex-wrap:wrap}
-  .wellness-experience .wi-workspace-heading>.wi-button{align-self:flex-start}
-  .wellness-experience .wi-energy-options{gap:7px}
-  .wellness-experience .wi-energy-choice{width:46px;height:52px}
-  .wellness-experience .wi-actions{flex-direction:column;align-items:stretch}
-  .wellness-experience .wi-actions>.wi-button{width:100%}
-  .wellness-experience .wi-entry-actions{flex-direction:column}
-}
-
-
-/* Segunda tanda de Wellness: manipulativos táctiles con alternativa por teclado. */
-.wellness-experience .wi-card:nth-child(7n+5){background:linear-gradient(137deg,#edf5fd,#fff)}
-.wellness-experience .wi-card:nth-child(7n+6){background:linear-gradient(137deg,#eaf5f2,#fff)}
-.wellness-experience .wi-card:nth-child(7n+7){background:linear-gradient(137deg,#fff0ea,#fff)}
-.wellness-experience .wi-card:nth-child(7n+5) .wi-index{background:#d8eafa;color:#24547c}
-.wellness-experience .wi-card:nth-child(7n+6) .wi-index{background:#d7eee6;color:#366e64}
-.wellness-experience .wi-card:nth-child(7n+7) .wi-index{background:#f8dace;color:#a05549}
-.wellness-experience .wi-sequence-list{list-style:none;display:grid;gap:10px;margin:19px 0;padding:0}
-.wellness-experience .wi-sequence-item{display:flex;align-items:center;gap:12px;padding:11px;border:1px solid #d4e6ee;border-radius:16px;background:#fff;box-shadow:0 4px 14px rgba(23,58,94,.035);min-width:0}
-.wellness-experience .wi-sequence-item.is-selected{background:#e1f3fa;border-color:#3985a4;box-shadow:inset 0 0 0 1px #3985a4}
-.wellness-experience .wi-sequence-select{flex:1 1 0;min-width:0;min-height:52px;padding:9px 12px;border:0;border-radius:10px;background:transparent;text-align:left;font:inherit;font-weight:750;font-size:.94rem;line-height:1.5;color:#173a5e;cursor:pointer}
-.wellness-experience .wi-sequence-select[aria-pressed="true"]{color:#1c627a}
-.wellness-experience .wi-move-actions{display:flex;gap:6px;flex-shrink:0}
-.wellness-experience .wi-move{display:grid;place-items:center;width:45px;height:45px;border:1px solid #bad2df;border-radius:11px;background:#f1f8fb;color:#275875;font:inherit;font-size:1.22rem;font-weight:850;cursor:pointer}
-.wellness-experience .wi-move:disabled{opacity:.30;cursor:default}
-.wellness-experience .wi-sequence-conclusion{margin-top:16px}
-.wellness-experience .wi-visual-stage{margin-top:17px}
-.wellness-experience .wi-visual-board{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:16px 0}
-.wellness-experience .wi-visual-piece{min-width:0;min-height:89px;padding:10px 6px;border:1px solid #cee1e9;border-radius:16px;background:#fff;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:9px;cursor:pointer}
-.wellness-experience .wi-visual-piece:hover:not(:disabled){background:#eef8fc;border-color:#74a8c2}
-.wellness-experience .wi-visual-piece[aria-pressed="true"]{background:#e0f4f1;border-color:#458c7c;opacity:.66}
-.wellness-experience .wi-visual-piece:disabled{cursor:default}
-.wellness-experience .wi-visual-piece small{font-size:.75rem;font-weight:740;color:#4d677a}
-.wellness-experience .wi-shape{display:block;width:30px;height:30px;flex:none}
-.wellness-experience .wi-shape--circle{border-radius:50%}
-.wellness-experience .wi-shape--square{border-radius:5px}
-.wellness-experience .wi-shape--triangle{clip-path:polygon(50% 3%,100% 97%,0 97%)}
-.wellness-experience .wi-shape--blue{background:#377da9}
-.wellness-experience .wi-shape--coral{background:#dc796b}
-.wellness-experience .wi-shape--green{background:#4b8c78}
-.wellness-experience .wi-moment-stage{margin-top:20px}
-.wellness-experience .wi-moment-preview{display:grid;gap:10px}
-.wellness-experience .wi-moment-preview-item{padding:16px 18px;border:1px solid #dbe8ef;border-radius:13px;background:#fff}
-.wellness-experience .wi-moment-preview-item strong{font-size:.87rem;color:#1d4b67}
-.wellness-experience .wi-moment-preview-item p{margin:8px 0 0;color:#4d6575;white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.6}
-@media(max-width:700px){
-  .wellness-experience .wi-visual-board{gap:7px}
-  .wellness-experience .wi-visual-piece{min-height:75px;padding:9px 2px;border-radius:11px}
-  .wellness-experience .wi-shape{width:26px;height:26px}
-  .wellness-experience .wi-sequence-item{gap:5px;padding:7px}
-  .wellness-experience .wi-sequence-select{font-size:.84rem;padding:8px}
-  .wellness-experience .wi-move-actions{gap:4px}
-  .wellness-experience .wi-move{width:42px;height:45px}
-}
-@media(max-width:390px){
-  .wellness-experience .wi-sequence-select{font-size:.79rem}
-  .wellness-experience .wi-visual-piece small{font-size:.67rem}
-  .wellness-experience .wi-visual-board{gap:5px}
-}
-
-
-/* Preparar la sesión: tres preguntas privadas, sin almacenamiento automático. */
 .space-page .space-session-prep{margin:30px 0;padding:clamp(20px,3vw,31px);border:1px solid #e8e0d8;border-radius:23px;background:linear-gradient(124deg,#fffaf5,#fff 65%,#f3f9fc);box-shadow:0 11px 28px rgba(23,58,94,.04);scroll-margin-top:96px}
 .space-page .space-session-prep:focus{outline:none}
 .space-page .space-session-prep:focus-visible{outline:3px solid #387d9e;outline-offset:4px}
@@ -910,18 +572,15 @@
 .space-page .space-session-prep-privacy{margin:14px 0 0;padding:15px 17px;border-left:3px solid #86b6ca;border-radius:12px;background:#eaf5fa;color:#547183;font-size:.80rem;line-height:1.7}
 .space-page .space-session-prep-privacy strong{color:#204b66}
 @media(max-width:680px){
- .space-page .space-session-prep{padding:20px 17px;border-radius:19px;margin:24px 0}
- .space-page .space-session-prep-head{gap:12px}
- .space-page .space-session-prep-head h3{font-size:clamp(1.78rem,8vw,2.2rem)}
- .space-page .space-session-prep-icon{width:39px;height:39px;border-radius:12px}
- .space-page .space-session-prep-form textarea{min-height:88px}
- .space-page .space-session-prep-actions{display:grid;grid-template-columns:minmax(0,1fr)}
- .space-page .space-session-prep-preview{padding:15px;border-radius:15px}
- .space-page .space-session-prep-transfer>button{width:100%}
+.space-page .space-session-prep{padding:20px 17px;border-radius:19px;margin:24px 0}
+.space-page .space-session-prep-head{gap:12px}
+.space-page .space-session-prep-head h3{font-size:clamp(1.78rem,8vw,2.2rem)}
+.space-page .space-session-prep-icon{width:39px;height:39px;border-radius:12px}
+.space-page .space-session-prep-form textarea{min-height:88px}
+.space-page .space-session-prep-actions{display:grid;grid-template-columns:minmax(0,1fr)}
+.space-page .space-session-prep-preview{padding:15px;border-radius:15px}
+.space-page .space-session-prep-transfer>button{width:100%}
 }
-
-
-/* Entre Sesiones · accesibilidad cognitiva y tipográfica, sin tocar datos clínicos. */
 .space-page .space-reading-preferences{margin:0 0 25px;padding:clamp(19px,3vw,28px);background:linear-gradient(125deg,#eaf6fc,#fff 72%);border:1px solid #cfe5f0;border-radius:23px;box-shadow:0 10px 26px rgba(16,56,87,.035)}
 .space-page .space-reading-preferences h3{font:550 clamp(1.65rem,3vw,2.2rem)/1.15 var(--font-newsreader),Georgia,serif;letter-spacing:-.035em;color:#173a5e;margin:7px 0 8px}
 .space-page .space-reading-preferences p:not(.space-eyebrow){font-size:.87rem;line-height:1.65;color:#4d7084;max-width:770px;margin:0 0 18px}
@@ -934,25 +593,21 @@
 .space-page .space-reading-checkbox strong{font-size:.88rem;color:#173a5e}
 .space-page .space-reading-checkbox small{font-size:.77rem;line-height:1.55;color:#5e798b}
 .space-page .space-reading-preferences #space-reading-feedback{margin:12px 0 0}
-.space-page[data-reading-size="large"] :is(.space-view>*, .space-patient-material-body, .wellness-dialog-inner){line-height:1.8}
-.space-page[data-reading-size="large"] :is(.space-view p,.space-view li,.space-view label,.space-view button,.space-view textarea,.space-view input,.space-view select,.wellness-dialog-inner p,.wellness-dialog-inner li){font-size:max(1rem,1.05em)}
-.space-page[data-reading-size="extra"] :is(.space-view>*, .space-patient-material-body, .wellness-dialog-inner){line-height:1.95}
-.space-page[data-reading-size="extra"] :is(.space-view p,.space-view li,.space-view label,.space-view button,.space-view textarea,.space-view input,.space-view select,.wellness-dialog-inner p,.wellness-dialog-inner li){font-size:max(1.12rem,1.13em)}
-.space-page.space-reading-simple :is(.space-view p,.space-view li,.space-patient-material-body,.wellness-dialog-inner){line-height:1.85}
+.space-page[data-reading-size="large"] :is(.space-view>*, .space-patient-material-body){line-height:1.8}
+.space-page[data-reading-size="large"] :is(.space-view p,.space-view li,.space-view label,.space-view button,.space-view textarea,.space-view input,.space-view select){font-size:max(1rem,1.05em)}
+.space-page[data-reading-size="extra"] :is(.space-view>*, .space-patient-material-body){line-height:1.95}
+.space-page[data-reading-size="extra"] :is(.space-view p,.space-view li,.space-view label,.space-view button,.space-view textarea,.space-view input,.space-view select){font-size:max(1.12rem,1.13em)}
+.space-page.space-reading-simple :is(.space-view p,.space-view li,.space-patient-material-body){line-height:1.85}
 .space-page.space-reading-simple :is(.space-hero,.space-session-prep-head,.space-patient-response){max-width:70ch}
-.space-page.space-reading-simple :is(.space-needs,.space-wellness-list){grid-template-columns:repeat(2,minmax(0,1fr))}
-.space-page.space-reading-quiet *, .space-page.space-reading-quiet *::before, .space-page.space-reading-quiet *::after{animation-duration:0.01ms!important;animation-iteration-count:1!important;transition-duration:0.01ms!important;scroll-behavior:auto!important}
+.space-page.space-reading-simple :is(.space-needs){grid-template-columns:repeat(2,minmax(0,1fr))}
+.space-page.space-reading-quiet *,.space-page.space-reading-quiet *::before,.space-page.space-reading-quiet *::after{animation-duration:0.01ms!important;animation-iteration-count:1!important;transition-duration:0.01ms!important;scroll-behavior:auto!important}
 @media(max-width:720px){
- .space-page .space-reading-fields{grid-template-columns:minmax(0,1fr)}
- .space-page.space-reading-simple :is(.space-needs,.space-wellness-list){grid-template-columns:minmax(0,1fr)}
+.space-page .space-reading-fields{grid-template-columns:minmax(0,1fr)}
+.space-page.space-reading-simple :is(.space-needs){grid-template-columns:minmax(0,1fr)}
 }
 @media(prefers-reduced-motion:reduce){
- .space-page :is(.space-reading-preferences,.space-needs button){animation:none!important;transition:none!important}
+.space-page :is(.space-reading-preferences,.space-needs button){animation:none!important;transition:none!important}
 }
-
-
-/* Verificación inicial: nunca mostrar el acceso por contraseña mientras se
-   está validando una sesión existente. Tampoco mostrar contenido clínico. */
 .space-page .space-session-check{
   min-height:calc(100dvh - 74px);padding:clamp(28px,8vw,75px) 18px;
   display:grid;place-items:start center;
@@ -978,33 +633,23 @@
 .space-page .space-session-check-help{font-size:.78rem!important}
 .space-page .space-session-check-help a{color:#1d617e;text-decoration:underline;text-underline-offset:3px}
 @keyframes space-access-wait{to{transform:rotate(360deg)}}
-@media(prefers-reduced-motion:reduce){.space-page .space-session-check-icon{animation:none;border-top-color:#2b6681}}
-
-
-/* Authentication phases are server-neutral: no login flicker while cookie validation runs. */
-.space-page[data-portal-phase="checking"] .space-access,
-.space-page[data-portal-phase="checking"] .space-shell,
-.space-page[data-portal-phase="signed-out"] .space-shell{
+@media(prefers-reduced-motion:reduce){
+.space-page .space-session-check-icon{animation:none;border-top-color:#2b6681}}
+.space-page[data-portal-phase="checking"] .space-access,.space-page[data-portal-phase="checking"] .space-shell,.space-page[data-portal-phase="signed-out"] .space-shell{
   display:none!important;
 }
-.space-page[data-portal-phase="authenticated"] .space-session-check,
-.space-page[data-portal-phase="authenticated"] .space-access,
-.space-page[data-portal-phase="signed-out"] .space-session-check{
+.space-page[data-portal-phase="authenticated"] .space-session-check,.space-page[data-portal-phase="authenticated"] .space-access,.space-page[data-portal-phase="signed-out"] .space-session-check{
   display:none!important;
 }
 .space-page[data-portal-phase="authenticated"] .space-shell:not([hidden]){display:grid}
-@media(max-width:760px){.space-page[data-portal-phase="authenticated"] .space-shell:not([hidden]){display:block}}
-
-
-/* Vista de impresión voluntaria como alternativa a la descarga remota de PDF.
-   Nunca imprime respuestas, registros escritos ni la ficha de otros ejercicios. */
-@media print {
-  @page { size: A4; margin: 16mm 14mm; }
-  body.space-print-patient-material,
-  body.space-print-patient-material .space-page {
+@media(max-width:760px){
+.space-page[data-portal-phase="authenticated"] .space-shell:not([hidden]){display:block}}
+@media print{
+@page{ size: A4; margin: 16mm 14mm; }
+body.space-print-patient-material,body.space-print-patient-material .space-page{
     background:#fff!important;color:#172f42!important;margin:0!important;padding:0!important;
   }
-  body.space-print-patient-material :is(
+body.space-print-patient-material :is(
     .esapp-portal-identity,.esapp-bottom-nav,.space-topbar,.space-sidebar,
     .space-session-check,.space-access,.space-hero,.space-section-heading,
     .space-material-download-button,.space-material-print-button,
@@ -1013,304 +658,49 @@
     .space-view[data-space-panel="therapy"]>.space-card,
     .space-view[data-space-panel="therapy"]>aside,
     .space-view[data-space-panel="therapy"]>.space-section[aria-labelledby="space-shared-files-title"]
-  ) { display:none!important; }
-  body.space-print-patient-material .space-shell,
-  body.space-print-patient-material .space-content,
-  body.space-print-patient-material .space-view[data-space-panel="therapy"],
-  body.space-print-patient-material #space-patient-materials {
+  ){ display:none!important; }
+body.space-print-patient-material .space-shell,body.space-print-patient-material .space-content,body.space-print-patient-material .space-view[data-space-panel="therapy"],body.space-print-patient-material #space-patient-materials{
     display:block!important;max-width:none!important;min-height:0!important;
     width:100%!important;padding:0!important;margin:0!important;
     border:0!important;box-shadow:none!important;background:#fff!important;
   }
-  body.space-print-patient-material .space-view[data-space-panel="therapy"]>.space-section {
+body.space-print-patient-material .space-view[data-space-panel="therapy"]>.space-section{
     margin:0!important;padding:0!important;
   }
-  body.space-print-patient-material #space-patient-materials>.space-patient-material:not([data-print-material]) {
+body.space-print-patient-material #space-patient-materials>.space-patient-material:not([data-print-material]){
     display:none!important;
   }
-  body.space-print-patient-material #space-patient-materials>.space-patient-material[data-print-material]{
+body.space-print-patient-material #space-patient-materials>.space-patient-material[data-print-material]{
     display:block!important;background:#fff!important;color:#203b50!important;
     border:0!important;border-radius:0!important;box-shadow:none!important;
     padding:0!important;margin:0!important;break-inside:auto!important;
   }
-  body.space-print-patient-material .space-patient-material[data-print-material] :is(
+body.space-print-patient-material .space-patient-material[data-print-material] :is(
     textarea,input,button,[data-neuro-answer],.space-neuro-answer,
     .space-neuro-response,.space-patient-response-status
-  ) {display:none!important}
-  body.space-print-patient-material .space-patient-material[data-print-material]>summary {
+  ){display:none!important}
+body.space-print-patient-material .space-patient-material[data-print-material]>summary{
     display:block!important;padding:0 0 14px!important;margin:0 0 18px!important;
     border-bottom:2px solid #173a5e!important;list-style:none!important;
   }
-  body.space-print-patient-material .space-patient-material[data-print-material]>summary::before,
-  body.space-print-patient-material .space-patient-material[data-print-material]>summary::marker,
-  body.space-print-patient-material .space-patient-material-chevron {display:none!important}
-  body.space-print-patient-material .space-patient-material[data-print-material] .space-patient-material-body {
+body.space-print-patient-material .space-patient-material[data-print-material]>summary::before,body.space-print-patient-material .space-patient-material[data-print-material]>summary::marker,body.space-print-patient-material .space-patient-material-chevron{display:none!important}
+body.space-print-patient-material .space-patient-material[data-print-material] .space-patient-material-body{
     padding:0!important;display:block!important;
   }
-  body.space-print-patient-material .space-patient-material[data-print-material] :is(
+body.space-print-patient-material .space-patient-material[data-print-material] :is(
     h1,h2,h3,h4,h5,h6,p,li,td,th
-  ) {color:#203b50!important}
-  body.space-print-patient-material .space-patient-material[data-print-material] :is(
+  ){color:#203b50!important}
+body.space-print-patient-material .space-patient-material[data-print-material] :is(
     table,figure,.space-neuro-visual
   ){break-inside:avoid-page}
 }
-
-/* Wellness: navegación por tareas, sin mostrar toda la biblioteca de golpe. */
-.wellness-experience .wellness-subnav{
-  display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;
-  padding:6px;margin:-8px 0 28px;position:sticky;top:80px;z-index:8;
-  border:1px solid #d4e6ed;border-radius:17px;background:#edf6fa;
-  box-shadow:0 8px 26px rgba(23,58,94,.06);
-}
-.wellness-experience .wellness-subnav button{
-  min-width:0;min-height:46px;padding:10px 12px;border:1px solid transparent;
-  border-radius:12px;background:transparent;color:#456479;
-  font:inherit;font-size:.87rem;font-weight:770;cursor:pointer;line-height:1.3;
-}
-.wellness-experience .wellness-subnav button:hover{background:#fff;color:#173a5e}
-.wellness-experience .wellness-subnav button.is-active{
-  background:#fff;color:#173a5e;border-color:#d3e3ea;
-  box-shadow:0 2px 10px rgba(23,58,94,.09);
-}
-.wellness-experience .wellness-subpanel[hidden],
-.wellness-experience [data-wellness-reset][hidden],
-.wellness-experience [data-wellness-go-explore][hidden]{display:none!important}
-.wellness-experience .wellness-subpanel{animation:wellness-arrive .16s ease-out}
-@keyframes wellness-arrive{from{opacity:.65;transform:translateY(5px)}to{opacity:1;transform:none}}
-@media(prefers-reduced-motion:reduce){.wellness-experience .wellness-subpanel{animation:none}}
-.wellness-experience .wellness-all-tools{
-  display:inline-flex;align-items:center;justify-content:center;min-height:42px;
-  margin:0 0 16px;padding:9px 15px;border:1px solid #bbd5e1;
-  border-radius:12px;background:#fff;color:#173a5e;font:inherit;
-  font-size:.83rem;font-weight:780;cursor:pointer;
-}
-.wellness-experience .wellness-needs:not(.wellness-needs-editorial) button{
-  min-height:103px;justify-content:center;gap:5px;padding:16px 17px;
-}
-.wellness-experience .wellness-needs:not(.wellness-needs-editorial) button>span{display:none}
-.wellness-experience[data-wellness-active="guardadas"] .wellness-interactive-section,
-.wellness-experience[data-wellness-active="guardadas"] .wellness-filters{display:none!important}
-.wellness-experience[data-wellness-active="guardadas"] .wellness-library-controls{justify-content:flex-start}
-@media(max-width:760px){
-  .wellness-experience .wellness-subnav{top:6px;gap:3px;padding:5px;border-radius:15px;margin:0 0 24px}
-  .wellness-experience .wellness-subnav button{min-height:45px;padding:8px 5px;font-size:.79rem}
-  .wellness-experience .wellness-needs:not(.wellness-needs-editorial) button{min-height:90px;padding:14px}
-}
-
-.wellness-experience .wellness-more-needs{margin:13px 0 0}
-.wellness-experience .wellness-more-needs summary{
-  display:inline-flex;align-items:center;min-height:43px;
-  padding:9px 15px;border:1px solid #cbdfea;border-radius:12px;
-  background:#fff;color:#234c67;font-size:.85rem;font-weight:760;cursor:pointer;
-}
-.wellness-experience .wellness-more-needs[open] summary{margin-bottom:13px;background:#edf7fa}
-
-/* Una necesidad seleccionada conduce directamente a sus resultados. */
-.wellness-experience[data-wellness-focused="true"] .wellness-interactive-section,
-.wellness-experience[data-wellness-focused="true"] .wellness-filters{display:none!important}
-.wellness-experience[data-wellness-focused="true"] .wellness-filter-context{
-  border-left:3px solid #367e9b;border-radius:0 12px 12px 0;
-}
-.wellness-experience .wellness-subnav{scroll-margin-top:12px}
-
-/* Entre Sesiones · tarjetas editoriales Wellness.
-   Aislar del diseño legacy: los spans de texto nunca son iconos ni fondos. */
-.wellness-experience .wellness-need-section{
-  margin:0 0 37px;padding:clamp(16px,2.7vw,27px);
-  border:1px solid #e6eff2;border-radius:27px;
-  background:linear-gradient(145deg,#f7fcfe,#f3f9fb 70%,#fffaf7);
-}
-.wellness-experience .wellness-need-section .wellness-section-title{
-  display:flex;flex-direction:column;align-items:flex-start;gap:8px;margin-bottom:24px;
-}
-.wellness-experience .wellness-need-section .wellness-section-title .space-eyebrow{
-  color:#c16a5f;font-size:.73rem;letter-spacing:.20em;font-weight:800;
-}
-.wellness-experience .wellness-need-section .wellness-section-title h3{
-  margin:0;font:550 clamp(2.2rem,4.6vw,3.65rem)/1.06 var(--font-newsreader),Georgia,serif;
-  letter-spacing:-.05em;color:#102f50;
-}
-.wellness-experience .wellness-need-section .wellness-section-title>p{
-  font-size:clamp(.88rem,1.6vw,1.03rem);margin:3px 0 0;color:#687e8b;
-}
-.wellness-experience .wellness-needs-editorial{
-  display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px;align-items:stretch;
-}
-.wellness-experience .wellness-needs-editorial button{
-  box-sizing:border-box;min-width:0;width:100%;height:100%;min-height:150px;
-  display:grid;grid-template-columns:clamp(78px,9.6vw,108px) minmax(0,1fr) 18px;
-  align-items:center;gap:13px;padding:17px 16px;
-  text-align:left;position:relative;border-radius:22px;
-  border:1px solid #e0e9ed;background:#fff;color:#153755;cursor:pointer;
-  font:inherit;box-shadow:0 7px 20px rgba(20,59,83,.04);
-  transition:border-color .15s,box-shadow .15s,transform .15s;
-}
-.wellness-experience .wellness-needs-editorial button:hover{
-  border-color:#bed5df;box-shadow:0 12px 28px rgba(20,59,83,.07);transform:translateY(-2px);
-}
-.wellness-experience .wellness-needs-editorial button.is-active{
-  border-color:#5c98ad;background:#f5fbfe;box-shadow:inset 0 0 0 1px #5c98ad;
-}
-.wellness-experience .wellness-needs-editorial button>.wellness-art{
-  display:block;width:100%;height:auto;aspect-ratio:1;
-  min-width:0;min-height:0;margin:0;border:0;border-radius:0;
-  background-color:transparent;background-image:url('/wellness-editorial-sprite.svg');
-  background-repeat:no-repeat;background-size:400% 200%;font-size:0;
-}
-.wellness-experience .wellness-needs-editorial button:nth-child(1)>.wellness-art{background-position:0 0}
-.wellness-experience .wellness-needs-editorial button:nth-child(2)>.wellness-art{background-position:33.3333% 0}
-.wellness-experience .wellness-needs-editorial button:nth-child(3)>.wellness-art{background-position:66.6667% 0}
-.wellness-experience .wellness-needs-editorial button:nth-child(4)>.wellness-art{background-position:100% 0}
-.wellness-experience .wellness-needs-editorial button:nth-child(5)>.wellness-art{background-position:0 100%}
-.wellness-experience .wellness-needs-editorial button:nth-child(6)>.wellness-art{background-position:33.3333% 100%}
-.wellness-experience .wellness-needs-editorial button:nth-child(7)>.wellness-art{background-position:66.6667% 100%}
-.wellness-experience .wellness-needs-editorial button:nth-child(8)>.wellness-art{background-position:100% 100%}
-.wellness-experience .wellness-needs-editorial .wellness-need-copy{
-  display:flex;flex-direction:column;align-items:flex-start;gap:7px;
-  min-width:0;width:auto;height:auto;margin:0;padding:0;
-  border:0;border-radius:0;background:transparent;color:inherit;
-  overflow-wrap:normal;word-break:normal;
-}
-.wellness-experience .wellness-needs-editorial .wellness-need-copy strong{
-  display:block;max-width:100%;font-size:clamp(1.01rem,1.65vw,1.32rem);
-  line-height:1.23;color:#123552;font-weight:800;letter-spacing:-.02em;
-}
-.wellness-experience .wellness-needs-editorial .wellness-need-copy small{
-  display:block;max-width:100%;font-size:clamp(.82rem,1.3vw,.95rem);
-  line-height:1.44;color:#637987;font-weight:450;
-}
-.wellness-experience .wellness-needs-editorial button>.wellness-arrow{
-  display:block;justify-self:end;align-self:center;width:auto;height:auto;
-  margin:0;padding:0;border:0;border-radius:0;background:transparent;
-  color:#8399a8;font-size:1.65rem;font-weight:350;line-height:1;
-}
-@media(max-width:750px){
-  .wellness-experience .wellness-need-section{padding:17px 13px;border-radius:20px}
-  .wellness-experience .wellness-need-section .wellness-section-title h3{font-size:clamp(2rem,8vw,2.7rem)}
-  .wellness-experience .wellness-needs-editorial{gap:10px}
-  .wellness-experience .wellness-needs-editorial button{
-    grid-template-columns:minmax(0,1fr) 20px;grid-template-rows:73px auto;
-    align-items:start;align-content:start;column-gap:5px;row-gap:10px;
-    min-height:222px;padding:14px 13px 17px;border-radius:19px;
-  }
-  .wellness-experience .wellness-needs-editorial button>.wellness-art{
-    grid-column:1;grid-row:1;width:73px;height:73px;aspect-ratio:auto;align-self:start;
-  }
-  .wellness-experience .wellness-needs-editorial .wellness-need-copy{
-    grid-column:1/-1;grid-row:2;min-width:0;width:100%;height:auto;gap:6px;
-    align-self:start;justify-self:stretch;
-  }
-  .wellness-experience .wellness-needs-editorial .wellness-need-copy strong{
-    font-size:.98rem;line-height:1.25;letter-spacing:-.018em;
-  }
-  .wellness-experience .wellness-needs-editorial .wellness-need-copy small{
-    font-size:.82rem;line-height:1.4;
-  }
-  .wellness-experience .wellness-needs-editorial button>.wellness-arrow{
-    grid-column:2;grid-row:1;align-self:center;justify-self:end;
-    font-size:1.35rem;position:static;
-  }
-}
-@media(max-width:400px){
-  .wellness-experience .wellness-need-section{padding:13px 10px}
-  .wellness-experience .wellness-needs-editorial{gap:9px}
-  .wellness-experience .wellness-needs-editorial button{
-    grid-template-rows:68px auto;min-height:218px;padding:12px 11px 15px;row-gap:9px;
-  }
-  .wellness-experience .wellness-needs-editorial button>.wellness-art{width:68px;height:68px}
-  .wellness-experience .wellness-needs-editorial .wellness-need-copy strong{font-size:.93rem;line-height:1.25}
-  .wellness-experience .wellness-needs-editorial .wellness-need-copy small{font-size:.79rem;line-height:1.38}
-}
-@media(max-width:350px){
-  .wellness-experience .wellness-needs-editorial{gap:7px}
-  .wellness-experience .wellness-needs-editorial button{grid-template-rows:62px auto;min-height:225px;padding:11px 10px 13px}
-  .wellness-experience .wellness-needs-editorial button>.wellness-art{width:62px;height:62px}
-  .wellness-experience .wellness-needs-editorial .wellness-need-copy strong{font-size:.89rem}
-  .wellness-experience .wellness-needs-editorial .wellness-need-copy small{font-size:.77rem}
-}
-@media(prefers-reduced-motion:reduce){
-  .wellness-experience .wellness-needs-editorial button{transition:none}
-  .wellness-experience .wellness-needs-editorial button:hover{transform:none}
-}
-
-/* El registro diario vive en Wellness y sigue usando el mismo almacenamiento por cuenta. */
 .space-page .space-moment-shortcut{display:flex;gap:16px;align-items:center;justify-content:space-between;flex-wrap:wrap;margin:0 0 25px;padding:22px 24px;background:linear-gradient(120deg,#f3f9fc,#fffaf6);border:1px solid #d8e7ec;border-radius:21px}
 .space-page .space-moment-shortcut h3{margin:6px 0 8px;color:#173a5e;font:550 clamp(1.4rem,3vw,1.9rem)/1.15 var(--font-newsreader),Georgia,serif}
 .space-page .space-moment-shortcut p:last-child{margin:0;max-width:450px;color:#5b7281;font-size:.86rem;line-height:1.55}
 .space-page .space-moment-shortcut .space-primary{flex:none;min-height:45px}
-.wellness-experience .wellness-need-section .wellness-moment-link{display:inline-flex;gap:8px;align-items:center;align-self:flex-start;color:#245b78;background:#e7f3f8;border:1px solid #cee5ed;border-radius:100px;font-size:.78rem;font-weight:790;line-height:1.4;padding:9px 13px;text-decoration:none}
-.wellness-experience .wellness-need-section .wellness-moment-link:hover{background:#d8edf5;color:#173a5e}
-.wellness-experience .wellness-need-section .wellness-moment-link:focus-visible{outline:3px solid #397f9b;outline-offset:3px}
-.wellness-experience .wellness-moment-section{scroll-margin-top:95px;margin:20px 0 32px}
-.wellness-experience .wellness-moment-section .mood-tracker{margin:0;border-color:#d6e7ed;border-radius:25px;box-shadow:0 10px 34px rgba(23,58,94,.045);background:linear-gradient(145deg,#fff,#fafdff)}
-.wellness-experience .wellness-moment-section .mood-tracker-heading .space-eyebrow{color:#bd6a5d;font-weight:800;letter-spacing:.17em}
-@media(max-width:600px){.space-page .space-moment-shortcut{padding:18px;gap:14px}.space-page .space-moment-shortcut .space-primary{width:100%}.wellness-experience .wellness-moment-section{scroll-margin-top:72px}.wellness-experience .wellness-moment-section .mood-tracker{margin:0;padding:15px;border-radius:19px}}
-
-/* Dos decisiones complementarias, al mismo nivel, en la portada de Wellness. */
-.wellness-experience .wellness-primary-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px;align-items:start;margin:20px 0 32px}
-.wellness-experience .wellness-primary-grid > *{min-width:0;margin:0}
-.wellness-experience .wellness-primary-grid .wellness-need-section{height:100%}
-.wellness-experience .wellness-primary-grid .wellness-need-section .wellness-section-title h3{font-size:clamp(1.6rem,2.6vw,2.6rem)}
-@media(max-width:1200px){.wellness-experience .wellness-primary-grid{grid-template-columns:1fr}.wellness-experience .wellness-primary-grid .wellness-need-section{height:auto}}
-
-
-/* Entre Sesiones: portada Wellness equilibrada y evolución en ancho completo. */
-.wellness-experience .wellness-primary-grid{
-  grid-template-columns:repeat(auto-fit,minmax(min(100%,400px),1fr));
-  align-items:stretch;
-  gap:clamp(16px,2vw,24px);
-  margin:20px 0 24px;
-}
-.wellness-experience .wellness-primary-grid > *{min-width:0;max-width:100%;align-self:stretch}
-.wellness-experience .wellness-primary-grid .wellness-moment-section .mood-tracker{
-  height:100%;display:flex;flex-direction:column;min-width:0;
-}
-.wellness-experience .wellness-primary-grid .mood-tracker-body{
-  grid-template-columns:minmax(0,1fr);min-width:0;
-}
-.wellness-experience .wellness-primary-grid .mood-friend-panel{min-height:210px}
-.wellness-experience .wellness-primary-grid .mood-tracker-inputs{min-width:0}
-.wellness-experience .wellness-primary-grid :is(.mood-options,.mood-energy-options){min-width:0}
-.wellness-experience .wellness-primary-grid .wellness-need-section{
-  height:100%;min-width:0;margin:0;
-}
-.wellness-experience .wellness-primary-grid .wellness-needs-editorial button{min-width:0}
-.wellness-experience .wellness-need-section{container-type:inline-size}
-@container (max-width:560px){
-  .wellness-experience .wellness-needs-editorial button{
-    grid-template-columns:minmax(0,1fr) 18px;
-    grid-template-rows:74px auto;
-    align-items:start;align-content:start;gap:10px 4px;
-    min-height:182px;padding:13px;border-radius:17px;
-  }
-  .wellness-experience .wellness-needs-editorial button>.wellness-art{
-    grid-column:1;grid-row:1;width:74px;height:74px;aspect-ratio:1;
-  }
-  .wellness-experience .wellness-needs-editorial .wellness-need-copy{
-    grid-column:1/-1;grid-row:2;width:100%;align-self:start;overflow-wrap:anywhere;
-  }
-  .wellness-experience .wellness-needs-editorial button>.wellness-arrow{
-    grid-column:2;grid-row:1;justify-self:end;align-self:center;
-  }
-}
-.wellness-experience .wellness-evolution-full{width:100%;min-width:0;margin:0 0 34px}
-.wellness-experience .wellness-evolution-full .mood-history{
-  width:100%;min-width:0;margin:0;padding:clamp(16px,2.7vw,28px);
-  border:1px solid #d6e7ed;border-radius:24px;background:#fff;
-  box-shadow:0 10px 34px rgba(23,58,94,.045);
-}
-.wellness-experience .wellness-evolution-full .mood-evolution{
-  width:100%;max-width:none;min-width:0;margin:22px 0;
-}
-@media(max-width:750px){
-  .wellness-experience .wellness-primary-grid{grid-template-columns:minmax(0,1fr);gap:16px}
-  .wellness-experience .wellness-evolution-full .mood-history{padding:16px;border-radius:18px}
-  .wellness-experience .wellness-primary-grid .mood-friend-panel{min-height:230px}
-}
-
-
-/* Sistema CS, sincronizado con los tokens de carolinasanchezgirona.com.
-   El cambio es visual: conserva clases, estados, respuestas y accesibilidad. */
+@media(max-width:600px){
+.space-page .space-moment-shortcut{padding:18px;gap:14px}
+.space-page .space-moment-shortcut .space-primary{width:100%}}
 .space-page{
   --space-ink:#304750;
   --space-muted:#617680;
@@ -1324,15 +714,12 @@
   background:linear-gradient(160deg,#F2EFE7 0%,#EDEDED 100%);
   font-family:var(--font-inter),Inter,system-ui,sans-serif;
 }
-.space-page :is(h1,h2,h3,h4),.space-page .space-brand-name,
-.space-page .wellness-section-title h3,.space-page .mood-tracker-heading h3{
+.space-page :is(h1,h2,h3,h4),.space-page .space-brand-name,.space-page .mood-tracker-heading h3{
   color:#304750;font-family:var(--font-newsreader),Georgia,serif;
 }
-.space-page :is(.space-eyebrow,.space-kicker,.space-card-type,
-.wellness-card-type,.wellness-section-title .space-eyebrow){color:#708793}
+.space-page :is(.space-eyebrow,.space-kicker,.space-card-type){color:#708793}
 .space-page :is(.space-sidebar-copy,.space-hero>p:last-child,.space-card p,
-.space-routines span,.space-small,.space-history-item span,.space-summary span,
-.space-wellness-list p,.space-safety,.space-session-prep-head>p){color:#617680}
+.space-routines span,.space-small,.space-history-item span,.space-summary span,.space-safety,.space-session-prep-head>p){color:#617680}
 .space-page :is(.space-topbar,.space-sidebar){
   background:rgba(255,255,255,.92);border-color:rgba(48,71,80,.15);
 }
@@ -1351,8 +738,7 @@
   border-color:#809DA8;background:#F2EFE7;
 }
 .space-page :is(.space-card,.space-summary article,.space-routines button,
-.space-history-item,.space-empty,.space-access-card,.space-sidebar-note,
-.wellness-card,.space-patient-material,.space-patient-response,
+.space-history-item,.space-empty,.space-access-card,.space-sidebar-note,.space-patient-material,.space-patient-response,
 .space-patient-shared-file,.space-learning-card,.space-guided-record,
 .space-session-prep-form,.space-session-prep-transfer,.space-quick-start){
   background:#FFFFFF;border-color:rgba(48,71,80,.15);
@@ -1373,55 +759,6 @@
 .space-page .space-access-form input:focus{border-color:#708793}
 .space-page .space-topbar-dot{background:#809DA8}
 .space-page .space-history-item time{color:#617680}
-/* Componentes y tarjetas de autoconocimiento: marfil, perla y azul niebla,
-   manteniendo legibles textos, indicadores y contenidos de cada actividad. */
-.space-page .wellness-experience{
-  --space-accent:#708793;
-  --space-ink:#304750;
-  --space-accent-soft:#EDEDED;
-  background:transparent;color:#304750;
-}
-.space-page .wellness-experience :is(.wellness-hero,.wellness-need-section,
-.wellness-moment-section,.wellness-routine-grid,.wellness-evolution-full,
-.wellness-journey-disclosure,.wellness-moment-shortcut){
-  border-color:rgba(48,71,80,.15);
-}
-.space-page .wellness-experience :is(.wellness-hero,.wellness-need-section,
-.wellness-moment-section,.wellness-journey-disclosure){
-  background:linear-gradient(130deg,#F2EFE7,#FFFFFF);
-  box-shadow:0 10px 32px rgba(48,71,80,.04);
-}
-.space-page .wellness-experience .wellness-needs-editorial button{
-  border-color:rgba(48,71,80,.16);
-  background:#FFFFFF;color:#304750;
-  box-shadow:0 7px 22px rgba(48,71,80,.05);
-}
-.space-page .wellness-experience .wellness-needs-editorial button:nth-child(even){
-  background:#F2EFE7;
-}
-.space-page .wellness-experience .wellness-needs-editorial button:hover{
-  border-color:#809DA8;box-shadow:0 10px 24px rgba(48,71,80,.09);
-}
-.space-page .wellness-experience .wellness-needs-editorial :is(.wellness-need-copy strong,
-.wellness-need-copy small){color:#304750}
-.space-page .wellness-experience .wellness-need-copy small{color:#617680}
-.space-page .wellness-experience :is(.wellness-subnav,.wellness-filters,
-.wellness-section-title){border-color:rgba(48,71,80,.15)}
-.space-page .wellness-experience :is(.wellness-subnav a,.wellness-filters button){
-  color:#304750;border-color:rgba(48,71,80,.16);
-}
-.space-page .wellness-experience :is(.wellness-subnav a.is-active,
-.wellness-filters button.is-active){background:#304750;color:#FFFFFF;border-color:#304750}
-.space-page .wellness-experience :is(.wi-card,.wellness-card,.space-learning-card,
-.wellness-routine-grid>*){
-  background:#FFFFFF;border-color:rgba(48,71,80,.16);color:#304750;
-}
-.space-page .wellness-experience :is(.wi-button,.wellness-fav-mini){color:#304750}
-.space-page .wellness-experience .wellness-evolution-full .mood-history{
-  background:#FFFFFF;border-color:rgba(48,71,80,.16);
-  box-shadow:0 10px 28px rgba(48,71,80,.04);
-}
-/* El registro emocional conserva codificaciones de estado diferenciables. */
 .space-page .mood-tracker{--mood-ink:#304750;background:#FFFFFF;
   border-color:rgba(48,71,80,.16);box-shadow:0 10px 30px rgba(48,71,80,.04)}
 .space-page .mood-tracker-heading h3{color:#304750}

@@ -36,7 +36,7 @@ test("patient reading preferences are local, account scoped and switch off on lo
   assert.match(portalPage,/id="space-reading-simple"/);
   assert.match(portalPage,/id="space-reading-motion"/);
   assert.match(portal,/READING_KEY = "patient_reading_preferences_v1"/);
-  assert.match(portal,/localStorage\.setItem\(scopedWellnessKey\(READING_KEY\)/);
+  assert.match(portal,/localStorage\.setItem\(scopedPatientKey\(READING_KEY\)/);
   assert.match(portal,/state\.storageScope = scope \|\| null;\s*loadReadingSettings\(\)/);
   assert.match(portal,/state\.portalAuthenticated/);
   assert.match(css,/space-reading-simple/);
@@ -52,8 +52,8 @@ test("logout clears data from DOM and bfcache cannot restore stale clinical view
   assert.match(portal,/if \(!event\.persisted\) return;\s*showAccessGate\(true\);\s*void loadPatientSession\(\)/);
   assert.match(mood,/document\.addEventListener\("patient-portal-locked", locked\)/);
   assert.match(mood,/document\.removeEventListener\("patient-portal-locked", locked\)/);
-  assert.match(portal,/new Event\("patient-local-wellness-cleared"\)/);
-  assert.match(mood,/document\.addEventListener\("patient-local-wellness-cleared", clearWithWellness\)/);
+  assert.match(portal,/usePatientStorageScope\(null\)/);
+  assert.match(portal,/patientMaterials\?\.replaceChildren\(\)/);
 });
 
 test("partial clinic backend outages are explicit failures and never mistaken for empty assignments", () => {

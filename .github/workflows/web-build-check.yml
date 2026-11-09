@@ -187,6 +187,7 @@ jobs:
           node --test tests/wellness-interactive.test.mjs
           node --test tests/session-prep.test.mjs
           node --test tests/entre-sesiones-app-integration.test.mjs
+          node --test tests/mi-espacio-legacy-cleanup.test.mjs
           grep -q 'id="space-login-form"' app/mi-espacio/page.tsx
           grep -q '/mi-espacio/?vista=panel' public/mi-espacio.js
           ! grep -q 'id="space-code-form"' app/mi-espacio/page.tsx
