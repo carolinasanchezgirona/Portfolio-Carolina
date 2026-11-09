@@ -122,7 +122,7 @@ test("la firma registra sesión y hora y archiva original y acta privados antes 
   throw Error("Not allowed "+url);
  },async calls=>{
   const res=await clinicalSimplePatient(signPost(),env,async()=>verified,()=>true);
-  assert.equal(res.status,200,await res.text().catch(()=>"(none)"));
+  assert.equal(res.status,200);
   const data=await res.json();assert.equal(data.status,"archived");
   assert.equal(calls.filter(c=>c.url.includes("/storage/v1/object/clinical-documents/")&&c.opts.method==="POST").length,1);
   const changes=calls.filter(c=>c.url.includes("/clinical_simple_consents?")&&c.opts.method==="PATCH")
