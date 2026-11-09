@@ -1,6 +1,6 @@
-import { buildClinicalConsentPdf,CONSENT_VERSION,type ConsentKind } from "./clinical-consent-pdf";
+import { buildClinicalConsentPdf,CONSENT_VERSION,type ConsentKind } from "./clinical-consent-pdf.ts";
 import { authenticateDocusign,createDocusignDraft,sendDocusignDraft,getDocusignStatus,
- downloadSignedPdf,providerConfigured,sha256,verifyDocusignHmac,type DocusignEnv } from "./clinical-signature-docusign";
+ downloadSignedPdf,providerConfigured,sha256,verifyDocusignHmac,type DocusignEnv } from "./clinical-signature-docusign.ts";
 
 type Env=DocusignEnv & {SUPABASE_SERVICE_ROLE_KEY?:string};
 const SUPA="https://grgyvdxkjdstdyumdfyg.supabase.co";
