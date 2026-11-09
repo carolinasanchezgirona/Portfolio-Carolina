@@ -355,6 +355,19 @@ export default function AdminClinicaPage() {
                 <a href="https://www.signaturit.com/es/" target="_blank" rel="noopener noreferrer">Acceder a proveedor de firma electrónica</a>
               </div>
               <p id="clinic-signature-message" className="clinic-message" role="status" aria-live="polite" />
+
+              <div className="clinic-simple-consents" id="clinic-simple-consents">
+                <h4>Firma electrónica simple · sin cuota por firma</h4>
+                <p>El paciente lee el PDF original dentro de «Mi espacio», entra con su contraseña reciente y declara expresamente si acepta. El registro conserva la versión exacta y un acta de evidencias. No es una firma avanzada, cualificada ni PAdES.</p>
+                <p>Destinatario verificado: <strong id="clinic-simple-recipient">Selecciona un paciente</strong></p>
+                <label className="clinic-simple-check"><input id="clinic-simple-confirm" type="checkbox" />
+                  He explicado el procedimiento y sus alternativas, he ofrecido resolver dudas y he comprobado que la persona es adulta y puede consentir por sí misma.</label>
+                <button className="clinic-primary" id="clinic-simple-send" type="button" disabled>Enviar solicitud manual para firma simple</button>
+                <p id="clinic-simple-message" className="clinic-message" role="status" aria-live="polite" />
+                <div id="clinic-simple-history" className="clinic-simple-history" aria-label="Historial de solicitudes de aceptación electrónica" />
+                <p className="clinic-note">No se envía nada al reservar o recordar una cita. Para menores, representación o cuando se requieran garantías de identidad reforzadas, utiliza el procedimiento específico con certificado digital y verificación externa.</p>
+              </div>
+
               <div className="clinic-electronic-signature-steps">
                 <h4>Procedimiento sin papel</h4>
                 <ol>
