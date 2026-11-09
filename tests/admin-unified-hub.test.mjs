@@ -54,7 +54,8 @@ test("Supabase owner and mobile gate checks are preserved", () => {
 });
 
 test("only today's active appointments are retrieved and errors remain explicit", () => {
-  assert.match(client, /get\("appointment_bookings\?select/);
+  assert.match(client, /"appointment_bookings\?select=/);
+  assert.match(client, /const appointments = await get\(path\)/);
   assert.match(client, /patient_email\.neq\.bloqueo@agenda\.interno/);
   assert.match(client, /No se han podido actualizar las citas de hoy/);
   assert.match(client, /else unavailable\("#admin-home-today"\)|unavailable\("#admin-home-today"\)/);
