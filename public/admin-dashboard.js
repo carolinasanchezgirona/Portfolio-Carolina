@@ -75,7 +75,7 @@
   async function get(path) {
     const r = await fetch(`${REST_URL}/${path}`, { headers: authHeaders(), cache:"no-store" });
     if (r.status === 401) throw new Error("session");
-    const body = await r.json().catch(() => []);
+    const body = await r.json().catch(() => null);
     if (!r.ok) throw new Error(body?.message || "No se han podido cargar los datos.");
     return body;
   }
