@@ -59,9 +59,8 @@
   function key(y,m,d){return `${y}-${String(m).padStart(2,"0")}-${String(d).padStart(2,"0")}`;}
 
   function showMonth() {
-    document.querySelectorAll("#today-view, #tomorrow-view, #week-view, #patients-view, #waitlist-view")
-      .forEach(view => { view.hidden = true; });
-    section.hidden = false;
+    // Garantizar exclusividad incluso con vistas cargadas después del calendario.
+    document.querySelectorAll(".admin-page .admin-view").forEach(view => { view.hidden = view !== section; });
     tabs.querySelectorAll("button").forEach(b => b.classList.toggle("active", b === monthButton));
     loadMonth();
   }
@@ -94,11 +93,15 @@
       if (!openingsRes.ok) throw new Error(openingsBody?.message || "No se han podido cargar las aperturas.");
       if (!exceptionsRes.ok) throw new Error(exceptionsBody?.message || "No se han podido cargar los cierres.");
       rows = bookingsBody.filter(row => !["cancelled", "canceled"].includes(row.status));
-      blocks = blocksRes.ok ? blocksBody : null;
+      const blocksReadable = blocksRes.ok && Array.isArray(blocksBody);
+      blocks = blocksReadable ? blocksBody : null;
       holidays = holidaysBody || [];
       dateOpenings = openingsBody || [];
       dateExceptions = exceptionsBody || [];
-      render(); status.textContent = "";
+      render();
+      status.textContent = blocksReadable
+        ? ""
+        : "Citas cargadas, pero los bloqueos no se han podido comprobar. No interpretes los huecos como disponibles.";
     } catch (error) {
       if (request !== monthRequest) return;
       grid.replaceChildren();
