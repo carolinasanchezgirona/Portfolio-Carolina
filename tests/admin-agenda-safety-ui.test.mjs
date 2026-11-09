@@ -41,3 +41,67 @@ test("La lista de espera comparte paleta y no inyecta una hoja de estilos", () =
   assert.doesNotMatch(waitlist, /document\.createElement\("style"\)/);
   assert.doesNotMatch(css, /#9EDCE7|#11A6C2|#075A68/i);
 });
+
+function makeConflictChecker(respond) {
+  // Ejecutar la función real del navegador, aislada de Supabase y sin datos clínicos.
+  const start = agenda.indexOf("  async function checkAppointmentConflict(");
+  const end = agenda.indexOf("\n  async function saveAppointment()", start);
+  assert.ok(start >= 0 && end > start, "La comprobación de disponibilidad debe existir");
+  const declaration = agenda.slice(start, end).trim();
+  const factory = new Function(
+    "fetch", "REST_URL", "authHeaders", "madridLocalToIso", "addDaysKey", "keyFromIso", "timeFmt",
+    "return (" + declaration + ");"
+  );
+  const addDaysKey = (value, delta) => new Date(Date.parse(value + "T00:00:00.000Z") + delta * 86400000).toISOString().slice(0, 10);
+  return factory(
+    respond, "https://api.example.invalid/rest/v1", () => ({}),
+    (date, hour = "00:00") => date + "T" + hour + ":00.000Z",
+    addDaysKey, iso => iso.slice(0, 10),
+    { format: date => date.toISOString().slice(11, 16) }
+  );
+}
+
+const ok = body => ({ ok: true, json: async () => body });
+const failed = { ok: false, json: async () => ({ message: "No disponible" }) };
+const day = "2026-11-09T10:00:00.000Z";
+
+test("La validación real rechaza fallos del servidor y respuestas malformadas", async () => {
+  for (const responses of [
+    [failed, ok([])],
+    [ok([]), failed],
+    [ok({ error: "invalid" }), ok([])],
+    [ok([]), ok(null)]
+  ]) {
+    let calls = 0;
+    const check = makeConflictChecker(async () => responses[calls++]);
+    await assert.rejects(check(day), /No se han podido verificar|respuesta.*no es válida/);
+    assert.equal(calls, 2);
+  }
+});
+
+test("La validación real detecta bloqueos y citas de madrugada sin consultar servicios reales", async () => {
+  const bloqueado = makeConflictChecker(async url =>
+    url.includes("schedule_blocks") ? ok([{ reason: "Reunión" }]) : ok([])
+  );
+  assert.match(await bloqueado(day), /bloqueo de agenda.*Reunión/);
+
+  const morning = "2026-11-09T00:15:00.000Z";
+  const previousEvening = {
+    id: "ejemplo-sin-datos-personales",
+    status: "confirmed",
+    patient_name: "Paciente de prueba",
+    starts_at: "2026-11-08T23:45:00.000Z",
+    ends_at: "2026-11-09T00:45:00.000Z"
+  };
+  let appointmentsRequest = "";
+  const overlapping = makeConflictChecker(async url => {
+    if (url.includes("schedule_blocks")) return ok([]);
+    appointmentsRequest = url;
+    return ok([previousEvening]);
+  });
+  assert.match(await overlapping(morning), /Ya existe una cita/);
+  assert.match(appointmentsRequest, /2026-11-08T00/);
+
+  const available = makeConflictChecker(async () => ok([]));
+  assert.equal(await available(day), "");
+});
