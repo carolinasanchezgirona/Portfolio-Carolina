@@ -88,6 +88,12 @@ jobs:
           node --check public/patient-goal-process.js
           node --test tests/clinical-patient-goals.test.mjs
 
+      - name: Verificar revisiones clínicas privadas y borrador de consolidación
+        run: |
+          node --check public/clinic-process-reviews.js
+          node --check public/clinic-patient-workspace.js
+          node --test tests/clinic-process-reviews.test.mjs
+
       - name: Validar ficha clínica única y preparación de sesiones
         run: |
           node --check public/clinic-patient-workspace.js
