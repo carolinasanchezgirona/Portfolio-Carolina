@@ -27,7 +27,7 @@ function mockProvider(t, { limited = false, deliveryStatus = 201, provision = fa
   return calls;
 }
 test('sensitive and unknown routes never qualify for Analytics', () => {
-  for (const path of ['/cita/', '/mi-espacio/', '/mi-espacio/prueba/', '/admin/clinica/', '/entre-sesiones/app/', '/suscribete/', '/suscripcion/confirmada/', '/pregunta-a-carolina/', '/ansiedad/', '/articulos/trauma/', '/recursos/gracias/', '/new-health-feature/']) assert.equal(analyticsPage(path), null, path);
+  for (const path of ['/cita/', '/consentimientos/', '/consentimiento-psicologico/', '/consentimiento-neuropsicologico/', '/privacidad/', '/mi-espacio/', '/mi-espacio/prueba/', '/admin/clinica/', '/entre-sesiones/app/', '/suscribete/', '/suscripcion/confirmada/', '/pregunta-a-carolina/', '/ansiedad/', '/articulos/trauma/', '/recursos/gracias/', '/new-health-feature/']) assert.equal(analyticsPage(path), null, path);
   assert.deepEqual(analyticsPage('/sobre-mi'), { path: '/sobre-mi/', title: 'Sobre la profesional' });
 });
 test('consent fails closed for old versions, future timestamps, corruption and expiry', () => {
