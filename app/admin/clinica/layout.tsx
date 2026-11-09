@@ -28,12 +28,12 @@ export default function ClinicaLayout({ children }: Readonly<{ children: React.R
       <Script src="/clinic-word-export.js?v=20261009-legal-1" strategy="afterInteractive" />
       <Script src="/clinic-report-options.js?v=20261009-legal-1" strategy="afterInteractive" />
       <Script src="/clinic-ux-guards.js?v=20260915-1" strategy="afterInteractive" />
-      <Script src="/clinic-patient-dashboard.js?v=20261020-palette-1" strategy="afterInteractive" />
-      <Script src="/clinic-goals-manager.js?v=20261020-palette-1" strategy="afterInteractive" />
-      <Script src="/clinic-scale-trends.js?v=20261020-palette-1" strategy="afterInteractive" />
-      <Script src="/clinic-template-library.js?v=20261020-palette-1" strategy="afterInteractive" />
+      <Script src="/clinic-patient-dashboard.js?v=20261109-theme-1" strategy="afterInteractive" />
+      <Script src="/clinic-goals-manager.js?v=20261109-theme-1" strategy="afterInteractive" />
+      <Script src="/clinic-scale-trends.js?v=20261109-theme-1" strategy="afterInteractive" />
+      <Script src="/clinic-template-library.js?v=20261109-theme-1" strategy="afterInteractive" />
       <Script src="/clinic-patient-admin-enhancements.js?v=20261009-fixes-2" strategy="afterInteractive" />
-      <Script src="/clinic-patient-workspace.js?v=20261020-palette-1" strategy="afterInteractive" />
+      <Script src="/clinic-patient-workspace.js?v=20261109-theme-1" strategy="afterInteractive" />
       <Script src="/clinic-deferred-consent.js?v=20261018-1" strategy="afterInteractive" />
       <Script src="/clinic-adhd-assessments.js?v=20261104-6" strategy="afterInteractive" />
       <Script src="/clinic-adhd-assessment-planner.js?v=20261104-3" strategy="afterInteractive" />

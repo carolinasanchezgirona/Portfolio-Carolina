@@ -1,6 +1,6 @@
 /* Ficha clínica: jerarquía visual compacta y navegación persistente. */
 #clinic-patient-dialog{
-  --patient-border:#dce9eb;
+  --patient-border:var(--admin-line);
   --patient-ink:#193e50;
   scroll-margin-top:84px;
 }
@@ -131,7 +131,7 @@
 #clinic-patient-dialog:has(#clinic-patient-workspace-nav) .clinic-record-quicknav{display:none!important}
 #clinic-patient-dialog .clinic-patient-workspace-nav{
   position:sticky;top:67px;z-index:16;gap:5px;margin:12px 0 10px;padding:6px;
-  border:1px solid #dce9eb;border-radius:12px;background:rgba(255,255,255,.98);
+  border:1px solid var(--admin-line);border-radius:12px;background:rgba(255,255,255,.98);
   box-shadow:0 4px 18px rgba(16,64,86,.06);scroll-margin-top:85px
 }
 #clinic-patient-dialog .clinic-patient-workspace-nav .clinic-workspace-tab{

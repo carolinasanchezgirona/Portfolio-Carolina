@@ -105,19 +105,19 @@ export default function ResidenceOverview({residents, onDirectory, onSchedule, o
     </div>
     <style>{`
      .res-dashboard-summary{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:18px 0}
-     .res-dashboard-summary button{display:flex;flex-direction:column;align-items:flex-start;text-align:left;gap:6px;padding:16px;background:#fff;border:1px solid #c8dfe0;border-radius:12px;color:#173a5e;min-width:0}
+     .res-dashboard-summary button{display:flex;flex-direction:column;align-items:flex-start;text-align:left;gap:6px;padding:16px;background:#fff;border:1px solid var(--admin-line);border-radius:12px;color:var(--admin-action);min-width:0}
      .res-dashboard-summary strong{font-size:28px}.res-dashboard-summary span{font-size:13px;line-height:1.4}
      .res-dashboard-tabs{display:flex;flex-wrap:wrap;gap:8px;padding:12px 0;margin-bottom:12px}
      .res-dashboard-tabs button{display:flex;gap:8px;align-items:center;min-height:44px}
-     .res-dashboard-tabs button[aria-pressed=true]{background:#173a5e;color:white;border-color:#173a5e}
+     .res-dashboard-tabs button[aria-pressed=true]{background:var(--admin-action);color:white;border-color:var(--admin-action)}
      .res-dashboard-tabs span{border:1px solid currentColor;border-radius:20px;padding:1px 7px;font-size:12px}
      .res-dashboard-panels{grid-template-columns:minmax(0,1fr)}
      .res-dashboard-panels>[hidden]{display:none!important}
      .res-priority-panel{border-left:4px solid #f2766b;margin-bottom:16px}
      .res-priority-panel h3{margin:0;font-size:18px}
-     .res-priority-row{display:flex;align-items:center;justify-content:space-between;gap:12px;border-bottom:1px solid #edf7f7;padding:12px 0}
+     .res-priority-row{display:flex;align-items:center;justify-content:space-between;gap:12px;border-bottom:1px solid var(--admin-soft);padding:12px 0}
      .res-priority-row>div{min-width:0;overflow-wrap:anywhere}.res-priority-row p{margin:5px 0;font-size:13px}.res-priority-row button{flex-shrink:0}
-     .res-overview button:focus-visible{outline:3px solid #08a6a0;outline-offset:3px}
+     .res-overview button:focus-visible{outline:3px solid var(--admin-action);outline-offset:3px}
      @media(max-width:600px){.res-dashboard-summary{gap:6px}.res-dashboard-summary button{padding:10px}.res-dashboard-summary strong{font-size:24px}.res-dashboard-summary span{font-size:12px}.res-dashboard-tabs{gap:6px}.res-dashboard-tabs button{padding:9px;font-size:13px}}
     `}</style>
   </section>;

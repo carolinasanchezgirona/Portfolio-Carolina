@@ -1,14 +1,7 @@
 /* Unified admin software UI: shared density and visual language */
 :root{
-  --admin-bg:#F2EFE7;
-  --admin-surface:#ffffff;
-  --admin-line:#A0A0A0;
-  --admin-line-strong:#A0A0A0;
-  --admin-text:#304750;
-  --admin-muted:#708793;
-  --admin-navy:#708793;
-  --admin-accent:#809DA8;
-  --admin-soft:#EDEDED;
+  --admin-line-strong:var(--admin-line);
+  --admin-navy:var(--admin-action);
   --admin-radius:8px;
 }
 
@@ -311,7 +304,7 @@
 .admin-login-card,.articles-login-card,.questions-admin-login,.resources-login-card,
 .appointment-dialog{
   border-radius:12px!important;
-  box-shadow:0 12px 36px rgba(14,92,124,.08)!important;
+  box-shadow:0 12px 36px color-mix(in srgb,var(--admin-text) 8%,transparent)!important;
 }
 .admin-login-card,.articles-login-card,.questions-admin-login,.resources-login-card{
   padding:24px!important;

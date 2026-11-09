@@ -1,20 +1,20 @@
-.adhd-module{margin:24px 0;padding:25px;border:1px solid #d4e3e4;border-radius:16px;background:#fff;color:#183d4c}
+.adhd-module{margin:24px 0;padding:25px;border:1px solid #d4e3e4;border-radius:16px;background:#fff;color:var(--admin-text)}
 .adhd-module *, .adhd-patient-page *{box-sizing:border-box}
 .adhd-head{border-bottom:1px solid #e6eeee;padding-bottom:17px;margin-bottom:18px}
 .adhd-eyebrow{font-size:11px;font-weight:800;letter-spacing:.08em;color:#0c7280}
 .adhd-head h3{font-family:var(--font-newsreader),Georgia,serif;font-size:28px;font-weight:500;margin:7px 0}
 .adhd-head p{margin:0;color:#506c77;line-height:1.5;font-size:14px}
 .adhd-control-row,.adhd-case-top,.adhd-delivery,.adhd-actions{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between}
-.adhd-control-row select,.adhd-case-top select{flex:1;min-width:185px;max-width:100%;padding:11px;border:1px solid #cbdede;border-radius:9px;color:#183d4c;background:#fff;font:inherit}
-.adhd-btn{padding:10px 14px;border-radius:8px;min-height:41px;border:1px solid #bed4d7;background:white;color:#17556b;cursor:pointer;font:600 13px/1.25 inherit}
-.adhd-btn.primary,.adhd-btn.selected{background:#173d53;color:white;border-color:#173d53}
+.adhd-control-row select,.adhd-case-top select{flex:1;min-width:185px;max-width:100%;padding:11px;border:1px solid var(--admin-line);border-radius:9px;color:var(--admin-text);background:#fff;font:inherit}
+.adhd-btn{padding:10px 14px;border-radius:8px;min-height:41px;border:1px solid #bed4d7;background:white;color:var(--admin-action);cursor:pointer;font:600 13px/1.25 inherit}
+.adhd-btn.primary,.adhd-btn.selected{background:var(--admin-action);color:white;border-color:var(--admin-action)}
 .adhd-btn.light{background:#f8fbfc}
 .adhd-btn:focus-visible,.adhd-module textarea:focus-visible,.adhd-module select:focus-visible{outline:3px solid #90d5df;outline-offset:2px}
 .adhd-feedback{font-size:13px;min-height:20px;color:#13697c;line-height:1.4}
 .adhd-feedback.adhd-error{color:#a32b34;font-weight:650}
 .adhd-case-top{padding:14px 18px;background:#eff7f8;border-radius:10px;margin:16px 0}
 .adhd-case-top>div{display:grid;gap:4px}
-.adhd-case-top small,.adhd-help,.adhd-muted{color:#58717b;font-size:12px;line-height:1.55}
+.adhd-case-top small,.adhd-help,.adhd-muted{color:var(--admin-muted);font-size:12px;line-height:1.55}
 .adhd-form-nav{display:flex;gap:7px;overflow-x:auto;padding-bottom:12px;margin-bottom:13px}
 .adhd-form-nav .adhd-btn{flex:0 0 auto;max-width:240px;white-space:normal;text-align:left}
 .adhd-sheet{border-top:1px solid #e5eeee;padding-top:20px}
@@ -23,7 +23,7 @@
 .adhd-sheet .adhd-remote-note{background:#e8f5f4;color:#155666;border-left:3px solid #1aa6a5;padding:12px 15px;font-size:13px}
 .adhd-fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:15px;margin:18px 0}
 .adhd-fields label,.adhd-sheet>label{display:grid;align-content:start;gap:8px;color:#204858;font-weight:650;font-size:13px}
-.adhd-fields textarea,.adhd-sheet>label textarea{display:block;width:100%;padding:11px;border:1px solid #cbdede;border-radius:8px;background:white;color:#183d4c;font:400 13px/1.5 inherit;resize:vertical;min-height:94px}
+.adhd-fields textarea,.adhd-sheet>label textarea{display:block;width:100%;padding:11px;border:1px solid var(--admin-line);border-radius:8px;background:white;color:var(--admin-text);font:400 13px/1.5 inherit;resize:vertical;min-height:94px}
 .adhd-fields textarea:disabled{background:#f4f8f9;color:#516b75}
 .adhd-actions{justify-content:flex-start;margin-top:16px}
 @media(max-width:700px){.adhd-module{padding:16px}.adhd-fields{grid-template-columns:1fr}.adhd-form-nav{gap:5px}.adhd-case-top{padding:12px}}

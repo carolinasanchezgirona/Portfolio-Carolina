@@ -1,5 +1,6 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import Script from "next/script";
+import "../../public/admin-theme.css";
 import "./admin-unified.css";
 import "./workspace-navigation.css";
 import "./admin-palette.css";
@@ -15,6 +16,8 @@ export const metadata: Metadata = {
     nocache: true,
   },
 };
+
+export const viewport: Viewport = { themeColor: "#708793" };
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   return (

@@ -1,58 +1,58 @@
 
 /* Selector de modalidad y guía de pruebas TDAH adulto. */
-.adhd-new-evaluation,.adhd-test-planner{border:1px solid #c9dee2;border-radius:14px;background:#fff;padding:19px;margin:15px 0 21px;color:#183d4c}
+.adhd-new-evaluation,.adhd-test-planner{border:1px solid var(--admin-line);border-radius:14px;background:#fff;padding:19px;margin:15px 0 21px;color:var(--admin-text)}
 .adhd-new-evaluation h4,.adhd-test-planner h4{font:500 23px/1.25 var(--font-newsreader),Georgia,serif;margin:0 0 8px}
-.adhd-new-evaluation-head p,.adhd-plan-heading>p:last-child,.adhd-mode-option-copy>span:last-child{font-size:13px;line-height:1.55;color:#55717b;margin:0 0 14px}
+.adhd-new-evaluation-head p,.adhd-plan-heading>p:last-child,.adhd-mode-option-copy>span:last-child{font-size:13px;line-height:1.55;color:var(--admin-muted);margin:0 0 14px}
 .adhd-mode-options{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:15px 0}
-.adhd-mode-option{display:flex;gap:12px;align-items:flex-start;border:1px solid #cbdfe1;padding:17px;border-radius:12px;cursor:pointer;background:#fbfdfd}
-.adhd-mode-option:has(input:checked){border-color:#118793;box-shadow:inset 0 0 0 1px #118793;background:#eff9f9}
-.adhd-mode-option>input{accent-color:#117d89;margin-top:5px;flex-shrink:0}
+.adhd-mode-option{display:flex;gap:12px;align-items:flex-start;border:1px solid var(--admin-line);padding:17px;border-radius:12px;cursor:pointer;background:#fbfdfd}
+.adhd-mode-option:has(input:checked){border-color:var(--admin-action);box-shadow:inset 0 0 0 1px var(--admin-action);background:var(--admin-soft)}
+.adhd-mode-option>input{accent-color:var(--admin-action);margin-top:5px;flex-shrink:0}
 .adhd-mode-option-copy{display:grid;gap:9px}
 .adhd-mode-option-line{display:flex;gap:10px;flex-wrap:wrap;align-items:flex-start;justify-content:space-between}
 .adhd-mode-option-line strong{font-size:15px;line-height:1.35}
-.adhd-mode-option-line b{font-size:20px;color:#176f7d;white-space:nowrap}
-.adhd-mode-option-copy small{font-weight:700;color:#58717b}
+.adhd-mode-option-line b{font-size:20px;color:var(--admin-action);white-space:nowrap}
+.adhd-mode-option-copy small{font-weight:700;color:var(--admin-muted)}
 .adhd-test-planner[hidden]{display:none!important}
 .adhd-test-planner{background:#fafdfe;margin-top:19px}
-.adhd-plan-heading{padding-bottom:13px;border-bottom:1px solid #e3eded}
-.adhd-plan-eyebrow{color:#116e7c;font-size:11px;letter-spacing:.09em;font-weight:800;margin:0 0 8px}
+.adhd-plan-heading{padding-bottom:13px;border-bottom:1px solid var(--admin-line)}
+.adhd-plan-eyebrow{color:var(--admin-action);font-size:11px;letter-spacing:.09em;font-weight:800;margin:0 0 8px}
 .adhd-plan-heading h3{font:500 27px/1.25 var(--font-newsreader),Georgia,serif;margin:0 0 8px}
-.adhd-plan-overview{border-radius:10px;border:1px solid #b7d8de;background:#eff8fa;padding:15px;margin:16px 0}
-.adhd-plan-overview strong{color:#173d53;font-size:15px}
-.adhd-plan-overview p{font-size:13px;color:#446a74;line-height:1.55;margin:7px 0 0}
+.adhd-plan-overview{border-radius:10px;border:1px solid var(--admin-line);background:var(--admin-soft);padding:15px;margin:16px 0}
+.adhd-plan-overview strong{color:var(--admin-action);font-size:15px}
+.adhd-plan-overview p{font-size:13px;color:var(--admin-muted);line-height:1.55;margin:7px 0 0}
 .adhd-plan-section{margin:22px 0}
 .adhd-plan-section h4{font-size:24px}
 .adhd-plan-section h5{font-size:14px;font-weight:750;margin:20px 0 9px}
-.adhd-plan-muted{font-size:12px;color:#58717b;line-height:1.6;margin:0 0 14px}
+.adhd-plan-muted{font-size:12px;color:var(--admin-muted);line-height:1.6;margin:0 0 14px}
 .adhd-plan-list{display:grid;gap:8px}
-.adhd-plan-row{display:flex;justify-content:space-between;gap:12px;padding:13px 14px;border:1px solid #dce8e9;background:#fff;border-radius:9px}
+.adhd-plan-row{display:flex;justify-content:space-between;gap:12px;padding:13px 14px;border:1px solid var(--admin-line);background:#fff;border-radius:9px}
 .adhd-plan-row-info{min-width:0;flex:1}
 .adhd-plan-row-top{display:flex;flex-wrap:wrap;gap:9px;align-items:center}
-.adhd-plan-row-top strong{font-size:13px;color:#173d53}
-.adhd-plan-tag{font-size:11px;line-height:1.45;background:#eaf4f6;color:#226f7c;border-radius:7px;padding:3px 8px}
-.adhd-plan-row-info p{color:#536e78;font-size:12px;line-height:1.5;margin:6px 0 0}
+.adhd-plan-row-top strong{font-size:13px;color:var(--admin-action)}
+.adhd-plan-tag{font-size:11px;line-height:1.45;background:var(--admin-soft);color:var(--admin-action);border-radius:7px;padding:3px 8px}
+.adhd-plan-row-info p{color:var(--admin-muted);font-size:12px;line-height:1.5;margin:6px 0 0}
 .adhd-plan-row-action{display:flex;flex-direction:column;align-items:flex-end;justify-content:center;gap:6px}
-.adhd-plan-state{white-space:nowrap;color:#58717b;font-size:11px}
-.adhd-plan-btn{min-height:39px;border:1px solid #bdd3d8;border-radius:9px;padding:9px 12px;background:#fff;color:#145a6e;font-size:12px;font-weight:700;cursor:pointer}
-.adhd-plan-btn.primary{color:#fff;background:#173d53;border-color:#173d53}
-.adhd-plan-btn.secondary{color:#175b70}
+.adhd-plan-state{white-space:nowrap;color:var(--admin-muted);font-size:11px}
+.adhd-plan-btn{min-height:39px;border:1px solid var(--admin-line);border-radius:9px;padding:9px 12px;background:#fff;color:var(--admin-action);font-size:12px;font-weight:700;cursor:pointer}
+.adhd-plan-btn.primary{color:#fff;background:var(--admin-action);border-color:var(--admin-action)}
+.adhd-plan-btn.secondary{color:var(--admin-action)}
 .adhd-plan-btn.small{min-height:34px;padding:7px 11px}
 .adhd-plan-btn:disabled{opacity:.55;cursor:not-allowed}
-.adhd-plan-btn:focus-visible,.adhd-test-planner textarea:focus-visible,.adhd-plan-reason input:focus-visible{outline:3px solid #a1e2e6;outline-offset:2px}
-.adhd-plan-reasons{padding:16px;background:#fff;border:1px solid #dce8e9;border-radius:10px;margin:15px 0}
+.adhd-plan-btn:focus-visible,.adhd-test-planner textarea:focus-visible,.adhd-plan-reason input:focus-visible{outline:3px solid var(--admin-line);outline-offset:2px}
+.adhd-plan-reasons{padding:16px;background:#fff;border:1px solid var(--admin-line);border-radius:10px;margin:15px 0}
 .adhd-plan-reasons h5{margin:0 0 10px}
 .adhd-plan-reason-options{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px 15px;margin:12px 0}
-.adhd-plan-reason{display:flex;align-items:flex-start;gap:9px;font-size:12px;color:#285366;cursor:pointer;line-height:1.45}
-.adhd-plan-reason input{margin-top:2px;accent-color:#147a88}
-.adhd-plan-extra{border:1px solid #deeaec;border-radius:10px;background:white;margin:12px 0;padding:11px 12px}
-.adhd-plan-extra>summary{font-size:13px;font-weight:700;color:#175b70;cursor:pointer;padding:7px 0}
+.adhd-plan-reason{display:flex;align-items:flex-start;gap:9px;font-size:12px;color:var(--admin-action);cursor:pointer;line-height:1.45}
+.adhd-plan-reason input{margin-top:2px;accent-color:var(--admin-action)}
+.adhd-plan-extra{border:1px solid var(--admin-line);border-radius:10px;background:white;margin:12px 0;padding:11px 12px}
+.adhd-plan-extra>summary{font-size:13px;font-weight:700;color:var(--admin-action);cursor:pointer;padding:7px 0}
 .adhd-plan-extra .adhd-plan-list{margin-top:10px}
-.adhd-plan-upgrade{margin-top:18px;border:1px solid #accfd4;border-left:4px solid #1d91a0;border-radius:10px;padding:16px;background:#f5fbfc}
+.adhd-plan-upgrade{margin-top:18px;border:1px solid var(--admin-line);border-left:4px solid var(--admin-action);border-radius:10px;padding:16px;background:var(--admin-soft)}
 .adhd-plan-upgrade>strong{color:#163d53;font-size:14px}
 .adhd-plan-upgrade p{font-size:12px;line-height:1.6;color:#4c6b76}
 .adhd-plan-upgrade-form{background:#fff;margin-top:12px;padding:15px;border:1px solid #d3e6e9;border-radius:9px}
 .adhd-plan-upgrade-form>label:first-child{display:grid;gap:7px;font-size:12px;font-weight:750}
-.adhd-plan-upgrade-form textarea{display:block;width:100%;min-height:85px;padding:10px;border:1px solid #bfd8dc;border-radius:8px;color:#183d4c;background:#fff;font:13px/1.5 inherit;resize:vertical}
+.adhd-plan-upgrade-form textarea{display:block;width:100%;min-height:85px;padding:10px;border:1px solid #bfd8dc;border-radius:8px;color:var(--admin-text);background:#fff;font:13px/1.5 inherit;resize:vertical}
 .adhd-plan-acknowledge{display:flex;align-items:flex-start;gap:10px;font-size:12px;line-height:1.55;margin:15px 0}
 .adhd-plan-acknowledge input{margin-top:3px;accent-color:#148493}
 .adhd-plan-toolbar{display:flex;flex-wrap:wrap;gap:9px}
@@ -62,5 +62,5 @@
 @media(max-width:750px){.adhd-mode-options,.adhd-plan-reason-options{grid-template-columns:1fr}.adhd-plan-row{flex-direction:column}.adhd-plan-row-action{flex-direction:row;align-items:center;justify-content:space-between}.adhd-test-planner{padding:14px}}
 
 .adhd-plan-clickable{cursor:pointer;transition:background .14s ease,border-color .14s ease}
-.adhd-plan-clickable:hover{background:#f0f9fa;border-color:#63aeb9}
-.adhd-plan-clickable:focus-visible{outline:3px solid #87cfd8;outline-offset:2px}
+.adhd-plan-clickable:hover{background:var(--admin-soft);border-color:var(--admin-accent)}
+.adhd-plan-clickable:focus-visible{outline:3px solid var(--admin-accent);outline-offset:2px}

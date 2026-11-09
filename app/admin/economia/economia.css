@@ -1,85 +1,85 @@
-.econ-page{min-height:100vh;background:#f3f8f8;color:#0e5c7c;font-family:var(--font-dm-sans),Arial,sans-serif}
+.econ-page{min-height:100vh;background:var(--admin-bg);color:var(--admin-action);font-family:var(--font-dm-sans),Arial,sans-serif}
 .econ-page *{box-sizing:border-box}.econ-container{max-width:1220px;margin:auto;padding:30px 26px 90px}
 .econ-header{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:22px;margin-bottom:28px}
-.econ-brand{display:flex;align-items:center;gap:15px}.econ-mark{width:48px;height:48px;border-radius:16px;display:grid;place-items:center;color:white;background:#0e5c7c;font-size:24px;font-family:Georgia,serif}
-.econ-eyebrow{margin:0 0 8px;text-transform:uppercase;font-size:.76rem;letter-spacing:.12em;font-weight:750;color:#0e5c7c}
+.econ-brand{display:flex;align-items:center;gap:15px}.econ-mark{width:48px;height:48px;border-radius:16px;display:grid;place-items:center;color:white;background:var(--admin-action);font-size:24px;font-family:Georgia,serif}
+.econ-eyebrow{margin:0 0 8px;text-transform:uppercase;font-size:.76rem;letter-spacing:.12em;font-weight:750;color:var(--admin-action)}
 .econ-header h1{font:600 clamp(1.7rem,3vw,2.25rem)/1.2 Georgia,serif;margin:0}
-.econ-header p:last-child{margin:6px 0 0;font-size:.87rem;color:#536e78}
+.econ-header p:last-child{margin:6px 0 0;font-size:.87rem;color:var(--admin-muted)}
 .econ-top-links,.econ-actions{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
-.econ-top-links a{color:#0e5c7c;font-weight:700;text-decoration:none;padding:10px 13px;border:1px solid #c8dfe0;border-radius:10px;background:white}
+.econ-top-links a{color:var(--admin-action);font-weight:700;text-decoration:none;padding:10px 13px;border:1px solid var(--admin-line);border-radius:10px;background:white}
 .econ-button,.econ-outline{display:inline-flex;justify-content:center;align-items:center;padding:11px 17px;min-height:42px;border-radius:11px;font:700 .88rem inherit;cursor:pointer;text-decoration:none}
-.econ-button{background:#0e5c7c;border:1px solid #0e5c7c;color:white}
-.econ-outline{background:white;color:#0e5c7c;border:1px solid #c8dfe0}
+.econ-button{background:var(--admin-action);border:1px solid var(--admin-action);color:white}
+.econ-outline{background:white;color:var(--admin-action);border:1px solid var(--admin-line)}
 .econ-button:disabled,.econ-outline:disabled{opacity:.45;cursor:not-allowed}
-.econ-button:focus-visible,.econ-outline:focus-visible,.econ-top-links a:focus-visible,.econ-tabs button:focus-visible{outline:3px solid #0e5c7c;outline-offset:3px}
-.econ-tabs{display:flex;gap:7px;flex-wrap:wrap;margin:0 0 25px;padding:5px;background:white;border:1px solid #edf7f7;border-radius:14px;width:fit-content}
-.econ-tabs button{border:0;border-radius:10px;padding:12px 19px;font-weight:700;color:#536e78;background:transparent;cursor:pointer}
-.econ-tabs button.active{color:white;background:#0e5c7c}
+.econ-button:focus-visible,.econ-outline:focus-visible,.econ-top-links a:focus-visible,.econ-tabs button:focus-visible{outline:3px solid var(--admin-action);outline-offset:3px}
+.econ-tabs{display:flex;gap:7px;flex-wrap:wrap;margin:0 0 25px;padding:5px;background:white;border:1px solid var(--admin-soft);border-radius:14px;width:fit-content}
+.econ-tabs button{border:0;border-radius:10px;padding:12px 19px;font-weight:700;color:var(--admin-muted);background:transparent;cursor:pointer}
+.econ-tabs button.active{color:white;background:var(--admin-action)}
 .econ-status{font-size:.88rem;margin:12px 0;min-height:18px;color:#b03c30}.econ-status:empty{display:none}
 .econ-section-heading{display:flex;align-items:end;justify-content:space-between;flex-wrap:wrap;gap:17px;margin:20px 0}
 .econ-section-heading h2{font:600 1.8rem/1.1 Georgia,serif;margin:0}
 .econ-kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin:19px 0}
-.econ-kpis article,.econ-card,.econ-invoice{background:white;border:1px solid #edf7f7;border-radius:16px;padding:23px;box-shadow:0 8px 30px rgba(14,92,124,.025)}
-.econ-kpis article span{color:#536e78;font-size:.83rem;display:block;margin-bottom:14px}
+.econ-kpis article,.econ-card,.econ-invoice{background:white;border:1px solid var(--admin-soft);border-radius:16px;padding:23px;box-shadow:0 8px 30px color-mix(in srgb,var(--admin-text) 2.5%,transparent)}
+.econ-kpis article span{color:var(--admin-muted);font-size:.83rem;display:block;margin-bottom:14px}
 .econ-kpis article strong{font-size:clamp(1.25rem,2.5vw,1.85rem);font-variant-numeric:tabular-nums}
 .econ-two-columns{display:grid;grid-template-columns:1fr 1fr;gap:15px}.econ-card{margin-bottom:16px}.econ-card h3{margin:0 0 14px;font-size:1.1rem}
 .econ-balance{font-size:2rem;display:block;margin:12px 0}
-.econ-card p,.econ-help{color:#536e78;font-size:.85rem;line-height:1.7}.econ-help{margin:0 0 17px}
+.econ-card p,.econ-help{color:var(--admin-muted);font-size:.85rem;line-height:1.7}.econ-help{margin:0 0 17px}
 .econ-form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;margin-bottom:21px}
 .econ-form-grid label{display:grid;gap:8px;font-weight:700;font-size:.85rem}
 .econ-inline-label{display:flex;align-items:center;gap:9px;font-weight:700;font-size:.83rem}
-.econ-page input,.econ-page select{width:100%;min-width:0;padding:12px 13px;border:1px solid #c8dfe0;border-radius:9px;font:inherit;background:white;color:#0e5c7c}
-.econ-inline-label input{width:auto}.econ-page input:focus,.econ-page select:focus{outline:2px solid #0e5c7c;outline-offset:1px}
+.econ-page input,.econ-page select{width:100%;min-width:0;padding:12px 13px;border:1px solid var(--admin-line);border-radius:9px;font:inherit;background:white;color:var(--admin-action)}
+.econ-inline-label input{width:auto}.econ-page input:focus,.econ-page select:focus{outline:2px solid var(--admin-action);outline-offset:1px}
 .econ-span-full{grid-column:1/-1}.econ-list{display:grid;gap:12px;margin:18px 0}
 .econ-invoice-head{display:flex;justify-content:space-between;gap:15px;align-items:flex-start;flex-wrap:wrap}
-.econ-invoice h3{margin:0 0 8px;font-size:1.12rem}.econ-invoice p{color:#536e78;font-size:.84rem;margin:4px 0}
+.econ-invoice h3{margin:0 0 8px;font-size:1.12rem}.econ-invoice p{color:var(--admin-muted);font-size:.84rem;margin:4px 0}
 .econ-invoice .econ-actions{margin-top:15px}.econ-invoice .econ-outline{min-height:37px;padding:8px 13px}
-.econ-status-pill{font-weight:700;font-size:.76rem;background:#edf7f7;color:#0e5c7c;padding:6px 10px;border-radius:999px}
+.econ-status-pill{font-weight:700;font-size:.76rem;background:var(--admin-soft);color:var(--admin-action);padding:6px 10px;border-radius:999px}
 .econ-status-pill.draft{background:#fcf8e6;color:#665619}
-.econ-confirm-panel{border-left:4px solid #8c4192;background:#fff6f3;margin-top:14px;padding:16px;border-radius:8px}
-.econ-confirm-panel p{color:#6a3b32}.econ-payment-form{display:flex;gap:10px;align-items:end;flex-wrap:wrap;margin-top:15px;padding:14px;background:#f4f9f9;border-radius:10px}
+.econ-confirm-panel{border-left:4px solid var(--admin-action);background:#fff6f3;margin-top:14px;padding:16px;border-radius:8px}
+.econ-confirm-panel p{color:#6a3b32}.econ-payment-form{display:flex;gap:10px;align-items:end;flex-wrap:wrap;margin-top:15px;padding:14px;background:var(--admin-soft);border-radius:10px}
 .econ-payment-form label{font-size:.8rem;font-weight:700;display:grid;gap:7px}
 .econ-payment-form input{width:150px}.econ-payment-form select{width:190px}
-.econ-empty{padding:25px;border:1px dashed #c8dfe0;border-radius:12px;background:white;color:#536e78}
+.econ-empty{padding:25px;border:1px dashed var(--admin-line);border-radius:12px;background:white;color:var(--admin-muted)}
 .econ-inline-error{font-size:.84rem;color:#af382e}
 @media(max-width:850px){.econ-kpis{grid-template-columns:repeat(2,1fr)}.econ-two-columns{grid-template-columns:1fr}}
 @media(max-width:620px){.econ-container{padding:22px 14px 70px}.econ-form-grid{grid-template-columns:1fr}.econ-span-full{grid-column:auto}.econ-kpis{gap:9px}.econ-kpis article,.econ-card,.econ-invoice{padding:16px}.econ-tabs{width:100%}.econ-tabs button{flex:1;padding:10px 8px;font-size:.82rem}}
 
 
 /* Facturas recibidas y libro de gastos: revisión local antes de cualquier asiento. */
-.econ-import-tools{margin:26px 0 25px;background:#fff;border:1px solid #c8dfe0;border-radius:20px;padding:26px 28px;box-shadow:0 10px 28px rgba(14,92,124,.035)}
+.econ-import-tools{margin:26px 0 25px;background:#fff;border:1px solid var(--admin-line);border-radius:20px;padding:26px 28px;box-shadow:0 10px 28px color-mix(in srgb,var(--admin-text) 3.5%,transparent)}
 .econ-import-title,.econ-import-head{display:flex;justify-content:space-between;gap:22px;align-items:center;flex-wrap:wrap}
-.econ-import-title h3{font:600 1.37rem/1.3 Georgia,serif;color:#0e5c7c;margin:0 0 12px}
-.econ-import-label{padding:7px 11px;border:1px solid #c8dfe0;background:#f4f9f9;color:#183d4c;border-radius:20px;font-weight:750;font-size:.76rem}
+.econ-import-title h3{font:600 1.37rem/1.3 Georgia,serif;color:var(--admin-action);margin:0 0 12px}
+.econ-import-label{padding:7px 11px;border:1px solid var(--admin-line);background:var(--admin-soft);color:var(--admin-text);border-radius:20px;font-weight:750;font-size:.76rem}
 .econ-import-columns{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin:23px 0 8px}
-.econ-import-panel{min-width:0;padding:22px;border:1px solid #edf7f7;background:#ffffff;border-radius:15px}
-.econ-import-panel h4,.econ-import-review h4{color:#0e5c7c;font-size:1rem;margin:0 0 12px}
-.econ-import-panel>p,.econ-import-review p{font-size:.85rem;color:#536e78;line-height:1.75;margin:0 0 14px}
-.econ-upload-label{display:grid;gap:11px;font-size:.84rem;font-weight:700;color:#0e5c7c}
+.econ-import-panel{min-width:0;padding:22px;border:1px solid var(--admin-soft);background:#ffffff;border-radius:15px}
+.econ-import-panel h4,.econ-import-review h4{color:var(--admin-action);font-size:1rem;margin:0 0 12px}
+.econ-import-panel>p,.econ-import-review p{font-size:.85rem;color:var(--admin-muted);line-height:1.75;margin:0 0 14px}
+.econ-upload-label{display:grid;gap:11px;font-size:.84rem;font-weight:700;color:var(--admin-action)}
 .econ-upload-label input{max-width:100%;padding:13px;border-style:dashed;background:#fff}
-.econ-upload-label input::file-selector-button{border:1px solid #c8dfe0;border-radius:8px;background:#edf7f7;color:#0e5c7c;padding:9px 12px;cursor:pointer;font-weight:700}
-.econ-ocr-review{margin-top:22px;border-top:1px solid #edf7f7;padding-top:19px}
+.econ-upload-label input::file-selector-button{border:1px solid var(--admin-line);border-radius:8px;background:var(--admin-soft);color:var(--admin-action);padding:9px 12px;cursor:pointer;font-weight:700}
+.econ-ocr-review{margin-top:22px;border-top:1px solid var(--admin-soft);padding-top:19px}
 .econ-import-fields{display:grid;grid-template-columns:1fr 1fr;gap:13px;margin:15px 0}
 .econ-import-fields label{display:grid;gap:8px;font-size:.8rem;font-weight:750}
 .econ-import-fields label:nth-child(3){grid-column:1/-1}
-.econ-import-tools details{margin-top:15px}.econ-import-tools summary{cursor:pointer;color:#0e5c7c;font-size:.85rem;font-weight:700}
-.econ-ocr-raw{margin:12px 0 0;white-space:pre-wrap;overflow-wrap:anywhere;max-height:220px;overflow:auto;background:#f4f9f9;border:1px solid #edf7f7;border-radius:9px;padding:13px;font-size:.75rem;color:#536e78}
-.econ-import-busy,.econ-import-message{font-size:.86rem;line-height:1.6;padding:12px 16px;border-radius:10px;background:#edf7f7;color:#0e5c7c;margin:13px 0}
+.econ-import-tools details{margin-top:15px}.econ-import-tools summary{cursor:pointer;color:var(--admin-action);font-size:.85rem;font-weight:700}
+.econ-ocr-raw{margin:12px 0 0;white-space:pre-wrap;overflow-wrap:anywhere;max-height:220px;overflow:auto;background:var(--admin-soft);border:1px solid var(--admin-soft);border-radius:9px;padding:13px;font-size:.75rem;color:var(--admin-muted)}
+.econ-import-busy,.econ-import-message{font-size:.86rem;line-height:1.6;padding:12px 16px;border-radius:10px;background:var(--admin-soft);color:var(--admin-action);margin:13px 0}
 .econ-import-error{font-size:.82rem!important;color:#b64238!important;font-weight:700}
 .econ-import-small{margin-top:13px!important;font-size:.77rem!important}
-.econ-import-review{margin-top:27px;padding-top:24px;border-top:1px solid #edf7f7}
+.econ-import-review{margin-top:27px;padding-top:24px;border-top:1px solid var(--admin-soft)}
 .econ-import-head h4{margin:0 0 8px}.econ-import-head label,.econ-import-mapping label{display:grid;gap:7px;font-weight:700;font-size:.8rem}
 .econ-import-mapping{display:grid;grid-template-columns:repeat(5,minmax(140px,1fr));gap:11px;margin:23px 0}
-.econ-import-count{font-weight:750;color:#0e5c7c!important}
-.econ-import-scroll{overflow-x:auto;max-height:480px;border-radius:12px;border:1px solid #edf7f7;margin:12px 0 18px}
+.econ-import-count{font-weight:750;color:var(--admin-action)!important}
+.econ-import-scroll{overflow-x:auto;max-height:480px;border-radius:12px;border:1px solid var(--admin-soft);margin:12px 0 18px}
 .econ-import-table{width:100%;border-collapse:collapse;font-size:.8rem;min-width:1010px}
-.econ-import-table th{position:sticky;top:0;background:#edf7f7;color:#0e5c7c;text-align:left;padding:13px 10px;z-index:1}
-.econ-import-table td{border-top:1px solid #edf7f7;padding:9px;vertical-align:middle}
+.econ-import-table th{position:sticky;top:0;background:var(--admin-soft);color:var(--admin-action);text-align:left;padding:13px 10px;z-index:1}
+.econ-import-table td{border-top:1px solid var(--admin-soft);padding:9px;vertical-align:middle}
 .econ-import-table td:nth-child(1){width:64px;text-align:center}.econ-import-table input[type=checkbox]{width:19px;height:19px}
 .econ-import-table td input,.econ-import-table td select{min-width:110px;padding:8px 9px;font-size:.8rem}
 .econ-import-table td:nth-child(2) input{min-width:135px}.econ-import-table td:nth-child(4) input{min-width:210px}
 .econ-import-attention{background:#fcf8e6}
-.econ-import-confirm{display:flex;align-items:flex-start;gap:11px;margin:20px 0;font-weight:700;color:#0e5c7c;font-size:.85rem;line-height:1.6}
+.econ-import-confirm{display:flex;align-items:flex-start;gap:11px;margin:20px 0;font-weight:700;color:var(--admin-action);font-size:.85rem;line-height:1.6}
 .econ-import-confirm input{width:19px;height:19px;flex:none;margin:2px 0 0}
 @media(max-width:950px){.econ-import-mapping{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:760px){.econ-import-tools{padding:21px 16px}.econ-import-columns{grid-template-columns:1fr}.econ-import-fields{grid-template-columns:1fr}.econ-import-fields label:nth-child(3){grid-column:auto}.econ-import-mapping{grid-template-columns:1fr}}
@@ -90,23 +90,23 @@
 .econ-page .econ-tabs{display:flex;flex-wrap:nowrap;gap:4px;width:max-content;max-width:100%;overflow-x:auto;overflow-y:hidden;scrollbar-width:thin;padding:4px;margin:14px 0 22px}
 .econ-page .econ-tabs button{flex:0 0 auto;white-space:nowrap;padding:11px 15px}
 .econ-page .econ-movement-kpis{grid-template-columns:repeat(3,minmax(0,1fr))}
-.econ-page .econ-movement-filters{display:inline-flex;max-width:100%;padding:4px;margin:0 0 10px;gap:3px;background:#f4f9f9;border:1px solid #edf7f7;border-radius:12px}
-.econ-page .econ-movement-filters button{min-height:39px;padding:8px 17px;border:0;border-radius:9px;background:transparent;color:#536e78;font:inherit;font-size:.88rem;font-weight:750;cursor:pointer}
-.econ-page .econ-movement-filters button.active{background:#0e5c7c;color:#fff}
-.econ-page .econ-movement-filters button:focus-visible,.econ-page .econ-expense-register summary:focus-visible{outline:3px solid #0e5c7c;outline-offset:3px}
+.econ-page .econ-movement-filters{display:inline-flex;max-width:100%;padding:4px;margin:0 0 10px;gap:3px;background:var(--admin-soft);border:1px solid var(--admin-soft);border-radius:12px}
+.econ-page .econ-movement-filters button{min-height:39px;padding:8px 17px;border:0;border-radius:9px;background:transparent;color:var(--admin-muted);font:inherit;font-size:.88rem;font-weight:750;cursor:pointer}
+.econ-page .econ-movement-filters button.active{background:var(--admin-action);color:#fff}
+.econ-page .econ-movement-filters button:focus-visible,.econ-page .econ-expense-register summary:focus-visible{outline:3px solid var(--admin-action);outline-offset:3px}
 .econ-page .econ-movement-list{display:grid;gap:10px;margin-top:17px}
-.econ-page .econ-movement-entry{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:16px 20px;border:1px solid #edf7f7;border-left:4px solid #0e5c7c;border-radius:13px;background:#fff}
-.econ-page .econ-movement-entry.expense{border-left-color:#8c4192}
+.econ-page .econ-movement-entry{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:16px 20px;border:1px solid var(--admin-soft);border-left:4px solid var(--admin-action);border-radius:13px;background:#fff}
+.econ-page .econ-movement-entry.expense{border-left-color:var(--admin-action)}
 .econ-page .econ-movement-info{display:flex;flex-direction:column;gap:5px;min-width:0}
-.econ-page .econ-movement-info strong{overflow-wrap:anywhere;color:#0e5c7c;font-size:.98rem}
-.econ-page .econ-movement-date,.econ-page .econ-movement-info small{font-size:.8rem;color:#536e78}
-.econ-page .econ-movement-amount{white-space:nowrap;color:#183d4c;font-variant-numeric:tabular-nums;font-size:1.03rem}
+.econ-page .econ-movement-info strong{overflow-wrap:anywhere;color:var(--admin-action);font-size:.98rem}
+.econ-page .econ-movement-date,.econ-page .econ-movement-info small{font-size:.8rem;color:var(--admin-muted)}
+.econ-page .econ-movement-amount{white-space:nowrap;color:var(--admin-text);font-variant-numeric:tabular-nums;font-size:1.03rem}
 .econ-page .econ-movement-entry.expense .econ-movement-amount{color:#a04b44}
-.econ-page .econ-expense-register{margin:17px 0 8px;border:1px solid #edf7f7;border-radius:13px;background:#fff}
-.econ-page .econ-expense-register>summary{list-style:none;cursor:pointer;padding:17px 20px;color:#0e5c7c;font-size:.94rem;font-weight:750}
+.econ-page .econ-expense-register{margin:17px 0 8px;border:1px solid var(--admin-soft);border-radius:13px;background:#fff}
+.econ-page .econ-expense-register>summary{list-style:none;cursor:pointer;padding:17px 20px;color:var(--admin-action);font-size:.94rem;font-weight:750}
 .econ-page .econ-expense-register>summary::marker{content:""}
 .econ-page .econ-expense-register>summary::-webkit-details-marker{display:none}
-.econ-page .econ-expense-register[open]>summary{border-bottom:1px solid #edf7f7}
+.econ-page .econ-expense-register[open]>summary{border-bottom:1px solid var(--admin-soft)}
 .econ-page .econ-expense-register-inner{padding:17px 19px 12px}
 .econ-page .econ-expense-register-inner .econ-section-heading{margin-bottom:16px}
 .econ-page .econ-expense-register-inner .econ-section-heading h3{font-size:1.12rem;margin:0}
@@ -131,15 +131,15 @@
 
 
 /* Movimientos documentados fuera del libro de facturas interno. */
-.econ-page .econ-external-confirm{display:flex;align-items:flex-start;gap:10px;max-width:100%;margin:17px 0;padding:12px 13px;border:1px solid #edf7f7;border-radius:10px;background:#f4f9f9;color:#0e5c7c;font-size:.83rem;line-height:1.55}
-.econ-page .econ-external-confirm input{flex:0 0 19px;width:19px;height:19px;margin:2px 0 0;accent-color:#0e5c7c}
+.econ-page .econ-external-confirm{display:flex;align-items:flex-start;gap:10px;max-width:100%;margin:17px 0;padding:12px 13px;border:1px solid var(--admin-soft);border-radius:10px;background:var(--admin-soft);color:var(--admin-action);font-size:.83rem;line-height:1.55}
+.econ-page .econ-external-confirm input{flex:0 0 19px;width:19px;height:19px;margin:2px 0 0;accent-color:var(--admin-action)}
 .econ-page .econ-external-void-actions{margin-left:auto}
 .econ-page .econ-external-void-actions .econ-outline{min-height:36px;padding:7px 11px;font-size:.78rem}
 .econ-page .econ-void-form{grid-column:1/-1;width:100%;padding:15px;border:1px solid #f0d5d5;border-radius:11px;background:#fffaf9}
 .econ-page .econ-void-form label{display:grid;gap:7px;font-size:.83rem;font-weight:650}
-.econ-page .econ-void-form input{width:100%;min-height:40px;padding:9px 12px;border:1px solid #edf7f7;border-radius:8px;font:inherit}
-.econ-page .econ-voided-history{margin-top:16px;border-top:1px solid #edf7f7;padding-top:15px}
-.econ-page .econ-voided-history>summary{cursor:pointer;color:#536e78;font-weight:750;font-size:.83rem}
+.econ-page .econ-void-form input{width:100%;min-height:40px;padding:9px 12px;border:1px solid var(--admin-soft);border-radius:8px;font:inherit}
+.econ-page .econ-voided-history{margin-top:16px;border-top:1px solid var(--admin-soft);padding-top:15px}
+.econ-page .econ-voided-history>summary{cursor:pointer;color:var(--admin-muted);font-weight:750;font-size:.83rem}
 .econ-page .econ-voided-history .econ-list{margin-top:12px}
 .econ-page .econ-movement-entry:has(.econ-external-void-actions){flex-wrap:wrap}
 @media(max-width:620px){
@@ -150,33 +150,33 @@
 
 .econ-primary-actions{display:flex;gap:10px;flex-wrap:wrap;margin:8px 0 24px}
 .econ-secondary-actions{display:flex;justify-content:flex-end;gap:18px;margin:-6px 0 24px}
-.econ-secondary-actions button{border:0;background:transparent;color:#173a5e;text-decoration:underline;text-underline-offset:4px;cursor:pointer;font:inherit;font-size:.86rem;padding:8px 0}
+.econ-secondary-actions button{border:0;background:transparent;color:var(--admin-action);text-decoration:underline;text-underline-offset:4px;cursor:pointer;font:inherit;font-size:.86rem;padding:8px 0}
 .econ-workspace-kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
-.econ-workspace-kpis button{display:flex;flex-direction:column;align-items:flex-start;gap:10px;padding:22px;background:#fff;border:1px solid #cfdee8;border-radius:16px;color:#173a5e;text-align:left;cursor:pointer;font:inherit}
+.econ-workspace-kpis button{display:flex;flex-direction:column;align-items:flex-start;gap:10px;padding:22px;background:#fff;border:1px solid var(--admin-line);border-radius:16px;color:var(--admin-action);text-align:left;cursor:pointer;font:inherit}
 .econ-workspace-kpis strong{font-size:clamp(1.3rem,2vw,1.9rem);line-height:1.2}
 .econ-workspace-kpis small,.econ-book-shortcuts span{color:#496178;font-size:.82rem}
 .econ-pending-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
-.econ-pending-grid button{display:flex;align-items:center;gap:12px;padding:16px;border:1px solid #d6e4eb;border-radius:12px;background:#f5fafd;color:#173a5e;font:inherit;text-align:left;cursor:pointer}
+.econ-pending-grid button{display:flex;align-items:center;gap:12px;padding:16px;border:1px solid var(--admin-line);border-radius:12px;background:#f5fafd;color:var(--admin-action);font:inherit;text-align:left;cursor:pointer}
 .econ-pending-grid button strong{font-size:1.4rem;min-width:30px}.econ-pending-grid button span:last-child{margin-left:auto}
 .econ-book-shortcuts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin:20px 0}
-.econ-book-shortcuts button{font:inherit;color:#173a5e;text-align:left;cursor:pointer;display:flex;flex-direction:column;gap:10px;margin:0}
+.econ-book-shortcuts button{font:inherit;color:var(--admin-action);text-align:left;cursor:pointer;display:flex;flex-direction:column;gap:10px;margin:0}
 .econ-register-toolbar{display:flex;gap:14px;align-items:flex-end;flex-wrap:wrap;margin:24px 0 16px}
 .econ-register-toolbar label{display:grid;gap:6px;min-width:210px}.econ-register-toolbar label:first-child{flex:1}
-.econ-tax-books input:not([type=checkbox]):not([type=file]),.econ-tax-books select{box-sizing:border-box;max-width:100%;padding:11px 12px;min-height:44px;border:1px solid #b8cbd8;border-radius:9px;background:#fff;color:#173a5e;font:inherit}
-.econ-tax-books label{font-size:.9rem}.econ-tax-books input[type=checkbox]{width:18px;height:18px;vertical-align:middle;margin-right:8px;accent-color:#173a5e}
-.econ-compact-scroll{overflow-x:auto;max-width:100%;border:1px solid #d6e4eb;border-radius:12px;background:#fff}
+.econ-tax-books input:not([type=checkbox]):not([type=file]),.econ-tax-books select{box-sizing:border-box;max-width:100%;padding:11px 12px;min-height:44px;border:1px solid #b8cbd8;border-radius:9px;background:#fff;color:var(--admin-action);font:inherit}
+.econ-tax-books label{font-size:.9rem}.econ-tax-books input[type=checkbox]{width:18px;height:18px;vertical-align:middle;margin-right:8px;accent-color:var(--admin-action)}
+.econ-compact-scroll{overflow-x:auto;max-width:100%;border:1px solid var(--admin-line);border-radius:12px;background:#fff}
 .econ-compact-table{width:100%;border-collapse:collapse;min-width:720px;font-size:.9rem}
-.econ-compact-table th{padding:13px 14px;background:#eaf6fb;text-align:left;font-size:.8rem;font-weight:650;color:#173a5e;white-space:nowrap}
-.econ-compact-table td{padding:15px 14px;vertical-align:middle;border-top:1px solid #e4edf2;max-width:270px;overflow-wrap:anywhere;color:#173a5e}
+.econ-compact-table th{padding:13px 14px;background:var(--admin-soft);text-align:left;font-size:.8rem;font-weight:650;color:var(--admin-action);white-space:nowrap}
+.econ-compact-table td{padding:15px 14px;vertical-align:middle;border-top:1px solid #e4edf2;max-width:270px;overflow-wrap:anywhere;color:var(--admin-action)}
 .econ-compact-table td small{display:block;color:#526a7e;font-size:.76rem;margin-top:6px}.econ-amount-cell{font-variant-numeric:tabular-nums;white-space:nowrap;font-weight:650}
 .econ-state{display:inline-block;padding:5px 9px;font-size:.76rem;border-radius:20px;white-space:nowrap}.econ-state.pending{background:#fff0e7;color:#7c4529}.econ-state.complete{background:#e4f5f3;color:#196961}.econ-state.review{background:#fce9e6;color:#8a3f35}
-.econ-import-steps{list-style:none;display:flex;padding:0;margin:16px 0 24px;gap:20px;flex-wrap:wrap}.econ-import-steps li{display:flex;gap:8px;align-items:center;color:#63778a;font-size:.9rem}.econ-import-steps li span{display:grid;place-items:center;width:28px;height:28px;border-radius:50%;background:#e8eef2}.econ-import-steps .current{color:#173a5e;font-weight:650}.econ-import-steps .current span{background:#173a5e;color:#fff}
-.econ-import-save,.econ-selection-bar{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;padding:16px;background:#eaf6fb;border:1px solid #c5dce9;border-radius:12px;margin:16px 0}
+.econ-import-steps{list-style:none;display:flex;padding:0;margin:16px 0 24px;gap:20px;flex-wrap:wrap}.econ-import-steps li{display:flex;gap:8px;align-items:center;color:#63778a;font-size:.9rem}.econ-import-steps li span{display:grid;place-items:center;width:28px;height:28px;border-radius:50%;background:#e8eef2}.econ-import-steps .current{color:var(--admin-action);font-weight:650}.econ-import-steps .current span{background:var(--admin-action);color:#fff}
+.econ-import-save,.econ-selection-bar{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;padding:16px;background:var(--admin-soft);border:1px solid #c5dce9;border-radius:12px;margin:16px 0}
 .econ-column-map{margin-top:18px}.econ-column-map summary,.econ-editor-group summary{cursor:pointer;font-weight:650;padding:12px 0}
 .econ-record-editor,.econ-import-flow,.econ-download-panel{scroll-margin-top:25px}
-.econ-editor-group{padding:18px 0;border-top:1px solid #dce7ed}.econ-editor-group h4{margin:0 0 16px;font-size:1rem;color:#173a5e}
+.econ-editor-group{padding:18px 0;border-top:1px solid var(--admin-line)}.econ-editor-group h4{margin:0 0 16px;font-size:1rem;color:var(--admin-action)}
 .econ-editor-pending{padding:14px;background:#fff4ed;border-radius:10px;color:#784629;margin-bottom:18px}.econ-editor-pending summary{cursor:pointer;font-weight:650}
-.econ-linked-note{padding:14px 16px;background:#eaf6fb;border-radius:10px;font-size:.9rem;color:#173a5e}
-.econ-download-options{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin-top:20px}.econ-download-options article{border:1px solid #cfdee8;border-radius:12px;padding:18px;display:flex;flex-direction:column;gap:14px}.econ-download-options h4,.econ-download-options p{margin:0}.econ-download-options label{display:grid;gap:6px}.econ-download-options button{margin-top:auto}
-.econ-primary-actions button:focus-visible,.econ-pending-grid button:focus-visible,.econ-workspace-kpis button:focus-visible{outline:3px solid #08a6a0;outline-offset:3px}
+.econ-linked-note{padding:14px 16px;background:var(--admin-soft);border-radius:10px;font-size:.9rem;color:var(--admin-action)}
+.econ-download-options{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin-top:20px}.econ-download-options article{border:1px solid var(--admin-line);border-radius:12px;padding:18px;display:flex;flex-direction:column;gap:14px}.econ-download-options h4,.econ-download-options p{margin:0}.econ-download-options label{display:grid;gap:6px}.econ-download-options button{margin-top:auto}
+.econ-primary-actions button:focus-visible,.econ-pending-grid button:focus-visible,.econ-workspace-kpis button:focus-visible{outline:3px solid var(--admin-action);outline-offset:3px}
 @media(max-width:800px){.econ-workspace-kpis{grid-template-columns:repeat(2,minmax(0,1fr))}.econ-book-shortcuts,.econ-download-options{grid-template-columns:1fr}.econ-pending-grid{grid-template-columns:1fr}.econ-secondary-actions{justify-content:flex-start}.econ-workspace-kpis button{padding:16px}.econ-register-toolbar label{min-width:0;flex:1 1 100%}.econ-tabs{overflow-x:auto;flex-wrap:nowrap}.econ-tabs button{white-space:nowrap}.econ-primary-actions>button{flex:1 1 auto}}

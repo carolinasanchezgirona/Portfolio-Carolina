@@ -5,8 +5,8 @@
   "start_url": "/admin/agenda/?source=pwa",
   "scope": "/admin/",
   "display": "standalone",
-  "background_color": "#F7F5F0",
-  "theme_color": "#0E6B54",
+  "background_color": "#F2EFE7",
+  "theme_color": "#708793",
   "lang": "es",
   "icons": [{ "src": "/pwa-icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }]
 }

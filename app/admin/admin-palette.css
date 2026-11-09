@@ -1,118 +1,57 @@
-/* Professional admin palette aligned with public site: mist blue #809DA8, slate #708793, stone #A0A0A0, ivory #F2EFE7, pearl #EDEDED. */
-:root{
-  --admin-plum:#708793;
-  --admin-turquoise:#809DA8;
-  --admin-petroleum:#708793;
-  --admin-forest:#708793;
-  --admin-leaf:#809DA8;
-  --admin-yellow:#A0A0A0;
-  --admin-palette-bg:#F2EFE7;
-  --admin-palette-line:#A0A0A0;
-  --admin-palette-muted:#708793;
-  --admin-plum-soft:#EDEDED;
+/* Shared colors for admin controls and navigation. */
+body:has(:is(.admin-hub-page,.admin-page,.articles-admin-page,.questions-admin-page,.questions-admin-loading,.resources-admin-page,.econ-page,.admin-notice-page,.residence,.professional,.admin-marketing-page,.admin-messages-page,.clinic-page,.clinical-access-page,.clinic-documentation,.external-library,.admin-workspace-nav)){
+  background:var(--admin-bg);
 }
-body:has(:is(.admin-hub-page,.admin-page,.articles-admin-page,.questions-admin-page,.questions-admin-loading,.resources-admin-page,.econ-page,.admin-notice-page,.residence,.professional,.admin-marketing-page,.admin-workspace-nav)){
-  background:var(--admin-palette-bg);
-}
-.admin-hub-page .admin-hub-mark,
-.admin-hub-page .admin-hub-main-action{
-  background:var(--admin-plum);
-  color:#fff;
-}
-.admin-hub-page .admin-hub-main-action:hover{background:var(--admin-petroleum)}
-.admin-hub-page .admin-hub-mark{box-shadow:inset 0 -4px 0 var(--admin-turquoise)}
-.admin-hub-page .admin-home-eyebrow{color:var(--admin-plum)}
+.admin-hub-page .admin-hub-mark{box-shadow:inset 0 -4px 0 var(--admin-accent)}
+.admin-hub-page .admin-home-eyebrow{color:var(--admin-action)}
 .admin-hub-page .admin-hub-shortcuts>a{
-  border-color:var(--admin-palette-line);
-  border-inline-start:3px solid var(--admin-plum);
+  border-color:var(--admin-line);
+  border-inline-start:3px solid var(--admin-action);
 }
-.admin-hub-page .admin-hub-shortcuts>a:nth-child(5n+2){border-inline-start-color:var(--admin-turquoise)}
-.admin-hub-page .admin-hub-shortcuts>a:nth-child(5n+3){border-inline-start-color:var(--admin-leaf)}
-.admin-hub-page .admin-hub-shortcuts>a:nth-child(5n+4){border-inline-start-color:var(--admin-yellow)}
-.admin-hub-page .admin-hub-shortcuts>a:nth-child(5n+5){border-inline-start-color:var(--admin-forest)}
-.admin-hub-page .admin-hub-shortcuts>a:hover{background:var(--admin-plum-soft);border-color:var(--admin-plum)}
-.admin-hub-page .admin-hub-module{border-color:var(--admin-palette-line);border-top:1px solid #A0A0A0}
-.admin-hub-page .admin-hub-module:nth-child(6n+1){--module-accent:var(--admin-plum);--module-soft:#EDEDED;--module-ink:var(--admin-plum)}
-.admin-hub-page .admin-hub-module:nth-child(6n+2){--module-accent:var(--admin-turquoise);--module-soft:#EDEDED;--module-ink:var(--admin-petroleum)}
-.admin-hub-page .admin-hub-module:nth-child(6n+3){--module-accent:var(--admin-petroleum);--module-soft:#EDEDED;--module-ink:var(--admin-petroleum)}
-.admin-hub-page .admin-hub-module:nth-child(6n+4){--module-accent:var(--admin-forest);--module-soft:#EDEDED;--module-ink:var(--admin-forest)}
-.admin-hub-page .admin-hub-module:nth-child(6n+5){--module-accent:var(--admin-leaf);--module-soft:#EDEDED;--module-ink:var(--admin-forest)}
-.admin-hub-page .admin-hub-module:nth-child(6n+6){--module-accent:var(--admin-yellow);--module-soft:#F2EFE7;--module-ink:#304750}
-.admin-hub-page .admin-hub-module .admin-hub-module-icon{background:var(--module-soft);color:var(--module-ink)}
-.admin-hub-page .admin-hub-module .admin-hub-module-open{color:var(--module-ink)}
-.admin-hub-page .admin-home-priority{border:1px solid #A0A0A0}
-.admin-hub-page .admin-home-priority:nth-child(3n+1) strong{color:var(--admin-plum)}
-.admin-hub-page .admin-home-priority:nth-child(3n+2) strong{color:var(--admin-petroleum)}
-.admin-hub-page .admin-home-priority:nth-child(3n+3) strong{color:var(--admin-forest)}
-.admin-hub-page .admin-home-priority.attention{background:#F2EFE7;border-color:var(--admin-yellow);color:#304750}
+.admin-hub-page .admin-hub-shortcuts>a:is(:nth-child(5n+2),:nth-child(5n+3)){border-inline-start-color:var(--admin-accent)}
+.admin-hub-page .admin-hub-shortcuts>a:nth-child(5n+4){border-inline-start-color:var(--admin-line)}
+.admin-hub-page .admin-hub-shortcuts>a:hover{background:var(--admin-soft);border-color:var(--admin-action)}
+.admin-hub-page .admin-hub-module{border-color:var(--admin-line)}
+.admin-hub-page .admin-hub-module-icon{
+  background:var(--admin-soft);
+  color:var(--admin-text);
+}
+.admin-hub-page .admin-home-priority{border-color:var(--admin-line)}
+.admin-hub-page .admin-home-priority.attention{background:var(--admin-bg);border-color:var(--admin-line);color:var(--admin-text)}
 
-/* Matching actions and current-view indicators across all admin workspaces. */
-.admin-page .admin-primary,
-.articles-admin-page .articles-primary,
-.resources-admin-page .resources-primary,
-.questions-admin-page .questions-admin-actions .primary,
-.questions-admin-page .questions-admin-primary{
-  background:var(--admin-plum)!important;
-  border-color:var(--admin-plum)!important;
-  color:#fff!important;
-}
-.econ-page .econ-button,
-.econ-page .econ-tabs button.active,
-.econ-page .econ-movement-filters button.active,
-.admin-notice-page .admin-notice-filters button[aria-pressed=true],
-.admin-notice-page .admin-notice-push-actions button,
-.residence button[type=submit],
-.residence aside>button,
-.residence .res-tabs [aria-pressed=true],
-.residence .res-local-nav [aria-pressed=true],
-.residence .res-day-nav [aria-pressed=true],
-.residence .res-clinical-shortcuts button[aria-pressed=true],
-.residence .res-mmse-nav button[aria-pressed=true],
-.professional button.professional-primary{
-  background:var(--admin-plum);
-  border-color:var(--admin-plum);
-  color:#fff;
-}
-.admin-page .admin-view-tabs button.active,
-.articles-admin-page .articles-filters button.active{
-  background:var(--admin-plum)!important;
-  color:#fff!important;
-}
-.admin-workspace-nav :is(a,summary).is-active{background:var(--admin-plum);color:#fff}
 .residence .res-list button.selected{
-  background:var(--admin-plum-soft);
-  border-color:var(--admin-plum);
-  color:var(--admin-petroleum);
+  background:var(--admin-soft);
+  border-color:var(--admin-action);
+  color:var(--admin-text);
 }
 .residence .res-stats :is(span,button),
 .professional .professional-stats button{
-  border-top:3px solid var(--admin-turquoise);
+  border-top:3px solid var(--admin-accent);
 }
-:is(.admin-hub-page,.admin-page,.articles-admin-page,.questions-admin-page,.resources-admin-page,.econ-page,.admin-notice-page,.residence,.professional,.admin-marketing-page) :is(input,select,textarea,progress){accent-color:var(--admin-plum)}
+:is(.admin-hub-page,.admin-page,.articles-admin-page,.questions-admin-page,.resources-admin-page,.econ-page,.admin-notice-page,.residence,.professional,.admin-marketing-page) :is(input,select,textarea,progress){accent-color:var(--admin-action)}
 :is(.admin-hub-page,.admin-page,.articles-admin-page,.questions-admin-page,.resources-admin-page,.econ-page,.admin-notice-page,.residence,.professional,.admin-marketing-page) :is(input,select,textarea,button,a,summary):focus-visible{
-  outline:3px solid var(--admin-plum);
+  outline:3px solid var(--admin-slate);
   outline-offset:3px;
 }
-.admin-workspace-nav :is(a,summary):focus-visible{outline:3px solid var(--admin-plum);outline-offset:3px}
+.admin-workspace-nav :is(a,summary):focus-visible{outline:3px solid var(--admin-slate);outline-offset:3px}
 
 /* The messaging component is shared with the patient portal: scope admin colors. */
-body:has(.admin-workspace-nav) .private-messages{color:var(--admin-petroleum);border-color:var(--admin-palette-line)}
-body:has(.admin-workspace-nav) .private-messages :is(textarea,select){color:var(--admin-petroleum);border-color:var(--admin-palette-line)}
-body:has(.admin-workspace-nav) .private-messages button{background:var(--admin-plum);border-color:var(--admin-plum);color:#fff}
-body:has(.admin-workspace-nav) .private-messages-refresh button{background:#fff;color:var(--admin-petroleum)}
-body:has(.admin-workspace-nav) .private-messages-history .from-patient{background:#EDEDED}
-body:has(.admin-workspace-nav) .private-messages-history .from-clinician{background:var(--admin-plum-soft)}
-body:has(.admin-workspace-nav) .private-messages :is(textarea,select):focus-visible{outline-color:var(--admin-plum)}
+body:has(.admin-workspace-nav) .private-messages{color:var(--admin-action);border-color:var(--admin-line)}
+body:has(.admin-workspace-nav) .private-messages :is(textarea,select){color:var(--admin-action);border-color:var(--admin-line)}
+body:has(.admin-workspace-nav) .private-messages-refresh button{background:var(--admin-surface);border-color:var(--admin-line);color:var(--admin-action)}
+body:has(.admin-workspace-nav) .private-messages-history .from-patient{background:var(--admin-soft)}
+body:has(.admin-workspace-nav) .private-messages-history .from-clinician{background:var(--admin-bg)}
+body:has(.admin-workspace-nav) .private-messages :is(textarea,select):focus{outline-color:var(--admin-slate)}
 
 @media print{
   .residence{background:#fff}
 }
 
-.residence .res-trend path{stroke:var(--admin-palette-muted)}
-.residence .res-trend line{stroke:var(--admin-palette-line)}
-.residence .res-trend polyline{stroke:var(--admin-plum)}
-.residence .res-trend circle{fill:var(--admin-petroleum)}
-.residence .res-trend text{fill:var(--admin-palette-muted)}
+.residence .res-trend path{stroke:var(--admin-muted)}
+.residence .res-trend line{stroke:var(--admin-line)}
+.residence .res-trend polyline{stroke:var(--admin-action)}
+.residence .res-trend circle{fill:var(--admin-action)}
+.residence .res-trend text{fill:var(--admin-muted)}
 
 /* Shared launcher artwork for the Android app and professional web workspace. */
 .admin-hub-page .admin-hub-mark img,.clinic-page .clinic-brand-mark img{
@@ -122,11 +61,7 @@ body:has(.admin-workspace-nav) .private-messages :is(textarea,select):focus-visi
 .admin-hub-page [data-android-download][hidden]{display:none!important}
 
 
-/* Accessible contrast for actions, fields and navigation. Brand-derived darker tone on filled controls. */
-:root{
-  --admin-action-contrast:color-mix(in srgb,#708793 70%,#304750 30%);
-  --admin-readable:#304750;
-}
+/* Keep shared actions consistent even where a module has more specific rules. */
 .admin-hub-page .admin-hub-main-action,
 .admin-hub-page .admin-hub-mark,
 .admin-page .admin-primary,
@@ -151,16 +86,8 @@ body:has(.admin-workspace-nav) .private-messages :is(textarea,select):focus-visi
 .articles-admin-page .articles-filters button.active,
 .admin-workspace-nav :is(a,summary).is-active,
 body:has(.admin-workspace-nav) .private-messages button:not(.private-messages-refresh button){
-  background:var(--admin-action-contrast)!important;
-  border-color:var(--admin-action-contrast)!important;
+  background:var(--admin-action)!important;
+  border-color:var(--admin-action)!important;
   color:#fff!important;
 }
-.admin-hub-page .admin-hub-main-action:hover{background:#304750!important}
-.admin-hub-page .admin-hub-module .admin-hub-module-icon,
-.admin-hub-page .admin-hub-module .admin-hub-module-open,
-.admin-hub-page .admin-home-priority strong,
-.residence .res-list button.selected{color:var(--admin-readable)}
-:is(.admin-hub-page,.admin-page,.articles-admin-page,.questions-admin-page,.resources-admin-page,.econ-page,.admin-notice-page,.residence,.professional,.admin-marketing-page) :is(input,select,textarea,button,a,summary):focus-visible,
-.admin-workspace-nav :is(a,summary):focus-visible{
-  outline-color:#708793;
-}
+.admin-hub-page .admin-hub-main-action:hover{background:var(--admin-action-hover)!important}

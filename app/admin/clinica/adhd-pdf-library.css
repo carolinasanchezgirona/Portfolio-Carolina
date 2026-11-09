@@ -1,4 +1,4 @@
-.adhd-pdf-library{background:#fcfefe;border:1px solid #c8dfe3;border-radius:14px;padding:22px;margin:18px 0 24px;color:#173d53}
+.adhd-pdf-library{background:#fcfefe;border:1px solid #c8dfe3;border-radius:14px;padding:22px;margin:18px 0 24px;color:var(--admin-action)}
 .adhd-pdf-library[hidden]{display:none!important}
 .adhd-pdf-library *{box-sizing:border-box}
 .adhd-pdf-kicker{font-weight:800;font-size:11px;color:#117484;letter-spacing:.1em;margin:0 0 7px}
@@ -12,11 +12,11 @@
 .adhd-pdf-row strong{font-size:14px;color:#1a4251}
 .adhd-pdf-row small{font-size:12px;color:#607983;overflow-wrap:anywhere}
 .adhd-pdf-row-actions{display:flex;flex-wrap:wrap;justify-content:flex-end;gap:7px}
-.adhd-pdf-btn{cursor:pointer;background:white;border:1px solid #c3d9dd;border-radius:8px;padding:8px 11px;font:600 12px/1.3 Arial,Helvetica,sans-serif;color:#14586b;min-height:37px}
+.adhd-pdf-btn{cursor:pointer;background:white;border:1px solid #c3d9dd;border-radius:8px;padding:8px 11px;font:600 12px/1.3 Arial,Helvetica,sans-serif;color:var(--admin-action);min-height:37px}
 .adhd-pdf-btn:hover{background:#eaf5f6}
 .adhd-pdf-btn:focus-visible{outline:3px solid #92d5e0;outline-offset:2px}
 .adhd-pdf-history{margin-top:14px;border:1px solid #dce9ea;background:white;padding:12px 14px;border-radius:10px}
-.adhd-pdf-history summary{color:#14586b;font-weight:700;font-size:13px;cursor:pointer}
+.adhd-pdf-history summary{color:var(--admin-action);font-weight:700;font-size:13px;cursor:pointer}
 .adhd-pdf-history-row{display:flex;align-items:center;gap:10px;padding:12px 0;border-bottom:1px solid #eef2f3}
 .adhd-pdf-history-row span{flex:1;font-size:12px}
 @media(max-width:700px){.adhd-pdf-library{padding:15px}.adhd-pdf-row{align-items:flex-start;flex-direction:column}.adhd-pdf-row-actions{justify-content:flex-start}.adhd-pdf-history-row{flex-wrap:wrap}}

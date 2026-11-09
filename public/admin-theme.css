@@ -1,0 +1,14 @@
+/* Shared by the professional workspace and the standalone Authenticator page. */
+:root {
+  --admin-bg: #F2EFE7;
+  --admin-soft: #EDEDED;
+  --admin-line: #A0A0A0;
+  --admin-slate: #708793;
+  --admin-accent: #809DA8;
+
+  --admin-surface: #fff;
+  --admin-text: #222;
+  --admin-muted: #505050;
+  --admin-action: color-mix(in srgb, var(--admin-slate) 65%, var(--admin-text));
+  --admin-action-hover: color-mix(in srgb, var(--admin-slate) 45%, var(--admin-text));
+}
