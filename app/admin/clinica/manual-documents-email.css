@@ -1,0 +1,10 @@
+.clinic-manual-documents{margin:16px 0;border:1px solid #cad6da;border-radius:12px;overflow:hidden;background:#f8faf9;}
+.clinic-manual-documents summary{cursor:pointer;padding:15px 18px;}
+.clinic-manual-documents .clinic-record-section-body{padding:16px 20px 20px;}
+.clinic-manual-documents .clinic-record-section-body>p{max-width:72ch;}
+.clinic-legal-choices{display:grid;gap:10px;margin:14px 0 18px;}
+.clinic-legal-choices label{display:flex;align-items:center;gap:10px;flex-wrap:wrap;line-height:1.5;}
+.clinic-legal-choices label input{width:18px;height:18px;flex:none;accent-color:#708793;}
+.clinic-legal-choices a{font-size:.88rem;text-underline-offset:3px;color:#466776;}
+.clinic-manual-documents #clinic-legal-send:disabled{opacity:.55;cursor:not-allowed;}
+.clinic-manual-documents #clinic-legal-message{margin-top:12px;}
