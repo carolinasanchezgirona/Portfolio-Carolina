@@ -146,9 +146,13 @@
 
   function setView(name) {
     const views = { today: els.todayView, tomorrow: els.tomorrowView, week: els.weekView, patients: els.patientsView };
-    const buttons = { today: els.viewToday, tomorrow: els.viewTomorrow, week: els.viewWeek, patients: els.viewPatients };
-    Object.entries(views).forEach(([key, view]) => { view.hidden = key !== name; });
-    Object.entries(buttons).forEach(([key, button]) => button.classList.toggle("active", key === name));
+    const target = views[name];
+    if (!target) return;
+    // Una sola vista visible, incluidas las añadidas dinámicamente (mes y espera).
+    document.querySelectorAll(".admin-page .admin-view").forEach(view => { view.hidden = view !== target; });
+    document.querySelectorAll(".admin-view-tabs button").forEach(button => {
+      button.classList.toggle("active", button === ({ today: els.viewToday, tomorrow: els.viewTomorrow, week: els.viewWeek, patients: els.viewPatients })[name]);
+    });
     if (name === "patients") els.patientSearch?.focus();
   }
 
@@ -264,14 +268,17 @@
     }
     const body = await response.json().catch(() => []);
     if (!response.ok) throw new Error(body.message || "No se ha podido cargar la agenda.");
-    const blocks = blocksResponse.ok ? await blocksResponse.json() : [];
+    const blocksBody = blocksResponse.ok ? await blocksResponse.json().catch(() => null) : null;
+    const blocksReadable = Array.isArray(blocksBody);
     if (request !== weekRequest) return;
     appointments = body;
-    scheduleBlocks = blocks;
+    scheduleBlocks = blocksReadable ? blocksBody : [];
     renderWeek();
     renderToday();
     renderTomorrow();
-    setStatus("");
+    setStatus(blocksReadable
+      ? ""
+      : "Citas cargadas, pero no se han podido verificar los bloqueos. No interpretes los huecos como disponibles hasta actualizar.");
   }
 
   function renderWeek() {
@@ -525,7 +532,8 @@
     const start = new Date(startsAt);
     const end = new Date(start.getTime() + 60 * 60 * 1000);
     const dayKey = keyFromIso(startsAt);
-    const dayStart = madridLocalToIso(dayKey, "00:00");
+    // Incluir el día anterior por si una cita cruza la medianoche.
+    const dayStart = madridLocalToIso(addDaysKey(dayKey, -1), "00:00");
     const dayEnd = madridLocalToIso(addDaysKey(dayKey, 1), "00:00");
     const select = "id,patient_name,status,starts_at,ends_at";
     const appointmentUrl = `${REST_URL}/appointment_bookings?select=${encodeURIComponent(select)}&starts_at=gte.${encodeURIComponent(dayStart)}&starts_at=lt.${encodeURIComponent(dayEnd)}&order=starts_at.asc`;
@@ -534,15 +542,22 @@
       fetch(appointmentUrl, { headers: authHeaders(), cache: "no-store" }),
       fetch(blockUrl, { headers: authHeaders(), cache: "no-store" }),
     ]);
-    const rows = await appointmentResponse.json().catch(() => []);
-    const blocks = blockResponse.ok ? await blockResponse.json().catch(() => []) : [];
+    // Si alguna consulta falla, nunca asumir que el horario está libre.
+    if (!appointmentResponse.ok || !blockResponse.ok) {
+      throw new Error("No se han podido verificar las citas y los bloqueos de ese horario. No se ha guardado ningún cambio. Actualiza la agenda e inténtalo de nuevo.");
+    }
+    const rows = await appointmentResponse.json().catch(() => null);
+    const blocks = await blockResponse.json().catch(() => null);
+    if (!Array.isArray(rows) || !Array.isArray(blocks)) {
+      throw new Error("La respuesta al comprobar disponibilidad no es válida. No se ha guardado ningún cambio.");
+    }
 
-    const conflict = appointmentResponse.ok ? rows.find((row) => {
+    const conflict = rows.find((row) => {
       if (row.id === ignoreId || ["cancelled", "canceled", "completed", "no_show"].includes(row.status)) return false;
       const rowStart = new Date(row.starts_at);
       const rowEnd = row.ends_at ? new Date(row.ends_at) : new Date(rowStart.getTime() + 60 * 60 * 1000);
       return rowStart < end && rowEnd > start;
-    }) : null;
+    });
 
     if (conflict) {
       return `Ya existe una cita de ${conflict.patient_name} a las ${timeFmt.format(new Date(conflict.starts_at))}.`;
@@ -555,7 +570,9 @@
 
   async function saveAppointment() {
     const startsAt = madridLocalToIso(els.date.value, els.time.value);
-    const conflictMessage = await checkAppointmentConflict(startsAt, els.id.value || null);
+    // Una cancelación debe seguir siendo posible si falla el servicio de disponibilidad.
+    const cancelling = ["cancelled", "canceled"].includes(els.appointmentStatus.value);
+    const conflictMessage = cancelling ? "" : await checkAppointmentConflict(startsAt, els.id.value || null);
     if (conflictMessage && !window.confirm(`${conflictMessage}\n\n¿Quieres guardar la cita de todos modos?`)) {
       throw new Error("No se ha guardado la cita para evitar un solapamiento.");
     }
