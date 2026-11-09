@@ -40,8 +40,25 @@
    }
    if(item.status==="recording"){
     const notice=document.createElement("small");
-    notice.textContent="Se recibió una aceptación, pero el archivo no está completo. No reenviar ni marcar como firmado. Revisión técnica necesaria.";
+    notice.textContent="La declaración está registrada, pero la custodia está incompleta. No envíes otra solicitud.";
     entry.append(notice);
+    const repair=document.createElement("button");
+    repair.type="button";repair.className="clinic-secondary";repair.textContent="Verificar acta y completar archivo";
+    repair.disabled=busy;
+    repair.addEventListener("click",async()=>{
+     if(busy||!window.confirm("Se verificará la aceptación ya registrada y se intentará completar el archivo, SIN volver a enviar ni pedir otra firma. ¿Continuar?"))return;
+     const id=current();busy=true;refresh();setMessage("Comprobando integridad del PDF original y del acta…");
+     try{
+      const response=await fetch(endpoint,{method:"POST",headers:{Authorization:"Bearer "+token(),"Content-Type":"application/json"},
+       body:JSON.stringify({action:"repair",patient_id:id,request_id:item.id}),cache:"no-store"});
+      const data=await response.json().catch(()=>({}));
+      if(current()!==id)return;
+      if(!response.ok)throw Error(data.error||"No se ha podido completar la custodia.");
+      setMessage("Archivo completado. El PDF original y el acta están disponibles en la historia clínica.");
+     }catch(e){if(current()===id)setMessage(e?.message||"Se necesita revisión técnica.");}
+     finally{busy=false;refresh();if(current()===id)await load();}
+    });
+    entry.append(repair);
    }
    history.append(entry);
   }
