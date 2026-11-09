@@ -79,6 +79,11 @@ jobs:
           node --check public/clinic-manual-documents-email.js
           node --experimental-strip-types --test tests/manual-patient-documents-email.test.mjs
 
+      - name: Verificar PDF individualizado de consentimiento
+        run: |
+          node --check public/clinic-electronic-signature.js
+          node --experimental-strip-types --test tests/clinical-consent-packet.test.mjs
+
       - name: Validar editor clínico, guardado automático y navegación
         run: |
           node --check public/admin-clinica.js
