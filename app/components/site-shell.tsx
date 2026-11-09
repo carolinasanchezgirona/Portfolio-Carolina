@@ -37,13 +37,14 @@ const serviceNavigation = [
   { href: "/evaluacion-tea-adultos/", label: "Evaluación de TEA en adultos" },
   { href: "/orientacion-tdah-tea-adultos/", label: "¿TDAH, TEA u otra causa?" },
   { href: "/evaluacion-altas-capacidades-adultos/", label: "Altas capacidades en adultos" },
+  { href: "/evaluacion-dislexia/", label: "Evaluación de dislexia" },
   { href: "/consultoria-neuropsicologica-juridica/", label: "Consultoría neuropsicológica" },
 ] as const;
 
 const servicePaths = [
   "/psicologia/", "/neuropsicologia/", "/ansiedad/",
   "/duelo/", "/evaluacion-neuropsicologica/", "/evaluacion-tdah-adultos/", "/evaluacion-tea-adultos/", "/orientacion-tdah-tea-adultos/", "/evaluacion-altas-capacidades-adultos/",
-  "/problemas-de-memoria/", "/psicologa-arenys-de-mar/", "/consultoria-neuropsicologica-juridica/",
+  "/problemas-de-memoria/", "/psicologa-arenys-de-mar/", "/evaluacion-dislexia/", "/consultoria-neuropsicologica-juridica/",
 ];
 
 function ChevronIcon() {

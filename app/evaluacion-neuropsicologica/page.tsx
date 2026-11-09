@@ -150,6 +150,7 @@ export default function NeuropsychAssessmentPage() {
             <h3>Relacionados</h3>
             <div className="seo-related">
               <a href="/neuropsicologia/">Neuropsicología</a>
+              <a href="/evaluacion-dislexia/">Evaluación de dislexia en adultos</a>
               <a href="/evaluacion-altas-capacidades-adultos/">Evaluación de altas capacidades en adultos</a>
               <a href="/ictus-y-dano-cerebral-adquirido/">Ictus y daño cerebral adquirido</a>
               <a href="/parkinson-y-cambios-cognitivos/">Parkinson y cambios cognitivos</a>

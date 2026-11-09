@@ -77,6 +77,7 @@ export default function NeuropsychologyPage() {
               <li>Olvidos o cambios de memoria que generan preocupación.</li>
               <li>Dificultades para mantener la atención o seguir tareas complejas, incluido el estudio clínico del <a href="/evaluacion-tdah-adultos/">TDAH en adultos</a> cuando corresponda.</li>
               <li>Consulta sobre posibles características del espectro autista en la edad adulta: <a href="/evaluacion-tea-adultos/">evaluación del TEA en adultos</a>.</li>
+              <li>Dificultades persistentes de lectura y escritura desde la etapa escolar: <a href="/evaluacion-dislexia/">evaluación de dislexia en adultos</a>.</li>
               <li>Problemas de lenguaje, planificación u organización.</li>
               <li>Cambios cognitivos asociados al envejecimiento o a una enfermedad neurológica.</li>
               <li>Dudas sobre deterioro cognitivo o evolución de una demencia.</li>
@@ -177,6 +178,7 @@ export default function NeuropsychologyPage() {
               <a href="/evaluacion-neuropsicologica/">Evaluación neuropsicológica</a>
               <a href="/evaluacion-tdah-adultos/">Evaluación del TDAH en adultos</a>
               <a href="/evaluacion-tea-adultos/">Evaluación del TEA en adultos</a>
+              <a href="/evaluacion-dislexia/">Evaluación de dislexia en adultos</a>
               <a href="/evaluacion-neuropsicologica/">Evaluación de memoria y funcionamiento cognitivo</a>
               <a href="/evaluacion-altas-capacidades-adultos/">Altas capacidades en adultos</a>
               <a href="/problemas-de-memoria/">Problemas de memoria y olvidos</a>
