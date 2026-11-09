@@ -115,6 +115,7 @@ test("la firma registra sesión y hora y archiva original y acta privados antes 
  await mockFetch((url,opts)=>{
   if(url.includes("/clinical_patients?"))return Response.json([patient]);
   if(url.includes("/clinical_simple_consents?")&&(!opts.method||opts.method==="GET"))return Response.json([row]);
+  if(url.includes("/storage/v1/object/authenticated/clinical-documents/")&&url.includes("/evidence.pdf"))return new Response(null,{status:404});
   if(url.includes("/storage/v1/object/authenticated/clinical-documents/"))return new Response(pdf,{status:200});
   if(url.includes("/clinical_simple_consents?")&&opts.method==="PATCH")return Response.json([{id:REQ}]);
   if(url.includes("/storage/v1/object/clinical-documents/")&&opts.method==="POST")return Response.json({Key:"ok"});
