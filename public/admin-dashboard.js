@@ -75,26 +75,9 @@
   async function get(path) {
     const r = await fetch(`${REST_URL}/${path}`, { headers: authHeaders(), cache:"no-store" });
     if (r.status === 401) throw new Error("session");
-    const body = await r.json().catch(() => []);
+    const body = await r.json().catch(() => null);
     if (!r.ok) throw new Error(body?.message || "No se han podido cargar los datos.");
     return body;
-  }
-
-  async function unreadMessages() {
-    const response = await fetch("/api/admin/patient-messages?unread=1", {
-      headers: { Authorization: authHeaders().Authorization }, cache: "no-store",
-    });
-    if (!response.ok) throw new Error("No se ha podido consultar la bandeja.");
-    const result = await response.json();
-    if (typeof result.hasUnread !== "boolean") throw new Error("No se ha podido consultar la bandeja.");
-    return result.hasUnread;
-  }
-
-  function renderDailyStatus(id, text, attention = false) {
-    const target = document.querySelector(id);
-    if (!target) return;
-    target.textContent = text;
-    target.closest("a").classList.toggle("attention", attention);
   }
 
   function esc(v) {
@@ -108,18 +91,8 @@
       el.innerHTML = `<div class="admin-home-empty">${esc(emptyText)}</div>`;
       return;
     }
-    el.innerHTML = rows.slice(0,6).map(formatter).join("");
+    el.innerHTML = rows.map(formatter).join("");
   }
-
-  function priorityCard(href, value, label, attention=false) {
-    return `<a class="admin-home-priority${attention ? " attention" : ""}" href="${href}"><strong>${value}</strong><span>${esc(label)}</span></a>`;
-  }
-
-
-  const numberFormat = new Intl.NumberFormat("es-ES");
-  const money = amount => new Intl.NumberFormat("es-ES", {style:"currency",currency:"EUR"}).format(Number(amount||0)/100);
-  const ready = result => result.status === "fulfilled";
-  const resultOf = result => ready(result) ? result.value : [];
 
   function unavailable(id) {
     const target = document.querySelector(id);
@@ -127,6 +100,8 @@
   }
 
   async function logout() {
+    // Invalidar cualquier carga pendiente antes de ocultar información privada.
+    latestRequest += 1;
     const active = session();
     sessionStorage.removeItem(SESSION_KEY);
     root.hidden = true;
@@ -143,8 +118,11 @@
     window.location.replace("/admin/clinica/acceso/?next=%2Fadmin%2F");
   }
 
+  let latestRequest = 0;
   async function load() {
+    const request = ++latestRequest;
     const user = await currentUser();
+    if (request !== latestRequest) return;
     if (!user) {
       sessionStorage.removeItem(SESSION_KEY);
       window.location.replace("/admin/clinica/acceso/?next=%2Fadmin%2F");
@@ -154,114 +132,52 @@
     const loading = document.querySelector("#admin-home-loading");
     if (loading) loading.hidden = true;
 
-    const today = madridDateKey(), tomorrow = addDays(today,1);
-    const start = localIso(today), end = localIso(tomorrow);
-    const now = new Date().toISOString();
+    const today = madridDateKey();
+    const start = localIso(today), end = localIso(addDays(today,1));
     const dateEl = document.querySelector("#admin-home-date");
     if (dateEl) dateEl.textContent = new Intl.DateTimeFormat("es-ES", {
       weekday:"long",day:"numeric",month:"long",year:"numeric",timeZone:ZONE
     }).format(new Date());
-    setStatus("Consultando actividad…");
+    setStatus("Consultando las citas de hoy…");
 
+    // Inicio de mínima exposición: solo consulta el día actual, nunca facturación,
+    // publicaciones, ventas, mensajes ni el directorio completo de pacientes.
     const realAppointments = "&or=(patient_email.is.null,patient_email.neq.bloqueo@agenda.interno)";
-    const results = await Promise.allSettled([
-      get("appointment_bookings?select=id,patient_name,status,starts_at,service_code&starts_at=gte."+encodeURIComponent(start)+"&starts_at=lt."+encodeURIComponent(end)+realAppointments+"&order=starts_at.asc&limit=200"),
-      get("articles?select=id,title,status,scheduled_at,updated_at&or=(status.eq.draft,status.eq.scheduled)&order=updated_at.desc&limit=100"),
-      get("digital_resource_orders?select=id,payment_status,amount_total,currency,created_at,paid_at&order=created_at.desc&limit=100"),
-      get("billing_invoices?select=id,status,total_cents,recipient_name,issue_date,created_at&order=created_at.desc&limit=1000"),
-      get("billing_receipts?select=invoice_id,amount_cents&limit=1000"),
-      get("billing_issuer_settings?select=tax_id,fiscal_address,first_invoice_year,first_invoice_number&id=eq.1"),
-      get("appointment_bookings?select=starts_at&starts_at=gte."+encodeURIComponent(now)+realAppointments+"&status=in.(confirmed,pending,rescheduled)&order=starts_at.asc&limit=1"),
-      unreadMessages(),
-    ]);
-    if (results.some(r => r.status === "rejected" && r.reason?.message === "session")) {
-      sessionStorage.removeItem(SESSION_KEY);
-      root.hidden = true;
-      window.location.replace("/admin/clinica/acceso/?next=%2Fadmin%2F");
-      return;
-    }
+    const path = "appointment_bookings?select=id,patient_name,status,starts_at,service_code" +
+      "&starts_at=gte." + encodeURIComponent(start) +
+      "&starts_at=lt." + encodeURIComponent(end) +
+      realAppointments + "&order=starts_at.asc&limit=200";
 
-    const [a,ar,o,bi,br,issuer,upcoming,messages] = results;
-    const appointments=resultOf(a), articles=resultOf(ar),
-      orders=resultOf(o), invoices=resultOf(bi), receipts=resultOf(br), settings=resultOf(issuer);
-    const todayActive = appointments.filter(row => !["cancelled","canceled"].includes(String(row.status||"")));
-    const scheduled = articles.filter(row => row.status === "scheduled" && row.scheduled_at);
-    const ordersPaid = orders.filter(row => ["paid","complete","succeeded"].includes(String(row.payment_status||"").toLowerCase()));
-
-    const paidById = new Map();
-    receipts.forEach(row => paidById.set(row.invoice_id,(paidById.get(row.invoice_id)||0)+Number(row.amount_cents||0)));
-    const issued = invoices.filter(row => row.status === "issued");
-    const open = ready(bi) && ready(br) ? issued.filter(row =>
-      Number(row.total_cents||0) > (paidById.get(row.id)||0)
-    ) : [];
-    const amountOpen = open.reduce((sum,row)=>sum+Math.max(0,Number(row.total_cents||0)-(paidById.get(row.id)||0)),0);
-    const fiscalReady = Boolean(ready(issuer) && settings[0] &&
-      String(settings[0].tax_id||"").trim().length>=8 &&
-      String(settings[0].fiscal_address||"").trim().length>=10 &&
-      Number.isInteger(settings[0].first_invoice_year) &&
-      Number.isInteger(settings[0].first_invoice_number));
-
-    const priorities = document.querySelector("#admin-home-priorities");
-    if (priorities) priorities.innerHTML = [
-      priorityCard("/admin/economia/",ready(bi)&&ready(br)?numberFormat.format(open.length):"—","facturas por cobrar",open.length>0),
-      priorityCard("/admin/articulos/",ready(ar)?numberFormat.format(scheduled.length):"—","artículos programados"),
-      priorityCard("/admin/recursos/",ready(o)?numberFormat.format(ordersPaid.length):"—","ventas recientes de recursos"),
-    ].join("");
-
-    const timeFmt = new Intl.DateTimeFormat("es-ES",{hour:"2-digit",minute:"2-digit",hour12:false,timeZone:ZONE});
-    const nextAppointment = resultOf(upcoming)[0];
-    if (!ready(upcoming)) {
-      renderDailyStatus("#admin-home-next-appointment", "Agenda sin actualizar");
-    } else if (!nextAppointment) {
-      renderDailyStatus("#admin-home-next-appointment", "Sin próximas citas");
-    } else {
-      const date = new Date(nextAppointment.starts_at);
-      const day = madridDateKey(date) === today ? "Hoy" :
-        new Intl.DateTimeFormat("es-ES", { day: "numeric", month: "long", year: "numeric", timeZone: ZONE }).format(date);
-      renderDailyStatus("#admin-home-next-appointment", day + " · " + timeFmt.format(date));
-    }
-    const messageStatus = ready(messages) ?
-      (messages.value ? "Tienes mensajes sin leer" : "Estás al día") : "Bandeja sin actualizar";
-    renderDailyStatus("#admin-home-messages", messageStatus, ready(messages) && messages.value);
-
-    if(ready(a)){
+    try {
+      const appointments = await get(path);
+      if (request !== latestRequest) return;
+      if (!Array.isArray(appointments)) throw new Error("Respuesta inválida de la agenda.");
+      const todayActive = appointments.filter(row => !["cancelled","canceled"].includes(String(row.status||"").toLowerCase()));
+      const timeFmt = new Intl.DateTimeFormat("es-ES", {
+        hour:"2-digit",minute:"2-digit",hour12:false,timeZone:ZONE
+      });
+      const statusLabel = {
+        confirmed:"Confirmada", pending:"Pendiente", completed:"Realizada",
+        no_show:"No presentada", rescheduled:"Reprogramada"
+      };
       renderList("#admin-home-today",todayActive,row =>
-        '<div class="admin-home-item"><div><strong>'+esc(row.patient_name||"Cita")+
-        '</strong><span>'+esc(row.service_code==="neuropsicologia"?"Neuropsicología":"Consulta")+
-        '</span></div><small>'+esc(timeFmt.format(new Date(row.starts_at)))+'</small></div>',
+        '<div class="admin-home-item"><div><strong>' + esc(row.patient_name || "Cita") +
+        '</strong><span>' + esc(row.service_code === "neuropsicologia" ? "Neuropsicología" : "Psicología") +
+        ' · ' + esc(statusLabel[row.status] || "Cita") +
+        '</span></div><small>' + esc(timeFmt.format(new Date(row.starts_at))) + '</small></div>',
         "No hay citas programadas hoy.");
-    } else unavailable("#admin-home-today");
-
-    if(ready(bi)&&ready(br)){
-      const draftCount=invoices.filter(row=>row.status==="draft").length;
-      const rows=[
-        {label:"Pendiente por cobrar",value:money(amountOpen),note:open.length+" facturas"},
-        {label:"Borradores",value:numberFormat.format(draftCount),note:"Sin emitir"},
-      ];
-      if(ready(issuer)&&!fiscalReady)rows.push({label:"Datos fiscales",value:"Pendientes",note:"Completar antes de emitir"});
-      renderList("#admin-home-economy",rows,row =>
-        '<div class="admin-home-item"><div><strong>'+esc(row.label)+'</strong><span>'+esc(row.note)+
-        '</span></div><small>'+esc(row.value)+'</small></div>',"Sin movimiento económico.");
-    } else unavailable("#admin-home-economy");
-
-    if(ready(ar)){
-      renderList("#admin-home-editorial",articles.slice(0,3),row =>
-        '<div class="admin-home-item"><div><strong>'+esc(row.title||"Artículo sin título")+
-        '</strong><span>Artículo</span></div><small>'+esc(row.status||"")+'</small></div>',
-        "No hay pendientes editoriales destacados.");
-    } else unavailable("#admin-home-editorial");
-
-    if(ready(o)){
-      const fmt = new Intl.DateTimeFormat("es-ES",{day:"2-digit",month:"2-digit",timeZone:ZONE});
-      renderList("#admin-home-commerce",ordersPaid,row =>
-        '<div class="admin-home-item"><div><strong>'+esc(money(row.amount_total))+
-        '</strong><span>Recurso digital · pago registrado</span></div><small>'+
-        esc(fmt.format(new Date(row.paid_at||row.created_at)))+'</small></div>',
-        "Todavía no hay ventas recientes de recursos.");
-    } else unavailable("#admin-home-commerce");
-
-    const fails=results.filter(r=>r.status==="rejected").length;
-    setStatus(fails>0?"Hay "+fails+" áreas sin actualizar; los demás datos se muestran con normalidad.":"");
+      setStatus("");
+    } catch (error) {
+      if (request !== latestRequest) return;
+      if (error?.message === "session") {
+        sessionStorage.removeItem(SESSION_KEY);
+        root.hidden = true;
+        window.location.replace("/admin/clinica/acceso/?next=%2Fadmin%2F");
+        return;
+      }
+      unavailable("#admin-home-today");
+      setStatus("No se han podido actualizar las citas de hoy. Puedes reintentar con «Actualizar» o acceder a Agenda.");
+    }
   }
   document.querySelector("#admin-home-refresh")?.addEventListener("click",()=>load().catch(e=>setStatus(e?.message||"No se ha podido actualizar.")));
   document.querySelector("#admin-home-logout")?.addEventListener("click",logout);
@@ -270,12 +186,5 @@
     if(loading)loading.textContent="No se ha podido comprobar el acceso. Actualiza para intentarlo de nuevo.";
     setStatus(error?.message||"No se ha podido iniciar el panel.");
   });
-  const toolSearch=document.querySelector('#admin-tool-search');
-  toolSearch?.addEventListener('input',()=>{
-    const normalize=value=>String(value).normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
-    const terms=normalize(toolSearch.value).split(/\s+/).filter(Boolean),cards=[...document.querySelectorAll('.admin-hub-module')];
-    for(const card of cards)card.hidden=!terms.every(term=>normalize(card.textContent).includes(term));
-    const count=cards.filter(card=>!card.hidden).length,notice=document.querySelector('#admin-tool-search-status');
-    if(notice)notice.textContent=!terms.length?'':count?count+' herramienta(s) encontrada(s).':'No hay herramientas con esa búsqueda.';
-  });
+
 })();
