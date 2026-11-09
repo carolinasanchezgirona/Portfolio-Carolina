@@ -19,3 +19,14 @@
 .clinic-signature-request{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:12px;border:1px solid #dce2e4;border-radius:8px;flex-wrap:wrap;}
 .clinic-signature-request p{margin:5px 0 0;font-size:.9rem;}
 .clinic-signature-request small{max-width:23rem;}
+
+.clinic-signature-send-box{margin:20px 0;padding:18px 20px;border:1px solid #cad6da;border-radius:12px;background:white}
+.clinic-signature-send-box h4{margin:12px 0 10px;font-size:1rem}
+.clinic-signature-send-box .clinic-signature-check{display:flex;align-items:flex-start;gap:10px;font-weight:400;margin:16px 0}
+.clinic-signature-send-box .clinic-signature-check input{width:18px;height:18px;margin-top:3px;flex:none;accent-color:#708793}
+.clinic-signature-send-box #clinic-signature-send:disabled{opacity:.48;cursor:not-allowed}
+.clinic-signature-history{display:grid;gap:10px;margin:14px 0}
+.clinic-signature-request{display:grid;gap:8px;padding:14px 16px;background:#f6f8f8;border:1px solid #dbe3e5;border-radius:9px}
+.clinic-signature-request small{color:#5e737d}
+.clinic-signature-request p{margin:0;line-height:1.6}
+.clinic-signature-request button{justify-self:start}
