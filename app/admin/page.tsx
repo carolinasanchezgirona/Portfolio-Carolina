@@ -52,7 +52,7 @@ function AdminSidebarLinks() {
   return (
     <>
       {adminLinks.map(({ href, icon, label }) => (
-        <a key={href} href={href} aria-current={href === "/admin/" ? "page" : undefined}>
+        <a key={href} href={href} aria-current={href === "/admin/" ? "page" : undefined} download={href.endsWith(".apk") ? true : undefined} data-android-download={href.endsWith(".apk") ? true : undefined}>
           <AdminIcon name={icon} />{label}
         </a>
       ))}
@@ -97,7 +97,6 @@ export default function AdminHomePage() {
                 <p id="admin-home-date" className="admin-hub-date">Cargando fecha…</p>
               </div>
             </div>
-            <p id="admin-home-status" className="admin-home-status" role="status" aria-live="polite" />
             <nav className="admin-home-priorities admin-home-daily" aria-label="Acciones de consulta">
               <a className="admin-home-priority" href="/admin/agenda/">
                 <AdminIcon name="calendar" /><strong>Próxima cita</strong>
