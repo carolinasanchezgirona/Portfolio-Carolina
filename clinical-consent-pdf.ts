@@ -91,6 +91,8 @@ export async function buildClinicalConsentPdf(patient:Patient, kind:ConsentKind,
   section("Constancia de la información facilitada");
   paragraph("Profesional responsable: Carolina Sánchez Girona  |  Lugar y fecha de explicación: __________________________",9,2);
   paragraph("Si firma un representante: identidad, vínculo y acreditación de representación que debe verificarse: __________________________",9,5);
+  section("Firma de la persona atendida");
+  paragraph("Este espacio se cumplimenta mediante la firma electrónica del prestador, con verificación de identidad y certificado de finalización.",9,13);
   const total=pdf.getNumberOfPages();
   for(let p=1;p<=total;p++){pdf.setPage(p);pdf.setFontSize(8);pdf.setTextColor(118,130,138);pdf.text("Documento base para firma electrónica · "+CONSENT_VERSION,20,285);pdf.text("Página "+p+" de "+total,177,285);}
   return new Uint8Array(pdf.output("arraybuffer"));
