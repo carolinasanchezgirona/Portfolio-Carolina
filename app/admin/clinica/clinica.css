@@ -639,9 +639,6 @@
 
 
 /* Software-grade clinical workspace refinement */
-.clinic-page{
-  background:#ffffff;
-}
 .clinic-app{
   width:min(1360px,calc(100% - 28px));
   padding:16px 0 44px;

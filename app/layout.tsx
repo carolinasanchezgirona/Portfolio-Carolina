@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Inter, Newsreader } from "next/font/google";
 import GoogleAnalyticsConsent from "./components/google-analytics-consent";
 import SiteShell from "./components/site-shell";
@@ -24,6 +24,8 @@ const newsreader = Newsreader({
   variable: "--font-newsreader",
   display: "swap",
 });
+
+export const viewport: Viewport = { themeColor: "#F2EFE7" };
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://carolinasanchezgirona.com"),
@@ -181,7 +183,6 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
   return (
     <html lang="es" className={`${inter.variable} ${newsreader.variable}`}>
       <head>
-        <meta name="theme-color" content="#F2EFE7" />
         <meta property="og:image" content="https://carolinasanchezgirona.com/carolina-sanchez-portada-720.webp" />
         <meta property="og:image:width" content="720" />
         <meta property="og:image:height" content="1080" />
