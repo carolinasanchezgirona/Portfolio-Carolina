@@ -1,6 +1,6 @@
 import { buildClinicalConsentPdf,CONSENT_VERSION,type ConsentKind } from "./clinical-consent-pdf.ts";
 import { authenticateDocusign,createDocusignDraft,sendDocusignDraft,getDocusignStatus,
- downloadSignedPdf,providerConfigured,sha256,verifyDocusignHmac,type DocusignEnv } from "./clinical-signature-docusign.ts";
+ downloadSignedPdf,providerConfigured,sha256,exactBuffer,verifyDocusignHmac,type DocusignEnv } from "./clinical-signature-docusign.ts";
 
 type Env=DocusignEnv & {SUPABASE_SERVICE_ROLE_KEY?:string};
 const SUPA="https://grgyvdxkjdstdyumdfyg.supabase.co";
@@ -38,7 +38,7 @@ async function savePdf(env:Env,path:string,bytes:Uint8Array){
  const result=await fetch(SUPA+"/storage/v1/object/clinical-documents/"+path,{method:"POST",headers:{
   apikey:env.SUPABASE_SERVICE_ROLE_KEY||"",Authorization:"Bearer "+(env.SUPABASE_SERVICE_ROLE_KEY||""),
   "Content-Type":"application/pdf","x-upsert":"false"
- },body:bytes,cache:"no-store"});
+ },body:exactBuffer(bytes),cache:"no-store"});
  if(!result.ok && result.status!==409)throw Error("No se ha podido guardar el PDF en la custodia privada.");
 }
 async function registerClinicalDocument(env:Env,row:SignatureRow,which:"signed"|"certificate",path:string,hash:string){
