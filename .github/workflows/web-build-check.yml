@@ -74,6 +74,11 @@ jobs:
       - name: Verificar consentimiento de cookies y suscripción con confirmación
         run: node --experimental-strip-types --test tests/website-privacy.test.mjs
 
+      - name: Verificar envío manual protegido de documentación al paciente
+        run: |
+          node --check public/clinic-manual-documents-email.js
+          node --experimental-strip-types --test tests/manual-patient-documents-email.test.mjs
+
       - name: Validar editor clínico, guardado automático y navegación
         run: |
           node --check public/admin-clinica.js
