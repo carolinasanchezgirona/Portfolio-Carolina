@@ -32,7 +32,7 @@ function AdminIcon({ name }: { name: IconName }) {
 const adminLinks: { href: string; icon: IconName; label: string }[] = [
   { href: "/admin/", icon: "home", label: "Inicio" },
   { href: "/admin/agenda/", icon: "calendar", label: "Agenda de citas" },
-  { href: "/admin/clinica/?panel=1&amp;view=patients", icon: "patients", label: "Pacientes" },
+  { href: "/admin/clinica/?panel=1&view=patients", icon: "patients", label: "Pacientes" },
   { href: "/admin/clinica/?panel=1", icon: "clinical", label: "Gestión clínica" },
   { href: "/admin/residencia/", icon: "clinical", label: "Residencia" },
   { href: "/admin/mensajes/", icon: "questions", label: "Mensajes de pacientes" },
