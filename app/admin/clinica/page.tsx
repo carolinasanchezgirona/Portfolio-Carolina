@@ -325,6 +325,21 @@ export default function AdminClinicaPage() {
             <button className="clinic-primary" type="submit">Guardar ficha completa</button>
           </div>
 
+          <details id="clinic-manual-documents" className="clinic-record-section clinic-manual-documents" >
+            <summary><span>Enviar documentación al paciente</span><small>Consentimientos y protección de datos · solo envío manual</small></summary>
+            <div className="clinic-record-section-body">
+              <p className="clinic-message">No se envía ninguna documentación al reservar, confirmar o recordar una cita. Solo se enviará cuando pulses el botón y confirmes el correo destinatario.</p>
+              <p>Correo de la ficha: <strong id="clinic-legal-email">Selecciona un paciente</strong></p>
+              <div className="clinic-legal-choices">
+                <label><input id="clinic-legal-consents" type="checkbox" defaultChecked /> Consentimientos informados <a href="/consentimientos/" target="_blank" rel="noopener noreferrer">Ver documentos</a></label>
+                <label><input id="clinic-legal-privacy" type="checkbox" defaultChecked /> Política de protección de datos <a href="/privacidad/" target="_blank" rel="noopener noreferrer">Ver documento</a></label>
+              </div>
+              <p className="clinic-note">Se enviarán enlaces públicos a documentos informativos, sin diagnósticos, datos de salud ni documentos firmados. El envío no acredita la firma del consentimiento.</p>
+              <button id="clinic-legal-send" type="button" className="clinic-secondary" disabled>Enviar correo manualmente</button>
+              <p id="clinic-legal-message" className="clinic-message" role="status" aria-live="polite" />
+            </div>
+          </details>
+
           <section id="clinic-section-materials" className="clinic-exercises-section">
             <div className="clinic-goals-heading"><div><p className="clinic-eyebrow">Continuidad terapéutica</p><h3>Material entre sesiones</h3></div><button id="clinic-new-exercise" className="clinic-secondary" type="button">Asignar material</button></div>
             <div id="clinic-exercise-suggestions" className="clinic-exercise-suggestions" />
