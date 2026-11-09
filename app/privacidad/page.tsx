@@ -8,7 +8,7 @@ export const metadata: Metadata = {
 };
 
 export default function PrivacyPage() {
-  return <LegalDocument title="Política de privacidad y protección de datos">
+  return <LegalDocument title="Política de privacidad y protección de datos" updatedAt="9 de noviembre de 2026">
     <nav aria-label="Contenido de la política"><a href="#responsable">Responsable</a> · <a href="#tratamientos">Tratamientos</a> · <a href="#conservacion">Conservación</a> · <a href="#proveedores">Proveedores</a> · <a href="#derechos">Tus derechos</a> · <a href="/cookies/">Cookies</a></nav>
     <section id="responsable">
       <h2>1. Responsable del tratamiento</h2>
@@ -27,6 +27,7 @@ export default function PrivacyPage() {
       <div className="legal-table-wrap"><table><caption>Finalidades y bases jurídicas por tratamiento</caption><thead><tr><th scope="col">Tratamiento y datos</th><th scope="col">Finalidad y base jurídica</th></tr></thead><tbody>
         <tr><td>Solicitudes de cita: nombre, correo, teléfono, servicio y horario.</td><td>Gestionar la solicitud, confirmar la reserva y enviar avisos relativos a ella: art. 6.1.b RGPD. No se solicita el motivo de consulta, diagnósticos ni informes en el formulario público. Si la información permite inferir una atención sanitaria, se aplica también la habilitación del art. 9.2.h RGPD y el deber de secreto.</td></tr>
         <tr><td>Asistencia sanitaria e historia clínica: identificación, antecedentes pertinentes, datos de salud, evaluaciones, intervenciones y evolución.</td><td>Prestar asistencia psicológica o neuropsicológica y cumplir los deberes de documentación sanitaria: arts. 6.1.b y 6.1.c, junto con el art. 9.2.h RGPD y la normativa sanitaria aplicable.</td></tr>
+        <tr><td>Consentimientos asistenciales: tipo de actuación, alcance autorizado, documento firmado y registro clínico de su fecha y versión cuando corresponda.</td><td>Documentar la información y las decisiones relacionadas con la asistencia sanitaria y la historia clínica: arts. 6.1.c y 9.2.h RGPD y normativa sanitaria aplicable. La negativa o retirada se registra cuando sea necesario para respetar la decisión y documentar la atención.</td></tr>
         <tr><td>Mi espacio: correo de acceso, credenciales protegidas, sesión y materiales o respuestas que decidas guardar o compartir.</td><td>Facilitar el acceso al servicio y al trabajo terapéutico: art. 6.1.b RGPD; art. 9.2.h cuando forme parte de la asistencia sanitaria. Las notas clínicas internas no se muestran en el portal.</td></tr>
         <tr><td>Facturación y compras de recursos: identificación fiscal cuando corresponda, correo, compra, importe y referencia de pago.</td><td>Gestionar la compra y entregar el recurso: art. 6.1.b. Cumplir obligaciones fiscales y contables: art. 6.1.c RGPD. El pago con tarjeta se tramita a través de Stripe; la consulta no recibe el número completo de tu tarjeta.</td></tr>
         <tr><td>Consultas generales por correo: dirección de contacto y contenido del mensaje.</td><td>Responder a tu solicitud: art. 6.1.b cuando se refiera a servicios solicitados; en otras consultas generales, interés legítimo en atender comunicaciones, art. 6.1.f. Puedes oponerte cuando proceda. Evita enviar información clínica por canales generales.</td></tr>
@@ -36,7 +37,7 @@ export default function PrivacyPage() {
         <tr><td>Seguridad: datos técnicos necesarios, como dirección IP y registros de acceso; huellas criptográficas para limitar abusos de formularios.</td><td>Prevenir abuso y proteger la confidencialidad y disponibilidad del servicio: interés legítimo, art. 6.1.f, y obligaciones de seguridad, arts. 6.1.c y 32 RGPD. No se utilizan para publicidad.</td></tr>
       </tbody></table></div>
       <p>Los campos obligatorios se identifican en cada formulario. Sin los datos necesarios no se puede tramitar la petición correspondiente; los datos opcionales no condicionan la asistencia. Puedes descargar los materiales gratuitos sin suscribirte.</p>
-      <p>El consentimiento informado clínico es distinto del consentimiento de protección de datos. La asistencia sanitaria amparada por la ley no depende de aceptar publicidad, cookies analíticas o publicaciones divulgativas.</p>
+      <p>El <a href="/consentimientos/">consentimiento informado clínico</a> es distinto del consentimiento de protección de datos. La asistencia sanitaria amparada por la ley no depende de aceptar publicidad, cookies analíticas o publicaciones divulgativas. La constancia administrativa de un consentimiento en la historia no sustituye el documento firmado ni la información dada por la profesional.</p>
     </section>
     <section id="conservacion">
       <h2>3. Conservación y supresión</h2>
