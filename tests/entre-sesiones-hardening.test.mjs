@@ -58,7 +58,7 @@ test("logout clears data from DOM and bfcache cannot restore stale clinical view
 
 test("partial clinic backend outages are explicit failures and never mistaken for empty assignments", () => {
   assert.match(worker,/if \(!patientResponse\.ok\) return patientPortalJson\(/);
-  assert.match(worker,/if \(!appointmentResponse\.ok \|\| !materialsResponse\.ok \|\| !filesResponse\.ok\)/);
+  assert.match(worker,/if \(!appointmentResponse\.ok \|\| !materialsResponse\.ok \|\| !filesResponse\.ok \|\| !goalsResponse\.ok\)/);
   assert.match(worker,/No se ha podido cargar Mi espacio/);
   assert.match(worker,/return patientPortalJson\(\{ error: "La información no se ha recibido correctamente\." \}, 503\)/);
   assert.match(worker,/Cache-Control": "private, no-store"/);
