@@ -133,3 +133,29 @@ test("la firma registra sesión y hora y archiva original y acta privados antes 
   assert.equal(calls.filter(c=>c.url.includes("/brevo.com/")).length,0);
  });
 });
+
+test("reparación administrativa completa acta sin correo ni segunda firma",async()=>{
+ const pdf=await buildClinicalConsentPdf(patient,"psicologico",REQ);
+ const hash=Buffer.from(await crypto.subtle.digest("SHA-256",new Uint8Array(pdf).buffer)).toString("hex");
+ const row={...record,status:"recording",original_sha256:hash,accepted_by:patient.full_name,
+  accepted_at:"2026-11-09T20:10:11Z",accepted_session_id:SESSION};
+ await mockFetch((url,opts)=>{
+  if(url.includes("/clinical_patients?"))return Response.json([patient]);
+  if(url.includes("/clinical_simple_consents?")&&(!opts.method||opts.method==="GET"))return Response.json([row]);
+  if(url.includes("/storage/v1/object/authenticated/clinical-documents/")&&url.includes("/evidence.pdf"))
+   return new Response(null,{status:404});
+  if(url.includes("/storage/v1/object/authenticated/clinical-documents/"))return new Response(pdf,{status:200});
+  if(url.includes("/storage/v1/object/clinical-documents/")&&opts.method==="POST")return Response.json({Key:"ok"});
+  if(url.includes("/clinical_documents?")&&opts.method==="POST")return new Response(null,{status:201});
+  if(url.includes("/clinical_simple_consents?")&&opts.method==="PATCH")return Response.json([{id:REQ}]);
+  throw Error("Endpoint no previsto "+url);
+ },async calls=>{
+  const result=await clinicalSimpleAdmin(adminPost({action:"repair",request_id:REQ}),env,async()=>true,()=>true);
+  assert.equal(result.status,200);
+  assert.equal((await result.json()).status,"archived");
+  assert.equal(calls.filter(c=>c.url.includes("brevo.com")).length,0);
+  assert.equal(calls.filter(c=>c.url.includes("/storage/v1/object/clinical-documents/")&&c.opts.method==="POST").length,1);
+  const changes=calls.filter(c=>c.opts.method==="PATCH").map(c=>JSON.parse(c.opts.body));
+  assert.equal(changes.at(-1).status,"archived");
+ });
+});
