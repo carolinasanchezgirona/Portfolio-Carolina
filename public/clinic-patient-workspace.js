@@ -19,6 +19,7 @@
   const dashboard = select("#clinic-patient-dashboard");
   const preparation = select(".clinic-preparation");
   const goals = select(".clinic-goals-manager");
+  const reviews = select(".clinic-process-reviews");
   const tasks = select(".clinic-task-box");
   const consents = select(".clinic-consent-section");
   const audit = select(".clinic-audit-section");
@@ -100,6 +101,7 @@
   add("evaluacion",toolCards[2]); // instruments and longitudinal chart stay together
   add("tratamiento",details[3]);
   add("tratamiento",goals);
+  add("tratamiento",reviews);
   add("tratamiento",exercise);
   add("sesiones",toolCards[0]);
   add("sesiones",history.previousElementSibling?.matches("h3") ? history.previousElementSibling : null);
