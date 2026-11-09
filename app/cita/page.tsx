@@ -120,7 +120,7 @@ export default function BookingPage() {
             Si necesitas cambiar o cancelar, avisa con al menos 24 horas; los imprevistos se valorarán individualmente.
           </p>
           <details id="cancellation-information" className="privacy-details"><summary>Ver condiciones de cancelación</summary><p>Si necesitas cancelar o cambiar la cita, avisa con al menos 24 horas de antelación. Las situaciones imprevistas se valorarán individualmente.</p></details>
-          <details className="privacy-details booking-first-visit-help"><summary>¿Es tu primera visita?</summary><p>Podrás revisar el encuadre y el consentimiento clínico con la profesional al comenzar la atención. Si tienes informes relevantes, puedes traerlos, pero no es necesario adjuntarlos para pedir cita.</p></details>
+          <details className="privacy-details booking-first-visit-help"><summary>¿Es tu primera visita?</summary><p>Antes de acudir puedes consultar los <a href="/consentimientos/" target="_blank" rel="noopener noreferrer">consentimientos informados de psicología y neuropsicología</a> y la <a href="/privacidad/" target="_blank" rel="noopener noreferrer">información sobre protección de datos</a>. El encuadre y el alcance de la intervención se explicarán y revisarán contigo en consulta. Leer estos documentos o confirmar la reserva no sustituye el consentimiento clínico. Si tienes informes relevantes, puedes traerlos, pero no es necesario adjuntarlos para pedir cita.</p></details>
           <div id="form-message" className="form-message" role="status" aria-live="polite" />
           <button id="booking-submit" className="booking-submit" type="submit" disabled>Confirmar reserva <span aria-hidden="true">→</span></button>
         </form>
