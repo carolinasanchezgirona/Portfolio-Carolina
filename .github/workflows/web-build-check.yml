@@ -112,10 +112,11 @@ jobs:
       - name: Verificar agenda simplificada y centro de avisos privado
         run: |
           node --check public/admin-agenda-view-switcher.js
+          node --check public/admin-month-view.js
           node --check public/admin-notifications.js
           node --check public/sw.js
           node --check scripts/ensure-vapid.mjs
-          node --test tests/admin-agenda-notifications.test.mjs tests/admin-webpush.test.mjs
+          node --test tests/admin-agenda-notifications.test.mjs tests/admin-month-stability.test.mjs tests/admin-webpush.test.mjs
 
       - name: Verificar facturación privada y generación de facturas
         run: |

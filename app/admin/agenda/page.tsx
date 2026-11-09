@@ -1,6 +1,7 @@
 import Script from "next/script";
 import type { Metadata } from "next";
 import "./admin.css";
+import "./month-view.css";
 import AdminWorkspaceNav from "../workspace-nav";
 
 export const metadata: Metadata = {
@@ -144,7 +145,7 @@ export default function AdminAgendaPage() {
             <article><strong id="month-confirmed">0</strong><span>Confirmadas</span></article>
             <article><strong id="month-completed">0</strong><span>Realizadas</span></article>
           </section>
-          <p id="month-status" className="admin-message" role="status" />
+          <p id="month-status" className="admin-message" role="status" aria-live="polite" />
           <div className="month-weekdays" aria-hidden="true">
             <span>Lun</span><span>Mar</span><span>Mié</span><span>Jue</span><span>Vie</span><span>Sáb</span><span>Dom</span>
           </div>
