@@ -4,6 +4,7 @@ Loads the actual public/clinic-process-reviews.js in Chromium. All API requests
 are mocked in the page, so the test does not contact Supabase.
 """
 from pathlib import Path
+import shutil
 from playwright.sync_api import sync_playwright, expect
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -84,7 +85,12 @@ PATIENT_B = "bce4a4d0-0000-4000-8000-000000000002"
 
 def run():
     with sync_playwright() as p:
-        browser = p.chromium.launch(headless=True)
+        options = {"headless": True, "args": ["--no-sandbox", "--disable-dev-shm-usage"]}
+        system_chromium = (shutil.which("google-chrome") or shutil.which("google-chrome-stable")
+                           or shutil.which("chromium") or shutil.which("chromium-browser"))
+        if system_chromium:
+            options["executable_path"] = system_chromium
+        browser = p.chromium.launch(**options)
         try:
             page = browser.new_page(viewport={"width": 900, "height": 800})
             page.route("**/*", lambda route: route.fulfill(
