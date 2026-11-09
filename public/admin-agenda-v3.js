@@ -517,6 +517,7 @@
     const response = await fetch(`${REST_URL}/rpc/${name}`, { method: "POST", headers: authHeaders(), body: JSON.stringify(body) });
     const data = await response.json().catch(() => ({}));
     if (!response.ok) throw new Error(data.message || data.hint || "No se ha podido guardar la cita.");
+    window.dispatchEvent(new Event("agenda:appointments-changed"));
     return data;
   }
 
@@ -903,6 +904,7 @@
   els.logout?.addEventListener("click", () => { saveSession(null); currentUser = null; appointments = []; window.location.assign("/admin/clinica/acceso/"); });
   els.accessButton?.addEventListener("click", openAccess);
   els.newButton?.addEventListener("click", () => openNew(todayKey()));
+  window.addEventListener("agenda:edit-appointment", (event) => openEdit(event.detail));
   els.todayNew?.addEventListener("click", () => openNew(todayKey()));
   els.tomorrowNew?.addEventListener("click", () => openNew(addDaysKey(todayKey(), 1)));
   els.blockButton?.addEventListener("click", openBlock);

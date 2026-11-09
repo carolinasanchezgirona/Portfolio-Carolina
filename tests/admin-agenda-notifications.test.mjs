@@ -34,6 +34,15 @@ test("Agenda muestra una única cita principal y un selector de vistas que prese
   assert.match(month, /dayMenu\.append\(menuTrigger,dayMenuPanel\)/);
 });
 
+test("La vista mensual tiene un único botón y calendario y excluye ambos estados cancelados", () => {
+  for (const id of ["view-month", "month-view", "month-grid", "month-title", "month-prev", "month-next"]) {
+    assert.equal((agenda.match(new RegExp('id="' + id + '"', "g")) || []).length, 1, id);
+  }
+  assert.doesNotMatch(month, /(?:monthButton|section)\.id\s*=/);
+  assert.doesNotMatch(agenda, /id="month-cancelled"/);
+  assert.match(month, /rows = bookingsBody\.filter\(row => !\["cancelled", "canceled"\]\.includes\(row\.status\)\)/);
+});
+
 test("Centro de avisos autentica al titular y minimiza datos antes de consultar las fuentes", () => {
   assert.match(noticesPage, /id="admin-notice-app" hidden/);
   for (const key of ["agenda","patients","clinical","portal","economy","security","system"]) {

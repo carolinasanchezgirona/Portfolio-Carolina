@@ -198,7 +198,7 @@
   }
 
   function showView(){
-    [todayView,weekView,patientsView,document.querySelector("#month-view")].filter(Boolean).forEach(v=>v.hidden=true);
+    [todayView,weekView,patientsView,document.querySelector("#tomorrow-view"),document.querySelector("#month-view")].filter(Boolean).forEach(v=>v.hidden=true);
     section.hidden=false; tabs.querySelectorAll("button").forEach(b=>b.classList.toggle("active",b===waitButton)); load();
   }
   waitButton.addEventListener("click",showView);

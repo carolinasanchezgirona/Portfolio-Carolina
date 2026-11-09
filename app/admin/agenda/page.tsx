@@ -131,16 +131,24 @@ export default function AdminAgendaPage() {
         </section>
 
         <section id="month-view" className="admin-view" hidden>
-          <section className="admin-toolbar agenda-month-toolbar" aria-label="Navegación del calendario mensual">
-            <div className="admin-week-nav">
+          <div className="month-toolbar">
+            <div><p className="admin-eyebrow">Vista mensual</p><h2 id="month-title">Calendario mensual</h2></div>
+            <div className="month-nav" role="group" aria-label="Navegación del calendario mensual">
               <button id="month-prev" type="button" aria-label="Mes anterior">←</button>
-              <button id="month-today" type="button">Hoy</button>
+              <button id="month-today" type="button">Este mes</button>
               <button id="month-next" type="button" aria-label="Mes siguiente">→</button>
             </div>
-            <div><h2 id="month-title">Calendario mensual</h2><p className="admin-muted">Ocupación y horas disponibles para reservar</p></div>
+          </div>
+          <section className="month-summary" aria-label="Resumen mensual">
+            <article><strong id="month-total">0</strong><span>Citas</span></article>
+            <article><strong id="month-confirmed">0</strong><span>Confirmadas</span></article>
+            <article><strong id="month-completed">0</strong><span>Realizadas</span></article>
           </section>
-          <p id="month-status" className="admin-muted" role="status" />
-          <div id="month-calendar" className="agenda-month-calendar" aria-label="Ocupación mensual" />
+          <p id="month-status" className="admin-message" role="status" />
+          <div className="month-weekdays" aria-hidden="true">
+            <span>Lun</span><span>Mar</span><span>Mié</span><span>Jue</span><span>Vie</span><span>Sáb</span><span>Dom</span>
+          </div>
+          <div id="month-grid" className="month-grid" />
         </section>
 
         <section id="patients-view" className="admin-view" hidden>
@@ -249,8 +257,8 @@ export default function AdminAgendaPage() {
         </form>
       </dialog>
 
-      <Script src="/admin-agenda-v3.js?v=20261109-blocks-1" strategy="afterInteractive" />
-      <Script src="/admin-agenda-enhancement.js?v=20261109-blocks-1" strategy="afterInteractive" />
+      <Script src="/admin-agenda-v3.js?v=20261109-month-1" strategy="afterInteractive" />
+      <Script src="/admin-agenda-enhancement.js?v=20261109-month-1" strategy="afterInteractive" />
       <Script src="/pwa.js?v=20260915-admin-2" strategy="afterInteractive" />
     </main>
   );

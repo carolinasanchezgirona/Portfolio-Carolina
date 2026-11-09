@@ -1,9 +1,8 @@
 (() => {
   "use strict";
 
-  // Los módulos de Mes y Lista de espera añaden sus propios botones.
-  // Conservamos esos botones como origen de los eventos existentes, pero
-  // mostramos un único selector accesible para evitar dos barras de pestañas.
+  // El selector público reenvía cada cambio al botón de su vista.
+  // La lista de espera añade su botón al cargar.
   const tabs = document.querySelector(".admin-page .agenda-view-tabs-source");
   const select = document.querySelector("#admin-agenda-view-select");
   if (!tabs || !select) return;
