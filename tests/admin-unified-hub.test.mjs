@@ -10,25 +10,22 @@ const shell = read("public/admin-shell.js");
 const access = read("public/clinical-access.js");
 const clinic = read("public/admin-clinica.js");
 
-test("admin start shows only today's consultation information", () => {
+test("admin start shows only today's consultations", () => {
   assert.match(page, /Panel de administración/);
   assert.match(page, /index: false/);
   const workspace = page.split('<div className="admin-hub-workspace">')[1];
   assert.ok(workspace, "Missing workspace");
   assert.match(workspace, /Tu consulta hoy/);
-  assert.match(workspace, /Próxima cita/);
-  assert.match(workspace, /Buscar un paciente/);
-  assert.match(workspace, /Mensajes de pacientes/);
   assert.match(workspace, /Citas de hoy/);
-  assert.doesNotMatch(workspace, /Administración y contenidos|Todas tus áreas de trabajo|Facturas y cobros|Contenido editorial|Ventas de recursos|admin-hub-module-grid|admin-hub-tools/);
+  assert.doesNotMatch(workspace, /Próxima cita|Buscar un paciente|Mensajes de pacientes|Facturas y cobros|Contenido editorial|Ventas de recursos|admin-hub-module-grid/);
   for (const id of [
-    "admin-home", "admin-home-loading", "admin-home-date",
-    "admin-home-next-appointment", "admin-home-messages", "admin-home-today",
-    "admin-home-refresh", "admin-home-logout",
+    "admin-home", "admin-home-loading", "admin-home-date", "admin-home-status",
+    "admin-home-today", "admin-home-refresh", "admin-home-logout",
   ]) assert.equal((page.match(new RegExp('id="' + id + '"', "g")) || []).length, 1, id);
-  for (const id of ["admin-home-economy", "admin-home-editorial", "admin-home-commerce", "admin-home-priorities"]) {
-    assert.doesNotMatch(page, new RegExp('id="' + id + '"'), "Not part of home: " + id);
-  }
+  for (const id of [
+    "admin-home-next-appointment","admin-home-messages","admin-home-economy",
+    "admin-home-editorial","admin-home-commerce","admin-home-priorities"
+  ]) assert.doesNotMatch(page, new RegExp('id="' + id + '"'), "Not part of home: " + id);
 });
 
 test("other areas remain available exclusively from the sidebar navigation", () => {
@@ -56,15 +53,13 @@ test("Supabase owner and mobile gate checks are preserved", () => {
   assert.match(client, /AUTH_URL \+ "\/logout"/);
 });
 
-test("appointments and messages retain live data and graceful failures", () => {
-  assert.match(client, /Promise\.allSettled\(/);
-  assert.match(client, /result\.status === "fulfilled"/);
-  assert.match(client, /else unavailable\("#admin-home-today"\)/);
-  assert.match(client, /Agenda sin actualizar/);
-  assert.match(client, /Bandeja sin actualizar/);
-  assert.match(client, /status=in\.\(confirmed,pending,rescheduled\)&order=starts_at.asc&limit=1/);
-  assert.match(client, /patient_email.neq.bloqueo@agenda.interno/);
-  assert.match(client, /\/api\/admin\/patient-messages\?unread=1/);
+test("only today's active appointments are retrieved and errors remain explicit", () => {
+  assert.match(client, /get\("appointment_bookings\?select/);
+  assert.match(client, /patient_email\.neq\.bloqueo@agenda\.interno/);
+  assert.match(client, /No se han podido actualizar las citas de hoy/);
+  assert.match(client, /else unavailable\("#admin-home-today"\)|unavailable\("#admin-home-today"\)/);
+  assert.match(client, /rows\.map\(formatter\)/);
+  assert.doesNotMatch(client, /digital_resource_orders\?|billing_invoices\?|billing_receipts\?|articles\?select|patient-messages\?unread/);
 });
 
 test("responsive navigation and accessible keyboard focus", () => {
