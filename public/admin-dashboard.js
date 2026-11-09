@@ -100,6 +100,8 @@
   }
 
   async function logout() {
+    // Invalidar cualquier carga pendiente antes de ocultar información privada.
+    latestRequest += 1;
     const active = session();
     sessionStorage.removeItem(SESSION_KEY);
     root.hidden = true;
