@@ -5,7 +5,7 @@ import { readFileSync } from "node:fs";
 const read = path => readFileSync(new URL("../" + path, import.meta.url), "utf8");
 
 test("patient goal storage is owner-only and private by default", () => {
-  const sql = read("supabase/migrations/20261109_clinical_goal_publications.sql");
+  const sql = read("supabase/migrations/20261109132028_clinical_goal_publications.sql");
   assert.match(sql, /enable row level security/i);
   assert.match(sql, /revoke all.+from public, anon, authenticated/i);
   assert.match(sql, /is_clinical_owner/i);
