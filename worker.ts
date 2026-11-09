@@ -458,7 +458,7 @@ async function handlePatientPortalSession(request: Request, env: Env): Promise<R
   if (!patient) return patientPortalJson({ authenticated: false }, 401, { "Set-Cookie": patientPortalCookie("", 0) });
 
   const now = new Date().toISOString();
-  const [appointmentResponse, materialsResponse, filesResponse] = await Promise.all([
+  const [appointmentResponse, materialsResponse, filesResponse, goalsResponse] = await Promise.all([
     fetch(
       RESOURCE_SUPABASE + "/rest/v1/appointment_bookings?select=id,starts_at,ends_at,status,service_code&clinical_patient_id=eq." +
         encodeURIComponent(session.patient_id) + "&starts_at=gte." + encodeURIComponent(now) +
@@ -476,22 +476,29 @@ async function handlePatientPortalSession(request: Request, env: Env): Promise<R
         "&shared_at=not.is.null&share_revoked_at=is.null&order=shared_at.desc&limit=100",
       { headers: serviceHeaders(env), cache: "no-store" },
     ),
+    // Only explicitly published patient-facing copies; no clinical notes or goal metadata.
+    fetch(
+      RESOURCE_SUPABASE + "/rest/v1/clinical_goal_publications?select=goal_id,display_title,description,published_at" +
+        "&patient_id=eq." + encodeURIComponent(session.patient_id) +
+        "&published_at=not.is.null&revoked_at=is.null&order=published_at.asc&limit=100",
+      { headers: serviceHeaders(env), cache: "no-store" },
+    ),
   ]);
 
   // Nunca mostrar una lista vacía como si significara «no tienes ejercicios»
   // cuando la base de datos no ha podido responder. No invalidamos la cookie.
-  if (!appointmentResponse.ok || !materialsResponse.ok || !filesResponse.ok) {
+  if (!appointmentResponse.ok || !materialsResponse.ok || !filesResponse.ok || !goalsResponse.ok) {
     return patientPortalJson({ error: "No se ha podido cargar Mi espacio. Inténtalo de nuevo más tarde." }, 503);
   }
-  let appointments: unknown, materials: unknown, files: unknown;
+  let appointments: unknown, materials: unknown, files: unknown, goals: unknown;
   try {
-    [appointments, materials, files] = await Promise.all([
-      appointmentResponse.json(), materialsResponse.json(), filesResponse.json()
+    [appointments, materials, files, goals] = await Promise.all([
+      appointmentResponse.json(), materialsResponse.json(), filesResponse.json(), goalsResponse.json()
     ]);
   } catch {
     return patientPortalJson({ error: "La información no se ha recibido correctamente." }, 503);
   }
-  if (!Array.isArray(appointments) || !Array.isArray(materials) || !Array.isArray(files)) {
+  if (!Array.isArray(appointments) || !Array.isArray(materials) || !Array.isArray(files) || !Array.isArray(goals)) {
     return patientPortalJson({ error: "La información no se ha recibido correctamente." }, 503);
   }
 
@@ -502,6 +509,7 @@ async function handlePatientPortalSession(request: Request, env: Env): Promise<R
     next_appointment: Array.isArray(appointments) ? appointments[0] || null : null,
     materials: Array.isArray(materials) ? materials : [],
     files: Array.isArray(files) ? files : [],
+    goals: goals.map((item: Record<string, unknown>) => ({ id: String(item.goal_id), title: String(item.display_title), description: String(item.description || "") })),
   });
 }
 
