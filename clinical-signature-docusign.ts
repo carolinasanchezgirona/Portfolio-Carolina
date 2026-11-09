@@ -117,7 +117,7 @@ export async function getDocusignStatus(session:Session,envelopeId:string){
  return {status:data.status||"unknown",completed_at:data.completedDateTime||null};
 }
 export async function downloadSignedPdf(session:Session,envelopeId:string,which:"combined"|"certificate"){
- const response=await docusignApi(session,"/envelopes/"+envelopeId+"/documents/"+which);
+ const response=await docusignApi(session,"/envelopes/"+envelopeId+"/documents/"+which,{headers:{Accept:"application/pdf"}});
  if(!response.ok)throw Error("No se ha podido obtener "+which+" desde Docusign.");
  const bytes=new Uint8Array(await response.arrayBuffer());
  if(bytes.byteLength<500||bytes.byteLength>25_000_000||new TextDecoder().decode(bytes.subarray(0,5))!=="%PDF-")
