@@ -3,6 +3,7 @@ import { residenceMaterialAi } from "./residence-material-ai";
 import { notifyPatientMessages } from "./patient-message-email";
 import { billingInvoiceEmail } from "./billing-invoice-email";
 import { clinicalConsentPacket } from "./clinical-consent-packet";
+import { clinicalSimpleAdmin, clinicalSimplePatient } from "./clinical-simple-consents";
 import { manualPatientDocumentsEmail } from "./manual-patient-documents-email";
 import { patientMessages } from "./patient-messages";
 import { adminAppointmentVideo, patientAppointmentVideo } from './appointment-video';
@@ -432,6 +433,23 @@ async function patientPortalSession(request: Request, env: Env): Promise<Patient
   }).catch(() => null);
 
   return { id: String(row.id), patient_id: String(row.patient_id), expires_at: String(row.expires_at) };
+}
+
+/** Consentimiento simple: exige sesión activa y contraseña introducida recientemente. */
+async function patientSimpleSignatureSession(request: Request, env: Env):
+ Promise<{patient_id:string;id:string;fresh_password:boolean}|null>{
+ const session=await patientPortalSession(request,env);
+ if(!session)return null;
+ const token=cookieValue(request,PATIENT_PORTAL_COOKIE);
+ if(!token.startsWith("pwd2_"))return {patient_id:session.patient_id,id:session.id,fresh_password:false};
+ const response=await fetch(RESOURCE_SUPABASE+"/rest/v1/patient_portal_sessions?select=created_at&id=eq."+
+  encodeURIComponent(session.id)+"&limit=1",{headers:serviceHeaders(env),cache:"no-store"}).catch(()=>null);
+ if(!response?.ok)return {patient_id:session.patient_id,id:session.id,fresh_password:false};
+ const items=await response.json().catch(()=>[]) as Array<{created_at?:string}>;
+ const created=items[0]?.created_at?Date.parse(items[0].created_at):NaN;
+ const age=Date.now()-created;
+ return {patient_id:session.patient_id,id:session.id,fresh_password:
+  Number.isFinite(age)&&age>=0&&age<15*60*1000};
 }
 
 function firstName(value: unknown): string {
@@ -2283,6 +2301,7 @@ export default {
     if (url.pathname.replace(/\/$/, "") === "/api/admin/invoices/email") return billingInvoiceEmail(request, env, verifyEditorialOwner);
     if (url.pathname.replace(/\/$/, "") === "/api/admin/patient-documents-email") return manualPatientDocumentsEmail(request, env, verifyEditorialOwner, patientPortalSameOrigin);
     if (url.pathname.replace(/\/$/, "") === "/api/admin/clinical-consent-packet") return clinicalConsentPacket(request, env, verifyEditorialOwner, patientPortalSameOrigin);
+    if (url.pathname.replace(/\/$/, "") === "/api/admin/clinical-simple-consents") return clinicalSimpleAdmin(request,env,verifyEditorialOwner,patientPortalSameOrigin);
 
     if (url.pathname === "/api/admin/patient-portal-access" || url.pathname === "/api/admin/patient-portal-access/") return handleAdminPatientPortalAccess(request, env);
     if (url.pathname === "/api/admin/push" || url.pathname === "/api/admin/push/") return adminPushRequest(request, env, verifyEditorialOwner);
@@ -2355,6 +2374,7 @@ export default {
         json: patientPortalJson,
       });
     }
+    if (url.pathname.replace(/\/$/, "") === "/api/patient-portal/clinical-simple-consents") return clinicalSimplePatient(request,env,req=>patientSimpleSignatureSession(req,env),patientPortalSameOrigin);
     if (url.pathname === "/api/patient-portal/session" || url.pathname === "/api/patient-portal/session/") return handlePatientPortalSession(request, env);
     if (url.pathname === "/api/patient-portal/preferences" || url.pathname === "/api/patient-portal/preferences/") return handlePatientPortalPreferences(request, env);
     if (url.pathname === "/api/patient-portal/response" || url.pathname === "/api/patient-portal/response/") return handlePatientPortalResponse(request, env);
