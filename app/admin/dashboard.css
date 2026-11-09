@@ -38,7 +38,7 @@
 .admin-home-priorities{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px}
 .admin-home-priority{display:flex;flex-direction:column-reverse;justify-content:space-between;gap:10px;min-width:0;min-height:122px;padding:21px;border:1px solid var(--admin-line);border-radius:12px;background:var(--admin-surface);text-decoration:none;color:var(--admin-text);transition:box-shadow .15s,border-color .15s}
 .admin-hub-details .admin-hub-section-heading>a{color:var(--admin-action);font-size:.82rem}
-.admin-hub-details .admin-home-priorities{margin-bottom:16px;grid-template-columns:repeat(4,minmax(0,1fr))}
+.admin-hub-details .admin-home-priorities{margin-bottom:16px}
 .admin-hub-details .admin-home-priority{min-height:100px}
 .admin-home-daily .admin-home-priority{flex-direction:column;justify-content:flex-start;gap:8px;min-height:128px}
 .admin-home-daily .admin-home-priority strong{font-size:clamp(1.2rem,2vw,1.5rem);line-height:1.15}

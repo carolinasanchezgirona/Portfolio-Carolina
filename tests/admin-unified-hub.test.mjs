@@ -11,7 +11,7 @@ const econ=read("public/admin-economia.js");
 const access=read("public/clinical-access.js");
 const clinic=read("public/admin-clinica.js");
 
-test("one central admin route for all six management sections",()=>{
+test("one central admin route for the main management sections",()=>{
   assert.match(page,/Panel de administración/);
   assert.match(page,/index: false/);
   for(const link of [
@@ -19,8 +19,7 @@ test("one central admin route for all six management sections",()=>{
     "/admin/agenda/",
     "/admin/economia/",
     "/admin/articulos/",
-    "/admin/recursos/",
-    "/admin/preguntas/"
+    "/admin/recursos/"
   ]) assert.ok(page.includes(link),"Missing "+link);
   for(const id of [
     "admin-home","admin-home-loading","admin-home-date",
@@ -31,6 +30,8 @@ test("one central admin route for all six management sections",()=>{
   ]) assert.equal((page.match(new RegExp('id="'+id+'"','g'))||[]).length,1,id);
   assert.doesNotMatch(page,/Pendientes clínicos|Tareas clínicas/);
   assert.doesNotMatch(client,/clinical_admin_tasks\?select/);
+  assert.doesNotMatch(page,/\/admin\/preguntas\//);
+  assert.doesNotMatch(client,/expert_questions\?select|\/admin\/preguntas\//);
   assert.match(page,/Contabilidad/);
   assert.match(page,/Centro editorial/);
   assert.match(page,/Mi espacio/);

@@ -166,7 +166,6 @@
     const realAppointments = "&or=(patient_email.is.null,patient_email.neq.bloqueo@agenda.interno)";
     const results = await Promise.allSettled([
       get("appointment_bookings?select=id,patient_name,status,starts_at,service_code&starts_at=gte."+encodeURIComponent(start)+"&starts_at=lt."+encodeURIComponent(end)+realAppointments+"&order=starts_at.asc&limit=200"),
-      get("expert_questions?select=id,status,created_at,category,question_public&status=neq.published&status=neq.discarded&order=created_at.asc&limit=100"),
       get("articles?select=id,title,status,scheduled_at,updated_at&or=(status.eq.draft,status.eq.scheduled)&order=updated_at.desc&limit=100"),
       get("digital_resource_orders?select=id,payment_status,amount_total,currency,created_at,paid_at&order=created_at.desc&limit=100"),
       get("billing_invoices?select=id,status,total_cents,recipient_name,issue_date,created_at&order=created_at.desc&limit=1000"),
@@ -182,11 +181,10 @@
       return;
     }
 
-    const [a,q,ar,o,bi,br,issuer,upcoming,messages] = results;
-    const appointments=resultOf(a), questions=resultOf(q), articles=resultOf(ar),
+    const [a,ar,o,bi,br,issuer,upcoming,messages] = results;
+    const appointments=resultOf(a), articles=resultOf(ar),
       orders=resultOf(o), invoices=resultOf(bi), receipts=resultOf(br), settings=resultOf(issuer);
     const todayActive = appointments.filter(row => !["cancelled","canceled"].includes(String(row.status||"")));
-    const pendingQuestions = questions.filter(row => !["published","discarded"].includes(row.status));
     const scheduled = articles.filter(row => row.status === "scheduled" && row.scheduled_at);
     const ordersPaid = orders.filter(row => ["paid","complete","succeeded"].includes(String(row.payment_status||"").toLowerCase()));
 
@@ -206,7 +204,6 @@
     const priorities = document.querySelector("#admin-home-priorities");
     if (priorities) priorities.innerHTML = [
       priorityCard("/admin/economia/",ready(bi)&&ready(br)?numberFormat.format(open.length):"—","facturas por cobrar",open.length>0),
-      priorityCard("/admin/preguntas/",ready(q)?numberFormat.format(pendingQuestions.length):"—","preguntas pendientes",pendingQuestions.length>0),
       priorityCard("/admin/articulos/",ready(ar)?numberFormat.format(scheduled.length):"—","artículos programados"),
       priorityCard("/admin/recursos/",ready(o)?numberFormat.format(ordersPaid.length):"—","ventas recientes de recursos"),
     ].join("");
@@ -247,14 +244,10 @@
         '</span></div><small>'+esc(row.value)+'</small></div>',"Sin movimiento económico.");
     } else unavailable("#admin-home-economy");
 
-    if(ready(q)&&ready(ar)){
-      const editorial=[
-        ...pendingQuestions.slice(0,3).map(row=>({type:"Pregunta",title:row.question_public||row.category||"Pregunta pendiente",meta:row.status})),
-        ...articles.slice(0,3).map(row=>({type:"Artículo",title:row.title||"Artículo sin título",meta:row.status})),
-      ];
-      renderList("#admin-home-editorial",editorial,row =>
-        '<div class="admin-home-item"><div><strong>'+esc(row.title)+
-        '</strong><span>'+esc(row.type)+'</span></div><small>'+esc(row.meta||"")+'</small></div>',
+    if(ready(ar)){
+      renderList("#admin-home-editorial",articles.slice(0,3),row =>
+        '<div class="admin-home-item"><div><strong>'+esc(row.title||"Artículo sin título")+
+        '</strong><span>Artículo</span></div><small>'+esc(row.status||"")+'</small></div>',
         "No hay pendientes editoriales destacados.");
     } else unavailable("#admin-home-editorial");
 

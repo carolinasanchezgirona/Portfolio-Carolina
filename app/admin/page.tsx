@@ -40,7 +40,6 @@ const sections: { href: string; icon: IconName; eyebrow: string; title: string; 
   { href: "/admin/clinica/materiales-externos/", icon: "resources", eyebrow: "Herramientas clínicas", title: "Biblioteca clínica", detail: "Añadir, editar, clasificar, descargar, archivar y asignar materiales a pacientes.", secondary: "Gestionar biblioteca", tone: "turquoise" },
   { href: "/admin/marketing/", icon: "editorial", eyebrow: "Marketing", title: "Marketing", detail: "Suscriptores, captación y conexión con Brevo.", secondary: "Ver captación", tone: "coral" },
   { href: "/admin/recursos/", icon: "resources", eyebrow: "Materiales digitales", title: "Recursos", detail: "Publicación, materiales gratuitos y de pago, pedidos y descargas.", secondary: "Administrar recursos", tone: "turquoise" },
-  { href: "/admin/preguntas/", icon: "questions", eyebrow: "Participación", title: "Preguntas", detail: "Revisar, preparar y publicar las preguntas recibidas.", secondary: "Revisar preguntas", tone: "coral" },
 ];
 
 export default function AdminHomePage() {
@@ -164,7 +163,7 @@ export default function AdminHomePage() {
         </div>
       </section>
       <Script src="/clinic-pwa.js?v=20261020-android-native-1" strategy="afterInteractive" />
-      <Script src="/admin-dashboard.js?v=20261107-daily-hub-1" strategy="afterInteractive" />
+      <Script src="/admin-dashboard.js?v=20261109-daily-hub-2" strategy="afterInteractive" />
     </main>
   );
 }
