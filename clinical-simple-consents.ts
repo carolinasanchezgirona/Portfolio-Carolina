@@ -236,18 +236,24 @@ export async function clinicalSimplePatient(request:Request,env:Env,
   if(!patient||patient.status==="archived"||!patient.portal_access_enabled)return json({error:"Acceso no autorizado."},401);
   const params=new URL(request.url).searchParams;
   if(request.method==="GET"){
-   if(params.has("document_id")){
-    const docId=params.get("document_id")||"";
+   if(params.has("document_id")||params.has("evidence_id")){
+    const evidenceRequested=params.has("evidence_id");
+    const docId=params.get(evidenceRequested?"evidence_id":"document_id")||"";
     if(!UUID.test(docId))return json({error:"Documento no válido."},400);
     const row=await findConsent(env,docId);
     if(!row||row.patient_id!==session.patient_id||!row.original_path||!row.original_sha256||
       !["pending","email_accepted","email_unknown","recording","archived"].includes(row.status))
      return json({error:"Documento no disponible para esta cuenta."},404);
-    const bytes=await storageGet(env,row.original_path);
-    if(await sha(bytes)!==row.original_sha256)throw Error("La integridad del documento no se ha podido verificar.");
+    if(evidenceRequested&&(row.status!=="archived"||!row.evidence_path||!row.evidence_sha256))
+     return json({error:"El acta no está archivada."},404);
+    const path=evidenceRequested?row.evidence_path!:row.original_path;
+    const expected=evidenceRequested?row.evidence_sha256!:row.original_sha256;
+    const bytes=await storageGet(env,path);
+    if(await sha(bytes)!==expected)throw Error("La integridad del documento no se ha podido verificar.");
     const buffer=new Uint8Array(bytes.length);buffer.set(bytes);
     return new Response(buffer.buffer,{headers:{
-     "Content-Type":"application/pdf","Content-Disposition":'attachment; filename="consentimiento-informado.pdf"',
+     "Content-Type":"application/pdf","Content-Disposition":evidenceRequested?
+      'attachment; filename="acta-aceptacion-electronica.pdf"':'attachment; filename="consentimiento-informado.pdf"',
      "Cache-Control":"private, no-store","X-Content-Type-Options":"nosniff","Referrer-Policy":"no-referrer"
     }});
    }
