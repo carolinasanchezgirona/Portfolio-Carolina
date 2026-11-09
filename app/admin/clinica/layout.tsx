@@ -30,6 +30,7 @@ export default function ClinicaLayout({ children }: Readonly<{ children: React.R
       <Script src="/clinic-ux-guards.js?v=20260915-1" strategy="afterInteractive" />
       <Script src="/clinic-patient-dashboard.js?v=20261109-theme-1" strategy="afterInteractive" />
       <Script src="/clinic-goals-manager.js?v=20261109-theme-1" strategy="afterInteractive" />
+      <Script src="/clinic-process-reviews.js?v=20261109-1" strategy="afterInteractive" />
       <Script src="/clinic-scale-trends.js?v=20261109-theme-1" strategy="afterInteractive" />
       <Script src="/clinic-template-library.js?v=20261109-theme-1" strategy="afterInteractive" />
       <Script src="/clinic-patient-admin-enhancements.js?v=20261009-fixes-2" strategy="afterInteractive" />
