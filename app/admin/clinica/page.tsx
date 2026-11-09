@@ -355,6 +355,20 @@ export default function AdminClinicaPage() {
                 <a href="https://www.signaturit.com/es/" target="_blank" rel="noopener noreferrer">Acceder a proveedor de firma electrónica</a>
               </div>
               <p id="clinic-signature-message" className="clinic-message" role="status" aria-live="polite" />
+              <div className="clinic-signature-send-box">
+                <h4>Solicitud de firma electrónica verificada</h4>
+                <p>Solo se envía cuando tú pulses el botón. Requiere una cuenta Docusign con verificación de identidad, contrato de encargo de tratamiento revisado y conexión autorizada.</p>
+                <p>Destinatario de la ficha: <strong id="clinic-signature-email">Abre una ficha</strong></p>
+                <label className="clinic-signature-check">
+                  <input id="clinic-signature-adult" type="checkbox" />
+                  He comprobado que es una persona adulta que puede consentir y firmará por sí misma, que he ofrecido resolver sus dudas y que no requiere firma por representación.
+                </label>
+                <button id="clinic-signature-send" className="clinic-primary" type="button" disabled>Enviar para firma verificada</button>
+                <p id="clinic-signature-request-message" className="clinic-message" role="status" aria-live="polite" />
+                <h4>Estado de las solicitudes y evidencias</h4>
+                <div id="clinic-signature-requests" className="clinic-signature-history" />
+              </div>
+
               <div className="clinic-signature-docusign" aria-label="Firma electrónica avanzada con verificación de identidad">
                 <h4>Firma verificada · envío exclusivamente manual</h4>
                 <p id="clinic-signature-provider-status" className="clinic-message" role="status">Consultando configuración del proveedor…</p>
