@@ -1,0 +1,23 @@
+/* Ficha clínica: navegación única, contenido clínico prioritario y herramientas contextuales. */
+#clinic-patient-dialog .clinic-patient-workspace-nav{display:flex;gap:7px;overflow-x:auto;overscroll-behavior-x:contain;scrollbar-width:thin;padding:12px 0 9px;margin:16px 0 8px;position:sticky;top:0;z-index:5;background:var(--admin-surface);border-bottom:1px solid var(--admin-line)}
+#clinic-patient-dialog .clinic-workspace-tab{flex:0 0 auto;appearance:none;background:var(--admin-soft);border:1px solid var(--admin-line);border-radius:7px;padding:11px 15px;color:var(--admin-muted);font:600 .85rem var(--font-inter),system-ui,sans-serif;cursor:pointer}
+#clinic-patient-dialog .clinic-workspace-tab.active{background:var(--admin-action);border-color:var(--admin-action);color:#fff}
+#clinic-patient-dialog .clinic-workspace-tab:focus-visible{outline:3px solid var(--admin-accent);outline-offset:2px}
+#clinic-patient-dialog .clinic-workspace-panel[hidden]{display:none!important}
+#clinic-patient-dialog .clinic-workspace-panel{padding:10px 0 20px;min-height:200px}
+#clinic-patient-dialog .clinic-workspace-panel-heading{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 12px;margin:5px 0 20px;align-items:start}
+#clinic-patient-dialog .clinic-workspace-panel-heading h3{grid-column:1;grid-row:1;font-family:var(--font-newsreader),Georgia,serif;font-size:1.2rem;font-weight:550;color:var(--admin-action);margin:0 0 5px}
+#clinic-patient-dialog .clinic-workspace-panel-heading p{grid-column:1;grid-row:2;font-size:.82rem;color:var(--admin-muted);margin:0}
+#clinic-patient-dialog :is(.clinic-workspace-shortcuts,.clinic-workspace-panel-actions){grid-column:2;grid-row:1 / span 2;display:flex;flex-wrap:wrap;gap:7px;justify-content:flex-end}
+#clinic-patient-dialog :is(.clinic-workspace-shortcuts,.clinic-workspace-panel-actions) button{min-height:38px;padding:8px 12px;font-size:.79rem}
+#clinic-patient-dialog .clinic-workspace-panel>.clinic-record-section{margin-bottom:16px}
+#clinic-patient-dialog .clinic-workspace-panel>.clinic-form-grid{margin:12px 0}
+#clinic-patient-dialog .clinic-patient-page-content>.clinic-form-actions-bottom{position:sticky;bottom:0;z-index:4;padding:12px 16px;border-top:1px solid var(--admin-line);background:color-mix(in srgb,var(--admin-surface) 97%,transparent)}
+#clinic-patient-dialog .clinic-workspace-panel>.clinic-patient-tools-grid{display:block}
+#clinic-patient-dialog .clinic-patient-admin-tools{margin:14px 0;padding:10px 14px;border:1px solid var(--admin-line);border-radius:12px;background:var(--admin-surface)}
+#clinic-patient-dialog .clinic-patient-admin-tools>summary{min-height:35px;padding:6px 0;cursor:pointer;color:var(--admin-action);font-weight:700}
+#clinic-patient-dialog .clinic-patient-admin-tools .clinic-record-actions{margin:9px 0}
+#clinic-patient-dialog .clinic-patient-admin-tools .clinic-record-action-note{margin:8px 0;color:var(--admin-muted)}
+@media(max-width:760px){#clinic-patient-dialog .clinic-workspace-panel-heading{grid-template-columns:minmax(0,1fr)}#clinic-patient-dialog :is(.clinic-workspace-shortcuts,.clinic-workspace-panel-actions){grid-column:1;grid-row:auto;justify-content:flex-start;margin-top:8px}}
+@media(max-width:640px){#clinic-patient-dialog .clinic-workspace-tab{padding:10px 13px}#clinic-patient-dialog .clinic-patient-page-content>.clinic-form-actions-bottom{flex-wrap:wrap}#clinic-patient-dialog .clinic-workspace-panel{min-height:100px}#clinic-patient-dialog :is(.clinic-workspace-shortcuts,.clinic-workspace-panel-actions) button{flex:1 1 auto}}
+@media(prefers-reduced-motion:reduce){#clinic-patient-dialog .clinic-patient-workspace-nav{scroll-behavior:auto}}

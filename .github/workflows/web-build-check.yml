@@ -86,10 +86,11 @@ jobs:
         run: |
           node --check public/clinic-patient-workspace.js
           node --check public/admin-clinica.js
+          node --check public/clinic-patient-workspace.js
           node --check public/clinic-patient-dashboard.js
           node --check public/clinic-goals-manager.js
           node --check public/clinic-scale-trends.js
-          node --test tests/clinic-unified-patient.test.mjs tests/clinic-patient-search-privacy.test.mjs
+          node --test tests/clinic-unified-patient.test.mjs tests/clinic-patient-workspace-ux.test.mjs tests/clinic-patient-search-privacy.test.mjs
 
       - name: Verificar notificaciones seguras de documentos
         run: |
