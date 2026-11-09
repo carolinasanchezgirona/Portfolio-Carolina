@@ -63,11 +63,8 @@
     </form>`;
   document.body.append(dialog);
 
-  const style = document.createElement("style");
-  style.textContent = `
-    .waitlist-heading{display:flex;align-items:flex-end;justify-content:space-between;gap:18px;padding:22px;border:1px solid rgba(45,50,47,.14);border-radius:16px;background:#fffdf9}.waitlist-heading h2{margin:0;font-family:Newsreader,Georgia,serif;font-size:1.8rem;font-weight:500}.waitlist-match-panel{display:grid;grid-template-columns:minmax(220px,1.5fr) repeat(3,minmax(130px,.65fr)) auto;gap:10px;align-items:end;margin:14px 0;padding:16px;border:1px solid #9EDCE7;border-radius:14px;background:#EAF6F8}.waitlist-match-panel p{margin:4px 0 0;color:#52615a;font-size:.78rem}.waitlist-match-panel label,.waitlist-filters{font-size:.8rem;font-weight:700}.waitlist-match-panel input,.waitlist-match-panel select,.waitlist-filters input,.waitlist-filters select{width:100%;min-height:42px;padding:9px 11px;border:1px solid #c9dfe4;border-radius:10px;background:#fffdf9;font:inherit}.waitlist-filters{display:grid;grid-template-columns:180px 220px 1fr;gap:10px;margin:14px 0}.waitlist-summary{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0 14px}.waitlist-summary span{padding:6px 10px;border-radius:999px;background:#EAF6F8;color:#075A68;font-size:.76rem;font-weight:700}.waitlist-list{display:grid;gap:10px}.waitlist-card{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px 18px;padding:17px 18px;border:1px solid rgba(45,50,47,.14);border-left:4px solid #11A6C2;border-radius:14px;background:#fffdf9}.waitlist-card.priority-1{border-left-color:#9b3516}.waitlist-card.priority-3{border-left-color:#9aa7ae}.waitlist-card.is-paused,.waitlist-card.is-removed,.waitlist-card.is-booked{opacity:.62}.waitlist-main h3{margin:0 0 5px;font-size:1rem}.waitlist-meta{display:flex;gap:8px;flex-wrap:wrap;color:#667983;font-size:.78rem}.waitlist-notes{grid-column:1/-1;margin:0;color:#625b54;font-size:.8rem;line-height:1.5}.waitlist-actions{display:flex;align-items:center;justify-content:flex-end;gap:7px;flex-wrap:wrap}.waitlist-actions button{min-height:34px;padding:6px 10px;border-radius:999px;font:inherit;font-size:.74rem;font-weight:700;cursor:pointer}.waitlist-chip{padding:5px 8px;border-radius:999px;background:#f2f5f6;color:#52615a;font-size:.7rem;font-weight:700}.waitlist-chip.match{background:#dff5ea;color:#23613a}.waitlist-empty{padding:38px;border:1px dashed #d8ccbc;border-radius:15px;background:#fffdf9;color:#7b7167;text-align:center}.waitlist-days{margin:16px 0 0;padding:12px;border:1px solid #d8ccbc;border-radius:11px}.waitlist-days legend{padding:0 5px;font-size:.84rem;font-weight:700}.waitlist-days>div{display:flex;gap:7px;flex-wrap:wrap}.waitlist-days label{display:flex;align-items:center;gap:5px;margin:0;padding:7px 9px;border:1px solid #d8ccbc;border-radius:999px;font-size:.76rem}.waitlist-days small{display:block;margin-top:8px;color:#7b7167}.waitlist-dialog textarea{width:100%;padding:10px 12px;border:1px solid #d8ccbc;border-radius:10px;background:#fffdf9;font:inherit;resize:vertical}@media(max-width:900px){.waitlist-match-panel{grid-template-columns:1fr 1fr}.waitlist-match-panel>div:first-child{grid-column:1/-1}.waitlist-filters{grid-template-columns:1fr 1fr}.waitlist-filters input{grid-column:1/-1}}@media(max-width:620px){.waitlist-heading{align-items:stretch;flex-direction:column;padding:18px}.waitlist-heading button{width:100%}.waitlist-match-panel,.waitlist-filters{grid-template-columns:1fr}.waitlist-match-panel>div:first-child,.waitlist-filters input{grid-column:auto}.waitlist-card{grid-template-columns:1fr}.waitlist-actions{justify-content:flex-start}.waitlist-notes{grid-column:1}}
-  `;
-  document.head.append(style);
+  // Estilos en app/admin/agenda/waitlist.css: no inyectar CSS desde JavaScript.
+
 
   const list = section.querySelector("#waitlist-list");
   const summary = section.querySelector("#waitlist-summary");
@@ -198,8 +195,9 @@
   }
 
   function showView(){
-    [todayView,weekView,patientsView,document.querySelector("#tomorrow-view"),document.querySelector("#month-view")].filter(Boolean).forEach(v=>v.hidden=true);
-    section.hidden=false; tabs.querySelectorAll("button").forEach(b=>b.classList.toggle("active",b===waitButton)); load();
+    document.querySelectorAll(".admin-page .admin-view").forEach(view => { view.hidden = view !== section; });
+    tabs.querySelectorAll("button").forEach(b=>b.classList.toggle("active",b===waitButton));
+    load();
   }
   waitButton.addEventListener("click",showView);
   tabs.querySelectorAll("button:not(#view-waitlist)").forEach(b=>b.addEventListener("click",()=>{section.hidden=true;waitButton.classList.remove("active");}));
