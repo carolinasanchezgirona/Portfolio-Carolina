@@ -204,6 +204,7 @@ jobs:
           fi
           python3 tests/mood-chart-mobile-browser.py
           python3 tests/public-questions-retirement-browser.py
+          python3 tests/clinical-process-reviews-browser.py
 
       - name: Verificar salida estática
         run: |
