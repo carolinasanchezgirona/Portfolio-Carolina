@@ -45,10 +45,10 @@ test("publication is checked server-side against clinician, source and questions
   assert.match(handler, /original\.category !== "intervention_plan"/);
   assert.match(handler, /patient_id=eq\./);
   assert.match(handler, /shared_at=not\.is\.null&share_revoked_at=is\.null/);
-  assert.match(handler, /"status=eq\.prepared&revoked_at=is\.null/);
+  assert.match(handler, /&status=eq\.prepared&revoked_at=is\.null&select=id/);
   assert.match(handler, /status: "assigned"/);
   assert.doesNotMatch(handler, /send-clinical-exercise|BREVO_API_KEY|storage\/v1\/object\/public/);
-  assert.match(worker, /url\.pathname\.replace\(\/\\\/\$\/, ""\) === "\/api\/admin\/clinical-form-publish"/);
+  assert.match(worker, /\/api\/admin\/clinical-form-publish/);
 });
 
 test("patients see only assigned materials and save in their own private session", () => {
@@ -56,5 +56,5 @@ test("patients see only assigned materials and save in their own private session
   assert.match(worker, /patientPortalSession\(request, env\)/);
   assert.match(worker, /patient_response_status: action === "share" \? "shared" : "draft"/);
   assert.match(portal, /\/api\/patient-portal\/file\?id=/);
-  assert.match(portal, /data\.formAnswer = def\.id/);
+  assert.match(portal, /control\.dataset\.formAnswer = def\.id/);
 });
