@@ -35,66 +35,58 @@ export default function ComoTrabajoPage() {
         </div>
       </section>
 
-      <ModeloVisual />
+      <section className="modelo-integrado" aria-labelledby="modelo-adaptacion-title">
+        <div className="editorial-wrap modelo-integrado-grid">
+          <ModeloVisual />
 
-      <section className="modelo-extra" aria-labelledby="modelo-adaptacion-title">
-        <div className="editorial-wrap modelo-extra-grid">
-          <div className="modelo-extra-main">
-            <h2 id="modelo-adaptacion-title">La forma de trabajar se adapta a lo que necesitas</h2>
-            <p>
-              Este esquema organiza mi práctica clínica, pero no es una terapia nueva ni un
-              método validado de forma independiente. Según el motivo de consulta,
-              el proceso puede centrarse en la intervención psicológica o en una evaluación
-              neuropsicológica específica.
+          <div className="modelo-integrado-copy">
+            <p className="editorial-section-eyebrow">El enfoque en consulta</p>
+            <h2 id="modelo-adaptacion-title">El proceso se adapta a lo que necesitas</h2>
+            <p className="modelo-integrado-lead">
+              La evaluación y la formulación clínica ayudan a decidir por dónde empezar.
+              Esta estructura organiza mi forma de trabajar, pero no es una terapia nueva
+              ni un método validado de manera independiente.
             </p>
 
-            <div className="modelo-domain-grid">
-              <article className="captacion-card">
+            <div className="modelo-ambitos">
+              <article className="modelo-ambito">
                 <p className="captacion-index">PSICOLOGÍA SANITARIA</p>
                 <h3>Intervención psicológica</h3>
                 <p>
-                  El trabajo se orienta a las dificultades emocionales o del comportamiento
-                  y a su repercusión en la vida cotidiana, con objetivos acordados contigo.
+                  Trabajamos las dificultades emocionales y del comportamiento, atendiendo
+                  a su repercusión cotidiana y a los cambios que para ti son importantes.
                 </p>
                 <a href="/psicologia/">Conocer psicología →</a>
               </article>
-              <article className="captacion-card">
+              <article className="modelo-ambito">
                 <p className="captacion-index">NEUROPSICOLOGÍA</p>
                 <h3>Evaluación y orientación</h3>
                 <p>
-                  Se integran la historia clínica, las pruebas indicadas y el funcionamiento
-                  cotidiano para comprender el perfil cognitivo y orientar recomendaciones.
+                  La historia clínica, las pruebas indicadas y la funcionalidad permiten
+                  interpretar el perfil cognitivo y ofrecer recomendaciones individualizadas.
                 </p>
                 <a href="/evaluacion-neuropsicologica/">Conocer neuropsicología →</a>
               </article>
             </div>
 
-            <div className="modelo-extras-footer">
-              <h3>¿Y entre sesiones?</h3>
+            <div className="modelo-integrado-footer">
+              <h3>Recursos entre sesiones, cuando aportan valor</h3>
               <p>
-                Cuando aporta valor, podemos utilizar <a href="/mi-espacio/">Mi espacio</a> para
-                compartir materiales y objetivos concretos. Los contenidos se facilitan de
-                forma individualizada: las notas clínicas internas no se publican
-                automáticamente y los ejercicios no sustituyen las sesiones.
+                Puedo compartir materiales y objetivos concretos en
+                <a href="/mi-espacio/"> Mi espacio</a>. Se seleccionan para cada caso y
+                no sustituyen las sesiones. Las notas clínicas internas no se publican
+                automáticamente en el portal.
               </p>
             </div>
-          </div>
 
-          <aside className="seo-sidebar" aria-label="Información práctica">
-            <div className="seo-card">
-              <h2>Tu primera visita</h2>
-              <p>
-                Es un espacio para explicar qué te preocupa, aportar antecedentes
-                relevantes y valorar juntos los siguientes pasos.
-              </p>
-              <ul className="seo-facts">
-                <li><span>Duración</span><strong>60 minutos</strong></li>
-                <li><span>Modalidades</span><strong>Presencial y online</strong></li>
-                <li><span>Ubicación</span><strong>Arenys de Mar</strong></li>
-              </ul>
+            <aside className="modelo-primera-visita" aria-label="Información de la primera visita">
+              <div>
+                <strong>Primera visita</strong>
+                <p>60 minutos · Presencial en Arenys de Mar u online</p>
+              </div>
               <a className="editorial-btn editorial-btn-primary" href="/cita/">Solicitar cita</a>
-            </div>
-          </aside>
+            </aside>
+          </div>
         </div>
       </section>
     </main>
