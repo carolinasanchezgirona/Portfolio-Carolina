@@ -764,3 +764,16 @@ body.space-print-patient-material .space-patient-material[data-print-material] :
 .space-page .mood-tracker-heading h3{color:#304750}
 .space-page .mood-tracker-private{background:#EDEDED;color:#304750}
 .space-page .mood-friend-panel{border-color:rgba(48,71,80,.16)}
+
+
+/* Respuestas estructuradas dentro de los objetivos terapéuticos */
+.space-interactive-fields{border-top:1px solid #D7E5EE;margin-top:18px;padding-top:16px;display:grid;gap:16px}
+.space-interactive-fields h5{font-size:1.05rem;color:#173A5E;margin:0 0 3px}
+.space-interactive-field{display:flex;flex-direction:column;gap:7px}
+.space-interactive-field strong{font-size:1rem;font-weight:650}
+.space-interactive-help{font-size:.94rem;line-height:1.5;color:#526577}
+.space-interactive-field input,.space-interactive-field select,.space-interactive-field textarea{display:block;width:100%;max-width:100%;border:1px solid #B7C9D6;border-radius:9px;background:#fff;color:#243746;min-height:44px;padding:10px 12px;font:inherit;font-size:16px}
+.space-interactive-field textarea{min-height:110px;resize:vertical}
+.space-interactive-field :is(input,select,textarea):focus-visible{outline:3px solid #08A6A0;outline-offset:2px}
+
+.space-interactive-source{border:1px solid #D7E5EE;border-radius:12px;padding:16px;margin:17px 0;background:#F6FAFB}.space-interactive-source p{margin:0 0 12px;line-height:1.6}.space-interactive-source a{display:inline-flex;align-items:center;justify-content:center;min-height:44px;text-decoration:none}.space-interactive-source a:focus-visible{outline:3px solid #08A6A0;outline-offset:3px}

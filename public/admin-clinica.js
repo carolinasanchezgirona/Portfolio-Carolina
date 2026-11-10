@@ -74,6 +74,7 @@
     exerciseObjective: $("#clinic-exercise-objective"), exerciseExample: $("#clinic-exercise-example"),
     exerciseRecord: $("#clinic-exercise-record"), exerciseSafety: $("#clinic-exercise-safety"), exerciseRemember: $("#clinic-exercise-remember"),
     exerciseSessionQuestions: $("#clinic-exercise-session-questions"),
+    interactiveFormList: $("#clinic-interactive-fields"), interactiveAddField: $("#clinic-add-interactive-field"),
     exerciseRationale: $("#clinic-exercise-rationale"), exerciseEmail: $("#clinic-exercise-email"), exerciseEmailSecondary: $("#clinic-exercise-email-secondary"),
     exerciseMessage: $("#clinic-exercise-message"), saveExercise: $("#clinic-save-exercise"),
     materialQuality: $("#clinic-material-quality"), materialQualityLabel: $("#clinic-material-quality-label"), materialQualityNote: $("#clinic-material-quality-note"),
@@ -605,6 +606,107 @@
     };
   }
 
+
+  const interactiveTypes = [
+    ["short_text", "Texto corto"], ["long_text", "Texto extenso"],
+    ["scale_0_10", "Escala 0–10"], ["date", "Fecha"],
+    ["yes_no", "Sí / No / No aplica"], ["choice", "Elegir una opción"],
+  ];
+  let interactiveFormFields = [];
+  let formSourceDocumentId = null;
+  let editingAssignmentId = null;
+  let formSourceDocumentName = "";
+
+  function normalizedInteractiveFields(value) {
+    if (!Array.isArray(value)) return [];
+    const used = new Set();
+    return value.slice(0, 30).map(raw => {
+      if (!raw || typeof raw !== "object") return null;
+      const id = /^[A-Za-z0-9_-]{1,50}$/.test(String(raw.id || "")) ? String(raw.id)
+        : "f_" + crypto.randomUUID().replaceAll("-", "").slice(0, 12);
+      const type = interactiveTypes.some(item => item[0] === raw.type) ? raw.type : "long_text";
+      const label = String(raw.label || "").slice(0, 200);
+      if (!label.trim() || used.has(id)) return null;
+      used.add(id);
+      return { id, label, type, help: String(raw.help || "").slice(0, 500),
+        options: Array.isArray(raw.options) ? raw.options.filter(option => typeof option === "string").map(option => option.slice(0, 100)).slice(0, 12) : [] };
+    }).filter(Boolean);
+  }
+
+  function renderInteractiveFields() {
+    if (!els.interactiveFormList) return;
+    els.interactiveFormList.replaceChildren();
+    interactiveFormFields.forEach((field, index) => {
+      const card = document.createElement("div");
+      card.className = "clinic-interactive-field";
+      const heading = document.createElement("div");
+      heading.className = "clinic-interactive-field-head";
+      const title = document.createElement("strong");
+      title.textContent = "Pregunta " + (index + 1);
+      const remove = document.createElement("button");
+      remove.type = "button";
+      remove.className = "clinic-text";
+      remove.textContent = "Eliminar";
+      remove.addEventListener("click", () => {
+        interactiveFormFields.splice(interactiveFormFields.indexOf(field), 1);
+        renderInteractiveFields();
+      });
+      heading.append(title, remove);
+      card.append(heading);
+
+      const caption = document.createElement("label");
+      caption.textContent = "Pregunta / indicación";
+      const question = document.createElement("textarea");
+      question.rows = 2;
+      question.maxLength = 200;
+      question.value = field.label;
+      question.placeholder = "Ej. ¿Qué ocurrió antes de iniciar la tarea?";
+      question.addEventListener("input", () => { field.label = question.value.slice(0, 200); });
+      caption.append(question);
+      card.append(caption);
+
+      const kind = document.createElement("label");
+      kind.textContent = "Tipo de respuesta";
+      const select = document.createElement("select");
+      for (const [value, text] of interactiveTypes) {
+        const option = document.createElement("option");
+        option.value = value;
+        option.textContent = text;
+        select.append(option);
+      }
+      select.value = field.type;
+      kind.append(select);
+      card.append(kind);
+
+      const optionsLabel = document.createElement("label");
+      optionsLabel.textContent = "Opciones de respuesta (una por línea)";
+      const options = document.createElement("textarea");
+      options.rows = 3;
+      options.value = field.options.join("\n");
+      options.addEventListener("input", () => {
+        field.options = options.value.split(/\r?\n/).map(x => x.trim().slice(0, 100)).filter(Boolean).slice(0, 12);
+      });
+      optionsLabel.append(options);
+      card.append(optionsLabel);
+      optionsLabel.hidden = field.type !== "choice";
+      select.addEventListener("change", () => {
+        field.type = select.value;
+        optionsLabel.hidden = field.type !== "choice";
+      });
+
+      const hint = document.createElement("label");
+      hint.textContent = "Ayuda para el paciente (opcional)";
+      const help = document.createElement("textarea");
+      help.rows = 2;
+      help.maxLength = 500;
+      help.value = field.help;
+      help.addEventListener("input", () => { field.help = help.value.slice(0, 500); });
+      hint.append(help);
+      card.append(hint);
+      els.interactiveFormList.append(card);
+    });
+  }
+
   function normalizedPatientDocument(template = null) {
     const type = template?.material_type === "psychoeducation" ? "psychoeducation" : "exercise";
     const defaults = materialPatientDefaults(type, template?.summary || "", template?.instructions || "", template?.duration_minutes);
@@ -664,6 +766,13 @@
     els.exerciseSafety.value = doc.safety_note || "";
     els.exerciseRemember.value = doc.remember || "";
     els.exerciseSessionQuestions.value = Array.isArray(doc.session_questions) ? doc.session_questions.join("\n") : "";
+    interactiveFormFields = normalizedInteractiveFields(doc.form_fields);
+    formSourceDocumentId = /^[0-9a-f-]{36}$/i.test(String(doc.source_document_id || "")) ? String(doc.source_document_id) : null;
+    formSourceDocumentName = String(doc.source_document_name || "").slice(0, 160);
+    const reviewBox = document.getElementById("clinic-form-source-reviewed");
+    if (reviewBox) reviewBox.checked = !!(formSourceDocumentId && doc.conversion_reviewed_at);
+    renderInteractiveFields();
+    renderInteractiveDocumentLink();
     window.ClinicNeuroMaterials?.hydrate(doc);
     renderPatientDocumentQuality(doc);
   }
@@ -685,8 +794,71 @@
       safety_note: els.exerciseSafety.value.trim(),
       remember: els.exerciseRemember.value.trim(),
       session_questions: els.exerciseSessionQuestions.value.split(/\r?\n/).map((item) => item.trim()).filter(Boolean).slice(0, 6),
+      form_fields: normalizedInteractiveFields(interactiveFormFields),
+      source_document_id: formSourceDocumentId,
+      ...(formSourceDocumentId ? { conversion_review_required: true,
+        conversion_reviewed_at: document.getElementById("clinic-form-source-reviewed")?.checked ? new Date().toISOString() : null } : {}),
       ...(window.ClinicNeuroMaterials?.read?.() || { clinical_area: "psychology", visual_blocks: [] })
     };
+  }
+
+
+  // Clinical documents stay in their original private bucket. Only the document's
+  // identifier is linked to the new patient-specific response form.
+  function renderInteractiveDocumentLink() {
+    const note = document.getElementById("clinic-form-source-document");
+    const preview = document.getElementById("clinic-form-source-open");
+    const reviewWrapper = document.getElementById("clinic-form-source-reviewed-wrapper");
+    if (reviewWrapper) reviewWrapper.hidden = !formSourceDocumentId;
+    if (!note || !preview) return;
+    const linked = formSourceDocumentId && clinicalDocuments.find(item =>
+      item.id === formSourceDocumentId && item.patient_id === currentPatient?.id);
+    note.textContent = linked
+      ? "PDF original vinculado: " + linked.file_name + ". Se mantiene disponible en los documentos del paciente."
+      : "No hay un documento de origen vinculado. Puedes crear un ejercicio digital independiente.";
+    preview.hidden = !linked;
+    preview.disabled = !linked;
+    preview.onclick = linked ? async () => {
+      try {
+        const response = await fetch(SUPABASE_URL + "/storage/v1/object/authenticated/clinical-documents/" +
+          linked.file_path.split("/").map(encodeURIComponent).join("/"), { headers: authHeaders(), cache: "no-store" });
+        if (!response.ok) throw new Error("No se ha podido abrir el PDF.");
+        const blob = await response.blob();
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url; a.target = "_blank"; a.rel = "noopener noreferrer";
+        a.click();
+        setTimeout(() => URL.revokeObjectURL(url), 60000);
+      } catch (error) { els.exerciseMessage.textContent = error.message || "No se pudo abrir el documento."; }
+    } : null;
+  }
+
+  function convertPatientPdfToInteractiveForm(doc) {
+    if (!currentPatient || doc.patient_id !== currentPatient.id ||
+        doc.mime_type !== "application/pdf" || !/^[0-9a-f-]{36}$/i.test(String(doc.id))) return;
+    // Never convert automatically: every exercise in the original PDF has to be
+    // transcribed or approved by the treating clinician before it is assigned.
+    openExercise();
+    formSourceDocumentId = doc.id;
+    const reviewBox = document.getElementById("clinic-form-source-reviewed");
+    if (reviewBox) reviewBox.checked = false;
+    formSourceDocumentName = String(doc.file_name || doc.title || "").slice(0, 160);
+    els.exerciseTitle.value = String(doc.title || "Ejercicios por objetivo").slice(0, 160);
+    els.exerciseIntroduction.value = "Este formulario acompaña al documento original compartido en tu espacio privado.";
+    els.exerciseWhy.value = "Anota aquí tus respuestas a las actividades de este objetivo para revisarlas juntos en consulta.";
+    els.exerciseContent.value = "Abre el PDF original vinculado a este objetivo y sigue sus indicaciones. Responde en los campos digitales que se hayan preparado para cada actividad. Puedes guardar un borrador sin compartirlo.";
+    els.exerciseObjective.value = String(doc.title || "").slice(0, 160);
+    els.exerciseRecord.value = "Observaciones o dudas adicionales sobre las actividades.";
+    els.exerciseRemember.value = "No es necesario realizar todo de una vez. Puedes guardar respuestas y continuar más adelante.";
+    els.exerciseFrequency.value = "Según lo acordado en sesión.";
+    els.exerciseDuration.value = "15";
+    els.exerciseExample.value = "Completa primero la actividad del PDF original y registra tu respuesta en el campo correspondiente.";
+    els.exerciseSessionQuestions.value = "¿Qué parte te resultó más útil o difícil?";
+    interactiveFormFields = []; // Never invent questions from a document not yet reviewed.
+    renderInteractiveFields();
+    renderInteractiveDocumentLink();
+    document.getElementById("clinic-interactive-form")?.setAttribute("open", "");
+    els.exerciseMessage.textContent = "Formulario vinculado al PDF original. Añade una pregunta digital por cada ejercicio del documento y revisa el contenido antes de guardar o enviar.";
   }
 
   function applyExerciseTemplate(template) {
@@ -708,6 +880,7 @@
 
   function openExercise(template = null, rationale = "") {
     if (!currentPatient) return;
+    editingAssignmentId = null;
     if (els.materialSearch) els.materialSearch.value = "";
     if(els.materialAiCreate)els.materialAiCreate.disabled=true;
     populateExerciseLibrary(template?.id || "");
@@ -743,6 +916,23 @@
     els.exerciseMessage.textContent = "";
     els.exerciseDialog.showModal();
   }
+
+  function openPreparedExercise(item) {
+    if (!currentPatient || item.patient_id !== currentPatient.id ||
+        item.status !== "prepared" || item.email_status === "sent" || item.revoked_at) return;
+    openExercise();
+    editingAssignmentId = item.id;
+    els.exerciseTitle.value = item.title || "";
+    els.exerciseContent.value = item.content || "";
+    els.exerciseRationale.value = item.rationale || "";
+    if (els.materialType) els.materialType.value = item.patient_document?.material_type || "exercise";
+    fillPatientDocument(normalizedPatientDocument({ patient_document: item.patient_document || {}, material_type: item.patient_document?.material_type || "exercise" }));
+    if (els.materialProcess) {
+      populateMaterialProcessOptions("other");
+    }
+    els.exerciseMessage.textContent = "Editando el borrador existente. Los cambios se guardarán sin duplicarlo. Para habilitar el envío del formulario vinculado a un PDF debes confirmar el cotejo de sus ejercicios originales.";
+  }
+
   function patientStateLabel(value) {
     return ({ pending: "Pendiente", reviewed: "Lo ha revisado", discuss: "Quiere comentarlo en sesión" })[value] || "Pendiente";
   }
@@ -752,8 +942,10 @@
     const record = String(source.record || "").trim();
     const answers = Array.isArray(source.answers) ? source.answers.map((value) => String(value || "").trim()) : [];
     const neuro_answers = Array.isArray(source.neuro_answers) ? source.neuro_answers.slice(0,14).map(value => String(value || "").trim()) : [];
-    if (!record && !answers.some(Boolean) && !neuro_answers.some(Boolean)) return null;
-    return { record, answers, neuro_answers };
+    const form_answers = source.form_answers && typeof source.form_answers === "object" && !Array.isArray(source.form_answers)
+      ? Object.fromEntries(Object.entries(source.form_answers).slice(0, 30).filter(([key, value]) => /^[A-Za-z0-9_-]{1,50}$/.test(key) && typeof value === "string").map(([key, value]) => [key, value.trim()])) : {};
+    if (!record && !answers.some(Boolean) && !neuro_answers.some(Boolean) && !Object.values(form_answers).some(Boolean)) return null;
+    return { record, answers, neuro_answers, form_answers };
   }
 
   function previewFileName(title) {
@@ -812,6 +1004,9 @@
   }
 
   async function sendExistingAssignment(item, resend = false) {
+    if (item.patient_document?.conversion_review_required && !item.patient_document?.conversion_reviewed_at) {
+      throw new Error("Este formulario necesita cotejo profesional con su PDF original antes de enviarse.");
+    }
     els.patientMessage.textContent = resend ? "Reenviando material…" : "Enviando material…";
     const response = await fetch(`${SUPABASE_URL}/functions/v1/send-clinical-exercise`, {
       method: "POST",
@@ -906,6 +1101,16 @@
           block.append(create("strong", "", "Ejercicio " + (index + 1)), create("p", "", answer));
           body.append(block);
         });
+        const fieldDefinitions = Array.isArray(item.patient_document?.form_fields) ? item.patient_document.form_fields : [];
+        for (const [fieldId, answer] of Object.entries(patientResponse.form_answers)) {
+          if (!answer) continue;
+          const field = fieldDefinitions.find(entry => entry.id === fieldId);
+          if (!field) continue;
+          const displayed = ({ si: "Sí", no: "No", no_aplica: "No aplica" })[answer] || answer;
+          const block = create("article");
+          block.append(create("strong", "", String(field.label || "Pregunta")), create("p", "", displayed));
+          body.append(block);
+        }
         if (item.patient_response_shared_at) {
           body.append(create("small", "", `Compartido ${dateShort.format(new Date(item.patient_response_shared_at))}`));
         }
@@ -915,6 +1120,15 @@
 
       const actions = create("div", "clinic-material-row-actions");
 
+      if (item.status === "prepared" && item.email_status !== "sent" && !item.revoked_at) {
+        const edit = create("button", "clinic-secondary", "Editar borrador");
+        edit.type = "button";
+        edit.addEventListener("click", () => openPreparedExercise(item));
+        actions.append(edit);
+        if (item.patient_document?.conversion_review_required && !item.patient_document?.conversion_reviewed_at) {
+          info.append(create("span", "clinic-material-state", "Pendiente de cotejar consignas del PDF original"));
+        }
+      }
       const preview = create("button", "clinic-text", "Ver");
       preview.type = "button";
       preview.addEventListener("click", () => openPatientMaterialPreview(item.title, item.patient_document || { instructions: item.content }, "html", false).catch((error) => { els.patientMessage.textContent = error.message; }));
@@ -928,6 +1142,8 @@
       if (item.email_status !== "sent") {
         const send = create("button", "clinic-secondary", "Enviar");
         send.type = "button";
+        send.disabled = Boolean(item.patient_document?.conversion_review_required && !item.patient_document?.conversion_reviewed_at);
+        if (send.disabled) send.title = "Antes de enviar, abre «Editar borrador» y confirma el cotejo del PDF original.";
         send.addEventListener("click", () => sendExistingAssignment(item, false).catch((error) => { els.patientMessage.textContent = error.message; }));
         actions.append(send);
       } else {
@@ -1038,13 +1254,31 @@
 
   async function saveExercise(sendAfterSave) {
     if (!currentPatient) return;
+    if (sendAfterSave && formSourceDocumentId && !document.getElementById("clinic-form-source-reviewed")?.checked) {
+      throw new Error("Confirma el cotejo de las consignas con el PDF original antes de enviar.");
+    }
     if (sendAfterSave) {
       const materialTypeForQuality = els.materialType?.value || "exercise";
       const docForQuality = patientDocumentFromForm(materialTypeForQuality);
+      if (interactiveFormFields.some(field => !field.label.trim() || (field.type === "choice" && !field.options.length))) {
+        throw new Error("Completa los enunciados y las opciones del formulario interactivo antes de enviar.");
+      }
       const validation = window.ClinicNeuroMaterials?.validate?.(docForQuality);
       if (validation && !validation.ok) throw new Error("Antes de prescribir: " + validation.issues.join("; ") + ".");
       if (docForQuality.clinical_area === "neuropsychology" && !document.getElementById("clinic-neuro-reviewed")?.checked) {
         throw new Error("Debes confirmar la revisión clínica de los estímulos y consignas antes de enviar esta actividad.");
+      }
+      if (formSourceDocumentId) {
+        const linkedDoc = clinicalDocuments.find(d => d.id === formSourceDocumentId && d.patient_id === currentPatient.id);
+        if (!linkedDoc || linkedDoc.mime_type !== "application/pdf") {
+          throw new Error("El PDF original no pertenece a la ficha actual. Vuelve a iniciar la conversión desde el documento correcto.");
+        }
+        if (!linkedDoc.shared_at || linkedDoc.share_revoked_at) {
+          throw new Error("Antes de asignar el formulario, publica expresamente el PDF original en Mi espacio.");
+        }
+        if (!docForQuality.form_fields.length) {
+          throw new Error("El formulario está vinculado a un PDF, pero aún no tiene preguntas. Añade los campos pertinentes antes de enviarlo.");
+        }
       }
       const quality = patientDocumentQuality(docForQuality);
       if (!quality.complete) {
@@ -1080,6 +1314,28 @@
       status: "prepared",
     };
     const recipients = [primaryEmail, ...(secondaryEmail ? [secondaryEmail] : [])];
+    if (editingAssignmentId) {
+      const existing = exerciseAssignments.find(item => item.id === editingAssignmentId &&
+        item.patient_id === currentPatient.id && item.status === "prepared" &&
+        item.email_status !== "sent" && !item.revoked_at);
+      if (!existing) throw new Error("El borrador ya no es editable.");
+      if (secondaryEmail) throw new Error("Este borrador no admite un segundo destinatario; guarda primero los cambios.");
+      const rows = await rest("clinical_exercise_assignments?id=eq." + encodeURIComponent(existing.id) +
+        "&patient_id=eq." + encodeURIComponent(currentPatient.id) + "&status=eq.prepared&email_status=neq.sent&select=*", {
+        method: "PATCH", headers: { Prefer: "return=representation" },
+        body: JSON.stringify({ ...baseAssignment, recipient_email: primaryEmail || null, updated_at: new Date().toISOString() })
+      });
+      if (!rows?.[0]) throw new Error("No se pudieron actualizar los datos del borrador.");
+      exerciseAssignments = exerciseAssignments.map(entry => entry.id === existing.id ? rows[0] : entry);
+      if (sendAfterSave) await sendExistingAssignment(rows[0], false);
+      else {
+        renderExercises(currentPatient);
+        renderTimeline(currentPatient);
+      }
+      editingAssignmentId = null;
+      els.exerciseDialog.close();
+      return;
+    }
     for (const [index, recipient] of recipients.entries()) {
       const rows = await rest("clinical_exercise_assignments?select=*", {
         method: "POST", headers: { Prefer: "return=representation" },
@@ -1717,6 +1973,13 @@
         finally { shareButton.disabled = false; }
       });
       actions.append(openButton, shareButton);
+      if (doc.mime_type === "application/pdf" && doc.category === "intervention_plan") {
+        const form = create("button", "clinic-secondary", "Crear formulario de este PDF");
+        form.type = "button";
+        form.title = "Prepara preguntas digitales vinculadas al PDF original. No lo envía automáticamente.";
+        form.addEventListener("click", () => convertPatientPdfToInteractiveForm(doc));
+        actions.append(form);
+      }
       if (isShared) {
         const whatsappButton = create("button", "clinic-secondary", "Compartir por WhatsApp");
         whatsappButton.type = "button";
@@ -2984,7 +3247,7 @@
           material_type: els.materialType?.value || existing?.material_type || "exercise",
           summary: existing?.summary || pendingAiMaterial?.summary || els.exerciseObjective.value.trim(),
           process_tags: els.materialProcess?.value ? [els.materialProcess.value] : (existing?.process_tags || []),
-          patient_document: (() => { const doc = patientDocumentFromForm(els.materialType?.value || existing?.material_type || "exercise"); return { ...doc, visual_blocks: (doc.visual_blocks || []).filter(b => b.type !== "image").map(({ data, ...rest }) => rest) }; })()
+          patient_document: (() => { const { source_document_id, ...doc } = patientDocumentFromForm(els.materialType?.value || existing?.material_type || "exercise"); return { ...doc, visual_blocks: (doc.visual_blocks || []).filter(b => b.type !== "image").map(({ data, ...rest }) => rest) }; })()
         })
       });
       const body = await response.json().catch(() => ({}));
@@ -3047,7 +3310,11 @@
       sequence_rank: Number.isFinite(Number(pendingAiMaterial?.sequence_rank))
         ? Number(pendingAiMaterial.sequence_rank)
         : Number(existing?.sequence_rank || 50),
-      patient_document: patientDocumentFromForm(materialType),
+      patient_document: (() => {
+        // Reusable templates must NEVER retain a patient-specific document reference.
+        const { source_document_id, ...documentForLibrary } = patientDocumentFromForm(materialType);
+        return documentForLibrary;
+      })(),
       patient_facing: true,
       updated_at: new Date().toISOString()
     };
@@ -3107,6 +3374,13 @@
   });
 
   els.exerciseClose.addEventListener("click", () => els.exerciseDialog.close());
+  els.interactiveAddField?.addEventListener("click", () => {
+    if (interactiveFormFields.length >= 30) { els.exerciseMessage.textContent = "Máximo 30 preguntas por objetivo."; return; }
+    interactiveFormFields.push({ id: "f_" + crypto.randomUUID().replaceAll("-", "").slice(0, 12), label: "",
+      type: "long_text", help: "", options: [] });
+    renderInteractiveFields();
+    els.interactiveFormList?.lastElementChild?.querySelector("textarea")?.focus();
+  });
   els.saveExercise.addEventListener("click", () => saveExercise(false).catch((error) => { els.exerciseMessage.textContent = error.message; }));
   els.exerciseForm.addEventListener("submit", (event) => { event.preventDefault(); saveExercise(true).catch((error) => { els.exerciseMessage.textContent = error.message; }); });
   els.generateDraft.addEventListener("click", () => { generateStructuredDraft(); scheduleSessionAutoSave(); });

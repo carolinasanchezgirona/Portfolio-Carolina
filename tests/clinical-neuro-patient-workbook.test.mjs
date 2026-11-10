@@ -52,7 +52,7 @@ test("la actividad del paciente es editable, persistente y revisable en Gestión
  assert.match(portal,/data-neuro-answer/);
  assert.match(portal,/neuro_answers: neuroAnswers/);
  assert.match(worker,/rawNeuroAnswers\.length!==digitalTaskCount/);
- assert.match(worker,/patient_response: \{ version: neuroAnswers \? 2 : 1/);
+ assert.match(worker,/patient_response: \{ version: fields\.size \? 3 : neuroAnswers \? 2 : 1/);
  assert.match(clinical,/patientResponse\.neuro_answers\.forEach/);
 });
 test("la vista online y el PDF anclan tablas e imágenes a cada ejercicio",()=>{

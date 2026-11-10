@@ -1589,3 +1589,14 @@ body.clinic-report-page-open{overflow:auto!important}
   #clinic-patient-dialog .clinic-form-grid{grid-template-columns:1fr}
   #clinic-patient-dialog .clinic-record-actions button{min-height:40px}
 }
+
+
+/* Editor de preguntas de los formularios interactivos */
+.clinic-interactive-fields{display:grid;gap:12px;margin:12px 0}
+.clinic-interactive-field{display:grid;gap:10px;padding:15px;border:1px solid #D7E5EE;border-radius:12px;background:#fff}
+.clinic-interactive-field-head{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.clinic-interactive-field label{display:grid;gap:6px;font-size:14px}
+.clinic-interactive-field :is(input,select,textarea){width:100%;min-height:42px;padding:9px;border:1px solid #B7C9D6;border-radius:8px;font:inherit}
+.clinic-interactive-field [hidden]{display:none!important}
+
+.clinic-form-source-document{border-left:3px solid #6A6572;padding:10px 13px;background:#F6F7F8;border-radius:0 8px 8px 0;font-size:14px;line-height:1.5}

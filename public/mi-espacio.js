@@ -152,7 +152,7 @@
   }
 
   function snapshotPatientMaterial(details) {
-    return JSON.stringify([...details.querySelectorAll("[data-response-record],[data-response-answer],[data-neuro-answer]")]
+    return JSON.stringify([...details.querySelectorAll("[data-response-record],[data-response-answer],[data-neuro-answer],[data-form-answer]")]
       .map(field => String(field.value || "")));
   }
 
@@ -326,11 +326,13 @@
       const record = form.querySelector("[data-response-record]")?.value || "";
       const neuroAnswers=[...form.closest(".space-patient-material-body").querySelectorAll("[data-neuro-answer]")].map(field=>field.value.slice(0,3000));
       const answers = [...form.querySelectorAll("[data-response-answer]")].map((field) => field.value || "");
+      const formAnswers = Object.fromEntries([...form.querySelectorAll("[data-form-answer]")]
+        .map(field => [field.dataset.formAnswer, String(field.value || "")]));
       const response = await fetch("/api/patient-portal/response", {
         method: "POST",
         credentials: "include",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ material_id: item.id, action, record, answers, ...(neuroAnswers.length ? { neuro_answers: neuroAnswers } : {}) })
+        body: JSON.stringify({ material_id: item.id, action, record, answers, form_answers: formAnswers, ...(neuroAnswers.length ? { neuro_answers: neuroAnswers } : {}) })
       });
       const body = await response.json().catch(() => ({}));
       if (responseEpoch !== portalSessionEpoch || !state.portalAuthenticated || !details?.isConnected) return;
@@ -342,7 +344,7 @@
         return;
       }
       if (!response.ok) throw new Error(body.error || "No se ha podido guardar.");
-      item.patient_response = { version: neuroAnswers.length ? 2 : 1, record, answers, ...(neuroAnswers.length ? { neuro_answers: neuroAnswers } : {}) };
+      item.patient_response = { version: Object.keys(formAnswers).length ? 3 : neuroAnswers.length ? 2 : 1, record, answers, form_answers: formAnswers, ...(neuroAnswers.length ? { neuro_answers: neuroAnswers } : {}) };
       item.patient_response_status = body.status;
       item.patient_response_updated_at = body.saved_at;
       item.patient_response_shared_at = body.status === "shared" ? body.saved_at : null;
@@ -564,6 +566,66 @@
     return true;
   }
 
+
+  // Each objective can define its own questions, without replicating the PDF.
+  function appendInteractiveQuestions(form, item, doc) {
+    const definitions = Array.isArray(doc.form_fields) ? doc.form_fields.slice(0, 30) : [];
+    const previous = item?.patient_response?.form_answers && typeof item.patient_response.form_answers === "object"
+      ? item.patient_response.form_answers : {};
+    const validTypes = new Set(["short_text", "long_text", "scale_0_10", "date", "yes_no", "choice"]);
+    const seen = new Set();
+    const section = document.createElement("section");
+    section.className = "space-interactive-fields";
+    const title = document.createElement("h5");
+    title.textContent = "Preguntas y registros de este objetivo";
+    section.append(title);
+    for (const def of definitions) {
+      if (!def || !/^[A-Za-z0-9_-]{1,50}$/.test(String(def.id || "")) ||
+          !validTypes.has(def.type) || !String(def.label || "").trim() || seen.has(def.id)) continue;
+      seen.add(def.id);
+      const label = document.createElement("label");
+      label.className = "space-interactive-field";
+      const question = document.createElement("strong");
+      question.textContent = String(def.label).slice(0, 200);
+      label.append(question);
+      if (def.help) {
+        const help = document.createElement("span");
+        help.className = "space-interactive-help";
+        help.textContent = String(def.help).slice(0, 500);
+        label.append(help);
+      }
+      let control;
+      if (def.type === "long_text") {
+        control = document.createElement("textarea");
+        control.rows = 4;
+        control.maxLength = 5000;
+      } else if (["scale_0_10", "yes_no", "choice"].includes(def.type)) {
+        control = document.createElement("select");
+        const choices = [["", "Sin responder"]];
+        if (def.type === "scale_0_10") for (let i = 0; i <= 10; i++) choices.push([String(i), String(i)]);
+        if (def.type === "yes_no") choices.push(["si", "Sí"], ["no", "No"], ["no_aplica", "No aplica"]);
+        if (def.type === "choice" && Array.isArray(def.options)) {
+          for (const option of def.options.slice(0, 12)) if (typeof option === "string") choices.push([option.slice(0, 100), option.slice(0, 100)]);
+        }
+        for (const [value, text] of choices) {
+          const opt = document.createElement("option");
+          opt.value = value;
+          opt.textContent = text;
+          control.append(opt);
+        }
+      } else {
+        control = document.createElement("input");
+        control.type = def.type === "date" ? "date" : "text";
+        if (def.type !== "date") control.maxLength = 500;
+      }
+      control.dataset.formAnswer = def.id;
+      control.value = String(Object.prototype.hasOwnProperty.call(previous, def.id) ? previous[def.id] : "");
+      label.append(control);
+      section.append(label);
+    }
+    if (seen.size) form.append(section);
+  }
+
   function createPatientMaterial(item, index) {
     const documentData = item?.patient_document && typeof item.patient_document === "object" ? item.patient_document : {};
     const details = document.createElement("details");
@@ -598,6 +660,27 @@
     appendMaterialExamples(body, documentData.example);
     appendPatientSection(body, "Qué conviene recordar", documentData.remember);
 
+    // The original PDF is never copied into this form. It is available only
+    // through the existing authenticated patient-document endpoint.
+    const sourceId = String(documentData.source_document_id || "");
+    const sourceFile = /^[0-9a-f-]{36}$/i.test(sourceId)
+      ? (Array.isArray(state.portalData?.files) ? state.portalData.files : [])
+          .find(file => file.id === sourceId && file.mime_type === "application/pdf")
+      : null;
+    if (sourceFile) {
+      const source = document.createElement("section");
+      source.className = "space-interactive-source";
+      const intro = document.createElement("p");
+      intro.textContent = "Este formulario acompaña al PDF original de tu objetivo. Lee sus instrucciones y responde aquí, sin imprimirlo.";
+      const link = document.createElement("a");
+      link.href = "/api/patient-portal/file?id=" + encodeURIComponent(sourceId);
+      link.target = "_blank";
+      link.rel = "noopener noreferrer";
+      link.className = "space-secondary";
+      link.textContent = "Abrir PDF original del objetivo";
+      source.append(intro, link);
+      body.append(source);
+    }
     const downloadArea = document.createElement("div");
     downloadArea.className = "space-patient-downloads";
     const downloadLink = document.createElement("a");
@@ -666,6 +749,7 @@
       recordLabel.append(record);
       if(documentData.clinical_area!=="neuropsychology")form.append(createGuidedRecord(record));
       form.append(recordLabel);
+      appendInteractiveQuestions(form, item, documentData);
 
       questions.forEach((question, questionIndex) => {
         const label = document.createElement("label");
@@ -718,10 +802,10 @@
 
     details.append(summary, body);
     materialSavedSnapshots.set(details, snapshotPatientMaterial(details));
-    details.addEventListener("input", event => {
+    const markUnsaved = event => {
       const field = event.target;
-      if (!(field instanceof HTMLTextAreaElement) ||
-          !field.matches("[data-response-record],[data-response-answer],[data-neuro-answer]")) return;
+      if (!(field instanceof HTMLTextAreaElement || field instanceof HTMLInputElement || field instanceof HTMLSelectElement) ||
+          !field.matches("[data-response-record],[data-response-answer],[data-neuro-answer],[data-form-answer]")) return;
       const status = details.querySelector(".space-patient-response-status");
       if (!status) return;
       const dirty = patientMaterialHasUnsavedChanges();
@@ -735,7 +819,9 @@
             ? "Borrador guardado. Carolina todavía no ve estas respuestas."
             : "Todavía no has guardado respuestas.";
       }
-    });
+    };
+    details.addEventListener("input", markUnsaved);
+    details.addEventListener("change", markUnsaved);
     return details;
   }
 
