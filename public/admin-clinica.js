@@ -1257,6 +1257,8 @@
     els.reportCurrent.value = content.current || "";
     const healthInputs = healthReportInputs();
     healthReportFields.forEach(([key]) => { healthInputs[key].value = content[key] || ""; });
+    // New reports start with the documented clinical record; saved drafts are never overwritten on opening.
+    if (!report) generateReportDraft();
     reportIsOpening = true;
     const health = healthReportSelected();
     Object.values(healthInputs).forEach((field) => { field.disabled = report?.status === "approved"; });
@@ -1269,6 +1271,8 @@
     const locked = report?.status === "approved";
     [els.reportType, els.reportRecipient, els.reportPurpose, els.reportStart, els.reportEnd, els.reportContext, els.reportEvolution, els.reportInterventions, els.reportCurrent].forEach((field) => { field.disabled = locked; });
     els.generateReport.disabled = locked; els.saveReport.disabled = locked; els.approveReport.disabled = locked;
+    const refreshButton = document.querySelector("#clinic-refresh-report-from-history");
+    if (refreshButton) refreshButton.disabled = locked;
     window.clearTimeout(reportSaveTimer);
     if (!els.reportDialog.parentElement?.matches("#clinic-patient-dialog")) els.patientDialog.append(els.reportDialog);
     if (!els.reportDialog.open) els.reportDialog.show();
@@ -1301,12 +1305,25 @@
     els.reportTitlePreview.textContent = reportTypeLabel(els.reportType.value);
     els.reportContext.value = [
       profile.reason_for_consultation ? `Motivo de consulta: ${profile.reason_for_consultation}` : "",
+      profile.current_problem_history ? `Historia del problema actual: ${profile.current_problem_history}` : "",
       currentPatient.clinical_summary ? `Síntesis clínica: ${currentPatient.clinical_summary}` : "",
-      profile.integrative_formulation ? `Formulación clínica: ${profile.integrative_formulation}` : "",
+      profile.significant_life_events ? `Acontecimientos vitales relevantes: ${profile.significant_life_events}` : "",
+      profile.personal_family_context ? `Contexto personal y familiar: ${profile.personal_family_context}` : "",
+      profile.social_context ? `Contexto social: ${profile.social_context}` : "",
+      profile.academic_work_context ? `Contexto académico o laboral: ${profile.academic_work_context}` : "",
+      profile.integrative_formulation ? `Formulación clínica documentada: ${profile.integrative_formulation}` : "",
       profile.diagnoses ? `Diagnósticos registrados: ${profile.diagnoses}` : "",
+      profile.diagnostic_hypotheses ? `Hipótesis diagnósticas (no confirmadas): ${profile.diagnostic_hypotheses}` : "",
     ].filter(Boolean).join("\n\n") || "No consta información clínica estructurada suficiente.";
-    els.reportEvolution.value = sessions.map((item) => `${dateShort.format(new Date(item.session_date))}: ${item.evolution_note || "Sin descripción de evolución."}`).join("\n\n") || profile.clinical_evolution_summary || "";
-    els.reportInterventions.value = sessions.filter((item) => item.intervention_note).map((item) => `${dateShort.format(new Date(item.session_date))}: ${item.intervention_note}`).join("\n\n") || profile.interventions_summary || "";
+    els.reportEvolution.value = [
+      profile.clinical_evolution_summary ? `Evolución clínica registrada: ${profile.clinical_evolution_summary}` : "",
+      ...sessions.filter(item => item.evolution_note || item.response_note).map(item =>
+        `${dateShort.format(new Date(item.session_date))}: ${[item.evolution_note, item.response_note && `Respuesta observada: ${item.response_note}`].filter(Boolean).join(" | ")}`)
+    ].filter(Boolean).join("\n\n");
+    els.reportInterventions.value = [
+      profile.interventions_summary ? `Intervenciones registradas: ${profile.interventions_summary}` : "",
+      ...sessions.filter(item => item.intervention_note).map(item => `${dateShort.format(new Date(item.session_date))}: ${item.intervention_note}`)
+    ].filter(Boolean).join("\n\n");
     const activeGoals = goals.map((goal) => goal.title).join("; ");
     els.reportCurrent.value = [
       currentPatient.next_session_focus ? `Focos clínicos pendientes: ${currentPatient.next_session_focus}` : "",
@@ -2629,7 +2646,20 @@
   els.reportForm.addEventListener("input", (event) => { if (event.target.matches("input,textarea,select")) scheduleReportAutoSave(); });
   els.reportForm.addEventListener("change", (event) => { if (event.target.matches("input,textarea,select")) scheduleReportAutoSave(); });
   els.reportType.addEventListener("change", () => { els.reportTitlePreview.textContent = reportTypeLabel(els.reportType.value); healthReportInputs(); healthReportSelected(); scheduleReportAutoSave(); });
-  els.generateReport.addEventListener("click", () => { try { if (!els.reportId.value && !reportHasContent()) { generateReportDraft(); scheduleReportAutoSave(); } downloadHealthReportWord(); } catch (error) { els.reportMessage.textContent = error.message; } });
+  // Separate data refresh from export: downloading must never silently overwrite clinician edits.
+  const refreshReportButton = document.createElement("button");
+  refreshReportButton.type = "button";
+  refreshReportButton.id = "clinic-refresh-report-from-history";
+  refreshReportButton.className = "clinic-secondary";
+  refreshReportButton.textContent = "Actualizar desde historia clínica";
+  els.generateReport.before(refreshReportButton);
+  refreshReportButton.addEventListener("click", () => {
+    if (!currentPatient || els.saveReport.disabled) return;
+    if (reportHasContent() && !window.confirm("Se reemplazará el texto actual de los apartados por los registros clínicos disponibles. Los cambios manuales sin guardar se perderán. ¿Continuar?")) return;
+    generateReportDraft();
+    scheduleReportAutoSave();
+  });
+  els.generateReport.addEventListener("click", () => { try { downloadHealthReportWord(); } catch (error) { els.reportMessage.textContent = error.message; } });
   els.saveReport.addEventListener("click", () => { if (reportSaveActive) { els.reportMessage.textContent = "Se está guardando el informe. Espera a la confirmación."; return; } if (healthReportSelected() && !reportHasContent()) generateReportDraft(); if (healthReportSelected() && !els.reportPurpose.value.trim()) { els.reportMessage.textContent = "Indica la finalidad del informe antes de guardarlo."; return; } persistReport("draft").then(() => { if (healthReportSelected()) els.reportMessage.textContent = "Borrador guardado en la historia clínica. La edición posterior del Word descargado no se sincroniza automáticamente."; }).catch((error) => { els.reportMessage.textContent = error.message; }); });
   els.approveReport.addEventListener("click", () => persistReport("approved").catch((error) => { els.reportMessage.textContent = error.message; }));
   $("#clinic-upload-revised-word")?.addEventListener("click", () => {
