@@ -737,6 +737,10 @@ export default function AdminClinicaPage() {
               <p className="clinic-material-helper">Añade preguntas específicas del objetivo terapéutico. El paciente podrá responderlas, guardar un borrador o compartirlo contigo. Conserva la psicoeducación y las técnicas en el contenido anterior. Puedes reutilizar esta estructura desde la biblioteca.</p>
               <p id="clinic-form-source-document" className="clinic-form-source-document">No hay un documento de origen vinculado.</p>
               <button type="button" id="clinic-form-source-open" className="clinic-secondary" hidden>Abrir PDF original para revisar los ejercicios</button>
+              <label id="clinic-form-source-reviewed-wrapper" className="clinic-material-helper" hidden>
+                <input id="clinic-form-source-reviewed" type="checkbox" />
+                He cotejado todas las consignas y ejercicios con el PDF original de este paciente y aprobado este formulario para su envío.
+              </label>
               <div id="clinic-interactive-fields" className="clinic-interactive-fields" />
               <button type="button" id="clinic-add-interactive-field" className="clinic-secondary">Añadir pregunta al formulario</button>
               <p className="clinic-material-helper">Tipos: texto corto, texto extenso, escala 0–10, fecha, sí/no y opciones. Máximo 30 preguntas por objetivo. Revisa siempre los enunciados antes de prescribir.</p>
