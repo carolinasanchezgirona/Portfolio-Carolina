@@ -764,8 +764,9 @@
     if (els.materialAiEnrich) els.materialAiEnrich.textContent = quality.complete ? "Mejorar ficha con IA" : "Completar ficha con IA";
   }
 
-  function fillPatientDocument(document) {
-    const doc = document || materialPatientDefaults(els.materialType?.value || "exercise");
+  function fillPatientDocument(patientDoc) {
+    // Never shadow the browser document: this function updates DOM review controls.
+    const doc = patientDoc || materialPatientDefaults(els.materialType?.value || "exercise");
     els.exerciseIntroduction.value = doc.introduction || "";
     els.exerciseWhy.value = doc.why || "";
     els.exerciseDuration.value = doc.duration_minutes || "";
@@ -845,6 +846,17 @@
     } : null;
   }
 
+  function focusPdfFormFields() {
+    const section = document.getElementById("clinic-interactive-form");
+    if (!section) return;
+    section.open = true;
+    // The generic material editor is long. Jump to the actual PDF questions on
+    // small screens so the button's action is immediately visible.
+    requestAnimationFrame(() => {
+      if (els.exerciseDialog?.open) section.scrollIntoView({ block: "start", behavior: "auto" });
+    });
+  }
+
   function convertPatientPdfToInteractiveForm(doc) {
     if (!currentPatient || doc.patient_id !== currentPatient.id ||
         doc.mime_type !== "application/pdf" || !/^[0-9a-f-]{36}$/i.test(String(doc.id))) return;
@@ -853,7 +865,7 @@
       item.patient_document?.source_document_id === doc.id && !item.revoked_at);
     if (existing?.status === "prepared" && existing.email_status !== "sent") {
       openPreparedExercise(existing);
-      document.getElementById("clinic-interactive-form")?.setAttribute("open", "");
+      focusPdfFormFields();
       els.exerciseMessage.textContent = "Ya había un borrador vinculado a este PDF. Puedes continuar editándolo y cotejar las preguntas antes de publicarlo.";
       return;
     }
@@ -882,7 +894,7 @@
     interactiveFormFields = []; // Never invent questions from a document not yet reviewed.
     renderInteractiveFields();
     renderInteractiveDocumentLink();
-    document.getElementById("clinic-interactive-form")?.setAttribute("open", "");
+    focusPdfFormFields();
     els.exerciseMessage.textContent = "Formulario vinculado al PDF original. Añade una pregunta digital por cada ejercicio del documento y revisa el contenido antes de guardar o enviar.";
   }
 
@@ -2033,7 +2045,25 @@
         const form = create("button", "clinic-secondary", "Crear formulario de este PDF");
         form.type = "button";
         form.title = "Prepara preguntas digitales vinculadas al PDF original. No lo envía automáticamente.";
-        form.addEventListener("click", () => convertPatientPdfToInteractiveForm(doc));
+        form.addEventListener("click", () => {
+          let feedback = row.querySelector(".clinic-form-editor-feedback");
+          if (!feedback) {
+            feedback = create("p", "clinic-form-editor-feedback");
+            feedback.setAttribute("role", "status");
+            feedback.setAttribute("aria-live", "polite");
+            row.append(feedback);
+          }
+          feedback.textContent = "";
+          try {
+            convertPatientPdfToInteractiveForm(doc);
+            if (!els.exerciseDialog?.open) {
+              feedback.textContent = "No se ha abierto un borrador. Comprueba si ya hay un formulario publicado para este PDF en «Materiales entre sesiones».";
+            }
+          } catch (error) {
+            console.error("No se pudo abrir el editor de formularios", error);
+            feedback.textContent = "No se ha podido abrir el editor. Actualiza el admin y vuelve a intentarlo.";
+          }
+        });
         actions.append(form);
       }
       if (isShared) {
