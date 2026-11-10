@@ -56,14 +56,10 @@ function IconoInfo() {
   return <svg viewBox="0 0 28 28" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true"><circle cx="14" cy="14" r="11"/><path d="M14 12v8M14 8.3v.7" strokeLinecap="round"/></svg>;
 }
 
-function IconoCerebro() {
-  return <svg viewBox="0 0 28 28" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M14 24V7c0-5-8-5-8-1a5 5 0 0 0-3 8c-3 3-1 8 3 8 0 3 5 4 8 2ZM14 7c0-5 8-5 8-1a5 5 0 0 1 3 8c3 3 1 8-3 8 0 3-5 4-8 2Z"/><path d="M8 9c2 0 3 1 3 3M6 18c3-1 5 0 5 3M20 9c-2 0-3 1-3 3M22 18c-3-1-5 0-5 3"/></svg>;
-}
-
 export default function ModeloVisual() {
   return (
-    <section className="modelo-graphic-section" id="etapas" aria-label="Las cinco etapas de mi proceso clínico">
-      <div className="editorial-wrap modelo-graphic-wrap">
+    <div className="modelo-graphic-section" id="etapas" aria-label="Las cinco etapas de mi proceso clínico">
+      <div className="modelo-graphic-wrap">
         <div className="modelo-timeline" role="list" aria-label="Proceso en cinco etapas">
           {etapas.map(({ numero, nombre, texto, icono }) => (
             <article className="modelo-stage" role="listitem" key={numero}>
@@ -71,7 +67,7 @@ export default function ModeloVisual() {
               <div className="modelo-stage-panel">
                 <span className="modelo-stage-icon"><IconoEtapa icono={icono} /></span>
                 <div className="modelo-stage-content">
-                  <h2>{numero} · {nombre}</h2>
+                  <h3>{nombre}</h3>
                   <p>{texto}</p>
                 </div>
               </div>
@@ -82,11 +78,7 @@ export default function ModeloVisual() {
           <IconoInfo />
           <span>No es un recorrido rígido ni implica un número fijo de sesiones.</span>
         </div>
-        <p className="modelo-neuro-note">
-          <IconoCerebro />
-          <span>En una evaluación neuropsicológica, el proceso puede finalizar con la devolución de resultados y las recomendaciones.</span>
-        </p>
       </div>
-    </section>
+    </div>
   );
 }
