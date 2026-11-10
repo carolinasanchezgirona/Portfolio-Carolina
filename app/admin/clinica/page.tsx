@@ -735,6 +735,8 @@ export default function AdminClinicaPage() {
             <details className="clinic-material-details" id="clinic-interactive-form">
               <summary>Formulario interactivo · preguntas que el paciente responderá en la web</summary>
               <p className="clinic-material-helper">Añade preguntas específicas del objetivo terapéutico. El paciente podrá responderlas, guardar un borrador o compartirlo contigo. Conserva la psicoeducación y las técnicas en el contenido anterior. Puedes reutilizar esta estructura desde la biblioteca.</p>
+              <p id="clinic-form-source-document" className="clinic-form-source-document">No hay un documento de origen vinculado.</p>
+              <button type="button" id="clinic-form-source-open" className="clinic-secondary" hidden>Abrir PDF original para revisar los ejercicios</button>
               <div id="clinic-interactive-fields" className="clinic-interactive-fields" />
               <button type="button" id="clinic-add-interactive-field" className="clinic-secondary">Añadir pregunta al formulario</button>
               <p className="clinic-material-helper">Tipos: texto corto, texto extenso, escala 0–10, fecha, sí/no y opciones. Máximo 30 preguntas por objetivo. Revisa siempre los enunciados antes de prescribir.</p>
