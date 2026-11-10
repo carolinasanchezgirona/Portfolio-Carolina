@@ -614,6 +614,7 @@
   ];
   let interactiveFormFields = [];
   let formSourceDocumentId = null;
+  let editingAssignmentId = null;
   let formSourceDocumentName = "";
 
   function normalizedInteractiveFields(value) {
@@ -768,6 +769,8 @@
     interactiveFormFields = normalizedInteractiveFields(doc.form_fields);
     formSourceDocumentId = /^[0-9a-f-]{36}$/i.test(String(doc.source_document_id || "")) ? String(doc.source_document_id) : null;
     formSourceDocumentName = String(doc.source_document_name || "").slice(0, 160);
+    const reviewBox = document.getElementById("clinic-form-source-reviewed");
+    if (reviewBox) reviewBox.checked = !!(formSourceDocumentId && doc.conversion_reviewed_at);
     renderInteractiveFields();
     renderInteractiveDocumentLink();
     window.ClinicNeuroMaterials?.hydrate(doc);
@@ -793,6 +796,8 @@
       session_questions: els.exerciseSessionQuestions.value.split(/\r?\n/).map((item) => item.trim()).filter(Boolean).slice(0, 6),
       form_fields: normalizedInteractiveFields(interactiveFormFields),
       source_document_id: formSourceDocumentId,
+      ...(formSourceDocumentId ? { conversion_review_required: true,
+        conversion_reviewed_at: document.getElementById("clinic-form-source-reviewed")?.checked ? new Date().toISOString() : null } : {}),
       ...(window.ClinicNeuroMaterials?.read?.() || { clinical_area: "psychology", visual_blocks: [] })
     };
   }
@@ -803,6 +808,8 @@
   function renderInteractiveDocumentLink() {
     const note = document.getElementById("clinic-form-source-document");
     const preview = document.getElementById("clinic-form-source-open");
+    const reviewWrapper = document.getElementById("clinic-form-source-reviewed-wrapper");
+    if (reviewWrapper) reviewWrapper.hidden = !formSourceDocumentId;
     if (!note || !preview) return;
     const linked = formSourceDocumentId && clinicalDocuments.find(item =>
       item.id === formSourceDocumentId && item.patient_id === currentPatient?.id);
@@ -833,6 +840,8 @@
     // transcribed or approved by the treating clinician before it is assigned.
     openExercise();
     formSourceDocumentId = doc.id;
+    const reviewBox = document.getElementById("clinic-form-source-reviewed");
+    if (reviewBox) reviewBox.checked = false;
     formSourceDocumentName = String(doc.file_name || doc.title || "").slice(0, 160);
     els.exerciseTitle.value = String(doc.title || "Ejercicios por objetivo").slice(0, 160);
     els.exerciseIntroduction.value = "Este formulario acompaña al documento original compartido en tu espacio privado.";
@@ -871,6 +880,7 @@
 
   function openExercise(template = null, rationale = "") {
     if (!currentPatient) return;
+    editingAssignmentId = null;
     if (els.materialSearch) els.materialSearch.value = "";
     if(els.materialAiCreate)els.materialAiCreate.disabled=true;
     populateExerciseLibrary(template?.id || "");
@@ -906,6 +916,23 @@
     els.exerciseMessage.textContent = "";
     els.exerciseDialog.showModal();
   }
+
+  function openPreparedExercise(item) {
+    if (!currentPatient || item.patient_id !== currentPatient.id ||
+        item.status !== "prepared" || item.email_status === "sent" || item.revoked_at) return;
+    openExercise();
+    editingAssignmentId = item.id;
+    els.exerciseTitle.value = item.title || "";
+    els.exerciseContent.value = item.content || "";
+    els.exerciseRationale.value = item.rationale || "";
+    if (els.materialType) els.materialType.value = item.patient_document?.material_type || "exercise";
+    fillPatientDocument(normalizedPatientDocument({ patient_document: item.patient_document || {}, material_type: item.patient_document?.material_type || "exercise" }));
+    if (els.materialProcess) {
+      populateMaterialProcessOptions("other");
+    }
+    els.exerciseMessage.textContent = "Editando el borrador existente. Los cambios se guardarán sin duplicarlo. Para habilitar el envío del formulario vinculado a un PDF debes confirmar el cotejo de sus ejercicios originales.";
+  }
+
   function patientStateLabel(value) {
     return ({ pending: "Pendiente", reviewed: "Lo ha revisado", discuss: "Quiere comentarlo en sesión" })[value] || "Pendiente";
   }
@@ -977,6 +1004,9 @@
   }
 
   async function sendExistingAssignment(item, resend = false) {
+    if (item.patient_document?.conversion_review_required && !item.patient_document?.conversion_reviewed_at) {
+      throw new Error("Este formulario necesita cotejo profesional con su PDF original antes de enviarse.");
+    }
     els.patientMessage.textContent = resend ? "Reenviando material…" : "Enviando material…";
     const response = await fetch(`${SUPABASE_URL}/functions/v1/send-clinical-exercise`, {
       method: "POST",
@@ -1090,6 +1120,15 @@
 
       const actions = create("div", "clinic-material-row-actions");
 
+      if (item.status === "prepared" && item.email_status !== "sent" && !item.revoked_at) {
+        const edit = create("button", "clinic-secondary", "Editar borrador");
+        edit.type = "button";
+        edit.addEventListener("click", () => openPreparedExercise(item));
+        actions.append(edit);
+        if (item.patient_document?.conversion_review_required && !item.patient_document?.conversion_reviewed_at) {
+          info.append(create("span", "clinic-material-state", "Pendiente de cotejar consignas del PDF original"));
+        }
+      }
       const preview = create("button", "clinic-text", "Ver");
       preview.type = "button";
       preview.addEventListener("click", () => openPatientMaterialPreview(item.title, item.patient_document || { instructions: item.content }, "html", false).catch((error) => { els.patientMessage.textContent = error.message; }));
@@ -1103,6 +1142,8 @@
       if (item.email_status !== "sent") {
         const send = create("button", "clinic-secondary", "Enviar");
         send.type = "button";
+        send.disabled = Boolean(item.patient_document?.conversion_review_required && !item.patient_document?.conversion_reviewed_at);
+        if (send.disabled) send.title = "Antes de enviar, abre «Editar borrador» y confirma el cotejo del PDF original.";
         send.addEventListener("click", () => sendExistingAssignment(item, false).catch((error) => { els.patientMessage.textContent = error.message; }));
         actions.append(send);
       } else {
@@ -1213,6 +1254,9 @@
 
   async function saveExercise(sendAfterSave) {
     if (!currentPatient) return;
+    if (sendAfterSave && formSourceDocumentId && !document.getElementById("clinic-form-source-reviewed")?.checked) {
+      throw new Error("Confirma el cotejo de las consignas con el PDF original antes de enviar.");
+    }
     if (sendAfterSave) {
       const materialTypeForQuality = els.materialType?.value || "exercise";
       const docForQuality = patientDocumentFromForm(materialTypeForQuality);
@@ -1270,6 +1314,28 @@
       status: "prepared",
     };
     const recipients = [primaryEmail, ...(secondaryEmail ? [secondaryEmail] : [])];
+    if (editingAssignmentId) {
+      const existing = exerciseAssignments.find(item => item.id === editingAssignmentId &&
+        item.patient_id === currentPatient.id && item.status === "prepared" &&
+        item.email_status !== "sent" && !item.revoked_at);
+      if (!existing) throw new Error("El borrador ya no es editable.");
+      if (secondaryEmail) throw new Error("Este borrador no admite un segundo destinatario; guarda primero los cambios.");
+      const rows = await rest("clinical_exercise_assignments?id=eq." + encodeURIComponent(existing.id) +
+        "&patient_id=eq." + encodeURIComponent(currentPatient.id) + "&status=eq.prepared&email_status=neq.sent&select=*", {
+        method: "PATCH", headers: { Prefer: "return=representation" },
+        body: JSON.stringify({ ...baseAssignment, recipient_email: primaryEmail || null, updated_at: new Date().toISOString() })
+      });
+      if (!rows?.[0]) throw new Error("No se pudieron actualizar los datos del borrador.");
+      exerciseAssignments = exerciseAssignments.map(entry => entry.id === existing.id ? rows[0] : entry);
+      if (sendAfterSave) await sendExistingAssignment(rows[0], false);
+      else {
+        renderExercises(currentPatient);
+        renderTimeline(currentPatient);
+      }
+      editingAssignmentId = null;
+      els.exerciseDialog.close();
+      return;
+    }
     for (const [index, recipient] of recipients.entries()) {
       const rows = await rest("clinical_exercise_assignments?select=*", {
         method: "POST", headers: { Prefer: "return=representation" },
