@@ -1335,12 +1335,29 @@
       const h = healthReportInputs();
       const dated = (note, item) => note ? dateShort.format(new Date(item.session_date)) + ": " + note : "";
       h.sources.value = sessions.length ? sessions.length + " sesiones aprobadas entre " + dateShort.format(new Date(sessions[0].session_date)) + " y " + dateShort.format(new Date(sessions[sessions.length - 1].session_date)) + ". Fuentes: anotaciones clínicas aprobadas y ficha estructurada." : "No constan sesiones aprobadas en el periodo seleccionado.";
-      h.background.value = currentPatient.clinical_summary || "[Completar antecedentes relevantes si procede]";
-      h.observation.value = sessions.map(item => dated(item.response_note, item)).filter(Boolean).join("\n\n") || "[Completar observaciones relevantes del estado actual]";
-      h.results.value = "[Completar únicamente con resultados y medidas verificables; no se han importado puntuaciones psicométricas]";
+      h.background.value = [
+        profile.current_problem_history ? `Historia del problema: ${profile.current_problem_history}` : "",
+        profile.psychological_psychiatric_history ? `Antecedentes psicológicos y psiquiátricos: ${profile.psychological_psychiatric_history}` : "",
+        profile.medical_history ? `Antecedentes médicos: ${profile.medical_history}` : "",
+        profile.family_history ? `Antecedentes familiares: ${profile.family_history}` : "",
+        currentPatient.clinical_summary || ""
+      ].filter(Boolean).join("\n\n") || "[Completar antecedentes relevantes si procede]";
+      h.observation.value = [
+        profile.clinical_examination ? `Exploración clínica: ${profile.clinical_examination}` : "",
+        profile.clinical_observations ? `Observaciones clínicas registradas: ${profile.clinical_observations}` : "",
+        ...sessions.map(item => dated(item.response_note, item)).filter(Boolean)
+      ].filter(Boolean).join("\n\n") || "[Completar observaciones relevantes del estado actual]";
+      h.results.value = [
+        profile.psychometric_assessment ? `Evaluación psicométrica documentada: ${profile.psychometric_assessment}` : "",
+        profile.neuropsychological_assessment ? `Evaluación neuropsicológica documentada: ${profile.neuropsychological_assessment}` : ""
+      ].filter(Boolean).join("\n\n") || "[Completar únicamente con resultados y medidas verificables; no constan resultados estructurados en la ficha]";
       h.integration.value = "";
       h.conclusions.value = "";
-      h.plan.value = [profile.treatment_plan, currentPatient.next_session_focus].filter(Boolean).join("\n\n") || "[Completar el plan si está documentado]";
+      h.plan.value = [
+        profile.treatment_plan ? `Plan terapéutico: ${profile.treatment_plan}` : "",
+        profile.therapeutic_goals ? `Objetivos terapéuticos: ${profile.therapeutic_goals}` : "",
+        currentPatient.next_session_focus ? `Foco de próxima sesión: ${currentPatient.next_session_focus}` : ""
+      ].filter(Boolean).join("\n\n") || "[Completar el plan si está documentado]";
       h.limitations.value = "Este borrador sintetiza únicamente los registros aprobados incluidos en el periodo. La ausencia de una medición estandarizada no permite cuantificar el cambio clínico.";
       els.reportRecipient.value ||= "Profesional sanitario";
     }
