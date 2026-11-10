@@ -61,3 +61,21 @@ test("el panel de marketing muestra recuentos sin solicitar datos personales", (
   assert.match(panel, /patient_type,status,created_at/);
   assert.doesNotMatch(panel, /patient_name,patient_email/);
 });
+
+test("WhatsApp abre un canal externo y la API de Meta queda fuera de servicio", () => {
+  const home = get("app/page.tsx");
+  const booking = get("app/cita/page.tsx");
+  const shell = get("app/components/site-shell.tsx");
+  const social = get("app/components/social-links.tsx");
+  const worker = get("worker.ts");
+
+  for (const page of [home, booking, shell, social]) {
+    assert.match(page, /https:\/\/wa\.me\/34604974857/);
+    assert.doesNotMatch(page, /informaci%C3%B3n%20administrativa%20sobre%20una%20primera%20visita/);
+  }
+  assert.match(home, /El botón abre WhatsApp fuera de esta web/);
+  assert.match(shell, /site-mobile-whatsapp/);
+  assert.match(worker, /url\.pathname === "\/api\/whatsapp\/webhook"/);
+  assert.match(worker, /status: 410/);
+  assert.doesNotMatch(worker, /return whatsappWebhook\(request, env\)/);
+});
