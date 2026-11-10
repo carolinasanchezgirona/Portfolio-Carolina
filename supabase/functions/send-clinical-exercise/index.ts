@@ -19,8 +19,18 @@ Deno.serve(async(req)=>{
  let payload:{assignment_id?:string;resend?:boolean};try{payload=await req.json()}catch{return json({error:"JSON no válido"},400)}
  if(!payload.assignment_id)return json({error:"Falta la asignación"},400);
  const id=encodeURIComponent(payload.assignment_id);
- const response=await fetch(`${SUPABASE_URL}/rest/v1/clinical_exercise_assignments?id=eq.${id}&select=id,recipient_email,email_status,access_token_hash,access_expires_at,revoked_at,first_opened_at,assigned_at,patient:clinical_patients(email)&limit=1`,{headers:authHeaders});
+ const response=await fetch(`${SUPABASE_URL}/rest/v1/clinical_exercise_assignments?id=eq.${id}&select=id,patient_id,patient_document,recipient_email,email_status,access_token_hash,access_expires_at,revoked_at,first_opened_at,assigned_at,patient:clinical_patients(email)&limit=1`,{headers:authHeaders});
  const item=(await response.json().catch(()=>[]))?.[0];if(!item)return json({error:"Asignación no encontrada"},404);
+ const doc=item.patient_document??{};
+ if(doc.conversion_review_required){
+   const sourceId=String(doc.source_document_id??"");
+   const date=String(doc.conversion_reviewed_at??"");
+   if(!date||!/^\d{4}-\d{2}-\d{2}T/.test(date))return json({error:"Este formulario requiere revisión profesional de los ejercicios del PDF original antes de enviarse."},409);
+   if(!/^[0-9a-f-]{36}$/i.test(sourceId))return json({error:"El PDF original vinculado no es válido."},409);
+   const source=await fetch(`${SUPABASE_URL}/rest/v1/clinical_documents?select=id&id=eq.${encodeURIComponent(sourceId)}&patient_id=eq.${encodeURIComponent(item.patient_id)}&category=eq.intervention_plan&shared_at=not.is.null&share_revoked_at=is.null&limit=1`,{headers:authHeaders,cache:"no-store"});
+   const originals=source.ok?await source.json().catch(()=>[]):[];
+   if(!Array.isArray(originals)||originals.length!==1)return json({error:"El PDF original no está disponible para este paciente."},409);
+ }
  const resend=Boolean(payload.resend);if(item.email_status==="sent"&&!resend)return json({error:"Este material ya fue enviado"},409);
  const recipient=item.recipient_email||item.patient?.email;if(!recipient)return json({error:"El paciente no tiene correo"},400);
  const now=new Date();
