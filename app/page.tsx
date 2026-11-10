@@ -143,8 +143,8 @@ export default function HomePage() {
             <article className="captacion-card"><span className="captacion-index">TEA ADULTO</span><h3>Comunicación, interacción y perfil sensorial</h3><p>Comprender la trayectoria evolutiva y las características del funcionamiento actual.</p><a href="/evaluacion-tea-adultos/">Conocer la evaluación →</a></article>
             <article className="captacion-card"><span className="captacion-index">DIAGNÓSTICO DIFERENCIAL</span><h3>No todo es TDAH o TEA</h3><p>Ansiedad, sueño, estado de ánimo y otros factores pueden explicar parte de las dificultades.</p><a href="/orientacion-tdah-tea-adultos/">Ayuda para orientarte →</a></article>
           </div>
-          <div className="captacion-actions"><a className="editorial-btn editorial-btn-primary" href="/orientacion-tdah-tea-adultos/">No sé qué evaluación necesito →</a><a className="editorial-btn editorial-btn-secondary" href="https://wa.me/34604974857?text=Hola%2C%20quisiera%20informaci%C3%B3n%20administrativa%20sobre%20una%20primera%20visita." target="_blank" rel="noopener noreferrer">Consultar por WhatsApp</a></div>
-          <p className="captacion-disclaimer">WhatsApp exclusivamente para información sobre horarios y reserva. No envíes datos clínicos ni informes por este canal.</p>
+          <div className="captacion-actions"><a className="editorial-btn editorial-btn-primary" href="/orientacion-tdah-tea-adultos/">No sé qué evaluación necesito →</a><a className="editorial-btn editorial-btn-secondary" href="https://wa.me/34604974857?text=Hola%2C%20quisiera%20consultar%20disponibilidad%20para%20una%20cita." target="_blank" rel="noopener noreferrer">Escribir por WhatsApp</a></div>
+          <p className="captacion-disclaimer">El botón abre WhatsApp fuera de esta web. Úsalo exclusivamente para consultar horarios y reservas. No envíes datos clínicos ni informes por este canal.</p>
         </div>
       </section>
 
