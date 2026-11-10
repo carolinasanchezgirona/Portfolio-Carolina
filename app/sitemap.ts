@@ -4,7 +4,7 @@ import { getPublishedArticles, isArticleVisible } from "./articulos/articles-dat
 const base = "https://carolinasanchezgirona.com";
 const staticLastModified = new Date("2026-10-02T09:45:00+02:00");
 const refreshedLastModified = new Date("2026-10-08T00:00:00+02:00");
-const homepageLastModified = new Date("2026-11-07T17:00:00+01:00");
+const homepageLastModified = new Date("2026-11-10T09:00:00+01:00");
 const dyslexiaServiceLastModified = new Date("2026-11-09");
 
 export const dynamic = "force-static";
@@ -22,6 +22,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${base}/evaluacion-altas-capacidades-adultos/`, lastModified: new Date("2026-11-04T23:00:00+01:00"), changeFrequency: "monthly", priority: 0.88 },
     { url: `${base}/evaluacion-dislexia/`, lastModified: dyslexiaServiceLastModified, changeFrequency: "monthly", priority: 0.88 },
     { url: `${base}/sobre-mi/`, lastModified: new Date("2026-11-07T17:00:00+01:00"), changeFrequency: "monthly", priority: 0.85 },
+    { url: `${base}/como-trabajo/`, lastModified: new Date("2026-11-10T09:00:00+01:00"), changeFrequency: "monthly", priority: 0.84 },
     { url: `${base}/ansiedad/`, lastModified: staticLastModified, changeFrequency: "monthly", priority: 0.82 },
     { url: `${base}/ataques-de-panico/`, lastModified: staticLastModified, changeFrequency: "monthly", priority: 0.82 },
     { url: `${base}/depresion/`, lastModified: staticLastModified, changeFrequency: "monthly", priority: 0.83 },
