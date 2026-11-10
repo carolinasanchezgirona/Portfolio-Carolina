@@ -1,4 +1,4 @@
-type Area = "agenda" | "economia" | "articulos" | "recursos" | "preguntas" | "tareas" | "residencia" | "mensajes" | "notificaciones" | "marketing" | "biblioteca" | "otra";
+type Area = "agenda" | "economia" | "articulos" | "recursos" | "preguntas" | "tareas" | "residencia" | "mensajes" | "notificaciones" | "marketing" | "biblioteca" | "privacidad" | "otra";
 
 type Icon = "today" | "agenda" | "patients" | "pending" | "more";
 
@@ -35,6 +35,7 @@ export default function AdminWorkspaceNav({ active }: { active: Area }) {
           <a href="/admin/residencia/" aria-current={active === "residencia" ? "page" : undefined}>Residencia</a>
           <p className="admin-workspace-more-label">Administración</p>
           <a href="/admin/economia/" aria-current={active === "economia" ? "page" : undefined}>Contabilidad</a>
+          <a href="/admin/privacidad/" aria-current={active === "privacidad" ? "page" : undefined}>Protección de datos e incidencias</a>
           <a href="/admin/mensajes/" aria-current={active === "mensajes" ? "page" : undefined}>Mensajes de pacientes</a>
           <a href="/admin/notificaciones/" aria-current={active === "notificaciones" ? "page" : undefined}>Centro de avisos</a>
           <p className="admin-workspace-more-label">Contenidos y materiales</p>
