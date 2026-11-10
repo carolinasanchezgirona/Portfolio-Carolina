@@ -137,6 +137,7 @@
   let appointments = [];
   let patients = [];
   let externalVisits = [];
+  let externalAttendance = [];
   let clinicalSessions = [];
   let clinicalGoals = [];
   let exerciseTemplates = [];
@@ -319,6 +320,14 @@
     return externalVisits
       .filter((item) => item.patient_id === patientId)
       .sort((a, b) => `${b.visit_date || "0000-00-00"}T${b.visit_time}`.localeCompare(`${a.visit_date || "0000-00-00"}T${a.visit_time}`));
+  }
+  function patientAttendance(patientId) {
+    return externalAttendance.filter((item) => item.patient_id === patientId)
+      .sort((a, b) => (b.visit_date + "T" + b.visit_time).localeCompare(a.visit_date + "T" + a.visit_time));
+  }
+  function attendanceLabel(status) {
+    return ({ pending: "Pendiente de confirmar", completed: "Sesión realizada",
+      no_show: "No se presenta", cancelled: "Cancelada" })[status] || "Pendiente de confirmar";
   }
   function externalCenterLabel(center) {
     return center === "arenys_2" ? "Arenys 2" : "Arenys 1";
@@ -1495,6 +1504,11 @@
   function timelineItems(patient) {
     const items = [];
     patientAppointments(patient.id).forEach((x) => items.push({ date: x.starts_at, type: "Cita", text: statusLabel(x.status) }));
+    patientAttendance(patient.id).forEach((x) => items.push({
+      date: x.visit_date + "T" + x.visit_time,
+      type: "Asistencia · Creu Blava",
+      text: attendanceLabel(x.attendance_status) + (x.attendance_note ? " · " + x.attendance_note : ""),
+    }));
     patientExternalVisits(patient.id).filter((x) => x.visit_date).forEach((x) => items.push({
       date: `${x.visit_date}T${x.visit_time}`,
       type: "Visita externa",
@@ -2050,9 +2064,30 @@
     els.patientHistory.replaceChildren();
     const bookings = patientAppointments(patient.id).sort((a, b) => new Date(b.starts_at) - new Date(a.starts_at));
     const visits = patientExternalVisits(patient.id);
-    if (!bookings.length && !visits.length) {
+    const attendance = patientAttendance(patient.id);
+    if (!bookings.length && !visits.length && !attendance.length) {
       els.patientHistory.append(create("p", "clinic-empty-inline", "No hay citas vinculadas."));
       return;
+    }
+    if (attendance.length) {
+      const completed = attendance.filter((x) => x.attendance_status === "completed").length;
+      const noShows = attendance.filter((x) => x.attendance_status === "no_show").length;
+      const cancelled = attendance.filter((x) => x.attendance_status === "cancelled").length;
+      els.patientHistory.append(create("p", "clinic-note",
+        "Creu Blava: " + completed + " realizada(s) · " + noShows + " ausencia(s) · " +
+        cancelled + " cancelada(s) · " + (attendance.length - completed - noShows - cancelled) + " pendiente(s)"));
+      attendance.forEach((entry) => {
+        const row = create("article");
+        const info = create("div");
+        info.append(
+          create("strong", "", externalVisitWhen(entry)),
+          create("span", "", "Creu Blava · " + attendanceLabel(entry.attendance_status) +
+            (entry.attendance_note ? " · " + entry.attendance_note : ""))
+        );
+        const badge = create("span", "clinic-status-pill", attendanceLabel(entry.attendance_status));
+        row.append(info, badge);
+        els.patientHistory.append(row);
+      });
     }
     visits.forEach((visit) => {
       const row = create("article");
@@ -2217,7 +2252,7 @@
       if (visits[0]) {
         body.append(create("p", "", `${visits[0].external_provider} · ${externalCenterLabel(visits[0].center)} · ${visits[0].insurance_provider} · ${externalVisitWhen(visits[0])}`));
       }
-      const summary = create("p", "", `${bookings.length} cita(s) propia(s) · ${visits.length} visita(s) externa(s) · ${patientSessions(patient.id).length} sesión(es) clínica(s)`);
+      const summary = create("p", "", `${bookings.length} cita(s) propia(s) · ${visits.length} visita(s) externa(s) · ${patientAttendance(patient.id).length} registro(s) de asistencia · ${patientSessions(patient.id).length} sesión(es) clínica(s)`);
       const button = create("button", "clinic-secondary", "Abrir ficha");
       button.type = "button";
       button.addEventListener("click", () => openPatient(patient));
@@ -2228,10 +2263,11 @@
 
   async function loadData() {
     setMessage("Cargando información clínica…");
-    const [bookingRows, patientRows, externalVisitRows, sessionRows, goalRows, templateRows, assignmentRows, reportRows, documentRows, scaleRows, noticeRows] = await Promise.all([
+    const [bookingRows, patientRows, externalVisitRows, attendanceRows, sessionRows, goalRows, templateRows, assignmentRows, reportRows, documentRows, scaleRows, noticeRows] = await Promise.all([
       rest(`appointment_bookings?select=id,patient_name,patient_email,patient_phone,patient_type,status,starts_at,ends_at,service_code,clinical_patient_id&order=starts_at.desc&limit=1000`),
       rest("clinical_patients?select=*&order=full_name.asc"),
       rest("clinical_external_visits?select=*&order=visit_date.desc.nullslast,visit_time.desc"),
+      rest("clinical_external_attendance?select=*&order=visit_date.desc,visit_time.desc"),
       rest("clinical_sessions?select=*&order=session_date.desc"),
       rest("clinical_goals?select=*&order=created_at.asc"),
       rest("clinical_exercise_templates?select=*&status=eq.active&order=title.asc"),
@@ -2244,6 +2280,7 @@
     appointments = bookingRows || [];
     patients = patientRows || [];
     externalVisits = externalVisitRows || [];
+    externalAttendance = attendanceRows || [];
     clinicalSessions = sessionRows || [];
     clinicalGoals = goalRows || [];
     exerciseTemplates = templateRows || [];

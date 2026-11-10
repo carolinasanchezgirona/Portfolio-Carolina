@@ -61,6 +61,7 @@ export default function AdminClinicaPage() {
               <a className="clinic-more-item" href="/admin/notificaciones/">Centro de avisos</a>
               <a className="clinic-more-item" href="/admin/tareas/">Mi agenda profesional</a>
               <a className="clinic-more-item" href="/admin/residencia/">Residentes · centros</a>
+              <a className="clinic-more-item" href="/admin/asistencia/">Asistencia · Creu Blava</a>
               <a className="clinic-more-item" href="/admin/">Panel general</a>
               <div className="clinic-more-install-slot" />
               <button id="clinic-logout" className="clinic-more-item clinic-more-logout" type="button">Cerrar sesión</button>
