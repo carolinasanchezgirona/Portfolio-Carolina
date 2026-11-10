@@ -235,7 +235,11 @@ export async function clinicalSimpleAdmin(request:Request,env:Env,
    return json({error:"Revisa el correo, la información ofrecida y la capacidad para consentir."},409);
   if(typeof body.kind!=="string"||!kinds.has(body.kind as ConsentKind))
    return json({error:"Tipo de consentimiento no válido."},400);
-  if(current.some(row=>row.kind===body.kind&&["preparing","pending","email_accepted","email_unknown","recording"].includes(row.status)))
+  // Recargar tras las expiraciones automáticas del trigger: el servidor decide
+  // si una invitación anterior sigue bloqueando otra solicitud de la misma clase.
+  const activeRequests=await rows<Consent>(env,table+"?select=id,kind,status&patient_id=eq."+id+
+   "&kind=eq."+body.kind+"&status=in.(preparing,pending,email_accepted,email_unknown,recording)&limit=10");
+  if(activeRequests.some(row=>row.kind===body.kind&&["preparing","pending","email_accepted","email_unknown","recording"].includes(row.status)))
    return json({error:"Ya existe una solicitud abierta de ese tipo. Revisa su estado antes de crear otra."},409);
   const signatureId=crypto.randomUUID();
   const record={id:signatureId,patient_id:id,kind:body.kind,consent_version:CONSENT_VERSION,
