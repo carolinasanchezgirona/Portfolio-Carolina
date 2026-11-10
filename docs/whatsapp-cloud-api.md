@@ -1,3 +1,5 @@
+> **Estado: desactivada el 10/11/2026.** La web solo enlaza a la aplicación externa de WhatsApp mediante `wa.me`. El endpoint `/api/whatsapp/webhook` responde 410 y no acepta ni envía mensajes. No activar Meta Cloud API sin autorización expresa posterior.
+
 # Activación de WhatsApp para reservas
 
 El Worker puede responder con el enlace de reservas cuando recibe exactamente el mensaje administrativo que rellenan los botones de WhatsApp de la web. El webhook verifica la firma de Meta. La aplicación descarta los demás mensajes y no guarda textos ni teléfonos. Conserva solo huellas de identificadores de mensaje para evitar duplicados y limitar envíos.
