@@ -13,6 +13,8 @@
 .attendance-head-row{display:flex;justify-content:space-between;align-items:center;gap:20px;flex-wrap:wrap}
 .attendance-head-row h2{margin:0}
 .attendance-page label{font-size:13px;display:flex;flex-direction:column;gap:7px;font-weight:600}
+.attendance-page .attendance-confirm-links{flex-direction:row;align-items:center;gap:10px;margin:16px 0;font-weight:500;line-height:1.5}
+.attendance-confirm-links input{width:18px;height:18px;flex-shrink:0}
 .attendance-page input:not([type=checkbox]),.attendance-page select,.attendance-page textarea{font:inherit;color:var(--att-ink);min-width:0;border:1px solid #c7d1d6;border-radius:8px;padding:10px;background:white;width:100%}
 .attendance-page textarea{resize:vertical}
 .attendance-page input:focus-visible,.attendance-page select:focus-visible,.attendance-page button:focus-visible,.attendance-back:focus-visible{outline:3px solid #a4c0cd;outline-offset:2px}
