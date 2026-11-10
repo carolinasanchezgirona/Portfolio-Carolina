@@ -37,3 +37,17 @@ test("server binds answers to authenticated patient's assigned fields", () => {
   assert.match(worker, /form_answers: formAnswers/);
   assert.match(worker, /patient_response_status: action === "share" \? "shared" : "draft"/);
 });
+
+
+test("original goal PDF is linked without copying into a public asset", () => {
+  assert.match(admin, /function convertPatientPdfToInteractiveForm\(doc\)/);
+  assert.match(admin, /doc\.mime_type === "application\/pdf" && doc\.category === "intervention_plan"/);
+  assert.match(admin, /formSourceDocumentId = doc\.id/);
+  assert.match(admin, /source_document_id: formSourceDocumentId/);
+  assert.match(admin, /interactiveFormFields = \[\]; \/\/ Never invent questions/);
+  assert.match(admin, /formSourceDocumentId && !docForQuality\.form_fields\.length/);
+  assert.match(portal, /source_document_id/);
+  assert.match(portal, /state\.portalData\?\.files/);
+  assert.match(portal, /\/api\/patient-portal\/file\?id=/);
+  assert.doesNotMatch(portal, /storage\/v1\/object\/public\/clinical-documents/);
+});
