@@ -848,7 +848,7 @@ export default function AdminClinicaPage() {
       <Script src="/clinic-neuro-weekly-composer.js?v=20261010-logic-4" strategy="afterInteractive" />
       <Script src="/clinic-neuro-catalog-browser.js?v=20261010-catalog-2" strategy="afterInteractive" />
       <Script src="/clinic-import-activity.js?v=20261018-1" strategy="afterInteractive" />
-      <Script src="/admin-clinica.js?v=20261110-history-unified-2" strategy="afterInteractive" />
+      <Script src="/admin-clinica.js?v=20261110-objective-forms-1" strategy="afterInteractive" />
       <Script src="/clinical-smart-intake.js?v=20261109-theme-1" strategy="afterInteractive" />
       <Script src="/clinical-diagnostic-assistant.js?v=20261109-theme-1" strategy="afterInteractive" />
       <Script src="/clinical-treatment-assistant.js?v=20261029-feedback-1" strategy="afterInteractive" />
