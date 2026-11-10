@@ -771,11 +771,12 @@ export default function AdminClinicaPage() {
           <label>Correo destinatario<input id="clinic-exercise-email" type="email" required /></label>
           <label>Segundo correo destinatario (opcional)<input id="clinic-exercise-email-secondary" type="email" autoComplete="off" placeholder="otro@correo.com" /></label>
           <p className="clinic-note">Si introduces un segundo correo, se preparará una entrega independiente con su propio enlace. Comprueba que tienes autorización para compartir este material con esa persona.</p>
-          <p className="clinic-note">El correo será neutro. El paciente podrá leer el material online y descargar un PDF profesional. El enlace personal caduca en 7 días.</p>
+          <p className="clinic-note">La publicación directa estará disponible en Mi espacio solo tras revisar el PDF y aprobar sus preguntas. No envía correo. Si eliges enviar, el aviso será neutro y el paciente accederá con su cuenta privada.</p>
           <p id="clinic-exercise-message" className="clinic-message" role="status" />
           <div className="clinic-material-review-actions"><details><summary>Comprobar vista previa y PDF</summary><div className="clinic-material-review-buttons"><button id="clinic-preview-material" className="clinic-secondary" type="button">Vista del paciente</button><button id="clinic-preview-pdf" className="clinic-secondary" type="button">PDF de prueba</button></div></details></div>
           <div className="clinic-dialog-actions clinic-material-actions">
             <button id="clinic-save-exercise" className="clinic-secondary" type="button">Guardar borrador</button>
+            <button id="clinic-publish-form" className="clinic-secondary" type="button" hidden>Publicar formulario en Mi espacio (sin correo)</button>
             <button className="clinic-primary" type="submit">Guardar y enviar al paciente</button>
           </div>
           </div>
@@ -854,7 +855,7 @@ export default function AdminClinicaPage() {
       <Script src="/clinic-neuro-weekly-composer.js?v=20261010-logic-4" strategy="afterInteractive" />
       <Script src="/clinic-neuro-catalog-browser.js?v=20261010-catalog-2" strategy="afterInteractive" />
       <Script src="/clinic-import-activity.js?v=20261018-1" strategy="afterInteractive" />
-      <Script src="/admin-clinica.js?v=20261110-objective-forms-1" strategy="afterInteractive" />
+      <Script src="/admin-clinica.js?v=20261110-pdf-publish-2" strategy="afterInteractive" />
       <Script src="/clinical-smart-intake.js?v=20261109-theme-1" strategy="afterInteractive" />
       <Script src="/clinical-diagnostic-assistant.js?v=20261109-theme-1" strategy="afterInteractive" />
       <Script src="/clinical-treatment-assistant.js?v=20261029-feedback-1" strategy="afterInteractive" />

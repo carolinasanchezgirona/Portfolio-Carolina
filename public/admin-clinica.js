@@ -633,6 +633,15 @@
     }).filter(Boolean);
   }
 
+  // Any change after the clinician's signoff requires checking the PDF again.
+  function invalidatePdfFormReview() {
+    if (!formSourceDocumentId) return;
+    const checkbox = document.getElementById("clinic-form-source-reviewed");
+    if (!checkbox?.checked) return;
+    checkbox.checked = false;
+    els.exerciseMessage.textContent = "Has modificado el borrador. Vuelve a cotejar los ejercicios con el PDF antes de publicarlo.";
+  }
+
   function renderInteractiveFields() {
     if (!els.interactiveFormList) return;
     els.interactiveFormList.replaceChildren();
@@ -649,6 +658,7 @@
       remove.textContent = "Eliminar";
       remove.addEventListener("click", () => {
         interactiveFormFields.splice(interactiveFormFields.indexOf(field), 1);
+        invalidatePdfFormReview();
         renderInteractiveFields();
       });
       heading.append(title, remove);
@@ -810,6 +820,8 @@
     const preview = document.getElementById("clinic-form-source-open");
     const reviewWrapper = document.getElementById("clinic-form-source-reviewed-wrapper");
     if (reviewWrapper) reviewWrapper.hidden = !formSourceDocumentId;
+    const publishButton = document.getElementById("clinic-publish-form");
+    if (publishButton) publishButton.hidden = !formSourceDocumentId;
     if (!note || !preview) return;
     const linked = formSourceDocumentId && clinicalDocuments.find(item =>
       item.id === formSourceDocumentId && item.patient_id === currentPatient?.id);
@@ -836,6 +848,19 @@
   function convertPatientPdfToInteractiveForm(doc) {
     if (!currentPatient || doc.patient_id !== currentPatient.id ||
         doc.mime_type !== "application/pdf" || !/^[0-9a-f-]{36}$/i.test(String(doc.id))) return;
+    // Reuse the draft for this source: repeated clicks must not create duplicates.
+    const existing = exerciseAssignments.find(item => item.patient_id === currentPatient.id &&
+      item.patient_document?.source_document_id === doc.id && !item.revoked_at);
+    if (existing?.status === "prepared" && existing.email_status !== "sent") {
+      openPreparedExercise(existing);
+      document.getElementById("clinic-interactive-form")?.setAttribute("open", "");
+      els.exerciseMessage.textContent = "Ya había un borrador vinculado a este PDF. Puedes continuar editándolo y cotejar las preguntas antes de publicarlo.";
+      return;
+    }
+    if (existing && ["sent", "assigned", "reviewed"].includes(existing.status)) {
+      els.patientMessage.textContent = "Ya existe un formulario publicado para este PDF. Puedes verlo o revocarlo en los materiales del paciente.";
+      return;
+    }
     // Never convert automatically: every exercise in the original PDF has to be
     // transcribed or approved by the treating clinician before it is assigned.
     openExercise();
@@ -1020,7 +1045,7 @@
   }
 
   async function revokeAssignment(item) {
-    if (!window.confirm("¿Revocar este enlace? El paciente dejará de poder abrirlo inmediatamente.")) return;
+    if (!window.confirm("¿Retirar acceso a este material? El paciente dejará de poder verlo inmediatamente.")) return;
     const rows = await rest(`clinical_exercise_assignments?id=eq.${encodeURIComponent(item.id)}&select=*`, {
       method: "PATCH",
       headers: { Prefer: "return=representation" },
@@ -1061,10 +1086,11 @@
       const info = create("div");
       const title = create("strong", "", item.title);
       const statusLine = item.revoked_at
-        ? "Enlace revocado"
+        ? "Acceso retirado"
         : item.email_status === "sent"
-          ? `Enviado${item.access_expires_at ? " · enlace hasta " + dateShort.format(new Date(item.access_expires_at)) : ""}`
-          : item.status === "prepared" ? "Preparado, sin enviar" : item.status;
+          ? "Enviado por correo · disponible en Mi espacio"
+          : item.status === "assigned" ? "Publicado en Mi espacio · sin correo"
+          : item.status === "prepared" ? "Borrador sin publicar" : item.status;
       info.append(title, create("span", "", statusLine));
 
       const states = create("div", "clinic-material-status");
@@ -1140,7 +1166,7 @@
       actions.append(pdf);
 
       if (item.email_status !== "sent") {
-        const send = create("button", "clinic-secondary", "Enviar");
+        const send = create("button", "clinic-secondary", item.status === "assigned" ? "Avisar por correo" : "Enviar");
         send.type = "button";
         send.disabled = Boolean(item.patient_document?.conversion_review_required && !item.patient_document?.conversion_reviewed_at);
         if (send.disabled) send.title = "Antes de enviar, abre «Editar borrador» y confirma el cotejo del PDF original.";
@@ -1153,8 +1179,8 @@
         actions.append(resend);
       }
 
-      if (item.email_status === "sent" && !item.revoked_at) {
-        const revoke = create("button", "clinic-text", "Revocar enlace");
+      if ((item.email_status === "sent" || item.status === "assigned") && !item.revoked_at) {
+        const revoke = create("button", "clinic-text", "Retirar acceso");
         revoke.type = "button";
         revoke.addEventListener("click", () => revokeAssignment(item).catch((error) => { els.patientMessage.textContent = error.message; }));
         actions.append(revoke);
@@ -1252,12 +1278,28 @@
     });
   }
 
-  async function saveExercise(sendAfterSave) {
+  async function publishExistingAssignment(item) {
+    if (!currentPatient || item.patient_id !== currentPatient.id || item.status !== "prepared") {
+      throw new Error("El borrador no se puede publicar.");
+    }
+    const response = await fetch("/api/admin/clinical-form-publish", {
+      method: "POST", credentials: "same-origin", cache: "no-store",
+      headers: authHeaders(), body: JSON.stringify({ assignment_id: item.id }),
+    });
+    const payload = await response.json().catch(() => ({}));
+    if (!response.ok || payload.status !== "assigned") {
+      throw new Error(payload.error || "No se ha podido publicar el formulario en Mi espacio.");
+    }
+  }
+
+  async function saveExercise(sendAfterSave, publishToPortal = false) {
     if (!currentPatient) return;
-    if (sendAfterSave && formSourceDocumentId && !document.getElementById("clinic-form-source-reviewed")?.checked) {
+    if (publishToPortal && !formSourceDocumentId) throw new Error("La publicación directa requiere un PDF original vinculado.");
+    const releasing = sendAfterSave || publishToPortal;
+    if (releasing && formSourceDocumentId && !document.getElementById("clinic-form-source-reviewed")?.checked) {
       throw new Error("Confirma el cotejo de las consignas con el PDF original antes de enviar.");
     }
-    if (sendAfterSave) {
+    if (releasing) {
       const materialTypeForQuality = els.materialType?.value || "exercise";
       const docForQuality = patientDocumentFromForm(materialTypeForQuality);
       if (interactiveFormFields.some(field => !field.label.trim() || (field.type === "choice" && !field.options.length))) {
@@ -1296,9 +1338,10 @@
     if (!els.exerciseIntroduction.value.trim() || !els.exerciseWhy.value.trim()) throw new Error("Completa la introducción y «Por qué hacemos este ejercicio».");
     const selectedTemplate = exerciseTemplates.find((item) => item.id === els.exerciseTemplateId.value) || null;
     const materialType = selectedTemplate?.material_type || els.materialType?.value || "exercise";
-    els.exerciseMessage.textContent = sendAfterSave ? "Preparando enlace seguro…" : "Guardando…";
+    els.exerciseMessage.textContent = publishToPortal ? "Publicando en Mi espacio…" : sendAfterSave ? "Preparando aviso seguro…" : "Guardando borrador…";
     const primaryEmail = els.exerciseEmail.value.trim().toLowerCase();
     const secondaryEmail = els.exerciseEmailSecondary?.value.trim().toLowerCase() || "";
+    if (publishToPortal && secondaryEmail) throw new Error("La publicación en Mi espacio es individual. Retira el segundo destinatario.");
     if (secondaryEmail && secondaryEmail === primaryEmail) throw new Error("El segundo correo debe ser diferente del principal.");
     if (secondaryEmail && !window.confirm("Vas a compartir el material clínico con un segundo destinatario: " + secondaryEmail + ". ¿Confirmas que está autorizado a recibirlo?")) {
       els.exerciseMessage.textContent = "Envío al segundo correo cancelado.";
@@ -1327,7 +1370,11 @@
       });
       if (!rows?.[0]) throw new Error("No se pudieron actualizar los datos del borrador.");
       exerciseAssignments = exerciseAssignments.map(entry => entry.id === existing.id ? rows[0] : entry);
-      if (sendAfterSave) await sendExistingAssignment(rows[0], false);
+      if (publishToPortal) {
+        await publishExistingAssignment(rows[0]);
+        await refreshCurrentPatientMaterials(currentPatient.id);
+        els.patientMessage.textContent = "Formulario publicado en Mi espacio. No se ha enviado ningún correo.";
+      } else if (sendAfterSave) await sendExistingAssignment(rows[0], false);
       else {
         renderExercises(currentPatient);
         renderTimeline(currentPatient);
@@ -1344,6 +1391,12 @@
       const saved = rows?.[0];
       if (!saved) throw new Error("No se ha podido guardar la entrega destinada a " + recipient + ".");
       exerciseAssignments.unshift(saved);
+      if (publishToPortal) {
+        // Keep the saved ID available if publishing fails, so a retry edits this
+        // draft instead of making a second assignment.
+        editingAssignmentId = saved.id;
+        await publishExistingAssignment(saved);
+      }
       if (sendAfterSave) {
         const response = await fetch(`${SUPABASE_URL}/functions/v1/send-clinical-exercise`, {
           method: "POST", headers: authHeaders(), body: JSON.stringify({ assignment_id: saved.id }),
@@ -1352,8 +1405,10 @@
         if (!response.ok) throw new Error("La entrega a " + recipient + " no se ha podido enviar: " + (body.error || "Error de correo") + ". Comprueba los envíos antes de reintentarlo.");
       }
     }
-    if (sendAfterSave) await loadData();
+    if (sendAfterSave || publishToPortal) await loadData();
     renderExercises(currentPatient);
+    if (publishToPortal) els.patientMessage.textContent = "Formulario publicado en Mi espacio. No se ha enviado ningún correo.";
+    editingAssignmentId = null;
     els.exerciseDialog.close();
   }
 
@@ -1973,7 +2028,8 @@
         finally { shareButton.disabled = false; }
       });
       actions.append(openButton, shareButton);
-      if (doc.mime_type === "application/pdf" && doc.category === "intervention_plan") {
+      const summaryOnly = /^objetivos? terap[eé]uticos?$/i.test(String(doc.title || "").trim());
+      if (doc.mime_type === "application/pdf" && doc.category === "intervention_plan" && !summaryOnly) {
         const form = create("button", "clinic-secondary", "Crear formulario de este PDF");
         form.type = "button";
         form.title = "Prepara preguntas digitales vinculadas al PDF original. No lo envía automáticamente.";
@@ -3378,8 +3434,26 @@
     if (interactiveFormFields.length >= 30) { els.exerciseMessage.textContent = "Máximo 30 preguntas por objetivo."; return; }
     interactiveFormFields.push({ id: "f_" + crypto.randomUUID().replaceAll("-", "").slice(0, 12), label: "",
       type: "long_text", help: "", options: [] });
+    invalidatePdfFormReview();
     renderInteractiveFields();
     els.interactiveFormList?.lastElementChild?.querySelector("textarea")?.focus();
+  });
+  // The signoff is invalidated by edited text, changed options, or question types.
+  // Email recipients and the review checkbox itself are not clinical content.
+  for (const eventName of ["input", "change"]) {
+    els.exerciseForm.addEventListener(eventName, (event) => {
+      const target = event.target;
+      if (!target || target.id === "clinic-form-source-reviewed" ||
+          target.id === "clinic-exercise-email" || target.id === "clinic-exercise-email-secondary") return;
+      invalidatePdfFormReview();
+    });
+  }
+  document.getElementById("clinic-publish-form")?.addEventListener("click", async (event) => {
+    const button = event.currentTarget;
+    button.disabled = true;
+    try { await saveExercise(false, true); }
+    catch (error) { els.exerciseMessage.textContent = error?.message || "No se ha podido publicar el formulario."; }
+    finally { button.disabled = false; }
   });
   els.saveExercise.addEventListener("click", () => saveExercise(false).catch((error) => { els.exerciseMessage.textContent = error.message; }));
   els.exerciseForm.addEventListener("submit", (event) => { event.preventDefault(); saveExercise(true).catch((error) => { els.exerciseMessage.textContent = error.message; }); });
