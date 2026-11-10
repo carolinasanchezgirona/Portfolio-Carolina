@@ -74,6 +74,7 @@
     exerciseObjective: $("#clinic-exercise-objective"), exerciseExample: $("#clinic-exercise-example"),
     exerciseRecord: $("#clinic-exercise-record"), exerciseSafety: $("#clinic-exercise-safety"), exerciseRemember: $("#clinic-exercise-remember"),
     exerciseSessionQuestions: $("#clinic-exercise-session-questions"),
+    interactiveFormList: $("#clinic-interactive-fields"), interactiveAddField: $("#clinic-add-interactive-field"),
     exerciseRationale: $("#clinic-exercise-rationale"), exerciseEmail: $("#clinic-exercise-email"), exerciseEmailSecondary: $("#clinic-exercise-email-secondary"),
     exerciseMessage: $("#clinic-exercise-message"), saveExercise: $("#clinic-save-exercise"),
     materialQuality: $("#clinic-material-quality"), materialQualityLabel: $("#clinic-material-quality-label"), materialQualityNote: $("#clinic-material-quality-note"),
@@ -605,6 +606,104 @@
     };
   }
 
+
+  const interactiveTypes = [
+    ["short_text", "Texto corto"], ["long_text", "Texto extenso"],
+    ["scale_0_10", "Escala 0–10"], ["date", "Fecha"],
+    ["yes_no", "Sí / No / No aplica"], ["choice", "Elegir una opción"],
+  ];
+  let interactiveFormFields = [];
+
+  function normalizedInteractiveFields(value) {
+    if (!Array.isArray(value)) return [];
+    const used = new Set();
+    return value.slice(0, 30).map(raw => {
+      if (!raw || typeof raw !== "object") return null;
+      const id = /^[A-Za-z0-9_-]{1,50}$/.test(String(raw.id || "")) ? String(raw.id)
+        : "f_" + crypto.randomUUID().replaceAll("-", "").slice(0, 12);
+      const type = interactiveTypes.some(item => item[0] === raw.type) ? raw.type : "long_text";
+      const label = String(raw.label || "").slice(0, 200);
+      if (!label.trim() || used.has(id)) return null;
+      used.add(id);
+      return { id, label, type, help: String(raw.help || "").slice(0, 500),
+        options: Array.isArray(raw.options) ? raw.options.filter(option => typeof option === "string").map(option => option.slice(0, 100)).slice(0, 12) : [] };
+    }).filter(Boolean);
+  }
+
+  function renderInteractiveFields() {
+    if (!els.interactiveFormList) return;
+    els.interactiveFormList.replaceChildren();
+    interactiveFormFields.forEach((field, index) => {
+      const card = document.createElement("div");
+      card.className = "clinic-interactive-field";
+      const heading = document.createElement("div");
+      heading.className = "clinic-interactive-field-head";
+      const title = document.createElement("strong");
+      title.textContent = "Pregunta " + (index + 1);
+      const remove = document.createElement("button");
+      remove.type = "button";
+      remove.className = "clinic-text";
+      remove.textContent = "Eliminar";
+      remove.addEventListener("click", () => {
+        interactiveFormFields.splice(interactiveFormFields.indexOf(field), 1);
+        renderInteractiveFields();
+      });
+      heading.append(title, remove);
+      card.append(heading);
+
+      const caption = document.createElement("label");
+      caption.textContent = "Pregunta / indicación";
+      const question = document.createElement("textarea");
+      question.rows = 2;
+      question.maxLength = 200;
+      question.value = field.label;
+      question.placeholder = "Ej. ¿Qué ocurrió antes de iniciar la tarea?";
+      question.addEventListener("input", () => { field.label = question.value.slice(0, 200); });
+      caption.append(question);
+      card.append(caption);
+
+      const kind = document.createElement("label");
+      kind.textContent = "Tipo de respuesta";
+      const select = document.createElement("select");
+      for (const [value, text] of interactiveTypes) {
+        const option = document.createElement("option");
+        option.value = value;
+        option.textContent = text;
+        select.append(option);
+      }
+      select.value = field.type;
+      kind.append(select);
+      card.append(kind);
+
+      const optionsLabel = document.createElement("label");
+      optionsLabel.textContent = "Opciones de respuesta (una por línea)";
+      const options = document.createElement("textarea");
+      options.rows = 3;
+      options.value = field.options.join("\n");
+      options.addEventListener("input", () => {
+        field.options = options.value.split(/\r?\n/).map(x => x.trim().slice(0, 100)).filter(Boolean).slice(0, 12);
+      });
+      optionsLabel.append(options);
+      card.append(optionsLabel);
+      optionsLabel.hidden = field.type !== "choice";
+      select.addEventListener("change", () => {
+        field.type = select.value;
+        optionsLabel.hidden = field.type !== "choice";
+      });
+
+      const hint = document.createElement("label");
+      hint.textContent = "Ayuda para el paciente (opcional)";
+      const help = document.createElement("textarea");
+      help.rows = 2;
+      help.maxLength = 500;
+      help.value = field.help;
+      help.addEventListener("input", () => { field.help = help.value.slice(0, 500); });
+      hint.append(help);
+      card.append(hint);
+      els.interactiveFormList.append(card);
+    });
+  }
+
   function normalizedPatientDocument(template = null) {
     const type = template?.material_type === "psychoeducation" ? "psychoeducation" : "exercise";
     const defaults = materialPatientDefaults(type, template?.summary || "", template?.instructions || "", template?.duration_minutes);
@@ -664,6 +763,8 @@
     els.exerciseSafety.value = doc.safety_note || "";
     els.exerciseRemember.value = doc.remember || "";
     els.exerciseSessionQuestions.value = Array.isArray(doc.session_questions) ? doc.session_questions.join("\n") : "";
+    interactiveFormFields = normalizedInteractiveFields(doc.form_fields);
+    renderInteractiveFields();
     window.ClinicNeuroMaterials?.hydrate(doc);
     renderPatientDocumentQuality(doc);
   }
@@ -685,6 +786,7 @@
       safety_note: els.exerciseSafety.value.trim(),
       remember: els.exerciseRemember.value.trim(),
       session_questions: els.exerciseSessionQuestions.value.split(/\r?\n/).map((item) => item.trim()).filter(Boolean).slice(0, 6),
+      form_fields: normalizedInteractiveFields(interactiveFormFields),
       ...(window.ClinicNeuroMaterials?.read?.() || { clinical_area: "psychology", visual_blocks: [] })
     };
   }
@@ -752,8 +854,10 @@
     const record = String(source.record || "").trim();
     const answers = Array.isArray(source.answers) ? source.answers.map((value) => String(value || "").trim()) : [];
     const neuro_answers = Array.isArray(source.neuro_answers) ? source.neuro_answers.slice(0,14).map(value => String(value || "").trim()) : [];
-    if (!record && !answers.some(Boolean) && !neuro_answers.some(Boolean)) return null;
-    return { record, answers, neuro_answers };
+    const form_answers = source.form_answers && typeof source.form_answers === "object" && !Array.isArray(source.form_answers)
+      ? Object.fromEntries(Object.entries(source.form_answers).slice(0, 30).filter(([key, value]) => /^[A-Za-z0-9_-]{1,50}$/.test(key) && typeof value === "string").map(([key, value]) => [key, value.trim()])) : {};
+    if (!record && !answers.some(Boolean) && !neuro_answers.some(Boolean) && !Object.values(form_answers).some(Boolean)) return null;
+    return { record, answers, neuro_answers, form_answers };
   }
 
   function previewFileName(title) {
@@ -906,6 +1010,16 @@
           block.append(create("strong", "", "Ejercicio " + (index + 1)), create("p", "", answer));
           body.append(block);
         });
+        const fieldDefinitions = Array.isArray(item.patient_document?.form_fields) ? item.patient_document.form_fields : [];
+        for (const [fieldId, answer] of Object.entries(patientResponse.form_answers)) {
+          if (!answer) continue;
+          const field = fieldDefinitions.find(entry => entry.id === fieldId);
+          if (!field) continue;
+          const displayed = ({ si: "Sí", no: "No", no_aplica: "No aplica" })[answer] || answer;
+          const block = create("article");
+          block.append(create("strong", "", String(field.label || "Pregunta")), create("p", "", displayed));
+          body.append(block);
+        }
         if (item.patient_response_shared_at) {
           body.append(create("small", "", `Compartido ${dateShort.format(new Date(item.patient_response_shared_at))}`));
         }
@@ -1041,6 +1155,9 @@
     if (sendAfterSave) {
       const materialTypeForQuality = els.materialType?.value || "exercise";
       const docForQuality = patientDocumentFromForm(materialTypeForQuality);
+      if (interactiveFormFields.some(field => !field.label.trim() || (field.type === "choice" && !field.options.length))) {
+        throw new Error("Completa los enunciados y las opciones del formulario interactivo antes de enviar.");
+      }
       const validation = window.ClinicNeuroMaterials?.validate?.(docForQuality);
       if (validation && !validation.ok) throw new Error("Antes de prescribir: " + validation.issues.join("; ") + ".");
       if (docForQuality.clinical_area === "neuropsychology" && !document.getElementById("clinic-neuro-reviewed")?.checked) {
@@ -3107,6 +3224,13 @@
   });
 
   els.exerciseClose.addEventListener("click", () => els.exerciseDialog.close());
+  els.interactiveAddField?.addEventListener("click", () => {
+    if (interactiveFormFields.length >= 30) { els.exerciseMessage.textContent = "Máximo 30 preguntas por objetivo."; return; }
+    interactiveFormFields.push({ id: "f_" + crypto.randomUUID().replaceAll("-", "").slice(0, 12), label: "",
+      type: "long_text", help: "", options: [] });
+    renderInteractiveFields();
+    els.interactiveFormList?.lastElementChild?.querySelector("textarea")?.focus();
+  });
   els.saveExercise.addEventListener("click", () => saveExercise(false).catch((error) => { els.exerciseMessage.textContent = error.message; }));
   els.exerciseForm.addEventListener("submit", (event) => { event.preventDefault(); saveExercise(true).catch((error) => { els.exerciseMessage.textContent = error.message; }); });
   els.generateDraft.addEventListener("click", () => { generateStructuredDraft(); scheduleSessionAutoSave(); });
