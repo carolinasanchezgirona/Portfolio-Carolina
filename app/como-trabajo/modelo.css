@@ -234,97 +234,89 @@
   .modelo-primera-visita { align-items: flex-start; flex-direction: column; }
 }
 
-/* Cabecera editorial de Mi forma de trabajar: fotografía real facilitada por la usuaria. */
+/* Cabecera del método: imagen original a escala de lectura.
+   No se estira la fotografía ni se recorta para llenar toda la altura. */
 .editorial-site .metodo-hero {
   padding: 0;
-  overflow: hidden;
   background: #F2EFE7;
   border-bottom: 1px solid rgba(112, 135, 147, .22);
 }
 .editorial-site .metodo-hero-grid {
   display: grid;
-  grid-template-columns: minmax(0, 52%) minmax(0, 48%);
-  min-height: 565px;
-  width: 100%;
+  grid-template-columns: minmax(0, 1.2fr) minmax(0, .8fr);
+  align-items: center;
+  gap: clamp(34px, 4vw, 72px);
+  width: min(100% - 48px, 1180px);
+  min-height: 430px;
+  margin-inline: auto;
+  padding-block: clamp(48px, 5vw, 76px);
 }
 .editorial-site .metodo-hero-copy {
-  z-index: 2;
   position: relative;
+  z-index: 1;
   min-width: 0;
-  align-self: center;
-  padding: 55px clamp(30px, 3.2vw, 66px) 62px max(28px, calc((100vw - 1180px) / 2));
+  padding: 0;
 }
 .editorial-site .metodo-hero h1 {
-  max-width: 13ch;
   margin: 0;
-  font-size: clamp(2.6rem, 4vw, 4.1rem);
+  max-width: 14ch;
+  font-size: clamp(2.45rem, 3.7vw, 3.75rem);
   line-height: 1.08;
 }
 .editorial-site .metodo-hero .seo-lead {
-  max-width: 49ch;
-  line-height: 1.7;
-  font-size: clamp(1rem, 1.15vw, 1.1rem);
+  max-width: 57ch;
+  margin-top: 20px;
   color: #304750;
+  font-size: clamp(1rem, 1.13vw, 1.06rem);
+  line-height: 1.68;
 }
-.editorial-site .metodo-hero .seo-actions { margin-top: 30px; }
+.editorial-site .metodo-hero .seo-actions { margin-top: 29px; }
 .editorial-site .metodo-hero-photo {
-  position: relative;
+  display: block;
+  width: 100%;
+  max-width: 370px;
+  aspect-ratio: 736 / 414;
   min-width: 0;
-  min-height: 565px;
   margin: 0;
+  justify-self: center;
   overflow: hidden;
-  isolation: isolate;
+  border-radius: 14px;
   background: #EDEDED;
+  box-shadow: 0 12px 30px rgba(48,71,80,.08);
 }
 .editorial-site .metodo-hero-photo img {
+  position: static;
   display: block;
-  position: absolute;
   width: 100%;
-  height: 100%;
-  inset: 0;
-  object-fit: cover;
-  object-position: center center;
+  height: auto;
+  aspect-ratio: 736 / 414;
+  object-fit: contain;
+  object-position: center;
 }
-.editorial-site .metodo-hero-photo::after {
-  content: "";
-  position: absolute;
-  z-index: 1;
-  pointer-events: none;
-  inset: 0 auto 0 0;
-  width: 22%;
-  background: linear-gradient(90deg, #F2EFE7 0%, rgba(242,239,231,.68) 42%, rgba(242,239,231,0) 100%);
+.editorial-site .metodo-hero-photo::after { display: none; }
+@media (max-width: 900px) {
+  .editorial-site .metodo-hero-grid {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 340px);
+    gap: clamp(24px, 3.5vw, 36px);
+    min-height: 0;
+  }
+  .editorial-site .metodo-hero-photo { max-width: 340px; }
 }
-@media (max-width: 1050px) {
-  .editorial-site .metodo-hero-grid { grid-template-columns: minmax(0, 54%) minmax(0, 46%); }
-  .editorial-site .metodo-hero-copy { padding-left: 30px; padding-right: 24px; }
-  .editorial-site .metodo-hero-photo { min-height: 525px; }
-}
-@media (max-width: 820px) {
-  .editorial-site .metodo-hero-grid { grid-template-columns: minmax(0, 1fr); }
-  .editorial-site .metodo-hero-copy {
-    padding: 43px 24px 36px;
-    max-width: 690px;
-    width: 100%;
-    margin-inline: auto;
+@media (max-width: 760px) {
+  .editorial-site .metodo-hero-grid {
+    grid-template-columns: minmax(0, 1fr);
+    width: min(100% - 40px, 640px);
+    gap: 26px;
+    padding-block: 38px 42px;
   }
   .editorial-site .metodo-hero-photo {
+    max-width: 370px;
     width: 100%;
-    min-height: 0;
-    height: clamp(230px, 42vw, 350px);
-  }
-  .editorial-site .metodo-hero-photo img {
-    object-position: center 52%;
-  }
-  .editorial-site .metodo-hero-photo::after {
-    inset: 0 0 auto 0;
-    width: 100%;
-    height: 22%;
-    background: linear-gradient(180deg, #F2EFE7, rgba(242,239,231,0));
+    justify-self: start;
   }
 }
 @media (max-width: 480px) {
-  .editorial-site .metodo-hero-copy { padding: 34px 20px 28px; }
-  .editorial-site .metodo-hero h1 { font-size: clamp(2.3rem, 10vw, 2.95rem); }
-  .editorial-site .metodo-hero .seo-lead { line-height: 1.65; }
-  .editorial-site .metodo-hero-photo { height: clamp(210px, 55vw, 275px); }
+  .editorial-site .metodo-hero-grid { gap: 24px; padding-block: 33px 36px; }
+  .editorial-site .metodo-hero h1 { font-size: clamp(2.25rem, 9.6vw, 2.85rem); }
+  .editorial-site .metodo-hero .seo-lead { line-height: 1.62; }
 }
