@@ -96,3 +96,22 @@ test("patient record section buttons have balanced horizontal spacing on desktop
   assert.match(styles, /scroll-padding-inline:9px/);
   assert.match(styles, /overflow-x:auto/);
 });
+
+test("clinical visit history uses one chronological presentation and keeps prior text intact", () => {
+  const start=main.indexOf("function renderHistory(patient) {");
+  const end=main.indexOf("function patientAge(birthDate)",start);
+  assert.ok(start>=0 && end>start);
+  const history=main.slice(start,end);
+  assert.match(history,/const events = \[\]/);
+  assert.match(history,/bookings\.forEach/);
+  assert.match(history,/attendance\.forEach/);
+  assert.match(history,/visits\.forEach/);
+  assert.match(history,/sessions\.filter/);
+  assert.match(history,/events\.sort/);
+  assert.match(history,/clinic-history-record/);
+  assert.match(history,/No constan citas, visitas ni sesiones vinculadas/);
+  assert.match(history,/clinicalProfileSchema\.some/);
+  assert.match(history,/window\.ClinicPatientWorkspace\?\.activate/);
+  assert.doesNotMatch(history,/method:\s*["'](?:POST|PATCH|DELETE)["']|localStorage|sessionStorage|\.innerHTML\s*=/);
+  assert.match(file("app/admin/clinica/page.tsx"),/admin-clinica\.js\?v=20261110-history-unified-2/);
+});
