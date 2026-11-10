@@ -1,0 +1,13 @@
+.privacy-incidents{--ink:#263547;--accent:#6A6572;max-width:1160px;margin:0 auto;padding:20px clamp(16px,4vw,42px) 50px;color:var(--ink);font-family:inherit}
+.privacy-head{margin:25px 0 24px}.privacy-overline{color:var(--accent);font-weight:700;font-size:13px;letter-spacing:.04em}
+.privacy-head h1{font-size:clamp(25px,3vw,36px);margin:6px 0 9px}.privacy-head p{max-width:800px;line-height:1.6}
+.privacy-gate,.privacy-details,.privacy-record{border:1px solid #E0E3E7;border-radius:14px;background:white;padding:20px;margin:12px 0}
+.privacy-gate[data-error=true]{border-color:#A6595D}.privacy-title{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.privacy-records{display:grid;gap:12px}.privacy-record h3{margin:0 0 8px;font-size:18px}.privacy-record p{white-space:pre-wrap;line-height:1.6}.privacy-tags{display:flex;gap:8px;flex-wrap:wrap}
+.privacy-tag{padding:4px 9px;border-radius:30px;border:1px solid #D5D9E2;font-size:12px}.privacy-record button,.privacy-title button,.privacy-primary{border-radius:10px;border:1px solid #6A6572;padding:10px 14px;cursor:pointer;font:inherit;font-weight:600}
+.privacy-primary{background:#514D59;color:#fff}.privacy-record button,.privacy-title button{color:#514D59;background:white}
+.privacy-record button:hover,.privacy-primary:hover,.privacy-title button:hover{filter:brightness(.95)}.privacy-record button:focus-visible,.privacy-primary:focus-visible{outline:3px solid #6A6572;outline-offset:3px}
+.privacy-details{margin-top:22px}.privacy-field{display:grid;gap:7px;margin:16px 0;font-weight:600}.privacy-field :is(textarea,input,select){width:100%;padding:10px 12px;border-radius:8px;border:1px solid #CAD2DD;font:inherit;font-size:16px;background:white;color:var(--ink)}
+.privacy-help,.privacy-footer{font-size:14px;color:#677486;line-height:1.5}.privacy-evidence{margin:12px 0}
+.privacy-event{border-top:1px solid #E6E9EE;padding:13px 0}.privacy-event strong{display:block}.privacy-event p{white-space:pre-wrap;margin:5px 0}.privacy-footer{margin-top:30px}
+@media(max-width:640px){.privacy-incidents{padding:14px}.privacy-gate,.privacy-details,.privacy-record{padding:16px}}
