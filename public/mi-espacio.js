@@ -660,6 +660,27 @@
     appendMaterialExamples(body, documentData.example);
     appendPatientSection(body, "Qué conviene recordar", documentData.remember);
 
+    // The original PDF is never copied into this form. It is available only
+    // through the existing authenticated patient-document endpoint.
+    const sourceId = String(documentData.source_document_id || "");
+    const sourceFile = /^[0-9a-f-]{36}$/i.test(sourceId)
+      ? (Array.isArray(state.portalData?.files) ? state.portalData.files : [])
+          .find(file => file.id === sourceId && file.mime_type === "application/pdf")
+      : null;
+    if (sourceFile) {
+      const source = document.createElement("section");
+      source.className = "space-interactive-source";
+      const intro = document.createElement("p");
+      intro.textContent = "Este formulario acompaña al PDF original de tu objetivo. Lee sus instrucciones y responde aquí, sin imprimirlo.";
+      const link = document.createElement("a");
+      link.href = "/api/patient-portal/file?id=" + encodeURIComponent(sourceId);
+      link.target = "_blank";
+      link.rel = "noopener noreferrer";
+      link.className = "space-secondary";
+      link.textContent = "Abrir PDF original del objetivo";
+      source.append(intro, link);
+      body.append(source);
+    }
     const downloadArea = document.createElement("div");
     downloadArea.className = "space-patient-downloads";
     const downloadLink = document.createElement("a");
