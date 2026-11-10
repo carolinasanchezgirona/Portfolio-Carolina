@@ -79,6 +79,7 @@ export default function ExternalAttendancePage() {
   const [drafts, setDrafts] = useState<Draft[]>([]);
   const [sourceText, setSourceText] = useState("");
   const [linksReviewed, setLinksReviewed] = useState(false);
+  const [storageAuthorized, setStorageAuthorized] = useState(false);
   const [message, setMessage] = useState("");
   const [busy, setBusy] = useState(false);
   const [extracting, setExtracting] = useState(false);
@@ -154,6 +155,7 @@ export default function ExternalAttendancePage() {
   }
   async function importDrafts() {
     if (!date) return;
+    if (!storageAuthorized) { setMessage("Confirma que el responsable del tratamiento ha autorizado el uso de este sistema para los datos de Creu Blava."); return; }
     const selected = drafts.filter((item) => item.selected);
     if (selected.some((item) => item.patient_id) && !linksReviewed) {
       setMessage("Antes de guardar, confirma que has comprobado las fichas vinculadas."); return;
@@ -245,8 +247,9 @@ export default function ExternalAttendancePage() {
                 {patients.map((p) => <option key={p.id} value={p.id}>{p.full_name} · {p.public_code}</option>)}
               </select>
             </div>)}
+            <label className="attendance-confirm-links"><input type="checkbox" checked={storageAuthorized} onChange={(event) => setStorageAuthorized(event.target.checked)} />Confirmo que existe autorización del responsable del tratamiento para guardar este listado de Creu Blava en Mi clínica.</label>
             <label className="attendance-confirm-links"><input type="checkbox" checked={linksReviewed} onChange={(event) => setLinksReviewed(event.target.checked)} />He revisado la identidad de las personas y las fichas sugeridas. Ninguna asistencia se confirma con esta importación.</label>
-            <button type="button" disabled={busy || (drafts.some((r) => r.selected && r.patient_id) && !linksReviewed)} onClick={importDrafts}>Guardar {drafts.filter((r) => r.selected).length} citas pendientes</button>
+            <button type="button" disabled={busy || !storageAuthorized || (drafts.some((r) => r.selected && r.patient_id) && !linksReviewed)} onClick={importDrafts}>Guardar {drafts.filter((r) => r.selected).length} citas pendientes</button>
           </div>}
         </section>
         <section className="attendance-card">
