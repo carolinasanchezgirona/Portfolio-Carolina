@@ -2086,57 +2086,89 @@
     markSessionSaved();
   }
 
+  // One chronology for every patient, regardless of when the record was created
+  // or which source supplied the appointment. This is presentation-only.
+  // Clinical profile text and approved session notes are never rewritten.
   function renderHistory(patient) {
     els.patientHistory.replaceChildren();
-    const bookings = patientAppointments(patient.id).sort((a, b) => new Date(b.starts_at) - new Date(a.starts_at));
+    const bookings = patientAppointments(patient.id);
     const visits = patientExternalVisits(patient.id);
     const attendance = patientAttendance(patient.id);
-    if (!bookings.length && !visits.length && !attendance.length) {
-      els.patientHistory.append(create("p", "clinic-empty-inline", "No hay citas vinculadas."));
+    const sessions = patientSessions(patient.id);
+    const bookingIds = new Set(bookings.map((item) => item.id));
+    const events = [];
+
+    bookings.forEach((appointment) => {
+      const existing = sessions.find((item) => item.appointment_id === appointment.id);
+      events.push({
+        date: appointment.starts_at,
+        type: "Cita",
+        title: "Consulta propia",
+        detail: timeFormat.format(new Date(appointment.starts_at)) + " · " + statusLabel(appointment.status) +
+          (existing ? " · Registro " + (existing.status === "approved" ? "aprobado" : "en borrador") : ""),
+        action: () => openSession(patient, appointment),
+        actionLabel: existing ? (existing.status === "approved" ? "Ver registro" : "Continuar sesión") : "Preparar sesión",
+        actionClass: existing?.status === "approved" ? "clinic-secondary" : "clinic-primary"
+      });
+    });
+    attendance.forEach((entry) => events.push({
+      date: entry.visit_date + "T" + (entry.visit_time || "12:00:00"),
+      type: "Asistencia",
+      title: "Creu Blava",
+      detail: attendanceLabel(entry.attendance_status) + (entry.attendance_note ? " · " + entry.attendance_note : "")
+    }));
+    visits.forEach((visit) => events.push({
+      date: visit.visit_date ? visit.visit_date + "T" + (visit.visit_time || "12:00:00") : null,
+      type: "Visita externa",
+      title: visit.external_provider || "Centro externo",
+      detail: externalCenterLabel(visit.center) + (visit.insurance_provider ? " · " + visit.insurance_provider : "")
+    }));
+    // Older or imported sessions may not be linked to a booking. Keep them
+    // visible rather than allowing the appointment-only history to hide them.
+    sessions.filter((item) => !item.appointment_id || !bookingIds.has(item.appointment_id)).forEach((item) => events.push({
+      date: item.session_date,
+      type: "Sesión",
+      title: "Sesión " + (item.session_number || "sin número"),
+      detail: item.status === "approved" ? "Registro clínico aprobado sin cita vinculada" : "Borrador sin cita vinculada"
+    }));
+    events.sort((a, b) => {
+      const t = (entry) => {
+        const n = new Date(entry.date || "").getTime();
+        return Number.isFinite(n) ? n : 0;
+      };
+      return t(b) - t(a);
+    });
+
+    if (!events.length) {
+      const profile = clinicalProfile(patient);
+      const structured = clinicalProfileSchema.some((field) => String(profile[field.key] || "").trim());
+      const narrative = String(patient.clinical_summary || "").trim();
+      els.patientHistory.append(create("p", "clinic-empty-inline",
+        "No constan citas, visitas ni sesiones vinculadas a esta ficha." +
+        (structured || narrative ? " La documentación clínica anterior sigue disponible en los apartados de la ficha." : "")));
+      if (structured || narrative) {
+        const goToHistory = create("button", "clinic-secondary", "Consultar información clínica");
+        goToHistory.type = "button";
+        goToHistory.addEventListener("click", () => window.ClinicPatientWorkspace?.activate(structured ? "historia" : "resumen"));
+        els.patientHistory.append(goToHistory);
+      }
       return;
     }
-    if (attendance.length) {
-      const completed = attendance.filter((x) => x.attendance_status === "completed").length;
-      const noShows = attendance.filter((x) => x.attendance_status === "no_show").length;
-      const cancelled = attendance.filter((x) => x.attendance_status === "cancelled").length;
-      els.patientHistory.append(create("p", "clinic-note",
-        "Creu Blava: " + completed + " realizada(s) · " + noShows + " ausencia(s) · " +
-        cancelled + " cancelada(s) · " + (attendance.length - completed - noShows - cancelled) + " pendiente(s)"));
-      attendance.forEach((entry) => {
-        const row = create("article");
-        const info = create("div");
-        info.append(
-          create("strong", "", externalVisitWhen(entry)),
-          create("span", "", "Creu Blava · " + attendanceLabel(entry.attendance_status) +
-            (entry.attendance_note ? " · " + entry.attendance_note : ""))
-        );
-        const badge = create("span", "clinic-status-pill", attendanceLabel(entry.attendance_status));
-        row.append(info, badge);
-        els.patientHistory.append(row);
-      });
-    }
-    visits.forEach((visit) => {
-      const row = create("article");
+
+    events.forEach((entry) => {
+      const row = create("article", "clinic-history-record");
       const info = create("div");
-      info.append(
-        create("strong", "", externalVisitWhen(visit)),
-        create("span", "", `${visit.external_provider} · ${externalCenterLabel(visit.center)} · ${visit.insurance_provider}`)
-      );
-      row.append(info, create("span", "clinic-status-pill", "Visita externa"));
-      els.patientHistory.append(row);
-    });
-    bookings.forEach((appointment) => {
-      const row = create("article");
-      const info = create("div");
-      info.append(
-        create("strong", "", dateShort.format(new Date(appointment.starts_at))),
-        create("span", "", `${timeFormat.format(new Date(appointment.starts_at))} · ${statusLabel(appointment.status)}`)
-      );
-      const existing = clinicalSessions.find((item) => item.appointment_id === appointment.id);
-      const button = create("button", existing?.status === "approved" ? "clinic-secondary" : "clinic-primary", existing ? (existing.status === "approved" ? "Ver registro" : "Continuar sesión") : "Preparar sesión");
-      button.type = "button";
-      button.addEventListener("click", () => openSession(patient, appointment));
-      row.append(info, button);
+      const when = entry.date ? new Date(entry.date) : null;
+      const date = when && !Number.isNaN(when.getTime()) ? dateShort.format(when) : "Fecha no indicada";
+      info.append(create("strong", "", date + " · " + entry.title), create("span", "", entry.detail));
+      const right = entry.action
+        ? create("button", entry.actionClass, entry.actionLabel)
+        : create("span", "clinic-status-pill", entry.type);
+      if (entry.action) {
+        right.type = "button";
+        right.addEventListener("click", entry.action);
+      }
+      row.append(info, right);
       els.patientHistory.append(row);
     });
   }
