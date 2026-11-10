@@ -78,6 +78,7 @@ export default function ExternalAttendancePage() {
   const [records, setRecords] = useState<Attendance[]>([]);
   const [drafts, setDrafts] = useState<Draft[]>([]);
   const [sourceText, setSourceText] = useState("");
+  const [linksReviewed, setLinksReviewed] = useState(false);
   const [message, setMessage] = useState("");
   const [busy, setBusy] = useState(false);
   const [extracting, setExtracting] = useState(false);
@@ -119,12 +120,13 @@ export default function ExternalAttendancePage() {
 
   function proposedPatient(name: string) {
     const target = normalizeName(name);
-    const matches = patients.filter((p) => normalizeName(p.full_name) === target);
+    const matches = patients.filter((p) => ["creu_blava", "combined"].includes(p.care_context) && normalizeName(p.full_name) === target);
     return matches.length === 1 ? matches[0].id : null;
   }
   function prepare(text: string) {
     const items = parseRoster(text).map((r) => ({ ...r, patient_id: proposedPatient(r.roster_name) }));
     setDrafts(items);
+    setLinksReviewed(false);
     setMessage(items.length
       ? "Se han detectado " + items.length + " filas. Corrige nombres y vinculaciones antes de guardar."
       : "No se han reconocido filas. Pega el listado con hora y nombre en cada línea.");
@@ -153,6 +155,9 @@ export default function ExternalAttendancePage() {
   async function importDrafts() {
     if (!date) return;
     const selected = drafts.filter((item) => item.selected);
+    if (selected.some((item) => item.patient_id) && !linksReviewed) {
+      setMessage("Antes de guardar, confirma que has comprobado las fichas vinculadas."); return;
+    }
     if (!selected.length) { setMessage("Selecciona al menos una fila."); return; }
     if (selected.some((item) => !normalizeTime(item.visit_time) || !item.roster_name.trim())) {
       setMessage("Hay filas sin nombre u hora válida."); return;
@@ -183,15 +188,17 @@ export default function ExternalAttendancePage() {
     }
     setBusy(true);
     try {
-      await rest("clinical_external_attendance?id=eq." + encodeURIComponent(record.id), {
-        method: "PATCH", headers: { Prefer: "return=minimal" }, body: JSON.stringify(patch)
-      });
+      const saved = await rest("clinical_external_attendance?id=eq." + encodeURIComponent(record.id) + "&select=id", {
+        method: "PATCH", headers: { Prefer: "return=representation" }, body: JSON.stringify(patch)
+      }) as { id: string }[];
+      if (!Array.isArray(saved) || saved.length !== 1) throw new Error("No se ha confirmado el cambio en la base de datos.");
       await reload();
       setMessage("Cambio guardado y reflejado en la historia del paciente vinculado.");
     } catch (error) { setMessage(error instanceof Error ? error.message : "No se pudo guardar el cambio."); }
     finally { setBusy(false); }
   }
   function editDraft(key: string, patch: Partial<Draft>) {
+    setLinksReviewed(false);
     setDrafts((previous) => previous.map((row) => row.key === key ? { ...row, ...patch } : row));
   }
 
@@ -203,7 +210,7 @@ export default function ExternalAttendancePage() {
       </header>
       {!authorized ? <p role="status">{message || "Verificando acceso profesional…"}</p> : <>
         <section className="attendance-card">
-          <div className="attendance-head-row"><h2>Jornada</h2><label>Fecha de las citas <input type="date" value={date} onChange={(event) => { setDate(event.target.value); setDrafts([]); }} /></label></div>
+          <div className="attendance-head-row"><h2>Jornada</h2><label>Fecha de las citas <input type="date" value={date} onChange={(event) => { setDate(event.target.value); setDrafts([]); setLinksReviewed(false); }} /></label></div>
           <div className="attendance-stats">
             <div><strong>{records.length}</strong><span>Programadas</span></div>
             <div><strong>{counts.completed}</strong><span>Realizadas</span></div>
@@ -232,7 +239,8 @@ export default function ExternalAttendancePage() {
                 {patients.map((p) => <option key={p.id} value={p.id}>{p.full_name} · {p.public_code}</option>)}
               </select>
             </div>)}
-            <button type="button" disabled={busy} onClick={importDrafts}>Guardar {drafts.filter((r) => r.selected).length} citas pendientes</button>
+            <label className="attendance-confirm-links"><input type="checkbox" checked={linksReviewed} onChange={(event) => setLinksReviewed(event.target.checked)} />He revisado la identidad de las personas y las fichas sugeridas. Ninguna asistencia se confirma con esta importación.</label>
+            <button type="button" disabled={busy || (drafts.some((r) => r.selected && r.patient_id) && !linksReviewed)} onClick={importDrafts}>Guardar {drafts.filter((r) => r.selected).length} citas pendientes</button>
           </div>}
         </section>
         <section className="attendance-card">
@@ -259,7 +267,7 @@ export default function ExternalAttendancePage() {
           </div>}
         </section>
         <p className="attendance-feedback" role="status" aria-live="polite">{message}</p>
-        <p className="attendance-disclaimer">Las citas importadas no acreditan asistencia. Solo los cambios confirmados quedan registrados. No se envía ninguna comunicación al paciente y no se crea automáticamente una nota de evolución clínica.</p>
+        <p className="attendance-disclaimer">Las coincidencias de nombre son sugerencias que requieren verificación manual. Las citas importadas no acreditan asistencia. Solo los cambios confirmados quedan registrados. No se envía ninguna comunicación al paciente y no se crea automáticamente una nota de evolución clínica.</p>
       </>}
     </main>
   );
