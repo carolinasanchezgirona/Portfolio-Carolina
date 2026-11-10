@@ -1166,7 +1166,7 @@
       actions.append(pdf);
 
       if (item.email_status !== "sent") {
-        const send = create("button", "clinic-secondary", "Enviar");
+        const send = create("button", "clinic-secondary", item.status === "assigned" ? "Avisar por correo" : "Enviar");
         send.type = "button";
         send.disabled = Boolean(item.patient_document?.conversion_review_required && !item.patient_document?.conversion_reviewed_at);
         if (send.disabled) send.title = "Antes de enviar, abre «Editar borrador» y confirma el cotejo del PDF original.";
