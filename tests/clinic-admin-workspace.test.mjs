@@ -18,7 +18,7 @@ test("the report opens within the patient's workspace, not as a modal", () => {
 
 test("report inputs are visible and include clinician-reviewed integration and conclusions", () => {
   assert.match(js, /panel\.hidden = !active/);
-  assert.match(js, /sheet\.hidden = false/);
+  assert.match(js, /sheet\.hidden = free/);
   assert.match(js, /\["integration", "Integración e impresión clínica/);
   assert.match(js, /\["conclusions", "Conclusiones/);
   assert.match(page, /clinic-report-save-state/);
