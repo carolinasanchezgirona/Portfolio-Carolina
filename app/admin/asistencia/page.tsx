@@ -182,8 +182,14 @@ export default function ExternalAttendancePage() {
     finally { setBusy(false); }
   }
   async function updateRecord(record: Attendance, patch: Partial<Attendance>) {
-    if (patch.attendance_status && patch.attendance_status !== "pending" && !(patch.patient_id || record.patient_id)) {
+    const nextStatus = patch.attendance_status ?? record.attendance_status;
+    const nextPatient = patch.patient_id === undefined ? record.patient_id : patch.patient_id;
+    if (nextStatus !== "pending" && !nextPatient) {
       setMessage("Vincula primero la cita con una ficha clínica antes de marcar su asistencia.");
+      return;
+    }
+    if (patch.patient_id && record.patient_id && patch.patient_id !== record.patient_id &&
+        !window.confirm("Esta visita ya está vinculada a otra historia. ¿Has verificado la identidad y quieres corregir la vinculación? El cambio quedará auditado.")) {
       return;
     }
     setBusy(true);
