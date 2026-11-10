@@ -753,6 +753,40 @@ async function handlePatientPortalResponse(request: Request, env: Env): Promise<
     return patientPortalJson({error:"Revisa el número o la longitud de las respuestas del cuaderno."},400);
   }
   const neuroAnswers=suppliedNeuro?(rawNeuroAnswers as string[]):null;
+
+  // Only questions that the clinician assigned to this patient can be answered.
+  const definitions = Array.isArray(document.form_fields) ? document.form_fields.slice(0, 30) : [];
+  const types = new Set(["short_text", "long_text", "scale_0_10", "date", "yes_no", "choice"]);
+  const fields = new Map<string, { type: string; options: string[] }>();
+  for (const item of definitions) {
+    if (!item || typeof item !== "object" || Array.isArray(item)) continue;
+    const def = item as Record<string, unknown>;
+    const id = String(def.id || ""), type = String(def.type || "");
+    if (!/^[A-Za-z0-9_-]{1,50}$/.test(id) || !types.has(type) || !String(def.label || "").trim() || fields.has(id)) continue;
+    const options = Array.isArray(def.options)
+      ? def.options.slice(0, 12).filter(value => typeof value === "string").map(value => String(value).slice(0, 100))
+      : [];
+    fields.set(id, { type, options });
+  }
+  const submittedForm = body.form_answers === undefined ? {} : body.form_answers;
+  if (!submittedForm || typeof submittedForm !== "object" || Array.isArray(submittedForm) ||
+      Object.keys(submittedForm).length > 30) {
+    return patientPortalJson({ error: "El formulario no tiene un formato válido." }, 400);
+  }
+  const formAnswers: Record<string, string> = Object.create(null);
+  for (const [id, rawValue] of Object.entries(submittedForm as Record<string, unknown>)) {
+    const field = fields.get(id);
+    if (!field || typeof rawValue !== "string" || rawValue.length > 5000) {
+      return patientPortalJson({ error: "El formulario incluye una respuesta no permitida." }, 400);
+    }
+    const value = rawValue.trim();
+    if (field.type === "short_text" && value.length > 500) return patientPortalJson({ error: "Una respuesta es demasiado larga." }, 400);
+    if (field.type === "date" && value && !/^\d{4}-\d{2}-\d{2}$/.test(value)) return patientPortalJson({ error: "Fecha no válida." }, 400);
+    if (field.type === "scale_0_10" && value && !/^(10|[0-9])$/.test(value)) return patientPortalJson({ error: "Escala no válida." }, 400);
+    if (field.type === "yes_no" && value && !["si", "no", "no_aplica"].includes(value)) return patientPortalJson({ error: "Respuesta no válida." }, 400);
+    if (field.type === "choice" && value && !field.options.includes(value)) return patientPortalJson({ error: "Opción no válida." }, 400);
+    formAnswers[id] = value;
+  }
   const savedAt = new Date().toISOString();
 
   const update = await fetch(
@@ -763,7 +797,7 @@ async function handlePatientPortalResponse(request: Request, env: Env): Promise<
       method: "PATCH",
       headers: serviceHeaders(env, { Prefer: "return=representation" }),
       body: JSON.stringify({
-        patient_response: { version: neuroAnswers ? 2 : 1, record, answers, ...(neuroAnswers ? { neuro_answers: neuroAnswers } : {}) },
+        patient_response: { version: fields.size ? 3 : neuroAnswers ? 2 : 1, record, answers, form_answers: formAnswers, ...(neuroAnswers ? { neuro_answers: neuroAnswers } : {}) },
         patient_response_status: action === "share" ? "shared" : "draft",
         patient_response_updated_at: savedAt,
         patient_response_shared_at: action === "share" ? savedAt : null,
