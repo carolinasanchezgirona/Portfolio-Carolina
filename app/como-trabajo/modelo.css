@@ -1,0 +1,174 @@
+/* Infografía del proceso clínico. Reproduce el lenguaje gráfico azul niebla / marfil
+   con contenido HTML legible, seleccionable y adaptable a móvil. */
+.modelo-graphic-section {
+  padding: clamp(30px, 4vw, 56px) 0 clamp(42px, 5vw, 70px);
+  background: #fff;
+}
+.modelo-graphic-wrap { max-width: 1080px; }
+.modelo-graphic-intro {
+  margin: 0 auto 30px;
+  max-width: 67ch;
+  text-align: center;
+  line-height: 1.65;
+  color: #304750;
+  font-size: 1rem;
+}
+.modelo-timeline {
+  position: relative;
+  display: grid;
+  gap: clamp(16px, 2vw, 23px);
+  max-width: 960px;
+  margin: 0 auto;
+}
+.modelo-timeline::before {
+  content: "";
+  position: absolute;
+  z-index: 0;
+  top: 65px;
+  bottom: 65px;
+  left: 35px;
+  width: 3px;
+  border-radius: 99px;
+  background: linear-gradient(180deg, #809DA8, #708793, #809DA8);
+  opacity: .8;
+}
+.modelo-stage {
+  position: relative;
+  display: grid;
+  grid-template-columns: 88px minmax(0, 1fr);
+  align-items: center;
+  min-width: 0;
+}
+.modelo-stage-number {
+  z-index: 1;
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 73px;
+  height: 73px;
+  border: 4px solid #fff;
+  border-radius: 50%;
+  background: #809DA8;
+  color: #fff;
+  font: 500 1.8rem/1 var(--font-newsreader), Georgia, serif;
+  box-shadow: 0 1px 0 rgba(48, 71, 80, .1);
+}
+.modelo-stage:nth-child(even) .modelo-stage-number { background: #708793; }
+.modelo-stage-panel {
+  display: grid;
+  grid-template-columns: 104px minmax(0, 1fr);
+  align-items: center;
+  gap: clamp(18px, 2.2vw, 28px);
+  padding: clamp(19px, 2.5vw, 27px) clamp(20px, 3.5vw, 42px);
+  border-radius: 72px;
+  background: #F2EFE7;
+  min-width: 0;
+  min-height: 152px;
+}
+.modelo-stage:nth-child(even) .modelo-stage-panel { background: #EDEDED; }
+.modelo-stage-icon {
+  display: grid;
+  place-items: center;
+  width: 91px;
+  height: 91px;
+  border-radius: 50%;
+  background: #DFE6E8;
+  color: #708793;
+}
+.modelo-stage-icon svg { width: 54px; height: 54px; }
+.modelo-stage-content {
+  min-width: 0;
+  border-left: 1px solid #708793;
+  padding-left: clamp(18px, 2.5vw, 30px);
+}
+.modelo-stage-content h2 {
+  margin: 0 0 6px;
+  color: #304750;
+  font: 500 clamp(1.45rem, 2.4vw, 2rem)/1.2 var(--font-newsreader), Georgia, serif;
+  letter-spacing: -.015em;
+}
+.modelo-stage-content p {
+  max-width: 53ch;
+  margin: 0;
+  color: #304750;
+  font-size: clamp(.94rem, 1.45vw, 1.075rem);
+  line-height: 1.55;
+}
+.modelo-note {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  max-width: 960px;
+  margin: clamp(25px, 4vw, 38px) auto 0;
+  padding: 20px 26px;
+  border-radius: 20px;
+  color: #304750;
+  background: #DDE7EA;
+  font-weight: 600;
+  font-size: clamp(.92rem, 1.65vw, 1.13rem);
+  line-height: 1.48;
+}
+.modelo-note svg, .modelo-neuro-note svg {
+  display: block;
+  width: 26px;
+  height: 26px;
+  flex: 0 0 26px;
+  color: #536F7B;
+}
+.modelo-neuro-note {
+  display: flex;
+  align-items: flex-start;
+  gap: 18px;
+  max-width: 920px;
+  margin: 20px auto 0;
+  padding: 0 8px;
+  color: #304750;
+  font-size: .95rem;
+  line-height: 1.6;
+}
+.modelo-neuro-note svg { margin-top: 2px; }
+.modelo-extra {
+  background: #F2EFE7;
+  padding: clamp(48px, 6vw, 78px) 0;
+}
+.modelo-extra-grid { display: grid; grid-template-columns: minmax(0,1.35fr) minmax(260px,.65fr); gap: clamp(30px,4.5vw,65px); align-items: start; }
+.modelo-extra-main h2 {
+  margin: 0 0 15px;
+  font-size: clamp(1.8rem, 3vw, 2.5rem);
+  line-height: 1.2;
+}
+.modelo-extra-main > p { color:#304750;line-height:1.7;max-width:70ch; }
+.modelo-extra .captacion-card { margin-top: 0; }
+.modelo-domain-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:16px; margin:26px 0 0; }
+.modelo-domain-grid .captacion-card { height:100%; }
+.modelo-extras-footer { margin-top:32px; padding-top:26px; border-top:1px solid rgba(112,135,147,.25); }
+.modelo-extras-footer h3 { margin: 0 0 10px; font: 500 1.55rem/1.3 var(--font-newsreader), Georgia, serif; }
+.modelo-extras-footer p { margin:0; color:#304750; line-height:1.65; }
+@media (max-width: 850px) {
+  .modelo-extra-grid { grid-template-columns:1fr; }
+  .modelo-extra .seo-sidebar { position:static;grid-template-columns:repeat(2,minmax(0,1fr)); }
+}
+@media (max-width: 600px) {
+  .modelo-graphic-section { padding-top: 24px; }
+  .modelo-timeline { gap:14px; }
+  .modelo-timeline::before { left:22px;top:42px;bottom:42px;width:2px; }
+  .modelo-stage { grid-template-columns:54px minmax(0,1fr); }
+  .modelo-stage-number { width:46px;height:46px;border-width:3px;font-size:1.24rem; }
+  .modelo-stage-panel {
+    grid-template-columns:52px minmax(0,1fr);
+    gap:10px;
+    padding:16px 15px;
+    border-radius:24px;
+    min-height:115px;
+  }
+  .modelo-stage-icon {width:48px;height:48px;}
+  .modelo-stage-icon svg {width:31px;height:31px;}
+  .modelo-stage-content {padding-left:11px;}
+  .modelo-stage-content h2 {font-size:clamp(1.16rem,5.1vw,1.55rem);}
+  .modelo-stage-content p {font-size:.89rem;line-height:1.48;}
+  .modelo-note {gap:12px;padding:15px;border-radius:14px;}
+  .modelo-neuro-note {gap:12px;padding:0 2px;}
+  .modelo-domain-grid {grid-template-columns:1fr;}
+  .modelo-extra .seo-sidebar {grid-template-columns:1fr;}
+}
+@media (prefers-reduced-motion: reduce) { .modelo-stage, .modelo-stage-panel { transition:none; } }
