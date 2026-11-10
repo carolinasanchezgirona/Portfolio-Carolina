@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import "../seo-pages.css";
 import ModeloVisual from "./modelo-visual";
 
@@ -18,20 +19,33 @@ export const metadata: Metadata = {
 export default function ComoTrabajoPage() {
   return (
     <main className="editorial-site">
-      <section className="seo-hero">
-        <div className="editorial-wrap seo-hero-inner">
-          <p className="seo-breadcrumbs"><a href="/">Inicio</a><span>·</span><span>Cómo trabajo</span></p>
-          <p className="editorial-eyebrow">Psicología sanitaria y neuropsicología</p>
-          <h1>Mi forma de trabajar</h1>
-          <p className="seo-lead">
-            Un proceso claro, adaptado a cada persona. La evaluación, las hipótesis clínicas
-            y los objetivos compartidos orientan qué hacemos en consulta. Las decisiones
-            se apoyan en la evidencia disponible, sin aplicar técnicas de forma automática.
-          </p>
-          <div className="seo-actions">
-            <a className="editorial-btn editorial-btn-primary" href="/cita/">Pedir cita</a>
-            <a className="editorial-btn editorial-btn-secondary" href="#etapas">Ver el proceso</a>
+      <section className="seo-hero metodo-hero" aria-labelledby="metodo-page-title">
+        <div className="metodo-hero-grid">
+          <div className="metodo-hero-copy">
+            <p className="seo-breadcrumbs"><a href="/">Inicio</a><span>·</span><span>Cómo trabajo</span></p>
+            <p className="editorial-eyebrow">Psicología sanitaria y neuropsicología</p>
+            <h1 id="metodo-page-title">Mi forma de trabajar</h1>
+            <p className="seo-lead">
+              Un proceso claro, adaptado a cada persona. La evaluación, las hipótesis clínicas
+              y los objetivos compartidos orientan qué hacemos en consulta. Las decisiones
+              se apoyan en la evidencia disponible, sin aplicar técnicas de forma automática.
+            </p>
+            <div className="seo-actions">
+              <a className="editorial-btn editorial-btn-primary" href="/cita/">Pedir cita</a>
+              <a className="editorial-btn editorial-btn-secondary" href="#etapas">Ver el proceso</a>
+            </div>
           </div>
+          <figure className="metodo-hero-photo">
+            <Image
+              src="/modelo-sesion-psicologia.webp"
+              alt="Sesión de atención psicológica: una profesional toma notas mientras conversa con otra persona"
+              width={560}
+              height={315}
+              sizes="(max-width: 820px) 100vw, 50vw"
+              priority
+              unoptimized
+            />
+          </figure>
         </div>
       </section>
 
