@@ -113,7 +113,7 @@ test("clinical visit history uses one chronological presentation and keeps prior
   assert.match(history,/clinicalProfileSchema\.some/);
   assert.match(history,/window\.ClinicPatientWorkspace\?\.activate/);
   assert.doesNotMatch(history,/method:\s*["'](?:POST|PATCH|DELETE)["']|localStorage|sessionStorage|\.innerHTML\s*=/);
-  assert.match(file("app/admin/clinica/page.tsx"),/admin-clinica\.js\?v=20261110-objective-forms-1/);
+  assert.match(file("app/admin/clinica/page.tsx"),/admin-clinica\.js\?v=20261110-pdf-publish-2/);
 });
 
 test("legacy narrative synthesis shares the same read and edit presentation without rewriting saved notes", () => {
