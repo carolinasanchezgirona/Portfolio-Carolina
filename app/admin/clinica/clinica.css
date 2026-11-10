@@ -270,6 +270,7 @@
 .clinic-report-sheet h1{color:var(--admin-action);margin:4px 0;font-size:28px}
 .clinic-report-sheet label{display:grid;gap:7px;margin:20px 0;font-weight:700}
 .clinic-report-sheet textarea{width:100%;border:1px solid var(--admin-line);border-radius:10px;padding:12px;font:inherit;line-height:1.5;color:var(--admin-text);background:#fff}
+.clinic-report-sheet textarea,#clinic-health-report-sections textarea{box-sizing:border-box;overflow-y:hidden;resize:none;min-height:96px}
 .clinic-report-sheet footer{margin-top:42px;border-top:1px solid var(--admin-soft);padding-top:18px}
 @media(max-width:620px){.clinic-report-sheet{padding:22px}.clinic-report-toolbar{align-items:stretch;flex-direction:column}}
 
