@@ -2,6 +2,7 @@ import Script from "next/script";
 import type { Metadata } from "next";
 import PatientBulkImport from "./patient-bulk-import";
 import NeuroFollowup from "./neuro-followup";
+import ClinicalPdfExporter from "./clinical-pdf-exporter";
 import "./clinica.css";
 import "./clinic-navigation.css";
 import "./patient-ux.css";
@@ -437,7 +438,7 @@ export default function AdminClinicaPage() {
             <button id="clinic-report-close" className="clinic-close" type="button" aria-label="Cerrar">×</button>
           </div>
           <div className="clinic-form-grid clinic-report-settings">
-            <label>Tipo de informe<select id="clinic-report-type"><option value="evolution_health">Evolución y seguimiento · Profesional sanitario</option><option value="evolution">Informe de evolución</option><option value="clinical_summary">Resumen clínico</option><option value="referral">Informe de derivación</option></select></label>
+            <label>Tipo de informe<select id="clinic-report-type"><option value="evolution_health">Evolución y seguimiento · Profesional sanitario</option><option value="evolution">Informe de evolución</option><option value="clinical_summary">Resumen clínico</option><option value="referral">Informe de derivación</option><option value="free">Informe libre · Redacción propia</option></select></label>
             <label>Destinatario<input id="clinic-report-recipient" placeholder="Paciente, profesional, entidad…" /></label>
             <label className="clinic-full">Finalidad<input id="clinic-report-purpose" placeholder="Finalidad asistencial del documento…" /></label>
             <label>Desde<input id="clinic-report-start" type="date" /></label>
@@ -447,6 +448,10 @@ export default function AdminClinicaPage() {
             <button id="clinic-generate-report" className="clinic-secondary" type="button">Autogenerar borrador</button>
             <span>Se incluirán únicamente registros aprobados del periodo seleccionado. Los cambios hechos posteriormente en Word se adjuntan desde «Adjuntar Word revisado». El borrador se guarda automáticamente cuando tiene finalidad y contenido suficientes.</span>
           </div>
+          <section id="clinic-free-report" className="clinic-report-sheet" hidden aria-label="Informe redactado libremente">
+            <label>Título del informe<input id="clinic-free-report-title" type="text" placeholder="Ej. Informe clínico de valoración" maxLength={180} /></label>
+            <label>Contenido redactado por ti<textarea id="clinic-free-report-body" rows={22} placeholder="Redacta aquí tu informe completo. Puedes separar apartados con títulos y párrafos." /></label>
+          </section>
           <section id="clinic-report-sheet" className="clinic-report-sheet" aria-label="Contenido clínico editable">
             <header><p>Carolina Sánchez Girona · Psicóloga General Sanitaria y Neuropsicóloga</p><h1 id="clinic-report-title-preview">Informe de evolución</h1><p id="clinic-report-meta" /></header>
             <label>Motivo y contexto<textarea id="clinic-report-context" rows={5} /></label>
@@ -460,7 +465,8 @@ export default function AdminClinicaPage() {
           <div className="clinic-dialog-actions">
             <button id="clinic-save-report" className="clinic-secondary" type="button">Guardar borrador</button>
             <button id="clinic-approve-report" className="clinic-secondary" type="button">Aprobar informe</button>
-            <button id="clinic-print-report" className="clinic-primary" type="button">Imprimir / guardar PDF</button>
+            <button id="clinic-download-pdf" className="clinic-primary" type="button">Descargar PDF</button>
+            <button id="clinic-print-report" className="clinic-secondary" type="button">Imprimir</button>
             <button id="clinic-upload-revised-word" className="clinic-secondary" type="button">Adjuntar Word revisado</button>
           </div>
         </form>
@@ -828,13 +834,14 @@ export default function AdminClinicaPage() {
         </form>
       </dialog>
 
+      <ClinicalPdfExporter />
       <Script src="/clinic-neuro-materials.js?v=20261010-ux-1" strategy="afterInteractive" />
       <Script src="/clinic-neuro-graded-recipes.js?v=20261010-1" strategy="afterInteractive" />
       <Script src="/clinic-neuro-variant-factory.js?v=20261010-logic-1" strategy="afterInteractive" />
       <Script src="/clinic-neuro-weekly-composer.js?v=20261010-logic-4" strategy="afterInteractive" />
       <Script src="/clinic-neuro-catalog-browser.js?v=20261010-catalog-2" strategy="afterInteractive" />
       <Script src="/clinic-import-activity.js?v=20261018-1" strategy="afterInteractive" />
-      <Script src="/admin-clinica.js?v=20261104-remove-admin-tasks-2" strategy="afterInteractive" />
+      <Script src="/admin-clinica.js?v=20261110-free-pdf-1" strategy="afterInteractive" />
       <Script src="/clinical-smart-intake.js?v=20261109-theme-1" strategy="afterInteractive" />
       <Script src="/clinical-diagnostic-assistant.js?v=20261109-theme-1" strategy="afterInteractive" />
       <Script src="/clinical-treatment-assistant.js?v=20261029-feedback-1" strategy="afterInteractive" />
