@@ -838,7 +838,7 @@ export default function AdminClinicaPage() {
       <Script src="/clinical-diagnostic-assistant.js?v=20261109-theme-1" strategy="afterInteractive" />
       <Script src="/clinical-treatment-assistant.js?v=20261029-feedback-1" strategy="afterInteractive" />
       <Script src="/admin-clinica-audit-fixes.js?v=20260915-1" strategy="afterInteractive" />
-      <Script src="/clinic-readable-history.js?v=20261025-1" strategy="afterInteractive" />
+      <Script src="/clinic-readable-history.js?v=20261110-structured-2" strategy="afterInteractive" />
       <Script src="/clinical-ai-button-bridge.js?v=20261029-2" strategy="afterInteractive" />
     </main>
   );
