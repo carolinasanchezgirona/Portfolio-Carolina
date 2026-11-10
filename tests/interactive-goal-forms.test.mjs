@@ -54,7 +54,7 @@ test("original goal PDF is linked without copying into a public asset", () => {
 
 
 test("source PDFs remain patient-specific and only shared originals may be assigned", () => {
-  assert.match(admin, /linkedDoc\.patient_id === currentPatient\.id/);
+  assert.match(admin, /d\.patient_id === currentPatient\.id/);
   assert.match(admin, /!linkedDoc\.shared_at \|\| linkedDoc\.share_revoked_at/);
   assert.match(admin, /const \{ source_document_id, \.\.\.documentForLibrary \}/);
   assert.match(admin, /const \{ source_document_id, \.\.\.doc \} = patientDocumentFromForm/);
