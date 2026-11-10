@@ -151,11 +151,12 @@ export default function HomePage() {
       <section className="editorial-section editorial-method" id="como-trabajo" aria-labelledby="metodo-title">
         <div className="editorial-wrap">
           <div className="editorial-section-head">
-            <p className="editorial-section-eyebrow">Cómo trabajo</p>
-            <h2 id="metodo-title">Evaluar, comprender y acompañar.</h2>
+            <p className="editorial-section-eyebrow">Cómo trabajaremos</p>
+            <h2 id="metodo-title">Un proceso claro, adaptado a cada persona.</h2>
             <p className="editorial-method-intro">
-              El proceso comienza escuchando el motivo de consulta y comprendiendo su contexto.
-              A partir de la evaluación clínica, definimos objetivos y revisamos la evolución.
+              No hay una técnica válida para todo el mundo. Partimos de tu situación, acordamos qué
+              queremos trabajar y revisamos qué está cambiando. Estas cinco etapas orientan el proceso;
+              no son un recorrido rígido ni implican un número fijo de sesiones.
             </p>
           </div>
 
@@ -170,24 +171,35 @@ export default function HomePage() {
                 loading="lazy"
               />
             </figure>
-            <div className="editorial-method-list" aria-label="Fases del proceso clínico">
+            <div className="editorial-method-list" aria-label="Cinco etapas del proceso clínico">
               <div className="editorial-method-item">
                 <span className="editorial-method-number" aria-hidden="true">01</span>
-                <div><h3>Comprender</h3><p>Explorar el motivo de consulta, la historia clínica y el contexto.</p></div>
+                <div><h3>Comprender</h3><p>Exploramos el motivo de consulta, tu historia y cómo te afecta en el día a día.</p></div>
               </div>
               <div className="editorial-method-item">
                 <span className="editorial-method-number" aria-hidden="true">02</span>
-                <div><h3>Formular</h3><p>Integrar los datos y formular hipótesis clínicas fundamentadas.</p></div>
+                <div><h3>Definir</h3><p>Integramos la información disponible y acordamos objetivos relevantes y realistas.</p></div>
               </div>
               <div className="editorial-method-item">
                 <span className="editorial-method-number" aria-hidden="true">03</span>
-                <div><h3>Intervenir</h3><p>Acordar objetivos y seleccionar intervenciones ajustadas.</p></div>
+                <div><h3>Intervenir</h3><p>Seleccionamos estrategias respaldadas por la evidencia y adaptadas a tus necesidades.</p></div>
               </div>
               <div className="editorial-method-item">
                 <span className="editorial-method-number" aria-hidden="true">04</span>
-                <div><h3>Revisar</h3><p>Revisar la evolución y ajustar el plan cuando sea necesario.</p></div>
+                <div><h3>Medir y ajustar</h3><p>Revisamos los cambios, el funcionamiento cotidiano y lo que todavía necesita atención.</p></div>
+              </div>
+              <div className="editorial-method-item">
+                <span className="editorial-method-number" aria-hidden="true">05</span>
+                <div><h3>Consolidar</h3><p>Preparamos el cierre, reforzamos recursos y valoramos el seguimiento si es necesario.</p></div>
               </div>
             </div>
+          </div>
+          <p className="editorial-method-intro">
+            En una evaluación neuropsicológica, el proceso puede finalizar con la devolución de resultados
+            y las recomendaciones, sin que sea necesaria una intervención posterior.
+          </p>
+          <div className="editorial-actions">
+            <a className="editorial-btn editorial-btn-secondary" href="/como-trabajo/">Conocer mi forma de trabajar <Arrow /></a>
           </div>
         </div>
       </section>
