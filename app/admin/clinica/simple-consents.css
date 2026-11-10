@@ -1,0 +1,10 @@
+.clinic-simple-consents{margin:18px 0;padding:19px 21px;border:1px solid #ced9de;border-radius:12px;background:#fafafa;color:#273642}
+.clinic-simple-consents h4{margin:0 0 10px;font-size:1.05rem}
+.clinic-simple-consents p{line-height:1.6}
+.clinic-simple-check{display:flex!important;align-items:flex-start;gap:10px;margin:16px 0;font-weight:400!important;line-height:1.5}
+.clinic-simple-check input{width:18px;height:18px;flex:none;margin-top:4px;accent-color:#708793}
+.clinic-simple-consents button:disabled{opacity:.5;cursor:not-allowed}
+.clinic-simple-history{display:grid;gap:10px;margin:16px 0}
+.clinic-simple-item{border:1px solid #d4dce0;background:white;border-radius:8px;padding:14px 16px}
+.clinic-simple-item p{margin:7px 0 3px}
+.clinic-simple-item small{color:#5b6971;line-height:1.5;display:block}

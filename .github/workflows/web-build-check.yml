@@ -201,6 +201,12 @@ jobs:
       - name: Verificar categorías de artículos y redirecciones SEO
         run: node --test tests/articles-categories.test.mjs
 
+      - name: Verificar firma simple clínica, seguridad y custodia sin papel
+        run: |
+          node --check public/clinic-simple-consents.js
+          node --check public/patient-simple-consents.js
+          node --experimental-strip-types --test tests/clinical-simple-consents.test.mjs
+
       - name: Compilar y exportar web
         run: npm run build
 

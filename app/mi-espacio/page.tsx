@@ -1,6 +1,7 @@
 import LegalLinks from "../components/legal-links";
 import type { Metadata } from "next";
 import Script from "next/script";
+import "./simple-consents.css";
 import "./mi-espacio.css";
 import "./patient-goals.css";
 
@@ -118,6 +119,20 @@ export default function MiEspacioPage() {
               </div>
               <button type="button" className="space-primary" data-go-therapy>Ir a mis ejercicios →</button>
             </div>
+
+
+            <section id="space-simple-consents" className="space-simple-consents" aria-labelledby="space-simple-consents-title" hidden>
+              <div className="space-simple-consents-heading">
+                <div>
+                  <p className="space-eyebrow">Documentación de la consulta</p>
+                  <h3 id="space-simple-consents-title">Consentimientos para revisar</h3>
+                </div>
+              </div>
+              <p>Carolina te ha enviado un documento. Puedes descargarlo, leerlo con tranquilidad y preguntar antes de decidir. No se acepta nada automáticamente.</p>
+              <div id="space-simple-consents-list" aria-live="polite" />
+              <p id="space-simple-consents-message" role="status" aria-live="polite" />
+              <p className="space-simple-consents-note">La aceptación desde este portal es una firma electrónica simple mediante tu cuenta privada. No es una firma electrónica avanzada o cualificada. También puedes solicitar firmar un PDF con certificado digital.</p>
+            </section>
 
             <section id="space-session-prep" className="space-session-prep" aria-labelledby="space-session-prep-title" tabIndex={-1}>
               <div className="space-session-prep-head">
@@ -309,6 +324,7 @@ export default function MiEspacioPage() {
 
       <Script src="/patient-video.js?v=20261009-1" strategy="afterInteractive" />
       <Script src="/mi-espacio.js?v=20261105-clinical-only-1" strategy="afterInteractive" />
+      <Script src="/patient-simple-consents.js?v=20261109-1" strategy="afterInteractive" />
       <Script src="/session-prep.js?v=20261017-1" strategy="afterInteractive" />
       <Script src="/patient-goal-process.js?v=20261109-1" strategy="afterInteractive" />
     </main>
