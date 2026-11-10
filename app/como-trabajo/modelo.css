@@ -1,10 +1,10 @@
 /* Infografía del proceso clínico. Reproduce el lenguaje gráfico azul niebla / marfil
    con contenido HTML legible, seleccionable y adaptable a móvil. */
 .modelo-graphic-section {
-  padding: clamp(30px, 4vw, 56px) 0 clamp(42px, 5vw, 70px);
+  padding: clamp(26px, 3.4vw, 48px) 0 clamp(36px, 4.25vw, 60px);
   background: #fff;
 }
-.modelo-graphic-wrap { max-width: 1080px; }
+.modelo-graphic-wrap { max-width: 920px; }
 .modelo-graphic-intro {
   margin: 0 auto 30px;
   max-width: 67ch;
@@ -16,18 +16,18 @@
 .modelo-timeline {
   position: relative;
   display: grid;
-  gap: clamp(16px, 2vw, 23px);
-  max-width: 960px;
+  gap: clamp(14px, 1.7vw, 20px);
+  max-width: 816px;
   margin: 0 auto;
 }
 .modelo-timeline::before {
   content: "";
   position: absolute;
   z-index: 0;
-  top: 65px;
-  bottom: 65px;
-  left: 35px;
-  width: 3px;
+  top: 55px;
+  bottom: 55px;
+  left: 30px;
+  width: 2.5px;
   border-radius: 99px;
   background: linear-gradient(180deg, #809DA8, #708793, #809DA8);
   opacity: .8;
@@ -35,7 +35,7 @@
 .modelo-stage {
   position: relative;
   display: grid;
-  grid-template-columns: 88px minmax(0, 1fr);
+  grid-template-columns: 75px minmax(0, 1fr);
   align-items: center;
   min-width: 0;
 }
@@ -44,86 +44,86 @@
   position: relative;
   display: grid;
   place-items: center;
-  width: 73px;
-  height: 73px;
-  border: 4px solid #fff;
+  width: 62px;
+  height: 62px;
+  border: 3px solid #fff;
   border-radius: 50%;
   background: #809DA8;
   color: #fff;
-  font: 500 1.8rem/1 var(--font-newsreader), Georgia, serif;
+  font: 500 1.53rem/1 var(--font-newsreader), Georgia, serif;
   box-shadow: 0 1px 0 rgba(48, 71, 80, .1);
 }
 .modelo-stage:nth-child(even) .modelo-stage-number { background: #708793; }
 .modelo-stage-panel {
   display: grid;
-  grid-template-columns: 104px minmax(0, 1fr);
+  grid-template-columns: 88px minmax(0, 1fr);
   align-items: center;
-  gap: clamp(18px, 2.2vw, 28px);
-  padding: clamp(19px, 2.5vw, 27px) clamp(20px, 3.5vw, 42px);
-  border-radius: 72px;
+  gap: clamp(15px, 1.87vw, 24px);
+  padding: clamp(16px, 2.125vw, 23px) clamp(17px, 3vw, 36px);
+  border-radius: 61px;
   background: #F2EFE7;
   min-width: 0;
-  min-height: 152px;
+  min-height: 129px;
 }
 .modelo-stage:nth-child(even) .modelo-stage-panel { background: #EDEDED; }
 .modelo-stage-icon {
   display: grid;
   place-items: center;
-  width: 91px;
-  height: 91px;
+  width: 77px;
+  height: 77px;
   border-radius: 50%;
   background: #DFE6E8;
   color: #708793;
 }
-.modelo-stage-icon svg { width: 54px; height: 54px; }
+.modelo-stage-icon svg { width: 46px; height: 46px; }
 .modelo-stage-content {
   min-width: 0;
   border-left: 1px solid #708793;
-  padding-left: clamp(18px, 2.5vw, 30px);
+  padding-left: clamp(15px, 2.125vw, 25.5px);
 }
 .modelo-stage-content h2 {
-  margin: 0 0 6px;
+  margin: 0 0 5px;
   color: #304750;
-  font: 500 clamp(1.45rem, 2.4vw, 2rem)/1.2 var(--font-newsreader), Georgia, serif;
+  font: 500 clamp(1.23rem, 2.04vw, 1.7rem)/1.2 var(--font-newsreader), Georgia, serif;
   letter-spacing: -.015em;
 }
 .modelo-stage-content p {
   max-width: 53ch;
   margin: 0;
   color: #304750;
-  font-size: clamp(.94rem, 1.45vw, 1.075rem);
+  font-size: clamp(.88rem, 1.23vw, .98rem);
   line-height: 1.55;
 }
 .modelo-note {
   display: flex;
   align-items: center;
-  gap: 18px;
-  max-width: 960px;
-  margin: clamp(25px, 4vw, 38px) auto 0;
-  padding: 20px 26px;
-  border-radius: 20px;
+  gap: 15px;
+  max-width: 816px;
+  margin: clamp(21px, 3.4vw, 32px) auto 0;
+  padding: 17px 22px;
+  border-radius: 17px;
   color: #304750;
   background: #DDE7EA;
   font-weight: 600;
-  font-size: clamp(.92rem, 1.65vw, 1.13rem);
+  font-size: clamp(.88rem, 1.4vw, 1rem);
   line-height: 1.48;
 }
 .modelo-note svg, .modelo-neuro-note svg {
   display: block;
-  width: 26px;
-  height: 26px;
-  flex: 0 0 26px;
+  width: 22px;
+  height: 22px;
+  flex: 0 0 22px;
   color: #536F7B;
 }
 .modelo-neuro-note {
   display: flex;
   align-items: flex-start;
-  gap: 18px;
-  max-width: 920px;
-  margin: 20px auto 0;
-  padding: 0 8px;
+  gap: 15px;
+  max-width: 782px;
+  margin: 17px auto 0;
+  padding: 0 7px;
   color: #304750;
-  font-size: .95rem;
+  font-size: .9rem;
   line-height: 1.6;
 }
 .modelo-neuro-note svg { margin-top: 2px; }
@@ -151,18 +151,18 @@
 @media (max-width: 600px) {
   .modelo-graphic-section { padding-top: 24px; }
   .modelo-timeline { gap:14px; }
-  .modelo-timeline::before { left:22px;top:42px;bottom:42px;width:2px; }
-  .modelo-stage { grid-template-columns:54px minmax(0,1fr); }
-  .modelo-stage-number { width:46px;height:46px;border-width:3px;font-size:1.24rem; }
+  .modelo-timeline::before { left:21px;top:40px;bottom:40px;width:2px; }
+  .modelo-stage { grid-template-columns:51px minmax(0,1fr); }
+  .modelo-stage-number { width:44px;height:44px;border-width:3px;font-size:1.2rem; }
   .modelo-stage-panel {
-    grid-template-columns:52px minmax(0,1fr);
+    grid-template-columns:50px minmax(0,1fr);
     gap:10px;
-    padding:16px 15px;
-    border-radius:24px;
-    min-height:115px;
+    padding:15px 14px;
+    border-radius:23px;
+    min-height:110px;
   }
-  .modelo-stage-icon {width:48px;height:48px;}
-  .modelo-stage-icon svg {width:31px;height:31px;}
+  .modelo-stage-icon {width:46px;height:46px;}
+  .modelo-stage-icon svg {width:30px;height:30px;}
   .modelo-stage-content {padding-left:11px;}
   .modelo-stage-content h2 {font-size:clamp(1.16rem,5.1vw,1.55rem);}
   .modelo-stage-content p {font-size:.89rem;line-height:1.48;}
