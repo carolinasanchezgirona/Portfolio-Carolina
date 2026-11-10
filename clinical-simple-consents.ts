@@ -237,6 +237,15 @@ export async function clinicalSimpleAdmin(request:Request,env:Env,
    return json({error:"Tipo de consentimiento no válido."},400);
   // Recargar tras las expiraciones automáticas del trigger: el servidor decide
   // si una invitación anterior sigue bloqueando otra solicitud de la misma clase.
+  const nowIso=new Date().toISOString();
+  for(const previous of current){
+   if(previous.kind!==body.kind ||
+      !["pending","email_accepted","email_unknown"].includes(previous.status) ||
+      !(Date.parse(previous.expires_at)<=Date.now()))continue;
+   // Condicional: nunca borra o reabre declaraciones del paciente ya recibidas.
+   await patch(env,previous.id,{status:"expired"},
+      "&status=in.(pending,email_accepted,email_unknown)&expires_at=lte."+encodeURIComponent(nowIso));
+  }
   const activeRequests=await rows<Consent>(env,table+"?select=id,kind,status&patient_id=eq."+id+
    "&kind=eq."+body.kind+"&status=in.(preparing,pending,email_accepted,email_unknown,recording)&limit=10");
   if(activeRequests.some(row=>row.kind===body.kind&&["preparing","pending","email_accepted","email_unknown","recording"].includes(row.status)))
