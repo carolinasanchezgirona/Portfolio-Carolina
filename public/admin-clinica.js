@@ -1045,7 +1045,7 @@
   }
 
   async function revokeAssignment(item) {
-    if (!window.confirm("¿Revocar este enlace? El paciente dejará de poder abrirlo inmediatamente.")) return;
+    if (!window.confirm("¿Retirar acceso a este material? El paciente dejará de poder verlo inmediatamente.")) return;
     const rows = await rest(`clinical_exercise_assignments?id=eq.${encodeURIComponent(item.id)}&select=*`, {
       method: "PATCH",
       headers: { Prefer: "return=representation" },
@@ -1086,10 +1086,11 @@
       const info = create("div");
       const title = create("strong", "", item.title);
       const statusLine = item.revoked_at
-        ? "Enlace revocado"
+        ? "Acceso retirado"
         : item.email_status === "sent"
-          ? `Enviado${item.access_expires_at ? " · enlace hasta " + dateShort.format(new Date(item.access_expires_at)) : ""}`
-          : item.status === "prepared" ? "Preparado, sin enviar" : item.status;
+          ? "Enviado por correo · disponible en Mi espacio"
+          : item.status === "assigned" ? "Publicado en Mi espacio · sin correo"
+          : item.status === "prepared" ? "Borrador sin publicar" : item.status;
       info.append(title, create("span", "", statusLine));
 
       const states = create("div", "clinic-material-status");
@@ -1178,8 +1179,8 @@
         actions.append(resend);
       }
 
-      if (item.email_status === "sent" && !item.revoked_at) {
-        const revoke = create("button", "clinic-text", "Revocar enlace");
+      if ((item.email_status === "sent" || item.status === "assigned") && !item.revoked_at) {
+        const revoke = create("button", "clinic-text", "Retirar acceso");
         revoke.type = "button";
         revoke.addEventListener("click", () => revokeAssignment(item).catch((error) => { els.patientMessage.textContent = error.message; }));
         actions.append(revoke);
