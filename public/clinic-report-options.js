@@ -26,6 +26,27 @@
   badge.style.cssText = "margin:0 0 18px;padding:10px 14px;border:2px solid #b64a2b;border-radius:10px;color:#9b3516;font-weight:800;text-align:center;letter-spacing:.04em";
   sheet.prepend(badge);
 
+  // Let each report textarea grow to fit all of its content, including autofilled text.
+  const autosizeReportFields = () => {
+    if (!dialog.open) return;
+    dialog.querySelectorAll("#clinic-report-sheet textarea, #clinic-health-report-sections textarea").forEach((field) => {
+      if (field.getClientRects().length === 0) return;
+      field.style.height = "auto";
+      field.style.height = Math.max(96, field.scrollHeight + 2) + "px";
+    });
+  };
+  dialog.addEventListener("input", (event) => {
+    if (event.target.matches("#clinic-report-sheet textarea, #clinic-health-report-sections textarea")) autosizeReportFields();
+  });
+  const sizeObserver = new MutationObserver(() => {
+    if (dialog.open) requestAnimationFrame(autosizeReportFields);
+  });
+  sizeObserver.observe(dialog, { attributes: true, attributeFilter: ["open"] });
+  sizeObserver.observe(document.querySelector("#clinic-health-report-sections") || sheet, { childList: true, subtree: true });
+  window.addEventListener("resize", autosizeReportFields);
+  dialog.addEventListener("click", () => setTimeout(autosizeReportFields, 0));
+  window.ClinicReportAutosize = autosizeReportFields;
+
   const reportContext = document.querySelector("#clinic-report-context");
   const updateBadge = () => { badge.hidden = Boolean(reportContext?.disabled); };
   const observer = new MutationObserver(() => { if (dialog.open) setTimeout(updateBadge, 0); });
