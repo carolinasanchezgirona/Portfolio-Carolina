@@ -86,6 +86,7 @@ function SiteHeader({ pathname }: { pathname: string }) {
             <a href="/articulos/" aria-current={currentPage("/articulos/")}>Artículos</a>
           </div>
         </details>
+        <a href="/como-trabajo/" aria-current={currentPage("/como-trabajo/")}>Cómo trabajo</a>
         <a href="/sobre-mi/" aria-current={currentPage("/sobre-mi/")}>Sobre mí</a>
       </nav>
 
@@ -114,6 +115,7 @@ function SiteHeader({ pathname }: { pathname: string }) {
                 <a href="/articulos/" aria-current={currentPage("/articulos/")}>Artículos</a>
               </div>
             </details>
+            <a href="/como-trabajo/" aria-current={currentPage("/como-trabajo/")}>Cómo trabajo</a>
             <a href="/sobre-mi/" aria-current={currentPage("/sobre-mi/")}>Sobre mí</a>
             <a className="site-mobile-patient" href="/mi-espacio/">Mi espacio · Acceso de pacientes</a>
             <a className="site-mobile-booking" href="/cita/">Pedir cita</a>
@@ -168,6 +170,7 @@ function SiteFooter() {
         <nav className="site-footer-column" aria-label="Consulta">
           <p className="site-footer-heading">Consulta</p>
           <a href="/sobre-mi/">Sobre mí</a>
+          <a href="/como-trabajo/">Cómo trabajo</a>
           <a href="/recursos/">Recursos y materiales</a>
           <a href="/articulos/">Artículos</a>
           <a href="/mi-espacio/">Mi espacio</a>
