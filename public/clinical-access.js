@@ -30,11 +30,19 @@
     try {return JSON.parse(sessionStorage.getItem(SESSION_KEY)||"null");}
     catch {return null;}
   }
+  function safeReturnUrl() {
+    const intended = new URLSearchParams(window.location.search).get("next") || "/admin/";
+    try {
+      const url = new URL(intended, window.location.origin);
+      if (url.origin !== window.location.origin || !url.pathname.startsWith("/admin/") || intended.startsWith("//") || intended.includes("\\")) return "/admin/";
+      return url.pathname + url.search + url.hash;
+    } catch { return "/admin/"; }
+  }
   function saveAndEnter(session) {
     sessionStorage.setItem(SESSION_KEY,JSON.stringify(session));
     pending=null;factorId=null;
     password.value="";mfaCode.value="";
-    window.location.assign("/admin/");
+    window.location.assign(safeReturnUrl());
   }
   function showMfa(session,factors) {
     pending=session;factorId=factors[0]?.id;
