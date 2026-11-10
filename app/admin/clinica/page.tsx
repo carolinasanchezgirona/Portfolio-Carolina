@@ -343,7 +343,7 @@ export default function AdminClinicaPage() {
           <details id="clinic-electronic-signature" className="clinic-record-section clinic-electronic-signature">
             <summary><span>Firma electrónica y archivo digital</span><small>Preparar consentimiento individualizado · Custodia sin papel</small></summary>
             <div className="clinic-record-section-body">
-              <p>El consentimiento debe ser informado, específico y libre. Prepara el PDF con los datos de esta ficha y tramita la firma con un proveedor de confianza, previa verificación de identidad y representación cuando proceda.</p>
+              <p>El consentimiento debe ser informado, específico y libre. Elige la aceptación electrónica simple dentro de Mi espacio o prepara el PDF para firma con certificado digital. Comprueba previamente la identidad y capacidad para consentir; si hay representación, utiliza un procedimiento específico.</p>
               <label htmlFor="clinic-signature-kind">Documento para firma electrónica</label>
               <select id="clinic-signature-kind" defaultValue="psicologico">
                 <option value="psicologico">Consentimiento para atención psicológica</option>
@@ -369,7 +369,7 @@ export default function AdminClinicaPage() {
               </div>
 
               <div className="clinic-electronic-signature-steps">
-                <h4>Procedimiento sin papel</h4>
+                <h4>Alternativa: firma con certificado digital o proveedor externo</h4>
                 <ol>
                   <li>Revisa con el paciente la finalidad, riesgos y alternativas, y verifica su capacidad para consentir o la representación acreditada.</li>
                   <li>Descarga el PDF individualizado. Comprueba su contenido y envíalo <strong>manualmente</strong> desde un prestador que ofrezca firma avanzada con verificación adecuada, sellado temporal y documento probatorio.</li>
