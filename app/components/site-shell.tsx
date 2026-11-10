@@ -119,6 +119,7 @@ function SiteHeader({ pathname }: { pathname: string }) {
             <a href="/sobre-mi/" aria-current={currentPage("/sobre-mi/")}>Sobre mí</a>
             <a className="site-mobile-patient" href="/mi-espacio/">Mi espacio · Acceso de pacientes</a>
             <a className="site-mobile-booking" href="/cita/">Pedir cita</a>
+            <a className="site-mobile-whatsapp" href="https://wa.me/34604974857?text=Hola%2C%20quisiera%20consultar%20disponibilidad%20para%20una%20cita." target="_blank" rel="noopener noreferrer">Escribir por WhatsApp (externo)</a>
           </nav>
         </details>
       </div>
