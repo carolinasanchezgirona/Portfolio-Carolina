@@ -613,6 +613,8 @@
     ["yes_no", "Sí / No / No aplica"], ["choice", "Elegir una opción"],
   ];
   let interactiveFormFields = [];
+  let formSourceDocumentId = null;
+  let formSourceDocumentName = "";
 
   function normalizedInteractiveFields(value) {
     if (!Array.isArray(value)) return [];
@@ -764,7 +766,10 @@
     els.exerciseRemember.value = doc.remember || "";
     els.exerciseSessionQuestions.value = Array.isArray(doc.session_questions) ? doc.session_questions.join("\n") : "";
     interactiveFormFields = normalizedInteractiveFields(doc.form_fields);
+    formSourceDocumentId = /^[0-9a-f-]{36}$/i.test(String(doc.source_document_id || "")) ? String(doc.source_document_id) : null;
+    formSourceDocumentName = String(doc.source_document_name || "").slice(0, 160);
     renderInteractiveFields();
+    renderInteractiveDocumentLink();
     window.ClinicNeuroMaterials?.hydrate(doc);
     renderPatientDocumentQuality(doc);
   }
@@ -787,8 +792,65 @@
       remember: els.exerciseRemember.value.trim(),
       session_questions: els.exerciseSessionQuestions.value.split(/\r?\n/).map((item) => item.trim()).filter(Boolean).slice(0, 6),
       form_fields: normalizedInteractiveFields(interactiveFormFields),
+      source_document_id: formSourceDocumentId,
+      source_document_name: formSourceDocumentName,
       ...(window.ClinicNeuroMaterials?.read?.() || { clinical_area: "psychology", visual_blocks: [] })
     };
+  }
+
+
+  // Clinical documents stay in their original private bucket. Only the document's
+  // identifier is linked to the new patient-specific response form.
+  function renderInteractiveDocumentLink() {
+    const note = document.getElementById("clinic-form-source-document");
+    const preview = document.getElementById("clinic-form-source-open");
+    if (!note || !preview) return;
+    const linked = formSourceDocumentId && clinicalDocuments.find(item =>
+      item.id === formSourceDocumentId && item.patient_id === currentPatient?.id);
+    note.textContent = linked
+      ? "PDF original vinculado: " + linked.file_name + ". Se mantiene disponible en los documentos del paciente."
+      : "No hay un documento de origen vinculado. Puedes crear un ejercicio digital independiente.";
+    preview.hidden = !linked;
+    preview.disabled = !linked;
+    preview.onclick = linked ? async () => {
+      try {
+        const response = await fetch(SUPABASE_URL + "/storage/v1/object/authenticated/clinical-documents/" +
+          linked.file_path.split("/").map(encodeURIComponent).join("/"), { headers: authHeaders(), cache: "no-store" });
+        if (!response.ok) throw new Error("No se ha podido abrir el PDF.");
+        const blob = await response.blob();
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url; a.target = "_blank"; a.rel = "noopener noreferrer";
+        a.click();
+        setTimeout(() => URL.revokeObjectURL(url), 60000);
+      } catch (error) { els.exerciseMessage.textContent = error.message || "No se pudo abrir el documento."; }
+    } : null;
+  }
+
+  function convertPatientPdfToInteractiveForm(doc) {
+    if (!currentPatient || doc.patient_id !== currentPatient.id ||
+        doc.mime_type !== "application/pdf" || !/^[0-9a-f-]{36}$/i.test(String(doc.id))) return;
+    // Never convert automatically: every exercise in the original PDF has to be
+    // transcribed or approved by the treating clinician before it is assigned.
+    openExercise();
+    formSourceDocumentId = doc.id;
+    formSourceDocumentName = String(doc.file_name || doc.title || "").slice(0, 160);
+    els.exerciseTitle.value = String(doc.title || "Ejercicios por objetivo").slice(0, 160);
+    els.exerciseIntroduction.value = "Este formulario acompaña al documento original compartido en tu espacio privado.";
+    els.exerciseWhy.value = "Anota aquí tus respuestas a las actividades de este objetivo para revisarlas juntos en consulta.";
+    els.exerciseContent.value = "Abre el PDF original vinculado a este objetivo y sigue sus indicaciones. Responde en los campos digitales que se hayan preparado para cada actividad. Puedes guardar un borrador sin compartirlo.";
+    els.exerciseObjective.value = String(doc.title || "").slice(0, 160);
+    els.exerciseRecord.value = "Observaciones o dudas adicionales sobre las actividades.";
+    els.exerciseRemember.value = "No es necesario realizar todo de una vez. Puedes guardar respuestas y continuar más adelante.";
+    els.exerciseFrequency.value = "Según lo acordado en sesión.";
+    els.exerciseDuration.value = "15";
+    els.exerciseExample.value = "Completa primero la actividad del PDF original y registra tu respuesta en el campo correspondiente.";
+    els.exerciseSessionQuestions.value = "¿Qué parte te resultó más útil o difícil?";
+    interactiveFormFields = []; // Never invent questions from a document not yet reviewed.
+    renderInteractiveFields();
+    renderInteractiveDocumentLink();
+    document.getElementById("clinic-interactive-form")?.setAttribute("open", "");
+    els.exerciseMessage.textContent = "Formulario vinculado al PDF original. Añade una pregunta digital por cada ejercicio del documento y revisa el contenido antes de guardar o enviar.";
   }
 
   function applyExerciseTemplate(template) {
@@ -1162,6 +1224,9 @@
       if (validation && !validation.ok) throw new Error("Antes de prescribir: " + validation.issues.join("; ") + ".");
       if (docForQuality.clinical_area === "neuropsychology" && !document.getElementById("clinic-neuro-reviewed")?.checked) {
         throw new Error("Debes confirmar la revisión clínica de los estímulos y consignas antes de enviar esta actividad.");
+      }
+      if (formSourceDocumentId && !docForQuality.form_fields.length) {
+        throw new Error("El formulario está vinculado a un PDF, pero aún no tiene preguntas. Añade una por cada ejercicio pertinente antes de enviar.");
       }
       const quality = patientDocumentQuality(docForQuality);
       if (!quality.complete) {
@@ -1834,6 +1899,13 @@
         finally { shareButton.disabled = false; }
       });
       actions.append(openButton, shareButton);
+      if (doc.mime_type === "application/pdf" && doc.category === "intervention_plan") {
+        const form = create("button", "clinic-secondary", "Crear formulario de este PDF");
+        form.type = "button";
+        form.title = "Prepara preguntas digitales vinculadas al PDF original. No lo envía automáticamente.";
+        form.addEventListener("click", () => convertPatientPdfToInteractiveForm(doc));
+        actions.append(form);
+      }
       if (isShared) {
         const whatsappButton = create("button", "clinic-secondary", "Compartir por WhatsApp");
         whatsappButton.type = "button";
