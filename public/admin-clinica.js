@@ -846,6 +846,17 @@
     } : null;
   }
 
+  function focusPdfFormFields() {
+    const section = document.getElementById("clinic-interactive-form");
+    if (!section) return;
+    section.open = true;
+    // The generic material editor is long. Jump to the actual PDF questions on
+    // small screens so the button's action is immediately visible.
+    requestAnimationFrame(() => {
+      if (els.exerciseDialog?.open) section.scrollIntoView({ block: "start", behavior: "auto" });
+    });
+  }
+
   function convertPatientPdfToInteractiveForm(doc) {
     if (!currentPatient || doc.patient_id !== currentPatient.id ||
         doc.mime_type !== "application/pdf" || !/^[0-9a-f-]{36}$/i.test(String(doc.id))) return;
@@ -854,7 +865,7 @@
       item.patient_document?.source_document_id === doc.id && !item.revoked_at);
     if (existing?.status === "prepared" && existing.email_status !== "sent") {
       openPreparedExercise(existing);
-      document.getElementById("clinic-interactive-form")?.setAttribute("open", "");
+      focusPdfFormFields();
       els.exerciseMessage.textContent = "Ya había un borrador vinculado a este PDF. Puedes continuar editándolo y cotejar las preguntas antes de publicarlo.";
       return;
     }
@@ -883,7 +894,7 @@
     interactiveFormFields = []; // Never invent questions from a document not yet reviewed.
     renderInteractiveFields();
     renderInteractiveDocumentLink();
-    document.getElementById("clinic-interactive-form")?.setAttribute("open", "");
+    focusPdfFormFields();
     els.exerciseMessage.textContent = "Formulario vinculado al PDF original. Añade una pregunta digital por cada ejercicio del documento y revisa el contenido antes de guardar o enviar.";
   }
 
