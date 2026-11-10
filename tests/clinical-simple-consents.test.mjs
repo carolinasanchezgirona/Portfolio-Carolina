@@ -159,3 +159,47 @@ test("reparación administrativa completa acta sin correo ni segunda firma",asyn
   assert.equal(changes.at(-1).status,"archived");
  });
 });
+
+
+test("una aceptación en custodia incompleta bloquea nuevos envíos y conserva la evidencia",async()=>{
+ const prior={...record,status:"recording",accepted_at:"2026-11-09T20:10:11Z"};
+ await mockFetch((url,opts)=>{
+  if(url.includes("/clinical_patients?"))return Response.json([patient]);
+  if(url.includes("/clinical_simple_consents?")&&(!opts.method||opts.method==="GET"))return Response.json([prior]);
+  throw Error("No debe modificar ni enviar: "+url);
+ },async calls=>{
+  const res=await clinicalSimpleAdmin(adminPost(),env,async()=>true,()=>true);
+  assert.equal(res.status,409);
+  assert.equal(calls.filter(c=>c.opts.method==="POST"||c.opts.method==="PATCH").length,0);
+ });
+});
+test("puede caducar una invitación antigua sin reenvío automático ni eliminar declaraciones",async()=>{
+ const expired={...record,expires_at:"2020-01-01T00:00:00Z",status:"email_accepted"};
+ let reads=0;
+ await mockFetch((url,opts)=>{
+  if(url.includes("/clinical_patients?"))return Response.json([patient]);
+  if(url.includes("/clinical_simple_consents?")&&(!opts.method||opts.method==="GET")){
+   reads++;
+   return Response.json(reads===1?[expired]:[]);
+  }
+  if(url.includes("/clinical_simple_consents?")&&opts.method==="PATCH")
+   return Response.json([{id:REQ}]);
+  if(url.endsWith("/clinical_simple_consents")&&opts.method==="POST")
+   return new Response(null,{status:201});
+  if(url.includes("/storage/v1/object/clinical-documents/")&&opts.method==="POST")
+   return Response.json({Key:"stored"});
+  if(url.includes("api.brevo.com/v3/smtp/email"))
+   return Response.json({messageId:"simulated"});
+  throw Error("Endpoint inesperado: "+url);
+ },async calls=>{
+  const res=await clinicalSimpleAdmin(adminPost(),env,async()=>true,()=>true);
+  assert.equal(res.status,200);
+  assert.equal((await res.json()).status,"email_accepted");
+  const expiry=calls.find(c=>c.opts.method==="PATCH"&&c.url.includes("clinical_simple_consents"));
+  assert.ok(expiry);
+  assert.equal(JSON.parse(expiry.opts.body).status,"expired");
+  const emailCalls=calls.filter(c=>c.url.includes("api.brevo.com"));
+  assert.equal(emailCalls.length,1);
+  assert.equal(calls.filter(c=>c.url.includes("/storage/v1/object/clinical-documents/")&&c.opts.method==="POST").length,1);
+ });
+});
