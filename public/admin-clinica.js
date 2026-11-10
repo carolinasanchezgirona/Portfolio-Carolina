@@ -793,7 +793,6 @@
       session_questions: els.exerciseSessionQuestions.value.split(/\r?\n/).map((item) => item.trim()).filter(Boolean).slice(0, 6),
       form_fields: normalizedInteractiveFields(interactiveFormFields),
       source_document_id: formSourceDocumentId,
-      source_document_name: formSourceDocumentName,
       ...(window.ClinicNeuroMaterials?.read?.() || { clinical_area: "psychology", visual_blocks: [] })
     };
   }
@@ -1225,8 +1224,17 @@
       if (docForQuality.clinical_area === "neuropsychology" && !document.getElementById("clinic-neuro-reviewed")?.checked) {
         throw new Error("Debes confirmar la revisión clínica de los estímulos y consignas antes de enviar esta actividad.");
       }
-      if (formSourceDocumentId && !docForQuality.form_fields.length) {
-        throw new Error("El formulario está vinculado a un PDF, pero aún no tiene preguntas. Añade una por cada ejercicio pertinente antes de enviar.");
+      if (formSourceDocumentId) {
+        const linkedDoc = clinicalDocuments.find(d => d.id === formSourceDocumentId && d.patient_id === currentPatient.id);
+        if (!linkedDoc || linkedDoc.mime_type !== "application/pdf") {
+          throw new Error("El PDF original no pertenece a la ficha actual. Vuelve a iniciar la conversión desde el documento correcto.");
+        }
+        if (!linkedDoc.shared_at || linkedDoc.share_revoked_at) {
+          throw new Error("Antes de asignar el formulario, publica expresamente el PDF original en Mi espacio.");
+        }
+        if (!docForQuality.form_fields.length) {
+          throw new Error("El formulario está vinculado a un PDF, pero aún no tiene preguntas. Añade los campos pertinentes antes de enviarlo.");
+        }
       }
       const quality = patientDocumentQuality(docForQuality);
       if (!quality.complete) {
@@ -3173,7 +3181,7 @@
           material_type: els.materialType?.value || existing?.material_type || "exercise",
           summary: existing?.summary || pendingAiMaterial?.summary || els.exerciseObjective.value.trim(),
           process_tags: els.materialProcess?.value ? [els.materialProcess.value] : (existing?.process_tags || []),
-          patient_document: (() => { const doc = patientDocumentFromForm(els.materialType?.value || existing?.material_type || "exercise"); return { ...doc, visual_blocks: (doc.visual_blocks || []).filter(b => b.type !== "image").map(({ data, ...rest }) => rest) }; })()
+          patient_document: (() => { const { source_document_id, ...doc } = patientDocumentFromForm(els.materialType?.value || existing?.material_type || "exercise"); return { ...doc, visual_blocks: (doc.visual_blocks || []).filter(b => b.type !== "image").map(({ data, ...rest }) => rest) }; })()
         })
       });
       const body = await response.json().catch(() => ({}));
@@ -3236,7 +3244,11 @@
       sequence_rank: Number.isFinite(Number(pendingAiMaterial?.sequence_rank))
         ? Number(pendingAiMaterial.sequence_rank)
         : Number(existing?.sequence_rank || 50),
-      patient_document: patientDocumentFromForm(materialType),
+      patient_document: (() => {
+        // Reusable templates must NEVER retain a patient-specific document reference.
+        const { source_document_id, ...documentForLibrary } = patientDocumentFromForm(materialType);
+        return documentForLibrary;
+      })(),
       patient_facing: true,
       updated_at: new Date().toISOString()
     };
