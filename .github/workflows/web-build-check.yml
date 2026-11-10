@@ -156,6 +156,9 @@ jobs:
           node --check public/mi-espacio.js
           node --test tests/patient-shared-files.test.mjs tests/mi-espacio-material-download.test.mjs tests/entre-sesiones-access-control.test.mjs
 
+      - name: Verificar formularios terapéuticos individualizados
+        run: node --test tests/interactive-goal-forms.test.mjs
+
       - name: Validar Word clínico, protección y controles
         run: node --test tests/clinic-word-export.test.mjs
 
