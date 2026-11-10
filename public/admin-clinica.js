@@ -132,6 +132,11 @@
     { key: "clinical_observations", id: "clinic-clinical-observations", label: "Observaciones clínicas", group: "Seguridad y coordinación" },
   ];
   const clinicalProfileFields = Object.fromEntries(clinicalProfileSchema.map((field) => [field.key, $(`#${field.id}`)]));
+  // Shared, read-only list of clinical headings for historical and print views.
+  // No patient data is exposed here and no stored content is transformed.
+  window.ClinicClinicalProfileSchema = Object.freeze(
+    clinicalProfileSchema.map(({ key, label, group }) => Object.freeze({ key, label, group }))
+  );
 
   let session = null;
   let appointments = [];
