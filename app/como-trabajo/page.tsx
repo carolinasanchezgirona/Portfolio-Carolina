@@ -37,11 +37,11 @@ export default function ComoTrabajoPage() {
           </div>
           <figure className="metodo-hero-photo">
             <Image
-              src="/modelo-sesion-psicologia.webp"
+              src="/modelo-sesion-original.jpg"
               alt="Sesión de atención psicológica: una profesional toma notas mientras conversa con otra persona"
-              width={560}
-              height={315}
-              sizes="(max-width: 820px) 100vw, 50vw"
+              width={736}
+              height={414}
+              sizes="(max-width: 760px) min(100vw - 40px, 370px), 370px"
               priority
               unoptimized
             />
