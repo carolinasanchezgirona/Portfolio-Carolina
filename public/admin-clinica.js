@@ -1225,7 +1225,7 @@
     if (state) state.textContent = message;
   }
   function reportHasContent() {
-    return (els.reportType.value === "free" && document.querySelector("#clinic-free-report-body").value.trim()) || [els.reportContext, els.reportEvolution, els.reportInterventions, els.reportCurrent, ...Object.values(healthReportInputs())].some(input => input.value.trim());
+    return els.reportType.value === "free" ? !!document.querySelector("#clinic-free-report-body").value.trim() : [els.reportContext, els.reportEvolution, els.reportInterventions, els.reportCurrent, ...Object.values(healthReportInputs())].some(input => input.value.trim());
   }
   function scheduleReportAutoSave() {
     if (reportIsOpening || !currentPatient || !els.reportDialog.open || els.saveReport.disabled) return;
