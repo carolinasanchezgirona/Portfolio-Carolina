@@ -81,6 +81,7 @@ jobs:
         run: |
           test -f out/admin/economia/index.html
           test -f out/admin/clinica/index.html
+          test -f out/admin/asistencia/index.html
           test -f out/admin/agenda/index.html
           test -f out/admin/notificaciones/index.html
           test -f out/mi-espacio/index.html
