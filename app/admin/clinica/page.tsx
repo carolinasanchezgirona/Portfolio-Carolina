@@ -262,7 +262,7 @@ export default function AdminClinicaPage() {
 
           <section id="clinic-section-history" className="clinic-record-sections" aria-label="Historia clínica estructurada">
             <details className="clinic-record-section" open>
-              <summary><span>Anamnesis clínica y evolutiva</span><small>Motivo de consulta, evolución, antecedentes y contexto</small></summary>
+              <summary><span>Historia y antecedentes</span><small>Demanda, evolución del problema y contexto biopsicosocial</small></summary>
               <div className="clinic-record-section-body clinic-form-grid">
                 <label className="clinic-full">Motivo de consulta<textarea id="clinic-reason-consultation" rows={3} placeholder="Demanda principal, quién solicita la consulta, motivo referido y expectativas…" /></label>
                 <label className="clinic-full">Historia del problema actual<textarea id="clinic-problem-history" rows={4} placeholder="Inicio, evolución, desencadenantes, fluctuaciones, impacto funcional y estrategias utilizadas…" /></label>
@@ -289,7 +289,7 @@ export default function AdminClinicaPage() {
             </details>
 
             <details className="clinic-record-section">
-              <summary><span>Formulación clínica</span><small>Problemas y factores explicativos del caso</small></summary>
+              <summary><span>Formulación clínica</span><small>Hipótesis integradora, factores de mantenimiento y recursos</small></summary>
               <div className="clinic-record-section-body clinic-form-grid">
                 <label className="clinic-full">Problemas clínicos actuales<textarea id="clinic-current-problems" rows={4} placeholder="Dificultades principales que requieren intervención o seguimiento…" /></label>
                 <label>Factores predisponentes<textarea id="clinic-predisposing-factors" rows={4} placeholder="Variables biográficas, temperamentales, familiares, médicas o contextuales que aumentan vulnerabilidad…" /></label>
@@ -301,7 +301,7 @@ export default function AdminClinicaPage() {
             </details>
 
             <details className="clinic-record-section">
-              <summary><span>Plan terapéutico y evolución</span><small>Objetivos, intervención y respuesta al tratamiento</small></summary>
+              <summary><span>Tratamiento y evolución</span><small>Objetivos, intervenciones, seguimiento y respuesta terapéutica</small></summary>
               <div className="clinic-record-section-body clinic-form-grid">
                 <label>Objetivos terapéuticos<textarea id="clinic-therapeutic-goals" rows={4} placeholder="Objetivo, prioridad, indicadores de cambio, estado y evolución…" /></label>
                 <label>Plan terapéutico<textarea id="clinic-treatment-plan" rows={4} placeholder="Focos de intervención, estrategias previstas, frecuencia y criterios de revisión…" /></label>
