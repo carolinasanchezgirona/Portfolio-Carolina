@@ -26,9 +26,9 @@ export default function ComoTrabajoPage() {
             <p className="editorial-eyebrow">Psicología sanitaria y neuropsicología</p>
             <h1 id="metodo-page-title">Mi forma de trabajar</h1>
             <p className="seo-lead">
-              Un proceso claro, adaptado a cada persona. La evaluación, las hipótesis clínicas
-              y los objetivos compartidos orientan qué hacemos en consulta. Las decisiones
-              se apoyan en la evidencia disponible, sin aplicar técnicas de forma automática.
+              Un proceso claro, personalizado y basado en la evidencia.
+              Evaluamos, definimos objetivos compartidos y adaptamos la intervención
+              a tus necesidades.
             </p>
             <div className="seo-actions">
               <a className="editorial-btn editorial-btn-primary" href="/cita/">Pedir cita</a>
@@ -41,9 +41,8 @@ export default function ComoTrabajoPage() {
               alt="Sesión de atención psicológica: una profesional toma notas mientras conversa con otra persona"
               width={736}
               height={414}
-              sizes="(max-width: 760px) min(100vw - 40px, 370px), 370px"
+              sizes="(max-width: 760px) calc(100vw - 40px), (max-width: 1020px) 48vw, 620px"
               priority
-              unoptimized
             />
           </figure>
         </div>
