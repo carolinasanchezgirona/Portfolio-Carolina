@@ -201,7 +201,6 @@ export default function ManualAttendance() {
       await load();
       setNotice("Asistencia guardada: " + label(status) + ". Consta en la cronología de " + patient.full_name + ".");
       setNote(""); setTime("");
-      resetPatient();
     } catch (err) {
       setNotice(err instanceof Error ? err.message : "No se pudo guardar la asistencia.");
     } finally { setBusy(false); }
