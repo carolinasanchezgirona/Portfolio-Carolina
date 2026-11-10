@@ -3,280 +3,333 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import "./attendance.css";
 
-const SUPABASE_URL = "https://grgyvdxkjdstdyumdfyg.supabase.co";
-const API = SUPABASE_URL + "/rest/v1";
+const BASE = "https://grgyvdxkjdstdyumdfyg.supabase.co";
+const API = BASE + "/rest/v1";
 const KEY = "sb_publishable_b2MRfP0bPti87V2FXCzHGw_Y9vvcbii";
 const OWNER = "9d2cfdb1-fed6-4f76-b47a-d58507eb14f2";
 const LOGIN = "/admin/clinica/acceso/?next=%2Fadmin%2Fasistencia%2F";
 
-type AttendanceStatus = "pending" | "completed" | "no_show" | "cancelled";
-type Patient = { id: string; full_name: string; public_code: string; care_context: string };
-type Attendance = {
-  id: string; visit_date: string; visit_time: string; roster_name: string;
-  patient_id: string | null; attendance_status: AttendanceStatus;
-  attendance_note: string | null; status_recorded_at: string | null;
+type Status = "pending" | "completed" | "no_show" | "cancelled";
+type Patient = {
+  id: string;
+  full_name: string;
+  public_code: string;
+  care_context: string;
+  status: string;
 };
-type Draft = { key: string; visit_time: string; roster_name: string; patient_id: string | null; selected: boolean };
+type Visit = {
+  id: string;
+  visit_date: string;
+  visit_time: string;
+  roster_name: string;
+  patient_id: string | null;
+  attendance_status: Status;
+  attendance_note: string | null;
+  status_recorded_at: string | null;
+};
 
-const choices: { value: AttendanceStatus; label: string }[] = [
-  { value: "pending", label: "Pendiente" },
-  { value: "completed", label: "Realizada" },
-  { value: "no_show", label: "No se presenta" },
-  { value: "cancelled", label: "Cancelada" }
+const STATUSES: { value: Status; label: string; className: string }[] = [
+  { value: "completed", label: "Realizada", className: "completed" },
+  { value: "no_show", label: "No se presenta", className: "no-show" },
+  { value: "cancelled", label: "Cancelada", className: "cancelled" },
+  { value: "pending", label: "Pendiente", className: "pending" }
 ];
-function localDate() {
+
+function today() {
   const d = new Date();
-  return String(d.getFullYear()) + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0");
+  return [d.getFullYear(), String(d.getMonth() + 1).padStart(2, "0"), String(d.getDate()).padStart(2, "0")].join("-");
 }
 function accessToken() {
   try {
-    const stored = JSON.parse(sessionStorage.getItem("dememoria_admin_session") || "null");
-    return String(stored?.access_token || "");
+    const saved = JSON.parse(sessionStorage.getItem("dememoria_admin_session") || "null");
+    return String(saved?.access_token || "");
   } catch { return ""; }
 }
-function headers(extra?: Record<string, string>): Record<string, string> {
-  return { apikey: KEY, Authorization: "Bearer " + accessToken(), "Content-Type": "application/json", ...(extra || {}) };
+function headers(extra: Record<string, string> = {}): Record<string, string> {
+  return {
+    apikey: KEY, Authorization: "Bearer " + accessToken(),
+    "Content-Type": "application/json", ...extra
+  };
 }
-async function rest(path: string, options: RequestInit = {}) {
-  const response = await fetch(API + "/" + path, { ...options, cache: "no-store", headers: headers(options.headers as Record<string, string> || {}) });
-  const body = response.status === 204 ? null : await response.json().catch(() => null);
-  if (!response.ok) throw new Error(body?.message || body?.hint || "No se ha podido completar la operación.");
-  return body;
-}
-function normalizeName(value: string) {
-  const parts = value.toLocaleUpperCase("es-ES").split(",");
-  const inOrder = parts.length === 2 ? parts[1] + " " + parts[0] : value;
-  return inOrder.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toUpperCase()
-    .replace(/[^A-Z ]/g, " ").trim().split(/\s+/).filter(Boolean).sort().join(" ");
-}
-function normalizeTime(s: string) {
-  const match = s.trim().match(/^(\d{1,2})[:.;]([0-5]\d)$/);
-  return match && +match[1] < 24 ? match[1].padStart(2, "0") + ":" + match[2] : "";
-}
-function parseRoster(content: string): Draft[] {
-  const parsed: Draft[] = [];
-  for (const line of content.split(/\r?\n/)) {
-    const match = line.match(/^\s*(\d{1,2}[:.;][0-5]\d)\s+(.+?)\s*$/);
-    if (match) {
-      const visit_time = normalizeTime(match[1]);
-      const roster_name = match[2].replace(/\s+/g, " ").replace(/[|]/g, "I").trim();
-      if (visit_time && /[A-ZÁÉÍÓÚÑÇÀÈÏÜa-záéíóúñçàèïü]/.test(roster_name)) {
-        parsed.push({ key: String(parsed.length), visit_time, roster_name, patient_id: null, selected: true });
-      }
-    } else if (parsed.length && line.trim() && /^[A-ZÁÉÍÓÚÑÇÀÈÏÜ\s,.'-]+$/.test(line.trim()) && !/^(HORA|PACIENTE|TOTAL|FECHA)$/i.test(line.trim())) {
-      parsed[parsed.length - 1].roster_name += " " + line.trim();
-    }
+async function rest(path: string, opts: RequestInit = {}) {
+  const response = await fetch(API + "/" + path, {
+    ...opts, cache: "no-store", headers: headers((opts.headers || {}) as Record<string, string>)
+  });
+  const result = response.status === 204 ? null : await response.json().catch(() => null);
+  if (!response.ok) {
+    throw new Error(result?.message || result?.hint || "No se ha podido guardar. Comprueba la conexión.");
   }
-  return Array.from(new Map(parsed.map((item) => [item.visit_time + "|" + normalizeName(item.roster_name), item])).values());
+  return result;
 }
-function formatTime(s: string) { return s.slice(0, 5); }
+function norm(value: string) {
+  return value.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLocaleUpperCase("es-ES")
+    .replace(/[^A-Z0-9 ]/g, " ").replace(/\s+/g, " ").trim();
+}
+function normPerson(value: string) {
+  const parts = value.split(",");
+  const ordered = parts.length === 2 ? parts[1] + " " + parts[0] : value;
+  return norm(ordered).split(" ").sort().join(" ");
+}
+function shortTime(value: string) { return value.slice(0, 5); }
+function label(status: Status) {
+  return STATUSES.find((item) => item.value === status)?.label || "Pendiente";
+}
+function count(rows: Visit[], status: Status) { return rows.filter((v) => v.attendance_status === status).length; }
+function spanishDate(date: string) {
+  const [y, m, d] = date.split("-").map(Number);
+  return new Intl.DateTimeFormat("es-ES", { dateStyle: "medium" }).format(new Date(y, m - 1, d, 12));
+}
+function isValidDate(date: string) {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) return false;
+  const [y, m, d] = date.split("-").map(Number);
+  const parsed = new Date(y, m - 1, d);
+  return parsed.getFullYear() === y && parsed.getMonth() + 1 === m && parsed.getDate() === d;
+}
 
-export default function ExternalAttendancePage() {
+export default function ManualAttendance() {
   const [date, setDate] = useState("");
-  const [authorized, setAuthorized] = useState(false);
+  const [time, setTime] = useState("");
+  const [search, setSearch] = useState("");
+  const [patientId, setPatientId] = useState("");
+  const [note, setNote] = useState("");
   const [patients, setPatients] = useState<Patient[]>([]);
-  const [records, setRecords] = useState<Attendance[]>([]);
-  const [drafts, setDrafts] = useState<Draft[]>([]);
-  const [sourceText, setSourceText] = useState("");
-  const [linksReviewed, setLinksReviewed] = useState(false);
-  const [storageAuthorized, setStorageAuthorized] = useState(false);
-  const [message, setMessage] = useState("");
+  const [visits, setVisits] = useState<Visit[]>([]);
+  const [notesDraft, setNotesDraft] = useState<Record<string, string>>({});
+  const [authenticated, setAuthenticated] = useState(false);
   const [busy, setBusy] = useState(false);
-  const [extracting, setExtracting] = useState(false);
-  const photoRef = useRef<HTMLInputElement>(null);
+  const [notice, setNotice] = useState("");
+  const patientSearchRef = useRef<HTMLInputElement>(null);
+
+  const load = async () => {
+    const data = await rest("clinical_external_attendance?select=*&order=visit_date.desc,visit_time.desc&limit=1000") as Visit[];
+    if (!Array.isArray(data)) throw new Error("No se ha recibido el historial de asistencia.");
+    setVisits(data);
+    setNotesDraft(Object.fromEntries(data.map((v) => [v.id, v.attendance_note || ""])));
+    if (data.length === 1000) setNotice("El registro alcanza 1000 visitas. Consulta con soporte para paginar el historial completo.");
+  };
 
   useEffect(() => {
-    setDate(localDate());
+    setDate(today());
     (async () => {
-      const token = accessToken();
-      if (!token) { location.replace(LOGIN); return; }
-      const [userResponse, gateResponse] = await Promise.all([
-        fetch(SUPABASE_URL + "/auth/v1/user", { headers: headers() }),
+      if (!accessToken()) { window.location.assign(LOGIN); return; }
+      const [userRes, gateRes] = await Promise.all([
+        fetch(BASE + "/auth/v1/user", { headers: headers(), cache: "no-store" }),
         fetch(API + "/rpc/admin_mobile_gate", { method: "POST", headers: headers(), body: "{}" })
       ]);
-      const user = await userResponse.json().catch(() => null);
-      const gate = await gateResponse.json().catch(() => false);
-      if (!userResponse.ok || !gateResponse.ok || user?.id !== OWNER || gate !== true) {
-        location.replace(LOGIN); return;
+      const user = await userRes.json().catch(() => null);
+      const gate = await gateRes.json().catch(() => false);
+      if (!userRes.ok || !gateRes.ok || user?.id !== OWNER || gate !== true) {
+        window.location.assign(LOGIN);
+        return;
       }
-      const found = await rest("clinical_patients?select=id,full_name,public_code,care_context&order=full_name.asc") as Patient[];
-      setPatients(found || []);
-      setAuthorized(true);
-    })().catch((error) => setMessage(error instanceof Error ? error.message : "No se pudo validar el acceso."));
+      const people = await rest("clinical_patients?select=id,full_name,public_code,care_context,status&order=full_name.asc") as Patient[];
+      if (!Array.isArray(people)) throw new Error("No se ha podido cargar el listado de pacientes.");
+      setPatients(people);
+      await load();
+      setAuthenticated(true);
+    })().catch((err) => setNotice(err instanceof Error ? err.message : "No se pudo iniciar el registro."));
   }, []);
 
-  useEffect(() => {
-    if (!authorized || !date) return;
-    rest("clinical_external_attendance?select=*&visit_date=eq." + date + "&order=visit_time.asc,roster_name.asc")
-      .then((data) => setRecords(data || []))
-      .catch((error) => setMessage(error instanceof Error ? error.message : "No se pudo cargar el día."));
-  }, [date, authorized]);
+  const patient = patients.find((p) => p.id === patientId);
+  const matching = useMemo(() => {
+    const text = norm(search);
+    if (!text || patientId) return [];
+    const parts = text.split(" ");
+    return patients.filter((p) => p.status !== "archived" &&
+      parts.every((part) => norm(p.full_name + " " + p.public_code).includes(part)))
+      .slice(0, 8);
+  }, [search, patientId, patients]);
+  const daily = useMemo(() => visits.filter((v) => v.visit_date === date)
+    .sort((a, b) => a.visit_time.localeCompare(b.visit_time)), [visits, date]);
+  const patientHistory = useMemo(() => visits.filter((v) => v.patient_id === patientId)
+    .sort((a, b) => (b.visit_date + b.visit_time).localeCompare(a.visit_date + a.visit_time)),
+    [visits, patientId]);
+  const patientById = useMemo(() => new Map(patients.map((p) => [p.id, p])), [patients]);
 
-  const counts = useMemo(() => ({
-    completed: records.filter((r) => r.attendance_status === "completed").length,
-    noShow: records.filter((r) => r.attendance_status === "no_show").length,
-    cancelled: records.filter((r) => r.attendance_status === "cancelled").length,
-    pending: records.filter((r) => r.attendance_status === "pending").length
-  }), [records]);
-
-  function proposedPatient(name: string) {
-    const target = normalizeName(name);
-    const matches = patients.filter((p) => ["creu_blava", "combined"].includes(p.care_context) && normalizeName(p.full_name) === target);
-    return matches.length === 1 ? matches[0].id : null;
+  function choosePatient(p: Patient) {
+    setPatientId(p.id);
+    setSearch("");
+    setNotice("");
   }
-  function prepare(text: string) {
-    const items = parseRoster(text).map((r) => ({ ...r, patient_id: proposedPatient(r.roster_name) }));
-    setDrafts(items);
-    setLinksReviewed(false);
-    setMessage(items.length
-      ? "Se han detectado " + items.length + " filas. Corrige nombres y vinculaciones antes de guardar."
-      : "No se han reconocido filas. Pega el listado con hora y nombre en cada línea.");
+  function resetPatient() {
+    setPatientId("");
+    setSearch("");
+    patientSearchRef.current?.focus();
   }
-  async function readPhoto() {
-    const file = photoRef.current?.files?.[0];
-    if (!file) { prepare(sourceText); return; }
-    setExtracting(true);
-    setMessage("Reconociendo la fotografía en el navegador. No se almacena la imagen.");
-    try {
-      const { createWorker } = await import("tesseract.js");
-      const worker = await createWorker("eng");
-      try {
-        const result = await worker.recognize(file, { rotateAuto: true });
-        setSourceText(result.data.text);
-        prepare(result.data.text);
-      } finally { await worker.terminate(); }
-    } catch (error) {
-      setMessage(error instanceof Error ? error.message : "Error leyendo la fotografía. Puedes pegar el texto.");
-    } finally { setExtracting(false); }
-  }
-  async function reload() {
-    const data = await rest("clinical_external_attendance?select=*&visit_date=eq." + date + "&order=visit_time.asc,roster_name.asc");
-    setRecords(data || []);
-  }
-  async function importDrafts() {
-    if (!date) return;
-    if (!storageAuthorized) { setMessage("Confirma que el responsable del tratamiento ha autorizado el uso de este sistema para los datos de Creu Blava."); return; }
-    const selected = drafts.filter((item) => item.selected);
-    if (selected.some((item) => item.patient_id) && !linksReviewed) {
-      setMessage("Antes de guardar, confirma que has comprobado las fichas vinculadas."); return;
-    }
-    if (!selected.length) { setMessage("Selecciona al menos una fila."); return; }
-    if (selected.some((item) => !normalizeTime(item.visit_time) || !item.roster_name.trim())) {
-      setMessage("Hay filas sin nombre u hora válida."); return;
-    }
-    const existing = new Set(records.map((r) => formatTime(r.visit_time) + "|" + normalizeName(r.roster_name)));
-    const newRows = selected.filter((r) => !existing.has(r.visit_time + "|" + normalizeName(r.roster_name)));
-    if (!newRows.length) { setMessage("Estas citas ya están guardadas para la fecha seleccionada."); return; }
-    setBusy(true);
-    try {
-      await rest("clinical_external_attendance", {
-        method: "POST",
-        headers: { Prefer: "return=minimal" },
-        body: JSON.stringify(newRows.map((r) => ({
-          visit_date: date, visit_time: r.visit_time, roster_name: r.roster_name.trim(),
-          patient_id: r.patient_id, attendance_status: "pending", source_type: "photo_roster"
-        })))
-      });
-      await reload();
-      setDrafts([]);
-      setMessage(newRows.length + " citas guardadas como pendientes. Ninguna se ha marcado como realizada.");
-    } catch (error) { setMessage(error instanceof Error ? error.message : "No se pudo importar."); }
-    finally { setBusy(false); }
-  }
-  async function updateRecord(record: Attendance, patch: Partial<Attendance>) {
-    const nextStatus = patch.attendance_status ?? record.attendance_status;
-    const nextPatient = patch.patient_id === undefined ? record.patient_id : patch.patient_id;
-    if (nextStatus !== "pending" && !nextPatient) {
-      setMessage("Vincula primero la cita con una ficha clínica antes de marcar su asistencia.");
+  async function saveVisit(status: Status) {
+    if (!patient || !isValidDate(date) || !/^(?:[01]\d|2[0-3]):[0-5]\d$/.test(time)) {
+      setNotice("Selecciona una ficha clínica, una fecha válida y la hora de la cita.");
       return;
     }
-    if (patch.patient_id && record.patient_id && patch.patient_id !== record.patient_id &&
-        !window.confirm("Esta visita ya está vinculada a otra historia. ¿Has verificado la identidad y quieres corregir la vinculación? El cambio quedará auditado.")) {
+    const samePatient = visits.filter((v) => v.patient_id === patient.id &&
+      v.visit_date === date && shortTime(v.visit_time) === time);
+    const unlinkedMatch = visits.filter((v) => !v.patient_id &&
+      v.visit_date === date && shortTime(v.visit_time) === time &&
+      normPerson(v.roster_name) === normPerson(patient.full_name));
+    const existing = [...samePatient, ...unlinkedMatch];
+    if (existing.length > 1) {
+      setNotice("Hay varias visitas coincidentes. Revisa el registro diario antes de añadir otra.");
       return;
     }
-    setBusy(true);
+    const old = existing[0];
+    if (old && old.attendance_status !== "pending" && old.attendance_status !== status &&
+        !window.confirm("Ya existe una asistencia registrada a esa hora. ¿Quieres corregir su estado? Se conservará el cambio en auditoría.")) {
+      return;
+    }
+    setBusy(true); setNotice("Guardando la asistencia…");
     try {
-      const saved = await rest("clinical_external_attendance?id=eq." + encodeURIComponent(record.id) + "&select=id", {
+      const data: Record<string, unknown> = {
+        patient_id: patient.id, attendance_status: status
+      };
+      if (note.trim()) data.attendance_note = note.trim();
+      if (old) {
+        const saved = await rest("clinical_external_attendance?id=eq." + encodeURIComponent(old.id) + "&select=id", {
+          method: "PATCH", headers: { Prefer: "return=representation" }, body: JSON.stringify(data)
+        }) as { id: string }[];
+        if (!Array.isArray(saved) || saved.length !== 1) throw new Error("La modificación no se ha confirmado.");
+      } else {
+        const saved = await rest("clinical_external_attendance?select=id", {
+          method: "POST", headers: { Prefer: "return=representation" },
+          body: JSON.stringify({
+            visit_date: date, visit_time: time, roster_name: patient.full_name,
+            patient_id: patient.id, attendance_status: status, attendance_note: note.trim() || null,
+            source_type: "manual"
+          })
+        }) as { id: string }[];
+        if (!Array.isArray(saved) || saved.length !== 1) throw new Error("La nueva visita no se ha confirmado.");
+      }
+      await load();
+      setNotice("Asistencia guardada: " + label(status) + ". Consta en la cronología de " + patient.full_name + ".");
+      setNote(""); setTime("");
+      resetPatient();
+    } catch (err) {
+      setNotice(err instanceof Error ? err.message : "No se pudo guardar la asistencia.");
+    } finally { setBusy(false); }
+  }
+  async function updateVisit(visit: Visit, patch: Partial<Visit>) {
+    if (patch.attendance_status && patch.attendance_status !== visit.attendance_status &&
+        visit.attendance_status !== "pending" &&
+        !window.confirm("¿Cambiar el estado de esta visita? La corrección quedará auditada.")) return;
+    if (!visit.patient_id) {
+      setNotice("Esta visita no tiene ficha vinculada. Selecciona primero el paciente y regístrala con la misma fecha y hora.");
+      return;
+    }
+    setBusy(true); setNotice("Actualizando registro…");
+    try {
+      const updated = await rest("clinical_external_attendance?id=eq." + encodeURIComponent(visit.id) + "&select=id", {
         method: "PATCH", headers: { Prefer: "return=representation" }, body: JSON.stringify(patch)
       }) as { id: string }[];
-      if (!Array.isArray(saved) || saved.length !== 1) throw new Error("No se ha confirmado el cambio en la base de datos.");
-      await reload();
-      setMessage("Cambio guardado y reflejado en la historia del paciente vinculado.");
-    } catch (error) { setMessage(error instanceof Error ? error.message : "No se pudo guardar el cambio."); }
-    finally { setBusy(false); }
+      if (!Array.isArray(updated) || updated.length !== 1) throw new Error("El cambio no ha quedado confirmado.");
+      await load();
+      setNotice("Corrección guardada en el historial de asistencia.");
+    } catch (err) {
+      setNotice(err instanceof Error ? err.message : "No se pudo actualizar el registro.");
+    } finally { setBusy(false); }
   }
-  function editDraft(key: string, patch: Partial<Draft>) {
-    setLinksReviewed(false);
-    setDrafts((previous) => previous.map((row) => row.key === key ? { ...row, ...patch } : row));
+  async function saveNote(visit: Visit) {
+    const updatedNote = notesDraft[visit.id]?.trim() || "";
+    if (updatedNote === (visit.attendance_note || "")) return;
+    await updateVisit(visit, { attendance_note: updatedNote || null });
   }
-
   return (
-    <main className="attendance-page">
+    <main className="attendance-page" id="admin-main-content">
       <header className="attendance-header">
-        <div><span className="attendance-eyebrow">Gestión clínica · Creu Blava</span><h1>Control de asistencia</h1><p>Listados diarios, ausencias y registro vinculado a la historia clínica.</p></div>
+        <div>
+          <span className="attendance-eyebrow">Mi clínica · Creu Blava</span>
+          <h1>Control de asistencia</h1>
+          <p>Un registro por visita. Recuento automático en la historia de cada paciente.</p>
+        </div>
         <a className="attendance-back" href="/admin/clinica/?panel=1">Volver a Mi clínica</a>
       </header>
-      {!authorized ? <p role="status">{message || "Verificando acceso profesional…"}</p> : <>
-        <section className="attendance-card">
-          <div className="attendance-head-row"><h2>Jornada</h2><label>Fecha de las citas <input type="date" value={date} onChange={(event) => { setDate(event.target.value); setDrafts([]); setLinksReviewed(false); }} /></label></div>
-          <div className="attendance-stats">
-            <div><strong>{records.length}</strong><span>Programadas</span></div>
-            <div><strong>{counts.completed}</strong><span>Realizadas</span></div>
-            <div><strong>{counts.noShow}</strong><span>No se presentan</span></div>
-            <div><strong>{counts.cancelled}</strong><span>Canceladas</span></div>
-            <div><strong>{counts.pending}</strong><span>Pendientes</span></div>
+      {!authenticated ? <div className="attendance-card"><p role="status">{notice || "Verificando acceso profesional…"}</p>
+        {notice && <a href={LOGIN}>Volver a identificarme</a>}</div> : <>
+        <section className="attendance-card attendance-registration" aria-label="Registrar asistencia">
+          <div className="attendance-topline"><h2>Registrar sesión</h2><span className="attendance-step">1. Paciente · 2. Fecha y hora · 3. Estado</span></div>
+          {patient ? <div className="attendance-selected">
+            <div><strong>{patient.full_name}</strong><small>Ficha {patient.public_code}</small></div>
+            <button type="button" className="attendance-light-button" onClick={resetPatient}>Cambiar paciente</button>
+          </div> : <div className="attendance-patient-picker">
+            <label htmlFor="attendance-patient-search">Buscar paciente por nombre o código de historia</label>
+            <input ref={patientSearchRef} id="attendance-patient-search" type="search" autoComplete="off"
+              value={search} onChange={(e) => setSearch(e.target.value)}
+              placeholder="Empieza a escribir el nombre…" />
+            {search && <div className="attendance-suggestions" role="list" aria-label="Pacientes coincidentes">
+              {matching.length ? matching.map((p) => <button type="button" key={p.id} role="listitem" onClick={() => choosePatient(p)}>
+                <strong>{p.full_name}</strong><small>Historia {p.public_code}</small>
+              </button>) : <p>No hay coincidencias. Comprueba el nombre o la ficha en Pacientes.</p>}
+            </div>}
+          </div>}
+          <div className="attendance-fields">
+            <label>Fecha de la cita<input type="date" value={date} onChange={(e) => setDate(e.target.value)} required /></label>
+            <label>Hora de la cita<input type="time" step={60} value={time} onChange={(e) => setTime(e.target.value)} required /></label>
           </div>
-        </section>
-        <section className="attendance-card">
-          <h2>Importar listado de la Creu</h2>
-          <p>Selecciona la fecha exacta de la fotografía. La lectura se realiza en este dispositivo y debes revisar sus resultados antes de guardarlos.</p>
-          <div className="attendance-import">
-            <label>Fotografía del listado <input ref={photoRef} type="file" accept="image/*" /></label>
-            <button type="button" onClick={readPhoto} disabled={extracting || busy}>{extracting ? "Leyendo imagen…" : "Leer fotografía o texto"}</button>
-          </div>
-          <label className="attendance-full">Texto alternativo (hora y paciente por línea)
-            <textarea rows={3} value={sourceText} onChange={(event) => setSourceText(event.target.value)} placeholder={"09:00 APELLIDOS, NOMBRE\n09:20 APELLIDOS, NOMBRE"} />
+          <label className="attendance-optional-note">Observación (opcional)
+            <input value={note} maxLength={1000} onChange={(e) => setNote(e.target.value)} placeholder="Por ejemplo: avisó antes de la cita…" />
           </label>
-          {drafts.length > 0 && <div className="attendance-preview"><h3>Revisión antes de guardar ({drafts.length})</h3>
-            {drafts.map((row) => <div className="attendance-edit-row" key={row.key}>
-              <input type="checkbox" aria-label="Importar fila" checked={row.selected} onChange={(event) => editDraft(row.key, { selected: event.target.checked })} />
-              <input aria-label="Hora" value={row.visit_time} onChange={(event) => editDraft(row.key, { visit_time: event.target.value })} />
-              <input aria-label="Nombre" value={row.roster_name} onChange={(event) => editDraft(row.key, { roster_name: event.target.value, patient_id: null })} />
-              <select aria-label="Vincular paciente" value={row.patient_id || ""} onChange={(event) => editDraft(row.key, { patient_id: event.target.value || null })}>
-                <option value="">Sin vincular</option>
-                {patients.map((p) => <option key={p.id} value={p.id}>{p.full_name} · {p.public_code}</option>)}
-              </select>
-            </div>)}
-            <label className="attendance-confirm-links"><input type="checkbox" checked={storageAuthorized} onChange={(event) => setStorageAuthorized(event.target.checked)} />Confirmo que existe autorización del responsable del tratamiento para guardar este listado de Creu Blava en Mi clínica.</label>
-            <label className="attendance-confirm-links"><input type="checkbox" checked={linksReviewed} onChange={(event) => setLinksReviewed(event.target.checked)} />He revisado la identidad de las personas y las fichas sugeridas. Ninguna asistencia se confirma con esta importación.</label>
-            <button type="button" disabled={busy || !storageAuthorized || (drafts.some((r) => r.selected && r.patient_id) && !linksReviewed)} onClick={importDrafts}>Guardar {drafts.filter((r) => r.selected).length} citas pendientes</button>
-          </div>}
+          <div className="attendance-actions" aria-label="Guardar estado de asistencia">
+            {STATUSES.map((item) => <button key={item.value} type="button"
+              className={"attendance-action " + item.className}
+              disabled={busy || !patient || !isValidDate(date) || !time}
+              onClick={() => saveVisit(item.value)}>{item.label}</button>)}
+          </div>
+          <p className="attendance-hint">Pulsa el estado correspondiente para guardarlo. Si ya existe una visita del mismo paciente a esa hora, se actualizará sin duplicarla.</p>
         </section>
         <section className="attendance-card">
-          <h2>Registro diario</h2>
-          {!records.length ? <p>No hay visitas registradas para esta fecha.</p> : <div className="attendance-records">
-            {records.map((r) => <div className="attendance-record" key={r.id}>
-              <div className="attendance-patient"><strong>{formatTime(r.visit_time)} · {r.roster_name}</strong><span>{r.patient_id ? "Vinculado a historia clínica" : "Sin ficha vinculada"}</span></div>
-              <label>Ficha
-                <select disabled={busy} value={r.patient_id || ""} onChange={(event) => updateRecord(r, { patient_id: event.target.value || null })}>
-                  <option value="">Sin vincular</option>
-                  {patients.map((p) => <option key={p.id} value={p.id}>{p.full_name} · {p.public_code}</option>)}
-                </select>
-              </label>
-              <label>Asistencia
-                <select disabled={busy} value={r.attendance_status} onChange={(event) => updateRecord(r, { attendance_status: event.target.value as AttendanceStatus })}>
-                  {choices.map((choice) => <option key={choice.value} value={choice.value}>{choice.label}</option>)}
-                </select>
-              </label>
-              <label className="attendance-note">Observación administrativa
-                <input key={r.id + (r.attendance_note || "")} disabled={busy} defaultValue={r.attendance_note || ""} placeholder="Avisó, cancelación, etc." maxLength={1000}
-                  onBlur={(event) => { if (event.target.value !== (r.attendance_note || "")) updateRecord(r, { attendance_note: event.target.value || null }); }} />
-              </label>
-            </div>)}
-          </div>}
+          <div className="attendance-topline"><h2>Resumen del día</h2><strong>{isValidDate(date) ? spanishDate(date) : "Fecha por seleccionar"}</strong></div>
+          <div className="attendance-stats">
+            <div><strong>{daily.length}</strong><span>Registradas</span></div>
+            <div><strong>{count(daily,"completed")}</strong><span>Realizadas</span></div>
+            <div><strong>{count(daily,"no_show")}</strong><span>No se presentan</span></div>
+            <div><strong>{count(daily,"cancelled")}</strong><span>Canceladas</span></div>
+            <div><strong>{count(daily,"pending")}</strong><span>Pendientes</span></div>
+          </div>
+          <div className="attendance-list">
+            {!daily.length ? <p className="attendance-empty">Aún no hay visitas registradas en esta fecha.</p> :
+              daily.map((v) => <article className="attendance-visit" key={v.id}>
+                <div className="attendance-visit-person">
+                  <strong>{shortTime(v.visit_time)} · {patientById.get(v.patient_id || "")?.full_name || v.roster_name}</strong>
+                  <span>{patientById.get(v.patient_id || "")?.public_code || "Sin ficha vinculada"}</span>
+                </div>
+                <label>Estado
+                  <select disabled={busy || !v.patient_id} value={v.attendance_status}
+                    onChange={(e) => updateVisit(v, { attendance_status: e.target.value as Status })}>
+                    {STATUSES.map((s) => <option key={s.value} value={s.value}>{s.label}</option>)}
+                  </select>
+                </label>
+                <div className="attendance-visit-note">
+                  <label>Observación<input maxLength={1000} disabled={busy}
+                    value={notesDraft[v.id] ?? v.attendance_note ?? ""}
+                    onChange={(e) => setNotesDraft((prev) => ({ ...prev, [v.id]: e.target.value }))} /></label>
+                  {(notesDraft[v.id] ?? "") !== (v.attendance_note || "") &&
+                    <button type="button" disabled={busy} className="attendance-light-button"
+                      onClick={() => saveNote(v)}>Guardar nota</button>}
+                </div>
+              </article>)}
+          </div>
         </section>
-        <p className="attendance-feedback" role="status" aria-live="polite">{message}</p>
-        <p className="attendance-disclaimer">Las coincidencias de nombre son sugerencias que requieren verificación manual. Las citas importadas no acreditan asistencia. Solo los cambios confirmados quedan registrados. No se envía ninguna comunicación al paciente y no se crea automáticamente una nota de evolución clínica.</p>
+        {patient && <section className="attendance-card" aria-label="Seguimiento del paciente">
+          <div className="attendance-topline"><h2>Historial de asistencia</h2><span>{patient.full_name}</span></div>
+          <p>Acumulado de Creu Blava, independientemente del día seleccionado.</p>
+          <div className="attendance-stats">
+            <div><strong>{patientHistory.length}</strong><span>Registradas</span></div>
+            <div><strong>{count(patientHistory,"completed")}</strong><span>Realizadas</span></div>
+            <div><strong>{count(patientHistory,"no_show")}</strong><span>Ausencias</span></div>
+            <div><strong>{count(patientHistory,"cancelled")}</strong><span>Canceladas</span></div>
+            <div><strong>{count(patientHistory,"pending")}</strong><span>Pendientes</span></div>
+          </div>
+          <div className="attendance-patient-history">
+            {patientHistory.length ? patientHistory.map((v) => <div key={v.id}>
+              <span>{spanishDate(v.visit_date)} · {shortTime(v.visit_time)}</span>
+              <strong>{label(v.attendance_status)}</strong>
+              {v.attendance_note && <small>{v.attendance_note}</small>}
+            </div>) : <p className="attendance-empty">Todavía no hay registros de asistencia de este paciente.</p>}
+          </div>
+        </section>}
+        <p className="attendance-feedback" role="status" aria-live="polite">{notice}</p>
+        <p className="attendance-disclaimer">
+          Registro asistencial administrativo privado. La asistencia no crea automáticamente una nota de evolución clínica.
+          Cada corrección queda auditada. Utiliza este módulo con datos de Creu Blava únicamente si está autorizado por el responsable del tratamiento.
+        </p>
       </>}
     </main>
   );
