@@ -51,3 +51,12 @@ test("original goal PDF is linked without copying into a public asset", () => {
   assert.match(portal, /\/api\/patient-portal\/file\?id=/);
   assert.doesNotMatch(portal, /storage\/v1\/object\/public\/clinical-documents/);
 });
+
+
+test("source PDFs remain patient-specific and only shared originals may be assigned", () => {
+  assert.match(admin, /linkedDoc\.patient_id === currentPatient\.id/);
+  assert.match(admin, /!linkedDoc\.shared_at \|\| linkedDoc\.share_revoked_at/);
+  assert.match(admin, /const \{ source_document_id, \.\.\.documentForLibrary \}/);
+  assert.match(admin, /const \{ source_document_id, \.\.\.doc \} = patientDocumentFromForm/);
+  assert.doesNotMatch(portal, /source_document_name/);
+});
