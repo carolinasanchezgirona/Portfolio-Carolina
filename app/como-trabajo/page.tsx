@@ -39,8 +39,8 @@ export default function ComoTrabajoPage() {
             <Image
               src="/modelo-sesion-psicologia.webp"
               alt="Sesión de atención psicológica: una profesional toma notas mientras conversa con otra persona"
-              width={736}
-              height={414}
+              width={560}
+              height={315}
               sizes="(max-width: 820px) 100vw, 50vw"
               priority
               unoptimized
