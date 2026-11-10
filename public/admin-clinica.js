@@ -764,8 +764,9 @@
     if (els.materialAiEnrich) els.materialAiEnrich.textContent = quality.complete ? "Mejorar ficha con IA" : "Completar ficha con IA";
   }
 
-  function fillPatientDocument(document) {
-    const doc = document || materialPatientDefaults(els.materialType?.value || "exercise");
+  function fillPatientDocument(patientDoc) {
+    // Never shadow the browser document: this function updates DOM review controls.
+    const doc = patientDoc || materialPatientDefaults(els.materialType?.value || "exercise");
     els.exerciseIntroduction.value = doc.introduction || "";
     els.exerciseWhy.value = doc.why || "";
     els.exerciseDuration.value = doc.duration_minutes || "";
@@ -2033,7 +2034,25 @@
         const form = create("button", "clinic-secondary", "Crear formulario de este PDF");
         form.type = "button";
         form.title = "Prepara preguntas digitales vinculadas al PDF original. No lo envía automáticamente.";
-        form.addEventListener("click", () => convertPatientPdfToInteractiveForm(doc));
+        form.addEventListener("click", () => {
+          let feedback = row.querySelector(".clinic-form-editor-feedback");
+          if (!feedback) {
+            feedback = create("p", "clinic-form-editor-feedback");
+            feedback.setAttribute("role", "status");
+            feedback.setAttribute("aria-live", "polite");
+            row.append(feedback);
+          }
+          feedback.textContent = "";
+          try {
+            convertPatientPdfToInteractiveForm(doc);
+            if (!els.exerciseDialog?.open) {
+              feedback.textContent = "No se ha abierto un borrador. Comprueba si ya hay un formulario publicado para este PDF en «Materiales entre sesiones».";
+            }
+          } catch (error) {
+            console.error("No se pudo abrir el editor de formularios", error);
+            feedback.textContent = "No se ha podido abrir el editor. Actualiza el admin y vuelve a intentarlo.";
+          }
+        });
         actions.append(form);
       }
       if (isShared) {
