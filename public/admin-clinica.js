@@ -1127,7 +1127,7 @@
     }).join("");
   }
   function reportTypeLabel(type) {
-    return ({ evolution_health: "Informe de evolución y seguimiento · Profesional sanitario", evolution: "Informe de evolución", clinical_summary: "Resumen clínico", referral: "Informe de derivación" })[type] || "Informe clínico";
+    return ({ evolution_health: "Informe de evolución y seguimiento · Profesional sanitario", evolution: "Informe de evolución", clinical_summary: "Resumen clínico", referral: "Informe de derivación", free: "Informe libre" })[type] || "Informe clínico";
   }
   function approvedSessionsInPeriod(patientId) {
     const start = els.reportStart.value ? new Date(els.reportStart.value + "T00:00:00") : null;
@@ -1212,7 +1212,7 @@
   let reportSaveRequested = false;
   let reportIsOpening = false;
   function reportInputs() {
-    return [els.reportType,els.reportRecipient,els.reportPurpose,els.reportStart,els.reportEnd,els.reportContext,els.reportEvolution,els.reportInterventions,els.reportCurrent,...Object.values(healthReportInputs())];
+    return [els.reportType,els.reportRecipient,els.reportPurpose,els.reportStart,els.reportEnd,document.querySelector("#clinic-free-report-title"),document.querySelector("#clinic-free-report-body"),els.reportContext,els.reportEvolution,els.reportInterventions,els.reportCurrent,...Object.values(healthReportInputs())];
   }
   function reportSnapshot() { return JSON.stringify(reportInputs().map(input => [input.id,input.value])); }
   function markReportClean() {
@@ -1225,7 +1225,7 @@
     if (state) state.textContent = message;
   }
   function reportHasContent() {
-    return [els.reportContext, els.reportEvolution, els.reportInterventions, els.reportCurrent, ...Object.values(healthReportInputs())].some(input => input.value.trim());
+    return (els.reportType.value === "free" && document.querySelector("#clinic-free-report-body").value.trim()) || [els.reportContext, els.reportEvolution, els.reportInterventions, els.reportCurrent, ...Object.values(healthReportInputs())].some(input => input.value.trim());
   }
   function scheduleReportAutoSave() {
     if (reportIsOpening || !currentPatient || !els.reportDialog.open || els.saveReport.disabled) return;
@@ -1233,19 +1233,24 @@
     if (!reportDirty) { reportSaveState("Guardado · sin cambios"); return; }
     reportSaveState("Cambios sin guardar · guardado automático pendiente");
     window.clearTimeout(reportSaveTimer);
-    if (!els.reportPurpose.value.trim() || !reportHasContent() || (healthReportSelected() && (!els.reportStart.value || !els.reportEnd.value))) {
+    if ((els.reportType.value !== "free" && !els.reportPurpose.value.trim()) || !reportHasContent() || (healthReportSelected() && (!els.reportStart.value || !els.reportEnd.value))) {
       reportSaveState("Cambios pendientes · indica finalidad y periodo para guardar"); return;
     }
     reportSaveTimer = window.setTimeout(() => persistReport("draft", { auto: true }).catch(error => reportSaveState("No se ha guardado: " + error.message)), 3500);
   }
   function healthReportSelected() {
     const active = els.reportType.value === "evolution_health";
+    const free = els.reportType.value === "free";
+    const freeSection = document.querySelector("#clinic-free-report");
+    if (freeSection) { freeSection.hidden = !free; freeSection.style.display = free ? "block" : "none"; }
     const panel = document.querySelector("#clinic-health-report-sections");
     if (panel) { panel.hidden = !active; panel.style.display = active ? "grid" : "none"; }
-    if (els.reportContext?.closest("#clinic-report-sheet")) { const sheet = els.reportContext.closest("#clinic-report-sheet"); sheet.hidden = false; sheet.style.display = ""; }
-    if (els.generateReport) els.generateReport.textContent = "Descargar Word editable";
-    if (els.printReport) { els.printReport.hidden = false; els.printReport.style.display = ""; els.printReport.textContent = "Imprimir borrador"; }
-    if (els.saveReport) { els.saveReport.hidden = false; els.saveReport.style.display = ""; els.saveReport.textContent = "Guardar en Gestión Clínica"; }
+    if (els.reportContext?.closest("#clinic-report-sheet")) { const sheet = els.reportContext.closest("#clinic-report-sheet"); sheet.hidden = free; sheet.style.display = free ? "none" : ""; }
+    if (els.generateReport) { els.generateReport.hidden = free; els.generateReport.style.display = free ? "none" : ""; els.generateReport.textContent = "Descargar Word editable"; }
+    const refreshButton = document.querySelector("#clinic-refresh-report-from-history");
+    if (refreshButton) { refreshButton.hidden = free; refreshButton.style.display = free ? "none" : ""; }
+    if (els.printReport) { els.printReport.hidden = false; els.printReport.style.display = ""; els.printReport.textContent = "Imprimir"; }
+    if (els.saveReport) { els.saveReport.hidden = false; els.saveReport.style.display = ""; els.saveReport.textContent = "Guardar borrador"; }
     if (els.approveReport) { els.approveReport.hidden = active; els.approveReport.style.display = active ? "none" : ""; }
     const label = document.querySelector("#clinic-report-current")?.closest("label");
     if (label) label.firstChild.textContent = active ? "Estado actual y objetivos pendientes" : "Situación actual y recomendaciones";
@@ -1264,6 +1269,8 @@
     els.reportEvolution.value = content.evolution || "";
     els.reportInterventions.value = content.interventions || "";
     els.reportCurrent.value = content.current || "";
+    document.querySelector("#clinic-free-report-title").value = content.free_title || (report?.report_type === "free" ? report.title : "") || "";
+    document.querySelector("#clinic-free-report-body").value = content.free_body || "";
     const healthInputs = healthReportInputs();
     healthReportFields.forEach(([key]) => { healthInputs[key].value = content[key] || ""; });
     // New reports start with the documented clinical record; saved drafts are never overwritten on opening.
@@ -1271,6 +1278,7 @@
     reportIsOpening = true;
     const health = healthReportSelected();
     Object.values(healthInputs).forEach((field) => { field.disabled = report?.status === "approved"; });
+    for (const id of ["#clinic-free-report-title","#clinic-free-report-body"]) document.querySelector(id).disabled = report?.status === "approved";
     if (health && !els.reportRecipient.value) els.reportRecipient.value = "Profesional sanitario";
     els.reportTitlePreview.textContent = report?.title || reportTypeLabel(els.reportType.value);
     els.reportHeading.textContent = report?.title || "Nuevo informe";
@@ -1307,7 +1315,7 @@
     return true;
   }
   function generateReportDraft() {
-    if (!currentPatient) return;
+    if (!currentPatient || els.reportType.value === "free") return;
     const sessions = approvedSessionsInPeriod(currentPatient.id);
     const goals = patientGoals(currentPatient.id);
     const profile = clinicalProfile(currentPatient);
@@ -1404,17 +1412,17 @@
     const sessions = approvedSessionsInPeriod(currentPatient.id);
     return {
       patient_id: currentPatient.id, report_type: els.reportType.value,
-      title: reportTypeLabel(els.reportType.value), recipient: els.reportRecipient.value.trim() || null,
+      title: els.reportType.value === "free" ? (document.querySelector("#clinic-free-report-title").value.trim() || "Informe clínico") : reportTypeLabel(els.reportType.value), recipient: els.reportRecipient.value.trim() || null,
       purpose: els.reportPurpose.value.trim() || null, period_start: els.reportStart.value || null,
       period_end: els.reportEnd.value || null,
-      content: { context: els.reportContext.value.trim(), evolution: els.reportEvolution.value.trim(), interventions: els.reportInterventions.value.trim(), current: els.reportCurrent.value.trim(), ...(healthReportSelected() ? Object.fromEntries(healthReportFields.map(([key]) => [key, healthReportInputs()[key].value.trim()])) : {}) },
+      content: { free_title: document.querySelector("#clinic-free-report-title").value.trim(), free_body: document.querySelector("#clinic-free-report-body").value.trim(), context: els.reportContext.value.trim(), evolution: els.reportEvolution.value.trim(), interventions: els.reportInterventions.value.trim(), current: els.reportCurrent.value.trim(), ...(healthReportSelected() ? Object.fromEntries(healthReportFields.map(([key]) => [key, healthReportInputs()[key].value.trim()])) : {}) },
       included_session_ids: sessions.map((item) => item.id), status,
       approved_at: status === "approved" ? new Date().toISOString() : null, updated_at: new Date().toISOString(),
     };
   }
   async function persistReport(status, { auto = false } = {}) {
     if (reportSaveActive) { reportSaveRequested = true; if (!auto) throw new Error("Se está guardando el borrador. Espera unos segundos."); return; }
-    if (auto && (!els.reportPurpose.value.trim() || !reportHasContent())) return;
+    if (auto && ((els.reportType.value !== "free" && !els.reportPurpose.value.trim()) || !reportHasContent())) return;
     if (els.reportId.value && clinicalReports.some(item => item.id === els.reportId.value && item.status === "approved")) throw new Error("El informe aprobado no se puede sobrescribir.");
     if (auto && healthReportSelected() && (!els.reportStart.value || !els.reportEnd.value || els.reportStart.value > els.reportEnd.value)) return;
     if (auto && !reportDirty) return;
@@ -1427,7 +1435,7 @@
       if (!h.integration.value.trim() || !h.conclusions.value.trim()) throw new Error("Revisa y redacta expresamente la integración y las conclusiones antes de aprobar.");
       if (Object.values(h).some(x => /\[completar/i.test(x.value))) throw new Error("Hay apartados pendientes de completar.");
     }
-    if (status === "approved" && !els.reportEvolution.value.trim() && !els.reportContext.value.trim()) throw new Error("El informe no contiene información suficiente para aprobarlo.");
+    if (status === "approved" && !reportHasContent()) throw new Error("El informe no contiene información suficiente para aprobarlo.");
     els.reportMessage.textContent = status === "approved" ? "Aprobando informe…" : "Guardando borrador…";
     const payload = reportPayload(status);
     reportSaveActive = true;
@@ -1454,6 +1462,13 @@
   }
   function printCurrentReport() {
     if (!currentPatient) return;
+    if (els.reportType.value === "free") {
+      const title = document.querySelector("#clinic-free-report-title").value.trim() || "Informe clínico";
+      const body = document.querySelector("#clinic-free-report-body").value.trim();
+      if (!body) throw new Error("Redacta el informe antes de imprimirlo.");
+      printableWindow(title, `<header><p>Carolina Sánchez Girona · Psicóloga General Sanitaria y Neuropsicóloga · Col. 24892</p><h1>${escapeHtml(title)}</h1><p class="meta">Paciente: ${escapeHtml(currentPatient.full_name)} · Código: ${escapeHtml(currentPatient.public_code)} · Fecha: ${escapeHtml(dateShort.format(new Date()))}</p></header><div class="text">${escapeHtml(body)}</div><div class="signature"><p>Carolina Sánchez Girona</p></div><p class="privacy">Documento confidencial que contiene datos de salud.</p>`);
+      return;
+    }
     const section = (title, value) => value.trim() ? `<h2>${title}</h2><div class="text">${escapeHtml(value)}</div>` : "";
     printableWindow(els.reportTitlePreview.textContent, `<header><p>Carolina Sánchez Girona · Psicóloga General Sanitaria y Neuropsicóloga</p><h1>${escapeHtml(els.reportTitlePreview.textContent)}</h1><p class="meta">Paciente: ${escapeHtml(currentPatient.full_name)} · Código: ${escapeHtml(currentPatient.public_code)}<br>Destinatario: ${escapeHtml(els.reportRecipient.value || "No especificado")} · Finalidad: ${escapeHtml(els.reportPurpose.value || "Asistencial")}<br>Fecha: ${escapeHtml(dateShort.format(new Date()))}</p></header>${section("Motivo y contexto", els.reportContext.value)}${section("Evolución clínica", els.reportEvolution.value)}${section("Intervenciones realizadas", els.reportInterventions.value)}${section(healthReportSelected() ? "Estado actual y objetivos pendientes" : "Situación actual y recomendaciones", els.reportCurrent.value)}${healthReportSelected() ? healthReportFields.map(([key,label]) => section(label, healthReportInputs()[key].value)).join("") : ""}<div class="signature"><p>Carolina Sánchez Girona</p></div><p class="privacy">Documento confidencial que contiene datos de salud.</p>`);
   }
@@ -2699,7 +2714,7 @@
   els.reportDialog.addEventListener("cancel", event => { event.preventDefault(); closeReportEditor(); });
   els.reportForm.addEventListener("input", (event) => { if (event.target.matches("input,textarea,select")) scheduleReportAutoSave(); });
   els.reportForm.addEventListener("change", (event) => { if (event.target.matches("input,textarea,select")) scheduleReportAutoSave(); });
-  els.reportType.addEventListener("change", () => { els.reportTitlePreview.textContent = reportTypeLabel(els.reportType.value); healthReportInputs(); healthReportSelected(); scheduleReportAutoSave(); });
+  els.reportType.addEventListener("change", () => { els.reportTitlePreview.textContent = els.reportType.value === "free" ? (document.querySelector("#clinic-free-report-title").value.trim() || "Informe clínico") : reportTypeLabel(els.reportType.value); healthReportInputs(); healthReportSelected(); scheduleReportAutoSave(); });
   // Separate data refresh from export: downloading must never silently overwrite clinician edits.
   const refreshReportButton = document.createElement("button");
   refreshReportButton.type = "button";
@@ -2713,6 +2728,7 @@
     generateReportDraft();
     scheduleReportAutoSave();
   });
+  document.querySelector("#clinic-free-report-title").addEventListener("input", (event) => { if (els.reportType.value === "free") els.reportTitlePreview.textContent = event.target.value.trim() || "Informe clínico"; });
   els.generateReport.addEventListener("click", () => { try { downloadHealthReportWord(); } catch (error) { els.reportMessage.textContent = error.message; } });
   els.saveReport.addEventListener("click", () => { if (reportSaveActive) { els.reportMessage.textContent = "Se está guardando el informe. Espera a la confirmación."; return; } if (healthReportSelected() && !reportHasContent()) generateReportDraft(); if (healthReportSelected() && !els.reportPurpose.value.trim()) { els.reportMessage.textContent = "Indica la finalidad del informe antes de guardarlo."; return; } persistReport("draft").then(() => { if (healthReportSelected()) els.reportMessage.textContent = "Borrador guardado en la historia clínica. La edición posterior del Word descargado no se sincroniza automáticamente."; }).catch((error) => { els.reportMessage.textContent = error.message; }); });
   els.approveReport.addEventListener("click", () => persistReport("approved").catch((error) => { els.reportMessage.textContent = error.message; }));
@@ -2728,7 +2744,24 @@
     els.documentDialog.showModal();
   });
 
-  window.ClinicReportPreparePrint = () => { if (!els.reportId.value && !reportHasContent()) generateReportDraft(); };
+  window.ClinicReportPreparePrint = () => { if (els.reportType.value !== "free" && !els.reportId.value && !reportHasContent()) generateReportDraft(); };
+  document.querySelector("#clinic-download-pdf").addEventListener("click", () => {
+    try {
+      if (!currentPatient || !window.ClinicPdfExport?.download) throw new Error("No se ha cargado el exportador PDF. Recarga la página.");
+      const free = els.reportType.value === "free";
+      const title = free ? (document.querySelector("#clinic-free-report-title").value.trim() || "Informe clínico") : els.reportTitlePreview.textContent;
+      const sections = free ? [{ title: "", text: document.querySelector("#clinic-free-report-body").value }] : [
+        { title: "Motivo y contexto", text: els.reportContext.value },
+        { title: "Evolución clínica", text: els.reportEvolution.value },
+        { title: "Intervenciones realizadas", text: els.reportInterventions.value },
+        { title: healthReportSelected() ? "Estado actual y objetivos pendientes" : "Situación actual y recomendaciones", text: els.reportCurrent.value },
+        ...(healthReportSelected() ? healthReportFields.map(([key,label]) => ({ title: label, text: healthReportInputs()[key].value })) : [])
+      ];
+      if (!sections.some(item => item.text?.trim())) throw new Error("Redacta el informe antes de descargarlo.");
+      window.ClinicPdfExport.download({ title, patient: currentPatient.full_name, code: currentPatient.public_code, recipient: els.reportRecipient.value, purpose: els.reportPurpose.value, date: dateShort.format(new Date()), sections });
+      els.reportMessage.textContent = "PDF descargado. Comprueba el documento antes de entregarlo.";
+    } catch (error) { els.reportMessage.textContent = error.message; }
+  });
   els.printReport.addEventListener("click", () => { try { window.ClinicReportPreparePrint(); printCurrentReport(); } catch (error) { els.reportMessage.textContent = error.message; } });
   els.newExercise.addEventListener("click", () => openExercise());
   els.exerciseLibrary?.addEventListener("change", () => {
