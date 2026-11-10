@@ -74,6 +74,8 @@ test("responsive navigation and accessible keyboard focus", () => {
 test("users return to admin from modules and sign in to the same page", () => {
   assert.match(shell, /".econ-top-links"/);
   assert.match(shell, /link\.href = "\/admin\/"/);
-  assert.match(access, /window\.location\.assign\("\/admin\/"\)/);
+  assert.match(access, /window\.location\.assign\(safeReturnUrl\(\)\)/);
+  assert.match(access, /return "\/admin\/";/);
+  assert.match(access, /url\.origin !== window\.location\.origin/);
   assert.match(clinic, /next=%2Fadmin%2F/);
 });

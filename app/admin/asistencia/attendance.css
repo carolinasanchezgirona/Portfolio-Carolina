@@ -1,41 +1,64 @@
-:root{--att-ink:#314750;--att-blue:#708793;--att-mist:#809da8;--att-border:#d6dfe2;--att-paper:#fff;--att-bg:#f5f5f2}
-.attendance-page{font-family:Arial,Helvetica,sans-serif;background:var(--att-bg);color:var(--att-ink);min-height:100vh;padding:clamp(20px,4vw,48px);font-size:15px;line-height:1.45}
+:root{--at-ink:#30444d;--at-blue:#708793;--at-mist:#809da8;--at-border:#d9e1e5;--at-paper:#fff;--at-bg:#f4f5f3}
+.attendance-page{background:var(--at-bg);min-height:100vh;padding:clamp(18px,3vw,48px);font:15px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif;color:var(--at-ink)}
 .attendance-page *{box-sizing:border-box}
-.attendance-header{max-width:1160px;margin:0 auto 24px;display:flex;align-items:flex-start;justify-content:space-between;gap:20px}
-.attendance-eyebrow{font-size:12px;font-weight:700;letter-spacing:.13em;text-transform:uppercase;color:var(--att-blue)}
-.attendance-header h1{margin:8px 0;font-size:clamp(27px,3vw,40px);font-family:Georgia,serif;font-weight:500}
-.attendance-header p{color:#58676c;margin:0}
-.attendance-back{background:white;border:1px solid var(--att-border);color:var(--att-ink);padding:11px 15px;border-radius:10px;white-space:nowrap;text-decoration:none;font-weight:600}
-.attendance-card{max-width:1160px;margin:0 auto 20px;background:var(--att-paper);border:1px solid var(--att-border);border-radius:16px;padding:clamp(18px,2.5vw,28px)}
-.attendance-card h2{font-size:21px;margin:0 0 12px;font-family:Georgia,serif;font-weight:500;color:var(--att-ink)}
-.attendance-card h3{font-size:17px;margin:0 0 14px}
-.attendance-card p{color:#65747a}
-.attendance-head-row{display:flex;justify-content:space-between;align-items:center;gap:20px;flex-wrap:wrap}
-.attendance-head-row h2{margin:0}
-.attendance-page label{font-size:13px;display:flex;flex-direction:column;gap:7px;font-weight:600}
-.attendance-page .attendance-confirm-links{flex-direction:row;align-items:center;gap:10px;margin:16px 0;font-weight:500;line-height:1.5}
-.attendance-confirm-links input{width:18px;height:18px;flex-shrink:0}
-.attendance-page input:not([type=checkbox]),.attendance-page select,.attendance-page textarea{font:inherit;color:var(--att-ink);min-width:0;border:1px solid #c7d1d6;border-radius:8px;padding:10px;background:white;width:100%}
-.attendance-page textarea{resize:vertical}
-.attendance-page input:focus-visible,.attendance-page select:focus-visible,.attendance-page button:focus-visible,.attendance-back:focus-visible{outline:3px solid #a4c0cd;outline-offset:2px}
-.attendance-page button{font:inherit;font-weight:600;border:0;border-radius:9px;background:var(--att-blue);color:white;padding:11px 15px;cursor:pointer}
-.attendance-page button[disabled]{opacity:.6;cursor:wait}
-.attendance-stats{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px;margin-top:20px}
-.attendance-stats div{border-radius:12px;background:#f2f5f6;padding:16px;display:flex;flex-direction:column;gap:5px}
-.attendance-stats strong{font-size:28px;font-weight:600;font-variant-numeric:tabular-nums}
-.attendance-stats span{color:#58696e;font-size:12px}
-.attendance-import{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:15px;align-items:end;margin:15px 0}
-.attendance-full{margin-top:12px}
-.attendance-preview{margin-top:22px;padding-top:20px;border-top:1px solid var(--att-border)}
-.attendance-edit-row{display:grid;grid-template-columns:26px 80px minmax(140px,1.4fr) minmax(170px,1fr);gap:10px;align-items:center;margin:8px 0}
-.attendance-edit-row input[type=checkbox]{width:18px;height:18px}
-.attendance-preview button{margin-top:15px}
-.attendance-records{display:grid;gap:9px}
-.attendance-record{display:grid;grid-template-columns:minmax(160px,1.3fr) minmax(160px,1fr) minmax(130px,.7fr) minmax(150px,1fr);gap:12px;align-items:center;padding:15px 0;border-top:1px solid #e4e9eb}
-.attendance-patient{display:flex;flex-direction:column;gap:5px}
-.attendance-patient strong{font-size:14px}
-.attendance-patient span{font-size:12px;color:#687b82}
-.attendance-feedback{max-width:1160px;margin:0 auto 10px;font-weight:600;color:#365768}
-.attendance-disclaimer{max-width:1160px;margin:0 auto;font-size:12px;color:#6e7779}
-@media(max-width:960px){.attendance-record{grid-template-columns:1fr 1fr}.attendance-patient{grid-column:1/-1}.attendance-stats{grid-template-columns:repeat(3,minmax(0,1fr))}}
-@media(max-width:600px){.attendance-page{padding:16px}.attendance-header{flex-direction:column}.attendance-stats{grid-template-columns:repeat(2,minmax(0,1fr))}.attendance-import{grid-template-columns:1fr}.attendance-record{grid-template-columns:1fr}.attendance-edit-row{grid-template-columns:24px 74px 1fr}.attendance-edit-row select{grid-column:2/-1}}
+.attendance-page h1,.attendance-page h2{font-family:Georgia,serif;font-weight:500}
+.attendance-header{max-width:1180px;margin:0 auto 24px;display:flex;justify-content:space-between;gap:18px;align-items:flex-start}
+.attendance-header h1{font-size:clamp(28px,3vw,40px);margin:6px 0}
+.attendance-header p{margin:0;color:#62727a}
+.attendance-eyebrow{text-transform:uppercase;letter-spacing:.14em;font-size:12px;font-weight:700;color:var(--at-blue)}
+.attendance-back{border:1px solid var(--at-border);border-radius:10px;padding:10px 14px;background:#fff;text-decoration:none;color:var(--at-ink);white-space:nowrap;font-weight:600}
+.attendance-card{max-width:1180px;margin:0 auto 20px;border:1px solid var(--at-border);border-radius:15px;padding:clamp(18px,2.4vw,28px);background:var(--at-paper);box-shadow:0 2px 10px #405a6510}
+.attendance-card h2{font-size:clamp(20px,2vw,25px);margin:0}
+.attendance-card p{margin:10px 0;color:#62727a}
+.attendance-topline{display:flex;align-items:baseline;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:18px}
+.attendance-topline strong,.attendance-topline span{font-size:13px;color:#566a74}
+.attendance-step{color:#71818a!important}
+.attendance-page label{font-size:13px;font-weight:600;display:flex;flex-direction:column;gap:7px}
+.attendance-page input,.attendance-page select{width:100%;min-width:0;border:1px solid #bac9d1;padding:12px 13px;border-radius:10px;background:#fff;color:var(--at-ink);font:inherit;line-height:1.3}
+.attendance-page button{font:inherit;cursor:pointer}
+.attendance-page input:focus-visible,.attendance-page button:focus-visible,.attendance-page select:focus-visible,.attendance-back:focus-visible{outline:3px solid #adc9d6;outline-offset:2px}
+.attendance-page button:disabled{cursor:not-allowed;opacity:.45}
+.attendance-patient-picker{position:relative;max-width:740px;margin-bottom:18px}
+.attendance-suggestions{border:1px solid var(--at-border);border-radius:12px;background:#fff;margin-top:6px;box-shadow:0 12px 25px #00000012;overflow:hidden}
+.attendance-suggestions button{display:flex;flex-direction:column;gap:2px;width:100%;padding:12px 14px;text-align:left;background:#fff;border:0;border-bottom:1px solid #e6ecef}
+.attendance-suggestions button:hover{background:#f0f5f6}
+.attendance-suggestions small{font-size:12px;color:#6d7b83}
+.attendance-suggestions p{padding:5px 12px}
+.attendance-selected{display:flex;align-items:center;justify-content:space-between;gap:16px;border:1px solid #c8d9df;border-radius:12px;background:#eef5f7;padding:14px 16px;margin:10px 0 22px;max-width:740px}
+.attendance-selected div{display:flex;flex-direction:column;gap:2px}
+.attendance-selected strong{font-size:17px}
+.attendance-selected small{font-size:12px;color:#617581}
+.attendance-light-button{background:#fff;border:1px solid #bbcad1;border-radius:9px;padding:9px 12px;color:#3e5966;font-weight:600}
+.attendance-light-button:hover{background:#f4f8f9}
+.attendance-fields{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px;max-width:740px;margin-bottom:15px}
+.attendance-optional-note{max-width:740px}
+.attendance-actions{display:flex;gap:10px;margin-top:24px;flex-wrap:wrap}
+.attendance-action{border-radius:10px;padding:13px 18px;border:1px solid transparent;font-weight:650!important}
+.attendance-action.completed{background:#627e8e;color:#fff}
+.attendance-action.no-show{background:#f6ede9;color:#8c4e3f;border-color:#e7cbbd}
+.attendance-action.cancelled{background:#f2eff1;color:#705b66;border-color:#dbd0d6}
+.attendance-action.pending{background:#fff;color:#637681;border-color:#c6d3d9}
+.attendance-hint{font-size:12px}
+.attendance-stats{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:9px}
+.attendance-stats>div{display:flex;flex-direction:column;gap:3px;padding:14px;background:#f1f5f6;border-radius:11px}
+.attendance-stats strong{font-size:26px;font-weight:600;font-variant-numeric:tabular-nums}
+.attendance-stats span{font-size:12px;color:#667a83}
+.attendance-list{margin-top:20px;border-top:1px solid #e4eaec}
+.attendance-visit{display:grid;grid-template-columns:minmax(175px,1.2fr) minmax(140px,.7fr) minmax(220px,1.2fr);align-items:center;gap:16px;border-bottom:1px solid #e4eaec;padding:13px 0}
+.attendance-visit-person{display:flex;flex-direction:column;gap:2px}
+.attendance-visit-person strong{font-size:14px}
+.attendance-visit-person span{font-size:12px;color:#71828a}
+.attendance-visit label{font-size:12px}
+.attendance-visit select,.attendance-visit input{padding:9px}
+.attendance-visit-note{display:flex;align-items:flex-end;gap:8px}
+.attendance-visit-note label{flex:1}
+.attendance-visit-note button{white-space:nowrap}
+.attendance-patient-history{margin-top:15px;max-height:350px;overflow:auto}
+.attendance-patient-history>div{display:flex;gap:14px;justify-content:space-between;align-items:baseline;padding:12px 0;border-bottom:1px solid #e5ebed;font-size:14px}
+.attendance-patient-history strong{font-size:13px}
+.attendance-patient-history small{font-size:12px;color:#7a858b}
+.attendance-feedback{max-width:1180px;margin:4px auto 12px;font-weight:600;color:#4a6571;min-height:22px}
+.attendance-disclaimer{max-width:1180px;margin:0 auto;color:#71828a;font-size:12px;line-height:1.6}
+.attendance-empty{font-size:14px}
+@media(max-width:850px){.attendance-visit{grid-template-columns:1fr 1fr}.attendance-visit-person{grid-column:1/-1}.attendance-visit-note{grid-column:1/-1}.attendance-stats{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:600px){.attendance-page{padding:15px}.attendance-header{flex-direction:column}.attendance-stats{grid-template-columns:repeat(2,minmax(0,1fr))}.attendance-fields{grid-template-columns:1fr}.attendance-visit{grid-template-columns:1fr}.attendance-visit-person,.attendance-visit-note{grid-column:auto}.attendance-actions{display:grid;grid-template-columns:1fr 1fr}.attendance-action{padding:13px 9px}.attendance-patient-history>div{align-items:flex-start;flex-direction:column;gap:3px}}
