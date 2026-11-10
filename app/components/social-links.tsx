@@ -70,7 +70,7 @@ export default function SocialLinks({ className = "", compact = false }: SocialL
     .join(" ");
 
   return (
-    <div className={classes} aria-label="Redes profesionales">
+    <div className={classes} aria-label="Redes y contacto profesional">
       <a
         href="https://www.instagram.com/carolina_tupsicologa/"
         target="_blank"
@@ -79,6 +79,18 @@ export default function SocialLinks({ className = "", compact = false }: SocialL
       >
         <InstagramIcon />
         <span>Instagram</span>
+      </a>
+      <a
+        href="https://wa.me/34604974857?text=Hola%2C%20quisiera%20consultar%20disponibilidad%20para%20una%20cita."
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label="Escribir por WhatsApp, abre una aplicación externa"
+      >
+        <svg {...iconProps} className="social-link-icon" aria-hidden="true">
+          <path d="M20.3 11.5a8.3 8.3 0 0 1-12.2 7.3L3.5 20l1.3-4.4A8.3 8.3 0 1 1 20.3 11.5Z" stroke="currentColor" strokeWidth="1.7" strokeLinejoin="round" />
+          <path d="M8.7 8.3c.3-.3.6-.2.8.1l.8 1.2c.2.3.2.5 0 .8l-.5.6a6 6 0 0 0 2.9 2.8l.6-.5c.3-.2.5-.2.8 0l1.2.8c.3.2.4.6.1.9-.5.7-1.4 1.1-2.2.9a8.8 8.8 0 0 1-5.3-5.3c-.2-.9.1-1.8.8-2.3Z" stroke="currentColor" strokeWidth="1.4" strokeLinejoin="round" />
+        </svg>
+        <span>WhatsApp</span>
       </a>
       <a
         href="https://www.linkedin.com/in/carolina-s%C3%A1nchez-girona-43b3b94a/"
