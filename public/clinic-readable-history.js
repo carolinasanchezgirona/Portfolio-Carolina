@@ -23,7 +23,7 @@
     #clinic-patient-dialog details.clinic-record-section.readable-history>summary{padding:16px 19px;gap:12px;align-items:center}
     #clinic-patient-dialog details.clinic-record-section.readable-history>summary span{font-weight:650}
     #clinic-patient-dialog details.clinic-record-section.readable-history>summary small{font-weight:400;font-size:.78rem;color:var(--admin-muted,#63737c)}
-    #clinic-patient-dialog details.clinic-record-section.readable-history-body{display:block}
+    #clinic-patient-dialog details.clinic-record-section.readable-history .clinic-record-section-body{display:block}
     #clinic-patient-dialog details.clinic-record-section.readable-history:not(.history-editing) .clinic-record-section-body{display:none!important}
     #clinic-patient-dialog details.clinic-record-section.readable-history:not(.history-editing) .history-preview{display:grid}
     #clinic-patient-dialog details.clinic-record-section.readable-history .history-preview{gap:0;padding:0 19px 12px}
@@ -36,9 +36,9 @@
     #clinic-patient-dialog details.clinic-record-section.readable-history .history-toggle{border:1px solid var(--admin-line,#c7dbe6);background:#fff;border-radius:9px;color:var(--admin-action,#506570);padding:8px 13px;cursor:pointer;font:600 .8rem var(--font-inter),system-ui,sans-serif}
     #clinic-patient-dialog details.clinic-record-section.readable-history .history-toggle:hover{background:var(--admin-soft,#f2f5f6)}
     #clinic-patient-dialog details.clinic-record-section.readable-history .history-toggle:focus-visible{outline:3px solid var(--admin-accent,#809da8);outline-offset:2px}
-    #clinic-patient-dialog details.clinic-record-section.readable-history .history-editing .clinic-record-section-body{display:grid!important;padding:15px 19px 20px}
-    #clinic-patient-dialog details.clinic-record-section.readable-history .history-editing .history-preview{display:none}
-    #clinic-patient-dialog details.clinic-record-section.readable-history .history-editing textarea{font-weight:400!important;min-height:100px}
+    #clinic-patient-dialog details.clinic-record-section.readable-history.history-editing .clinic-record-section-body{display:grid!important;padding:15px 19px 20px}
+    #clinic-patient-dialog details.clinic-record-section.readable-history.history-editing .history-preview{display:none}
+    #clinic-patient-dialog details.clinic-record-section.readable-history.history-editing textarea{font-weight:400!important;min-height:100px}
     #clinic-patient-dialog details.clinic-record-section.readable-history .history-entry[data-category="factor"]{border:0;border-bottom:1px solid var(--admin-line,#e5e9eb);border-radius:0;padding:13px 0 15px}
     #clinic-patient-dialog details.clinic-record-section.readable-history .history-entry[data-wide="true"]{grid-column:1/-1}
     @media(max-width:640px){#clinic-patient-dialog details.clinic-record-section.readable-history>summary{padding:13px}#clinic-patient-dialog details.clinic-record-section.readable-history .history-preview{padding:0 13px 9px}#clinic-patient-dialog details.clinic-record-section.readable-history .history-top-actions{padding:7px 13px 4px}}
