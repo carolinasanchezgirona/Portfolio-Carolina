@@ -106,7 +106,79 @@
   });
   // Diagnostic and treatment assistants already have controls inside their
   // respective clinical areas; avoid a duplicate panel detached by the tabs.
-  const refresh = () => sections.forEach(section => section._renderHistoryPreview?.());
+  // The older free-text synthesis used to remain as a permanently editable
+  // block beside the new read-only clinical sections. Give both generations
+  // the same presentation, while retaining the original text and field IDs.
+  let refreshSummary = () => {};
+  const summaryGrid = form.querySelector("#clinic-summary-note")?.closest(".clinic-form-grid");
+  if (summaryGrid && summaryGrid.parentElement) {
+    style.textContent += `
+      #clinic-patient-dialog .clinic-summary-readonly{margin:12px 0 20px;border:1px solid var(--admin-line,#dce1e3);border-radius:14px;background:#fff;overflow:hidden}
+      #clinic-patient-dialog .clinic-summary-readonly:not(.history-summary-editing)>.clinic-form-grid{display:none!important}
+      #clinic-patient-dialog .clinic-summary-readonly .history-summary-preview{padding:0 18px 10px;display:grid}
+      #clinic-patient-dialog .clinic-summary-readonly .history-top-actions{display:flex;justify-content:flex-end;padding:11px 18px 0}
+      #clinic-patient-dialog .clinic-summary-readonly .history-toggle{border:1px solid var(--admin-line,#c7dbe6);border-radius:9px;background:white;color:var(--admin-action,#506570);padding:8px 13px;font:600 .8rem system-ui,sans-serif;cursor:pointer}
+      #clinic-patient-dialog .clinic-summary-readonly .history-entry{border-bottom:1px solid var(--admin-line,#e5e9eb);padding:12px 0 14px}
+      #clinic-patient-dialog .clinic-summary-readonly .history-entry:last-child{border-bottom:0}
+      #clinic-patient-dialog .clinic-summary-readonly .history-entry-title{display:block;font-size:.76rem;font-weight:700;color:var(--admin-action,#506570);margin-bottom:5px}
+      #clinic-patient-dialog .clinic-summary-readonly .history-entry-text{margin:0;font-size:.9rem;font-weight:400;line-height:1.62;white-space:pre-wrap;overflow-wrap:anywhere}
+      #clinic-patient-dialog .clinic-summary-readonly .history-empty{padding:10px 0;color:var(--admin-muted,#748397);font-size:.85rem}
+      #clinic-patient-dialog .clinic-summary-readonly.history-summary-editing .history-summary-preview{display:none}
+      #clinic-patient-dialog .clinic-summary-readonly.history-summary-editing>.clinic-form-grid{display:grid;padding:12px 18px 18px}
+      @media(max-width:640px){#clinic-patient-dialog .clinic-summary-readonly .history-summary-preview{padding:0 13px 8px}#clinic-patient-dialog .clinic-summary-readonly .history-top-actions{padding:9px 13px 0}}
+    `;
+    const summary = document.createElement("section");
+    summary.className = "clinic-summary-readonly";
+    summary.setAttribute("aria-label", "Resumen clínico registrado");
+    const actions = document.createElement("div");
+    actions.className = "history-top-actions";
+    const edit = document.createElement("button");
+    edit.type = "button";
+    edit.className = "history-toggle";
+    edit.textContent = "Editar información";
+    edit.setAttribute("aria-expanded", "false");
+    actions.append(edit);
+    const preview = document.createElement("div");
+    preview.className = "history-summary-preview";
+    preview.setAttribute("aria-label", "Resumen de información clínica");
+    summaryGrid.before(summary);
+    summary.append(actions, preview, summaryGrid);
+    refreshSummary = () => {
+      if (summary.classList.contains("history-summary-editing")) return;
+      preview.replaceChildren();
+      let populated = 0;
+      for (const field of summaryGrid.querySelectorAll("textarea")) {
+        if (!field.value.trim()) continue;
+        populated++;
+        const entry = document.createElement("div");
+        entry.className = "history-entry";
+        const title = document.createElement("strong");
+        title.className = "history-entry-title";
+        title.textContent = field.closest("label")?.childNodes[0]?.textContent?.trim() || field.id;
+        const body = document.createElement("p");
+        body.className = "history-entry-text";
+        body.textContent = field.value.trim();
+        entry.append(title, body);
+        preview.append(entry);
+      }
+      if (!populated) {
+        const empty = document.createElement("p");
+        empty.className = "history-empty";
+        empty.textContent = "Sin síntesis clínica registrada. Puedes completarla en «Editar información».";
+        preview.append(empty);
+      }
+    };
+    edit.addEventListener("click", () => {
+      const editing = summary.classList.toggle("history-summary-editing");
+      edit.textContent = editing ? "Terminar edición" : "Editar información";
+      edit.setAttribute("aria-expanded", String(editing));
+      if (editing) summaryGrid.querySelector("textarea")?.focus({preventScroll:true});
+      else refreshSummary();
+    });
+    summaryGrid.addEventListener("input", refreshSummary);
+    refreshSummary();
+  }
+  const refresh = () => { sections.forEach(section => section._renderHistoryPreview?.()); refreshSummary(); };
   // La aplicación rellena los campos de forma programática al cambiar de paciente.
   document.addEventListener("click", () => { setTimeout(refresh, 120); setTimeout(refresh, 600); }, true);
   document.addEventListener("change", () => setTimeout(refresh, 100), true);
