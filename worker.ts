@@ -707,6 +707,105 @@ async function handlePatientPortalPreferences(request: Request, env: Env): Promi
   return patientPortalJson({ ok: true, avatar_id: avatarId });
 }
 
+/** Publish a clinician-reviewed PDF form in Mi espacio without sending email. */
+async function handleAdminClinicalFormPublish(request: Request, env: Env): Promise<Response> {
+  if (request.method !== "POST") return patientPortalJson({ error: "Método no permitido." }, 405);
+  if (!patientPortalSameOrigin(request)) return patientPortalJson({ error: "Origen no permitido." }, 403);
+  if (!await verifyEditorialOwner(request)) return patientPortalJson({ error: "Acceso profesional no autorizado." }, 401);
+  if (!env.SUPABASE_SERVICE_ROLE_KEY) return patientPortalJson({ error: "Publicación no disponible." }, 503);
+  if (Number(request.headers.get("content-length") || "0") > 1024) {
+    return patientPortalJson({ error: "Solicitud demasiado extensa." }, 413);
+  }
+  let body: Record<string, unknown>;
+  try { body = await request.json() as Record<string, unknown>; }
+  catch { return patientPortalJson({ error: "Solicitud no válida." }, 400); }
+  const assignmentId = typeof body.assignment_id === "string" ? body.assignment_id : "";
+  const uuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+  if (!uuid.test(assignmentId)) return patientPortalJson({ error: "Asignación no válida." }, 400);
+
+  const assignmentResponse = await fetch(
+    RESOURCE_SUPABASE + "/rest/v1/clinical_exercise_assignments?select=id,patient_id,status,email_status,revoked_at,patient_document" +
+      "&id=eq." + encodeURIComponent(assignmentId) + "&limit=1",
+    { headers: serviceHeaders(env), cache: "no-store" },
+  ).catch(() => null);
+  if (!assignmentResponse?.ok) return patientPortalJson({ error: "No se ha podido verificar el borrador." }, 503);
+  const rows = await assignmentResponse.json().catch(() => []) as Record<string, unknown>[];
+  const assignment = Array.isArray(rows) ? rows[0] : null;
+  if (!assignment || assignment.status !== "prepared" || assignment.revoked_at ||
+      assignment.email_status === "sent" || !uuid.test(String(assignment.patient_id || ""))) {
+    return patientPortalJson({ error: "El borrador no está disponible para publicación." }, 409);
+  }
+
+  const doc = assignment.patient_document && typeof assignment.patient_document === "object" &&
+    !Array.isArray(assignment.patient_document) ? assignment.patient_document as Record<string, unknown> : {};
+  const sourceId = String(doc.source_document_id || "");
+  const reviewedAt = String(doc.conversion_reviewed_at || "");
+  if (doc.conversion_review_required !== true || !uuid.test(sourceId) ||
+      !/^\d{4}-\d{2}-\d{2}T/.test(reviewedAt) || !Number.isFinite(Date.parse(reviewedAt))) {
+    return patientPortalJson({ error: "Falta el cotejo profesional con el PDF original." }, 409);
+  }
+
+  const definitions = doc.form_fields;
+  const supported = new Set(["short_text", "long_text", "scale_0_10", "date", "yes_no", "choice"]);
+  if (!Array.isArray(definitions) || definitions.length < 1 || definitions.length > 30) {
+    return patientPortalJson({ error: "Añade al menos una pregunta válida al formulario." }, 409);
+  }
+  const ids = new Set<string>();
+  for (const raw of definitions) {
+    if (!raw || typeof raw !== "object" || Array.isArray(raw)) {
+      return patientPortalJson({ error: "Hay preguntas no válidas." }, 409);
+    }
+    const field = raw as Record<string, unknown>;
+    const id = String(field.id || ""), label = String(field.label || "").trim();
+    if (!/^[A-Za-z0-9_-]{1,50}$/.test(id) || ids.has(id) || !supported.has(String(field.type || "")) ||
+        !label || label.length > 200 || typeof field.label !== "string") {
+      return patientPortalJson({ error: "Revisa los enunciados y tipos de las preguntas." }, 409);
+    }
+    ids.add(id);
+    if (field.type === "choice") {
+      const choices = field.options;
+      if (!Array.isArray(choices) || choices.length < 1 || choices.length > 12 ||
+          choices.some(option => typeof option !== "string" || !option.trim() || option.length > 100) ||
+          new Set(choices).size !== choices.length) {
+        return patientPortalJson({ error: "Revisa las opciones de respuesta." }, 409);
+      }
+    }
+  }
+
+  const originalResponse = await fetch(
+    RESOURCE_SUPABASE + "/rest/v1/clinical_documents?select=id,patient_id,mime_type,category,shared_at,share_revoked_at" +
+      "&id=eq." + encodeURIComponent(sourceId) + "&patient_id=eq." +
+      encodeURIComponent(String(assignment.patient_id)) +
+      "&shared_at=not.is.null&share_revoked_at=is.null&limit=1",
+    { headers: serviceHeaders(env), cache: "no-store" },
+  ).catch(() => null);
+  if (!originalResponse?.ok) return patientPortalJson({ error: "No se ha podido verificar el documento de origen." }, 503);
+  const originals = await originalResponse.json().catch(() => []) as Record<string, unknown>[];
+  const original = Array.isArray(originals) ? originals[0] : null;
+  if (!original || original.mime_type !== "application/pdf" || original.category !== "intervention_plan") {
+    return patientPortalJson({ error: "El PDF original debe seguir compartido con este mismo paciente." }, 409);
+  }
+
+  const now = new Date().toISOString();
+  const update = await fetch(
+    RESOURCE_SUPABASE + "/rest/v1/clinical_exercise_assignments?id=eq." + encodeURIComponent(assignmentId) +
+      "&patient_id=eq." + encodeURIComponent(String(assignment.patient_id)) +
+      "&status=eq.prepared&revoked_at=is.null&select=id,status,assigned_at",
+    {
+      method: "PATCH",
+      headers: serviceHeaders(env, { Prefer: "return=representation" }),
+      cache: "no-store",
+      body: JSON.stringify({ status: "assigned", assigned_at: now, updated_at: now }),
+    },
+  ).catch(() => null);
+  if (!update?.ok) return patientPortalJson({ error: "No se ha podido publicar el formulario." }, 503);
+  const published = await update.json().catch(() => []) as Record<string, unknown>[];
+  if (!Array.isArray(published) || published.length !== 1 || published[0].status !== "assigned") {
+    return patientPortalJson({ error: "El borrador ha cambiado de estado. Actualiza la ficha." }, 409);
+  }
+  return patientPortalJson({ ok: true, status: "assigned", published_at: now });
+}
+
 async function handlePatientPortalResponse(request: Request, env: Env): Promise<Response> {
   if (request.method !== "POST") return patientPortalJson({ error: "Método no permitido." }, 405);
   if (!patientPortalSameOrigin(request)) return patientPortalJson({ error: "Origen no permitido." }, 403);
@@ -2322,6 +2421,7 @@ export default {
     if (url.pathname.replace(/\/$/, "") === "/api/admin/clinical-consent-packet") return clinicalConsentPacket(request, env, verifyEditorialOwner, patientPortalSameOrigin);
 
     if (url.pathname === "/api/admin/patient-portal-access" || url.pathname === "/api/admin/patient-portal-access/") return handleAdminPatientPortalAccess(request, env);
+    if (url.pathname.replace(/\/$/, "") === "/api/admin/clinical-form-publish") return handleAdminClinicalFormPublish(request, env);
     if (url.pathname === "/api/admin/push" || url.pathname === "/api/admin/push/") return adminPushRequest(request, env, verifyEditorialOwner);
     if (url.pathname === "/api/video/appointment") return adminAppointmentVideo(request, env, verifyEditorialOwner);
     if (url.pathname === "/api/patient-portal/video") {
