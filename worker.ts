@@ -893,6 +893,13 @@ async function handlePatientPortalResponse(request: Request, env: Env): Promise<
     if (field.type === "choice" && value && !field.options.includes(value)) return patientPortalJson({ error: "Opción no válida." }, 400);
     formAnswers[id] = value;
   }
+  // A submission should contain actual patient material; an empty delivery
+  // must not create an apparent clinical-history event.
+  if (action === "share" && !record.trim() && !answers.some(value => value.trim()) &&
+      !Object.values(formAnswers).some(value => value.trim()) &&
+      !(neuroAnswers || []).some(value => value.trim())) {
+    return patientPortalJson({ error: "Escribe al menos una respuesta antes de compartir." }, 400);
+  }
   const savedAt = new Date().toISOString();
 
   const update = await fetch(
