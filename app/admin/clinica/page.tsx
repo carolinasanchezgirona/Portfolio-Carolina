@@ -68,6 +68,8 @@ export default function AdminClinicaPage() {
               <a className="clinic-more-item" href="/admin/recursos/">Recursos</a>
               <a className="clinic-more-item" href="/admin/marketing/">Marketing</a>
               <a className="clinic-more-item" href="/admin/preguntas/">Preguntas</a>
+              <p className="clinic-more-heading">Seguridad y privacidad</p>
+              <a className="clinic-more-item" href="/admin/proteccion-datos/">Protección de datos e incidencias</a>
               <p className="clinic-more-heading">Administración</p>
               <a className="clinic-more-item" href="/admin/">Panel general</a>
               <div className="clinic-more-install-slot" />

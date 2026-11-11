@@ -66,6 +66,7 @@ const adminMenuGroups: AdminMenuGroup[] = [
   },
   {
     id: "tools", title: "Acceso y herramientas", links: [
+      { href: "/admin/proteccion-datos/", icon: "shield", label: "Protección de datos e incidencias", keywords: "rgpd brechas seguridad privacidad registro" },
       { href: "/admin-authenticator.html", icon: "shield", label: "Authenticator", keywords: "seguridad doble factor 2fa totp" },
       { href: "/downloads/mi-clinica-1.0.0.apk", icon: "more", label: "App Android", keywords: "aplicación instalar descargar" },
     ]
