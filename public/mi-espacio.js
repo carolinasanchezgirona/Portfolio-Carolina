@@ -579,12 +579,18 @@
     heading.textContent = "Contenido completo del documento";
     const lead = document.createElement("p");
     lead.textContent = "Lee aquí todas las explicaciones, técnicas, ejemplos y consignas del PDF original. Después encontrarás los espacios para responder. El documento conserva sus páginas y su contenido íntegro.";
-    const reader = document.createElement("iframe");
+    // Render every page to first-party canvases. Browser-native PDF iframes do
+    // not work reliably on Android and must never be the only reading path.
+    const reader = document.createElement("div");
     reader.className = "space-pdf-form-reader";
-    reader.src = url;
-    reader.title = "PDF completo del material terapéutico";
-    reader.loading = "lazy";
-    reader.referrerPolicy = "no-referrer";
+    reader.dataset.pdfUrl = url;
+    reader.setAttribute("role", "group");
+    reader.setAttribute("aria-label", "Todas las páginas del PDF original");
+    const loading = document.createElement("p");
+    loading.className = "space-pdf-form-loading";
+    loading.setAttribute("role", "status");
+    loading.textContent = "Cargando las páginas completas del documento…";
+    reader.append(loading);
     const fallback = document.createElement("p");
     fallback.className = "space-pdf-form-fallback";
     fallback.textContent = "Si el visor integrado no funciona en tu móvil, puedes abrir el documento original sin perder las respuestas de esta página.";
@@ -596,6 +602,77 @@
     open.textContent = "Abrir documento completo en otra pestaña";
     section.append(heading, lead, reader, fallback, open);
     form.append(section);
+  }
+
+  // The renderer is bundled in the site's own static assets. Neither the
+  // original PDF nor its pages are transmitted to any third-party service.
+  const renderedPdfHosts = new WeakSet();
+  async function renderCompletePdfPages(host) {
+    if (!host || renderedPdfHosts.has(host) || !state.portalAuthenticated) return;
+    const url = host.dataset.pdfUrl || "";
+    if (!/^\/api\/patient-portal\/file\?id=[0-9a-f-]{36}$/i.test(url)) return;
+    renderedPdfHosts.add(host);
+    const sessionEpoch = portalSessionEpoch;
+    const canContinue = () => state.portalAuthenticated && sessionEpoch === portalSessionEpoch &&
+      host.isConnected && host.closest(".space-patient-material")?.open;
+    const status = host.querySelector(".space-pdf-form-loading");
+    let task = null;
+    try {
+      if (!canContinue()) { renderedPdfHosts.delete(host); return; }
+      const pdfjs = await import("/vendor/pdfjs/pdf.mjs");
+      if (!canContinue()) { renderedPdfHosts.delete(host); return; }
+      pdfjs.GlobalWorkerOptions.workerSrc = "/vendor/pdfjs/pdf.worker.mjs";
+      task = pdfjs.getDocument({
+        url,
+        withCredentials: true,
+        isEvalSupported: false,
+        cMapUrl: "/vendor/pdfjs/cmaps/",
+        cMapPacked: true,
+        standardFontDataUrl: "/vendor/pdfjs/standard_fonts/",
+        wasmUrl: "/vendor/pdfjs/wasm/",
+      });
+      const pdf = await task.promise;
+      if (!canContinue()) { await task.destroy(); renderedPdfHosts.delete(host); return; }
+      if (status) status.textContent = "Documento completo · " + pdf.numPages +
+        (pdf.numPages === 1 ? " página" : " páginas");
+      // Render sequentially to avoid exhausting memory in Android WebView.
+      for (let pageNumber = 1; pageNumber <= pdf.numPages; pageNumber++) {
+        if (!canContinue()) { await task.destroy(); renderedPdfHosts.delete(host); return; }
+        const page = await pdf.getPage(pageNumber);
+        const original = page.getViewport({ scale: 1 });
+        const width = Math.max(280, Math.min(host.clientWidth || 700, 900));
+        const scale = Math.min(width / original.width, 1.75);
+        const viewport = page.getViewport({ scale });
+        const ratio = Math.min(window.devicePixelRatio || 1, 1.5);
+        const canvas = document.createElement("canvas");
+        canvas.className = "space-pdf-form-page";
+        canvas.setAttribute("role", "img");
+        canvas.setAttribute("aria-label", "Página " + pageNumber + " de " + pdf.numPages +
+          " del documento terapéutico");
+        canvas.width = Math.max(1, Math.floor(viewport.width * ratio));
+        canvas.height = Math.max(1, Math.floor(viewport.height * ratio));
+        canvas.style.width = Math.floor(viewport.width) + "px";
+        canvas.style.height = Math.floor(viewport.height) + "px";
+        const context = canvas.getContext("2d", { alpha: false });
+        if (!context) throw new Error("No se puede mostrar el documento en este dispositivo.");
+        context.setTransform(ratio, 0, 0, ratio, 0, 0);
+        await page.render({ canvas, canvasContext: context, viewport }).promise;
+        if (!canContinue()) { await task.destroy(); renderedPdfHosts.delete(host); return; }
+        host.append(canvas);
+        page.cleanup();
+        // Make each page available progressively, keeping the UI responsive.
+        await new Promise(resolve => requestAnimationFrame(resolve));
+      }
+    } catch (error) {
+      if (!canContinue()) { renderedPdfHosts.delete(host); return; }
+      if (status) status.textContent = "No se han podido mostrar todas las páginas aquí. Utiliza «Abrir documento completo» o descarga el PDF original.";
+      console.error("Visor de documento privado no disponible", error);
+      renderedPdfHosts.delete(host);
+    } finally {
+      if (!canContinue()) {
+        try { await task?.destroy(); } catch (_) {}
+      }
+    }
   }
 
   // Each objective can define its own questions, without replicating the PDF.
@@ -838,6 +915,15 @@
     }
 
     details.append(summary, body);
+    if (sourceFile) {
+      const showCompleteDocument = () => {
+        if (!details.open || !details.isConnected || !state.portalAuthenticated) return;
+        const host = details.querySelector(".space-pdf-form-reader");
+        if (host) void renderCompletePdfPages(host);
+      };
+      details.addEventListener("toggle", showCompleteDocument);
+      if (details.open) requestAnimationFrame(showCompleteDocument);
+    }
     materialSavedSnapshots.set(details, snapshotPatientMaterial(details));
     const markUnsaved = event => {
       const field = event.target;
