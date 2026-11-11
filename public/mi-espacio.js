@@ -841,6 +841,7 @@
       const form = document.createElement("form");
       let answerTarget = form;
       let exerciseSection = null;
+      let exerciseContent = null;
       if (sourceFile) {
         const workspace = document.createElement("div");
         workspace.className = "space-fillable-workspace";
@@ -869,7 +870,8 @@
           item.patient_response_status === "shared" ? "Respuestas compartidas" :
           item.patient_response_status === "draft" ? "Borrador guardado" : "Formulario para completar");
         exerciseSection = answerPart.section;
-        answerTarget = answerPart.content;
+        exerciseContent = answerPart.content;
+        answerTarget = form;
         if (neuroTaskContainer) answerTarget.append(neuroTaskContainer);
       }
 
@@ -949,7 +951,7 @@
         host.className = "space-workbook-response-content";
         host.append(explainer, form);
         // Neuro tasks live within the same exercise accordion, not in techniques.
-        exerciseSection.append(host);
+        exerciseContent.append(host);
         body.append(exerciseSection);
       } else {
         responseBox.append(heading, explainer, form);
