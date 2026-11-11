@@ -896,7 +896,7 @@
     renderInteractiveFields();
     renderInteractiveDocumentLink();
     focusPdfFormFields();
-    els.exerciseMessage.textContent = "Formulario vinculado: el paciente verá el PDF completo dentro de Mi espacio, con toda su psicoeducación, técnicas, ejemplos y ejercicios. Añade y coteja aquí los campos de respuesta antes de publicar.";
+    els.exerciseMessage.textContent = "Documento rellenable preparado. En Mi espacio se verá el PDF íntegro junto a un espacio para contestar. Puedes añadir campos estructurados para ejercicios concretos, pero no necesitas transcribir el documento. Revisa el PDF y confirma el cotejo antes de publicar.";
   }
 
   function applyExerciseTemplate(template) {
@@ -1388,9 +1388,8 @@
         if (!linkedDoc.shared_at || linkedDoc.share_revoked_at) {
           throw new Error("Antes de asignar el formulario, publica expresamente el PDF original en Mi espacio.");
         }
-        if (!docForQuality.form_fields.length) {
-          throw new Error("El formulario está vinculado a un PDF, pero aún no tiene preguntas. Añade los campos pertinentes antes de enviarlo.");
-        }
+        // The full original PDF and an open response area are sufficient.
+        // Specific structured questions can be added where clinically useful.
       }
       const quality = patientDocumentQuality(docForQuality);
       if (!quality.complete) {
