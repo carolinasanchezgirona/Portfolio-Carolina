@@ -246,13 +246,15 @@ export default function PrivacyIncidentsPage() {
 
   async function downloadEvidence() {
     if (!selected?.attachment_path || !selected.attachment_sha256) return;
+    const originalPath = selected.attachment_path;
+    const expectedSha256 = selected.attachment_sha256;
     await runAction(async () => {
       await createEvent(selected.id, "evidence_access_requested", "Acceso solicitado al PDF custodiado.");
-      const objectPath = selected.attachment_path.split("/").map(encodeURIComponent).join("/");
+      const objectPath = originalPath.split("/").map(encodeURIComponent).join("/");
       const response = await api("/storage/v1/object/authenticated/" + BUCKET + "/" + objectPath);
       const data = await response.blob();
       const actual = await hashFile(data);
-      if (actual !== selected.attachment_sha256) {
+      if (actual !== expectedSha256) {
         await createEvent(selected.id, "integrity_warning", "La comprobación SHA-256 del documento recuperado no coincide con el registro.");
         throw new Error("La huella SHA-256 no coincide. No se descargará el archivo.");
       }
