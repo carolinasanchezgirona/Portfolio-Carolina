@@ -42,6 +42,7 @@ const adminLinks: { href: string; icon: IconName; label: string }[] = [
   { href: "/admin/articulos/", icon: "editorial", label: "Centro editorial" },
   { href: "/admin/clinica/materiales-externos/", icon: "resources", label: "Biblioteca clínica" },
   { href: "/admin/clinica/documentacion/", icon: "resources", label: "Documentación" },
+  { href: "/admin/clinica/protocolos/", icon: "clinical", label: "Protocolos clínicos" },
   { href: "/admin/recursos/", icon: "resources", label: "Recursos" },
   { href: "/admin/marketing/", icon: "editorial", label: "Marketing" },
   { href: "/admin-authenticator.html", icon: "shield", label: "Authenticator" },

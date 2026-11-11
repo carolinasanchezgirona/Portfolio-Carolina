@@ -1,0 +1,39 @@
+.clinical-protocols-page{max-width:1220px;margin:0 auto;padding:22px 22px 85px;color:var(--admin-text,#28333a);font-family:inherit}
+.protocols-access{margin:10vh auto;max-width:650px;padding:30px;border-radius:16px;background:var(--admin-soft,#f5f7f8);line-height:1.7}
+.protocols-access h1{font-size:23px;margin:0 0 10px}.protocols-access button{margin:15px 0 0 16px;padding:9px 17px;border:1px solid #adb8c0;border-radius:8px;background:white;cursor:pointer}
+.protocols-header{display:flex;justify-content:space-between;align-items:start;gap:30px;margin:29px 0 26px}
+.protocols-header h1{font-size:clamp(26px,3vw,38px);margin:7px 0 9px}
+.protocols-header p{line-height:1.6;color:var(--admin-muted,#66757e);max-width:720px;margin:0}
+.protocols-header>a{white-space:nowrap;text-decoration:none;color:var(--admin-action,#526d7b);font-weight:600;font-size:14px}
+.protocols-eyebrow{font-size:11px!important;font-weight:750;letter-spacing:.1em;text-transform:uppercase;color:var(--admin-action,#526d7b)!important}
+.protocols-layout{display:grid;grid-template-columns:minmax(210px,275px) minmax(0,1fr);gap:20px;align-items:start}
+.protocols-choices,.protocols-document{border:1px solid var(--admin-line,#dde4e7);border-radius:17px;background:#fff}
+.protocols-choices{padding:17px;position:sticky;top:16px}
+.protocols-choices h2{font-size:15px;margin:2px 0 14px}
+.protocols-choice{display:grid;gap:4px;text-align:left;width:100%;background:transparent;border:1px solid var(--admin-line,#dce3e7);border-radius:11px;cursor:pointer;padding:14px;margin:0 0 9px;color:inherit}
+.protocols-choice:hover,.protocols-choice:focus-visible{border-color:var(--admin-action,#526d7b)}
+.protocols-choice.is-selected{background:var(--admin-soft,#f0f4f5);border-color:var(--admin-action,#526d7b)}
+.protocols-choice strong{font-size:15px}.protocols-choice span{font-size:13px;color:var(--admin-muted,#66757e)}
+.protocols-choice small{font-size:11px;color:var(--admin-muted,#66757e)}
+.protocols-private-note{font-size:12px;line-height:1.6;margin:16px 1px 2px;color:var(--admin-muted,#66757e)}
+.protocols-document{overflow:hidden}
+.protocols-document-top{display:flex;justify-content:space-between;align-items:start;gap:18px;padding:28px 30px;background:var(--admin-soft,#f5f7f8)}
+.protocols-document-top h2{font-size:clamp(22px,2.4vw,29px);line-height:1.2;margin:8px 0 12px}
+.protocols-summary{font-size:14px;color:var(--admin-muted,#66757e);line-height:1.65;margin:0 0 15px}
+.protocols-meta{display:flex;flex-wrap:wrap;gap:7px}
+.protocols-meta span{font-size:11px;border:1px solid var(--admin-line,#dce3e7);background:#fff;border-radius:99px;padding:5px 9px}
+.protocols-print{white-space:nowrap;cursor:pointer;border:1px solid var(--admin-action,#526d7b);color:var(--admin-action,#526d7b);font-weight:650;border-radius:9px;background:white;padding:10px 13px;font-size:12px}
+.protocols-sections{padding:9px 26px 22px}
+.protocols-section{border-bottom:1px solid var(--admin-line,#dde4e7)}
+.protocols-section summary{display:flex;justify-content:space-between;gap:15px;align-items:center;cursor:pointer;padding:19px 4px;font-weight:680;font-size:15px;list-style:none}
+.protocols-section summary::-webkit-details-marker{display:none}
+.protocols-chevron{font-size:23px;color:var(--admin-muted,#66757e);transition:transform .2s}
+.protocols-section[open] .protocols-chevron{transform:rotate(180deg)}
+.protocols-section-body{padding:0 8px 17px 4px}
+.protocols-section ul{margin:0;padding-left:19px;display:grid;gap:12px}
+.protocols-section li{font-size:13.5px;line-height:1.75}
+.protocols-disclaimer{font-size:12px;line-height:1.7;color:var(--admin-muted,#66757e);padding:0 30px 24px}
+.protocols-empty{padding:25px;border:1px dashed var(--admin-line,#dde4e7);border-radius:15px}
+@media(max-width:850px){.protocols-layout{grid-template-columns:1fr}.protocols-choices{position:static;display:flex;flex-wrap:wrap;gap:8px}.protocols-choices h2,.protocols-private-note{width:100%}.protocols-choice{flex:1;min-width:180px;margin:0}.protocols-header{display:block}.protocols-header>a{display:inline-block;margin-top:16px}}
+@media(max-width:620px){.clinical-protocols-page{padding:18px 13px 60px}.protocols-document-top{display:block;padding:22px 17px}.protocols-print{margin-top:16px}.protocols-sections{padding:5px 14px 18px}.protocols-disclaimer{padding:0 17px 20px}.protocols-choice{min-width:130px}.protocols-section summary{font-size:14px}}
+@media print{body{background:#fff!important}.protocols-no-print,.protocols-print,.protocols-access{display:none!important}.clinical-protocols-page{max-width:100%;padding:0!important}.protocols-layout{display:block}.protocols-document{border:0!important}.protocols-document-top{background:white!important;padding:0 0 18px}.protocols-section{break-inside:avoid}.protocols-section-body{display:block!important}.protocols-section:not([open]) .protocols-section-body{display:block!important}.protocols-section summary{padding:10px 0}.protocols-section li{font-size:11.5px;line-height:1.45}.protocols-chevron{display:none} .protocols-disclaimer{padding:10px 0}}
