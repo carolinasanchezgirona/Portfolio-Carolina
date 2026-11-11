@@ -45,21 +45,19 @@ test("an authenticated PDF form includes ALL original pages, not only questions"
 
 test("PDF is presented BEFORE its responses, without replacing original prose with generic scaffolding", () => {
   assert.match(portal, /if \(!sourceFile\) \{\s*appendPatientSection\(body/);
-  assert.match(portal, /if \(sourceFile\) appendCompletePdfToForm\(form, sourceFile\)/);
+  assert.match(portal, /appendCompletePdfToForm\(workspace, sourceFile\)/);
   const start = portal.indexOf('const form = document.createElement("form");', portal.indexOf("function createPatientMaterial"));
   const after = portal.slice(start, start + 1500);
-  assert.ok(after.indexOf("appendCompletePdfToForm(form, sourceFile)") < after.indexOf("appendInteractiveQuestions(form, item, documentData)"));
+  assert.ok(after.indexOf("appendCompletePdfToForm(workspace, sourceFile)") >= 0);
   assert.match(portal, /state\.portalData\?\.files/);
   assert.match(portal, /sourceFile \? "Material completo y respuestas"/);
   assert.doesNotMatch(portal, /storage\/v1\/object\/public\/clinical-documents/);
   assert.match(css, /space-pdf-form-reader/);
   assert.match(css, /@media\(max-width:700px\)/);
-  assert.match(portal, /await import\("\/vendor\/pdfjs\/pdf\.mjs"\)/);
-  assert.match(portal, /pdfjs\.GlobalWorkerOptions\.workerSrc = "\/vendor\/pdfjs\/pdf\.worker\.mjs"/);
-  assert.match(portal, /isEvalSupported: false/);
-  assert.match(portal, /for \(let pageNumber = 1; pageNumber <= pdf\.numPages; pageNumber\+\+\)/);
-  assert.match(portal, /await page\.render\(\{ canvas, canvasContext: context, viewport \}\)\.promise/);
-  assert.match(portal, /await page\.getTextContent\(\)/);
+  assert.match(portal, /reader\.src = url/);
+  assert.match(portal, /reader\.referrerPolicy = "no-referrer"/);
+  assert.match(portal, /renderCompletePdfPages\(host\)/);
+  assert.doesNotMatch(portal, /await import\("\/vendor\/pdfjs\/pdf\.mjs"\)/);
   assert.match(portal, /sourceFile \? "↓ Descargar PDF original completo"/);
 });
 
@@ -81,5 +79,5 @@ test("only the authenticated same-origin patient can embed an unabridged source 
 
 test("the clinical editor explains source PDF preservation rather than requesting duplicate text", () => {
   assert.match(adminPage, /el paciente verá todas sus páginas originales dentro del propio formulario/);
-  assert.match(adminPage, /añade únicamente los campos de respuesta/);
+  assert.match(adminPage, /puede responder en el espacio libre junto al PDF/);
 });
