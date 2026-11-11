@@ -807,7 +807,20 @@ body.space-print-patient-material .space-patient-material[data-print-material] :
   border:1px solid #CAD7E0;
   border-radius:10px;
   background:#fff;
+  padding:12px;
+  overflow:auto;
+  overscroll-behavior:contain;
 }
+.space-page .space-pdf-form-page{
+  display:block;
+  max-width:100%;
+  height:auto;
+  margin:0 auto 16px;
+  border:1px solid #E1E8EB;
+  background:#fff;
+  box-shadow:0 3px 9px rgba(29,55,73,.1);
+}
+.space-page .space-pdf-form-loading{margin:0 0 12px}
 .space-page .space-pdf-form-fallback{margin:12px 0}
 .space-page .space-pdf-form-document>a{
   display:inline-flex;
