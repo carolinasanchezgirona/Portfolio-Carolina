@@ -308,7 +308,7 @@ export default function MiEspacioPage() {
       </aside>
 
       <Script src="/patient-video.js?v=20261009-1" strategy="afterInteractive" />
-      <Script src="/mi-espacio.js?v=20261110-objective-forms-1" strategy="afterInteractive" />
+      <Script src="/mi-espacio.js?v=20261111-pdf-completo-1" strategy="afterInteractive" />
       <Script src="/session-prep.js?v=20261017-1" strategy="afterInteractive" />
       <Script src="/patient-goal-process.js?v=20261109-1" strategy="afterInteractive" />
     </main>

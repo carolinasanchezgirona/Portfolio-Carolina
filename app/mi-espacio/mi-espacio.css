@@ -777,3 +777,68 @@ body.space-print-patient-material .space-patient-material[data-print-material] :
 .space-interactive-field :is(input,select,textarea):focus-visible{outline:3px solid #08A6A0;outline-offset:2px}
 
 .space-interactive-source{border:1px solid #D7E5EE;border-radius:12px;padding:16px;margin:17px 0;background:#F6FAFB}.space-interactive-source p{margin:0 0 12px;line-height:1.6}.space-interactive-source a{display:inline-flex;align-items:center;justify-content:center;min-height:44px;text-decoration:none}.space-interactive-source a:focus-visible{outline:3px solid #08A6A0;outline-offset:3px}
+
+
+/* Read the unabridged private PDF in the same material as its response fields. */
+.space-page .space-pdf-form-document{
+  margin:16px 0 22px;
+  padding:clamp(12px,2vw,20px);
+  border:1px solid rgba(48,71,80,.18);
+  border-radius:15px;
+  background:#F8FAFB;
+}
+.space-page .space-pdf-form-document h5{
+  margin:0 0 10px;
+  color:#304750;
+  font-size:1.08rem;
+  line-height:1.4;
+}
+.space-page .space-pdf-form-document p{
+  color:#526577;
+  font-size:.9rem;
+  line-height:1.65;
+}
+.space-page .space-pdf-form-reader{
+  display:block;
+  width:100%;
+  height:min(74vh,900px);
+  min-height:520px;
+  margin:14px 0;
+  border:1px solid #CAD7E0;
+  border-radius:10px;
+  background:#fff;
+  padding:12px;
+  overflow:auto;
+  overscroll-behavior:contain;
+}
+.space-page .space-pdf-form-page-wrap{max-width:100%;margin:0 auto 20px}
+.space-page .space-pdf-form-transcript{margin:0 0 14px;padding:12px;border:1px solid #d6e2e8;border-radius:10px;background:#fff}
+.space-page .space-pdf-form-transcript summary{cursor:pointer;color:#304750;font-weight:700;font-size:.89rem}
+.space-page .space-pdf-form-transcript p{white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.65;margin:12px 0 0;font-size:.93rem}
+.space-page .space-pdf-form-page{
+  display:block;
+  max-width:100%;
+  height:auto;
+  margin:0 auto 16px;
+  border:1px solid #E1E8EB;
+  background:#fff;
+  box-shadow:0 3px 9px rgba(29,55,73,.1);
+}
+.space-page .space-pdf-form-loading{margin:0 0 12px}
+.space-page .space-pdf-form-fallback{margin:12px 0}
+.space-page .space-pdf-form-document>a{
+  display:inline-flex;
+  min-height:44px;
+  align-items:center;
+  justify-content:center;
+  max-width:100%;
+  padding:10px 14px;
+  border-radius:10px;
+  text-decoration:none;
+  text-align:center;
+}
+@media(max-width:700px){
+  .space-page .space-pdf-form-document{padding:12px;margin:12px -5px 18px}
+  .space-page .space-pdf-form-reader{height:64vh;min-height:440px}
+  .space-page .space-pdf-form-document>a{width:100%}
+}

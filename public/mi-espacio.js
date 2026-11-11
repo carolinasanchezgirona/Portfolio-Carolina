@@ -567,6 +567,143 @@
   }
 
 
+  // The complete PDF stays in private storage. The embedded reader requests it
+  // directly from the authenticated, patient-scoped endpoint, never a public URL.
+  function appendCompletePdfToForm(form, sourceFile) {
+    const sourceId = String(sourceFile?.id || "");
+    if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(sourceId)) return;
+    const url = "/api/patient-portal/file?id=" + encodeURIComponent(sourceId);
+    const section = document.createElement("section");
+    section.className = "space-pdf-form-document";
+    const heading = document.createElement("h5");
+    heading.textContent = "Contenido completo del documento";
+    const lead = document.createElement("p");
+    lead.textContent = "Lee aquí todas las explicaciones, técnicas, ejemplos y consignas del PDF original. Después encontrarás los espacios para responder. El documento conserva sus páginas y su contenido íntegro.";
+    // Render every page to first-party canvases. Browser-native PDF iframes do
+    // not work reliably on Android and must never be the only reading path.
+    const reader = document.createElement("div");
+    reader.className = "space-pdf-form-reader";
+    reader.dataset.pdfUrl = url;
+    reader.setAttribute("role", "group");
+    reader.setAttribute("aria-label", "Todas las páginas del PDF original");
+    const loading = document.createElement("p");
+    loading.className = "space-pdf-form-loading";
+    loading.setAttribute("role", "status");
+    loading.textContent = "Cargando las páginas completas del documento…";
+    reader.append(loading);
+    const fallback = document.createElement("p");
+    fallback.className = "space-pdf-form-fallback";
+    fallback.textContent = "Si el visor integrado no funciona en tu móvil, puedes abrir el documento original sin perder las respuestas de esta página.";
+    const open = document.createElement("a");
+    open.href = url;
+    open.target = "_blank";
+    open.rel = "noopener noreferrer";
+    open.className = "space-secondary";
+    open.textContent = "Abrir documento completo en otra pestaña";
+    section.append(heading, lead, reader, fallback, open);
+    form.append(section);
+  }
+
+  // The renderer is bundled in the site's own static assets. Neither the
+  // original PDF nor its pages are transmitted to any third-party service.
+  const renderedPdfHosts = new WeakSet();
+  async function renderCompletePdfPages(host) {
+    if (!host || renderedPdfHosts.has(host) || !state.portalAuthenticated) return;
+    const url = host.dataset.pdfUrl || "";
+    if (!/^\/api\/patient-portal\/file\?id=[0-9a-f-]{36}$/i.test(url)) return;
+    renderedPdfHosts.add(host);
+    // A previously interrupted render must never duplicate partial pages.
+    host.querySelectorAll(".space-pdf-form-page-wrap").forEach(node => node.remove());
+    const sessionEpoch = portalSessionEpoch;
+    const canContinue = () => state.portalAuthenticated && sessionEpoch === portalSessionEpoch &&
+      host.isConnected && host.closest(".space-patient-material")?.open;
+    const status = host.querySelector(".space-pdf-form-loading");
+    let task = null;
+    try {
+      if (!canContinue()) { renderedPdfHosts.delete(host); return; }
+      const pdfjs = await import("/vendor/pdfjs/pdf.mjs");
+      if (!canContinue()) { renderedPdfHosts.delete(host); return; }
+      pdfjs.GlobalWorkerOptions.workerSrc = "/vendor/pdfjs/pdf.worker.mjs";
+      task = pdfjs.getDocument({
+        url,
+        withCredentials: true,
+        isEvalSupported: false,
+        cMapUrl: "/vendor/pdfjs/cmaps/",
+        cMapPacked: true,
+        standardFontDataUrl: "/vendor/pdfjs/standard_fonts/",
+        wasmUrl: "/vendor/pdfjs/wasm/",
+      });
+      const pdf = await task.promise;
+      if (!canContinue()) { await task.destroy(); renderedPdfHosts.delete(host); return; }
+      if (status) status.textContent = "Mostrando " + pdf.numPages +
+        (pdf.numPages === 1 ? " página del documento original…" : " páginas del documento original…");
+      // Render sequentially to avoid exhausting memory in Android WebView.
+      for (let pageNumber = 1; pageNumber <= pdf.numPages; pageNumber++) {
+        if (!canContinue()) { await task.destroy(); renderedPdfHosts.delete(host); return; }
+        const page = await pdf.getPage(pageNumber);
+        const original = page.getViewport({ scale: 1 });
+        const width = Math.max(250, Math.min((host.clientWidth || 700) - 32, 900));
+        const scale = Math.min(width / original.width, 1.75);
+        const viewport = page.getViewport({ scale });
+        const ratio = Math.min(window.devicePixelRatio || 1, 1.5);
+        const canvas = document.createElement("canvas");
+        canvas.className = "space-pdf-form-page";
+        canvas.setAttribute("role", "img");
+        canvas.setAttribute("aria-label", "Página " + pageNumber + " de " + pdf.numPages +
+          " del documento terapéutico");
+        canvas.width = Math.max(1, Math.floor(viewport.width * ratio));
+        canvas.height = Math.max(1, Math.floor(viewport.height * ratio));
+        canvas.style.width = Math.floor(viewport.width) + "px";
+        const context = canvas.getContext("2d", { alpha: false });
+        if (!context) throw new Error("No se puede mostrar el documento en este dispositivo.");
+        context.setTransform(ratio, 0, 0, ratio, 0, 0);
+        await page.render({ canvas, canvasContext: context, viewport }).promise;
+        if (!canContinue()) { await task.destroy(); renderedPdfHosts.delete(host); return; }
+        const pageWrap = document.createElement("section");
+        pageWrap.className = "space-pdf-form-page-wrap";
+        pageWrap.append(canvas);
+        // Text layer alternative for reading and selecting the original wording.
+        // It is extracted locally from the same authenticated file, never OCR.
+        try {
+          const content = await page.getTextContent();
+          const raw = Array.isArray(content?.items) ? content.items : [];
+          const transcript = raw.map(item => {
+            if (typeof item?.str !== "string") return "";
+            return item.str + (item.hasEOL ? "\n" : " ");
+          }).join("").trim();
+          if (transcript) {
+            const readable = document.createElement("details");
+            readable.className = "space-pdf-form-transcript";
+            const toggle = document.createElement("summary");
+            toggle.textContent = "Leer o seleccionar el texto de la página " + pageNumber;
+            const paragraph = document.createElement("p");
+            paragraph.textContent = transcript.slice(0, 100000);
+            readable.append(toggle, paragraph);
+            pageWrap.append(readable);
+          }
+        } catch (_) {
+          // Image-only or malformed PDFs still display their original pages.
+        }
+        if (!canContinue()) { await task.destroy(); renderedPdfHosts.delete(host); return; }
+        host.append(pageWrap);
+        page.cleanup();
+        // Make each page available progressively, keeping the UI responsive.
+        await new Promise(resolve => requestAnimationFrame(resolve));
+      }
+      if (status) status.textContent = "Documento completo · " + pdf.numPages +
+        (pdf.numPages === 1 ? " página" : " páginas");
+    } catch (error) {
+      if (!canContinue()) { renderedPdfHosts.delete(host); return; }
+      if (status) status.textContent = "No se han podido mostrar todas las páginas aquí. Utiliza «Abrir documento completo» o descarga el PDF original.";
+      console.error("Visor de documento privado no disponible", error);
+      renderedPdfHosts.delete(host);
+    } finally {
+      if (!canContinue()) {
+        try { await task?.destroy(); } catch (_) {}
+      }
+    }
+  }
+
   // Each objective can define its own questions, without replicating the PDF.
   function appendInteractiveQuestions(form, item, doc) {
     const definitions = Array.isArray(doc.form_fields) ? doc.form_fields.slice(0, 30) : [];
@@ -651,49 +788,42 @@
 
     const body = document.createElement("div");
     body.className = "space-patient-material-body";
-    appendPatientSection(body, "Para qué sirve", documentData.introduction);
-    appendPatientSection(body, documentData.clinical_area==="neuropsychology" ? "Para qué sirven estas actividades" : "Comprender lo que te pasa", documentData.why);
-    appendPatientSection(body, "Plan de práctica", documentData.frequency);
-    if(documentData.clinical_area!=="neuropsychology"||!appendNeuroWorkbook(body,documentData,item)) {
-      appendPatientSection(body, documentData.material_type === "psychoeducation" ? "Contenido" : "Cómo hacerlo", documentData.instructions);
-    }
-    appendMaterialExamples(body, documentData.example);
-    appendPatientSection(body, "Qué conviene recordar", documentData.remember);
-
-    // The original PDF is never copied into this form. It is available only
-    // through the existing authenticated patient-document endpoint.
+    // Source-linked forms show the ENTIRE original PDF as the primary clinical
+    // text. Generic form scaffolding must never replace or paraphrase it.
     const sourceId = String(documentData.source_document_id || "");
     const sourceFile = /^[0-9a-f-]{36}$/i.test(sourceId)
       ? (Array.isArray(state.portalData?.files) ? state.portalData.files : [])
           .find(file => file.id === sourceId && file.mime_type === "application/pdf")
       : null;
-    if (sourceFile) {
-      const source = document.createElement("section");
-      source.className = "space-interactive-source";
-      const intro = document.createElement("p");
-      intro.textContent = "Este formulario acompaña al PDF original de tu objetivo. Lee sus instrucciones y responde aquí, sin imprimirlo.";
-      const link = document.createElement("a");
-      link.href = "/api/patient-portal/file?id=" + encodeURIComponent(sourceId);
-      link.target = "_blank";
-      link.rel = "noopener noreferrer";
-      link.className = "space-secondary";
-      link.textContent = "Abrir PDF original del objetivo";
-      source.append(intro, link);
-      body.append(source);
+    if (!sourceFile) {
+      appendPatientSection(body, "Para qué sirve", documentData.introduction);
+      appendPatientSection(body, documentData.clinical_area==="neuropsychology" ? "Para qué sirven estas actividades" : "Comprender lo que te pasa", documentData.why);
+      appendPatientSection(body, "Plan de práctica", documentData.frequency);
+      if(documentData.clinical_area!=="neuropsychology"||!appendNeuroWorkbook(body,documentData,item)) {
+        appendPatientSection(body, documentData.material_type === "psychoeducation" ? "Contenido" : "Cómo hacerlo", documentData.instructions);
+      }
+      appendMaterialExamples(body, documentData.example);
+      appendPatientSection(body, "Qué conviene recordar", documentData.remember);
     }
     const downloadArea = document.createElement("div");
     downloadArea.className = "space-patient-downloads";
     const downloadLink = document.createElement("a");
     downloadLink.className = "space-secondary space-material-download-button";
-    downloadLink.textContent = "↓ Descargar PDF";
-    downloadLink.href = patientMaterialDownloadUrl(item);
-    // Content-Disposition on the authenticated endpoint supplies the filename.
-    // A new tab is often blocked or detached from the installed Android app.
-    downloadLink.download = "entre-sesiones.pdf";
+    downloadLink.textContent = sourceFile ? "↓ Descargar PDF original completo" : "↓ Descargar PDF";
+    if (sourceFile) {
+      downloadLink.href = "/api/patient-portal/file?id=" + encodeURIComponent(sourceId) + "&download=1";
+      downloadLink.download = "documento-original.pdf";
+    } else {
+      downloadLink.href = patientMaterialDownloadUrl(item);
+      // Content-Disposition on the authenticated endpoint supplies the filename.
+      downloadLink.download = "entre-sesiones.pdf";
+    }
     downloadLink.setAttribute("aria-label", "Descargar PDF: " + String(item.title || "Material"));
     const downloadHint = document.createElement("span");
     downloadHint.className = "space-material-download-status";
-    downloadHint.textContent = "El PDF se descarga desde el servidor. Si tu móvil no lo permite, utiliza la opción de imprimir y elige «Guardar como PDF».";
+    downloadHint.textContent = sourceFile
+      ? "Este es el documento original íntegro, no un resumen del formulario."
+      : "El PDF se descarga desde el servidor. Si tu móvil no lo permite, utiliza la opción de imprimir y elige «Guardar como PDF».";
     const printButton = document.createElement("button");
     printButton.type = "button";
     printButton.className = "space-secondary space-material-print-button";
@@ -720,7 +850,10 @@
         downloadHint.textContent = "El navegador no admite impresión desde la aplicación. Prueba a abrir Entre Sesiones en Chrome.";
       }
     });
-    downloadArea.append(downloadLink, printButton, downloadHint);
+    // Printing the web form does not reliably print embedded PDF pages.
+    // For original-PDF forms, offer the actual full PDF download instead.
+    if (sourceFile) downloadArea.append(downloadLink, downloadHint);
+    else downloadArea.append(downloadLink, printButton, downloadHint);
     body.append(downloadArea);
 
 
@@ -732,24 +865,34 @@
       const responseBox = document.createElement("div");
       responseBox.className = "space-patient-response";
       const heading = document.createElement("h4");
-      heading.textContent = "Rellena el ejercicio aquí";
+      heading.textContent = sourceFile ? "Material completo y respuestas" : "Rellena el ejercicio aquí";
       const explainer = document.createElement("p");
-      explainer.textContent = documentData.clinical_area==="neuropsychology"
+      explainer.textContent = sourceFile
+        ? "Primero encontrarás todo el contenido del PDF, sin recortes. Después puedes responder aquí mismo, guardar un borrador y compartirlo con Carolina cuando lo decidas."
+        : documentData.clinical_area==="neuropsychology"
         ? "Escribe en los espacios de cada ejercicio. Guarda un borrador para continuar otro día; Carolina solo verá las respuestas cuando decidas compartirlas."
         : "Puedes escribir o utilizar el autorregistro guiado. Solo se comparte con Carolina si pulsas «Compartir respuestas».";
       const form = document.createElement("form");
+      if (sourceFile) appendCompletePdfToForm(form, sourceFile);
 
       const recordLabel = document.createElement("label");
-      recordLabel.textContent = documentData.clinical_area==="neuropsychology" ? "Notas generales y dudas del cuaderno" : (documentData.record_prompt || "Mis notas y autorregistros");
+      recordLabel.textContent = sourceFile ? "Notas o dudas adicionales (opcional)"
+        : documentData.clinical_area==="neuropsychology" ? "Notas generales y dudas del cuaderno"
+        : (documentData.record_prompt || "Mis notas y autorregistros");
       const record = document.createElement("textarea");
       record.dataset.responseRecord = "true";
       record.maxLength = 12000;
       record.value = saved.record;
       record.placeholder = "Escribe aquí…";
       recordLabel.append(record);
-      if(documentData.clinical_area!=="neuropsychology")form.append(createGuidedRecord(record));
-      form.append(recordLabel);
-      appendInteractiveQuestions(form, item, documentData);
+      if (sourceFile) {
+        appendInteractiveQuestions(form, item, documentData);
+        form.append(recordLabel);
+      } else {
+        if(documentData.clinical_area!=="neuropsychology")form.append(createGuidedRecord(record));
+        form.append(recordLabel);
+        appendInteractiveQuestions(form, item, documentData);
+      }
 
       questions.forEach((question, questionIndex) => {
         const label = document.createElement("label");
@@ -801,6 +944,15 @@
     }
 
     details.append(summary, body);
+    if (sourceFile) {
+      const showCompleteDocument = () => {
+        if (!details.open || !details.isConnected || !state.portalAuthenticated) return;
+        const host = details.querySelector(".space-pdf-form-reader");
+        if (host) void renderCompletePdfPages(host);
+      };
+      details.addEventListener("toggle", showCompleteDocument);
+      if (details.open) requestAnimationFrame(showCompleteDocument);
+    }
     materialSavedSnapshots.set(details, snapshotPatientMaterial(details));
     const markUnsaved = event => {
       const field = event.target;
