@@ -811,6 +811,10 @@ body.space-print-patient-material .space-patient-material[data-print-material] :
   overflow:auto;
   overscroll-behavior:contain;
 }
+.space-page .space-pdf-form-page-wrap{max-width:100%;margin:0 auto 20px}
+.space-page .space-pdf-form-transcript{margin:0 0 14px;padding:12px;border:1px solid #d6e2e8;border-radius:10px;background:#fff}
+.space-page .space-pdf-form-transcript summary{cursor:pointer;color:#304750;font-weight:700;font-size:.89rem}
+.space-page .space-pdf-form-transcript p{white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.65;margin:12px 0 0;font-size:.93rem}
 .space-page .space-pdf-form-page{
   display:block;
   max-width:100%;
