@@ -703,15 +703,21 @@
     downloadArea.className = "space-patient-downloads";
     const downloadLink = document.createElement("a");
     downloadLink.className = "space-secondary space-material-download-button";
-    downloadLink.textContent = "↓ Descargar PDF";
-    downloadLink.href = patientMaterialDownloadUrl(item);
-    // Content-Disposition on the authenticated endpoint supplies the filename.
-    // A new tab is often blocked or detached from the installed Android app.
-    downloadLink.download = "entre-sesiones.pdf";
+    downloadLink.textContent = sourceFile ? "↓ Descargar PDF original completo" : "↓ Descargar PDF";
+    if (sourceFile) {
+      downloadLink.href = "/api/patient-portal/file?id=" + encodeURIComponent(sourceId) + "&download=1";
+      downloadLink.download = "documento-original.pdf";
+    } else {
+      downloadLink.href = patientMaterialDownloadUrl(item);
+      // Content-Disposition on the authenticated endpoint supplies the filename.
+      downloadLink.download = "entre-sesiones.pdf";
+    }
     downloadLink.setAttribute("aria-label", "Descargar PDF: " + String(item.title || "Material"));
     const downloadHint = document.createElement("span");
     downloadHint.className = "space-material-download-status";
-    downloadHint.textContent = "El PDF se descarga desde el servidor. Si tu móvil no lo permite, utiliza la opción de imprimir y elige «Guardar como PDF».";
+    downloadHint.textContent = sourceFile
+      ? "Este es el documento original íntegro, no un resumen del formulario."
+      : "El PDF se descarga desde el servidor. Si tu móvil no lo permite, utiliza la opción de imprimir y elige «Guardar como PDF».";
     const printButton = document.createElement("button");
     printButton.type = "button";
     printButton.className = "space-secondary space-material-print-button";
@@ -738,7 +744,10 @@
         downloadHint.textContent = "El navegador no admite impresión desde la aplicación. Prueba a abrir Entre Sesiones en Chrome.";
       }
     });
-    downloadArea.append(downloadLink, printButton, downloadHint);
+    // Printing the web form does not reliably print embedded PDF pages.
+    // For original-PDF forms, offer the actual full PDF download instead.
+    if (sourceFile) downloadArea.append(downloadLink, downloadHint);
+    else downloadArea.append(downloadLink, printButton, downloadHint);
     body.append(downloadArea);
 
 
