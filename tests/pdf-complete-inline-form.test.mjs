@@ -44,11 +44,11 @@ test("an authenticated PDF form includes ALL original pages, not only questions"
 });
 
 test("PDF is presented BEFORE its responses, without replacing original prose with generic scaffolding", () => {
-  assert.match(portal, /if \(!sourceFile\) \{\s*appendPatientSection\(body/);
-  assert.match(portal, /appendCompletePdfToForm\(workspace, sourceFile\)/);
+  assert.match(portal, /if \(!sourceFile\) \{\s*const reading = createWorkbookPart\("Psicoeducación"/);
+  assert.match(portal, /appendCompletePdfToForm\(readingPart\.content, sourceFile\)/);
   const start = portal.indexOf('const form = document.createElement("form");', portal.indexOf("function createPatientMaterial"));
   const after = portal.slice(start, start + 4500);
-  assert.ok(after.indexOf("appendCompletePdfToForm(workspace, sourceFile)") >= 0);
+  assert.ok(after.indexOf("appendCompletePdfToForm(readingPart.content, sourceFile)") >= 0);
   assert.match(portal, /state\.portalData\?\.files/);
   assert.match(portal, /sourceFile \? "Material completo y respuestas"/);
   assert.doesNotMatch(portal, /storage\/v1\/object\/public\/clinical-documents/);
