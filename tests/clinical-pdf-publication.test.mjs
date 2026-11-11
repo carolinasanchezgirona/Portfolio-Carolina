@@ -25,7 +25,7 @@ test("PDF forms can be saved, reviewed and published without email", () => {
   assert.match(admin, /publishExistingAssignment\(saved\)/);
   assert.match(admin, /\/api\/admin\/clinical-form-publish/);
   assert.match(admin, /No se ha enviado ningún correo/);
-  assert.match(page, /pdf-editor-open-3/);
+  assert.match(page, /pdf-workbook-1/);
 });
 
 test("publication is checked server-side against clinician, source and questions", () => {
