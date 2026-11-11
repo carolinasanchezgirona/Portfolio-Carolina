@@ -830,7 +830,10 @@
       }
 
       const recordLabel = document.createElement("label");
-      recordLabel.textContent = sourceFile ? "Notas o dudas adicionales (opcional)"
+      recordLabel.textContent = sourceFile
+        ? (Array.isArray(documentData.form_fields) && documentData.form_fields.length
+          ? "Notas o dudas adicionales (opcional)"
+          : "Escribe las respuestas a las actividades del PDF")
         : documentData.clinical_area==="neuropsychology" ? "Notas generales y dudas del cuaderno"
         : (documentData.record_prompt || "Mis notas y autorregistros");
       const record = document.createElement("textarea");
