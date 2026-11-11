@@ -52,18 +52,23 @@ export default function AdminClinicaPage() {
           <details className="clinic-more-menu">
             <summary><ClinicIcon name="more" /><span className="clinic-nav-label">Más</span></summary>
             <div className="clinic-more-panel">
-              <p className="clinic-more-heading">Herramientas</p>
-              <a className="clinic-more-item" href="/admin/clinica/materiales-externos/">Biblioteca clínica · gestionar materiales</a>
-              <a className="clinic-more-item" href="/admin/clinica/protocolos/">Protocolos clínicos · neuropsicología</a>
-              <a className="clinic-more-item" href="/admin/recursos/">Recursos</a>
-              <a className="clinic-more-item" href="/admin/preguntas/">Preguntas</a>
-              <a className="clinic-more-item" href="/admin/articulos/">Artículos</a>
-              <p className="clinic-more-heading">Administración</p>
-              <a className="clinic-more-item" href="/admin/economia/">Contabilidad</a>
-              <a className="clinic-more-item" href="/admin/notificaciones/">Centro de avisos</a>
-              <a className="clinic-more-item" href="/admin/tareas/">Mi agenda profesional</a>
-              <a className="clinic-more-item" href="/admin/residencia/">Residentes · centros</a>
+              <p className="clinic-more-heading">Clínica y evaluación</p>
+              <a className="clinic-more-item" href="/admin/clinica/protocolos/">Protocolos clínicos</a>
+              <a className="clinic-more-item" href="/admin/clinica/materiales-externos/">Biblioteca clínica · materiales</a>
+              <a className="clinic-more-item" href="/admin/clinica/documentacion/">Documentación</a>
+              <p className="clinic-more-heading">Organización y seguimiento</p>
+              <a className="clinic-more-item" href="/admin/tareas/">Tareas y notas</a>
+              <a className="clinic-more-item" href="/admin/residencia/">Residencia</a>
               <a className="clinic-more-item" href="/admin/asistencia/">Asistencia · Creu Blava</a>
+              <a className="clinic-more-item" href="/admin/mensajes/">Mensajes de pacientes</a>
+              <a className="clinic-more-item" href="/admin/notificaciones/">Centro de avisos</a>
+              <p className="clinic-more-heading">Gestión y difusión</p>
+              <a className="clinic-more-item" href="/admin/economia/">Contabilidad</a>
+              <a className="clinic-more-item" href="/admin/articulos/">Centro editorial</a>
+              <a className="clinic-more-item" href="/admin/recursos/">Recursos</a>
+              <a className="clinic-more-item" href="/admin/marketing/">Marketing</a>
+              <a className="clinic-more-item" href="/admin/preguntas/">Preguntas</a>
+              <p className="clinic-more-heading">Administración</p>
               <a className="clinic-more-item" href="/admin/">Panel general</a>
               <div className="clinic-more-install-slot" />
               <button id="clinic-logout" className="clinic-more-item clinic-more-logout" type="button">Cerrar sesión</button>

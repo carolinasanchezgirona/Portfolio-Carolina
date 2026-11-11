@@ -30,18 +30,19 @@ export default function AdminWorkspaceNav({ active }: { active: Area }) {
       <details className="admin-workspace-more">
         <summary className={!["agenda", "otra"].includes(active) ? "is-active" : undefined}><NavIcon name="more" /><span>Más</span></summary>
         <div className="admin-workspace-more-panel">
-          <p className="admin-workspace-more-label">Consulta y organización</p>
-          <a href="/admin/tareas/" aria-current={active === "tareas" ? "page" : undefined}>Tareas y notas</a>
-          <a href="/admin/residencia/" aria-current={active === "residencia" ? "page" : undefined}>Residencia</a>
-          <p className="admin-workspace-more-label">Administración</p>
-          <a href="/admin/economia/" aria-current={active === "economia" ? "page" : undefined}>Contabilidad</a>
-          <a href="/admin/mensajes/" aria-current={active === "mensajes" ? "page" : undefined}>Mensajes de pacientes</a>
-          <a href="/admin/notificaciones/" aria-current={active === "notificaciones" ? "page" : undefined}>Centro de avisos</a>
-          <p className="admin-workspace-more-label">Contenidos y materiales</p>
-          <a href="/admin/articulos/" aria-current={active === "articulos" ? "page" : undefined}>Centro editorial</a>
-          <a href="/admin/clinica/documentacion/" aria-current={active === "biblioteca" ? "page" : undefined}>Documentación</a>
+          <p className="admin-workspace-more-label">Clínica y evaluación</p>
+          <a href="/admin/clinica/?panel=1">Gestión clínica</a>
           <a href="/admin/clinica/protocolos/" aria-current={active === "protocolos" ? "page" : undefined}>Protocolos clínicos</a>
           <a href="/admin/clinica/materiales-externos/">Biblioteca clínica</a>
+          <a href="/admin/clinica/documentacion/" aria-current={active === "biblioteca" ? "page" : undefined}>Documentación</a>
+          <p className="admin-workspace-more-label">Organización y seguimiento</p>
+          <a href="/admin/tareas/" aria-current={active === "tareas" ? "page" : undefined}>Tareas y notas</a>
+          <a href="/admin/residencia/" aria-current={active === "residencia" ? "page" : undefined}>Residencia</a>
+          <a href="/admin/mensajes/" aria-current={active === "mensajes" ? "page" : undefined}>Mensajes de pacientes</a>
+          <a href="/admin/notificaciones/" aria-current={active === "notificaciones" ? "page" : undefined}>Centro de avisos</a>
+          <p className="admin-workspace-more-label">Gestión y difusión</p>
+          <a href="/admin/economia/" aria-current={active === "economia" ? "page" : undefined}>Contabilidad</a>
+          <a href="/admin/articulos/" aria-current={active === "articulos" ? "page" : undefined}>Centro editorial</a>
           <a href="/admin/recursos/" aria-current={active === "recursos" ? "page" : undefined}>Recursos</a>
           <a href="/admin/marketing/" aria-current={active === "marketing" ? "page" : undefined}>Marketing</a>
           <a href="/admin/preguntas/" aria-current={active === "preguntas" ? "page" : undefined}>Preguntas</a>

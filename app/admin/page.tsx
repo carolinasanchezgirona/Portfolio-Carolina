@@ -29,35 +29,82 @@ function AdminIcon({ name }: { name: IconName }) {
 }
 
 
-const adminLinks: { href: string; icon: IconName; label: string }[] = [
+type AdminMenuLink = { href: string; icon: IconName; label: string; keywords?: string };
+type AdminMenuGroup = { id: string; title: string; links: AdminMenuLink[] };
+
+// Mismo orden funcional que las barras de navegación del resto del admin.
+const quickLinks: AdminMenuLink[] = [
   { href: "/admin/", icon: "home", label: "Inicio" },
-  { href: "/admin/agenda/", icon: "calendar", label: "Agenda de citas" },
-  { href: "/admin/clinica/?panel=1&view=patients", icon: "patients", label: "Pacientes" },
-  { href: "/admin/clinica/?panel=1", icon: "clinical", label: "Gestión clínica" },
-  { href: "/admin/residencia/", icon: "clinical", label: "Residencia" },
-  { href: "/admin/mensajes/", icon: "questions", label: "Mensajes de pacientes" },
-  { href: "/admin/tareas/", icon: "editorial", label: "Tareas y notas" },
-  { href: "/admin/notificaciones/", icon: "bell", label: "Centro de avisos" },
-  { href: "/admin/economia/", icon: "economy", label: "Contabilidad" },
-  { href: "/admin/articulos/", icon: "editorial", label: "Centro editorial" },
-  { href: "/admin/clinica/materiales-externos/", icon: "resources", label: "Biblioteca clínica" },
-  { href: "/admin/clinica/documentacion/", icon: "resources", label: "Documentación" },
-  { href: "/admin/clinica/protocolos/", icon: "clinical", label: "Protocolos clínicos" },
-  { href: "/admin/recursos/", icon: "resources", label: "Recursos" },
-  { href: "/admin/marketing/", icon: "editorial", label: "Marketing" },
-  { href: "/admin-authenticator.html", icon: "shield", label: "Authenticator" },
-  { href: "/downloads/mi-clinica-1.0.0.apk", icon: "more", label: "App Android" },
+  { href: "/admin/agenda/", icon: "calendar", label: "Agenda" },
+  { href: "/admin/clinica/?panel=1&view=patients", icon: "patients", label: "Pacientes", keywords: "historiales fichas pacientes" },
 ];
+
+const adminMenuGroups: AdminMenuGroup[] = [
+  {
+    id: "clinical", title: "Clínica y evaluación", links: [
+      { href: "/admin/clinica/?panel=1", icon: "clinical", label: "Gestión clínica", keywords: "historia consulta terapia seguimiento informes" },
+      { href: "/admin/clinica/protocolos/", icon: "clinical", label: "Protocolos clínicos", keywords: "evaluación neuropsicología adultos infantil pruebas batería" },
+      { href: "/admin/clinica/materiales-externos/", icon: "resources", label: "Biblioteca clínica", keywords: "cuadernos ejercicios material pacientes" },
+      { href: "/admin/clinica/documentacion/", icon: "resources", label: "Documentación", keywords: "consentimientos documentos entrevistas informes" },
+    ]
+  },
+  {
+    id: "organization", title: "Organización y seguimiento", links: [
+      { href: "/admin/tareas/", icon: "editorial", label: "Tareas y notas" },
+      { href: "/admin/residencia/", icon: "clinical", label: "Residencia" },
+      { href: "/admin/mensajes/", icon: "questions", label: "Mensajes de pacientes" },
+      { href: "/admin/notificaciones/", icon: "bell", label: "Centro de avisos", keywords: "notificaciones" },
+    ]
+  },
+  {
+    id: "business", title: "Gestión y difusión", links: [
+      { href: "/admin/economia/", icon: "economy", label: "Contabilidad", keywords: "facturas cobros ingresos gastos" },
+      { href: "/admin/articulos/", icon: "editorial", label: "Centro editorial", keywords: "blog publicaciones artículos" },
+      { href: "/admin/recursos/", icon: "resources", label: "Recursos", keywords: "catálogo venta tienda mineuri" },
+      { href: "/admin/marketing/", icon: "editorial", label: "Marketing", keywords: "seo promoción" },
+    ]
+  },
+  {
+    id: "tools", title: "Acceso y herramientas", links: [
+      { href: "/admin-authenticator.html", icon: "shield", label: "Authenticator", keywords: "seguridad doble factor 2fa totp" },
+      { href: "/downloads/mi-clinica-1.0.0.apk", icon: "more", label: "App Android", keywords: "aplicación instalar descargar" },
+    ]
+  }
+];
+
+function AdminMenuAnchor({ item }: { item: AdminMenuLink }) {
+  const download = item.href.endsWith(".apk");
+  return (
+    <a href={item.href} data-search-text={[item.label, item.keywords || ""].join(" ")}
+      aria-current={item.href === "/admin/" ? "page" : undefined}
+      download={download || undefined} data-android-download={download || undefined}>
+      <AdminIcon name={item.icon} /><span>{item.label}</span>
+    </a>
+  );
+}
 
 function AdminSidebarLinks() {
   return (
-    <>
-      {adminLinks.map(({ href, icon, label }) => (
-        <a key={href} href={href} aria-current={href === "/admin/" ? "page" : undefined} download={href.endsWith(".apk") ? true : undefined} data-android-download={href.endsWith(".apk") ? true : undefined}>
-          <AdminIcon name={icon} />{label}
-        </a>
-      ))}
-    </>
+    <div className="admin-sidebar-navigation">
+      <label className="admin-nav-search-label">
+        <span>Buscar sección</span>
+        <input type="search" className="admin-nav-search" placeholder="Ej. protocolos, facturas…" aria-label="Buscar sección del menú" autoComplete="off" />
+      </label>
+      <div className="admin-nav-quick" aria-label="Accesos frecuentes">
+        {quickLinks.map(item => <AdminMenuAnchor key={item.href} item={item} />)}
+      </div>
+      <div className="admin-nav-groups">
+        {adminMenuGroups.map(group => (
+          <details key={group.id} className="admin-nav-group" data-group={group.id} open={group.id === "clinical"}>
+            <summary><span>{group.title}</span><span className="admin-nav-chevron" aria-hidden="true">⌄</span></summary>
+            <div className="admin-nav-group-links">
+              {group.links.map(item => <AdminMenuAnchor key={item.href} item={item} />)}
+            </div>
+          </details>
+        ))}
+      </div>
+      <p className="admin-nav-no-results" role="status" hidden>No se han encontrado secciones.</p>
+    </div>
   );
 }
 
@@ -111,6 +158,7 @@ export default function AdminHomePage() {
       </section>
       <Script src="/clinic-pwa.js?v=20261020-android-native-1" strategy="afterInteractive" />
       <Script src="/admin-dashboard.js?v=20261109-today-only-2" strategy="afterInteractive" />
+      <Script src="/admin-sidebar-navigation.js?v=20261111-menu-1" strategy="afterInteractive" />
     </main>
   );
 }
