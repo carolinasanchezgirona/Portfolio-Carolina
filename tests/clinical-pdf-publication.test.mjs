@@ -25,7 +25,7 @@ test("PDF forms can be saved, reviewed and published without email", () => {
   assert.match(admin, /publishExistingAssignment\(saved\)/);
   assert.match(admin, /\/api\/admin\/clinical-form-publish/);
   assert.match(admin, /No se ha enviado ningún correo/);
-  assert.match(page, /pdf-editor-open-3/);
+  assert.match(page, /pdf-workbook-1/);
 });
 
 test("publication is checked server-side against clinician, source and questions", () => {
@@ -39,7 +39,7 @@ test("publication is checked server-side against clinician, source and questions
   assert.match(handler, /assignment\.status !== "prepared"/);
   assert.match(handler, /doc\.conversion_review_required !== true/);
   assert.match(handler, /doc\.conversion_reviewed_at/);
-  assert.match(handler, /definitions\.length < 1 \|\| definitions\.length > 30/);
+  assert.match(handler, /definitions\.length > 30/);
   assert.match(handler, /ids\.has\(id\)/);
   assert.match(handler, /original\.mime_type !== "application\/pdf"/);
   assert.match(handler, /original\.category !== "intervention_plan"/);

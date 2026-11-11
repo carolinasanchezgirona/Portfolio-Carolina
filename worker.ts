@@ -585,7 +585,11 @@ async function handlePatientPortalFile(request: Request, env: Env): Promise<Resp
     "X-Content-Type-Options": "nosniff",
     "Referrer-Policy": "no-referrer",
     "X-Robots-Tag": "noindex, nofollow",
-    "X-Frame-Options": "DENY",
+    // Only the patient's authenticated same-origin page may embed a PDF.
+    // All other file formats remain unframeable.
+    "X-Frame-Options": safeMime === "application/pdf" ? "SAMEORIGIN" : "DENY",
+    "Content-Security-Policy": safeMime === "application/pdf" ? "frame-ancestors 'self'" : "frame-ancestors 'none'",
+    "Cross-Origin-Resource-Policy": "same-origin",
   });
   for (const key of ["Content-Length", "Content-Range", "Accept-Ranges"]) {
     const value = storage.headers.get(key);
@@ -747,8 +751,11 @@ async function handleAdminClinicalFormPublish(request: Request, env: Env): Promi
 
   const definitions = doc.form_fields;
   const supported = new Set(["short_text", "long_text", "scale_0_10", "date", "yes_no", "choice"]);
-  if (!Array.isArray(definitions) || definitions.length < 1 || definitions.length > 30) {
-    return patientPortalJson({ error: "Añade al menos una pregunta válida al formulario." }, 409);
+  // Source-linked workbooks always include a free-text answer area. Structured
+  // fields are optional and should only be added when the clinician requires them.
+  if (!Array.isArray(definitions) || definitions.length > 30 ||
+      (!definitions.length && !String(doc.record_prompt || "").trim())) {
+    return patientPortalJson({ error: "El documento necesita un espacio de respuesta válido." }, 409);
   }
   const ids = new Set<string>();
   for (const raw of definitions) {
@@ -885,6 +892,13 @@ async function handlePatientPortalResponse(request: Request, env: Env): Promise<
     if (field.type === "yes_no" && value && !["si", "no", "no_aplica"].includes(value)) return patientPortalJson({ error: "Respuesta no válida." }, 400);
     if (field.type === "choice" && value && !field.options.includes(value)) return patientPortalJson({ error: "Opción no válida." }, 400);
     formAnswers[id] = value;
+  }
+  // A submission should contain actual patient material; an empty delivery
+  // must not create an apparent clinical-history event.
+  if (action === "share" && !record.trim() && !answers.some(value => value.trim()) &&
+      !Object.values(formAnswers).some(value => value.trim()) &&
+      !(neuroAnswers || []).some(value => value.trim())) {
+    return patientPortalJson({ error: "Escribe al menos una respuesta antes de compartir." }, 400);
   }
   const savedAt = new Date().toISOString();
 

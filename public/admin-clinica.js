@@ -149,6 +149,7 @@
   let exerciseTemplates = [];
   let pendingAiMaterial = null;
   let exerciseAssignments = [];
+  let exerciseResponseEvents = [];
   let clinicalReports = [];
   let clinicalDocuments = [];
   let clinicalDocumentEmailNotices = [];
@@ -895,7 +896,7 @@
     renderInteractiveFields();
     renderInteractiveDocumentLink();
     focusPdfFormFields();
-    els.exerciseMessage.textContent = "Formulario vinculado al PDF original. Añade una pregunta digital por cada ejercicio del documento y revisa el contenido antes de guardar o enviar.";
+    els.exerciseMessage.textContent = "Documento rellenable preparado. En Mi espacio se verá el PDF íntegro junto a un espacio para contestar. Puedes añadir campos estructurados para ejercicios concretos, pero no necesitas transcribir el documento. Revisa el PDF y confirma el cotejo antes de publicar.";
   }
 
   function applyExerciseTemplate(template) {
@@ -1117,7 +1118,7 @@
       if (item.revoked_at) states.append(create("span", "clinic-material-state revoked", "Revocado"));
       if (states.childNodes.length) info.append(states);
 
-      if (patientResponse) {
+      if (patientResponse && !exerciseResponseEvents.some(event => event.assignment_id === item.id)) {
         const details = create("details", "clinic-material-response");
         const summary = create("summary", "", "Ver respuestas compartidas");
         const body = create("div", "clinic-material-response-body");
@@ -1154,6 +1155,63 @@
         }
         details.append(summary, body);
         info.append(details);
+      }
+
+      const deliveryHistory = exerciseResponseEvents.filter(event => event.assignment_id === item.id);
+      if (deliveryHistory.length) {
+        const archive = create("details", "clinic-material-response clinic-material-response-archive");
+        archive.append(create("summary", "", "Historial de entregas · " + deliveryHistory.length));
+        const archiveContent = create("div", "clinic-material-response-body");
+        for (const delivery of deliveryHistory) {
+          const entry = create("details", "clinic-response-history-entry");
+          const at = new Date(delivery.shared_at);
+          entry.append(create("summary", "", "Entrega del " +
+            (Number.isNaN(at.getTime()) ? "fecha desconocida" :
+              at.toLocaleString("es-ES", { dateStyle: "short", timeStyle: "short" })) +
+              " · sin validar clínicamente"));
+          const content = create("div");
+          const answers = sharedPatientResponse({
+            patient_response_status: "shared", patient_response: delivery.response || {}
+          });
+          if (answers) {
+            if (answers.record) {
+              const block = create("article");
+              block.append(create("strong", "", "Registro libre"), create("p", "", answers.record));
+              content.append(block);
+            }
+            const questions = Array.isArray(item.patient_document?.session_questions)
+              ? item.patient_document.session_questions : [];
+            answers.answers.forEach((answer, index) => {
+              if (!answer) return;
+              const block = create("article");
+              block.append(create("strong", "", questions[index] || "Respuesta " + (index + 1)),
+                create("p", "", answer));
+              content.append(block);
+            });
+            const definitions = Array.isArray(delivery.field_definitions) ? delivery.field_definitions : [];
+            Object.entries(answers.form_answers).forEach(([id, answer]) => {
+              if (!answer) return;
+              const field = definitions.find(entry => entry.id === id);
+              const block = create("article");
+              block.append(create("strong", "", String(field?.label || "Pregunta")),
+                create("p", "", ({ si: "Sí", no: "No", no_aplica: "No aplica" })[answer] || answer));
+              content.append(block);
+            });
+            answers.neuro_answers.forEach((answer, index) => {
+              if (!answer) return;
+              const block = create("article");
+              block.append(create("strong", "", "Ejercicio " + (index + 1)), create("p", "", answer));
+              content.append(block);
+            });
+          }
+          if (!content.childNodes.length) {
+            content.append(create("p", "", "La entrega no contenía texto en los campos de respuesta."));
+          }
+          entry.append(content);
+          archiveContent.append(entry);
+        }
+        archive.append(archiveContent);
+        info.append(archive);
       }
 
       const actions = create("div", "clinic-material-row-actions");
@@ -1330,9 +1388,8 @@
         if (!linkedDoc.shared_at || linkedDoc.share_revoked_at) {
           throw new Error("Antes de asignar el formulario, publica expresamente el PDF original en Mi espacio.");
         }
-        if (!docForQuality.form_fields.length) {
-          throw new Error("El formulario está vinculado a un PDF, pero aún no tiene preguntas. Añade los campos pertinentes antes de enviarlo.");
-        }
+        // The full original PDF and an open response area are sufficient.
+        // Specific structured questions can be added where clinically useful.
       }
       const quality = patientDocumentQuality(docForQuality);
       if (!quality.complete) {
@@ -1864,7 +1921,13 @@
       text: `${x.external_provider} · ${externalCenterLabel(x.center)} · ${x.insurance_provider}`,
     }));
     patientSessions(patient.id).forEach((x) => items.push({ date: x.session_date, type: "Sesión", text: `${x.status === "approved" ? "Aprobada" : "Borrador"} · sesión ${x.session_number || ""}` }));
-    patientExercises(patient.id).forEach((x) => items.push({ date: x.sent_at || x.created_at, type: "Ejercicio", text: `${x.title} · ${x.email_status === "sent" ? "enviado" : "preparado"}${x.patient_response_status === "shared" ? " · respuestas compartidas" : ""}` }));
+    patientExercises(patient.id).forEach((x) => items.push({ date: x.sent_at || x.created_at, type: "Ejercicio", text: `${x.title} · ${x.email_status === "sent" ? "enviado" : x.status === "assigned" ? "publicado en Mi espacio" : "preparado"}` }));
+    // Each patient-shared delivery is a separate, date-stamped history event.
+    // Drafts and unvalidated professional conclusions never appear here.
+    exerciseResponseEvents.filter(event => event.patient_id === patient.id).forEach(event => {
+      items.push({ date: event.shared_at, type: "Formulario cumplimentado",
+        text: (event.title || "Ejercicio") + " · entrega del paciente pendiente de revisión clínica" });
+    });
     clinicalReports.filter((x) => x.patient_id === patient.id).forEach((x) => items.push({ date: x.approved_at || x.created_at, type: "Informe", text: `${x.title} · ${x.status === "approved" ? "aprobado" : "borrador"}` }));
     clinicalDocuments.filter((x) => x.patient_id === patient.id).forEach((x) => items.push({ date: x.document_date || x.created_at, type: "Documento", text: x.title }));
     scaleMeasurements.filter((x) => x.patient_id === patient.id).forEach((x) => items.push({ date: x.measured_at, type: "Escala", text: `${x.instrument}${x.total_score !== null && x.total_score !== undefined ? `: ${x.total_score}` : ""}` }));
@@ -2670,7 +2733,7 @@
 
   async function loadData() {
     setMessage("Cargando información clínica…");
-    const [bookingRows, patientRows, externalVisitRows, attendanceRows, sessionRows, goalRows, templateRows, assignmentRows, reportRows, documentRows, scaleRows, noticeRows] = await Promise.all([
+    const [bookingRows, patientRows, externalVisitRows, attendanceRows, sessionRows, goalRows, templateRows, assignmentRows, responseEventRows, reportRows, documentRows, scaleRows, noticeRows] = await Promise.all([
       rest(`appointment_bookings?select=id,patient_name,patient_email,patient_phone,patient_type,status,starts_at,ends_at,service_code,clinical_patient_id&order=starts_at.desc&limit=1000`),
       rest("clinical_patients?select=*&order=full_name.asc"),
       rest("clinical_external_visits?select=*&order=visit_date.desc.nullslast,visit_time.desc"),
@@ -2679,6 +2742,7 @@
       rest("clinical_goals?select=*&order=created_at.asc"),
       rest("clinical_exercise_templates?select=*&status=eq.active&order=title.asc"),
       rest("clinical_exercise_assignments?select=*&order=created_at.desc"),
+      rest("clinical_exercise_response_events?select=id,assignment_id,patient_id,title,source_document_id,response,field_definitions,shared_at&order=shared_at.desc&limit=1000"),
       rest("clinical_reports?select=*&order=created_at.desc"),
       rest("clinical_documents?select=*&order=created_at.desc"),
       rest("clinical_scale_measurements?select=*&order=measured_at.desc"),
@@ -2692,6 +2756,7 @@
     clinicalGoals = goalRows || [];
     exerciseTemplates = templateRows || [];
     exerciseAssignments = assignmentRows || [];
+    exerciseResponseEvents = responseEventRows || [];
     clinicalReports = reportRows || [];
     clinicalDocuments = documentRows || [];
     clinicalDocumentEmailNotices = noticeRows || [];

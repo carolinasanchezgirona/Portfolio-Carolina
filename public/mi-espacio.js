@@ -567,6 +567,63 @@
   }
 
 
+  // The complete PDF stays in private storage. The embedded reader requests it
+  // directly from the authenticated, patient-scoped endpoint, never a public URL.
+  function appendCompletePdfToForm(form, sourceFile) {
+    const sourceId = String(sourceFile?.id || "");
+    if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(sourceId)) return;
+    const url = "/api/patient-portal/file?id=" + encodeURIComponent(sourceId);
+    const section = document.createElement("section");
+    section.className = "space-pdf-form-document";
+    const heading = document.createElement("h5");
+    heading.textContent = "Contenido completo del documento";
+    const lead = document.createElement("p");
+    lead.textContent = "Lee aquí todas las explicaciones, técnicas, ejemplos y consignas del PDF original. Después encontrarás los espacios para responder. El documento conserva sus páginas y su contenido íntegro.";
+    // Render every page to first-party canvases. Browser-native PDF iframes do
+    // not work reliably on Android and must never be the only reading path.
+    const reader = document.createElement("div");
+    reader.className = "space-pdf-form-reader";
+    reader.dataset.pdfUrl = url;
+    reader.setAttribute("role", "group");
+    reader.setAttribute("aria-label", "Todas las páginas del PDF original");
+    const loading = document.createElement("p");
+    loading.className = "space-pdf-form-loading";
+    loading.setAttribute("role", "status");
+    loading.textContent = "Cargando las páginas completas del documento…";
+    reader.append(loading);
+    const fallback = document.createElement("p");
+    fallback.className = "space-pdf-form-fallback";
+    fallback.textContent = "Si el visor integrado no funciona en tu móvil, puedes abrir el documento original sin perder las respuestas de esta página.";
+    const open = document.createElement("a");
+    open.href = url;
+    open.target = "_blank";
+    open.rel = "noopener noreferrer";
+    open.className = "space-secondary";
+    open.textContent = "Abrir documento completo en otra pestaña";
+    section.append(heading, lead, reader, fallback, open);
+    form.append(section);
+  }
+
+  // Native inline reader, protected by the same patient session as the file.
+  // No external PDF script or missing vendored dependency is needed. The
+  // patient has an explicit link to the same private PDF if their mobile
+  // browser does not support embedded PDF viewing.
+  const renderedPdfHosts = new WeakSet();
+  async function renderCompletePdfPages(host) {
+    if (!host || renderedPdfHosts.has(host) || !state.portalAuthenticated) return;
+    const url = host.dataset.pdfUrl || "";
+    if (!/^\/api\/patient-portal\/file\?id=[0-9a-f-]{36}$/i.test(url)) return;
+    renderedPdfHosts.add(host);
+    const reader = document.createElement("iframe");
+    reader.className = "space-pdf-form-frame";
+    reader.title = "Documento terapéutico original completo";
+    reader.loading = "lazy";
+    reader.referrerPolicy = "no-referrer";
+    reader.src = url;
+    reader.setAttribute("aria-label", "PDF original completo en visor privado");
+    host.replaceChildren(reader);
+  }
+
   // Each objective can define its own questions, without replicating the PDF.
   function appendInteractiveQuestions(form, item, doc) {
     const definitions = Array.isArray(doc.form_fields) ? doc.form_fields.slice(0, 30) : [];
@@ -651,49 +708,42 @@
 
     const body = document.createElement("div");
     body.className = "space-patient-material-body";
-    appendPatientSection(body, "Para qué sirve", documentData.introduction);
-    appendPatientSection(body, documentData.clinical_area==="neuropsychology" ? "Para qué sirven estas actividades" : "Comprender lo que te pasa", documentData.why);
-    appendPatientSection(body, "Plan de práctica", documentData.frequency);
-    if(documentData.clinical_area!=="neuropsychology"||!appendNeuroWorkbook(body,documentData,item)) {
-      appendPatientSection(body, documentData.material_type === "psychoeducation" ? "Contenido" : "Cómo hacerlo", documentData.instructions);
-    }
-    appendMaterialExamples(body, documentData.example);
-    appendPatientSection(body, "Qué conviene recordar", documentData.remember);
-
-    // The original PDF is never copied into this form. It is available only
-    // through the existing authenticated patient-document endpoint.
+    // Source-linked forms show the ENTIRE original PDF as the primary clinical
+    // text. Generic form scaffolding must never replace or paraphrase it.
     const sourceId = String(documentData.source_document_id || "");
     const sourceFile = /^[0-9a-f-]{36}$/i.test(sourceId)
       ? (Array.isArray(state.portalData?.files) ? state.portalData.files : [])
           .find(file => file.id === sourceId && file.mime_type === "application/pdf")
       : null;
-    if (sourceFile) {
-      const source = document.createElement("section");
-      source.className = "space-interactive-source";
-      const intro = document.createElement("p");
-      intro.textContent = "Este formulario acompaña al PDF original de tu objetivo. Lee sus instrucciones y responde aquí, sin imprimirlo.";
-      const link = document.createElement("a");
-      link.href = "/api/patient-portal/file?id=" + encodeURIComponent(sourceId);
-      link.target = "_blank";
-      link.rel = "noopener noreferrer";
-      link.className = "space-secondary";
-      link.textContent = "Abrir PDF original del objetivo";
-      source.append(intro, link);
-      body.append(source);
+    if (!sourceFile) {
+      appendPatientSection(body, "Para qué sirve", documentData.introduction);
+      appendPatientSection(body, documentData.clinical_area==="neuropsychology" ? "Para qué sirven estas actividades" : "Comprender lo que te pasa", documentData.why);
+      appendPatientSection(body, "Plan de práctica", documentData.frequency);
+      if(documentData.clinical_area!=="neuropsychology"||!appendNeuroWorkbook(body,documentData,item)) {
+        appendPatientSection(body, documentData.material_type === "psychoeducation" ? "Contenido" : "Cómo hacerlo", documentData.instructions);
+      }
+      appendMaterialExamples(body, documentData.example);
+      appendPatientSection(body, "Qué conviene recordar", documentData.remember);
     }
     const downloadArea = document.createElement("div");
     downloadArea.className = "space-patient-downloads";
     const downloadLink = document.createElement("a");
     downloadLink.className = "space-secondary space-material-download-button";
-    downloadLink.textContent = "↓ Descargar PDF";
-    downloadLink.href = patientMaterialDownloadUrl(item);
-    // Content-Disposition on the authenticated endpoint supplies the filename.
-    // A new tab is often blocked or detached from the installed Android app.
-    downloadLink.download = "entre-sesiones.pdf";
+    downloadLink.textContent = sourceFile ? "↓ Descargar PDF original completo" : "↓ Descargar PDF";
+    if (sourceFile) {
+      downloadLink.href = "/api/patient-portal/file?id=" + encodeURIComponent(sourceId) + "&download=1";
+      downloadLink.download = "documento-original.pdf";
+    } else {
+      downloadLink.href = patientMaterialDownloadUrl(item);
+      // Content-Disposition on the authenticated endpoint supplies the filename.
+      downloadLink.download = "entre-sesiones.pdf";
+    }
     downloadLink.setAttribute("aria-label", "Descargar PDF: " + String(item.title || "Material"));
     const downloadHint = document.createElement("span");
     downloadHint.className = "space-material-download-status";
-    downloadHint.textContent = "El PDF se descarga desde el servidor. Si tu móvil no lo permite, utiliza la opción de imprimir y elige «Guardar como PDF».";
+    downloadHint.textContent = sourceFile
+      ? "Este es el documento original íntegro, no un resumen del formulario."
+      : "El PDF se descarga desde el servidor. Si tu móvil no lo permite, utiliza la opción de imprimir y elige «Guardar como PDF».";
     const printButton = document.createElement("button");
     printButton.type = "button";
     printButton.className = "space-secondary space-material-print-button";
@@ -720,7 +770,10 @@
         downloadHint.textContent = "El navegador no admite impresión desde la aplicación. Prueba a abrir Entre Sesiones en Chrome.";
       }
     });
-    downloadArea.append(downloadLink, printButton, downloadHint);
+    // Printing the web form does not reliably print embedded PDF pages.
+    // For original-PDF forms, offer the actual full PDF download instead.
+    if (sourceFile) downloadArea.append(downloadLink, downloadHint);
+    else downloadArea.append(downloadLink, printButton, downloadHint);
     body.append(downloadArea);
 
 
@@ -732,24 +785,71 @@
       const responseBox = document.createElement("div");
       responseBox.className = "space-patient-response";
       const heading = document.createElement("h4");
-      heading.textContent = "Rellena el ejercicio aquí";
+      heading.textContent = sourceFile ? "Material completo y respuestas" : "Rellena el ejercicio aquí";
       const explainer = document.createElement("p");
-      explainer.textContent = documentData.clinical_area==="neuropsychology"
+      explainer.textContent = sourceFile
+        ? "Primero encontrarás todo el contenido del PDF, sin recortes. Después puedes responder aquí mismo, guardar un borrador y compartirlo con Carolina cuando lo decidas."
+        : documentData.clinical_area==="neuropsychology"
         ? "Escribe en los espacios de cada ejercicio. Guarda un borrador para continuar otro día; Carolina solo verá las respuestas cuando decidas compartirlas."
         : "Puedes escribir o utilizar el autorregistro guiado. Solo se comparte con Carolina si pulsas «Compartir respuestas».";
       const form = document.createElement("form");
+      let answerTarget = form;
+      if (sourceFile) {
+      const mobileNavigation = document.createElement("div");
+      mobileNavigation.className = "space-fillable-mobile-nav";
+      const readButton = document.createElement("button");
+      readButton.type = "button";
+      readButton.className = "space-secondary";
+      readButton.textContent = "Leer PDF completo";
+      const answerButton = document.createElement("button");
+      answerButton.type = "button";
+      answerButton.className = "space-secondary";
+      answerButton.textContent = "Escribir respuestas";
+      mobileNavigation.append(readButton, answerButton);
+      const workspace = document.createElement("div");
+      workspace.className = "space-fillable-workspace";
+      const answerPanel = document.createElement("section");
+      answerPanel.className = "space-fillable-answer-panel";
+      answerPanel.setAttribute("aria-label", "Respuestas del documento");
+      const panelHeading = document.createElement("h5");
+      panelHeading.textContent = "Mis respuestas";
+      answerPanel.append(panelHeading);
+      const focusPane = (panel, focus) => {
+        panel.scrollIntoView({ block: "start", behavior: "smooth" });
+        if (focus) panel.querySelector("[data-form-answer], [data-response-record]")?.focus({ preventScroll: true });
+      };
+      readButton.addEventListener("click", () => {
+        const panel = workspace.querySelector(".space-pdf-form-document");
+        if (panel) focusPane(panel, false);
+      });
+      answerButton.addEventListener("click", () => focusPane(answerPanel, true));
+      form.append(mobileNavigation, workspace);
+      appendCompletePdfToForm(workspace, sourceFile);
+      workspace.append(answerPanel);
+        answerTarget = answerPanel;
+      }
 
       const recordLabel = document.createElement("label");
-      recordLabel.textContent = documentData.clinical_area==="neuropsychology" ? "Notas generales y dudas del cuaderno" : (documentData.record_prompt || "Mis notas y autorregistros");
+      recordLabel.textContent = sourceFile
+        ? (Array.isArray(documentData.form_fields) && documentData.form_fields.length
+          ? "Notas o dudas adicionales (opcional)"
+          : "Escribe las respuestas a las actividades del PDF")
+        : documentData.clinical_area==="neuropsychology" ? "Notas generales y dudas del cuaderno"
+        : (documentData.record_prompt || "Mis notas y autorregistros");
       const record = document.createElement("textarea");
       record.dataset.responseRecord = "true";
       record.maxLength = 12000;
       record.value = saved.record;
       record.placeholder = "Escribe aquí…";
       recordLabel.append(record);
-      if(documentData.clinical_area!=="neuropsychology")form.append(createGuidedRecord(record));
-      form.append(recordLabel);
-      appendInteractiveQuestions(form, item, documentData);
+      if (sourceFile) {
+        appendInteractiveQuestions(answerTarget, item, documentData);
+        answerTarget.append(recordLabel);
+      } else {
+        if(documentData.clinical_area!=="neuropsychology")form.append(createGuidedRecord(record));
+        form.append(recordLabel);
+        appendInteractiveQuestions(form, item, documentData);
+      }
 
       questions.forEach((question, questionIndex) => {
         const label = document.createElement("label");
@@ -760,7 +860,7 @@
         field.value = saved.answers[questionIndex] || "";
         field.placeholder = "Tu respuesta…";
         label.append(field);
-        form.append(label);
+        answerTarget.append(label);
       });
 
       const actions = document.createElement("div");
@@ -795,12 +895,22 @@
         if (!window.confirm("¿Compartir estas respuestas con Carolina? Si prefieres conservarlas solo para ti, puedes guardar un borrador.")) return;
         void savePatientMaterialResponse(item, form, "share", responseStatus);
       });
-      form.append(actions, responseStatus);
+      if (sourceFile) answerTarget.append(actions, responseStatus);
+      else form.append(actions, responseStatus);
       responseBox.append(heading, explainer, form);
       body.append(responseBox);
     }
 
     details.append(summary, body);
+    if (sourceFile) {
+      const showCompleteDocument = () => {
+        if (!details.open || !details.isConnected || !state.portalAuthenticated) return;
+        const host = details.querySelector(".space-pdf-form-reader");
+        if (host) void renderCompletePdfPages(host);
+      };
+      details.addEventListener("toggle", showCompleteDocument);
+      if (details.open) requestAnimationFrame(showCompleteDocument);
+    }
     materialSavedSnapshots.set(details, snapshotPatientMaterial(details));
     const markUnsaved = event => {
       const field = event.target;
@@ -867,13 +977,36 @@
 
     const actions = document.createElement("div");
     actions.className = "space-patient-shared-actions";
+    const linkedMaterial = mime === "application/pdf"
+      ? (Array.isArray(state.portalData?.materials) ? state.portalData.materials : [])
+        .find(material => material.patient_document?.source_document_id === id &&
+          ["sent", "assigned", "reviewed"].includes(material.status))
+      : null;
+    if (linkedMaterial) {
+      const openWorkbook = document.createElement("button");
+      openWorkbook.type = "button";
+      openWorkbook.className = "space-primary";
+      openWorkbook.textContent = "Abrir y responder";
+      openWorkbook.addEventListener("click", () => {
+        navigateToView("therapy");
+        const linked = document.getElementById("space-material-" + linkedMaterial.id);
+        if (linked && patientMaterials?.contains(linked)) {
+          linked.open = true;
+          linked.scrollIntoView({ block: "start", behavior: "auto" });
+          const heading = linked.querySelector("summary");
+          heading?.setAttribute("tabindex", "-1");
+          heading?.focus({ preventScroll: true });
+        }
+      });
+      actions.append(openWorkbook);
+    }
     if (mime === "application/pdf" || mime.startsWith("image/")) {
       const view = document.createElement("a");
       view.className = "space-secondary";
       view.href = url;
       view.target = "_blank";
       view.rel = "noopener noreferrer";
-      view.textContent = "Ver archivo";
+      view.textContent = linkedMaterial ? "Ver solo el PDF" : "Ver archivo";
       actions.append(view);
     }
     const download = document.createElement("a");
