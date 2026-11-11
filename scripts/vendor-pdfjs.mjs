@@ -1,4 +1,4 @@
-import { mkdir, copyFile, readFile } from "node:fs/promises";
+import { mkdir, copyFile, readFile, cp, stat } from "node:fs/promises";
 import { dirname, join } from "node:path";
 import { createRequire } from "node:module";
 
@@ -19,4 +19,9 @@ for (const name of ["pdf.mjs", "pdf.worker.mjs"]) {
   await copyFile(join(source, "build", name), join(dest, name));
 }
 await copyFile(join(source, "LICENSE"), join(dest, "LICENSE"));
+for (const folder of ["cmaps", "standard_fonts", "wasm"]) {
+  const from = join(source, folder);
+  try { if ((await stat(from)).isDirectory()) await cp(from, join(dest, folder), { recursive: true }); }
+  catch (error) { if (error?.code !== "ENOENT") throw error; }
+}
 console.log("Visor PDF local preparado con pdfjs-dist@" + expectedVersion);
