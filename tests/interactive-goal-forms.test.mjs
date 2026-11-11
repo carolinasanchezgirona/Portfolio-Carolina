@@ -24,7 +24,7 @@ test("patient can save drafts and share individually prescribed form answers", (
   assert.match(portal, /data-form-answer/);
   assert.match(portal, /details\.addEventListener\("change", markUnsaved\)/);
   assert.match(portal, /fetch\("\/api\/patient-portal\/response"/);
-  assert.match(patientPage, /mi-espacio\.js\?v=20261111-pdf-completo-1/);
+  assert.match(patientPage, /mi-espacio\.js\?v=20261111-cuadernos-secciones-1/);
 });
 
 test("server binds answers to authenticated patient's assigned fields", () => {
