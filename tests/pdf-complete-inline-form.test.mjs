@@ -13,7 +13,8 @@ test("an authenticated PDF form includes ALL original pages, not only questions"
   const end = portal.indexOf("  // Each objective can define", start);
   assert.ok(start > 0 && end > start, "inline PDF reader function must exist");
   const createElement = tag => ({
-    tag, className: "", children: [],
+    tag, className: "", children: [], dataset: {}, attributes: {},
+    setAttribute(name, value) { this.attributes[name] = value; },
     append(...children) { this.children.push(...children); },
   });
   const handler = runInNewContext(portal.slice(start, end) + "\nappendCompletePdfToForm;", {
@@ -26,15 +27,16 @@ test("an authenticated PDF form includes ALL original pages, not only questions"
   assert.equal(form.children.length, 1);
   const section = form.children[0];
   assert.equal(section.className, "space-pdf-form-document");
-  const frame = section.children.find(node => node.tag === "iframe");
-  assert.ok(frame, "the complete document is embedded within the response form");
-  assert.equal(frame.src, "/api/patient-portal/file?id=" + id);
-  assert.equal(frame.referrerPolicy, "no-referrer");
+  const reader = section.children.find(node => node.className === "space-pdf-form-reader");
+  assert.ok(reader, "the complete document must be rendered inside the response form");
+  assert.equal(reader.dataset.pdfUrl, "/api/patient-portal/file?id=" + id);
+  assert.equal(reader.attributes.role, "group");
+  assert.ok(reader.children.some(node => node.className === "space-pdf-form-loading"));
   const link = section.children.find(node => node.tag === "a");
-  assert.equal(link.href, frame.src, "mobile fallback uses the same authenticated document");
+  assert.equal(link.href, reader.dataset.pdfUrl, "mobile fallback uses the same authenticated document");
   assert.equal(link.target, "_blank");
   assert.equal(link.rel, "noopener noreferrer");
-  assert.ok(!frame.src.includes("/storage/v1/") && !frame.src.includes("public"));
+  assert.ok(!reader.dataset.pdfUrl.includes("/storage/v1/") && !reader.dataset.pdfUrl.includes("public"));
 
   const invalidForm = { children: [], append(node) { this.children.push(node); } };
   handler(invalidForm, { id: "../invalid" });
@@ -52,6 +54,13 @@ test("PDF is presented BEFORE its responses, without replacing original prose wi
   assert.doesNotMatch(portal, /storage\/v1\/object\/public\/clinical-documents/);
   assert.match(css, /space-pdf-form-reader/);
   assert.match(css, /@media\(max-width:700px\)/);
+  assert.match(portal, /await import\("\/vendor\/pdfjs\/pdf\.mjs"\)/);
+  assert.match(portal, /pdfjs\.GlobalWorkerOptions\.workerSrc = "\/vendor\/pdfjs\/pdf\.worker\.mjs"/);
+  assert.match(portal, /isEvalSupported: false/);
+  assert.match(portal, /for \(let pageNumber = 1; pageNumber <= pdf\.numPages; pageNumber\+\+\)/);
+  assert.match(portal, /await page\.render\(\{ canvas, canvasContext: context, viewport \}\)\.promise/);
+  assert.match(portal, /await page\.getTextContent\(\)/);
+  assert.match(portal, /sourceFile \? "↓ Descargar PDF original completo"/);
 });
 
 test("only the authenticated same-origin patient can embed an unabridged source PDF", () => {
