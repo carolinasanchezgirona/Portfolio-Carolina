@@ -889,7 +889,7 @@
         appendInteractiveQuestions(form, item, documentData);
         form.append(recordLabel);
       } else {
-        if (documentData.clinical_area !== "neuropsychology") form.append(createGuidedRecord(record));
+        if(documentData.clinical_area!=="neuropsychology")form.append(createGuidedRecord(record));
         form.append(recordLabel);
         appendInteractiveQuestions(form, item, documentData);
       }
