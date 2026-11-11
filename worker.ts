@@ -751,8 +751,11 @@ async function handleAdminClinicalFormPublish(request: Request, env: Env): Promi
 
   const definitions = doc.form_fields;
   const supported = new Set(["short_text", "long_text", "scale_0_10", "date", "yes_no", "choice"]);
-  if (!Array.isArray(definitions) || definitions.length < 1 || definitions.length > 30) {
-    return patientPortalJson({ error: "Añade al menos una pregunta válida al formulario." }, 409);
+  // Source-linked workbooks always include a free-text answer area. Structured
+  // fields are optional and should only be added when the clinician requires them.
+  if (!Array.isArray(definitions) || definitions.length > 30 ||
+      (!definitions.length && !String(doc.record_prompt || "").trim())) {
+    return patientPortalJson({ error: "El documento necesita un espacio de respuesta válido." }, 409);
   }
   const ids = new Set<string>();
   for (const raw of definitions) {
