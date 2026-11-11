@@ -157,7 +157,7 @@ jobs:
           node --test tests/patient-shared-files.test.mjs tests/mi-espacio-material-download.test.mjs tests/entre-sesiones-access-control.test.mjs
 
       - name: Verificar formularios terapéuticos individualizados
-        run: node --test tests/interactive-goal-forms.test.mjs tests/pdf-goal-forms-review.test.mjs tests/clinical-pdf-publication.test.mjs tests/pdf-form-editor-open.test.mjs tests/pdf-complete-inline-form.test.mjs
+        run: node --test tests/interactive-goal-forms.test.mjs tests/pdf-goal-forms-review.test.mjs tests/clinical-pdf-publication.test.mjs tests/pdf-form-editor-open.test.mjs tests/pdf-complete-inline-form.test.mjs tests/pdf-fillable-history.test.mjs
 
       - name: Validar Word clínico, protección y controles
         run: node --test tests/clinic-word-export.test.mjs
