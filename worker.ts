@@ -585,7 +585,11 @@ async function handlePatientPortalFile(request: Request, env: Env): Promise<Resp
     "X-Content-Type-Options": "nosniff",
     "Referrer-Policy": "no-referrer",
     "X-Robots-Tag": "noindex, nofollow",
-    "X-Frame-Options": "DENY",
+    // Only the patient's authenticated same-origin page may embed a PDF.
+    // All other file formats remain unframeable.
+    "X-Frame-Options": safeMime === "application/pdf" ? "SAMEORIGIN" : "DENY",
+    "Content-Security-Policy": safeMime === "application/pdf" ? "frame-ancestors 'self'" : "frame-ancestors 'none'",
+    "Cross-Origin-Resource-Policy": "same-origin",
   });
   for (const key of ["Content-Length", "Content-Range", "Accept-Ranges"]) {
     const value = storage.headers.get(key);
