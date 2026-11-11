@@ -895,7 +895,7 @@
     renderInteractiveFields();
     renderInteractiveDocumentLink();
     focusPdfFormFields();
-    els.exerciseMessage.textContent = "Formulario vinculado al PDF original. Añade una pregunta digital por cada ejercicio del documento y revisa el contenido antes de guardar o enviar.";
+    els.exerciseMessage.textContent = "Formulario vinculado: el paciente verá el PDF completo dentro de Mi espacio, con toda su psicoeducación, técnicas, ejemplos y ejercicios. Añade y coteja aquí los campos de respuesta antes de publicar.";
   }
 
   function applyExerciseTemplate(template) {
