@@ -807,6 +807,15 @@
       details.setAttribute("data-print-material", "true");
       details.open = true;
       document.body.classList.add("space-print-patient-material");
+      // Closed reading sections must be printed too; restore the person's
+      // previous accordion state after the browser closes its print dialog.
+      const parts = [...details.querySelectorAll("details.space-workbook-part")];
+      const expandedBeforePrint = parts.map(part => part.open);
+      parts.forEach(part => { part.open = true; });
+      const restoreParts = () => {
+        parts.forEach((part, index) => { part.open = expandedBeforePrint[index]; });
+      };
+      window.addEventListener("afterprint", restoreParts, { once: true });
       try {
         window.print();
         downloadHint.textContent = "En Android, elige «Guardar como PDF» en las opciones de impresión. Si no aparece, abre esta página en Chrome.";
@@ -819,14 +828,16 @@
     if (sourceFile) downloadArea.append(downloadLink, downloadHint);
     else downloadArea.append(downloadLink, printButton, downloadHint);
     // The original file link moves into the reading accordion below.
-    if (!sourceFile && techniquesPart) techniquesPart.content.append(downloadArea);
-    else if (!sourceFile) body.append(downloadArea);
+    if (!sourceFile && techniquesPart) {
+      techniquesPart.content.append(downloadArea);
+      if (!body.contains(techniquesPart.section)) body.append(techniquesPart.section);
+    } else if (!sourceFile) body.append(downloadArea);
 
 
-    if (documentData.material_type !== "psychoeducation" || documentData.record_prompt) {
+    if (sourceFile || documentData.material_type !== "psychoeducation" || documentData.record_prompt) {
       const questions = Array.isArray(documentData.session_questions) && documentData.session_questions.length
         ? documentData.session_questions.slice(0, 6)
-        : ["¿Qué te resultó más fácil o más difícil?", "¿Qué observaste al probarlo?", "¿Qué ajustarías para que te resulte más útil?"];
+        : sourceFile ? [] : ["¿Qué te resultó más fácil o más difícil?", "¿Qué observaste al probarlo?", "¿Qué ajustarías para que te resulte más útil?"];
       const saved = patientResponseData(item, questions.length);
       const responseBox = document.createElement("div");
       responseBox.className = "space-patient-response";
