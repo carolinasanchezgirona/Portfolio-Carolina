@@ -304,6 +304,31 @@
     target.append(section);
   }
 
+  // A workbook is one collapsible item, with independently collapsible
+  // reading and exercise sections. All content stays in the private portal.
+  function createWorkbookPart(title, description, open = false) {
+    const section = document.createElement("details");
+    section.className = "space-workbook-part";
+    section.open = open;
+    const summary = document.createElement("summary");
+    const text = document.createElement("span");
+    text.className = "space-workbook-part-heading";
+    const name = document.createElement("strong");
+    name.textContent = title;
+    const hint = document.createElement("small");
+    hint.textContent = description;
+    text.append(name, hint);
+    const arrow = document.createElement("span");
+    arrow.className = "space-workbook-part-chevron";
+    arrow.setAttribute("aria-hidden", "true");
+    arrow.textContent = "⌄";
+    summary.append(text, arrow);
+    const content = document.createElement("div");
+    content.className = "space-workbook-part-body";
+    section.append(summary, content);
+    return { section, content };
+  }
+
   function patientResponseData(item, questionCount) {
     const source = item?.patient_response && typeof item.patient_response === "object" ? item.patient_response : {};
     const answers = Array.isArray(source.answers) ? source.answers : [];
@@ -691,7 +716,7 @@
     if (/^[0-9a-f-]{36}$/i.test(String(item.id || ""))) {
       details.id = "space-material-" + item.id;
     }
-    if (index === 0) details.open = true;
+    // Workbooks start collapsed. Opening one never activates another patient's content.
 
     const summary = document.createElement("summary");
     const titleWrap = document.createElement("div");
@@ -715,15 +740,34 @@
       ? (Array.isArray(state.portalData?.files) ? state.portalData.files : [])
           .find(file => file.id === sourceId && file.mime_type === "application/pdf")
       : null;
+    let techniquesPart = null;
+    let neuroTaskContainer = null;
     if (!sourceFile) {
-      appendPatientSection(body, "Para qué sirve", documentData.introduction);
-      appendPatientSection(body, documentData.clinical_area==="neuropsychology" ? "Para qué sirven estas actividades" : "Comprender lo que te pasa", documentData.why);
-      appendPatientSection(body, "Plan de práctica", documentData.frequency);
-      if(documentData.clinical_area!=="neuropsychology"||!appendNeuroWorkbook(body,documentData,item)) {
-        appendPatientSection(body, documentData.material_type === "psychoeducation" ? "Contenido" : "Cómo hacerlo", documentData.instructions);
+      const reading = createWorkbookPart("Psicoeducación", "Explicaciones y objetivos del material");
+      appendPatientSection(reading.content, "Para qué sirve", documentData.introduction);
+      appendPatientSection(reading.content,
+        documentData.clinical_area === "neuropsychology" ? "Para qué sirven estas actividades" : "Comprender lo que te pasa",
+        documentData.why);
+      if (reading.content.childNodes.length) body.append(reading.section);
+
+      techniquesPart = createWorkbookPart("Técnicas y ejemplos", "Instrucciones, pautas y material de apoyo");
+      appendPatientSection(techniquesPart.content, "Plan de práctica", documentData.frequency);
+      if (documentData.clinical_area === "neuropsychology") {
+        neuroTaskContainer = document.createElement("div");
+        if (!appendNeuroWorkbook(neuroTaskContainer, documentData, item)) {
+          appendPatientSection(techniquesPart.content,
+            documentData.material_type === "psychoeducation" ? "Contenido" : "Cómo hacerlo",
+            documentData.instructions);
+          neuroTaskContainer = null;
+        }
+      } else {
+        appendPatientSection(techniquesPart.content,
+          documentData.material_type === "psychoeducation" ? "Contenido" : "Cómo hacerlo",
+          documentData.instructions);
       }
-      appendMaterialExamples(body, documentData.example);
-      appendPatientSection(body, "Qué conviene recordar", documentData.remember);
+      appendMaterialExamples(techniquesPart.content, documentData.example);
+      appendPatientSection(techniquesPart.content, "Qué conviene recordar", documentData.remember);
+      if (techniquesPart.content.childNodes.length) body.append(techniquesPart.section);
     }
     const downloadArea = document.createElement("div");
     downloadArea.className = "space-patient-downloads";
@@ -774,7 +818,9 @@
     // For original-PDF forms, offer the actual full PDF download instead.
     if (sourceFile) downloadArea.append(downloadLink, downloadHint);
     else downloadArea.append(downloadLink, printButton, downloadHint);
-    body.append(downloadArea);
+    // The original file link moves into the reading accordion below.
+    if (!sourceFile && techniquesPart) techniquesPart.content.append(downloadArea);
+    else if (!sourceFile) body.append(downloadArea);
 
 
     if (documentData.material_type !== "psychoeducation" || documentData.record_prompt) {
@@ -794,39 +840,37 @@
         : "Puedes escribir o utilizar el autorregistro guiado. Solo se comparte con Carolina si pulsas «Compartir respuestas».";
       const form = document.createElement("form");
       let answerTarget = form;
+      let exerciseSection = null;
       if (sourceFile) {
-      const mobileNavigation = document.createElement("div");
-      mobileNavigation.className = "space-fillable-mobile-nav";
-      const readButton = document.createElement("button");
-      readButton.type = "button";
-      readButton.className = "space-secondary";
-      readButton.textContent = "Leer PDF completo";
-      const answerButton = document.createElement("button");
-      answerButton.type = "button";
-      answerButton.className = "space-secondary";
-      answerButton.textContent = "Escribir respuestas";
-      mobileNavigation.append(readButton, answerButton);
-      const workspace = document.createElement("div");
-      workspace.className = "space-fillable-workspace";
-      const answerPanel = document.createElement("section");
-      answerPanel.className = "space-fillable-answer-panel";
-      answerPanel.setAttribute("aria-label", "Respuestas del documento");
-      const panelHeading = document.createElement("h5");
-      panelHeading.textContent = "Mis respuestas";
-      answerPanel.append(panelHeading);
-      const focusPane = (panel, focus) => {
-        panel.scrollIntoView({ block: "start", behavior: "smooth" });
-        if (focus) panel.querySelector("[data-form-answer], [data-response-record]")?.focus({ preventScroll: true });
-      };
-      readButton.addEventListener("click", () => {
-        const panel = workspace.querySelector(".space-pdf-form-document");
-        if (panel) focusPane(panel, false);
-      });
-      answerButton.addEventListener("click", () => focusPane(answerPanel, true));
-      form.append(mobileNavigation, workspace);
-      appendCompletePdfToForm(workspace, sourceFile);
-      workspace.append(answerPanel);
-        answerTarget = answerPanel;
+        const workspace = document.createElement("div");
+        workspace.className = "space-fillable-workspace";
+
+        // Never assume which PDF pages correspond to psychoeducation or
+        // exercises: the entire unmodified original stays in the reading part.
+        const readingPart = createWorkbookPart("Leer el cuaderno completo",
+          "Psicoeducación, técnicas, ejemplos y consignas originales");
+        appendCompletePdfToForm(readingPart.content, sourceFile);
+        readingPart.content.append(downloadArea);
+        workspace.append(readingPart.section);
+
+        const answerPart = createWorkbookPart("Ejercicios y respuestas",
+          item.patient_response_status === "shared" ? "Respuestas compartidas" :
+          item.patient_response_status === "draft" ? "Borrador guardado" : "Formulario para completar");
+        answerPart.content.classList.add("space-fillable-answer-panel");
+        const panelHeading = document.createElement("h5");
+        panelHeading.textContent = "Mis respuestas";
+        answerPart.content.append(panelHeading);
+        workspace.append(answerPart.section);
+
+        form.append(workspace);
+        answerTarget = answerPart.content;
+      } else {
+        const answerPart = createWorkbookPart("Ejercicios y respuestas",
+          item.patient_response_status === "shared" ? "Respuestas compartidas" :
+          item.patient_response_status === "draft" ? "Borrador guardado" : "Formulario para completar");
+        exerciseSection = answerPart.section;
+        answerTarget = answerPart.content;
+        if (neuroTaskContainer) answerTarget.append(neuroTaskContainer);
       }
 
       const recordLabel = document.createElement("label");
@@ -897,8 +941,20 @@
       });
       if (sourceFile) answerTarget.append(actions, responseStatus);
       else form.append(actions, responseStatus);
-      responseBox.append(heading, explainer, form);
-      body.append(responseBox);
+      if (exerciseSection) {
+        // Move the entire form into the exercise accordion so free-text fields,
+        // neuropsychological tasks and save/share actions remain together.
+        // The form's own fields are the response source of truth.
+        const host = document.createElement("div");
+        host.className = "space-workbook-response-content";
+        host.append(explainer, form);
+        // Neuro tasks live within the same exercise accordion, not in techniques.
+        exerciseSection.append(host);
+        body.append(exerciseSection);
+      } else {
+        responseBox.append(heading, explainer, form);
+        body.append(responseBox);
+      }
     }
 
     details.append(summary, body);
