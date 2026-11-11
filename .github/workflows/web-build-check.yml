@@ -130,7 +130,7 @@ jobs:
           node --check public/admin-dashboard.js
           node --check public/admin-shell.js
           node --check public/clinical-access.js
-          node --test tests/admin-unified-hub.test.mjs tests/admin-home-today-only.test.mjs tests/admin-nav-accounting.test.mjs tests/admin-mobile-ux.test.mjs
+          node --test tests/admin-unified-hub.test.mjs tests/admin-home-today-only.test.mjs tests/admin-nav-accounting.test.mjs tests/admin-mobile-ux.test.mjs tests/admin-sidebar-navigation.test.mjs
 
       - name: Verificar agenda simplificada y centro de avisos privado
         run: |
