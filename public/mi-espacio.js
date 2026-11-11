@@ -1141,39 +1141,55 @@
 
     const materials = Array.isArray(data?.materials) ? data.materials : [];
     const files = Array.isArray(data?.files) ? data.files : [];
+    // Each treatment PDF appears only once: within its published interactive
+    // workbook, or as a read-only collapsible workbook if not converted yet.
+    const linkedSourceIds = new Set(materials.map(item =>
+      String(item.patient_document?.source_document_id || "")).filter(Boolean));
+    const standaloneWorkbooks = files.filter(file =>
+      file.mime_type === "application/pdf" &&
+      file.category === "intervention_plan" && !linkedSourceIds.has(String(file.id)));
+    const workbookFileIds = new Set([...linkedSourceIds,
+      ...standaloneWorkbooks.map(file => String(file.id))]);
+    const otherFiles = files.filter(file => !workbookFileIds.has(String(file.id)));
+
     const fileCount = document.getElementById("space-shared-file-count");
-    if (fileCount) fileCount.textContent = files.length === 1 ? "1 archivo" : files.length + " archivos";
+    if (fileCount) fileCount.textContent = otherFiles.length === 1
+      ? "1 archivo" : otherFiles.length + " archivos";
     if (patientFiles) {
       patientFiles.replaceChildren();
-      if (!files.length) {
+      if (!otherFiles.length) {
         const empty = document.createElement("div");
         empty.className = "space-empty";
-        empty.textContent = "Todavía no tienes documentos ni audios compartidos contigo.";
+        empty.textContent = "No hay otros documentos ni audios compartidos.";
         patientFiles.append(empty);
       } else {
-        files.forEach(file => patientFiles.append(createPatientFile(file)));
+        otherFiles.forEach(file => patientFiles.append(createPatientFile(file)));
       }
     }
+    const workbookCount = materials.length + standaloneWorkbooks.length;
     const count = document.getElementById("space-material-count");
-    if (count) count.textContent = materials.length === 1 ? "1 material disponible" : `${materials.length} materiales disponibles`;
+    if (count) count.textContent = workbookCount === 1
+      ? "1 cuaderno disponible" : workbookCount + " cuadernos disponibles";
     const quickCount = document.getElementById("space-quick-material-count");
-    if (quickCount) quickCount.textContent = materials.length
-      ? `Tienes ${materials.length} ${materials.length === 1 ? "material disponible" : "materiales disponibles"} para trabajar.`
-      : (files.length ? `También tienes ${files.length} archivo(s) compartido(s) en Mi espacio.` : "Aquí encontrarás los ejercicios que Carolina comparta contigo.");
+    if (quickCount) quickCount.textContent = workbookCount
+      ? `Tienes ${workbookCount} ${workbookCount === 1 ? "cuaderno" : "cuadernos"} para consultar o completar.`
+      : (otherFiles.length ? `También tienes ${otherFiles.length} archivo(s) compartido(s) en Mi espacio.`
+        : "Aquí encontrarás los materiales que Carolina comparta contigo.");
     const therapyStatus = document.getElementById("space-therapy-status");
-    if (therapyStatus) therapyStatus.textContent = materials.length || files.length
-      ? "Tienes ejercicios o archivos disponibles para consultar entre sesiones."
+    if (therapyStatus) therapyStatus.textContent = workbookCount || otherFiles.length
+      ? "Tienes cuadernos o archivos disponibles para consultar entre sesiones."
       : "No tienes material pendiente en este momento.";
 
     if (patientMaterials) {
       patientMaterials.replaceChildren();
-      if (!materials.length) {
+      if (!workbookCount) {
         const empty = document.createElement("div");
         empty.className = "space-empty";
-        empty.textContent = "No tienes materiales disponibles en este momento.";
+        empty.textContent = "No tienes cuadernos disponibles en este momento.";
         patientMaterials.append(empty);
       } else {
         materials.forEach((item, index) => patientMaterials.append(createPatientMaterial(item, index)));
+        standaloneWorkbooks.forEach(file => patientMaterials.append(createPatientFile(file)));
       }
     }
 
