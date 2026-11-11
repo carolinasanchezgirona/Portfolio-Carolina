@@ -204,9 +204,10 @@ export default function MiEspacioPage() {
 
             <section className="space-section space-materials-section">
               <div className="space-section-heading">
-                <div><p className="space-eyebrow">Entre sesiones</p><h3>Mis ejercicios y materiales</h3></div>
+                <div><p className="space-eyebrow">Entre sesiones</p><h3>Mis cuadernos y ejercicios</h3></div>
                 <span id="space-material-count" className="space-pill">Acceso privado</span>
               </div>
+              <p>Abre cada cuaderno para consultar las explicaciones, técnicas y ejercicios por separado. Si incluye un formulario, podrás responder y guardar tus avances sin salir de aquí.</p>
               <div id="space-patient-materials" className="space-patient-materials">
                 <div className="space-empty">Inicia sesión para ver tus materiales.</div>
               </div>
@@ -214,10 +215,10 @@ export default function MiEspacioPage() {
 
             <section className="space-section space-materials-section" aria-labelledby="space-shared-files-title">
               <div className="space-section-heading">
-                <div><p className="space-eyebrow">Archivos de tu consulta</p><h3 id="space-shared-files-title">Documentos y audios compartidos contigo</h3></div>
+                <div><p className="space-eyebrow">Archivos de tu consulta</p><h3 id="space-shared-files-title">Otros documentos y audios compartidos</h3></div>
                 <span id="space-shared-file-count" className="space-pill">Acceso privado</span>
               </div>
-              <p>Consulta o descarga únicamente los archivos que Carolina haya decidido compartir contigo.</p>
+              <p>Despliega cada archivo para consultarlo o descargarlo. Los cuadernos terapéuticos están agrupados en el apartado anterior.</p>
               <div id="space-shared-files" className="space-patient-materials">
                 <div className="space-empty">Inicia sesión para acceder a tus archivos.</div>
               </div>
@@ -308,7 +309,7 @@ export default function MiEspacioPage() {
       </aside>
 
       <Script src="/patient-video.js?v=20261009-1" strategy="afterInteractive" />
-      <Script src="/mi-espacio.js?v=20261111-pdf-completo-1" strategy="afterInteractive" />
+      <Script src="/mi-espacio.js?v=20261111-cuadernos-secciones-1" strategy="afterInteractive" />
       <Script src="/session-prep.js?v=20261017-1" strategy="afterInteractive" />
       <Script src="/patient-goal-process.js?v=20261109-1" strategy="afterInteractive" />
     </main>
