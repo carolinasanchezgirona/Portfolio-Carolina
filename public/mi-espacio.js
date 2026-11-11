@@ -604,104 +604,24 @@
     form.append(section);
   }
 
-  // The renderer is bundled in the site's own static assets. Neither the
-  // original PDF nor its pages are transmitted to any third-party service.
+  // Native inline reader, protected by the same patient session as the file.
+  // No external PDF script or missing vendored dependency is needed. The
+  // patient has an explicit link to the same private PDF if their mobile
+  // browser does not support embedded PDF viewing.
   const renderedPdfHosts = new WeakSet();
   async function renderCompletePdfPages(host) {
     if (!host || renderedPdfHosts.has(host) || !state.portalAuthenticated) return;
     const url = host.dataset.pdfUrl || "";
     if (!/^\/api\/patient-portal\/file\?id=[0-9a-f-]{36}$/i.test(url)) return;
     renderedPdfHosts.add(host);
-    // A previously interrupted render must never duplicate partial pages.
-    host.querySelectorAll(".space-pdf-form-page-wrap").forEach(node => node.remove());
-    const sessionEpoch = portalSessionEpoch;
-    const canContinue = () => state.portalAuthenticated && sessionEpoch === portalSessionEpoch &&
-      host.isConnected && host.closest(".space-patient-material")?.open;
-    const status = host.querySelector(".space-pdf-form-loading");
-    let task = null;
-    try {
-      if (!canContinue()) { renderedPdfHosts.delete(host); return; }
-      const pdfjs = await import("/vendor/pdfjs/pdf.mjs");
-      if (!canContinue()) { renderedPdfHosts.delete(host); return; }
-      pdfjs.GlobalWorkerOptions.workerSrc = "/vendor/pdfjs/pdf.worker.mjs";
-      task = pdfjs.getDocument({
-        url,
-        withCredentials: true,
-        isEvalSupported: false,
-        cMapUrl: "/vendor/pdfjs/cmaps/",
-        cMapPacked: true,
-        standardFontDataUrl: "/vendor/pdfjs/standard_fonts/",
-        wasmUrl: "/vendor/pdfjs/wasm/",
-      });
-      const pdf = await task.promise;
-      if (!canContinue()) { await task.destroy(); renderedPdfHosts.delete(host); return; }
-      if (status) status.textContent = "Mostrando " + pdf.numPages +
-        (pdf.numPages === 1 ? " página del documento original…" : " páginas del documento original…");
-      // Render sequentially to avoid exhausting memory in Android WebView.
-      for (let pageNumber = 1; pageNumber <= pdf.numPages; pageNumber++) {
-        if (!canContinue()) { await task.destroy(); renderedPdfHosts.delete(host); return; }
-        const page = await pdf.getPage(pageNumber);
-        const original = page.getViewport({ scale: 1 });
-        const width = Math.max(250, Math.min((host.clientWidth || 700) - 32, 900));
-        const scale = Math.min(width / original.width, 1.75);
-        const viewport = page.getViewport({ scale });
-        const ratio = Math.min(window.devicePixelRatio || 1, 1.5);
-        const canvas = document.createElement("canvas");
-        canvas.className = "space-pdf-form-page";
-        canvas.setAttribute("role", "img");
-        canvas.setAttribute("aria-label", "Página " + pageNumber + " de " + pdf.numPages +
-          " del documento terapéutico");
-        canvas.width = Math.max(1, Math.floor(viewport.width * ratio));
-        canvas.height = Math.max(1, Math.floor(viewport.height * ratio));
-        canvas.style.width = Math.floor(viewport.width) + "px";
-        const context = canvas.getContext("2d", { alpha: false });
-        if (!context) throw new Error("No se puede mostrar el documento en este dispositivo.");
-        context.setTransform(ratio, 0, 0, ratio, 0, 0);
-        await page.render({ canvas, canvasContext: context, viewport }).promise;
-        if (!canContinue()) { await task.destroy(); renderedPdfHosts.delete(host); return; }
-        const pageWrap = document.createElement("section");
-        pageWrap.className = "space-pdf-form-page-wrap";
-        pageWrap.append(canvas);
-        // Text layer alternative for reading and selecting the original wording.
-        // It is extracted locally from the same authenticated file, never OCR.
-        try {
-          const content = await page.getTextContent();
-          const raw = Array.isArray(content?.items) ? content.items : [];
-          const transcript = raw.map(item => {
-            if (typeof item?.str !== "string") return "";
-            return item.str + (item.hasEOL ? "\n" : " ");
-          }).join("").trim();
-          if (transcript) {
-            const readable = document.createElement("details");
-            readable.className = "space-pdf-form-transcript";
-            const toggle = document.createElement("summary");
-            toggle.textContent = "Leer o seleccionar el texto de la página " + pageNumber;
-            const paragraph = document.createElement("p");
-            paragraph.textContent = transcript.slice(0, 100000);
-            readable.append(toggle, paragraph);
-            pageWrap.append(readable);
-          }
-        } catch (_) {
-          // Image-only or malformed PDFs still display their original pages.
-        }
-        if (!canContinue()) { await task.destroy(); renderedPdfHosts.delete(host); return; }
-        host.append(pageWrap);
-        page.cleanup();
-        // Make each page available progressively, keeping the UI responsive.
-        await new Promise(resolve => requestAnimationFrame(resolve));
-      }
-      if (status) status.textContent = "Documento completo · " + pdf.numPages +
-        (pdf.numPages === 1 ? " página" : " páginas");
-    } catch (error) {
-      if (!canContinue()) { renderedPdfHosts.delete(host); return; }
-      if (status) status.textContent = "No se han podido mostrar todas las páginas aquí. Utiliza «Abrir documento completo» o descarga el PDF original.";
-      console.error("Visor de documento privado no disponible", error);
-      renderedPdfHosts.delete(host);
-    } finally {
-      if (!canContinue()) {
-        try { await task?.destroy(); } catch (_) {}
-      }
-    }
+    const reader = document.createElement("iframe");
+    reader.className = "space-pdf-form-frame";
+    reader.title = "Documento terapéutico original completo";
+    reader.loading = "lazy";
+    reader.referrerPolicy = "no-referrer";
+    reader.src = url;
+    reader.setAttribute("aria-label", "PDF original completo en visor privado");
+    host.replaceChildren(reader);
   }
 
   // Each objective can define its own questions, without replicating the PDF.
@@ -873,7 +793,41 @@
         ? "Escribe en los espacios de cada ejercicio. Guarda un borrador para continuar otro día; Carolina solo verá las respuestas cuando decidas compartirlas."
         : "Puedes escribir o utilizar el autorregistro guiado. Solo se comparte con Carolina si pulsas «Compartir respuestas».";
       const form = document.createElement("form");
-      if (sourceFile) appendCompletePdfToForm(form, sourceFile);
+      let answerTarget = form;
+      if (sourceFile) {
+      const mobileNavigation = document.createElement("div");
+      mobileNavigation.className = "space-fillable-mobile-nav";
+      const readButton = document.createElement("button");
+      readButton.type = "button";
+      readButton.className = "space-secondary";
+      readButton.textContent = "Leer PDF completo";
+      const answerButton = document.createElement("button");
+      answerButton.type = "button";
+      answerButton.className = "space-secondary";
+      answerButton.textContent = "Escribir respuestas";
+      mobileNavigation.append(readButton, answerButton);
+      const workspace = document.createElement("div");
+      workspace.className = "space-fillable-workspace";
+      const answerPanel = document.createElement("section");
+      answerPanel.className = "space-fillable-answer-panel";
+      answerPanel.setAttribute("aria-label", "Respuestas del documento");
+      const panelHeading = document.createElement("h5");
+      panelHeading.textContent = "Mis respuestas";
+      answerPanel.append(panelHeading);
+      const focusPane = (panel, focus) => {
+        panel.scrollIntoView({ block: "start", behavior: "smooth" });
+        if (focus) panel.querySelector("[data-form-answer], [data-response-record]")?.focus({ preventScroll: true });
+      };
+      readButton.addEventListener("click", () => {
+        const panel = workspace.querySelector(".space-pdf-form-document");
+        if (panel) focusPane(panel, false);
+      });
+      answerButton.addEventListener("click", () => focusPane(answerPanel, true));
+      form.append(mobileNavigation, workspace);
+      appendCompletePdfToForm(workspace, sourceFile);
+      workspace.append(answerPanel);
+        answerTarget = answerPanel;
+      }
 
       const recordLabel = document.createElement("label");
       recordLabel.textContent = sourceFile ? "Notas o dudas adicionales (opcional)"
@@ -886,8 +840,8 @@
       record.placeholder = "Escribe aquí…";
       recordLabel.append(record);
       if (sourceFile) {
-        appendInteractiveQuestions(form, item, documentData);
-        form.append(recordLabel);
+        appendInteractiveQuestions(answerTarget, item, documentData);
+        answerTarget.append(recordLabel);
       } else {
         if(documentData.clinical_area!=="neuropsychology")form.append(createGuidedRecord(record));
         form.append(recordLabel);
@@ -903,7 +857,7 @@
         field.value = saved.answers[questionIndex] || "";
         field.placeholder = "Tu respuesta…";
         label.append(field);
-        form.append(label);
+        answerTarget.append(label);
       });
 
       const actions = document.createElement("div");
@@ -938,7 +892,8 @@
         if (!window.confirm("¿Compartir estas respuestas con Carolina? Si prefieres conservarlas solo para ti, puedes guardar un borrador.")) return;
         void savePatientMaterialResponse(item, form, "share", responseStatus);
       });
-      form.append(actions, responseStatus);
+      if (sourceFile) answerTarget.append(actions, responseStatus);
+      else form.append(actions, responseStatus);
       responseBox.append(heading, explainer, form);
       body.append(responseBox);
     }
