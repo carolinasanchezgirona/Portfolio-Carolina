@@ -974,13 +974,36 @@
 
     const actions = document.createElement("div");
     actions.className = "space-patient-shared-actions";
+    const linkedMaterial = mime === "application/pdf"
+      ? (Array.isArray(state.portalData?.materials) ? state.portalData.materials : [])
+        .find(material => material.patient_document?.source_document_id === id &&
+          ["sent", "assigned", "reviewed"].includes(material.status))
+      : null;
+    if (linkedMaterial) {
+      const openWorkbook = document.createElement("button");
+      openWorkbook.type = "button";
+      openWorkbook.className = "space-primary";
+      openWorkbook.textContent = "Abrir y responder";
+      openWorkbook.addEventListener("click", () => {
+        navigateToView("therapy");
+        const linked = document.getElementById("space-material-" + linkedMaterial.id);
+        if (linked && patientMaterials?.contains(linked)) {
+          linked.open = true;
+          linked.scrollIntoView({ block: "start", behavior: "auto" });
+          const heading = linked.querySelector("summary");
+          heading?.setAttribute("tabindex", "-1");
+          heading?.focus({ preventScroll: true });
+        }
+      });
+      actions.append(openWorkbook);
+    }
     if (mime === "application/pdf" || mime.startsWith("image/")) {
       const view = document.createElement("a");
       view.className = "space-secondary";
       view.href = url;
       view.target = "_blank";
       view.rel = "noopener noreferrer";
-      view.textContent = "Ver archivo";
+      view.textContent = linkedMaterial ? "Ver solo el PDF" : "Ver archivo";
       actions.append(view);
     }
     const download = document.createElement("a");
