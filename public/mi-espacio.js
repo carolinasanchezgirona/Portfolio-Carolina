@@ -850,6 +850,7 @@
         // exercises: the entire unmodified original stays in the reading part.
         const readingPart = createWorkbookPart("Leer el cuaderno completo",
           "Psicoeducación, técnicas, ejemplos y consignas originales");
+        readingPart.section.classList.add("space-workbook-part-reading");
         appendCompletePdfToForm(readingPart.content, sourceFile);
         readingPart.content.append(downloadArea);
         workspace.append(readingPart.section);
@@ -961,13 +962,14 @@
 
     details.append(summary, body);
     if (sourceFile) {
+      const readingPart = details.querySelector(".space-workbook-part-reading");
       const showCompleteDocument = () => {
-        if (!details.open || !details.isConnected || !state.portalAuthenticated) return;
-        const host = details.querySelector(".space-pdf-form-reader");
+        if (!details.open || !readingPart?.open || !details.isConnected || !state.portalAuthenticated) return;
+        const host = readingPart.querySelector(".space-pdf-form-reader");
         if (host) void renderCompletePdfPages(host);
       };
       details.addEventListener("toggle", showCompleteDocument);
-      if (details.open) requestAnimationFrame(showCompleteDocument);
+      readingPart?.addEventListener("toggle", showCompleteDocument);
     }
     materialSavedSnapshots.set(details, snapshotPatientMaterial(details));
     const markUnsaved = event => {
@@ -1007,30 +1009,46 @@
   }
 
   function createPatientFile(file) {
-    const card = document.createElement("article");
-    card.className = "space-patient-shared-file";
-    const title = document.createElement("h4");
+    // Shared PDFs, audio and documents are all accessible via an individual
+    // accordion. Existing grants, URLs and downloads remain unchanged.
+    const card = document.createElement("details");
+    card.className = "space-patient-shared-file space-shared-file-accordion";
+    const summary = document.createElement("summary");
+    summary.className = "space-shared-file-summary";
+    const summaryText = document.createElement("span");
+    summaryText.className = "space-shared-file-summary-text";
+    const title = document.createElement("strong");
     title.textContent = String(file.title || "Archivo compartido");
-    const label = document.createElement("p");
+    const label = document.createElement("small");
     label.className = "space-patient-shared-file-kind";
     label.textContent = patientFileKind(file);
-    card.append(label, title);
+    summaryText.append(title, label);
+    const chevron = document.createElement("span");
+    chevron.className = "space-shared-file-chevron";
+    chevron.setAttribute("aria-hidden", "true");
+    chevron.textContent = "⌄";
+    summary.append(summaryText, chevron);
+
+    const content = document.createElement("div");
+    content.className = "space-shared-file-content";
     if (file.patient_note) {
       const note = document.createElement("p");
       note.textContent = String(file.patient_note);
-      card.append(note);
+      content.append(note);
     }
 
     const id = String(file.id || "");
     const url = "/api/patient-portal/file?id=" + encodeURIComponent(id);
     const mime = String(file.mime_type || "");
     if (mime.startsWith("audio/")) {
+      const audioPart = createWorkbookPart("Escuchar audio", "Reproductor privado del material compartido");
       const audio = document.createElement("audio");
       audio.controls = true;
       audio.preload = "none";
       audio.src = url;
       audio.setAttribute("aria-label", "Escuchar " + title.textContent);
-      card.append(audio);
+      audioPart.content.append(audio);
+      content.append(audioPart.section);
     }
 
     const actions = document.createElement("div");
@@ -1057,6 +1075,21 @@
         }
       });
       actions.append(openWorkbook);
+    } else if (mime === "application/pdf") {
+      // A PDF which has not been turned into a prescribed activity remains
+      // a readable workbook; do not invent questions or patient responses.
+      const reading = createWorkbookPart("Leer documento completo",
+        "Contenido original, sin modificaciones ni omisiones");
+      reading.section.classList.add("space-workbook-part-reading");
+      appendCompletePdfToForm(reading.content, file);
+      content.append(reading.section);
+      const openPrivateReader = () => {
+        if (!card.open || !reading.section.open || !card.isConnected || !state.portalAuthenticated) return;
+        const host = reading.content.querySelector(".space-pdf-form-reader");
+        if (host) void renderCompletePdfPages(host);
+      };
+      card.addEventListener("toggle", openPrivateReader);
+      reading.section.addEventListener("toggle", openPrivateReader);
     }
     if (mime === "application/pdf" || mime.startsWith("image/")) {
       const view = document.createElement("a");
@@ -1072,7 +1105,8 @@
     download.href = url + "&download=1";
     download.textContent = "↓ Descargar";
     actions.append(download);
-    card.append(actions);
+    content.append(actions);
+    card.append(summary, content);
     return card;
   }
 
