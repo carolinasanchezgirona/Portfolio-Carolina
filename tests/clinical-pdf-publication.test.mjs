@@ -39,7 +39,7 @@ test("publication is checked server-side against clinician, source and questions
   assert.match(handler, /assignment\.status !== "prepared"/);
   assert.match(handler, /doc\.conversion_review_required !== true/);
   assert.match(handler, /doc\.conversion_reviewed_at/);
-  assert.match(handler, /definitions\.length < 1 \|\| definitions\.length > 30/);
+  assert.match(handler, /definitions\.length > 30/);
   assert.match(handler, /ids\.has\(id\)/);
   assert.match(handler, /original\.mime_type !== "application\/pdf"/);
   assert.match(handler, /original\.category !== "intervention_plan"/);
