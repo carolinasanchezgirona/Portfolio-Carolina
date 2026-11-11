@@ -304,6 +304,31 @@
     target.append(section);
   }
 
+  // A workbook is one collapsible item, with independently collapsible
+  // reading and exercise sections. All content stays in the private portal.
+  function createWorkbookPart(title, description, open = false) {
+    const section = document.createElement("details");
+    section.className = "space-workbook-part";
+    section.open = open;
+    const summary = document.createElement("summary");
+    const text = document.createElement("span");
+    text.className = "space-workbook-part-heading";
+    const name = document.createElement("strong");
+    name.textContent = title;
+    const hint = document.createElement("small");
+    hint.textContent = description;
+    text.append(name, hint);
+    const arrow = document.createElement("span");
+    arrow.className = "space-workbook-part-chevron";
+    arrow.setAttribute("aria-hidden", "true");
+    arrow.textContent = "⌄";
+    summary.append(text, arrow);
+    const content = document.createElement("div");
+    content.className = "space-workbook-part-body";
+    section.append(summary, content);
+    return { section, content };
+  }
+
   function patientResponseData(item, questionCount) {
     const source = item?.patient_response && typeof item.patient_response === "object" ? item.patient_response : {};
     const answers = Array.isArray(source.answers) ? source.answers : [];
@@ -691,7 +716,7 @@
     if (/^[0-9a-f-]{36}$/i.test(String(item.id || ""))) {
       details.id = "space-material-" + item.id;
     }
-    if (index === 0) details.open = true;
+    // Workbooks start collapsed. Opening one never activates another patient's content.
 
     const summary = document.createElement("summary");
     const titleWrap = document.createElement("div");
@@ -715,15 +740,36 @@
       ? (Array.isArray(state.portalData?.files) ? state.portalData.files : [])
           .find(file => file.id === sourceId && file.mime_type === "application/pdf")
       : null;
+    let techniquesPart = null;
+    let neuroTaskContainer = null;
     if (!sourceFile) {
-      appendPatientSection(body, "Para qué sirve", documentData.introduction);
-      appendPatientSection(body, documentData.clinical_area==="neuropsychology" ? "Para qué sirven estas actividades" : "Comprender lo que te pasa", documentData.why);
-      appendPatientSection(body, "Plan de práctica", documentData.frequency);
-      if(documentData.clinical_area!=="neuropsychology"||!appendNeuroWorkbook(body,documentData,item)) {
-        appendPatientSection(body, documentData.material_type === "psychoeducation" ? "Contenido" : "Cómo hacerlo", documentData.instructions);
+      const reading = createWorkbookPart("Psicoeducación", "Explicaciones y objetivos del material");
+      appendPatientSection(reading.content, "Para qué sirve", documentData.introduction);
+      appendPatientSection(reading.content,
+        documentData.clinical_area === "neuropsychology" ? "Para qué sirven estas actividades" : "Comprender lo que te pasa",
+        documentData.why);
+      if (reading.content.childNodes.length) body.append(reading.section);
+
+      techniquesPart = createWorkbookPart("Técnicas y ejemplos", "Instrucciones, pautas y material de apoyo");
+      appendPatientSection(techniquesPart.content, "Plan de práctica", documentData.frequency);
+      if (documentData.clinical_area === "neuropsychology") {
+        neuroTaskContainer = document.createElement("div");
+        if (!appendNeuroWorkbook(neuroTaskContainer, documentData, item)) {
+          neuroTaskContainer = null;
+        }
+        // The structured exercise renderer selects task fields; preserve every
+        // original instruction in the reading section even if it was not parsed.
+        appendPatientSection(techniquesPart.content,
+          documentData.material_type === "psychoeducation" ? "Contenido" : "Instrucciones completas",
+          documentData.instructions);
+      } else {
+        appendPatientSection(techniquesPart.content,
+          documentData.material_type === "psychoeducation" ? "Contenido" : "Cómo hacerlo",
+          documentData.instructions);
       }
-      appendMaterialExamples(body, documentData.example);
-      appendPatientSection(body, "Qué conviene recordar", documentData.remember);
+      appendMaterialExamples(techniquesPart.content, documentData.example);
+      appendPatientSection(techniquesPart.content, "Qué conviene recordar", documentData.remember);
+      if (techniquesPart.content.childNodes.length) body.append(techniquesPart.section);
     }
     const downloadArea = document.createElement("div");
     downloadArea.className = "space-patient-downloads";
@@ -763,6 +809,15 @@
       details.setAttribute("data-print-material", "true");
       details.open = true;
       document.body.classList.add("space-print-patient-material");
+      // Closed reading sections must be printed too; restore the person's
+      // previous accordion state after the browser closes its print dialog.
+      const parts = [...details.querySelectorAll("details.space-workbook-part")];
+      const expandedBeforePrint = parts.map(part => part.open);
+      parts.forEach(part => { part.open = true; });
+      const restoreParts = () => {
+        parts.forEach((part, index) => { part.open = expandedBeforePrint[index]; });
+      };
+      window.addEventListener("afterprint", restoreParts, { once: true });
       try {
         window.print();
         downloadHint.textContent = "En Android, elige «Guardar como PDF» en las opciones de impresión. Si no aparece, abre esta página en Chrome.";
@@ -774,13 +829,17 @@
     // For original-PDF forms, offer the actual full PDF download instead.
     if (sourceFile) downloadArea.append(downloadLink, downloadHint);
     else downloadArea.append(downloadLink, printButton, downloadHint);
-    body.append(downloadArea);
+    // The original file link moves into the reading accordion below.
+    if (!sourceFile && techniquesPart) {
+      techniquesPart.content.append(downloadArea);
+      if (!body.contains(techniquesPart.section)) body.append(techniquesPart.section);
+    } else if (!sourceFile) body.append(downloadArea);
 
 
-    if (documentData.material_type !== "psychoeducation" || documentData.record_prompt) {
+    if (sourceFile || documentData.material_type !== "psychoeducation" || documentData.record_prompt) {
       const questions = Array.isArray(documentData.session_questions) && documentData.session_questions.length
         ? documentData.session_questions.slice(0, 6)
-        : ["¿Qué te resultó más fácil o más difícil?", "¿Qué observaste al probarlo?", "¿Qué ajustarías para que te resulte más útil?"];
+        : sourceFile ? [] : ["¿Qué te resultó más fácil o más difícil?", "¿Qué observaste al probarlo?", "¿Qué ajustarías para que te resulte más útil?"];
       const saved = patientResponseData(item, questions.length);
       const responseBox = document.createElement("div");
       responseBox.className = "space-patient-response";
@@ -794,39 +853,40 @@
         : "Puedes escribir o utilizar el autorregistro guiado. Solo se comparte con Carolina si pulsas «Compartir respuestas».";
       const form = document.createElement("form");
       let answerTarget = form;
+      let exerciseSection = null;
+      let exerciseContent = null;
       if (sourceFile) {
-      const mobileNavigation = document.createElement("div");
-      mobileNavigation.className = "space-fillable-mobile-nav";
-      const readButton = document.createElement("button");
-      readButton.type = "button";
-      readButton.className = "space-secondary";
-      readButton.textContent = "Leer PDF completo";
-      const answerButton = document.createElement("button");
-      answerButton.type = "button";
-      answerButton.className = "space-secondary";
-      answerButton.textContent = "Escribir respuestas";
-      mobileNavigation.append(readButton, answerButton);
-      const workspace = document.createElement("div");
-      workspace.className = "space-fillable-workspace";
-      const answerPanel = document.createElement("section");
-      answerPanel.className = "space-fillable-answer-panel";
-      answerPanel.setAttribute("aria-label", "Respuestas del documento");
-      const panelHeading = document.createElement("h5");
-      panelHeading.textContent = "Mis respuestas";
-      answerPanel.append(panelHeading);
-      const focusPane = (panel, focus) => {
-        panel.scrollIntoView({ block: "start", behavior: "smooth" });
-        if (focus) panel.querySelector("[data-form-answer], [data-response-record]")?.focus({ preventScroll: true });
-      };
-      readButton.addEventListener("click", () => {
-        const panel = workspace.querySelector(".space-pdf-form-document");
-        if (panel) focusPane(panel, false);
-      });
-      answerButton.addEventListener("click", () => focusPane(answerPanel, true));
-      form.append(mobileNavigation, workspace);
-      appendCompletePdfToForm(workspace, sourceFile);
-      workspace.append(answerPanel);
-        answerTarget = answerPanel;
+        const workspace = document.createElement("div");
+        workspace.className = "space-fillable-workspace";
+
+        // Never assume which PDF pages correspond to psychoeducation or
+        // exercises: the entire unmodified original stays in the reading part.
+        const readingPart = createWorkbookPart("Leer el cuaderno completo",
+          "Psicoeducación, técnicas, ejemplos y consignas originales");
+        readingPart.section.classList.add("space-workbook-part-reading");
+        appendCompletePdfToForm(readingPart.content, sourceFile);
+        readingPart.content.append(downloadArea);
+        workspace.append(readingPart.section);
+
+        const answerPart = createWorkbookPart("Ejercicios y respuestas",
+          item.patient_response_status === "shared" ? "Respuestas compartidas" :
+          item.patient_response_status === "draft" ? "Borrador guardado" : "Formulario para completar");
+        answerPart.content.classList.add("space-fillable-answer-panel");
+        const panelHeading = document.createElement("h5");
+        panelHeading.textContent = "Mis respuestas";
+        answerPart.content.append(panelHeading);
+        workspace.append(answerPart.section);
+
+        form.append(workspace);
+        answerTarget = answerPart.content;
+      } else {
+        const answerPart = createWorkbookPart("Ejercicios y respuestas",
+          item.patient_response_status === "shared" ? "Respuestas compartidas" :
+          item.patient_response_status === "draft" ? "Borrador guardado" : "Formulario para completar");
+        exerciseSection = answerPart.section;
+        exerciseContent = answerPart.content;
+        answerTarget = form;
+        if (neuroTaskContainer) answerTarget.append(neuroTaskContainer);
       }
 
       const recordLabel = document.createElement("label");
@@ -897,19 +957,32 @@
       });
       if (sourceFile) answerTarget.append(actions, responseStatus);
       else form.append(actions, responseStatus);
-      responseBox.append(heading, explainer, form);
-      body.append(responseBox);
+      if (exerciseSection) {
+        // Move the entire form into the exercise accordion so free-text fields,
+        // neuropsychological tasks and save/share actions remain together.
+        // The form's own fields are the response source of truth.
+        const host = document.createElement("div");
+        host.className = "space-workbook-response-content";
+        host.append(explainer, form);
+        // Neuro tasks live within the same exercise accordion, not in techniques.
+        exerciseContent.append(host);
+        body.append(exerciseSection);
+      } else {
+        responseBox.append(heading, explainer, form);
+        body.append(responseBox);
+      }
     }
 
     details.append(summary, body);
     if (sourceFile) {
+      const readingPart = details.querySelector(".space-workbook-part-reading");
       const showCompleteDocument = () => {
-        if (!details.open || !details.isConnected || !state.portalAuthenticated) return;
-        const host = details.querySelector(".space-pdf-form-reader");
+        if (!details.open || !readingPart?.open || !details.isConnected || !state.portalAuthenticated) return;
+        const host = readingPart.querySelector(".space-pdf-form-reader");
         if (host) void renderCompletePdfPages(host);
       };
       details.addEventListener("toggle", showCompleteDocument);
-      if (details.open) requestAnimationFrame(showCompleteDocument);
+      readingPart?.addEventListener("toggle", showCompleteDocument);
     }
     materialSavedSnapshots.set(details, snapshotPatientMaterial(details));
     const markUnsaved = event => {
@@ -949,30 +1022,46 @@
   }
 
   function createPatientFile(file) {
-    const card = document.createElement("article");
-    card.className = "space-patient-shared-file";
-    const title = document.createElement("h4");
+    // Shared PDFs, audio and documents are all accessible via an individual
+    // accordion. Existing grants, URLs and downloads remain unchanged.
+    const card = document.createElement("details");
+    card.className = "space-patient-shared-file space-shared-file-accordion";
+    const summary = document.createElement("summary");
+    summary.className = "space-shared-file-summary";
+    const summaryText = document.createElement("span");
+    summaryText.className = "space-shared-file-summary-text";
+    const title = document.createElement("strong");
     title.textContent = String(file.title || "Archivo compartido");
-    const label = document.createElement("p");
+    const label = document.createElement("small");
     label.className = "space-patient-shared-file-kind";
     label.textContent = patientFileKind(file);
-    card.append(label, title);
+    summaryText.append(title, label);
+    const chevron = document.createElement("span");
+    chevron.className = "space-shared-file-chevron";
+    chevron.setAttribute("aria-hidden", "true");
+    chevron.textContent = "⌄";
+    summary.append(summaryText, chevron);
+
+    const content = document.createElement("div");
+    content.className = "space-shared-file-content";
     if (file.patient_note) {
       const note = document.createElement("p");
       note.textContent = String(file.patient_note);
-      card.append(note);
+      content.append(note);
     }
 
     const id = String(file.id || "");
     const url = "/api/patient-portal/file?id=" + encodeURIComponent(id);
     const mime = String(file.mime_type || "");
     if (mime.startsWith("audio/")) {
+      const audioPart = createWorkbookPart("Escuchar audio", "Reproductor privado del material compartido");
       const audio = document.createElement("audio");
       audio.controls = true;
       audio.preload = "none";
       audio.src = url;
       audio.setAttribute("aria-label", "Escuchar " + title.textContent);
-      card.append(audio);
+      audioPart.content.append(audio);
+      content.append(audioPart.section);
     }
 
     const actions = document.createElement("div");
@@ -999,6 +1088,21 @@
         }
       });
       actions.append(openWorkbook);
+    } else if (mime === "application/pdf") {
+      // A PDF which has not been turned into a prescribed activity remains
+      // a readable workbook; do not invent questions or patient responses.
+      const reading = createWorkbookPart("Leer documento completo",
+        "Contenido original, sin modificaciones ni omisiones");
+      reading.section.classList.add("space-workbook-part-reading");
+      appendCompletePdfToForm(reading.content, file);
+      content.append(reading.section);
+      const openPrivateReader = () => {
+        if (!card.open || !reading.section.open || !card.isConnected || !state.portalAuthenticated) return;
+        const host = reading.content.querySelector(".space-pdf-form-reader");
+        if (host) void renderCompletePdfPages(host);
+      };
+      card.addEventListener("toggle", openPrivateReader);
+      reading.section.addEventListener("toggle", openPrivateReader);
     }
     if (mime === "application/pdf" || mime.startsWith("image/")) {
       const view = document.createElement("a");
@@ -1014,7 +1118,8 @@
     download.href = url + "&download=1";
     download.textContent = "↓ Descargar";
     actions.append(download);
-    card.append(actions);
+    content.append(actions);
+    card.append(summary, content);
     return card;
   }
 
@@ -1038,39 +1143,55 @@
 
     const materials = Array.isArray(data?.materials) ? data.materials : [];
     const files = Array.isArray(data?.files) ? data.files : [];
+    // Each treatment PDF appears only once: within its published interactive
+    // workbook, or as a read-only collapsible workbook if not converted yet.
+    const linkedSourceIds = new Set(materials.map(item =>
+      String(item.patient_document?.source_document_id || "")).filter(Boolean));
+    const standaloneWorkbooks = files.filter(file =>
+      file.mime_type === "application/pdf" &&
+      file.category === "intervention_plan" && !linkedSourceIds.has(String(file.id)));
+    const workbookFileIds = new Set([...linkedSourceIds,
+      ...standaloneWorkbooks.map(file => String(file.id))]);
+    const otherFiles = files.filter(file => !workbookFileIds.has(String(file.id)));
+
     const fileCount = document.getElementById("space-shared-file-count");
-    if (fileCount) fileCount.textContent = files.length === 1 ? "1 archivo" : files.length + " archivos";
+    if (fileCount) fileCount.textContent = otherFiles.length === 1
+      ? "1 archivo" : otherFiles.length + " archivos";
     if (patientFiles) {
       patientFiles.replaceChildren();
-      if (!files.length) {
+      if (!otherFiles.length) {
         const empty = document.createElement("div");
         empty.className = "space-empty";
-        empty.textContent = "Todavía no tienes documentos ni audios compartidos contigo.";
+        empty.textContent = "No hay otros documentos ni audios compartidos.";
         patientFiles.append(empty);
       } else {
-        files.forEach(file => patientFiles.append(createPatientFile(file)));
+        otherFiles.forEach(file => patientFiles.append(createPatientFile(file)));
       }
     }
+    const workbookCount = materials.length + standaloneWorkbooks.length;
     const count = document.getElementById("space-material-count");
-    if (count) count.textContent = materials.length === 1 ? "1 material disponible" : `${materials.length} materiales disponibles`;
+    if (count) count.textContent = workbookCount === 1
+      ? "1 cuaderno disponible" : workbookCount + " cuadernos disponibles";
     const quickCount = document.getElementById("space-quick-material-count");
-    if (quickCount) quickCount.textContent = materials.length
-      ? `Tienes ${materials.length} ${materials.length === 1 ? "material disponible" : "materiales disponibles"} para trabajar.`
-      : (files.length ? `También tienes ${files.length} archivo(s) compartido(s) en Mi espacio.` : "Aquí encontrarás los ejercicios que Carolina comparta contigo.");
+    if (quickCount) quickCount.textContent = workbookCount
+      ? `Tienes ${workbookCount} ${workbookCount === 1 ? "cuaderno" : "cuadernos"} para consultar o completar.`
+      : (otherFiles.length ? `También tienes ${otherFiles.length} archivo(s) compartido(s) en Mi espacio.`
+        : "Aquí encontrarás los materiales que Carolina comparta contigo.");
     const therapyStatus = document.getElementById("space-therapy-status");
-    if (therapyStatus) therapyStatus.textContent = materials.length || files.length
-      ? "Tienes ejercicios o archivos disponibles para consultar entre sesiones."
+    if (therapyStatus) therapyStatus.textContent = workbookCount || otherFiles.length
+      ? "Tienes cuadernos o archivos disponibles para consultar entre sesiones."
       : "No tienes material pendiente en este momento.";
 
     if (patientMaterials) {
       patientMaterials.replaceChildren();
-      if (!materials.length) {
+      if (!workbookCount) {
         const empty = document.createElement("div");
         empty.className = "space-empty";
-        empty.textContent = "No tienes materiales disponibles en este momento.";
+        empty.textContent = "No tienes cuadernos disponibles en este momento.";
         patientMaterials.append(empty);
       } else {
         materials.forEach((item, index) => patientMaterials.append(createPatientMaterial(item, index)));
+        standaloneWorkbooks.forEach(file => patientMaterials.append(createPatientFile(file)));
       }
     }
 

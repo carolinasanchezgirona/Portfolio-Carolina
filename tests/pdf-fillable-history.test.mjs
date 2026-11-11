@@ -14,13 +14,13 @@ test("Patient opens an entire private PDF alongside its editable fields", () => 
   assert.match(portal, /reader\.src = url/);
   assert.match(portal, /reader\.referrerPolicy = "no-referrer"/);
   assert.match(portal, /space-fillable-workspace/);
-  assert.match(portal, /appendCompletePdfToForm\(workspace, sourceFile\)/);
+  assert.match(portal, /appendCompletePdfToForm\(readingPart\.content, sourceFile\)/);
   assert.match(portal, /appendInteractiveQuestions\(answerTarget, item, documentData\)/);
   assert.match(portal, /answerTarget\.append\(actions, responseStatus\)/);
   assert.match(portal, /textContent = "Abrir y responder"/);
   assert.match(portal, /navigateToView\("therapy"\)/);
   assert.doesNotMatch(portal, /import\("\/vendor\/pdfjs\/pdf\.mjs"\)/);
-  assert.match(patientPage, /mi-espacio\.js\?v=20261111-pdf-completo-1/);
+  assert.match(patientPage, /mi-espacio\.js\?v=20261111-cuadernos-secciones-1/);
 });
 
 test("Original file stays private and PDF embedding is restricted to same origin", () => {

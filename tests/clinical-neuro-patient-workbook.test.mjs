@@ -48,7 +48,8 @@ test("la actividad del paciente es editable, persistente y revisable en Gestión
  const portal=read("public/mi-espacio.js");
  const worker=read("worker.ts");
  const clinical=read("public/admin-clinica.js");
- assert.match(portal,/appendNeuroWorkbook\(body,documentData,item\)/);
+ assert.match(portal,/appendNeuroWorkbook\(neuroTaskContainer, documentData, item\)/);
+ assert.match(portal,/if \(neuroTaskContainer\) answerTarget\.append\(neuroTaskContainer\)/);
  assert.match(portal,/data-neuro-answer/);
  assert.match(portal,/neuro_answers: neuroAnswers/);
  assert.match(worker,/rawNeuroAnswers\.length!==digitalTaskCount/);

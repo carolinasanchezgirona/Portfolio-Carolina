@@ -920,3 +920,113 @@ body.space-print-patient-material .space-patient-material[data-print-material] :
   .space-page .space-fillable-workspace .space-pdf-form-reader{height:58vh;min-height:380px}
   .space-page .space-fillable-mobile-nav{position:sticky;top:0;z-index:4;padding:8px 0;background:#fff}
 }
+
+
+/* Cuadernos desplegables por secciones: lectura íntegra, técnicas y ejercicios. */
+.space-page [data-space-panel="therapy"] .space-patient-material-body{
+  display:grid;
+  gap:13px;
+  padding-top:17px;
+}
+.space-page [data-space-panel="therapy"] .space-workbook-part{
+  min-width:0;
+  border:1px solid rgba(48,71,80,.17);
+  border-radius:15px;
+  background:#fff;
+  overflow:clip;
+}
+.space-page [data-space-panel="therapy"] .space-workbook-part>summary{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:14px;
+  min-height:65px;
+  cursor:pointer;
+  list-style:none;
+  margin:0;
+  padding:16px 19px;
+  background:#fafbf9;
+  color:#304750;
+}
+.space-page [data-space-panel="therapy"] .space-workbook-part>summary::-webkit-details-marker,
+.space-page [data-space-panel="therapy"] .space-shared-file-accordion>summary::-webkit-details-marker{
+  display:none;
+}
+.space-page .space-workbook-part-heading{display:grid;gap:4px;min-width:0}
+.space-page .space-workbook-part-heading strong{font-size:1rem;font-weight:750;color:#304750}
+.space-page .space-workbook-part-heading small{font-size:.79rem;color:#637782;line-height:1.45}
+.space-page .space-workbook-part-chevron,.space-page .space-shared-file-chevron{
+  font-size:1.12rem;
+  font-weight:750;
+  color:#617680;
+  transition:transform .18s ease;
+  flex-shrink:0;
+}
+.space-page .space-workbook-part[open]>.space-workbook-part-chevron,
+.space-page .space-workbook-part[open]>summary .space-workbook-part-chevron,
+.space-page .space-shared-file-accordion[open]>summary .space-shared-file-chevron{
+  transform:rotate(180deg);
+}
+.space-page .space-workbook-part-body{
+  padding:16px 19px 20px;
+  border-top:1px solid rgba(48,71,80,.1);
+}
+.space-page .space-workbook-part-body>.space-patient-section:first-child{padding-top:0}
+.space-page .space-workbook-part-body>.space-patient-section:last-child{border-bottom:0}
+.space-page .space-workbook-response-content>p{font-size:.88rem;line-height:1.65;color:#566f7f}
+.space-page .space-workbook-response-content form{display:grid;gap:10px}
+.space-page .space-workbook-response-content form>label{display:grid;gap:8px;color:#304750}
+.space-page .space-workbook-response-content form>label textarea{width:100%;min-height:110px}
+.space-page .space-fillable-workspace{grid-template-columns:minmax(0,1fr);margin:0;gap:12px}
+.space-page .space-fillable-workspace .space-workbook-part{width:100%}
+.space-page .space-fillable-workspace .space-workbook-part-body{padding:16px 19px}
+.space-page .space-fillable-workspace .space-pdf-form-document{margin:0}
+.space-page .space-fillable-workspace .space-fillable-answer-panel{border:0;box-shadow:none;padding:16px 19px}
+.space-page .space-shared-file-accordion{
+  display:block;
+  overflow:hidden;
+  padding:0;
+  border:1px solid rgba(48,71,80,.17);
+  background:#fff;
+  border-radius:16px;
+}
+.space-page .space-shared-file-accordion>summary{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:14px;
+  min-height:76px;
+  cursor:pointer;
+  list-style:none;
+  padding:18px 21px;
+}
+.space-page .space-shared-file-summary-text{display:grid;gap:6px;min-width:0}
+.space-page .space-shared-file-summary-text strong{color:#304750;font-size:1rem}
+.space-page .space-shared-file-summary-text small{color:#637782}
+.space-page .space-shared-file-content{
+  display:grid;
+  gap:14px;
+  padding:17px 20px 21px;
+  border-top:1px solid rgba(48,71,80,.1);
+}
+.space-page .space-shared-file-content .space-workbook-part>summary{padding:15px}
+.space-page .space-shared-file-content .space-workbook-part-body{padding:15px}
+.space-page .space-shared-file-content .space-pdf-form-document{margin:0}
+.space-page [data-space-panel="therapy"] .space-workbook-part:focus-within,
+.space-page [data-space-panel="therapy"] .space-shared-file-accordion:focus-within{border-color:#809DA8}
+.space-page [data-space-panel="therapy"] .space-workbook-part>summary:focus-visible,
+.space-page [data-space-panel="therapy"] .space-shared-file-accordion>summary:focus-visible{
+  outline:3px solid #708793;
+  outline-offset:-3px;
+}
+@media(max-width:700px){
+  .space-page [data-space-panel="therapy"] .space-workbook-part>summary{padding:14px 13px}
+  .space-page [data-space-panel="therapy"] .space-workbook-part-body{padding:14px 13px}
+  .space-page .space-fillable-workspace .space-fillable-answer-panel{padding:14px 13px}
+  .space-page .space-shared-file-accordion>summary{padding:16px 14px}
+  .space-page .space-shared-file-content{padding:13px 14px}
+  .space-page .space-fillable-workspace .space-pdf-form-reader{height:55vh;min-height:360px}
+}
+@media(prefers-reduced-motion:reduce){
+  .space-page :is(.space-workbook-part-chevron,.space-shared-file-chevron){transition:none}
+}
