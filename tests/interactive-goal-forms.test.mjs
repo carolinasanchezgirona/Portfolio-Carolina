@@ -45,7 +45,7 @@ test("original goal PDF is linked without copying into a public asset", () => {
   assert.match(admin, /formSourceDocumentId = doc\.id/);
   assert.match(admin, /source_document_id: formSourceDocumentId/);
   assert.match(admin, /interactiveFormFields = \[\]; \/\/ Never invent questions/);
-  assert.match(admin, /if \(!docForQuality\.form_fields\.length\)/);
+  assert.match(admin, /if \(releasing && formSourceDocumentId/);
   assert.match(portal, /source_document_id/);
   assert.match(portal, /state\.portalData\?\.files/);
   assert.match(portal, /\/api\/patient-portal\/file\?id=/);
