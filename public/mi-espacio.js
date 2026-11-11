@@ -612,6 +612,8 @@
     const url = host.dataset.pdfUrl || "";
     if (!/^\/api\/patient-portal\/file\?id=[0-9a-f-]{36}$/i.test(url)) return;
     renderedPdfHosts.add(host);
+    // A previously interrupted render must never duplicate partial pages.
+    host.querySelectorAll(".space-pdf-form-page-wrap").forEach(node => node.remove());
     const sessionEpoch = portalSessionEpoch;
     const canContinue = () => state.portalAuthenticated && sessionEpoch === portalSessionEpoch &&
       host.isConnected && host.closest(".space-patient-material")?.open;
@@ -633,14 +635,14 @@
       });
       const pdf = await task.promise;
       if (!canContinue()) { await task.destroy(); renderedPdfHosts.delete(host); return; }
-      if (status) status.textContent = "Documento completo · " + pdf.numPages +
-        (pdf.numPages === 1 ? " página" : " páginas");
+      if (status) status.textContent = "Mostrando " + pdf.numPages +
+        (pdf.numPages === 1 ? " página del documento original…" : " páginas del documento original…");
       // Render sequentially to avoid exhausting memory in Android WebView.
       for (let pageNumber = 1; pageNumber <= pdf.numPages; pageNumber++) {
         if (!canContinue()) { await task.destroy(); renderedPdfHosts.delete(host); return; }
         const page = await pdf.getPage(pageNumber);
         const original = page.getViewport({ scale: 1 });
-        const width = Math.max(280, Math.min(host.clientWidth || 700, 900));
+        const width = Math.max(250, Math.min((host.clientWidth || 700) - 32, 900));
         const scale = Math.min(width / original.width, 1.75);
         const viewport = page.getViewport({ scale });
         const ratio = Math.min(window.devicePixelRatio || 1, 1.5);
@@ -652,17 +654,44 @@
         canvas.width = Math.max(1, Math.floor(viewport.width * ratio));
         canvas.height = Math.max(1, Math.floor(viewport.height * ratio));
         canvas.style.width = Math.floor(viewport.width) + "px";
-        canvas.style.height = Math.floor(viewport.height) + "px";
         const context = canvas.getContext("2d", { alpha: false });
         if (!context) throw new Error("No se puede mostrar el documento en este dispositivo.");
         context.setTransform(ratio, 0, 0, ratio, 0, 0);
         await page.render({ canvas, canvasContext: context, viewport }).promise;
         if (!canContinue()) { await task.destroy(); renderedPdfHosts.delete(host); return; }
-        host.append(canvas);
+        const pageWrap = document.createElement("section");
+        pageWrap.className = "space-pdf-form-page-wrap";
+        pageWrap.append(canvas);
+        // Text layer alternative for reading and selecting the original wording.
+        // It is extracted locally from the same authenticated file, never OCR.
+        try {
+          const content = await page.getTextContent();
+          const raw = Array.isArray(content?.items) ? content.items : [];
+          const transcript = raw.map(item => {
+            if (typeof item?.str !== "string") return "";
+            return item.str + (item.hasEOL ? "\n" : " ");
+          }).join("").trim();
+          if (transcript) {
+            const readable = document.createElement("details");
+            readable.className = "space-pdf-form-transcript";
+            const toggle = document.createElement("summary");
+            toggle.textContent = "Leer o seleccionar el texto de la página " + pageNumber;
+            const paragraph = document.createElement("p");
+            paragraph.textContent = transcript.slice(0, 100000);
+            readable.append(toggle, paragraph);
+            pageWrap.append(readable);
+          }
+        } catch (_) {
+          // Image-only or malformed PDFs still display their original pages.
+        }
+        if (!canContinue()) { await task.destroy(); renderedPdfHosts.delete(host); return; }
+        host.append(pageWrap);
         page.cleanup();
         // Make each page available progressively, keeping the UI responsive.
         await new Promise(resolve => requestAnimationFrame(resolve));
       }
+      if (status) status.textContent = "Documento completo · " + pdf.numPages +
+        (pdf.numPages === 1 ? " página" : " páginas");
     } catch (error) {
       if (!canContinue()) { renderedPdfHosts.delete(host); return; }
       if (status) status.textContent = "No se han podido mostrar todas las páginas aquí. Utiliza «Abrir documento completo» o descarga el PDF original.";
