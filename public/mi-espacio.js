@@ -755,11 +755,13 @@
       if (documentData.clinical_area === "neuropsychology") {
         neuroTaskContainer = document.createElement("div");
         if (!appendNeuroWorkbook(neuroTaskContainer, documentData, item)) {
-          appendPatientSection(techniquesPart.content,
-            documentData.material_type === "psychoeducation" ? "Contenido" : "Cómo hacerlo",
-            documentData.instructions);
           neuroTaskContainer = null;
         }
+        // The structured exercise renderer selects task fields; preserve every
+        // original instruction in the reading section even if it was not parsed.
+        appendPatientSection(techniquesPart.content,
+          documentData.material_type === "psychoeducation" ? "Contenido" : "Instrucciones completas",
+          documentData.instructions);
       } else {
         appendPatientSection(techniquesPart.content,
           documentData.material_type === "psychoeducation" ? "Contenido" : "Cómo hacerlo",
