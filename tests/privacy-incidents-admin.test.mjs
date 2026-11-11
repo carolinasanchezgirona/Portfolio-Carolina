@@ -22,7 +22,7 @@ test("PDF original solo en bucket privado, con validación y verificación de in
   assert.match(page,/crypto\.subtle\.digest\("SHA-256"/);
   assert.match(page,/String\.fromCharCode\(\.\.\.signature\) !== "%PDF-"/);
   assert.match(page,/attachment_path: path, attachment_sha256: sha256/);
-  assert.match(page,/actual !== selected\.attachment_sha256/);
+  assert.match(page,/actual !== expectedSha256/);
   assert.match(page,/evidence_access_requested/);
   assert.match(page,/evidence_access_verified/);
   assert.doesNotMatch(page,/getPublicUrl|storage\/v1\/object\/public/);
