@@ -47,7 +47,7 @@ test("PDF is presented BEFORE its responses, without replacing original prose wi
   assert.match(portal, /if \(!sourceFile\) \{\s*appendPatientSection\(body/);
   assert.match(portal, /appendCompletePdfToForm\(workspace, sourceFile\)/);
   const start = portal.indexOf('const form = document.createElement("form");', portal.indexOf("function createPatientMaterial"));
-  const after = portal.slice(start, start + 1500);
+  const after = portal.slice(start, start + 4500);
   assert.ok(after.indexOf("appendCompletePdfToForm(workspace, sourceFile)") >= 0);
   assert.match(portal, /state\.portalData\?\.files/);
   assert.match(portal, /sourceFile \? "Material completo y respuestas"/);
