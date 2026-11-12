@@ -291,8 +291,30 @@
 .social-links svg.social-link-icon circle{
   vector-effect:non-scaling-stroke;
 }
-.social-links-compact{gap:6px;}
-.social-links-compact a{min-height:32px;padding:6px 9px;font-size:.76rem;}
+.social-links-compact{gap:10px;}
+.social-links-compact a{
+  width:36px;
+  height:36px;
+  min-height:36px;
+  padding:0;
+  justify-content:center;
+  border:0;
+  border-radius:0;
+  background:transparent;
+  color:var(--e-ink-soft);
+}
+.social-links-compact a span{display:none;}
+.social-links-compact a:hover{border-color:transparent;background:transparent;color:var(--e-teal);}
+.social-links-compact a:focus-visible{outline:2px solid var(--e-teal);outline-offset:3px;border-radius:4px;}
+.social-links-compact svg.social-link-icon{
+  width:25px!important;
+  height:25px!important;
+  min-width:25px;
+  max-width:25px;
+  min-height:25px;
+  max-height:25px;
+  flex:0 0 25px;
+}
 .editorial-about-social{margin-top:20px;}
 .seo-social-links{margin:14px 0 18px;}
 .site-footer-contact{display:flex;flex-wrap:wrap;align-items:center;justify-content:flex-end;gap:12px;}
