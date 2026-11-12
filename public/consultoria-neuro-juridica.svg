@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 660" role="img" aria-labelledby="title desc">
+<title id="title">Neuropsicología y ámbito jurídico</title><desc id="desc">Ilustración editorial de una balanza de justicia junto a un cerebro, sobre fondo marfil.</desc>
+<defs><linearGradient id="bg" x2="1" y2="1"><stop stop-color="#e6e8e4"/><stop offset="1" stop-color="#dadfdc"/></linearGradient><linearGradient id="metal" x2="0" y2="1"><stop stop-color="#9babae"/><stop offset="1" stop-color="#627d84"/></linearGradient><filter id="shade"><feDropShadow dx="0" dy="13" stdDeviation="18" flood-color="#536368" flood-opacity=".12"/></filter></defs>
+<rect width="900" height="660" rx="26" fill="url(#bg)"/><circle cx="720" cy="116" r="205" fill="#f6f5ed" opacity=".6"/><circle cx="180" cy="555" r="190" fill="#cad6d4" opacity=".5"/>
+<path d="M0 510 Q320 475 900 520 V660 H0Z" fill="#f3f0e8"/>
+<g filter="url(#shade)"><rect x="95" y="500" width="710" height="14" rx="7" fill="#8a999a" opacity=".3"/>
+<g fill="none" stroke="url(#metal)" stroke-width="13" stroke-linecap="round" stroke-linejoin="round"><path d="M290 178 V505"/><path d="M206 506 H374"/><path d="M231 484 H348"/><path d="M150 226 Q288 264 426 226"/><path d="M290 177 V212"/></g>
+<circle cx="290" cy="172" r="19" fill="#79929a"/><path d="M151 226 L112 358 M151 226 L199 358 M426 226 L380 358 M426 226 L474 358" stroke="#899b9b" stroke-width="4"/>
+<path d="M87 359 Q157 410 223 359Z M356 359 Q426 410 495 359Z" fill="#8aabb0" opacity=".82" stroke="#708d95" stroke-width="3"/>
+<g transform="translate(506 147)">
+<path d="M159 328 C91 312 55 276 61 219 C28 184 52 125 94 112 C102 60 160 37 198 60 C245 25 307 44 325 88 C384 92 403 145 381 184 C409 241 360 303 309 298 C273 335 218 346 159 328Z" fill="#e9d9c8" stroke="#bca899" stroke-width="6"/>
+<path d="M202 62 C179 103 204 120 180 155 M115 110 C141 142 134 158 114 182 M80 214 C126 194 144 230 126 257 M156 310 C180 269 154 244 180 219 M228 316 C225 272 251 256 265 235 M313 291 C293 258 315 231 354 233 M356 176 C307 186 303 155 321 122 M265 69 C244 105 255 135 282 152 M197 184 C223 156 259 185 246 215 M143 149 C170 130 201 145 211 174" stroke="#bba698" stroke-width="6" stroke-linecap="round" fill="none" opacity=".85"/>
+<path d="M212 330 V376 M164 377 H266" fill="none" stroke="#8c9e9e" stroke-width="11" stroke-linecap="round"/>
+</g></g><rect x="18" y="18" width="864" height="624" rx="19" fill="none" stroke="#bfc9c8" stroke-width="2"/>
+</svg>
