@@ -1263,3 +1263,10 @@
   .editorial-site .editorial-first-visit-photo{margin-top:18px;}
   .editorial-site .editorial-first-visit-photo img{aspect-ratio:1.8/1;}
 }
+
+/* Primera sesión: encuadre completo y proporciones naturales, sin recortar el mobiliario. */
+.editorial-site .editorial-first-visit-grid{align-items:center;}
+.editorial-site .editorial-first-visit-photo{max-width:520px;margin-top:22px;}
+.editorial-site .editorial-first-visit-photo img{aspect-ratio:4/3;object-fit:cover;object-position:center;}
+@media(max-width:900px){.editorial-site .editorial-first-visit-grid{align-items:start;}.editorial-site .editorial-first-visit-photo img{aspect-ratio:4/3;}}
+@media(max-width:680px){.editorial-site .editorial-first-visit-photo{max-width:100%;}.editorial-site .editorial-first-visit-photo img{aspect-ratio:4/3;}}
