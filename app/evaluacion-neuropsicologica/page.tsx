@@ -111,6 +111,35 @@ export default function NeuropsychAssessmentPage() {
             </p>
           </section>
 
+          <section id="informes-para-tramites">
+            <p className="editorial-section-eyebrow">Evaluación con una finalidad concreta</p>
+            <h2>¿Necesitas un informe para un trámite o procedimiento?</h2>
+            <p>Una evaluación neuropsicológica puede documentar el funcionamiento cognitivo y su repercusión en la autonomía. Antes de iniciar el proceso, revisamos quién solicita el informe, para qué se utilizará y qué requisitos documentales existen. No todos los trámites requieren la misma exploración.</p>
+            <div className="captacion-grid two">
+              <div className="captacion-card">
+                <h3>Discapacidad y dependencia</h3>
+                <p>Valoración cognitiva y funcional para aportar documentación clínica complementaria en solicitudes o revisiones. El reconocimiento y la resolución corresponden a los organismos competentes.</p>
+              </div>
+              <div className="captacion-card">
+                <h3>Deterioro cognitivo y autonomía</h3>
+                <p>Descripción de capacidades preservadas, dificultades, actividades de la vida diaria y posibles necesidades de apoyo, según la pregunta clínica.</p>
+              </div>
+              <div className="captacion-card">
+                <h3>Otros procedimientos</h3>
+                <p>Informes para coordinación asistencial u otras necesidades concretas, siempre que la evaluación y el alcance profesional lo permitan.</p>
+              </div>
+              <div className="captacion-card">
+                <h3>Ámbito judicial</h3>
+                <p>Los encargos con finalidad pericial o jurídica tienen un procedimiento independiente dentro de <a href="/consultoria-neuropsicologica-juridica/">Consultoría neuropsicológica</a>.</p>
+              </div>
+            </div>
+            <p>Si ya dispones de una evaluación especializada que incluye informe, no se presupone una segunda valoración ni se duplica el mismo documento. Se revisa primero el contenido existente y la finalidad de la solicitud.</p>
+            <div className="seo-actions">
+              <a className="editorial-btn editorial-btn-primary" href="mailto:contact@carolinasanchezgirona.com?subject=Consulta%20sobre%20informe%20neuropsicol%C3%B3gico">Consultar mi caso</a>
+              <a className="editorial-btn editorial-btn-secondary" href="/consultoria-neuropsicologica-juridica/">Ver consultoría jurídica</a>
+            </div>
+          </section>
+
           <section>
             <h2>Qué documentación puede ser útil</h2>
             <p>
