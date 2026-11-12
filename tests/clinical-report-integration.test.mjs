@@ -26,7 +26,7 @@ test("apartado profesional de informes enlazado y sujeto a control de acceso", (
   assert.match(reportHub, /OWNER_ID/);
   assert.match(reportHub, /status === "ready"/);
   assert.match(reportHub, /No se almacena ninguna información de pacientes/);
-  assert.match(reportHub, /no es un peritaje/);
+  assert.match(reportHub, /No presentar el informe asistencial como dictamen pericial/);
   assert.match(sidebar, /active === "informes"/);
   assert.match(clinic, /href="\/admin\/clinica\/informes\/"/);
   assert.match(docs, /Abrir espacio de informes/);
