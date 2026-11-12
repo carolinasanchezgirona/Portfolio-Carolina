@@ -33,6 +33,7 @@ export default function AdminWorkspaceNav({ active }: { active: Area }) {
           <p className="admin-workspace-more-label">Clínica y evaluación</p>
           <a href="/admin/clinica/?panel=1">Gestión clínica</a>
           <a href="/admin/clinica/protocolos/" aria-current={active === "protocolos" ? "page" : undefined}>Protocolos clínicos</a>
+          <a href="/admin/clinica/informes/" aria-current={active === "informes" ? "page" : undefined}>Informes y valoraciones</a>
           <a href="/admin/clinica/materiales-externos/">Biblioteca clínica</a>
           <a href="/admin/clinica/documentacion/" aria-current={active === "biblioteca" ? "page" : undefined}>Documentación</a>
           <p className="admin-workspace-more-label">Organización y seguimiento</p>
