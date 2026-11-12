@@ -291,9 +291,19 @@ export default function HomePage() {
 
       <section className="editorial-section editorial-first-visit" aria-labelledby="first-visit-home-title">
         <div className="editorial-wrap editorial-first-visit-grid">
-          <div>
+          <div className="editorial-first-visit-intro">
             <p className="editorial-section-eyebrow">Antes de venir</p>
             <h2 id="first-visit-home-title">¿Cómo será nuestra primera sesión?</h2>
+            <figure className="editorial-first-visit-photo">
+              <Image
+                src="/consulta-carolina-sanchez-sala-espera.webp"
+                alt="Espacio de acogida de la consulta de psicología en Arenys de Mar"
+                width={900}
+                height={600}
+                sizes="(max-width: 900px) calc(100vw - 36px), 45vw"
+                loading="lazy"
+              />
+            </figure>
           </div>
           <div className="editorial-first-visit-copy">
             <p>La primera sesión dura 60 minutos. Hablaremos de lo que te preocupa, revisaremos los antecedentes relevantes y valoraremos los siguientes pasos. Puedes traer informes previos si dispones de ellos.</p>
