@@ -129,7 +129,7 @@ export default function HomePage() {
                 <a className="editorial-card-link" href="/consultoria-neuropsicologica-juridica/">Conocer el servicio →</a>
               </div>
               </div>
-              <img src="/consultoria-neuropsicologica.svg" alt="Ilustración de una balanza de justicia y un cerebro que representa la consultoría neuropsicológica" style={{display:"block",width:"100%",height:"clamp(260px,32vw,440px)",objectFit:"cover",borderRadius:"18px"}} />
+              <img src="https://images.unsplash.com/photo-1559757148-5c350d0d3c56?auto=format&fit=crop&w=1100&q=85" alt="Fotografía de un modelo anatómico de cerebro sobre una mesa, relacionada con la evaluación neuropsicológica" style={{display:"block",width:"100%",height:"clamp(260px,32vw,440px)",objectFit:"cover",borderRadius:"18px"}} />
             </article>
           </div>
         </div>
