@@ -1,4 +1,4 @@
-type Area = "agenda" | "economia" | "articulos" | "recursos" | "preguntas" | "tareas" | "residencia" | "mensajes" | "notificaciones" | "marketing" | "biblioteca" | "protocolos" | "seguridad" | "otra";
+type Area = "agenda" | "economia" | "articulos" | "recursos" | "preguntas" | "tareas" | "residencia" | "mensajes" | "notificaciones" | "marketing" | "biblioteca" | "protocolos" | "informes" | "seguridad" | "otra";
 
 type Icon = "today" | "agenda" | "patients" | "pending" | "more";
 
