@@ -296,8 +296,8 @@ export default function HomePage() {
             <h2 id="first-visit-home-title">¿Cómo será nuestra primera sesión?</h2>
             <figure className="editorial-first-visit-photo">
               <Image
-                src="/consulta-carolina-sanchez-sala-espera.webp"
-                alt="Espacio de acogida de la consulta de psicología en Arenys de Mar"
+                src="/consulta-carolina-sanchez-despacho.webp"
+                alt="Interior de la consulta de psicología y neuropsicología de Carolina Sánchez"
                 width={900}
                 height={600}
                 sizes="(max-width: 900px) calc(100vw - 36px), 45vw"
