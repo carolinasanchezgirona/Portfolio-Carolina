@@ -1236,3 +1236,30 @@
   }
   .editorial-site .editorial-about-refined .editorial-about-photo img{max-height:345px;}
 }
+
+
+/* Imagen de acogida: primera visita, composición editorial responsive. */
+.editorial-site .editorial-first-visit-intro{min-width:0;}
+.editorial-site .editorial-first-visit-photo{
+  margin:22px 0 0;
+  max-width:100%;
+  overflow:hidden;
+  border-radius:12px;
+  border:1px solid #D9DDDE;
+}
+.editorial-site .editorial-first-visit-photo img{
+  display:block;
+  width:100%;
+  height:auto;
+  aspect-ratio:2.75/1;
+  object-fit:cover;
+  object-position:center;
+}
+@media(max-width:900px){
+  .editorial-site .editorial-first-visit-photo{max-width:620px;}
+  .editorial-site .editorial-first-visit-photo img{aspect-ratio:2.25/1;}
+}
+@media(max-width:680px){
+  .editorial-site .editorial-first-visit-photo{margin-top:18px;}
+  .editorial-site .editorial-first-visit-photo img{aspect-ratio:1.8/1;}
+}
