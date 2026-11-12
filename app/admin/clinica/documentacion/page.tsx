@@ -32,6 +32,7 @@ export default function DocumentacionClinicaPage() {
       <p>Protocolos, entrevistas, formularios e informes para uso profesional.</p></div>
       <a href="/admin/clinica/?panel=1">Volver a Gestión Clínica</a>
     </header>
+    <section className="doc-panel" style={{marginBottom:20}}><div className="doc-panel-heading"><div><p className="doc-eyebrow">Informes psicológicos y neuropsicológicos</p><h2>Informes y valoraciones</h2><p>Modalidades, criterios de admisión, checklist y estructuras de informe para uso profesional. Sin duplicar las evaluaciones existentes.</p></div><a href="/admin/clinica/informes/">Abrir espacio de informes →</a></div></section>
     <section className="doc-panel" style={{marginBottom:20}}><div className="doc-panel-heading"><div><p className="doc-eyebrow">Evaluación neuropsicológica</p><h2>Protocolos clínicos completos</h2><p>Infantojuvenil (6–17 años) y adultos (18+) · almacenados en la biblioteca profesional.</p></div><a href="/admin/clinica/protocolos/">Abrir protocolos →</a></div></section>
     <section className="doc-panel">
       <div className="doc-panel-heading"><div><p className="doc-eyebrow">TDAH infantil y adolescente</p><h2>Protocolo de evaluación</h2><p>Modalidad clínica: 500 € · Neuropsicológica ampliada: 700 €</p></div><span>13 documentos</span></div>

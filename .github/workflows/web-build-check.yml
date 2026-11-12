@@ -33,6 +33,9 @@ jobs:
       - name: Instalar dependencias
         run: npm ci
 
+      - name: Verificar integración de informes psicológicos y neuropsicológicos
+        run: node --test tests/clinical-report-integration.test.mjs
+
       - name: Probar bloqueo de identificadores en la IA clínica
         run: node --experimental-strip-types --test tests/clinical-privacy.test.mjs
 

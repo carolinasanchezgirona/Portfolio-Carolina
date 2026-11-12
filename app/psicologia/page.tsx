@@ -141,6 +141,16 @@ export default function PsychologyPage() {
         </div>
       </section>
 
+      <section className="captacion-section" aria-labelledby="informes-clinicos-psicologia">
+        <div className="editorial-wrap">
+          <p className="editorial-section-eyebrow">Documentación clínica</p>
+          <h2 id="informes-clinicos-psicologia">Informes psicológicos clínicos</h2>
+          <p className="captacion-intro">Cuando existe una finalidad justificada, puede valorarse la elaboración de un informe clínico que describa la evaluación realizada, la evolución y la repercusión funcional documentada. Su contenido depende de la información disponible y de la solicitud concreta.</p>
+          <p className="captacion-disclaimer">Un informe asistencial no es un peritaje independiente ni garantiza una resolución administrativa o laboral. Las copias y derechos de acceso a la historia clínica se gestionan por su vía correspondiente.</p>
+          <a className="editorial-card-link" href="mailto:contact@carolinasanchezgirona.com?subject=Consulta%20sobre%20informe%20psicol%C3%B3gico%20cl%C3%ADnico">Consultar la necesidad de un informe →</a>
+        </div>
+      </section>
+
       <section className="editorial-section psychology-visit" aria-labelledby="psychology-visit-title">
         <div className="editorial-wrap psychology-visit-grid">
           <div>
