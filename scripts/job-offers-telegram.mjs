@@ -61,10 +61,15 @@ async function main(){
     if(fresh.length>=8)break;
   }
   if(!send){console.log('Prueba sin envío: '+fresh.length+' ofertas.');return;}
-  if(!fresh.length){console.log('No hay ofertas nuevas, sin notificación.');return;}
   const [hour,minute,second]=localClock().split(':').map(Number);
   const wait=(8-hour)*3600000-minute*60000-second*1000;
   if(wait>0&&wait<1800000)await setTimeout(wait);
+  if(!fresh.length){
+    const result=await telegram(token,'sendMessage',{chat_id:chat,text:'Ofertas laborales · '+day.split('-').reverse().join('/')+'\nHoy no hay nuevas vacantes asalariadas verificadas en el Maresme y Barcelona.'});
+    if(!result.message_id)throw Error('Telegram no confirmó el resumen sin ofertas.');
+    console.log('Resumen diario sin ofertas enviado por Telegram.');
+    return;
+  }
   const message=render(day,fresh);
   if(message.length>3900)throw Error('Boletín de empleo demasiado extenso; no enviado.');
   const result=await telegram(token,'sendMessage',{chat_id:chat,text:message,parse_mode:'HTML',link_preview_options:{is_disabled:true}});
