@@ -71,3 +71,17 @@ jobs:
         with:
           path: ${{ runner.temp }}/job-offers-telegram.json
           key: job-offers-v1-${{ github.run_id }}-${{ github.run_attempt }}
+
+      - name: Avisar por Telegram si falla la búsqueda programada
+        if: ${{ failure() && steps.clock.outputs.run == 'true' && github.event_name == 'schedule' }}
+        shell: bash
+        env:
+          BOT_TOKEN: ${{ secrets.CLINICAL_BACKUP_TELEGRAM_BOT_TOKEN }}
+          CHAT_ID: ${{ secrets.CLINICAL_BACKUP_TELEGRAM_CHAT_ID }}
+        run: |
+          if [[ -n "$BOT_TOKEN" && -n "$CHAT_ID" ]]; then
+            curl --fail --silent --show-error --max-time 20 \
+              --request POST "https://api.telegram.org/bot${BOT_TOKEN}/sendMessage" \
+              --data-urlencode "chat_id=${CHAT_ID}" \
+              --data-urlencode "text=No se ha podido comprobar hoy el empleo en Maresme y Barcelona. Revisa el workflow de ofertas laborales en GitHub."
+          fi
