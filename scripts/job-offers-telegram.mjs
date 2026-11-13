@@ -38,7 +38,7 @@ async function research(token,urls){
     headers:{'Content-Type':'application/json','X-Psychology-Digest-Signature':String(stamp)+'.'+signature},
     body,signal:AbortSignal.timeout(320_000),redirect:'error'});
   const json=await response.json().catch(()=>({}));
-  if(!response.ok||!Array.isArray(json.items))throw Error(json.error||'La API no devolvió ofertas verificadas.');
+  if(!response.ok||json.mode!=='jobs'||!Array.isArray(json.items))throw Error(json.error||'La API no devolvió ofertas verificadas.');
   return json.items;
 }
 async function main(){

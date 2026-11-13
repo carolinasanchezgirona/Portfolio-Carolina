@@ -183,7 +183,7 @@ export async function handlePsychologyDigest(request: Request, apiKey?: string, 
       const timer = setInterval(() => controller.enqueue(heartbeat), 15_000);
       const signal = AbortSignal.any([abort.signal, AbortSignal.timeout(300_000)]);
       void (body?.mode === 'jobs' ? researchJobs(apiKey, madridDate.format(new Date()), recentUrls, signal) : research(apiKey, madridDate.format(new Date()), recentUrls, signal))
-        .then(items => ({ items }))
+        .then(items => ({ items, mode: body?.mode === 'jobs' ? 'jobs' : 'digest' }))
         .catch(error => ({ error: error instanceof DigestResearchError
           ? error.message : error instanceof SyntaxError ? 'La respuesta de búsqueda no era JSON válido.' : 'No se pudo completar la búsqueda del boletín.' }))
         .then(result => {
