@@ -1,0 +1,73 @@
+name: Ofertas laborales a Telegram
+on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/job-offers-telegram.yml
+      - scripts/job-offers-telegram.mjs
+      - psychology-digest-research.ts
+  schedule:
+    - cron: "45 5 * * *"
+    - cron: "45 6 * * *"
+  workflow_dispatch:
+    inputs:
+      send:
+        description: Enviar las ofertas al chat de Telegram
+        type: boolean
+        default: false
+permissions:
+  contents: read
+concurrency:
+  group: job-offers-telegram
+  cancel-in-progress: false
+jobs:
+  employment:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - name: Respetar las 07:45 de Madrid y los cambios de hora
+        id: clock
+        shell: bash
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          SCHEDULE: ${{ github.event.schedule }}
+        run: |
+          if [[ "$EVENT_NAME" == schedule ]]; then
+            OFFSET="$(TZ=Europe/Madrid date +%z)"
+            case "$OFFSET:$SCHEDULE" in
+              "+0200:45 5 * * *"|"+0100:45 6 * * *") ;;
+              *) echo "run=false" >> "$GITHUB_OUTPUT"; exit 0 ;;
+            esac
+          fi
+          echo "run=true" >> "$GITHUB_OUTPUT"
+      - uses: actions/checkout@v4
+        if: steps.clock.outputs.run == 'true'
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        if: steps.clock.outputs.run == 'true'
+        with:
+          node-version: 24
+      - name: Restaurar anuncios ya notificados
+        if: steps.clock.outputs.run == 'true'
+        uses: actions/cache/restore@v4
+        with:
+          path: ${{ runner.temp }}/job-offers-telegram.json
+          key: job-offers-v1-${{ github.run_id }}-${{ github.run_attempt }}
+          restore-keys: job-offers-v1-
+      - name: Buscar y avisar solo de ofertas nuevas
+        if: steps.clock.outputs.run == 'true'
+        id: alerts
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.CLINICAL_BACKUP_TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.CLINICAL_BACKUP_TELEGRAM_CHAT_ID }}
+          SEND_JOB_OFFERS: ${{ github.event_name == 'schedule' || inputs.send }}
+          JOB_ALERT_STATE_PATH: ${{ runner.temp }}/job-offers-telegram.json
+        run: node scripts/job-offers-telegram.mjs
+      - name: Guardar deduplicación tras la confirmación de Telegram
+        if: steps.alerts.outputs.sent == 'true'
+        uses: actions/cache/save@v4
+        with:
+          path: ${{ runner.temp }}/job-offers-telegram.json
+          key: job-offers-v1-${{ github.run_id }}-${{ github.run_attempt }}
