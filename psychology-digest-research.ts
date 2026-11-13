@@ -246,7 +246,7 @@ async function researchJobs(apiKey:string, day:string, recentUrls:string[], sign
     if(!item||typeof item!=='object')continue;
     const url=publicUrl(item.url);
     if(!url||!sources.has(url)||seen.has(url))continue;
-    if(typeof item.posted!=='string'||!/^\\d{4}-\\d{2}-\\d{2}$/.test(item.posted))continue;
+    if(typeof item.posted!=='string'||!/^\d{4}-\d{2}-\d{2}$/.test(item.posted))continue;
     if(item.posted<previousDate(day,7)||item.posted>day)continue;
     if(jobFields.some(field=>typeof item[field as keyof JobAlert]!=='string'||item[field as keyof JobAlert].length>250))continue;
     if(!item.title.trim()||!item.employer.trim()||!item.municipality.trim())continue;
