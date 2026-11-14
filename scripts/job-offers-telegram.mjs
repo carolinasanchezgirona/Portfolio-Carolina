@@ -53,15 +53,19 @@ async function research(token,urls){
 }
 async function main(){
   const { TELEGRAM_BOT_TOKEN:token,TELEGRAM_CHAT_ID:chat,
-    SEND_JOB_OFFERS:sendFlag,JOB_ALERT_STATE_PATH:path,GITHUB_OUTPUT }=process.env;
+    SEND_JOB_OFFERS:sendFlag,DIAGNOSE_JOB_API:diagnosticFlag,JOB_ALERT_STATE_PATH:path,GITHUB_OUTPUT }=process.env;
   if(!token||!chat||!path)throw Error('Faltan credenciales o ruta de estado.');
-  const send=sendFlag==='true',day=localDay();
+  const send=sendFlag==='true',diagnose=diagnosticFlag==='true',day=localDay();
   const previous=await readFile(path,'utf8').then(JSON.parse).catch(e=>{if(e.code==='ENOENT')return [];throw e;});
   const cutoff=new Date(day+'T00:00:00Z');cutoff.setUTCDate(cutoff.getUTCDate()-90);
   const history=(Array.isArray(previous)?previous:[]).filter(x=>x.day>=cutoff.toISOString().slice(0,10));
-  const sentUrls=new Set(history.map(x=>x.url));
-  const sentKeys=new Set(history.map(x=>x.key));
-  if(!send){
+  const sentUrls=new Set(history.map(x=>x.url).filter(x=>typeof x==='string'&&x.startsWith('https://')));
+  const sentKeys=new Set(history.map(x=>x.key).filter(x=>typeof x==='string'));
+  if(send&&history.some(x=>x.day===day&&x.checked===true)){
+    console.log('Búsqueda diaria ya completada, no repetir peticiones ni avisos.');
+    return;
+  }
+  if(!send&&!diagnose){
     const test=await telegram(token,'getChat',{chat_id:chat});
     if(!Number.isSafeInteger(test.id))throw Error('Telegram no confirmó el chat.');
     console.log('Conexión con Telegram confirmada. Prueba sin búsquedas de pago ni envío.');
@@ -69,15 +73,21 @@ async function main(){
   }
   await waitForDeployment();
   let results;
-  for(let attempt=0;attempt<3;attempt++){
+  for(let attempt=0;attempt<2;attempt++){
     try{
-      results=await research(token,history.slice(-90).map(x=>x.url));
+      results=await research(token,history.filter(x=>typeof x.url==='string'&&x.url.startsWith('https://')).slice(-90).map(x=>x.url));
       break;
     }catch(error){
-      if(attempt===2||!/(HTTP 429)/.test(String(error.message)))throw error;
-      console.warn('Límite temporal de búsqueda (HTTP 429); reintento diferido.');
-      await setTimeout((attempt+1)*80000);
+      const message=String(error.message||error);
+      const temporary=/HTTP 429/.test(message)&&/api_code=(rate_limit_exceeded|unknown)|api_type=rate_limit_exceeded/.test(message);
+      if(attempt===1||!temporary)throw error;
+      console.warn('Límite temporal de peticiones de la API (429); un único reintento.');
+      await setTimeout(45000);
     }
+  }
+  if(diagnose&&!send){
+    console.log('Diagnóstico completado sin enviar mensajes ni guardar ofertas. Respuesta válida: '+results.length+' candidatos.');
+    return;
   }
   const fresh=[];
   for(const job of results){
@@ -90,15 +100,26 @@ async function main(){
   const wait=(8-hour)*3600000-minute*60000-second*1000;
   if(wait>0&&wait<1800000)await setTimeout(wait);
   if(!fresh.length){
-    console.log('No hay ofertas nuevas verificadas. No se envía notificación.');
+    await writeFile(path,JSON.stringify([...history,{day,checked:true}]));
+    if(GITHUB_OUTPUT)await appendFile(GITHUB_OUTPUT,'state_saved=true\n');
+    console.log('No hay ofertas nuevas verificadas. Se guarda comprobación diaria; sin notificación.');
     return;
   }
   const message=render(day,fresh);
   if(message.length>3900)throw Error('Boletín de empleo demasiado extenso; no enviado.');
   const result=await telegram(token,'sendMessage',{chat_id:chat,text:message,parse_mode:'HTML',link_preview_options:{is_disabled:true}});
   if(!result.message_id)throw Error('Telegram no confirmó el mensaje.');
-  await writeFile(path,JSON.stringify([...history,...fresh.map(j=>({day,url:j.url,key:key(j)}))]));
-  if(GITHUB_OUTPUT)await appendFile(GITHUB_OUTPUT,'sent=true\n');
+  await writeFile(path,JSON.stringify([...history,...fresh.map(j=>({day,url:j.url,key:key(j)})),{day,checked:true}]));
+  if(GITHUB_OUTPUT)await appendFile(GITHUB_OUTPUT,'state_saved=true\n');
   console.log('Ofertas enviadas por Telegram: '+fresh.length);
 }
-main().catch(error=>{console.error('Aviso de empleo: '+error.message);process.exitCode=1;});
+main().catch(async error=>{
+  const detail=String(error?.message||error);
+  console.error('Aviso de empleo: '+detail);
+  const reason=/api_code=(insufficient_quota|billing_hard_limit_reached)|api_type=insufficient_quota/.test(detail)?'quota':
+    /HTTP 429/.test(detail)?'rate_limit':'other';
+  if(process.env.GITHUB_OUTPUT){
+    await appendFile(process.env.GITHUB_OUTPUT,'failure_reason='+reason+'\n').catch(()=>{});
+  }
+  process.exitCode=1;
+});
