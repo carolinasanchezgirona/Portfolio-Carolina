@@ -82,8 +82,11 @@ export function parseSocOffers(xml,day){
     const min=field(ad,'salaryMin').replace(/[^\d.,]/g,'');
     const max=field(ad,'salaryMax').replace(/[^\d.,]/g,'');
     const salary=min&&max?(min===max?min:min+'–'+max)+' (según oferta, confirmar periodicidad)':'No indicado';
-    const job={title,employer,municipality:city,posted:date,contract,hours,salary,
-      fit:'Fuente: Feina Activa / SOC. Consulta los requisitos de la convocatoria.',url:canon};
+    const info=normalize(title+' '+field(ad,'content'));
+    const occupational=/ambit ocupacio|orientacio laboral|ocupabilitat|insercio laboral|intermediacio laboral/.test(info);
+    const fit=occupational?'Ámbito ocupacional, no clínico; comprueba la experiencia exigida en orientación laboral.':
+      'Fuente: Feina Activa / SOC. Consulta los requisitos de la convocatoria.';
+    const job={title,employer,municipality:city,posted:date,contract,hours,salary,fit,url:canon};
     found.push({job,rank:score(job,field(ad,'content'))});
   }
   found.sort((a,b)=>b.rank-a.rank||b.job.posted.localeCompare(a.job.posted));
