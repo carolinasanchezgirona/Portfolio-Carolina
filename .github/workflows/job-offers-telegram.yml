@@ -5,6 +5,8 @@ on:
     paths:
       - .github/workflows/job-offers-telegram.yml
       - scripts/job-offers-telegram.mjs
+      - scripts/job-offers-soc.mjs
+      - tests/job-offers-soc.test.mjs
       - psychology-digest-research.ts
   schedule:
     - cron: "45 5 * * *"
