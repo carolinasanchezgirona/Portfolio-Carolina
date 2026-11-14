@@ -96,6 +96,7 @@ async function main(){
   }
   if((diagnose||diagnoseSoc)&&!send){
     console.log('Diagnóstico '+source+' sin avisos ni escrituras. Ofertas válidas: '+results.length+'.');
+    if(diagnoseSoc)for(const job of results.slice(0,8))console.log('SOC oferta: '+job.title+' | '+job.employer+' | '+job.municipality+' | '+job.posted+' | '+job.url);
     return;
   }
   const fresh=[];
