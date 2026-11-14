@@ -76,7 +76,6 @@ jobs:
             const chunk=await reader.read();
             const sample=new TextDecoder().decode(chunk.value||new Uint8Array()).slice(0,6000);
             await reader.cancel();
-            console.log('SOC etiquetas iniciales:',[...sample.matchAll(/<\\/?([A-Za-z][\\w:-]*)[\\s>]/g)].map(x=>x[1]).slice(0,60).join(', '));
             console.log('SOC cabecera XML:',sample.slice(0,750).replace(/[\\r\\n]+/g,' ').replace(/[<>]/g,'_'));
           } catch(error){console.log('SOC fuente no disponible:',error?.name||'error');}
           NODE
