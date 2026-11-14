@@ -30,6 +30,16 @@ async function telegram(token,method,data){
   if(!response.ok||json.ok!==true||!json.result)throw Error('Telegram no confirmó '+method+'.');
   return json.result;
 }
+async function waitForDeployment(){
+  // No consultar empleo contra una versión obsoleta de la API.
+  const deadline=Date.now()+7*60_000;
+  while(Date.now()<deadline){
+    const res=await fetch(endpoint,{signal:AbortSignal.timeout(12000),redirect:'error'}).catch(()=>null);
+    if(res?.status===405&&res.headers.get('X-Psychology-Digest')==='4')return;
+    await setTimeout(20000);
+  }
+  throw Error('La API de empleo aún no está desplegada (versión 4).');
+}
 async function research(token,urls){
   const body=JSON.stringify({mode:'jobs',recentUrls:urls});
   const stamp=Math.floor(Date.now()/1000);
@@ -38,7 +48,7 @@ async function research(token,urls){
     headers:{'Content-Type':'application/json','X-Psychology-Digest-Signature':String(stamp)+'.'+signature},
     body,signal:AbortSignal.timeout(320_000),redirect:'error'});
   const json=await response.json().catch(()=>({}));
-  if(!response.ok||json.mode!=='jobs'||!Array.isArray(json.items))throw Error(json.error||'La API no devolvió ofertas verificadas.');
+  if(!response.ok||json.mode!=='jobs'||!Array.isArray(json.items))throw Error(json.error||('La API devolvió una respuesta inválida (HTTP '+response.status+', modo '+String(json.mode||'sin indicar')+').'));
   return json.items;
 }
 async function main(){
@@ -51,6 +61,7 @@ async function main(){
   const history=(Array.isArray(previous)?previous:[]).filter(x=>x.day>=cutoff.toISOString().slice(0,10));
   const sentUrls=new Set(history.map(x=>x.url));
   const sentKeys=new Set(history.map(x=>x.key));
+  await waitForDeployment();
   if(!send)await telegram(token,'getChat',{chat_id:chat});
   const results=await research(token,history.slice(-90).map(x=>x.url));
   const fresh=[];
@@ -65,9 +76,7 @@ async function main(){
   const wait=(8-hour)*3600000-minute*60000-second*1000;
   if(wait>0&&wait<1800000)await setTimeout(wait);
   if(!fresh.length){
-    const result=await telegram(token,'sendMessage',{chat_id:chat,text:'Ofertas laborales · '+day.split('-').reverse().join('/')+'\nHoy no hay nuevas vacantes asalariadas verificadas en el Maresme y Barcelona.'});
-    if(!result.message_id)throw Error('Telegram no confirmó el resumen sin ofertas.');
-    console.log('Resumen diario sin ofertas enviado por Telegram.');
+    console.log('No hay ofertas nuevas verificadas. No se envía notificación.');
     return;
   }
   const message=render(day,fresh);
