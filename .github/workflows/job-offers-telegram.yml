@@ -72,7 +72,7 @@ jobs:
             const response=await fetch(url,{signal:AbortSignal.timeout(30000),redirect:'error'});
             console.log('SOC HTTP:',response.status,'tipo:',response.headers.get('content-type'),'tamaño:',response.headers.get('content-length'));
             const reader=response.body?.getReader();
-            if(!reader)return;
+            if(!reader)throw Error('Respuesta sin cuerpo');
             const chunk=await reader.read();
             const sample=new TextDecoder().decode(chunk.value||new Uint8Array()).slice(0,6000);
             await reader.cancel();
