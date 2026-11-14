@@ -227,7 +227,15 @@ async function researchJobs(apiKey:string, day:string, recentUrls:string[], sign
       tools:[{type:'web_search'}],tool_choice:'required',include:['web_search_call.action.sources'],max_tool_calls:18,
       max_output_tokens:7000,text:{format:{type:'json_schema',name:'job_alerts',strict:true,schema:jobSchema}},input:instruction}),
   });
-  if(!reply.ok)throw new DigestResearchError('No se pudo investigar empleo (HTTP '+reply.status+').');
+  if(!reply.ok){
+    // El código y tipo de error de la API identifican límites temporales frente a cuota agotada.
+    // Nunca registrar mensajes completos de la API ni credenciales.
+    const payload=await reply.json().catch(()=>({})) as {error?:{code?:unknown;type?:unknown}};
+    const safe=(value:unknown)=>typeof value==='string'&&/^[a-zA-Z0-9_-]{1,64}$/.test(value)?value:'unknown';
+    const code=safe(payload.error?.code);
+    const type=safe(payload.error?.type);
+    throw new DigestResearchError('No se pudo investigar empleo (HTTP '+reply.status+'; api_code='+code+'; api_type='+type+').');
+  }
   const response=await reply.json() as SearchResponse;
   if(response.status!=='completed')throw new DigestResearchError('Búsqueda de empleo incompleta.');
   const search=(response.output??[]).filter(x=>x.type==='web_search_call'&&x.status==='completed');
