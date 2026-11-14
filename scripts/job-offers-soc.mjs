@@ -55,7 +55,7 @@ export function parseSocOffers(xml,day){
     const ad=match[1];
     const title=field(ad,'title').slice(0,200);
     const titleNorm=normalize(title);
-    if(!/\b(?:neuropsicolog\w*|psicolog\w*|psicoleg\w*|psicologia)\b/i.test(titleNorm))continue;
+    if(!/\b(?:neuropsicolog\w*|neuropsicoleg\w*|psicolog\w*|psicoleg\w*|psicologia)\b/i.test(titleNorm))continue;
     const city=field(ad,'city').slice(0,100);
     const cityNorm=normalize(city);
     if(cityNorm!=='barcelona'&&!MARESME.has(cityNorm))continue;
