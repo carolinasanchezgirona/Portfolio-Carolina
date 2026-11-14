@@ -9,6 +9,9 @@ on:
   schedule:
     - cron: "45 5 * * *"
     - cron: "45 6 * * *"
+    # Segundo intento local a las 08:15 (tolerancia a retrasos del planificador).
+    - cron: "15 6 * * *"
+    - cron: "15 7 * * *"
   workflow_dispatch:
     inputs:
       send:
@@ -36,7 +39,7 @@ jobs:
           if [[ "$EVENT_NAME" == schedule ]]; then
             OFFSET="$(TZ=Europe/Madrid date +%z)"
             case "$OFFSET:$SCHEDULE" in
-              "+0200:45 5 * * *"|"+0100:45 6 * * *") ;;
+              "+0200:45 5 * * *"|"+0100:45 6 * * *"|"+0200:15 6 * * *"|"+0100:15 7 * * *") ;;
               *) echo "run=false" >> "$GITHUB_OUTPUT"; exit 0 ;;
             esac
           fi
@@ -62,7 +65,7 @@ jobs:
         env:
           TELEGRAM_BOT_TOKEN: ${{ secrets.CLINICAL_BACKUP_TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.CLINICAL_BACKUP_TELEGRAM_CHAT_ID }}
-          SEND_JOB_OFFERS: ${{ github.event_name == 'schedule' || inputs.send }}
+          SEND_JOB_OFFERS: ${{ github.event_name == 'schedule' || inputs.send || (github.event_name == 'push' && contains(github.event.head_commit.message, '[enviar-ofertas]')) }}
           JOB_ALERT_STATE_PATH: ${{ runner.temp }}/job-offers-telegram.json
         run: node scripts/job-offers-telegram.mjs
       - name: Guardar deduplicación tras la confirmación de Telegram
