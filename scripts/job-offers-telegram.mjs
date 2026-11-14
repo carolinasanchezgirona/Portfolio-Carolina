@@ -3,6 +3,7 @@ import { readFile, writeFile, appendFile } from 'node:fs/promises';
 import { setTimeout } from 'node:timers/promises';
 import { digestSigningKey } from './psychology-digest.mjs';
 
+// Ejecución diagnóstica sin envío habilitada solo mediante etiqueta de commit.
 const endpoint='https://carolinasanchezgirona.com/api/automation/psychology-digest';
 const localDay=()=>new Intl.DateTimeFormat('sv-SE',{timeZone:'Europe/Madrid'}).format(new Date());
 const localClock=()=>new Intl.DateTimeFormat('en-GB',{timeZone:'Europe/Madrid',hourCycle:'h23',hour:'2-digit',minute:'2-digit',second:'2-digit'}).format(new Date());
