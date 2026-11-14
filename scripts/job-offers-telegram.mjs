@@ -2,6 +2,7 @@ import { createHmac } from 'node:crypto';
 import { readFile, writeFile, appendFile } from 'node:fs/promises';
 import { setTimeout } from 'node:timers/promises';
 import { digestSigningKey } from './psychology-digest.mjs';
+import { fetchSocJobs } from './job-offers-soc.mjs';
 
 // Ejecución diagnóstica sin envío habilitada solo mediante etiqueta de commit.
 const endpoint='https://carolinasanchezgirona.com/api/automation/psychology-digest';
@@ -10,8 +11,10 @@ const localClock=()=>new Intl.DateTimeFormat('en-GB',{timeZone:'Europe/Madrid',h
 const norm=s=>s.normalize('NFKD').replace(/[\u0300-\u036f]/g,'').trim().toLowerCase().replace(/\s+/g,' ');
 const key=j=>norm(j.employer)+'|'+norm(j.title)+'|'+norm(j.municipality);
 const esc=s=>String(s).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;');
-function render(day,jobs){
-  const parts=['<b>Ofertas de psicología y neuropsicología · '+day.split('-').reverse().join('/')+'</b>'];
+function render(day,jobs,source){
+  const parts=['<b>Ofertas de psicología y neuropsicología · '+day.split('-').reverse().join('/')+'</b>',
+    source==='soc'?'Fuente: Feina Activa (SOC), ofertas publicadas en los últimos 7 días.':'Fuentes: búsqueda web verificada.'];
+  if(!jobs.length)parts.push('Hoy no hay ofertas nuevas verificadas en esta fuente para Barcelona ciudad y Maresme.');
   for(const [index,j] of jobs.entries()){
     parts.push('<b>'+(index+1)+'. '+esc(j.title)+'</b>',
       esc(j.employer)+' · '+esc(j.municipality),
@@ -54,9 +57,9 @@ async function research(token,urls){
 }
 async function main(){
   const { TELEGRAM_BOT_TOKEN:token,TELEGRAM_CHAT_ID:chat,
-    SEND_JOB_OFFERS:sendFlag,DIAGNOSE_JOB_API:diagnosticFlag,JOB_ALERT_STATE_PATH:path,GITHUB_OUTPUT }=process.env;
+    SEND_JOB_OFFERS:sendFlag,DIAGNOSE_JOB_API:diagnosticFlag,DIAGNOSE_SOC:diagnoseSocFlag,JOB_ALERT_STATE_PATH:path,GITHUB_OUTPUT }=process.env;
   if(!token||!chat||!path)throw Error('Faltan credenciales o ruta de estado.');
-  const send=sendFlag==='true',diagnose=diagnosticFlag==='true',day=localDay();
+  const send=sendFlag==='true',diagnose=diagnosticFlag==='true',diagnoseSoc=diagnoseSocFlag==='true',day=localDay();
   const previous=await readFile(path,'utf8').then(JSON.parse).catch(e=>{if(e.code==='ENOENT')return [];throw e;});
   const cutoff=new Date(day+'T00:00:00Z');cutoff.setUTCDate(cutoff.getUTCDate()-90);
   const history=(Array.isArray(previous)?previous:[]).filter(x=>x.day>=cutoff.toISOString().slice(0,10));
@@ -66,28 +69,33 @@ async function main(){
     console.log('Búsqueda diaria ya completada, no repetir peticiones ni avisos.');
     return;
   }
-  if(!send&&!diagnose){
+  if(!send&&!diagnose&&!diagnoseSoc){
     const test=await telegram(token,'getChat',{chat_id:chat});
     if(!Number.isSafeInteger(test.id))throw Error('Telegram no confirmó el chat.');
     console.log('Conexión con Telegram confirmada. Prueba sin búsquedas de pago ni envío.');
     return;
   }
-  await waitForDeployment();
+  const source=diagnose||process.env.JOB_SEARCH_SOURCE==='api'&&!diagnoseSoc?'api':'soc';
   let results;
-  for(let attempt=0;attempt<2;attempt++){
-    try{
-      results=await research(token,history.filter(x=>typeof x.url==='string'&&x.url.startsWith('https://')).slice(-90).map(x=>x.url));
-      break;
-    }catch(error){
-      const message=String(error.message||error);
-      const temporary=/HTTP 429/.test(message)&&/api_code=(rate_limit_exceeded|unknown)|api_type=rate_limit_exceeded/.test(message);
-      if(attempt===1||!temporary)throw error;
-      console.warn('Límite temporal de peticiones de la API (429); un único reintento.');
-      await setTimeout(45000);
+  if(source==='soc'){
+    results=await fetchSocJobs(day);
+  }else{
+    await waitForDeployment();
+    for(let attempt=0;attempt<2;attempt++){
+      try{
+        results=await research(token,history.filter(x=>typeof x.url==='string'&&x.url.startsWith('https://')).slice(-90).map(x=>x.url));
+        break;
+      }catch(error){
+        const message=String(error.message||error);
+        const temporary=/HTTP 429/.test(message)&&/api_code=(rate_limit_exceeded|unknown)|api_type=rate_limit_exceeded/.test(message);
+        if(attempt===1||!temporary)throw error;
+        console.warn('Límite temporal de peticiones de la API (429); un único reintento.');
+        await setTimeout(45000);
+      }
     }
   }
-  if(diagnose&&!send){
-    console.log('Diagnóstico completado sin enviar mensajes ni guardar ofertas. Respuesta válida: '+results.length+' candidatos.');
+  if((diagnose||diagnoseSoc)&&!send){
+    console.log('Diagnóstico '+source+' sin avisos ni escrituras. Ofertas válidas: '+results.length+'.');
     return;
   }
   const fresh=[];
@@ -100,19 +108,13 @@ async function main(){
   const [hour,minute,second]=localClock().split(':').map(Number);
   const wait=(8-hour)*3600000-minute*60000-second*1000;
   if(wait>0&&wait<1800000)await setTimeout(wait);
-  if(!fresh.length){
-    await writeFile(path,JSON.stringify([...history,{day,checked:true}]));
-    if(GITHUB_OUTPUT)await appendFile(GITHUB_OUTPUT,'state_saved=true\n');
-    console.log('No hay ofertas nuevas verificadas. Se guarda comprobación diaria; sin notificación.');
-    return;
-  }
-  const message=render(day,fresh);
+  const message=render(day,fresh,source);
   if(message.length>3900)throw Error('Boletín de empleo demasiado extenso; no enviado.');
   const result=await telegram(token,'sendMessage',{chat_id:chat,text:message,parse_mode:'HTML',link_preview_options:{is_disabled:true}});
   if(!result.message_id)throw Error('Telegram no confirmó el mensaje.');
   await writeFile(path,JSON.stringify([...history,...fresh.map(j=>({day,url:j.url,key:key(j)})),{day,checked:true}]));
   if(GITHUB_OUTPUT)await appendFile(GITHUB_OUTPUT,'state_saved=true\n');
-  console.log('Ofertas enviadas por Telegram: '+fresh.length);
+  console.log('Resumen diario enviado por Telegram; nuevas ofertas verificadas: '+fresh.length+'. Fuente: '+source+'.');
 }
 main().catch(async error=>{
   const detail=String(error?.message||error);
