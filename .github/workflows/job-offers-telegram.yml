@@ -59,6 +59,9 @@ jobs:
           path: ${{ runner.temp }}/job-offers-telegram.json
           key: job-offers-v1-${{ github.run_id }}-${{ github.run_attempt }}
           restore-keys: job-offers-v1-
+      - name: Validar sintaxis de alertas de empleo
+        if: steps.clock.outputs.run == 'true'
+        run: node --check scripts/job-offers-telegram.mjs
       - name: Buscar y avisar solo de ofertas nuevas
         if: steps.clock.outputs.run == 'true'
         id: alerts
@@ -66,10 +69,11 @@ jobs:
           TELEGRAM_BOT_TOKEN: ${{ secrets.CLINICAL_BACKUP_TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.CLINICAL_BACKUP_TELEGRAM_CHAT_ID }}
           SEND_JOB_OFFERS: ${{ github.event_name == 'schedule' || inputs.send || (github.event_name == 'push' && contains(github.event.head_commit.message, '[enviar-ofertas]')) }}
+          DIAGNOSE_JOB_API: ${{ github.event_name == 'push' && contains(github.event.head_commit.message, '[diagnosticar-ofertas]') }}
           JOB_ALERT_STATE_PATH: ${{ runner.temp }}/job-offers-telegram.json
         run: node scripts/job-offers-telegram.mjs
       - name: Guardar deduplicación tras la confirmación de Telegram
-        if: steps.alerts.outputs.sent == 'true'
+        if: steps.alerts.outputs.state_saved == 'true'
         uses: actions/cache/save@v4
         with:
           path: ${{ runner.temp }}/job-offers-telegram.json
@@ -81,10 +85,16 @@ jobs:
         env:
           BOT_TOKEN: ${{ secrets.CLINICAL_BACKUP_TELEGRAM_BOT_TOKEN }}
           CHAT_ID: ${{ secrets.CLINICAL_BACKUP_TELEGRAM_CHAT_ID }}
+          FAILURE_REASON: ${{ steps.alerts.outputs.failure_reason }}
         run: |
+          case "$FAILURE_REASON" in
+            quota) message='No se han podido comprobar las ofertas: la API ha indicado cuota agotada. La búsqueda NO se ha completado. Alternativa manual: https://feinaactiva.gencat.cat/es' ;;
+            rate_limit) message='No se han podido comprobar las ofertas: límite temporal de solicitudes en la API. Se intentará en la próxima ejecución programada.' ;;
+            *) message='No se ha podido comprobar hoy el empleo en Maresme y Barcelona. Revisa el workflow de ofertas laborales en GitHub.' ;;
+          esac
           if [[ -n "$BOT_TOKEN" && -n "$CHAT_ID" ]]; then
             curl --fail --silent --show-error --max-time 20 \
               --request POST "https://api.telegram.org/bot${BOT_TOKEN}/sendMessage" \
               --data-urlencode "chat_id=${CHAT_ID}" \
-              --data-urlencode "text=No se ha podido comprobar hoy el empleo en Maresme y Barcelona. Revisa el workflow de ofertas laborales en GitHub."
+              --data-urlencode "text=${message}"
           fi
