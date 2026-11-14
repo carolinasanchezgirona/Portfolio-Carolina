@@ -59,26 +59,12 @@ jobs:
           path: ${{ runner.temp }}/job-offers-telegram.json
           key: job-offers-v1-${{ github.run_id }}-${{ github.run_attempt }}
           restore-keys: job-offers-v1-
-      - name: Validar sintaxis de alertas de empleo
+      - name: Validar parser público y alertas de empleo
         if: steps.clock.outputs.run == 'true'
-        run: node --check scripts/job-offers-telegram.mjs
-      - name: Diagnóstico acotado del XML público del SOC (sin secretos)
-        if: ${{ github.event_name == 'push' && contains(github.event.head_commit.message, '[diagnosticar-fuente]') }}
-        shell: bash
         run: |
-          node --input-type=module <<'NODE'
-          const url='https://feinaactiva.gencat.cat/api/offers/offers-xml';
-          try {
-            const response=await fetch(url,{signal:AbortSignal.timeout(30000),redirect:'error'});
-            console.log('SOC HTTP:',response.status,'tipo:',response.headers.get('content-type'),'tamaño:',response.headers.get('content-length'));
-            const reader=response.body?.getReader();
-            if(!reader)throw Error('Respuesta sin cuerpo');
-            const chunk=await reader.read();
-            const sample=new TextDecoder().decode(chunk.value||new Uint8Array()).slice(0,6000);
-            await reader.cancel();
-            console.log('SOC cabecera XML:',sample.slice(0,750).replace(/[\\r\\n]+/g,' ').replace(/[<>]/g,'_'));
-          } catch(error){console.log('SOC fuente no disponible:',error?.name||'error');}
-          NODE
+          node --check scripts/job-offers-telegram.mjs
+          node --check scripts/job-offers-soc.mjs
+          node --test tests/job-offers-soc.test.mjs
       - name: Buscar y avisar solo de ofertas nuevas
         if: steps.clock.outputs.run == 'true'
         id: alerts
@@ -87,9 +73,11 @@ jobs:
           TELEGRAM_CHAT_ID: ${{ secrets.CLINICAL_BACKUP_TELEGRAM_CHAT_ID }}
           SEND_JOB_OFFERS: ${{ github.event_name == 'schedule' || inputs.send || (github.event_name == 'push' && contains(github.event.head_commit.message, '[enviar-ofertas]')) }}
           DIAGNOSE_JOB_API: ${{ github.event_name == 'push' && contains(github.event.head_commit.message, '[diagnosticar-ofertas]') }}
+          DIAGNOSE_SOC: ${{ github.event_name == 'push' && contains(github.event.head_commit.message, '[diagnosticar-soc]') }}
+          JOB_SEARCH_SOURCE: soc
           JOB_ALERT_STATE_PATH: ${{ runner.temp }}/job-offers-telegram.json
         run: node scripts/job-offers-telegram.mjs
-      - name: Guardar deduplicación tras la confirmación de Telegram
+      - name: Guardar estado tras el resumen diario confirmado
         if: steps.alerts.outputs.state_saved == 'true'
         uses: actions/cache/save@v4
         with:
