@@ -61,9 +61,24 @@ async function main(){
   const history=(Array.isArray(previous)?previous:[]).filter(x=>x.day>=cutoff.toISOString().slice(0,10));
   const sentUrls=new Set(history.map(x=>x.url));
   const sentKeys=new Set(history.map(x=>x.key));
+  if(!send){
+    const test=await telegram(token,'getChat',{chat_id:chat});
+    if(!Number.isSafeInteger(test.id))throw Error('Telegram no confirmó el chat.');
+    console.log('Conexión con Telegram confirmada. Prueba sin búsquedas de pago ni envío.');
+    return;
+  }
   await waitForDeployment();
-  if(!send)await telegram(token,'getChat',{chat_id:chat});
-  const results=await research(token,history.slice(-90).map(x=>x.url));
+  let results;
+  for(let attempt=0;attempt<3;attempt++){
+    try{
+      results=await research(token,history.slice(-90).map(x=>x.url));
+      break;
+    }catch(error){
+      if(attempt===2||!/(HTTP 429)/.test(String(error.message)))throw error;
+      console.warn('Límite temporal de búsqueda (HTTP 429); reintento diferido.');
+      await setTimeout((attempt+1)*80000);
+    }
+  }
   const fresh=[];
   for(const job of results){
     if(!job.url?.startsWith('https://')||!job.title||!job.employer||!job.municipality)continue;
@@ -71,7 +86,6 @@ async function main(){
     sentUrls.add(job.url);sentKeys.add(key(job));fresh.push(job);
     if(fresh.length>=8)break;
   }
-  if(!send){console.log('Prueba sin envío: '+fresh.length+' ofertas.');return;}
   const [hour,minute,second]=localClock().split(':').map(Number);
   const wait=(8-hour)*3600000-minute*60000-second*1000;
   if(wait>0&&wait<1800000)await setTimeout(wait);
