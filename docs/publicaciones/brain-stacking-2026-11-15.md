@@ -19,3 +19,9 @@ La propuesta no es un protocolo terapéutico, ni garantiza transferencia cogniti
 
 - WHO (2026), Risk reduction of cognitive decline and dementia: https://www.who.int/publications-detail-redirect/9789240123557
 - Luo y cols. (2026), Cognitive transfer and durability of computerised cognitive training: https://pubmed.ncbi.nlm.nih.gov/42959097/
+
+## Imagen destacada
+
+- Archivo público: /brain-stacking-hero.png
+- Alt: Mesa luminosa con libro, cuaderno, pasatiempos y un teléfono apartado para una rutina de actividades sin pantallas.
+- La imagen está asociada al artículo publicado en Supabase.
