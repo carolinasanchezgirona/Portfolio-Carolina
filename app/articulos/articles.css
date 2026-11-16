@@ -2,3 +2,52 @@
 
 /* Keep legacy category fallback hidden even when cards use a flex/grid display. */
 .articles-card[hidden]{display:none}
+
+
+/* Compact featured images: blog grid and article header. */
+/* En el listado, el artículo destacado usa una imagen lateral en lugar de un gran cartel. */
+@media (min-width:721px){
+  .articles-grid .articles-card.featured{
+    display:grid;
+    grid-template-columns:minmax(0,42%) minmax(0,1fr);
+    min-height:275px;
+  }
+  .articles-grid .articles-card.featured .articles-card-image{
+    width:100%;
+    height:100%;
+    min-height:275px;
+    aspect-ratio:auto;
+  }
+  .articles-grid .articles-card.featured .articles-card-body{
+    min-width:0;
+    padding:24px 28px;
+  }
+  .articles-grid .articles-card.featured h2{
+    font-size:clamp(1.65rem,2.6vw,2.2rem);
+  }
+}
+/* Al entrar en un artículo, la fotografía principal no debe dominar la pantalla. */
+.article-header .article-figure{
+  max-width:740px;
+  margin:30px auto 0;
+}
+.article-header .article-image{
+  width:100%;
+  height:clamp(240px,34vw,370px);
+  max-height:none;
+  object-fit:cover;
+}
+@media (max-width:720px){
+  .articles-grid .articles-card.featured .articles-card-image{
+    aspect-ratio:16/9;
+    max-height:210px;
+  }
+  .article-header .article-figure{
+    margin-top:24px;
+  }
+  .article-header .article-image{
+    height:auto;
+    max-height:260px;
+    object-fit:cover;
+  }
+}
