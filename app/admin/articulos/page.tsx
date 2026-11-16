@@ -150,7 +150,7 @@ export default function AdminArticlesPage() {
                 <div className="settings-body">
                   <div className="settings-grid">
                     <div>
-                      <label className="featured-check"><input id="article-featured" type="checkbox" /><span>Artículo destacado</span></label>
+                      <label className="featured-check"><input id="article-featured" type="checkbox" disabled /><span>Destacado automático: último artículo publicado</span></label>
                       <label className="field">Etiquetas<input id="article-tags" type="text" placeholder="memoria, ansiedad, atención" /></label>
                       <label className="field">Página relacionada<select id="article-related-page">
                         <option value="">Selección automática</option>

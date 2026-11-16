@@ -72,6 +72,13 @@
     if (r.status === 401) { saveSession(null); window.location.replace("/admin/clinica/acceso/?next=" + encodeURIComponent("/admin/articulos/")); return; }
     if (!r.ok) throw new Error(body.message || "No se han podido cargar los artículos.");
     articles = body;
+    // Mostrar siempre como destacado el artículo publicado más reciente,
+    // independientemente del marcador manual guardado antiguamente.
+    const latest = articles
+      .filter((article) => articleUiStatus(article) === "published")
+      .sort((a, b) => ((Date.parse(b.published_at) || 0) - (Date.parse(a.published_at) || 0)) ||
+        ((Date.parse(b.updated_at) || 0) - (Date.parse(a.updated_at) || 0)))[0];
+    articles.forEach((article) => { article.featured = article.id === latest?.id; });
     renderList();
     if (selectId) {
       const article = articles.find((a) => a.id === selectId);

@@ -26,13 +26,17 @@ export type PublicArticle = {
 const select = "id,title,subtitle,slug,excerpt,content,category,featured,image_url,image_alt,image_caption,related_page,seo_title,seo_description,tags,cta_label,cta_url,published_at,scheduled_at,updated_at";
 
 export async function getPublishedArticles(category?: string): Promise<PublicArticle[]> {
-  const filters = [`select=${encodeURIComponent(select)}`, "status=eq.published", "order=featured.desc,published_at.desc"];
+  const filters = [`select=${encodeURIComponent(select)}`, "status=eq.published", "order=published_at.desc.nullslast,updated_at.desc"];
   if (category === "psicologia" || category === "neuropsicologia") filters.push(`category=eq.${category}`);
   const response = await fetch(`${SUPABASE_URL}/rest/v1/articles?${filters.join("&")}`, {
     headers: { apikey: SUPABASE_PUBLISHABLE_KEY },
   });
   if (!response.ok) return [];
-  return response.json();
+  const rows: PublicArticle[] = await response.json();
+  // Solo el artículo más reciente visible recibe el diseño destacado.
+  // La selección manual histórica de "featured" no altera este orden.
+  return rows.filter((article) => isArticleVisible(article))
+    .map((article, index) => ({ ...article, featured: index === 0 }));
 }
 
 export async function getPublishedArticle(slug: string): Promise<PublicArticle | null> {

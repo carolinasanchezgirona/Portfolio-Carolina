@@ -83,3 +83,24 @@ test('general and unrelated asset URLs keep their existing behavior', async () =
     assert.equal(await response.text(), 'asset');
   }
 });
+
+test('the newest published article is highlighted even if an older one was manually featured', async () => {
+  const { grid } = await renderList({ rows: [
+    { id: 'old', slug: 'antiguo', title: 'Antiguo', category: 'psicologia', published_at: '2026-09-01T09:00:00Z', featured: true, content: '' },
+    { id: 'new', slug: 'nuevo', title: 'Nuevo', category: 'neuropsicologia', published_at: '2026-11-15T09:00:00Z', featured: false, content: '' },
+  ] });
+  assert.equal(grid.cards.length, 2);
+  assert.match(grid.cards[0].innerHTML, /Nuevo/);
+  assert.match(grid.cards[0].className, /featured/);
+  assert.doesNotMatch(grid.cards[1].className, /featured/);
+});
+
+test('a future scheduled article cannot displace the current featured article', async () => {
+  const { grid } = await renderList({ rows: [
+    { id: 'future', slug: 'futuro', title: 'Futuro', category: 'psicologia', published_at: '2099-01-01T09:00:00Z', featured: true, content: '' },
+    { id: 'current', slug: 'actual', title: 'Actual', category: 'psicologia', published_at: '2026-11-15T09:00:00Z', featured: false, content: '' },
+  ] });
+  assert.equal(grid.cards.length, 1);
+  assert.match(grid.cards[0].className, /featured/);
+  assert.match(grid.cards[0].innerHTML, /Actual/);
+});

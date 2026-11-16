@@ -74,8 +74,11 @@
     if (!hasStaticArticles) status.textContent = emptyMessage;
 
     try {
-      const rows = await request(`articles?select=${encodeURIComponent(select)}&status=eq.published&order=featured.desc,published_at.desc`);
-      const visible = rows.filter(isPublishedNow);
+      const rows = await request(`articles?select=${encodeURIComponent(select)}&status=eq.published&order=published_at.desc.nullslast,updated_at.desc`);
+      const visible = rows.filter(isPublishedNow).sort((a, b) =>
+        ((Date.parse(b.published_at) || 0) - (Date.parse(a.published_at) || 0)) ||
+        ((Date.parse(b.updated_at) || 0) - (Date.parse(a.updated_at) || 0))
+      );
       if (!visible.some((article) => article.category === "neuropsicologia") && category !== "neuropsicologia") {
         document.querySelector('.articles-filters a[data-category="neuropsicologia"]')?.remove();
       }
@@ -83,9 +86,9 @@
       grid.replaceChildren();
       if (!articles.length) { status.textContent = emptyMessage; status.hidden = false; return; }
       status.hidden = true;
-      articles.forEach((article) => {
+      articles.forEach((article, index) => {
         const card = document.createElement("article");
-        card.className = `articles-card${article.featured ? " featured" : ""}`;
+        card.className = `articles-card${index === 0 ? " featured" : ""}`;
         card.dataset.articleCategory = article.category;
         const href = articleHref(article.slug, staticSlugs);
         const summary = article.subtitle || article.excerpt || "";
