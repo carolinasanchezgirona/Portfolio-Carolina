@@ -40,3 +40,6 @@
     scroll-padding-inline:9px;
   }
 }
+
+/* La auditoría se consulta desde /admin/logs, fuera de la ficha asistencial. */
+#clinic-patient-dialog .clinic-audit-section{display:none!important}
