@@ -4,7 +4,7 @@ import { readFileSync } from "node:fs";
 
 const read = path => readFileSync(new URL("../" + path, import.meta.url), "utf8");
 
-test("Historia clínica uniforme después de mover los apartados a las pestañas", () => {
+test("Historia clínica editable directamente después de mover los apartados a las pestañas", () => {
   const history = read("public/clinic-readable-history.js");
   const workspace = read("public/clinic-patient-workspace.js");
   assert.ok(workspace.includes("panels.get(id).append(node)"));
@@ -15,10 +15,13 @@ test("Historia clínica uniforme después de mover los apartados a las pestañas
 
   assert.ok(history.includes('closest("details.clinic-record-section")'));
   assert.ok(history.includes("details.clinic-record-section.readable-history"));
-  assert.ok(history.includes("details.clinic-record-section.readable-history.history-editing"));
+  assert.ok(history.includes("display:grid!important"));
+  assert.ok(!history.includes("history-toggle"));
+  assert.ok(!history.includes("history-preview"));
+  assert.ok(!history.includes("history-summary-editing"));
   assert.ok(!history.includes('querySelector(".clinic-record-sections")'));
-  assert.ok(!history.includes(".clinic-record-sections.readable-history"));
   assert.ok(history.includes("clinical:patient-opened"));
+  assert.ok(history.includes('form.addEventListener("focusin"'));
   assert.ok(!history.includes("clinic:patient-loaded"));
   assert.ok(!history.includes("root.appendChild(aiPanel)"));
 });
