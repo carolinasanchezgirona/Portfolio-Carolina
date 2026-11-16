@@ -116,14 +116,12 @@ test("clinical visit history uses one chronological presentation and keeps prior
   assert.match(file("app/admin/clinica/page.tsx"),/admin-clinica\.js\?v=20261111-pdf-workbook-1/);
 });
 
-test("legacy narrative synthesis shares the same read and edit presentation without rewriting saved notes", () => {
+test("clinical history keeps the original editable fields without rewriting saved notes", () => {
   const readable = file("public/clinic-readable-history.js");
-  assert.match(readable,/clinic-summary-readonly/);
-  assert.match(readable,/history-summary-preview/);
-  assert.match(readable,/history-summary-editing/);
-  assert.match(readable,/summaryGrid\.before\(summary\)/);
-  assert.match(readable,/body\.textContent = field\.value\.trim\(\)/);
-  assert.match(readable,/refreshSummary\(\)/);
+  assert.match(readable,/display:grid!important/);
+  assert.match(readable,/textarea:focus/);
+  assert.match(readable,/form\.addEventListener\("focusin"/);
+  assert.doesNotMatch(readable,/clinic-summary-readonly|history-summary-preview|history-summary-editing|history-toggle/);
   assert.doesNotMatch(readable,/fetch\(|localStorage|sessionStorage|JSON\.stringify/);
-  assert.match(file("app/admin/clinica/page.tsx"),/clinic-readable-history\.js\?v=20261110-structured-4/);
+  assert.match(file("app/admin/clinica/page.tsx"),/clinic-readable-history\.js\?v=20261116-direct-edit-1/);
 });
