@@ -11,6 +11,14 @@ Enlace clínico: /problemas-de-memoria/
 ## Enfoque
 Análisis de The Father (2020) desde la neuropsicología clínica, sin atribuir un diagnóstico al personaje. Memoria episódica, orientación, reconocimiento, anosognosia, atención centrada en la persona y límites del lenguaje cinematográfico.
 
+## Imágenes
+
+- **Portada corregida**: cartel promocional de *The Father* con los dos rostros en primer plano (Anthony Hopkins a la izquierda y Olivia Colman a la derecha).
+  https://www.newdvdreleasedates.com/images/posters/large/the-father-2020.jpg
+- **Imagen complementaria**: escena de Olivia Colman junto a Anthony Hopkins en el salón, insertada en el apartado «La mirada de la hija».
+  https://fr.web.img5.acsta.net/pictures/21/02/03/17/24/5778282.jpg
+- Créditos: © Sony Pictures Classics; imágenes sujetas a derechos de autor. Debe comprobarse la autorización para reutilizarlas.
+
 ## Referencias
 - https://pmc.ncbi.nlm.nih.gov/articles/PMC9045340/
 - https://www.nice.org.uk/guidance/ng97/chapter/recommendations
@@ -18,19 +26,4 @@ Análisis de The Father (2020) desde la neuropsicología clínica, sin atribuir 
 - https://pmc.ncbi.nlm.nih.gov/articles/PMC11497716/
 - https://ijal.se/article/view/4854
 
-## Imágenes actualizadas (21/11/2026)
-
-- **Portada acordada**: cartel promocional de *The Father* con los rostros de Anthony Hopkins y Olivia Colman en primer plano (Anthony a la izquierda y Olivia a la derecha):
-  https://www.newdvdreleasedates.com/images/posters/large/the-father-2020.jpg
-- **Segunda imagen dentro del artículo**, junto al apartado «La mirada de la hija»: escena de Olivia Colman conversando con Anthony Hopkins sentado en una butaca:
-  https://fr.web.img5.acsta.net/pictures/21/02/03/17/24/5778282.jpg
-- Créditos: © Sony Pictures Classics. Material sujeto a derechos de autor; no equivale a permiso de reutilización.
-- Ambas URLs han quedado registradas en Supabase `public.articles`.
-
-## Imagen destacada
-Cartel oficial promocional de The Father (2020), procedente del sitio web del titular:
-https://www.sonypictures.com/sites/default/files/styles/max_860x460/public/title-key-art/thefather_onesheet_1400x2100.png?itok=39bf8nkE
-
-Crédito: © Sony Pictures Entertainment. Sustituye la fotografía genérica de la sala de cine a petición de la responsable de la web. La disponibilidad pública del recurso no implica una licencia de reutilización; verificar la autorización de derechos.
-
-Este registro documenta la publicación de un artículo cuya versión autoritativa está en Supabase. Esta actualización permite que el proceso de compilación estática existente incorpore su nueva imagen sin alterar componentes ni configuración del sitio.
+La versión editorial autoritativa del contenido y de sus imágenes se encuentra en public.articles en Supabase. Actualizar este archivo en el repositorio activa el proceso habitual de compilación estática cuando está configurado.
