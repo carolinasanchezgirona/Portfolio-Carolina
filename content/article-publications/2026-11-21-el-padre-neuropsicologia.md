@@ -18,8 +18,10 @@ Análisis de The Father (2020) desde la neuropsicología clínica, sin atribuir 
 - https://pmc.ncbi.nlm.nih.gov/articles/PMC11497716/
 - https://ijal.se/article/view/4854
 
-## Imagen
-Fotografía de Tima Miroshnichenko, Pexels, licencia gratuita:
-https://www.pexels.com/photo/empty-seats-of-a-movie-theater-7991112/
+## Imagen destacada
+Cartel oficial promocional de The Father (2020), procedente del sitio web del titular:
+https://www.sonypictures.com/sites/default/files/styles/max_860x460/public/title-key-art/thefather_onesheet_1400x2100.png?itok=39bf8nkE
 
-Este registro documenta la publicación de un artículo cuya versión autoritativa está en Supabase. La adición al repositorio permite que el proceso de compilación estática existente incluya su ruta pública sin alterar componentes ni configuración del sitio.
+Crédito: © Sony Pictures Entertainment. Sustituye la fotografía genérica de la sala de cine a petición de la responsable de la web. La disponibilidad pública del recurso no implica una licencia de reutilización; verificar la autorización de derechos.
+
+Este registro documenta la publicación de un artículo cuya versión autoritativa está en Supabase. Esta actualización permite que el proceso de compilación estática existente incorpore su nueva imagen sin alterar componentes ni configuración del sitio.
