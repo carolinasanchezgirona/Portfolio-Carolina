@@ -30,3 +30,43 @@
 .am-copy-fallback{width:100%;min-height:140px;margin:1rem 0}
 @media(max-width:720px){.am-fields{grid-template-columns:1fr}.am-module{padding:.9rem}.am-toolbar{display:grid;grid-template-columns:minmax(0,1fr);align-items:stretch}.am-control{flex-basis:auto}.am-btn{width:100%}.am-actions{display:grid;grid-template-columns:1fr}.am-section{padding:.85rem}}
 @media print{.am-module{border:0}.am-toolbar,.am-actions,.am-status{display:none!important}}
+
+/* Entrevistas académicas v2: bloques plegables, campos selectivos y checkboxes accesibles. */
+.am-form-summary{color:#34465b;line-height:1.6;font-size:.96rem;margin:0 0 .75rem}
+.am-references{display:flex;gap:.45rem 1rem;flex-wrap:wrap;align-items:baseline;font-size:.82rem;color:#667183;margin:0 0 1rem}
+.am-references strong{font-weight:650}
+.am-references a{color:#345c81;text-decoration:underline;text-underline-offset:3px}
+.am-progress{background:#f3f6fa;border:1px solid #d9e2eb;border-radius:10px;padding:.7rem .9rem;color:#3a5069;font-size:.83rem;line-height:1.5;margin:.8rem 0 1.2rem}
+.am-section-details{padding:.85rem 1.1rem;margin:.8rem 0}
+.am-section-details>summary{cursor:pointer;font-size:1rem;font-weight:750;color:#2b4158;padding:.35rem .2rem;line-height:1.4;list-style-position:inside}
+.am-section-details>summary:focus-visible{outline:3px solid #9db8ce;outline-offset:3px}
+.am-section-details:not([open])>summary{margin:0}
+.am-section-details[open]>summary{border-bottom:1px solid #e5eaf0;padding-bottom:.75rem;margin-bottom:.8rem}
+.am-section-details>.am-muted{padding:.1rem .15rem .7rem}
+.am-question{min-width:0;border:1px solid #e5eaf0;border-radius:10px;background:#fff;padding:.8rem;display:flex;flex-direction:column;gap:.4rem}
+.am-question-title{display:block;font-weight:670;line-height:1.5;color:#25364a;font-size:.89rem}
+.am-field-label{display:flex;flex-direction:column;gap:.45rem}
+.am-fields .am-question .am-field-label{font-size:.89rem}
+.am-question :is(select,input[type="text"],input[type="date"],input[type="number"]){width:100%;min-height:42px;box-sizing:border-box;padding:.58rem .68rem;color:#233043;background:white;border:1px solid #b9c7d5;border-radius:8px;font-family:inherit;font-size:.94rem}
+.am-question select{cursor:pointer}
+.am-question textarea{min-height:100px}
+.am-question :is(textarea,select,input):disabled{background:#f3f5f8;color:#3b4a5e;cursor:default}
+.am-checkbox-group{min-width:0;padding:0;margin:0;border:0}
+.am-checkbox-group>legend{font-size:.89rem;font-weight:670;color:#25364a;line-height:1.5;margin-bottom:.45rem;float:none;padding:0}
+.am-checkbox-options{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:.4rem .65rem}
+.am-fields .am-checkbox-options .am-check-option{display:flex;flex-direction:row;gap:.5rem;align-items:start;font-size:.86rem;line-height:1.4;font-weight:450;padding:.48rem .55rem;border:1px solid #e2e8ef;background:#f9fafc;border-radius:7px;cursor:pointer;min-width:0}
+.am-check-option input[type="checkbox"]{appearance:auto;flex:0 0 auto;accent-color:#3d526e;width:18px;height:18px;margin:.02rem 0 0}
+.am-check-option input[type="checkbox"]:disabled{cursor:default}
+.am-check-option:has(input:checked){border-color:#8fa5bb;background:#edf4f9}
+.am-check-option span{overflow-wrap:anywhere}
+.am-question-help{margin:0;color:#64748b;font-size:.78rem;line-height:1.45}
+.am-recovery{padding:1rem;border:1px solid #d9a0a0;border-radius:10px}
+.am-recovery>summary{font-weight:650;cursor:pointer}
+.am-recovery textarea{width:100%;font-family:monospace;font-size:.85rem}
+@media(max-width:720px){
+  .am-section-details{padding:.7rem .65rem}
+  .am-question{padding:.7rem}
+  .am-checkbox-options{grid-template-columns:1fr}
+  .am-references{display:block}
+  .am-references a{display:block;padding:.25rem 0}
+}
