@@ -18,6 +18,15 @@ Análisis de The Father (2020) desde la neuropsicología clínica, sin atribuir 
 - https://pmc.ncbi.nlm.nih.gov/articles/PMC11497716/
 - https://ijal.se/article/view/4854
 
+## Imágenes actualizadas (21/11/2026)
+
+- **Portada acordada**: cartel promocional de *The Father* con los rostros de Anthony Hopkins y Olivia Colman en primer plano (Anthony a la izquierda y Olivia a la derecha):
+  https://www.newdvdreleasedates.com/images/posters/large/the-father-2020.jpg
+- **Segunda imagen dentro del artículo**, junto al apartado «La mirada de la hija»: escena de Olivia Colman conversando con Anthony Hopkins sentado en una butaca:
+  https://fr.web.img5.acsta.net/pictures/21/02/03/17/24/5778282.jpg
+- Créditos: © Sony Pictures Classics. Material sujeto a derechos de autor; no equivale a permiso de reutilización.
+- Ambas URLs han quedado registradas en Supabase `public.articles`.
+
 ## Imagen destacada
 Cartel oficial promocional de The Father (2020), procedente del sitio web del titular:
 https://www.sonypictures.com/sites/default/files/styles/max_860x460/public/title-key-art/thefather_onesheet_1400x2100.png?itok=39bf8nkE
