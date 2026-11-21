@@ -33,9 +33,9 @@ class TrendRadarTests(unittest.TestCase):
         now = datetime.now(timezone.utc)
         t = radar.THEMES[0]
         rows = [
-            {"id": "1", "title": "Noticia A", "source": "Medio A",
+            {"id": "1", "title": "Noticia sobre memoria A", "source": "Medio A",
              "url": "https://news.google.com/a", "date": now},
-            {"id": "2", "title": "Noticia B", "source": "Medio A",
+            {"id": "2", "title": "Noticia sobre memoria B", "source": "Medio A",
              "url": "https://news.google.com/b", "date": now},
         ]
         self.assertEqual(radar.score_themes({t["name"]: rows}, [], set()), [])
@@ -49,14 +49,33 @@ class TrendRadarTests(unittest.TestCase):
         now = datetime.now(timezone.utc)
         t = radar.THEMES[0]
         rows = [
-            {"id": "1", "title": "Noticia A", "source": "Medio A", "url": "https://news.google.com/a", "date": now},
-            {"id": "2", "title": "Noticia B", "source": "Medio B", "url": "https://news.google.com/b", "date": now},
+            {"id": "1", "title": "Noticia sobre memoria A", "source": "Medio A", "url": "https://news.google.com/a", "date": now},
+            {"id": "2", "title": "Noticia sobre memoria B", "source": "Medio B", "url": "https://news.google.com/b", "date": now},
         ]
         picks = radar.score_themes({t["name"]: rows}, ["Alzhéimer"], set())
         # El término sin tilde del feed se contrasta con las variantes en el radar.
         self.assertEqual(len(picks), 1)
         self.assertTrue(picks[0]["trends"])
         self.assertEqual(picks[0]["potential"], "ALTO")
+
+    def test_long_report_is_split_without_dropping_topics(self):
+        now = datetime.now(timezone.utc)
+        picks = []
+        for i, theme in enumerate(radar.THEMES[:5]):
+            long_story = {
+                "id": str(i), "title": "memoria y psicología " + "novedades " * 12,
+                "source": "Medio A", "url": "https://news.google.com/rss/articles/" + "x" * 460,
+                "date": now,
+            }
+            picks.append({
+                "theme": theme, "stories": [long_story, dict(long_story, source="Medio B", id="b" + str(i))],
+                "publishers": 2, "trends": False, "potential": "MEDIO",
+            })
+        messages = radar.render_messages(now.astimezone(radar.MADRID).date(), picks, 9, True)
+        self.assertGreater(len(messages), 1)
+        self.assertTrue(all(len(message) < 4096 for message in messages))
+        for theme in radar.THEMES[:5]:
+            self.assertIn(theme["name"], "\n".join(messages))
 
     def test_escape_html_and_safety(self):
         self.assertEqual(radar.escape_html('<b>"hola"</b>'), '&lt;b&gt;&quot;hola&quot;&lt;/b&gt;')
