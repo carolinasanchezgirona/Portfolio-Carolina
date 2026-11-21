@@ -488,9 +488,22 @@
     if (!record||record.status==="reviewed") return;
     if (!confirm("¿Marcar esta anamnesis como revisada? Se bloqueará para evitar modificaciones retrospectivas. Las ampliaciones se documentarán en una nueva evaluación.")) return;
     if (!await saveCurrent()) return;
-    if (!record.answers?.motivo || !record.answers?.fuentes || Object.keys(record.answers||{}).length<3) {
+    const sourceOk=Array.isArray(record.answers?.fuentes)
+      ? record.answers.fuentes.length>0
+      : Boolean(String(record.answers?.fuentes||"").trim());
+    if (!record.answers?.motivo || !sourceOk || Object.keys(record.answers||{}).length<3) {
       notify("Antes de cerrar, documenta el motivo, las fuentes y al menos un hallazgo clínico pertinente.",true);
       return;
+    }
+    if (String(record.protocol_version||"1.0")!=="1.0") {
+      const all=formSections(record)?.flatMap(section=>section.questions)||[];
+      const answered=all.filter(question=>hasAnswer(record.answers?.[question.key])).length;
+      if (answered<12) {
+        notify("Completa al menos 12 campos, incluidos motivo y fuentes, antes de marcar la anamnesis como revisada.",true);
+        return;
+      }
+      if (answered<Math.ceil(all.length*0.65) &&
+          !confirm("Se han cumplimentado "+answered+" de "+all.length+" campos. ¿Marcar como revisada a pesar de la información no explorada? Esta decisión quedará reflejada en el registro.")) return;
     }
     const target=record;
     try {
@@ -527,18 +540,29 @@
     }
     const error=permitted(type);
     if (error) { notify(error,true); return; }
-    const existing=records.find(item=>item.assessment_type===type && item.status!=="reviewed");
+    if (!bank()?.profiles?.[type]) {
+      notify("No se ha cargado la plantilla estructurada. Actualiza la página antes de iniciar.",true);
+      return;
+    }
+    const existing=records.find(item=>item.assessment_type===type
+      && item.status!=="reviewed" && String(item.protocol_version)==="2.0");
     if (existing) {
       await selectRecord(existing.id);
-      notify("Se ha abierto el proceso existente para evitar duplicados.");
+      notify("Se ha abierto la anamnesis estructurada en curso para evitar duplicados.");
       return;
+    }
+    const earlier=records.find(item=>item.assessment_type===type
+      && item.status!=="reviewed" && String(item.protocol_version||"1.0")==="1.0");
+    if (earlier &&
+        !confirm("Existe una entrevista anterior (versión 1.0) de esta valoración. Se conservará sin cambios. ¿Quieres iniciar un nuevo formulario estructurado 2.0 independiente?")) {
+      await selectRecord(earlier.id); return;
     }
     if (dirty&&!await saveCurrent()) return;
     loading=true;
     try {
       const rows=await api("clinical_anamnesis_records",
         {method:"POST",headers:{Prefer:"return=representation"},
-         body:JSON.stringify({patient_id:patientId,assessment_type:type,status:"draft",answers:{}})}
+         body:JSON.stringify({patient_id:patientId,assessment_type:type,protocol_version:"2.0",status:"draft",answers:{}})}
       );
       if (!rows?.[0]) throw Error("No se confirmó la creación de la anamnesis.");
       records.unshift(rows[0]);
@@ -560,11 +584,16 @@
       "Origen: entrevista y documentación clínica. Pendiente de integración y revisión profesional.",
       ""
     ];
-    for (const section of sectionList(record.assessment_type)) {
-      const items=section.fields.filter(([key])=>typeof record.answers?.[key]==="string"&&record.answers[key].trim());
+    const sections=formSections(record)||[];
+    for (const section of sections) {
+      const items=section.questions.filter(question=>hasAnswer(record.answers?.[question.key]));
       if (!items.length) continue;
       out.push(section.title.toUpperCase());
-      for (const [key,title] of items) out.push(title+"\n"+record.answers[key].trim()+"\n");
+      for (const question of items) {
+        const answer=record.answers[question.key];
+        const display=Array.isArray(answer)?answer.join(", "):String(answer);
+        out.push(question.label+"\n"+display+"\n");
+      }
     }
     return out.join("\n");
   }
@@ -663,7 +692,7 @@
     if (!panel||!dialog) return false;
     root=node("section",null,"am-module");root.id="clinic-anamnesis-module";
     root.append(node("h3","Anamnesis y evaluaciones"));
-    root.append(node("p","Entrevistas clínicas estructuradas por motivo de valoración. Se guardan en la ficha de cada paciente y permanecen fuera del portal del paciente.","am-intro"));
+    root.append(node("p","Formularios de entrevista clínica especializados, con casillas, desplegables, fechas y campos para ejemplos. Información privada vinculada a cada paciente; no se comparte con su portal. El formulario no sustituye pruebas estandarizadas ni el juicio clínico.","am-intro"));
     const top=node("div",null,"am-toolbar");
     const newBox=node("label",null,"am-control");
     newBox.append(node("span","Tipo de valoración"));
@@ -691,6 +720,9 @@
     renderRecords();renderEditor();
     const check=()=>{void loadPatient();};
     window.addEventListener("clinical:patient-opened",check);
+    window.addEventListener("clinic-anamnesis-forms-ready",()=>{
+      if(root&&record&&String(record.protocol_version||"1.0")!=="1.0"&&!dirty) renderEditor();
+    });
     new MutationObserver(check).observe(dialog,{attributes:true,attributeFilter:["hidden"]});
     document.querySelector("#clinic-patient-close")?.addEventListener("click",()=>{
       clearTimeout(saveTimer);
