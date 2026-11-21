@@ -33,6 +33,7 @@
     ["sesiones","Sesiones","Registro de sesiones, citas y evolución longitudinal"],
     ["tratamiento","Tratamiento","Objetivos, evolución, técnicas y material"],
     ["evaluacion","Evaluación","Pruebas, mediciones e hipótesis diagnósticas"],
+    ["anamnesis","Anamnesis","Entrevistas estructuradas por tipo de valoración"],
     ["historia","Historia","Anamnesis, formulación, seguridad y coordinación"],
     ["documentos","Informes","Informes, documentos y archivos compartidos"],
     ["datos","Datos","Identificación, acceso del paciente y administración"]
