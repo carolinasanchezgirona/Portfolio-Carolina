@@ -1,0 +1,95 @@
+name: Radar editorial de tendencias a Telegram
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/trend-radar-telegram.yml
+      - scripts/trend-radar-telegram.py
+      - tests/test_trend_radar.py
+  schedule:
+    # 08:35 Madrid (invierno/verano); seleccionar solo el cron correcto.
+    - cron: "35 6 * * 2,5"
+    - cron: "35 7 * * 2,5"
+  workflow_dispatch:
+    inputs:
+      send:
+        description: Enviar informe a mi Telegram ahora
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: trend-radar-telegram
+  cancel-in-progress: false
+
+jobs:
+  trends:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - name: Respetar el cambio de hora en Madrid
+        id: clock
+        shell: bash
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          SCHEDULE: ${{ github.event.schedule }}
+        run: |
+          if [[ "$EVENT_NAME" == "schedule" ]]; then
+            OFFSET="$(TZ=Europe/Madrid date +%z)"
+            case "$OFFSET:$SCHEDULE" in
+              "+0200:35 6 * * 2,5"|"+0100:35 7 * * 2,5") ;;
+              *) echo "run=false" >> "$GITHUB_OUTPUT"; exit 0 ;;
+            esac
+          fi
+          echo "run=true" >> "$GITHUB_OUTPUT"
+
+      - uses: actions/checkout@v4
+        if: steps.clock.outputs.run == 'true'
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-python@v5
+        if: steps.clock.outputs.run == 'true'
+        with:
+          python-version: '3.12'
+
+      - name: Validar código y pruebas sin credenciales
+        if: steps.clock.outputs.run == 'true'
+        run: |
+          python -m py_compile scripts/trend-radar-telegram.py
+          python -m unittest discover -s tests -p 'test_trend_radar.py' -v
+
+      - name: Restaurar historial de noticias ya enviadas
+        if: steps.clock.outputs.run == 'true'
+        uses: actions/cache/restore@v4
+        with:
+          path: ${{ runner.temp }}/trend-radar-telegram.json
+          key: trend-radar-v1-${{ github.run_id }}-${{ github.run_attempt }}
+          restore-keys: trend-radar-v1-
+
+      - name: Investigar tendencias y preparar el informe
+        if: steps.clock.outputs.run == 'true'
+        id: radar
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.CLINICAL_BACKUP_TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.CLINICAL_BACKUP_TELEGRAM_CHAT_ID }}
+          TREND_RADAR_STATE_PATH: ${{ runner.temp }}/trend-radar-telegram.json
+          SEND_RADAR: ${{ github.event_name == 'schedule' || inputs.send }}
+        shell: bash
+        run: |
+          if [[ "$SEND_RADAR" == "true" ]]; then
+            python scripts/trend-radar-telegram.py --send
+          else
+            python scripts/trend-radar-telegram.py
+          fi
+
+      - name: Guardar historial tras el envío confirmado
+        if: steps.radar.outputs.sent == 'true'
+        uses: actions/cache/save@v4
+        with:
+          path: ${{ runner.temp }}/trend-radar-telegram.json
+          key: trend-radar-v1-${{ github.run_id }}-${{ github.run_attempt }}
