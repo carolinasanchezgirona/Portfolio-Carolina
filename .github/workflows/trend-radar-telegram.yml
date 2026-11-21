@@ -20,6 +20,7 @@ on:
 
 permissions:
   contents: read
+  issues: write
 
 concurrency:
   group: trend-radar-telegram
@@ -78,6 +79,7 @@ jobs:
           TELEGRAM_BOT_TOKEN: ${{ secrets.CLINICAL_BACKUP_TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.CLINICAL_BACKUP_TELEGRAM_CHAT_ID }}
           TREND_RADAR_STATE_PATH: ${{ runner.temp }}/trend-radar-telegram.json
+          TREND_RADAR_REPORT_PATH: ${{ runner.temp }}/trend-radar-brief.md
           SEND_RADAR: ${{ github.event_name == 'schedule' || inputs.send || (github.event_name == 'push' && contains(github.event.head_commit.message, '[enviar-radar]')) }}
         shell: bash
         run: |
@@ -86,6 +88,17 @@ jobs:
           else
             python scripts/trend-radar-telegram.py
           fi
+
+      - name: Sincronizar las oportunidades editoriales con el blog
+        if: steps.clock.outputs.run == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TREND_RADAR_REPORT_PATH: ${{ runner.temp }}/trend-radar-brief.md
+        shell: bash
+        run: |
+          test -s "$TREND_RADAR_REPORT_PATH"
+          gh issue edit 244 --repo "$GITHUB_REPOSITORY" --body-file "$TREND_RADAR_REPORT_PATH"
+          echo "Fuente editorial compartida actualizada en GitHub Issue #244."
 
       - name: Guardar historial tras el envío confirmado
         if: steps.radar.outputs.sent == 'true'
