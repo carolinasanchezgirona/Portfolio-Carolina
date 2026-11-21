@@ -313,8 +313,8 @@
     if (!record||record.status==="reviewed") return;
     if (!confirm("¿Marcar esta anamnesis como revisada? Se bloqueará para evitar modificaciones retrospectivas. Las ampliaciones se documentarán en una nueva evaluación.")) return;
     if (!await saveCurrent()) return;
-    if (Object.keys(record.answers||{}).length<3) {
-      notify("Antes de cerrar, documenta al menos el motivo, las fuentes y los hallazgos pertinentes.",true);
+    if (!record.answers?.motivo || !record.answers?.fuentes || Object.keys(record.answers||{}).length<3) {
+      notify("Antes de cerrar, documenta el motivo, las fuentes y al menos un hallazgo clínico pertinente.",true);
       return;
     }
     const target=record;
@@ -425,12 +425,12 @@
     windowPrint.print();
     notify("Vista de impresión preparada. Selecciona «Guardar como PDF» en el navegador.");
   }
-  async function loadPatient() {
+  async function loadPatient(force=false) {
     if (!root) return;
     const next=document.querySelector("#clinic-patient-id")?.value||"";
     const dialog=document.querySelector("#clinic-patient-dialog");
     if (!next||dialog?.hidden) return;
-    if (next===patientId) return;
+    if (next===patientId && !force) return;
     if (dirty&&!await saveCurrent()) {
       if (record && patientId) recoveries.set(patientId,{
         recordId:record.id, assessmentType:record.assessment_type,
@@ -505,7 +505,7 @@
     recordsSelect=node("select");
     recordsSelect.addEventListener("change",()=>{void selectRecord(recordsSelect.value);});
     pastBox.append(recordsSelect);
-    const refresh=button("Actualizar",()=>{patientId="";void loadPatient();},"am-btn");
+    const refresh=button("Actualizar",()=>{void loadPatient(true);},"am-btn");
     top.append(pastBox,refresh);
     root.append(top);
     statusNode=node("p","","am-status");statusNode.setAttribute("role","status");statusNode.setAttribute("aria-live","polite");
