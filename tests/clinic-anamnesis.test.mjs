@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
+import * as vm from "node:vm";
 import test from "node:test";
 
 const read = path => readFileSync(new URL("../"+path,import.meta.url),"utf8");
@@ -47,3 +48,47 @@ test("Guardado por paciente, versión, bloqueo y exportación revisable",()=>{
   assert.match(moduleJs,/age<6/);
   assert.match(moduleJs,/age<18/);
 });
+
+test("Las cinco anamnesis 2.0 disponen de entrevista extensa, formatos seleccionables y fuentes académicas",()=>{
+  const {runInNewContext}=requireVm();
+  const fakeWindow={dispatchEvent(){}};
+  runInNewContext(read("public/clinic-anamnesis-forms.js"),{
+    window:fakeWindow,Event:class Event{constructor(type){this.type=type;}}
+  },{timeout:1200});
+  const forms=fakeWindow.ClinicAnamnesisForms;
+  assert.equal(forms.version,"2.0");
+  const expected=["tea_adultos","memoria_deterioro","altas_capacidades","dislexia","neuropsicologia_general"];
+  assert.deepEqual(Object.keys(forms.profiles).sort(),expected.sort());
+  for (const [key,profile] of Object.entries(forms.profiles)) {
+    assert.ok(profile.sources.length>=2,key+" sin referencias");
+    assert.ok(profile.sections.length>=4,key+" sin desarrollo clínico suficiente");
+    const items=[...forms.common,...profile.sections].flatMap(section=>section.questions);
+    assert.ok(items.length>=75,key+": "+items.length+" preguntas");
+    assert.ok(items.filter(q=>q.kind==="checks").length>=10,key+" sin casillas suficientes");
+    assert.ok(items.filter(q=>q.kind==="select").length>=25,key+" sin respuestas seleccionables");
+    assert.equal(new Set(items.map(q=>q.key)).size,items.length,key+" con claves repetidas");
+    for (const item of items) {
+      assert.match(item.key,/^[a-z][a-z0-9_]*$/);
+      assert.ok(item.label);
+      if (["checks","select"].includes(item.kind)) assert.ok(item.options.length>=2,item.key);
+    }
+  }
+});
+
+test("La ficha estructura selectores, checkboxes, guardado por versión y conserva formularios históricos",()=>{
+  assert.match(moduleJs,/formSections\(current\)/);
+  assert.match(moduleJs,/String\(current\.protocol_version\|\|"1\.0"\)==="1\.0"/);
+  assert.match(moduleJs,/renderQuestion\(question, previous, readonly\)/);
+  assert.match(moduleJs,/checkbox\.type="checkbox"/);
+  assert.match(moduleJs,/input\.add\(new Option\("Sin responder \/ seleccionar…",""\)\)/);
+  assert.match(moduleJs,/input\.type=kind==="date"\|\|kind==="number"\?kind:"text"/);
+  assert.match(moduleJs,/protocol_version:"2\.0"/);
+  assert.match(moduleJs,/const earlier=records\.find/);
+  assert.match(moduleJs,/Array\.isArray\(answer\)\?answer\.join/);
+  assert.match(moduleJs,/document\.createElement|node\("details"/);
+  assert.match(read("app/admin/clinica/layout.tsx"),/clinic-anamnesis-forms\.js/);
+});
+
+function requireVm(){
+  return {runInNewContext:vm.runInNewContext};
+}
