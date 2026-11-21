@@ -70,6 +70,7 @@ jobs:
           node --check public/admin-economia.js
           node --check public/admin-agenda-view-switcher.js
           node --check public/admin-notifications.js
+          node --check public/clinic-anamnesis-forms.js
           node --check public/clinic-anamnesis.js
           node --test tests/clinic-anamnesis.test.mjs
           node --check public/sw.js
