@@ -1,0 +1,95 @@
+name: Radar semanal de ahorro a Telegram
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/savings-radar-telegram.yml
+      - scripts/savings-radar-telegram.py
+      - tests/test_savings_radar.py
+  schedule:
+    # Domingos a las 10:00 (Europe/Madrid), ajustando horario de verano.
+    - cron: "0 8 * * 0"
+    - cron: "0 9 * * 0"
+  workflow_dispatch:
+    inputs:
+      send:
+        description: Enviar al Telegram habitual ahora
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: savings-radar-telegram
+  cancel-in-progress: false
+
+jobs:
+  savings:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    steps:
+      - name: Ajustar horario local de Madrid
+        id: clock
+        shell: bash
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          SCHEDULE: ${{ github.event.schedule }}
+        run: |
+          if [[ "$EVENT_NAME" == "schedule" ]]; then
+            OFFSET="$(TZ=Europe/Madrid date +%z)"
+            case "$OFFSET:$SCHEDULE" in
+              "+0200:0 8 * * 0"|"+0100:0 9 * * 0") ;;
+              *) echo "run=false" >> "$GITHUB_OUTPUT"; exit 0 ;;
+            esac
+          fi
+          echo "run=true" >> "$GITHUB_OUTPUT"
+
+      - uses: actions/checkout@v4
+        if: steps.clock.outputs.run == 'true'
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-python@v5
+        if: steps.clock.outputs.run == 'true'
+        with:
+          python-version: '3.12'
+
+      - name: Validar código y pruebas sin credenciales
+        if: steps.clock.outputs.run == 'true'
+        run: |
+          python -m py_compile scripts/savings-radar-telegram.py
+          python -m unittest discover -s tests -p 'test_savings_radar.py' -v
+
+      - name: Recuperar informes enviados
+        if: steps.clock.outputs.run == 'true'
+        uses: actions/cache/restore@v4
+        with:
+          path: ${{ runner.temp }}/savings-radar-telegram.json
+          key: savings-radar-v1-${{ github.run_id }}-${{ github.run_attempt }}
+          restore-keys: savings-radar-v1-
+
+      - name: Preparar informe o enviar a Telegram
+        if: steps.clock.outputs.run == 'true'
+        id: radar
+        shell: bash
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.CLINICAL_BACKUP_TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.CLINICAL_BACKUP_TELEGRAM_CHAT_ID }}
+          SAVINGS_RADAR_STATE_PATH: ${{ runner.temp }}/savings-radar-telegram.json
+          SEND_SAVINGS: ${{ github.event_name == 'schedule' || inputs.send }}
+        run: |
+          if [[ "$SEND_SAVINGS" == "true" ]]; then
+            python scripts/savings-radar-telegram.py --send
+          else
+            python scripts/savings-radar-telegram.py
+          fi
+
+      - name: Guardar historial solo tras confirmación de Telegram
+        if: steps.radar.outputs.sent == 'true'
+        uses: actions/cache/save@v4
+        with:
+          path: ${{ runner.temp }}/savings-radar-telegram.json
+          key: savings-radar-v1-${{ github.run_id }}-${{ github.run_attempt }}
