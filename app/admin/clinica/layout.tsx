@@ -4,6 +4,7 @@ import "./mobile-fixes.css";
 import "./brand-fixes.css";
 import "./admin-enhancements.css";
 import "./adhd-assessments.css";
+import "./anamnesis.css";
 import "./adhd-neuro-expanded.css";
 import "./adhd-assessment-planner.css";
 import "./adhd-pdf-library.css";
@@ -40,6 +41,7 @@ export default function ClinicaLayout({ children }: Readonly<{ children: React.R
       <Script src="/clinic-manual-documents-email.js?v=20261109-1" strategy="afterInteractive" />
       <Script src="/clinic-electronic-signature.js?v=20261109-1" strategy="afterInteractive" />
       <Script src="/clinic-adhd-assessments.js?v=20261104-6" strategy="afterInteractive" />
+      <Script src="/clinic-anamnesis.js?v=20261121-1" strategy="afterInteractive" />
       <Script src="/clinic-adhd-assessment-planner.js?v=20261104-3" strategy="afterInteractive" />
       <Script src="/clinic-adhd-pdf-library.js?v=20261104-4" strategy="afterInteractive" />
       <Script src="/clinic-adhd-neuro-expanded.js?v=20261104-5" strategy="afterInteractive" />
