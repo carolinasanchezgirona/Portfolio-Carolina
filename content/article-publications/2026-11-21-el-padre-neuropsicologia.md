@@ -11,14 +11,14 @@ Enlace clínico: /problemas-de-memoria/
 ## Enfoque
 Análisis de The Father (2020) desde la neuropsicología clínica, sin atribuir un diagnóstico al personaje. Memoria episódica, orientación, reconocimiento, anosognosia, atención centrada en la persona y límites del lenguaje cinematográfico.
 
-## Imagen principal
+## Imagen principal (actualizada con el cartel aportado por la usuaria)
 
-- Única imagen de la película, utilizada tanto en el listado como dentro del artículo: fotografía promocional con los dos rostros en primer plano.
-- URL: https://www.newdvdreleasedates.com/images/posters/large/the-father-2020.jpg
-- Pie: «Imagen promocional de El padre (The Father, 2020). © Sony Pictures Classics.»
-- Imagen adicional eliminada del cuerpo del artículo tras detectar encuadre y pie incorrectos.
-- Maquetación: conservar la proporción de la imagen con `object-fit: contain` para evitar cortes de las caras en móviles.
-- La imagen está sujeta a derechos de autor; atribuirla no constituye una licencia de reutilización.
+- Se ha seleccionado la imagen específica adjunta por la usuaria el 21/11/2026: cartel horizontal de *The Father*, con Olivia Colman a la izquierda, Anthony Hopkins a la derecha, citas de prensa en el centro y el título en el margen inferior.
+- Recurso público con la misma composición: https://anygoodfilms.com/wp-content/uploads/2021/03/father-scaled.jpg
+- El listado y la ficha del artículo utilizan el mismo campo `image_url` de Supabase.
+- CSS específico para mostrar la imagen completa en móvil y escritorio: `object-fit: contain`, sin cortar rostros, texto ni el título.
+- Pie: «Cartel promocional de The Father (2020)». Derechos reservados a sus respectivos titulares; la fuente de consulta no concede por sí sola una licencia.
+- No hay fotografías adicionales dentro del cuerpo del artículo.
 
 ## Referencias
 - https://pmc.ncbi.nlm.nih.gov/articles/PMC9045340/
