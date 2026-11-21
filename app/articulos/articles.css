@@ -52,30 +52,32 @@
   }
 }
 
-
-/* The Father (2020): show the complete approved promotional image on mobile and desktop.
-   Avoid the global cover crops that cut off the actors' faces. */
-.articles-card-image img[src*="/the-father-2020.jpg"]{
+/* The Father: show the complete user-selected 2021 landscape poster.
+   No cropping of the two portraits, reviews or film title. */
+.articles-card-image img[src*="/father-scaled.jpg"] {
+  width:100%;
+  height:100%;
   object-fit:contain;
-  object-position:center;
-  background:#F2EFE7;
+  object-position:center center;
+  background:#e7e4dc;
 }
-.article-header .article-image[src*="/the-father-2020.jpg"]{
+.article-header .article-image[src*="/father-scaled.jpg"] {
+  display:block;
   width:100%;
   height:auto;
-  max-height:520px;
+  max-height:none;
   object-fit:contain;
-  object-position:center;
-  background:#F2EFE7;
+  object-position:center center;
+  background:#e7e4dc;
 }
-@media(max-width:720px){
-  .article-header .article-image[src*="/the-father-2020.jpg"]{
-    height:auto;
-    max-height:520px;
-    object-fit:contain;
-  }
-  .articles-grid .articles-card.featured .articles-card-image:has(img[src*="/the-father-2020.jpg"]){
+@media (max-width:720px) {
+  .articles-grid .articles-card.featured .articles-card-image:has(img[src*="/father-scaled.jpg"]) {
+    aspect-ratio:4/3;
     max-height:none;
-    aspect-ratio:16/9;
+  }
+  .article-header .article-image[src*="/father-scaled.jpg"] {
+    height:auto;
+    max-height:none;
+    object-fit:contain;
   }
 }
