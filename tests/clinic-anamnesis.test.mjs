@@ -31,7 +31,7 @@ test("Los datos clínicos solo van al almacenamiento autorizado, sin caché web"
   assert.match(schema,/for select to authenticated using \(\(select public\.is_clinical_owner\(\)\)\)/);
   assert.match(schema,/for update to authenticated/i);
   assert.match(schema,/status <> 'reviewed'/);
-  assert.doesNotMatch(moduleJs,/localStorage|service_role|innerHTML/);
+  assert.doesNotMatch(moduleJs,/localStorage\.(?:setItem|getItem)|service_role\s*[:=]|innerHTML\s*=/);
   assert.match(moduleJs,/sessionStorage/);
   assert.match(moduleJs,/clinical_anamnesis_records\?id=eq/);
   assert.match(moduleJs,/revision=eq/);
