@@ -430,4 +430,5 @@
     isAnswer(value){return Array.isArray(value)?value.length>0:value!==null&&value!==undefined&&String(value).trim()!=="";},
     format(value){return Array.isArray(value)?value.join(", "):String(value??"");}
   });
+  window.dispatchEvent(new Event("clinic-anamnesis-forms-ready"));
 })();
