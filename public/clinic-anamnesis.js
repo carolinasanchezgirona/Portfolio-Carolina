@@ -122,6 +122,8 @@
   const statusNames = {draft:"Borrador", in_progress:"En curso", reviewed:"Revisada"};
   let root, patientId="", birthDate=null, records=[], record=null, editor, statusNode, typeSelect, recordsSelect;
   let dirty=false, changeCounter=0, saveTimer=null, saving=null, loadCounter=0, loading=false;
+  // Recuperación volátil, solo en esta pestaña y nunca en localStorage, para errores de conexión.
+  const recoveries=new Map();
 
   function node(tag, text, css) {
     const element=document.createElement(tag);
@@ -297,10 +299,11 @@
         return false;
       }
     })();
-    try { return await saving; }
+    let success=false;
+    try { success=await saving; return success; }
     finally {
       saving=null;
-      if (dirty && record===target) {
+      if (success && dirty && record===target) {
         clearTimeout(saveTimer);
         saveTimer=setTimeout(()=>{void saveCurrent();},2000);
       }
@@ -341,6 +344,7 @@
   async function startAssessment() {
     if (loading||!patientId) return;
     const type=typeSelect.value;
+    if (!type) { notify("Selecciona primero el tipo de valoración.",true); return; }
     if (type==="tdah") {
       window.ClinicPatientWorkspace?.activate?.("evaluacion");
       document.querySelector("#adhd-assessment-module")?.scrollIntoView({block:"nearest",behavior:"smooth"});
@@ -428,8 +432,12 @@
     if (!next||dialog?.hidden) return;
     if (next===patientId) return;
     if (dirty&&!await saveCurrent()) {
-      notify("No se pudieron guardar los cambios previos. Reabre la ficha anterior para recuperar el borrador antes de continuar.",true);
-      return;
+      if (record && patientId) recoveries.set(patientId,{
+        recordId:record.id, assessmentType:record.assessment_type,
+        revision:record.revision, answers:values()
+      });
+      clearTimeout(saveTimer);
+      dirty=false;
     }
     const generation=++loadCounter;
     patientId=next;birthDate=null;records=[];record=null;dirty=false;changeCounter=0;
@@ -444,8 +452,33 @@
       birthDate=patient?.[0]?.birth_date||null;
       records=Array.isArray(items)?items:[];
       record=records[0]||null;
+      const recovery=recoveries.get(next);
+      let recovered=false;
+      if (recovery) {
+        const previous=records.find(item=>item.id===recovery.recordId);
+        if (previous && previous.revision===recovery.revision && previous.status!=="reviewed") {
+          previous.answers=recovery.answers;
+          record=previous;
+          dirty=true;changeCounter++;
+          recoveries.delete(next);
+          recovered=true;
+        }
+      }
       renderRecords();renderEditor();
-      notify(records.length?records.length+" proceso(s) de anamnesis disponible(s).":"Todavía no hay anamnesis específicas para este paciente.");
+      if (recovered) {
+        notify("Borrador sin guardar recuperado para este paciente. Revisa y pulsa «Guardar borrador» para conservarlo.",true);
+      } else if (recovery) {
+        const details=node("details",null,"am-recovery");
+        details.append(node("summary","Hay cambios pendientes de recuperar de esta evaluación"));
+        details.append(node("p","Otro cambio pudo haber modificado el registro. Copia y contrasta estas anotaciones antes de incorporarlas; no se sobrescribirá nada automáticamente."));
+        const area=node("textarea");area.rows=10;area.readOnly=true;
+        area.value=Object.entries(recovery.answers).map(([key,value])=>key+": "+value).join("\n\n");
+        details.append(area);
+        editor.prepend(details);
+        notify("Se han conservado anotaciones de esta ficha en memoria temporal. Revisa las diferencias.",true);
+      } else {
+        notify(records.length?records.length+" proceso(s) de anamnesis disponible(s).":"Todavía no hay anamnesis específicas para este paciente.");
+      }
     } catch(e) { if(generation===loadCounter) {editor.replaceChildren();notify(e.message,true);} }
   }
   function mount() {
@@ -489,7 +522,7 @@
       if (dirty) void saveCurrent();
     });
     window.addEventListener("beforeunload",event=>{
-      if (dirty) { event.preventDefault(); event.returnValue=""; }
+      if (dirty || recoveries.size) { event.preventDefault(); event.returnValue=""; }
     });
     void loadPatient();
     return true;
