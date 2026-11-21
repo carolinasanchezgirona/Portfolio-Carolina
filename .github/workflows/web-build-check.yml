@@ -107,6 +107,11 @@ jobs:
           node --check public/clinic-patient-workspace.js
           node --test tests/clinic-process-reviews.test.mjs
 
+      - name: Validar anamnesis específicas y permisos clínicos
+        run: |
+          node --check public/clinic-anamnesis.js
+          node --test tests/clinic-anamnesis.test.mjs
+
       - name: Validar ficha clínica única y preparación de sesiones
         run: |
           node --check public/clinic-patient-workspace.js
