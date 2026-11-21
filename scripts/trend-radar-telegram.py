@@ -204,6 +204,9 @@ def score_themes(news_by_theme, trends, already_sent):
         unique = set()
         publishers = set()
         for item in news_by_theme.get(theme["name"], []):
+            headline = normalize(item["title"])
+            if not any(normalize(term) in headline for term in theme["terms"]):
+                continue
             if item["id"] in already_sent or item["id"] in unique:
                 continue
             unique.add(item["id"])
@@ -236,18 +239,18 @@ def escape_html(value):
     return html.escape(str(value), quote=True)
 
 
-def render_message(day, picks, checked, trends_ok):
-    parts = [
+def render_messages(day, picks, checked, trends_ok):
+    introduction = [
         "<b>RADAR DE TENDENCIAS · " + day.strftime("%d/%m/%Y") + "</b>",
         "Psicología y neuropsicología | Ideas para tu blog e Instagram",
         "<i>Indicadores: cobertura mediática de 7 días" + (" y coincidencias con Trends España" if trends_ok else "") + ". El potencial es editorial, no una medición de viralidad. Las noticias no demuestran eficacia clínica.</i>",
     ]
+    blocks = []
     if not picks:
-        parts.append("No hay temas nuevos con al menos dos medios independientes en las fuentes disponibles. Prefiero no presentar como tendencia algo que no está suficientemente respaldado.")
+        blocks.append("No hay temas nuevos con al menos dos medios independientes en las fuentes disponibles. Prefiero no presentar como tendencia algo que no está suficientemente respaldado.")
     for index, pick in enumerate(picks[:5], 1):
         theme = pick["theme"]
-        parts.extend([
-            "",
+        lines = [
             "<b>" + str(index) + ". " + escape_html(theme["name"]) + "</b> · " + pick["potential"],
             "Señal: " + str(pick["publishers"]) + " medios diferentes" + (" + coincidencia en Trends" if pick["trends"] else "") + ".",
             "<b>Idea SEO:</b> " + escape_html(theme["title"]),
@@ -255,19 +258,30 @@ def render_message(day, picks, checked, trends_ok):
             "<b>Formato:</b> " + escape_html(theme["format"]),
             "<b>Enfoque:</b> " + escape_html(theme["angle"]),
             "<b>Cautela:</b> " + escape_html(theme["caution"]),
-        ])
-        # Dos titulares permiten valorar qué está generando conversación.
+        ]
         for story in pick["stories"][:2]:
             title = escape_html(story["title"][:105])
-            parts.append('Fuente: <a href="' + escape_html(story["url"]) + '">' + title + "</a> (" + escape_html(story["source"][:45]) + ")")
-    parts.extend(["", "Las fuentes enlazan a noticias recopiladas por Google Noticias, no necesariamente a artículos científicos. Ninguna publicación se realiza automáticamente."])
-    message = "\n".join(parts)
-    while len(message) > MAX_MESSAGE and picks:
-        picks = picks[:-1]
-        return render_message(day, picks, checked, trends_ok)
-    if len(message) > MAX_MESSAGE:
-        raise ValueError("Mensaje de Telegram demasiado largo")
-    return message
+            lines.append('Fuente: <a href="' + escape_html(story["url"]) + '">' + title + "</a> (" + escape_html(story["source"][:45]) + ")")
+        blocks.append("\n".join(lines))
+    footer = "Fuentes: noticias indexadas por Google Noticias, no necesariamente estudios científicos. No se publica automáticamente."
+    messages = []
+    current = "\n".join(introduction)
+    for block in blocks:
+        addition = "\n\n" + block
+        if len(current) + len(addition) + 100 > MAX_MESSAGE:
+            messages.append(current)
+            current = "<b>RADAR · continuación</b>"
+        if len(current) + len(addition) + 100 > MAX_MESSAGE:
+            raise ValueError("Una propuesta excede el límite de Telegram")
+        current += addition
+    if len(current) + len(footer) + 2 > MAX_MESSAGE:
+        messages.append(current)
+        current = "<b>RADAR · continuación</b>"
+    current += "\n\n" + footer
+    messages.append(current)
+    return [("<b>Informe " + str(i) + "/" + str(len(messages)) + "</b>\n" + item)
+            for i, item in enumerate(messages, 1)]
+
 
 
 def telegram_send(token, chat, message):
@@ -345,12 +359,13 @@ def main():
         print("Google Trends no disponible: se usa solo cobertura mediática.", file=sys.stderr)
 
     picks = score_themes(news_by_theme, trends, sent_ids)[:5]
-    message = render_message(today, picks, successes, trends_ok)
+    messages = render_messages(today, picks, successes, trends_ok)
     if not args.send:
-        print("Vista previa sin envío (" + str(successes) + " temas consultados):\n" + message)
+        print("Vista previa sin envío (" + str(successes) + " temas consultados):\n" + "\n\n".join(messages))
         return
 
-    telegram_send(token, chat, message)
+    for message in messages:
+        telegram_send(token, chat, message)
     new_history = history + [
         {"day": today.isoformat(), "id": item["id"]}
         for pick in picks
