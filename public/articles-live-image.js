@@ -5,6 +5,13 @@
   if (!image) return;
   const segments = location.pathname.split("/").filter(Boolean);
   if (segments[0] !== "articulos" || !segments[1] || segments[1] === "leer") return;
+  // The outdated build included a second movie still as an inline figure.
+  // Remove that duplicate on the canonical article while the static site rebuilds.
+  if (segments[1] === "el-padre-pelicula-alzheimer-neuropsicologia") {
+    document.querySelectorAll(".article-prose figure").forEach((figure) => {
+      if (figure.querySelector('img[src*="5778282.jpg"]')) figure.remove();
+    });
+  }
   const slug = decodeURIComponent(segments[1]);
   const url = "https://grgyvdxkjdstdyumdfyg.supabase.co/rest/v1/articles?" +
     "select=image_url,image_alt,image_caption&status=eq.published&slug=eq." +
