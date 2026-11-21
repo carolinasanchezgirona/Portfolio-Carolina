@@ -29,7 +29,7 @@ MAX_MESSAGE = 3900
 THEMES = [
     {
         "name": "Memoria y Alzheimer",
-        "query": "Alzheimer demencia memoria investigación diagnóstico España",
+        "query": ""Alzheimer" OR "demencia" OR "deterioro cognitivo"",
         "terms": ("alzheimer", "demencia", "memoria", "deterioro cognitivo"),
         "title": "¿Estamos entendiendo bien los primeros signos de deterioro cognitivo?",
         "hook": "No todo olvido es una demencia. ¿Qué señales justifican una valoración?",
@@ -40,7 +40,7 @@ THEMES = [
     },
     {
         "name": "TDAH en adultos",
-        "query": "TDAH adultos diagnóstico evaluación salud mental España",
+        "query": ""TDAH" OR "ADHD" OR "diagnóstico TDAH"",
         "terms": ("tdah", "déficit de atención", "deficit de atencion", "adhd"),
         "title": "TDAH en adultos: qué explica una evaluación clínica completa",
         "hook": "Reconocerte en un vídeo no confirma un TDAH. ¿Qué debe evaluarse?",
@@ -51,7 +51,7 @@ THEMES = [
     },
     {
         "name": "Cerebro, sueño y atención",
-        "query": "sueño cerebro atención memoria investigación salud mental",
+        "query": ""sueño" "memoria" OR "cerebro" "atención" OR "insomnio" "cerebro"",
         "terms": ("sueno", "dormir", "insomnio", "cerebro", "atencion"),
         "title": "Sueño y memoria: qué sabemos y qué se exagera",
         "hook": "Dormir mal afecta a la atención, pero ¿qué ocurre realmente en el cerebro?",
@@ -62,7 +62,7 @@ THEMES = [
     },
     {
         "name": "Ansiedad y estrés",
-        "query": "ansiedad estrés burnout salud mental psicología España",
+        "query": ""ansiedad" OR "estrés" OR "burnout"",
         "terms": ("ansiedad", "estres", "burnout", "agotamiento", "salud mental"),
         "title": "Ansiedad o sobrecarga: cuándo hablamos de un problema clínico",
         "hook": "Sentirse desbordado no siempre significa tener un trastorno de ansiedad.",
@@ -73,7 +73,7 @@ THEMES = [
     },
     {
         "name": "Psicología y redes sociales",
-        "query": "TikTok Instagram psicología salud mental autodiagnóstico viral",
+        "query": ""TikTok" "salud mental" OR "autodiagnóstico" OR "psicología en redes"",
         "terms": ("tiktok", "instagram", "redes sociales", "autodiagnostico", "viral"),
         "title": "Autodiagnóstico en redes: por qué un vídeo puede convencernos",
         "hook": "¿Por qué tantos síntomas de TikTok parecen describirnos?",
@@ -84,7 +84,7 @@ THEMES = [
     },
     {
         "name": "Depresión y psicoterapia",
-        "query": "depresión psicoterapia terapia psicológica investigación España",
+        "query": ""depresión" "psicoterapia" OR "terapia psicológica" "depresión"",
         "terms": ("depresion", "psicoterapia", "terapia psicologica", "tratamiento"),
         "title": "Psicoterapia y depresión: qué tratamientos tienen evidencia",
         "hook": "Que una terapia suene convincente no significa que tenga evidencia.",
@@ -95,7 +95,7 @@ THEMES = [
     },
     {
         "name": "Envejecimiento y cognición",
-        "query": "envejecimiento cognitivo mayores ejercicio memoria investigación",
+        "query": ""envejecimiento cognitivo" OR "memoria mayores" OR "longevidad cerebral"",
         "terms": ("envejecimiento", "mayores", "cognicion", "memoria", "longevidad"),
         "title": "Envejecer no es perder la memoria: qué cambios son esperables",
         "hook": "¿Qué cambia con la edad y qué merece una consulta de memoria?",
@@ -106,7 +106,7 @@ THEMES = [
     },
     {
         "name": "Autismo en adultos",
-        "query": "autismo adultos diagnóstico evaluación salud mental",
+        "query": ""autismo" "adultos" OR "diagnóstico autismo"",
         "terms": ("autismo", "autista", "tea adultos", "espectro autista"),
         "title": "Autismo en la edad adulta: claves para una evaluación rigurosa",
         "hook": "Identificarse con un rasgo no equivale a cumplir criterios de TEA.",
@@ -117,7 +117,7 @@ THEMES = [
     },
     {
         "name": "Cine, series y psicología",
-        "query": "película serie cine salud mental psicología cerebro",
+        "query": ""cine" "psicología" OR "salud mental" "serie" OR "película" "psicología"",
         "terms": ("pelicula", "cine", "serie", "salud mental", "psicologia"),
         "title": "Lo que el cine nos enseña y nos confunde sobre la salud mental",
         "hook": "¿La pantalla retrata un trastorno o está alimentando un mito?",
