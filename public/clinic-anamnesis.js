@@ -230,10 +230,13 @@
     const answers=values();
     const all=sections.flatMap(s=>s.questions);
     const answered=all.filter(q=>hasAnswer(answers[q.key])).length;
-    progressNode.textContent="Campos cumplimentados: "+answered+" de "+all.length+
-      ". Las respuestas no equivalen a criterios diagnósticos validados.";
-    const progress=progressNode.querySelector("progress");
-    if (progress) {progress.max=all.length;progress.value=answered;}
+    progressNode.replaceChildren();
+    const info=node("span","Campos respondidos: "+answered+" de "+all.length
+      +". Los campos no explorados pueden dejarse vacíos y documentarse como límite de la valoración.");
+    const progress=node("progress");
+    progress.max=all.length;progress.value=answered;
+    progress.setAttribute("aria-label","Campos de anamnesis cumplimentados");
+    progressNode.append(info,progress);
   }
   function renderQuestion(question, previous, readonly) {
     const key=question.key, old=previous[key], kind=question.kind||"textarea";
@@ -252,7 +255,17 @@
         checkbox.dataset.amField=key;
         checkbox.checked=selected.includes(option);
         checkbox.disabled=readonly;
-        checkbox.addEventListener("change",()=>{updateDirty();updateProgress();});
+        checkbox.addEventListener("change",()=>{
+          if (checkbox.checked) {
+            const isExclusive=value=>/^(ningun|sin datos|no identificad|no explorad)/i.test(value);
+            const siblings=items.querySelectorAll('input[type="checkbox"]');
+            for(const sibling of siblings){
+              if(sibling===checkbox||!sibling.checked)continue;
+              if(isExclusive(option)||isExclusive(sibling.value))sibling.checked=false;
+            }
+          }
+          updateDirty();updateProgress();
+        });
         label.append(checkbox,node("span",option));
         items.append(label);
       }
