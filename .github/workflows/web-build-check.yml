@@ -109,6 +109,7 @@ jobs:
 
       - name: Validar anamnesis específicas y permisos clínicos
         run: |
+          node --check public/clinic-anamnesis-forms.js
           node --check public/clinic-anamnesis.js
           node --test tests/clinic-anamnesis.test.mjs
 
