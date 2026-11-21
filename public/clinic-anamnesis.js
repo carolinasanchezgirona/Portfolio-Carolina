@@ -121,7 +121,8 @@
   };
   const statusNames = {draft:"Borrador", in_progress:"En curso", reviewed:"Revisada"};
   let root, patientId="", birthDate=null, records=[], record=null, editor, statusNode, typeSelect, recordsSelect;
-  let dirty=false, changeCounter=0, saveTimer=null, saving=null, loadCounter=0, loading=false;
+  let dirty=false, changeCounter=0, saveTimer=null, saving=null, loadCounter=0, loading=false, progressNode=null;
+  const bank=()=>window.ClinicAnamnesisForms||null;
   // Recuperación volátil, solo en esta pestaña y nunca en localStorage, para errores de conexión.
   const recoveries=new Map();
 
@@ -186,13 +187,187 @@
   function sectionList(type) {
     return [...COMMON.slice(0,2),...(TYPES[type]?.sections||[]),COMMON[2]];
   }
+  function formSections(current) {
+    if (!current || String(current.protocol_version||"1.0")==="1.0") {
+      return sectionList(current?.assessment_type).map(section=>({
+        ...section,
+        questions:section.fields.map(([key,label])=>({key,label,kind:"textarea"}))
+      }));
+    }
+    const forms=bank();
+    if (!forms?.profiles?.[current.assessment_type]) return null;
+    const common=forms.common||[];
+    return [...common.slice(0,3),...forms.profiles[current.assessment_type].sections,...common.slice(3)];
+  }
+  function hasAnswer(answer) {
+    return bank()?.isAnswer?.(answer) ??
+      (Array.isArray(answer)?answer.length>0:answer!==undefined&&answer!==null&&String(answer).trim()!=="");
+  }
   function values() {
-    const result={};
-    editor?.querySelectorAll("textarea[data-am-field]").forEach(area=>{
-      const value=area.value.trim();
-      if (value) result[area.dataset.amField]=value;
-    });
+    // Conservar respuestas de versiones previas y no borrar claves desconocidas.
+    const result={...(record?.answers||{})};
+    const controls=editor?.querySelectorAll("[data-am-field]")||[];
+    const handled=new Set();
+    for (const field of controls) {
+      const key=field.dataset.amField;
+      if (!key || handled.has(key)) continue;
+      handled.add(key);
+      if (field.type==="checkbox") {
+        const selected=Array.from(controls).filter(c=>c.dataset.amField===key && c.type==="checkbox" && c.checked).map(c=>c.value);
+        if (selected.length) result[key]=selected; else delete result[key];
+        continue;
+      }
+      const value=String(field.value??"").trim();
+      if (!value) delete result[key];
+      else result[key]=field.type==="number"?Number(value):value;
+    }
     return result;
+  }
+  function updateProgress() {
+    if (!progressNode || !record) return;
+    const sections=formSections(record);
+    if (!sections) return;
+    const answers=values();
+    const all=sections.flatMap(s=>s.questions);
+    const answered=all.filter(q=>hasAnswer(answers[q.key])).length;
+    progressNode.textContent="Campos cumplimentados: "+answered+" de "+all.length+
+      ". Las respuestas no equivalen a criterios diagnósticos validados.";
+    const progress=progressNode.querySelector("progress");
+    if (progress) {progress.max=all.length;progress.value=answered;}
+  }
+  function renderQuestion(question, previous, readonly) {
+    const key=question.key, old=previous[key], kind=question.kind||"textarea";
+    const wrapper=node("div",null,"am-question am-kind-"+kind);
+    const title=node("span",question.label,"am-question-title");
+    if (kind==="checks") {
+      const group=node("fieldset",null,"am-checkbox-group");
+      group.append(node("legend",question.label));
+      const items=node("div",null,"am-checkbox-options");
+      const selected=Array.isArray(old)?old:[];
+      for (const option of question.options||[]) {
+        const label=node("label",null,"am-check-option");
+        const checkbox=node("input");
+        checkbox.type="checkbox";
+        checkbox.value=option;
+        checkbox.dataset.amField=key;
+        checkbox.checked=selected.includes(option);
+        checkbox.disabled=readonly;
+        checkbox.addEventListener("change",()=>{updateDirty();updateProgress();});
+        label.append(checkbox,node("span",option));
+        items.append(label);
+      }
+      group.append(items);
+      wrapper.append(group);
+    } else {
+      const label=node("label",null,"am-field-label");
+      label.append(title);
+      let input;
+      if (kind==="textarea") {
+        input=node("textarea");
+        input.rows=3;input.maxLength=4000;
+        input.placeholder="Describe ejemplos, fuente, cronología y repercusión si procede…";
+      } else if (kind==="select") {
+        input=node("select");
+        input.add(new Option("Sin responder / seleccionar…",""));
+        for (const option of question.options||[]) input.add(new Option(option,option));
+      } else {
+        input=node("input");
+        input.type=kind==="date"||kind==="number"?kind:"text";
+        if (kind==="text") {input.maxLength=400;input.placeholder="Cumplimentar…";}
+        if (kind==="number") {
+          if(question.min!==undefined) input.min=String(question.min);
+          if(question.max!==undefined) input.max=String(question.max);
+          input.step=question.step||"1";
+        }
+      }
+      input.value=(old===undefined||old===null)?"":String(old);
+      input.dataset.amField=key;
+      input.disabled=readonly;
+      input.addEventListener(kind==="select"||kind==="date"?"change":"input",()=>{updateDirty();updateProgress();});
+      label.append(input);
+      wrapper.append(label);
+    }
+    if (question.help) wrapper.append(node("p",question.help,"am-question-help"));
+    return wrapper;
+  }
+  function renderRecords() {
+    const selected=record?.id||"";
+    recordsSelect.replaceChildren();
+    if (!records.length) recordsSelect.add(new Option("No hay anamnesis iniciadas",""));
+    for (const item of records) {
+      const label=(TYPES[item.assessment_type]?.title||item.assessment_type)
+        +" · "+(statusNames[item.status]||item.status)
+        +" · v"+(item.protocol_version||"1.0")+" · "+formatDate(item.created_at);
+      recordsSelect.add(new Option(label,item.id));
+    }
+    recordsSelect.disabled=!records.length;
+    recordsSelect.value=selected||records[0]?.id||"";
+  }
+  function renderEditor() {
+    editor.replaceChildren();progressNode=null;
+    if (!record) {
+      editor.append(node("p","Selecciona el tipo de valoración para iniciar una anamnesis, o abre una evaluación anterior.","am-empty"));
+      return;
+    }
+    const sections=formSections(record);
+    if (!sections) {
+      editor.append(node("p","Cargando la plantilla estructurada de esta valoración. Si el aviso persiste, actualiza la página y comprueba la conexión.","am-empty"));
+      return;
+    }
+    const readonly=record.status==="reviewed";
+    const header=node("div",null,"am-record-head");
+    const titleArea=node("div");
+    titleArea.append(node("h4",TYPES[record.assessment_type]?.title||"Valoración"));
+    titleArea.append(node("p",(statusNames[record.status]||record.status)
+      +" · Versión "+(record.protocol_version||"1.0")
+      +" · Iniciada "+formatDate(record.created_at)
+      +" · Actualizada "+formatDate(record.updated_at)
+      +" · Revisión interna "+record.revision,"am-muted"));
+    header.append(titleArea);
+    editor.append(header);
+    if (readonly) editor.append(node("p","Registro revisado y bloqueado. Para añadir datos, inicia una nueva evaluación: la anterior se conserva íntegra.","am-readonly"));
+    else editor.append(node("p","Entrevista clínica profesional editable, no instrumento psicométrico validado. Ninguna respuesta se interpreta automáticamente como diagnóstico. Puedes completar los bloques en varias sesiones; se guardan automáticamente y con el botón de guardado.","am-help"));
+
+    if(String(record.protocol_version||"1.0")!=="1.0"){
+      const info=bank().profiles[record.assessment_type];
+      const summary=node("p",info.subtitle,"am-form-summary");
+      editor.append(summary);
+      const citations=node("div",null,"am-references");
+      citations.append(node("strong","Documentación de referencia: "));
+      for (const [label,url] of info.sources) {
+        const link=node("a",label);
+        link.href=url;link.target="_blank";link.rel="noopener noreferrer";
+        citations.append(link);
+      }
+      editor.append(citations);
+    }
+    progressNode=node("div",null,"am-progress");
+    progressNode.setAttribute("role","status");
+    progressNode.setAttribute("aria-live","polite");
+    editor.append(progressNode);
+
+    const previous=record.answers||{};
+    sections.forEach((section,index)=>{
+      // En los formularios 2.0 la entrevista se divide en bloques plegables.
+      const details=node("details",null,"am-section am-section-details");
+      details.open=index<2;
+      const summary=node("summary",section.title,"am-section-toggle");
+      details.append(summary);
+      if (section.description) details.append(node("p",section.description,"am-muted"));
+      const grid=node("div",null,"am-fields");
+      for (const question of section.questions) grid.append(renderQuestion(question,previous,readonly));
+      details.append(grid);
+      editor.append(details);
+    });
+    const actions=node("div",null,"am-actions");
+    if (!readonly) {
+      actions.append(button("Guardar borrador",()=>{void saveCurrent();},"am-btn am-primary"));
+      actions.append(button("Marcar como revisada",()=>{void reviewCurrent();},"am-btn"));
+    }
+    actions.append(button("Copiar para informe",()=>{void copyForReport();},"am-btn"));
+    actions.append(button("Imprimir / guardar PDF",()=>{void printRecord();},"am-btn"));
+    editor.append(actions);
+    updateProgress();
   }
   function updateDirty() {
     if (!record || record.status==="reviewed") return;
