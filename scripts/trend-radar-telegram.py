@@ -284,6 +284,70 @@ def render_messages(day, picks, checked, trends_ok):
 
 
 
+
+def markdown_escape(value):
+    return re.sub(r"([\\\[\]()*_~])", r"\\\1", clean_text(str(value)))
+
+
+def render_editorial_report(now, picks, successes, trends_ok):
+    local = now.astimezone(MADRID)
+    lines = [
+        "# Radar editorial: oportunidades para el blog",
+        "",
+        "**Actualizado:** " + local.strftime("%Y-%m-%d %H:%M") + " (Europe/Madrid)",
+        "**Cobertura:** 7 días | Fuentes RSS consultadas: " + str(successes)
+        + " | Google Trends España: " + ("consultado" if trends_ok else "no disponible"),
+        "",
+        "> Estas son señales de interés mediático, no evidencia clínica."
+        " Los titulares pueden contener errores. La publicación del blog DEBE"
+        " comprobar las fuentes científicas originales, vigencia, enlaces y originalidad."
+        " El radar NO autoriza conclusiones clínicas ni la publicación de afirmaciones no contrastadas.",
+        "",
+    ]
+    if not picks:
+        lines += ["No hay oportunidades suficientemente respaldadas por varias fuentes independientes.", ""]
+    for index, item in enumerate(picks[:5], 1):
+        theme = item["theme"]
+        lines += [
+            "## " + str(index) + ". " + markdown_escape(theme["name"]),
+            "",
+            "- **Potencial editorial:** " + item["potential"] + " (estimación, no cifra de búsquedas ni viralidad).",
+            "- **Señales:** " + str(item["publishers"]) + " medios diferentes"
+            + (" y coincidencia en Google Trends ES." if item["trends"] else "."),
+            "- **Propuesta de título:** " + markdown_escape(theme["title"]),
+            "- **Gancho de difusión:** " + markdown_escape(theme["hook"]),
+            "- **Formato:** " + markdown_escape(theme["format"]),
+            "- **Enfoque clínico:** " + markdown_escape(theme["angle"]),
+            "- **Advertencia:** " + markdown_escape(theme["caution"]),
+            "- **Noticias recientes (no confundir con estudios):**",
+        ]
+        for story in item["stories"][:2]:
+            title = markdown_escape(story["title"][:135])
+            source = markdown_escape(story["source"][:70])
+            date = story["date"].astimezone(MADRID).date().isoformat()
+            lines.append("  - [" + title + "](" + story["url"] + ") · "
+                         + source + " · " + date)
+        lines.append("")
+    lines.extend([
+        "## Reglas para la automatización del blog",
+        "",
+        "1. Seleccionar una sola oportunidad del radar, siempre que sea reciente, clínicamente útil,"
+        " no repita un artículo publicado y respete el equilibrio editorial.",
+        "2. Contrastarla mediante al menos 2 referencias científicas primarias, revisiones"
+        " o guías clínicas originales. No usar noticias de prensa como evidencia suficiente.",
+        "3. Si el radar es antiguo (más de 7 días), presenta fuentes dudosas,"
+        " no identifica una oportunidad útil o no supera la verificación,"
+        " investigar un tema alternativo antes de publicar.",
+        "4. Mantener estándares SEO, imagen autorizada, CTA prudente, comprobación"
+        " de la publicación real y periodicidad de tres días del flujo existente.",
+        "5. Evitar afirmaciones causales no avaladas, diagnósticos por redes,"
+        " consejos médicos individualizados o contenido clínico de pacientes.",
+        "",
+        "_Actualizado automáticamente por el radar de Telegram, no por el editor del blog._",
+    ])
+    return "\n".join(lines) + "\n"
+
+
 def telegram_send(token, chat, message):
     endpoint = "https://api.telegram.org/bot" + token + "/sendMessage"
     payload = json.dumps({
@@ -359,6 +423,11 @@ def main():
         print("Google Trends no disponible: se usa solo cobertura mediática.", file=sys.stderr)
 
     picks = score_themes(news_by_theme, trends, sent_ids)[:5]
+    report_path = os.environ.get("TREND_RADAR_REPORT_PATH", "")
+    if report_path:
+        report_file = Path(report_path)
+        report_file.parent.mkdir(parents=True, exist_ok=True)
+        report_file.write_text(render_editorial_report(now, picks, successes, trends_ok), encoding="utf-8")
     messages = render_messages(today, picks, successes, trends_ok)
     if not args.send:
         print("Vista previa sin envío (" + str(successes) + " temas consultados):\n" + "\n\n".join(messages))
