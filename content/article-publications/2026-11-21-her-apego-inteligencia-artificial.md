@@ -17,11 +17,13 @@ Análisis de «Her» (Spike Jonze, 2013) sobre apego, soledad, antropomorfizaci�
 - Folk & Dunn, Psychological Science (2026): https://doi.org/10.1177/09567976261427747
 - Fang et al., MIT Media Lab, estudio controlado preliminar (2025): https://www.media.mit.edu/publications/how-ai-and-human-behaviors-shape-psychosocial-effects-of-chatbot-use-a-longitudinal-controlled-study/
 
-## Fotografía de portada
-Foto real en formato horizontal de Julio Lopez, Pexels: una mujer con auriculares trabaja con un ordenador junto a una ventana urbana. Imagen ilustrativa, no fotograma ni material promocional de «Her».
-Fuente y licencia: https://www.pexels.com/photo/young-woman-working-on-laptop-in-modern-office-34211774/
-https://www.pexels.com/legal-pages/license
-Imagen optimizada: https://images.pexels.com/photos/34211774/pexels-photo-34211774.jpeg?auto=compress&cs=tinysrgb&w=1400&h=790&fit=crop
+## Cartel de portada actualizado (21/11/2026)
+- Cartel de *Her* (2013) seleccionado por la usuaria mediante una imagen adjunta en la conversación.
+- Imagen pública de la misma composición: https://image.tmdb.org/t/p/original/mxgEnjVUlzFDjmGxISErP4LwCge.jpg
+- Primer plano de Joaquin Phoenix, fondo rosa intenso, créditos superiores y título «her» blanco.
+- Se ha actualizado `image_url`, `image_alt`, `image_caption` y la nota editorial del cuerpo en Supabase.
+- CSS específico para mantener íntegro el cartel vertical, evitando recortes en la tarjeta del listado y en el artículo.
+- Derechos del cartel reservados a los titulares; su presencia en TMDB no equivale a licencia de reutilización.
 
 ## Publicación
 El contenido autoritativo está en Supabase public.articles. El registro en GitHub solicita recompilación del export estático del sitio con el nuevo slug. Verificar la URL pública, que la fotografía se cargue, y el orden destacado después del despliegue, sin modificar el sistema clínico ni elementos ajenos al blog.
