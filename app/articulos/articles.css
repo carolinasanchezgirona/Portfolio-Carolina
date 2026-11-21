@@ -51,3 +51,31 @@
     object-fit:cover;
   }
 }
+
+
+/* The Father (2020): show the complete approved promotional image on mobile and desktop.
+   Avoid the global cover crops that cut off the actors' faces. */
+.articles-card-image img[src*="/the-father-2020.jpg"]{
+  object-fit:contain;
+  object-position:center;
+  background:#F2EFE7;
+}
+.article-header .article-image[src*="/the-father-2020.jpg"]{
+  width:100%;
+  height:auto;
+  max-height:520px;
+  object-fit:contain;
+  object-position:center;
+  background:#F2EFE7;
+}
+@media(max-width:720px){
+  .article-header .article-image[src*="/the-father-2020.jpg"]{
+    height:auto;
+    max-height:520px;
+    object-fit:contain;
+  }
+  .articles-grid .articles-card.featured .articles-card-image:has(img[src*="/the-father-2020.jpg"]){
+    max-height:none;
+    aspect-ratio:16/9;
+  }
+}
