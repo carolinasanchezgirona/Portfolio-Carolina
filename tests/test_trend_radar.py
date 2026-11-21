@@ -77,6 +77,22 @@ class TrendRadarTests(unittest.TestCase):
         for theme in radar.THEMES[:5]:
             self.assertIn(theme["name"], "\n".join(messages))
 
+    def test_editorial_brief_contains_source_and_scientific_warning(self):
+        now = datetime.now(timezone.utc)
+        theme = radar.THEMES[0]
+        story = {"id": "new-id", "title": "Nuevo estudio sobre memoria",
+                 "source": "Medio A", "url": "https://news.google.com/articles/news",
+                 "date": now}
+        pick = {"theme": theme, "stories": [story], "publishers": 2,
+                "trends": False, "potential": "MEDIO"}
+        report = radar.render_editorial_report(now, [pick], 9, True)
+        self.assertIn("Radar editorial: oportunidades para el blog", report)
+        self.assertIn("Nuevo estudio sobre memoria", report)
+        self.assertIn("https://news.google.com/articles/news", report)
+        self.assertIn("no evidencia clínica", report)
+        self.assertIn("comprobar las fuentes científicas", report)
+        self.assertIn("Actualizado:", report)
+
     def test_escape_html_and_safety(self):
         self.assertEqual(radar.escape_html('<b>"hola"</b>'), '&lt;b&gt;&quot;hola&quot;&lt;/b&gt;')
         self.assertIsNone(radar.safe_url('http://example.com'))
