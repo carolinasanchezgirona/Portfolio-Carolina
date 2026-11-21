@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Script from "next/script";
 import { notFound } from "next/navigation";
 import { getAutomaticRelatedPage, getPublishedArticle, getPublishedArticles, isArticleVisible } from "../articles-data";
 import "../articles.css";
@@ -221,6 +222,7 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
         </article>
       </div>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }} />
+      <Script src="/articles-live-image.js?v=20261121" strategy="afterInteractive" />
     </main>
   );
 }
