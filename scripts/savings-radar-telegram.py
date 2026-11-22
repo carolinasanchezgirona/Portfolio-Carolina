@@ -25,6 +25,8 @@ SOURCES = {
     "metodos": ("Banco de España: métodos para ahorrar", "https://clientebancario.bde.es/pcb/es/blog/metodos-sencillos-para-ahorrar.html?blog=%2Fwebcb%2FBlog%2FEducacionFinanciera"),
     "cnmc": ("CNMC: comparar suministros eléctricos", "https://www.cnmc.es/facil-para-ti/que-hace-la-cnmc-para-consumidores/comercializacion-y-suministro-electrico"),
     "idae": ("IDAE: consumo eficiente en el hogar", "https://www.idae.es/ahorra-energia/recomendaciones-para-el-ahorro-energetico-en-hogares"),
+    "consum_ca": ("Agència Catalana del Consum: servicios extra de luz y gas", "https://consum.gencat.cat/ca/els-meus-drets/subministraments-basics/serveis-addicionals-en-la-factura-de-la-llum-o-el-gas/"),
+    "irpf_ca": ("Agència Tributària de Catalunya: deducciones autonómicas", "https://atc.gencat.cat/es/tributs/irpf/deduccions-tram-irpf/"),
 }
 # (tema, tarea concreta, cálculo orientativo, minirreto, referencia).
 TIPS = [
@@ -44,6 +46,8 @@ TIPS = [
     ("Reserva de emergencias", "Si tienes margen, separa una reserva líquida para imprevistos sin descuidar pagos esenciales.", "Apartar 15 €/semana acumula 780 €/año, no es una ganancia.", "Define tu primera meta realista.", "metodos"),
     ("Cargos anuales", "Identifica suscripciones anuales y fechas de renovación para valorar si siguen compensando.", "Evitar una renovación de 30 € innecesaria ahorra 30 € ese año.", "Programa avisos previos a tres renovaciones.", "bde"),
     ("Ingresos variables", "Calcula tus gastos esenciales del mes y separa las cantidades reservadas para impuestos de las disponibles para consumir.", "Apartar 6 €/semana acumula 312 €/año, no reduce gastos por sí solo.", "Calcula tu mínimo mensual imprescindible.", "bde"),
+    ("Servicios extra en la factura, Cataluña", "Revisa si pagas mantenimiento u otros servicios añadidos a luz o gas que no necesitas. Comprueba las condiciones para cancelarlos y reclama los cargos no autorizados.", "Evitar un servicio de 4 €/mes supone 48 €/año; depende de que puedas cancelarlo sin penalización.", "Busca cargos de servicios adicionales en tu última factura.", "consum_ca"),
+    ("Deducciones fiscales en Cataluña", "Consulta las deducciones autonómicas del IRPF vigentes para el ejercicio que declares. Revisa requisitos y límites antes de dar por hecho cualquier ahorro.", "Una deducción aplicable de 50 € reduce la cuota en 50 €; sin cumplir requisitos el ahorro es 0 €.", "Reúne los justificantes y contrasta si encajas en alguna deducción.", "irpf_ca"),
 ]
 QUERIES = (
     "site:cnmc.es ahorro electricidad tarifa consumidor",
@@ -113,7 +117,7 @@ def render(day, tip, stories):
     esc = html.escape
     out = [
         "<b>RADAR DE AHORRO · " + day.strftime("%d/%m/%Y") + "</b>",
-        "Consejos para España · Una acción práctica por semana", "",
+        "Consejos aplicables en España y Cataluña · Una acción práctica por semana", "",
         "<b>Esta semana: " + esc(title) + "</b>",
         esc(action), "", "<b>Ejemplo con números</b>", esc(example),
         "<i>Cálculo hipotético, nunca una promesa de ahorro.</i>", "",
