@@ -83,7 +83,7 @@ jobs:
           TELEGRAM_BOT_TOKEN: ${{ secrets.CLINICAL_BACKUP_TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.CLINICAL_BACKUP_TELEGRAM_CHAT_ID }}
           SAVINGS_RADAR_STATE_PATH: ${{ runner.temp }}/savings-radar-telegram.json
-          SEND_SAVINGS: ${{ github.event_name == 'schedule' || inputs.send || github.event.head_commit.message == 'PRUEBA_AHORRO_TELEGRAM_20261122' }}
+          SEND_SAVINGS: ${{ github.event_name == 'schedule' || inputs.send }}
         run: |
           if [[ "$SEND_SAVINGS" == "true" ]]; then
             python scripts/savings-radar-telegram.py --send
