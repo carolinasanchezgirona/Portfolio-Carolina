@@ -43,7 +43,7 @@ export default function ClinicalConsentTemplate({ kind }: { kind: Kind }) {
       <p className="legal-eyebrow">Carolina Sánchez Girona · Consentimiento clínico</p>
       <h1>{doc.title}</h1>
       <p>Versión {VERSION}. Modelo para información clínica, cumplimentación y firma manuscrita en pantalla. La copia se guarda localmente y debe entregarse para su revisión y archivo.</p>
-      <PrintLegal />
+      <div className="legal-hero-actions"><a className="legal-quick-sign" href="#firma-digital">Cumplimentar y firmar en pantalla</a><PrintLegal /></div>
     </div></section>
     <article className="legal-wrap legal-document">
       <section>
