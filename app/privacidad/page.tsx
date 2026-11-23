@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import LegalDocument from "../components/legal-document";
+import LegalSignatureForm from "../components/legal-signature-form";
 
 export const metadata: Metadata = {
   title: "Política de privacidad | Carolina Sánchez Girona",
@@ -81,5 +82,6 @@ export default function PrivacyPage() {
       <p>No se adoptan decisiones diagnósticas o terapéuticas basadas únicamente en procesos automatizados con efectos jurídicos o similares. Las propuestas tecnológicas requieren revisión profesional. Un uso para investigación o una publicación identificable necesitan su propia habilitación e información; no se autorizan por utilizar esta web.</p>
     </section>
     <section id="cookies"><h2>7. Cookies y cambios de esta información</h2><p>Consulta la <a href="/cookies/">política de cookies y almacenamiento local</a> y utiliza el botón «Cookies» para modificar la analítica. Esta política se revisa cuando cambian los tratamientos; la fecha de actualización figura al inicio.</p></section>
+    <LegalSignatureForm kind="privacy" />
   </LegalDocument>;
 }
