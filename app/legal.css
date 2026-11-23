@@ -59,3 +59,49 @@
  .legal-signature-section{break-inside:avoid-page;}
  a{color:inherit!important;text-decoration:none!important;}
 }
+
+
+/* Formularios legales cumplimentables: la escritura y la firma permanecen en el navegador. */
+.legal-sign-form{padding:24px;border:1px solid #ccd9dc;border-radius:16px;background:#fff;}
+.legal-sign-form h2{margin-top:0;}
+.legal-sign-fields{display:grid;gap:18px;margin-top:18px;}
+.legal-sign-fields-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:15px;}
+.legal-sign-fields-grid label{display:flex;flex-direction:column;gap:6px;font-size:.9rem;font-weight:600;color:#273642;}
+.legal-sign-fields-grid input{width:100%;min-width:0;min-height:44px;border:1px solid #92aab2;border-radius:8px;padding:9px 12px;background:#fff;color:#273642;font:inherit;}
+.legal-sign-fields input:focus-visible,.legal-sign-fields canvas:focus-visible{outline:3px solid #618697;outline-offset:2px;}
+.legal-sign-fields fieldset{display:grid;gap:10px;border:1px solid #d4dde0;border-radius:10px;padding:14px;}
+.legal-sign-fields legend{padding:0 6px;font-weight:700;color:#273642;}
+.legal-sign-radio,.legal-sign-confirm{display:flex;align-items:flex-start;gap:10px;line-height:1.5;color:#273642;}
+.legal-sign-radio input,.legal-sign-confirm input{width:18px;height:18px;flex:0 0 18px;margin:2px 0;accent-color:#476f83;}
+.legal-sign-confirm{padding:14px;border-radius:10px;background:#edf4f6;font-weight:600;}
+.legal-signature-capture{display:grid;gap:9px;}
+.legal-signature-capture>strong{color:#273642;}
+.legal-signature-capture canvas{display:block;width:100%;height:auto;aspect-ratio:760 / 220;border:2px dashed #8099a5;border-radius:10px;background:#fff;touch-action:none;cursor:crosshair;}
+.legal-signature-image,.legal-printed-field,.legal-sign-printed-confirm{display:none;}
+.legal-sign-controls{display:flex;flex-wrap:wrap;gap:12px;align-items:center;}
+.legal-sign-controls .legal-print{margin-top:0;}
+.legal-sign-secondary{border:1px solid #8195a0;border-radius:8px;background:#fff;color:#334f5e;padding:9px 14px;font:inherit;font-weight:600;cursor:pointer;}
+.legal-sign-hint,.legal-sign-provenance{font-size:.86rem;}
+.legal-sign-error{font-weight:700;color:#a62424!important;}
+@media(max-width:680px){.legal-sign-form{padding:16px}.legal-sign-fields-grid{grid-template-columns:1fr}.legal-sign-controls button{width:100%}}
+@media print{
+ .legal-sign-form{padding:0;border:0;border-radius:0;background:#fff;}
+ .legal-sign-fields{gap:8px;}
+ .legal-sign-fields-grid{gap:8px 18px;}
+ .legal-sign-fields-grid label{font-size:9pt;break-inside:avoid;}
+ .legal-sign-fields-grid input,.legal-sign-fields fieldset,.legal-sign-confirm,.legal-sign-fields canvas,.legal-sign-controls,.legal-print-hide,.legal-sign-hint,.legal-sign-error{display:none!important;}
+ .legal-signature-image,.legal-printed-field,.legal-sign-printed-confirm{display:block!important;}
+ .legal-printed-field{min-height:14pt;border-bottom:1px solid #777;color:#222;white-space:pre-wrap;overflow-wrap:anywhere;font-weight:400;}
+ .legal-sign-printed-confirm{font-weight:600;color:#222;}
+ .legal-sign-printed-confirm p{margin-bottom:4px;}
+ .legal-signature-image{width:100%;max-width:540px;min-height:90px;border-bottom:1px solid #777;}
+ .legal-signature-image img{display:block;width:100%;max-height:120px;object-fit:contain;object-position:left center;}
+ .legal-signature-capture{break-inside:avoid;}
+ .legal-sign-provenance{color:#333!important;font-size:8pt;}
+}
+
+.legal-hero-actions{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-top:18px;}
+.legal-hero-actions .legal-print{margin-top:0;}
+.legal-quick-sign{display:inline-flex;padding:12px 18px;border-radius:8px;background:#31576a;color:#fff;text-decoration:none;font-weight:700;}
+.legal-quick-sign:hover{background:#244352;}
+@media print{.legal-hero-actions{display:none!important;}}
