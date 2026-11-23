@@ -1,4 +1,5 @@
 import PrintLegal from "./print-legal";
+import LegalSignatureForm from "./legal-signature-form";
 import "../legal.css";
 
 type Kind = "psychological" | "neuropsychological";
@@ -41,20 +42,13 @@ export default function ClinicalConsentTemplate({ kind }: { kind: Kind }) {
     <section className="legal-hero"><div className="legal-wrap">
       <p className="legal-eyebrow">Carolina Sánchez Girona · Consentimiento clínico</p>
       <h1>{doc.title}</h1>
-      <p>Versión {VERSION}. Modelo para información, revisión y firma presencial. No se firma ni se envía automáticamente desde esta página.</p>
+      <p>Versión {VERSION}. Modelo para información clínica, cumplimentación y firma manuscrita en pantalla. La copia se guarda localmente y debe entregarse para su revisión y archivo.</p>
       <PrintLegal />
     </div></section>
     <article className="legal-wrap legal-document">
       <section>
         <h2>Datos de identificación</h2>
-        <div className="legal-data legal-consent-fields">
-          <p>Nombre y apellidos: __________________________________</p>
-          <p>Fecha de nacimiento: _________________________________</p>
-          <p>DNI/NIE (si procede): __________________________________</p>
-          <p>Fecha y lugar: _______________________________________</p>
-          <p>Representante legal (si procede): _______________________</p>
-          <p>Relación y acreditación de representación: ________________</p>
-        </div>
+        <p>Los datos identificativos de la persona atendida y, cuando corresponda, de su representante se cumplimentan en el formulario de firma situado al final del documento.</p>
         <p><strong>Profesional responsable:</strong> Carolina Sánchez Girona, Psicóloga General Sanitaria y neuropsicóloga, COPC 24892.</p>
       </section>
       <section>
@@ -92,13 +86,8 @@ export default function ClinicalConsentTemplate({ kind }: { kind: Kind }) {
         <h2>8. Declaración de consentimiento</h2>
         <p>Declaro que he recibido información suficiente sobre el objeto, los procedimientos, los beneficios posibles, los riesgos y las alternativas, que he podido plantear preguntas y que mi decisión es libre.</p>
         <p>{doc.scope}</p>
-        {kind === "neuropsychological" && <div className="legal-choices"><p>☐ Evaluación neuropsicológica</p><p>☐ Intervención o seguimiento neuropsicológico</p><p>☐ Ambas actuaciones, según el plan acordado</p></div>}
-        <div className="legal-choices"><p>☐ Presto mi consentimiento clínico para el alcance indicado.</p></div>
-        <div className="legal-signature-grid">
-          <div><strong>Paciente o representante acreditado</strong><p>Nombre: ______________________________</p><p>Firma: ________________________________</p><p>Fecha: _______________________________</p></div>
-          <div><strong>Profesional que informa</strong><p>Carolina Sánchez Girona</p><p>Firma: ________________________________</p><p>Fecha: _______________________________</p></div>
-        </div>
-        <p className="legal-consent-note">Una copia del documento firmado podrá archivarse en la historia clínica. Marcar una casilla en papel o consultar esta página no acredita por sí solo la obtención del consentimiento.</p>
+        <LegalSignatureForm kind={kind} />
+        <p className="legal-consent-note">La profesional verificará la identidad, la representación cuando exista y la correspondencia entre el documento y la actuación acordada antes de incorporarlo a la historia clínica. La firma manuscrita en pantalla no equivale a una firma electrónica avanzada.</p>
       </section>
     </article>
     <footer className="legal-footer"><div className="legal-wrap"><a href="/consentimientos/">Volver a los documentos</a> · <a href="/privacidad/">Protección de datos</a><p>© 2026 Carolina Sánchez Girona</p></div></footer>
