@@ -2,7 +2,7 @@ import LegalSignatureForm from "./legal-signature-form";
 import "../legal.css";
 
 type Kind = "psychological" | "neuropsychological";
-const VERSION = "2026-11-09";
+const VERSION = "2026-11-24";
 
 const details = {
   psychological: {
@@ -75,7 +75,7 @@ export default function ClinicalConsentTemplate({ kind }: { kind: Kind }) {
       </section>
       <section>
         <h2>6. Información sobre datos personales</h2>
-        <p>La responsable del tratamiento es Carolina Sánchez Girona. Los datos necesarios para la prestación sanitaria y la historia clínica se tratan conforme a las bases jurídicas aplicables, incluidos los arts. 6.1.b/6.1.c y 9.2.h del RGPD. <strong>Este consentimiento clínico no es un consentimiento RGPD para el tratamiento asistencial</strong>. Los derechos, plazos de conservación, proveedores y destinatarios figuran en la <a href="/privacidad/">política de privacidad</a>, disponible también en consulta.</p>
+        <p>La responsable del tratamiento es Carolina Sánchez Girona. Los datos necesarios para la prestación sanitaria y la historia clínica se tratan conforme a las bases jurídicas aplicables, incluidos los arts. 6.1.b/6.1.c y 9.2.h del RGPD. <strong>Este consentimiento clínico no es un consentimiento RGPD para el tratamiento asistencial</strong>. Los derechos, plazos de conservación y categorías de destinatarios figuran en la <a href="/privacidad/">política de privacidad</a>, disponible también en consulta.</p>
       </section>
       <section>
         <h2>7. Derecho a decidir y retirar el consentimiento</h2>

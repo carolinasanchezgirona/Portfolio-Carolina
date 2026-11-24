@@ -1,7 +1,7 @@
 import { jsPDF } from "jspdf";
 
 export type ConsentKind = "psicologico" | "neuro_evaluacion" | "neuro_intervencion" | "privacidad";
-export const CONSENT_VERSION = "2026-11-09";
+export const CONSENT_VERSION = "2026-11-24";
 
 type Patient = { full_name: string; birth_date?: string | null; national_id?: string | null };
 export const contents: Record<ConsentKind,{title:string;lead:string;procedures:string[];effects:string;scope:string}> = {
@@ -37,7 +37,7 @@ export const contents: Record<ConsentKind,{title:string;lead:string;procedures:s
       "La finalidad es gestionar citas, asistencia psicológica y neuropsicológica, historia clínica, comunicaciones de servicio y obligaciones legales.",
       "Base jurídica principal de asistencia: arts. 6.1.b / 6.1.c y 9.2.h del RGPD, junto con normativa sanitaria aplicable.",
       "La historia clínica está sujeta a conservación legal. Se facilitan derechos de acceso, rectificación, supresión cuando proceda, limitación, oposición y reclamación ante la AEPD.",
-      "Información completa entregada o puesta a disposición: https://carolinasanchezgirona.com/privacidad/ (versión 2026-11-09)."
+      "Información completa entregada o puesta a disposición: https://carolinasanchezgirona.com/privacidad/ (versión 2026-11-24)."
     ],
     effects:"No se exige consentimiento RGPD general para prestar la asistencia sanitaria amparada legalmente. Publicidad, cesiones opcionales o grabaciones no están autorizadas mediante este acuse.",
     scope:"Confirmo haber recibido o tenido acceso a la política de privacidad indicada, sin autorizar mediante este documento tratamientos voluntarios."
@@ -100,7 +100,7 @@ export async function buildClinicalConsentPdf(patient:Patient, kind:ConsentKind,
   section("8. Declaración para la firma electrónica");
   paragraph("Declaro que he recibido información suficiente sobre la finalidad, naturaleza, riesgos previsibles, alternativas y límites; que he tenido oportunidad real de formular preguntas y que mi decisión es libre.");
   paragraph(info.scope);
-  paragraph("Esta copia se ha preparado para su firma a través de un servicio externo de confianza. LA GENERACIÓN DEL PDF NO ES UNA FIRMA. La firma válida y la evidencia probatoria deben incorporarse después a la historia clínica.",9,4);
+  paragraph("Este documento está preparado para su lectura y firma. LA GENERACIÓN DEL PDF NO CONSTITUYE UNA FIRMA. Una vez firmado, debe incorporarse a la historia clínica junto con la constancia de la fecha y la verificación profesional que corresponda.",9,4);
   section("Constancia de la información facilitada");
   paragraph("Profesional responsable: Carolina Sánchez Girona  |  Lugar y fecha de explicación: __________________________",9,2);
   paragraph("Si firma un representante: identidad, vínculo y acreditación de representación que debe verificarse: __________________________",9,5);
