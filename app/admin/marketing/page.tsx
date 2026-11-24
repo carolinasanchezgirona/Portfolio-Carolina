@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import AdminWorkspaceNav from "../workspace-nav";
+import PromoCampaigns from "./promo-campaigns";
 type Stats = {connected?:boolean; list_found?:boolean; subscriber_count?:number|null; error?:string};
 type BookingCounts = { total: number; first: number; activeFirst: number; completedFirst: number; truncated: boolean };
 const sessionKey = "dememoria_admin_session";
@@ -57,6 +58,7 @@ export default function MarketingPage(){
  <h1 style={{fontFamily:"Georgia,serif",fontSize:"clamp(34px,4vw,52px)",margin:"12px 0"}}>Suscriptores y captación</h1>
  <p style={{fontSize:18,maxWidth:780,lineHeight:1.6}}>Consulta las suscripciones confirmadas de Brevo y accede a las herramientas de difusión de tus recursos gratuitos.</p>
  <AdminWorkspaceNav active="marketing"/>
+ <PromoCampaigns/>
  <section style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(210px,1fr))",gap:16,margin:"30px 0"}}>
  {["Suscriptores confirmados","Nuevas altas","Bajas","Descargas gratuitas"].map((label,i)=><article key={label} style={{background:"var(--admin-soft)",borderRadius:18,padding:22,minHeight:134}}>
  <h2 style={{fontSize:17,margin:0}}>{label}</h2>
