@@ -1,7 +1,7 @@
 import { signedConsentPdf, type ConsentSignedData } from "./clinical-consent-signed-pdf";
 import { CONSENT_VERSION, type ConsentKind } from "./clinical-consent-pdf";
 
-type Env = { SUPABASE_SERVICE_ROLE_KEY?: string };
+type Env = { SUPABASE_SERVICE_ROLE_KEY?: string; BREVO_API_KEY?: string };
 type Session = { patient_id: string } | null;
 type Options = {
   owner: (request: Request) => Promise<boolean>;
@@ -17,8 +17,8 @@ const names: Record<ConsentKind, string> = {
   neuro_intervencion:"Consentimiento intervención neuropsicológica",
   privacidad:"Acuse información de protección de datos",
 };
-type ConsentRow = { id:string; patient_id:string; kind:ConsentKind; status:string; assigned_at:string; signed_at:string|null; verified_at:string|null; document_id:string|null; pdf_sha256:string|null };
-type Patient = { id:string; full_name:string; birth_date:string|null; national_id:string|null; status:string; portal_access_enabled:boolean };
+type ConsentRow = { id:string; patient_id:string; kind:ConsentKind; status:string; assigned_at:string; signed_at:string|null; verified_at:string|null; document_id:string|null; pdf_sha256:string|null; signing_method?:string|null };
+type Patient = { id:string; full_name:string; email:string|null; birth_date:string|null; national_id:string|null; status:string; portal_access_enabled:boolean };
 
 function json(body:unknown,status=200){return Response.json(body,{status,headers:{"Cache-Control":"private, no-store","X-Content-Type-Options":"nosniff","Referrer-Policy":"no-referrer","X-Frame-Options":"DENY"}});}
 const string=(value:unknown,max=140)=>typeof value==="string"?value.trim().replace(/[\t\n\r]+/g," ").slice(0,max+1):"";
@@ -46,18 +46,18 @@ async function parsePayload(request:Request) {
  return result;
 }
 async function patientRecord(env:Env,id:string) {
- const response=await query(env,"clinical_patients?select=id,full_name,birth_date,national_id,status,portal_access_enabled&id=eq."+encodeURIComponent(id)+"&limit=1");
+ const response=await query(env,"clinical_patients?select=id,full_name,email,birth_date,national_id,status,portal_access_enabled&id=eq."+encodeURIComponent(id)+"&limit=1");
  if(!response.ok)return null;
  const rows=await response.json().catch(()=>[]) as Patient[];
  return rows[0]||null;
 }
 async function getRequests(env:Env,patientId:string) {
- const response=await query(env,"clinical_consent_requests?select=id,patient_id,kind,status,assigned_at,signed_at,verified_at,document_id,pdf_sha256&patient_id=eq."+encodeURIComponent(patientId)+"&order=assigned_at.desc&limit=60");
+ const response=await query(env,"clinical_consent_requests?select=id,patient_id,kind,status,assigned_at,signed_at,verified_at,document_id,pdf_sha256,signing_method&patient_id=eq."+encodeURIComponent(patientId)+"&order=assigned_at.desc&limit=60");
  if(!response.ok)throw Error("No se pueden consultar las solicitudes.");
  return await response.json() as ConsentRow[];
 }
 async function getOne(env:Env,id:string,patientId:string) {
- const response=await query(env,"clinical_consent_requests?select=id,patient_id,kind,status,assigned_at,signed_at,verified_at,document_id,pdf_sha256&id=eq."+encodeURIComponent(id)+"&patient_id=eq."+encodeURIComponent(patientId)+"&limit=1");
+ const response=await query(env,"clinical_consent_requests?select=id,patient_id,kind,status,assigned_at,signed_at,verified_at,document_id,pdf_sha256,signing_method&id=eq."+encodeURIComponent(id)+"&patient_id=eq."+encodeURIComponent(patientId)+"&limit=1");
  if(!response.ok)return null;
  const rows=await response.json().catch(()=>[]) as ConsentRow[];
  return rows[0]||null;
@@ -71,7 +71,78 @@ async function archivePdf(env:Env,path:string,bytes:Uint8Array){
 async function deletePdf(env:Env,path:string){
  await fetch(SUPABASE+"/storage/v1/object/clinical-documents/"+path,{method:"DELETE",headers:authHeaders(env)}).catch(()=>null);
 }
-export async function clinicalConsentWorkflow(request:Request,env:Env, options:Options,actor:"admin"|"patient"):Promise<Response>{
+
+function randomSecret(bytes=32):string {
+ const data=crypto.getRandomValues(new Uint8Array(bytes));
+ return btoa(String.fromCharCode(...data)).replace(/\+/g,"-").replace(/\//g,"_").replace(/=/g,"");
+}
+function signatureRoute(kind:ConsentKind){
+ return kind==="psicologico"?"/consentimiento-psicologico/":kind==="privacidad"?"/privacidad/":"/consentimiento-neuropsicologico/";
+}
+function formatPatient(row:Patient){
+ return {name:row.full_name,birth_date:row.birth_date||"",national_id:row.national_id||""};
+}
+async function onsiteAccess(request:Request,env:Env):Promise<{row:ConsentRow;patient:Patient;tokenId:string}|null>{
+ const token=request.headers.get("X-Consent-Presencial")||"";
+ if(!/^[A-Za-z0-9_-]{40,90}$/.test(token))return null;
+ const tokenHash=await digest(token);
+ const response=await query(env,"clinical_consent_onsite_links?select=id,request_id&token_hash=eq."+
+  encodeURIComponent(tokenHash)+"&expires_at=gt."+encodeURIComponent(new Date().toISOString())+
+  "&consumed_at=is.null&revoked_at=is.null&limit=1");
+ if(!response.ok)return null;
+ const links=await response.json().catch(()=>[]) as Array<{id:string;request_id:string}>;
+ if(links.length!==1)return null;
+ const rowResponse=await query(env,"clinical_consent_requests?select=id,patient_id,kind,status,assigned_at,signed_at,verified_at,document_id,pdf_sha256,signing_method&id=eq."+
+  encodeURIComponent(links[0].request_id)+"&status=eq.pending&limit=1");
+ if(!rowResponse.ok)return null;
+ const rows=await rowResponse.json().catch(()=>[]) as ConsentRow[];
+ if(rows.length!==1)return null;
+ const patient=await patientRecord(env,rows[0].patient_id);
+ if(!patient||patient.status==="archived")return null;
+ return {row:rows[0],patient,tokenId:links[0].id};
+}
+async function sendConfirmationCode(env:Env,requestId:string,patientId:string,email:string){
+ if(!env.BREVO_API_KEY)return json({error:"La confirmación por correo aún no está configurada."},503);
+ const address=email.trim().toLowerCase();
+ if(address.length>254||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(address))
+  return json({error:"La ficha no tiene un correo válido. Corrígelo con la consulta antes de firmar de esta forma."},409);
+ const code=String(Math.floor((crypto.getRandomValues(new Uint32Array(1))[0]/4294967296)*1e6)).padStart(6,"0");
+ const hashed=await digest(code+"|"+requestId+"|"+env.SUPABASE_SERVICE_ROLE_KEY);
+ const reserved=await query(env,"rpc/issue_clinical_consent_email_otp",{
+  method:"POST",headers:{"Content-Type":"application/json"},
+  body:JSON.stringify({p_request_id:requestId,p_patient_id:patientId,p_code_hash:hashed})
+ }).catch(()=>null);
+ if(!reserved?.ok)return json({error:"No se ha podido solicitar el código."},503);
+ const status=await reserved.json().catch(()=>"invalid");
+ if(status!=="ok")return json({error:status==="cooldown"?"Espera al menos un minuto antes de solicitar otro código.":status==="rate_limited"?"Se ha alcanzado el límite de tres códigos por hora.":"La solicitud ya no está pendiente."},status==="invalid"?409:429);
+ const mail=await fetch("https://api.brevo.com/v3/smtp/email",{
+   method:"POST",
+   headers:{"api-key":env.BREVO_API_KEY,"Content-Type":"application/json",Accept:"application/json"},
+   body:JSON.stringify({
+     sender:{name:"Carolina Sánchez Girona",email:"contact@carolinasanchezgirona.com"},
+     to:[{email:address}],
+     subject:"Código de confirmación de firma",
+     textContent:"Tu código de un solo uso para confirmar la firma en Mi espacio es: "+code+
+       "\nCaduca en 10 minutos. Si no has solicitado esta operación, ignora este mensaje. No compartas el código.",
+     headers:{"X-Mailin-Track-Opens":"0","X-Mailin-Track-Clicks":"0"},
+     tags:["consent-signing-otp"]
+   }),signal:AbortSignal.timeout(15000)
+ }).catch(()=>null);
+ if(!mail?.ok)return json({error:"No se ha podido entregar el código. No se ha firmado ningún documento."},503);
+ return json({ok:true,message:"Hemos enviado un código al correo guardado en tu ficha. Caduca en 10 minutos."});
+}
+async function validateConfirmationCode(env:Env,requestId:string,patientId:string,value:unknown) {
+ const code=string(value,12);
+ if(!/^[0-9]{6}$/.test(code))return false;
+ const hashed=await digest(code+"|"+requestId+"|"+env.SUPABASE_SERVICE_ROLE_KEY);
+ const checked=await query(env,"rpc/consume_clinical_consent_email_otp",{
+  method:"POST",headers:{"Content-Type":"application/json"},
+  body:JSON.stringify({p_request_id:requestId,p_patient_id:patientId,p_code_hash:hashed})
+ }).catch(()=>null);
+ return checked?.ok&&await checked.json().catch(()=>false)===true;
+}
+
+export async function clinicalConsentWorkflow(request:Request,env:Env, options:Options,actor:"admin"|"patient"|"onsite"):Promise<Response>{
  const method=request.method;
  if(!["GET","POST"].includes(method))return json({error:"Método no permitido."},405);
  if(method==="POST"&&!options.sameOrigin(request))return json({error:"Origen no permitido."},403);
