@@ -59,6 +59,7 @@
   }
  }
  window.addEventListener("patient-portal-session-ready",()=>{void render();});
+ if(document.getElementById("space-shell")?.hidden===false)void render();
  document.getElementById("space-logout")?.addEventListener("click",()=>{
    sequence++;host.replaceChildren();if(count)count.textContent="Acceso privado";
  });
