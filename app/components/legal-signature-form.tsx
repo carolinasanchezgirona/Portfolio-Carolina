@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState, type FormEvent, type PointerEvent } from "react";
 
 type DocumentKind = "psychological" | "neuropsychological" | "privacy";
-const VERSION = "2026-11-09";
+const VERSION = "2026-11-24";
 const labels: Record<DocumentKind, string> = {
   psychological: "atención psicológica sanitaria",
   neuropsychological: "atención neuropsicológica",
