@@ -105,3 +105,8 @@
 .legal-quick-sign{display:inline-flex;padding:12px 18px;border-radius:8px;background:#31576a;color:#fff;text-decoration:none;font-weight:700;}
 .legal-quick-sign:hover{background:#244352;}
 @media print{.legal-hero-actions{display:none!important;}}
+
+.legal-sign-linked-note{padding:14px 18px;border-left:3px solid #5a7c8d;background:#eef4f6;border-radius:8px;color:#304955!important;}
+.legal-sign-fields input[readonly]{background:#f1f4f5;color:#344d57;}
+.legal-sign-fields button:disabled{opacity:.6;cursor:not-allowed;}
+@media print{.legal-sign-linked-note{display:none!important;}}
