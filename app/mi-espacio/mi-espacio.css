@@ -1030,3 +1030,10 @@ body.space-print-patient-material .space-patient-material[data-print-material] :
 @media(prefers-reduced-motion:reduce){
   .space-page :is(.space-workbook-part-chevron,.space-shared-file-chevron){transition:none}
 }
+
+.space-consents-section{margin:18px 0;}
+.space-consent-list{display:grid;gap:12px;}
+.space-consent-item{display:grid;justify-items:start;gap:8px;padding:16px;border:1px solid #cfdde0;border-radius:12px;background:#fff;}
+.space-consent-item strong{color:#263b48;font-size:1rem;}
+.space-consent-item p{margin:0;line-height:1.55;}
+.space-consent-item a.space-primary{display:inline-flex;text-decoration:none;padding:10px 14px;}
