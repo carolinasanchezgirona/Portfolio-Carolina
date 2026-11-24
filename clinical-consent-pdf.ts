@@ -100,7 +100,7 @@ export async function buildClinicalConsentPdf(patient:Patient, kind:ConsentKind,
   section("8. Declaración para la firma electrónica");
   paragraph("Declaro que he recibido información suficiente sobre la finalidad, naturaleza, riesgos previsibles, alternativas y límites; que he tenido oportunidad real de formular preguntas y que mi decisión es libre.");
   paragraph(info.scope);
-  paragraph("Esta copia se ha preparado para su firma a través de un servicio externo de confianza. LA GENERACIÓN DEL PDF NO ES UNA FIRMA. La firma válida y la evidencia probatoria deben incorporarse después a la historia clínica.",9,4);
+  paragraph("Este documento está preparado para su lectura y firma. LA GENERACIÓN DEL PDF NO CONSTITUYE UNA FIRMA. Una vez firmado, debe incorporarse a la historia clínica junto con la constancia de la fecha y la verificación profesional que corresponda.",9,4);
   section("Constancia de la información facilitada");
   paragraph("Profesional responsable: Carolina Sánchez Girona  |  Lugar y fecha de explicación: __________________________",9,2);
   paragraph("Si firma un representante: identidad, vínculo y acreditación de representación que debe verificarse: __________________________",9,5);
