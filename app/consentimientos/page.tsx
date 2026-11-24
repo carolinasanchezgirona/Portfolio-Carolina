@@ -8,7 +8,7 @@ export const metadata: Metadata = {
 };
 
 export default function PatientConsentsPage() {
-  return <LegalDocument title="Información y consentimientos clínicos" updatedAt="9 de noviembre de 2026">
+  return <LegalDocument title="Información y consentimientos clínicos" updatedAt="24 de noviembre de 2026">
     <section>
       <h2>Antes de comenzar la atención</h2>
       <p>Estos documentos permiten conocer con antelación el proceso asistencial. Para firmar uno de ellos, la profesional debe asignarlo primero a tu ficha. Después puedes acceder a «Mi espacio», leerlo, cumplimentarlo y firmarlo desde el móvil o el ordenador. La copia se incorpora automáticamente a tu expediente privado y queda pendiente de revisión profesional. No es necesario enviar ningún PDF por correo.</p>
