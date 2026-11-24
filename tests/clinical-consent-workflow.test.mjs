@@ -32,7 +32,7 @@ test("the PDF archive is private and requires a hash check on retrieval",()=>{
  assert.match(source,/share_revoked_at|category:"consent"/);
  assert.match(source,/await digest\(bytes\)!==record\.pdf_sha256/);
  assert.match(source,/status:"submitted"/);
- assert.match(source,/status==="submitted"/);
+ assert.match(source,/\["submitted","verified"\]\.includes\(record\.status\)/);
 });
 
 test("patients see consent assignments only after portal authentication",()=>{
