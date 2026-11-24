@@ -27,16 +27,21 @@ export default function LegalSignatureForm({ kind }: { kind: DocumentKind }) {
   const [error, setError] = useState("");
   const [assignmentId, setAssignmentId] = useState("");
   const [assignedKind, setAssignedKind] = useState("");
-  const [assignmentLoading, setAssignmentLoading] = useState(false);
+  const [assignmentLoading, setAssignmentLoading] = useState(true);
   const [assignmentError, setAssignmentError] = useState("");
   const [submitted, setSubmitted] = useState(false);
   const [sending, setSending] = useState(false);
 
   useEffect(() => {
     const requestId = new URLSearchParams(window.location.search).get("solicitud");
-    if (!requestId) return;
+    if (!requestId) {
+      setAssignmentError("Para firmar este documento, entra en Mi espacio y abre la solicitud asignada a tu ficha clínica.");
+      setAssignmentLoading(false);
+      return;
+    }
     if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(requestId)) {
       setAssignmentError("El enlace no contiene una referencia válida. Abre el documento desde Mi espacio.");
+      setAssignmentLoading(false);
       return;
     }
     let cancelled = false;
@@ -138,7 +143,10 @@ export default function LegalSignatureForm({ kind }: { kind: DocumentKind }) {
       return;
     }
     setError("");
-    if (!assignmentId) { window.print(); return; }
+    if (!assignmentId) {
+      setError("La firma requiere una solicitud vinculada a la ficha clínica.");
+      return;
+    }
     setSending(true);
     try {
       const response = await fetch("/api/patient-portal/consents",{
@@ -165,7 +173,7 @@ export default function LegalSignatureForm({ kind }: { kind: DocumentKind }) {
     {assignmentError && <p className="legal-sign-error" role="alert">{assignmentError} <a href="/mi-espacio/">Volver a Mi espacio</a></p>}
     {assignmentId && !submitted && <p className="legal-sign-linked-note">Documento asignado a tu expediente. Al finalizar, la firma se registrará en tu ficha clínica y quedará pendiente de revisión profesional. No se envía por correo ni se publica en Internet.</p>}
     {submitted && <p className="legal-sign-linked-note" role="status"><strong>Firma recibida correctamente.</strong> El documento se ha incorporado a tu historia clínica como pendiente de validación. <a href="/mi-espacio/">Volver a Mi espacio</a>.</p>}
-    <form className="legal-sign-fields" onSubmit={prepareCopy}>
+    {assignmentId && !submitted && !assignmentLoading && !assignmentError && <form className="legal-sign-fields" onSubmit={prepareCopy}>
       <div className="legal-sign-fields-grid">
         <label>Nombre y apellidos de la persona atendida *
           <input value={name} onChange={e => setName(e.target.value)} maxLength={140} autoComplete="name" readOnly={Boolean(assignmentId)} required />
@@ -234,12 +242,12 @@ export default function LegalSignatureForm({ kind }: { kind: DocumentKind }) {
           <button type="button" onClick={clearDraw} className="legal-sign-secondary">Borrar firma</button>
         </div>
       </div>
-      <p className="legal-sign-provenance">Documento: {labels[kind]} · Versión {VERSION} · Responsable: Carolina Sánchez Girona (COPC 24892). Esta copia se genera en el navegador y no se envía ni archiva automáticamente.</p>
+      <p className="legal-sign-provenance">Documento: {labels[kind]} · Versión {VERSION} · Responsable: Carolina Sánchez Girona (COPC 24892). El documento se envía al archivo clínico privado solo cuando pulsas «Firmar y enviar a mi ficha clínica».</p>
       {error && <p className="legal-sign-error" role="alert">{error}</p>}
       <div className="legal-sign-controls">
-        <button type="submit" className="legal-print" disabled={assignmentLoading || Boolean(assignmentError) || sending || submitted}>{sending ? "Guardando firma…" : assignmentId ? "Firmar y enviar a mi ficha clínica" : "Guardar o imprimir el documento cumplimentado"}</button>
+        <button type="submit" className="legal-print" disabled={assignmentLoading || Boolean(assignmentError) || sending || submitted}>{sending ? "Guardando firma…" : "Firmar y enviar a mi ficha clínica"}</button>
       </div>
-      <p className="legal-sign-hint legal-print-hide">{assignmentId ? "La firma se guarda directamente en el expediente privado y será revisada por la profesional." : "En el diálogo de impresión elige «Guardar como PDF». Envía el archivo por el canal acordado para su revisión y archivo en la historia clínica."} La firma dibujada no acredita por sí sola la identidad del firmante ni equivale a firma electrónica avanzada.</p>
-    </form>
+      <p className="legal-sign-hint legal-print-hide">La firma se guarda directamente en el expediente privado y será revisada por la profesional. La firma dibujada no acredita por sí sola la identidad del firmante ni equivale a firma electrónica avanzada.</p>
+    </form>}
   </section>;
 }
