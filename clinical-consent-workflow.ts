@@ -272,7 +272,7 @@ export async function clinicalConsentWorkflow(request:Request,env:Env, options:O
    if(actor!=="patient")return json({error:"Este código solo se solicita desde Mi espacio."},403);
    return sendConfirmationCode(env,id,patientId,patient.email||"");
  }
- const signingMethod=actor==="onsite"?"drawn_onsite":body.signing_method==="typed_email_otp"?"typed_email_otp":"drawn_portal";
+ const signingMethod:ConsentSignedData["signing_method"]=actor==="onsite"?"drawn_onsite":body.signing_method==="typed_email_otp"?"typed_email_otp":"drawn_portal";
  const typedName=string(body.typed_name,160);
  if(signingMethod==="typed_email_otp"&&
      (body.signer==="representative"||comparable(typedName)!==comparable(patient.full_name))){
