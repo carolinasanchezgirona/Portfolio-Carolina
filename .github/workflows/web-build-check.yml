@@ -77,18 +77,12 @@ jobs:
       - name: Verificar consentimiento de cookies y suscripción con confirmación
         run: node --experimental-strip-types --test tests/website-privacy.test.mjs
 
-      - name: Verificar envío manual protegido de documentación al paciente
+      - name: Verificar circuito único de consentimientos en Mi espacio
         run: |
-          node --check public/clinic-manual-documents-email.js
-          node --experimental-strip-types --test tests/manual-patient-documents-email.test.mjs
-
-      - name: Verificar PDF individualizado de consentimiento
-        run: |
-          node --check public/clinic-electronic-signature.js
-          node --experimental-strip-types --test tests/clinical-consent-packet.test.mjs
           node --check public/clinic-consent-workflow.js
           node --check public/patient-consents.js
-          node --test tests/clinical-consent-workflow.test.mjs
+          node --check public/clinic-deferred-consent.js
+          node --test tests/clinical-consent-workflow.test.mjs tests/consent-unified-ui.test.mjs
 
       - name: Validar editor clínico, guardado automático y navegación
         run: |

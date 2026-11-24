@@ -59,7 +59,7 @@
         if (Array.isArray(recorded) && recorded.length) return;
       }
       if (current !== lookup || dialog.hidden || idField.value !== patientId) return;
-      const link = rows[0].service_code === "neuropsicologia" ? "/consentimiento-neuropsicologico/" : "/consentimiento-psicologico/";
+      const link = "#clinic-consent-requests";
       notice.replaceChildren();
       const title = document.createElement("strong");
       title.textContent = "Consentimiento clínico pendiente de documentar";
@@ -68,9 +68,16 @@
       body.textContent = "Esta persona ha reservado sin firmar documentos clínicos. Revisa el encuadre, informa y obtén el consentimiento antes de iniciar la atención; registra el resultado en la historia.";
       const anchor = document.createElement("a");
       anchor.href = link;
-      anchor.target = "_blank";
-      anchor.rel = "noopener noreferrer";
-      anchor.textContent = "Consultar el documento de consentimiento";
+      anchor.textContent = "Asignar consentimiento desde la ficha";
+      anchor.addEventListener("click", event => {
+        event.preventDefault();
+        const section = document.getElementById("clinic-consent-requests");
+        if (!section) return;
+        section.open = true;
+        const kind = document.getElementById("clinic-signature-kind");
+        if (kind) kind.value = rows[0].service_code === "neuropsicologia" ? "neuro_evaluacion" : "psicologico";
+        section.scrollIntoView({behavior:"smooth",block:"center"});
+      });
       notice.append(title, body, anchor);
       notice.hidden = false;
     } catch {

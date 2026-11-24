@@ -1,4 +1,3 @@
-import PrintLegal from "./print-legal";
 import LegalSignatureForm from "./legal-signature-form";
 import "../legal.css";
 
@@ -42,8 +41,8 @@ export default function ClinicalConsentTemplate({ kind }: { kind: Kind }) {
     <section className="legal-hero"><div className="legal-wrap">
       <p className="legal-eyebrow">Carolina Sánchez Girona · Consentimiento clínico</p>
       <h1>{doc.title}</h1>
-      <p>Versión {VERSION}. Modelo para información clínica, cumplimentación y firma manuscrita en pantalla. La copia se guarda localmente y debe entregarse para su revisión y archivo.</p>
-      <div className="legal-hero-actions"><a className="legal-quick-sign" href="#firma-digital">Cumplimentar y firmar en pantalla</a><PrintLegal /></div>
+      <p>Versión {VERSION}. Información clínica para consulta previa. La firma está disponible solo desde una solicitud asociada a la ficha del paciente en «Mi espacio», y el resultado se archiva en su expediente privado para revisión.</p>
+      <div className="legal-hero-actions"><a className="legal-quick-sign" href="/mi-espacio/">Acceder a Mi espacio para firmar</a></div>
     </div></section>
     <article className="legal-wrap legal-document">
       <section>
