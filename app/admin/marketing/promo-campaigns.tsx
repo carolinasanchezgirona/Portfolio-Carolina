@@ -38,9 +38,10 @@ export default function PromoCampaigns(){
     if(!/^[A-Z0-9_-]{3,32}$/.test(item.code)||!item.label||!(item.discount_eur>0&&item.discount_eur<60)||item.ends_on<item.starts_on){setMessage("Revisa el código, el descuento y las fechas.");return;}
     setBusy(true);setMessage("Guardando…");
     try{
-      await api("/booking_promo_codes"+(code?"?code=eq."+encodeURIComponent(code):""),{method:code?"PATCH":"POST",headers:{Prefer:"return=minimal"},body:JSON.stringify(item)});
+      const saved=await api("/booking_promo_codes"+(code?"?code=eq."+encodeURIComponent(code):""),{method:code?"PATCH":"POST",headers:{Prefer:"return=representation"},body:JSON.stringify(item)});
+      const rows=await saved.json();if(!Array.isArray(rows)||rows.length!==1)throw new Error("No se ha guardado la campaña. Comprueba los permisos.");
       if(!code)form.reset();
-      await load();setMessage("Campaña guardada.");
+      await load();
     }catch(e){setMessage(e instanceof Error?e.message:"No se ha guardado.");}
     finally{setBusy(false);}
   }

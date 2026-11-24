@@ -115,7 +115,7 @@ begin
 
   return v_booking_id;
 end
-$function$
+$function$;
 
 revoke all on function public.create_public_booking_quick(timestamptz,integer,text,text,text,text,text,text) from public,anon,authenticated;
 grant execute on function public.create_public_booking_quick(timestamptz,integer,text,text,text,text,text,text) to anon,authenticated;
