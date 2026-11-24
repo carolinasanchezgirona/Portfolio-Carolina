@@ -61,6 +61,7 @@ const adminMenuGroups: AdminMenuGroup[] = [
       { href: "/admin/economia/", icon: "economy", label: "Contabilidad", keywords: "facturas cobros ingresos gastos" },
       { href: "/admin/articulos/", icon: "editorial", label: "Centro editorial", keywords: "blog publicaciones artículos" },
       { href: "/admin/recursos/", icon: "resources", label: "Recursos", keywords: "catálogo venta tienda mineuri" },
+      { href: "/admin/seo/", icon: "editorial", label: "SEO y captación", keywords: "posicionamiento google auditoría" },
       { href: "/admin/marketing/", icon: "editorial", label: "Marketing", keywords: "seo promoción" },
     ]
   },

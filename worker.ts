@@ -1,3 +1,4 @@
+import { seoSearchConsole } from "./seo-search-console";
 import { residenceOrganizationDocument } from "./residence-organization-document";
 import { residenceMaterialAi } from "./residence-material-ai";
 import { notifyPatientMessages } from "./patient-message-email";
@@ -13,6 +14,8 @@ import type { WhatsAppEnv } from "./whatsapp-webhook";
 export { WhatsAppQuota } from "./whatsapp-webhook";
 
 interface Env extends WhatsAppEnv {
+  GSC_SERVICE_ACCOUNT_JSON?: string;
+  GSC_SITE_URL?: string;
   DAILY_API_KEY?: string;
   BREVO_API_KEY?: string;
   STRIPE_WEBHOOK_SECRET: string;
@@ -2473,6 +2476,7 @@ export default {
       if (!file.ok) return new Response("File unavailable", { status: 404 });
       return new Response(file.body, { status: 200, headers: { "Content-Type": "application/pdf", "Content-Disposition": `attachment; filename="${slug}.pdf"`, "Cache-Control": "public, max-age=300", "X-Content-Type-Options": "nosniff" } });
     }
+    if (url.pathname === "/api/admin/seo" || url.pathname === "/api/admin/seo/") return seoSearchConsole(request, env, verifyEditorialOwner);
     if (url.pathname === "/api/marketing/brevo-stats") {
       if (!await verifyEditorialOwner(request)) return resourceJson({ error: "No autorizado" }, 401);
       if (!env.BREVO_API_KEY) return resourceJson({ error: "Brevo no configurado" }, 503);
