@@ -29,14 +29,18 @@
   if (details.length !== 5 || toolCards.length !== 3 || !summaryGrid || !preparation || !bottomSave || !exercise || !savedReports || !history) return;
 
   const layout = [
-    ["resumen","Resumen","Situación clínica actual y foco de la próxima sesión"],
-    ["sesiones","Sesiones","Registro de sesiones, citas y evolución longitudinal"],
-    ["tratamiento","Tratamiento","Objetivos, evolución, técnicas y material"],
-    ["evaluacion","Evaluación","Pruebas, mediciones e hipótesis diagnósticas"],
-    ["anamnesis","Anamnesis","Entrevistas estructuradas por tipo de valoración"],
-    ["historia","Historia","Anamnesis, formulación, seguridad y coordinación"],
-    ["documentos","Informes","Informes, documentos y archivos compartidos"],
-    ["datos","Datos","Identificación, acceso del paciente y administración"]
+    ["resumen","Resumen","Situación clínica actual y próxima sesión","▤"],
+    ["datos","Datos personales","Identificación y contacto","◉"],
+    ["motivo","Motivo de consulta","Demanda e historia del problema actual","✎"],
+    ["anamnesis","Anamnesis","Antecedentes y entrevistas estructuradas","▤"],
+    ["exploracion","Exploración clínica","Estado mental, observación y seguridad","＋"],
+    ["evaluacion","Evaluación","Pruebas y resultados psicométricos y neuropsicológicos","▥"],
+    ["historia","Diagnóstico","Juicio clínico, hipótesis y formulación","◇"],
+    ["tratamiento","Plan terapéutico","Objetivos, intervención y materiales","◎"],
+    ["sesiones","Evolución","Sesiones y seguimiento longitudinal","◷"],
+    ["documentos","Documentación","Informes y archivos","▧"],
+    ["consentimientos","Consentimientos","Firma y protección de datos","✓"],
+    ["cierre","Cierre y archivo","Gestión del estado de la ficha","□"]
   ];
 
   const navigation = document.createElement("nav");
@@ -51,11 +55,15 @@
   const panels = new Map();
   const buttons = new Map();
 
-  for (const [id,label,description] of layout) {
+  for (const [id,label,description,icon] of layout) {
     const button = document.createElement("button");
     button.type = "button";
     button.className = "clinic-workspace-tab";
-    button.textContent = label;
+    const glyph = document.createElement("span");
+    glyph.setAttribute("aria-hidden","true");
+    glyph.textContent = icon;
+    glyph.style.marginInlineEnd = "7px";
+    button.append(glyph,document.createTextNode(label));
     button.dataset.workspaceTab = id;
     button.id = "clinic-tab-" + id;
     button.setAttribute("aria-controls","clinic-panel-" + id);
@@ -92,14 +100,31 @@
   add("resumen",summarySave);
   add("resumen",tasks);
   add("datos",select(".clinic-personal-admin-section"));
-  add("datos",consents);
+  add("consentimientos",select("#clinic-consent-requests"));
+  // Historical manual consent records remain available without creating a second signing workflow.
+  add("consentimientos",consents);
   add("datos",duplicates);
   add("datos",select(".clinic-portal-access"));
-  add("historia",details[0]);
+  function moveFields(id, ids) {
+    const grid = document.createElement("div");
+    grid.className = "clinic-form-grid";
+    for (const fieldId of ids) {
+      const label = select("#" + fieldId)?.closest("label");
+      if (label) grid.append(label);
+    }
+    if (grid.childElementCount) add(id,grid);
+  }
+  moveFields("motivo",["clinic-reason-consultation","clinic-problem-history"]);
+  moveFields("anamnesis",["clinic-medication"]);
+  add("anamnesis",details[0]);
+  moveFields("exploracion",["clinic-clinical-examination","clinic-risk-safety","clinic-clinical-observations"]);
+  moveFields("evaluacion",["clinic-psychometric-assessment","clinic-neuropsych-assessment"]);
+  moveFields("historia",["clinic-diagnoses","clinic-diagnostic-hypotheses","clinic-differential-diagnosis"]);
   add("historia",details[2]);
-  add("historia",details[4]);
-  add("evaluacion",details[1]);
+  add("exploracion",details[4]);
+  details[1].remove();
   add("evaluacion",toolCards[2]); // instruments and longitudinal chart stay together
+  moveFields("sesiones",["clinic-interventions-summary","clinic-evolution-summary"]);
   add("tratamiento",details[3]);
   add("tratamiento",goals);
   add("tratamiento",reviews);
@@ -131,7 +156,11 @@
 
   note.after(navigation,workspace);
   adminTools.append(note);
-  add("datos",adminTools);
+  add("cierre",adminTools);
+  // The original controls stay in the same form; no duplicated IDs or data stores.
+  for (const panel of panels.values()) {
+    for (const detail of panel.querySelectorAll(":scope > details.clinic-record-section")) detail.open = true;
+  }
   if (record && !record.children.length) record.remove();
   if (tools && !tools.children.length) tools.remove();
   // The save button must be available on every tab, not only in the final section.
