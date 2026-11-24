@@ -75,6 +75,8 @@
   };
 
   let draft = null;
+  let draftPatient = null;
+  let revision = 0;
   let templates = null;
 
   function session() {
@@ -128,7 +130,7 @@
 
   function buildUi() {
     const form = el("clinic-patient-form");
-    const history = form?.querySelector(".clinic-record-sections");
+    const history = form?.querySelector("#clinic-panel-resumen");
     if (!form || !history || el("clinic-smart-intake")) return;
 
     addStyles();
@@ -147,12 +149,12 @@
         <div>
           <p class="clinic-eyebrow">Entrada clínica inteligente</p>
           <h3>Pega tus notas una sola vez</h3>
-          <p>Distribuye la información por el historial, señala inferencias y detecta aspectos que conviene explorar. Nada se incorpora hasta que lo revises.</p>
+          <p>Pega el caso y revisa los campos propuestos. Puedes editar o excluir cada apartado. Las inferencias adicionales se muestran como sugerencias y no se incorporan automáticamente.</p>
         </div>
         <span class="clinic-smart-badge">Borrador · requiere revisión</span>
       </div>
       <label class="clinic-full">Notas originales
-        <textarea id="clinic-smart-note" rows="9" placeholder="Pega aquí tus notas de Word o escribe de forma libre. No necesitas ordenarlas ni utilizar terminología clínica."></textarea>
+        <textarea id="clinic-smart-note" rows="9" placeholder="Pega aquí el caso trabajado con ChatGPT, una entrevista o tus notas clínicas. Puedes usar texto libre o encabezados."></textarea>
       </label>
       <div class="clinic-smart-actions">
         <button id="clinic-smart-analyze" class="clinic-primary" type="button">Analizar y distribuir</button>
@@ -172,7 +174,7 @@
         <article class="clinic-smart-exercises"><h4>Procesos y ejercicios a considerar</h4><div id="clinic-smart-processes" class="clinic-smart-list"></div><div id="clinic-smart-exercise-candidates" class="clinic-smart-exercise-candidates"></div></article>
       </div>
     `;
-    history.before(launcher, section);
+    history.querySelector(".clinic-workspace-panel-heading").after(launcher, section);
 
     launcher.addEventListener("click", () => {
       clear();
@@ -235,9 +237,17 @@
       item.className = "clinic-smart-field";
       const title = document.createElement("strong");
       title.textContent = fieldLabels[key];
-      const text = document.createElement("p");
-      text.textContent = value;
-      item.append(title, text);
+      const text = document.createElement("textarea");
+      text.rows = 4;
+      text.value = value;
+      text.setAttribute("aria-label", fieldLabels[key]);
+      text.addEventListener("input", () => { if (draft) draft.fields[key] = text.value; });
+      const include = document.createElement("input");
+      include.type = "checkbox"; include.checked = true;
+      const label = document.createElement("label");
+      label.append(include, document.createTextNode(" Incorporar este apartado"));
+      include.addEventListener("change", () => { text.disabled = !include.checked; if (draft) draft.fields[key] = include.checked ? text.value : ""; });
+      item.append(title, text, label);
       fields.append(item);
     });
 
@@ -411,6 +421,10 @@
       return;
     }
 
+    const patientAtStart = el("clinic-patient-id")?.value;
+    const requestRevision = ++revision;
+    draft = null; draftPatient = null;
+    el("clinic-smart-preview").hidden = true;
     status.textContent = "Analizando y organizando…";
     el("clinic-smart-analyze").disabled = true;
 
@@ -426,12 +440,13 @@
         headers: { Authorization: "Bearer " + value.access_token, "Content-Type": "application/json" },
         body: JSON.stringify({
           notes: scrubKnownIdentifiers(note),
-          existing_profile: existing
+          existing_profile: {}
         })
       });
       const body = await response.json().catch(() => ({}));
       if (!response.ok) throw new Error(body.error || "No se ha podido analizar la nota.");
-      draft = body;
+      if (requestRevision !== revision || patientAtStart !== el("clinic-patient-id")?.value) return;
+      draft = body; draftPatient = patientAtStart;
       render();
       status.textContent = "Propuesta preparada. Revisa los apartados antes de aplicarla.";
     } catch (error) {
@@ -455,7 +470,7 @@
     const status = el("clinic-smart-status");
     const patientId = el("clinic-patient-id")?.value;
     const originalNote = el("clinic-smart-note")?.value?.trim() || "";
-    if (!patientId) {
+    if (!patientId || patientId !== draftPatient) {
       status.textContent = "No se ha podido identificar la ficha del paciente.";
       return;
     }
@@ -474,17 +489,9 @@
       const profile = patient.clinical_profile && typeof patient.clinical_profile === "object" ? { ...patient.clinical_profile } : {};
 
       Object.entries(draft.fields || {}).forEach(([key, incoming]) => {
-        if (!incoming) return;
+        if (!incoming || !fieldMap[key]) return;
         if (["clinical_summary", "next_session_focus", "medication_notes"].includes(key)) return;
         profile[key] = mergeText(profile[key], incoming);
-      });
-
-      (draft.inferences || []).forEach((item) => {
-        const target = fieldMap[item.target_field] && !["clinical_summary","next_session_focus","medication_notes"].includes(item.target_field)
-          ? item.target_field
-          : "clinical_observations";
-        const line = "[Inferencia clínica sugerida · " + (item.confidence === "high" ? "coherencia alta" : "hipótesis plausible") + "] " + item.statement + (item.basis ? " Base: " + item.basis : "");
-        profile[target] = mergeText(profile[target], line);
       });
 
       const log = Array.isArray(profile._smart_intake_log) ? profile._smart_intake_log.slice(-19) : [];
@@ -505,7 +512,7 @@
       const payload = {
         clinical_profile: profile,
         clinical_summary: mergeText(patient.clinical_summary, draft.fields?.clinical_summary),
-        next_session_focus: mergeText(mergeText(patient.next_session_focus, draft.fields?.next_session_focus), missingText),
+        next_session_focus: mergeText(patient.next_session_focus, draft.fields?.next_session_focus),
         medication_notes: mergeText(patient.medication_notes, draft.fields?.medication_notes),
         updated_at: new Date().toISOString()
       };
@@ -516,7 +523,8 @@
         body: JSON.stringify(payload)
       });
       const savedRows = await save.json().catch(() => []);
-      if (!save.ok) throw new Error("No se ha podido guardar la integración.");
+      if (!save.ok || !savedRows?.[0]) throw new Error("No se ha podido confirmar el guardado de la integración.");
+      if (patientId !== el("clinic-patient-id")?.value) return;
       const updatedPatient = savedRows?.[0] || null;
 
       Object.entries(fieldMap).forEach(([key, id]) => {
@@ -550,7 +558,7 @@
     if (preview) preview.hidden = true;
     const status = el("clinic-smart-status");
     if (status) status.textContent = "";
-    draft = null;
+    draft = null; draftPatient = null; revision++;
   }
 
   window.addEventListener("clinical:patient-opened", () => {
