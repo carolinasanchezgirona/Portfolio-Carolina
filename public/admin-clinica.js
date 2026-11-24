@@ -103,6 +103,11 @@
 
 
   const clinicalProfileSchema = [
+    { key: "prognosis", id: "clinic-prognosis", label: "Pronóstico clínico", group: "Juicio clínico" },
+    { key: "discharge_date", id: "clinic-discharge-date", label: "Fecha de cierre clínico", group: "Alta clínica" },
+    { key: "discharge_reason", id: "clinic-discharge-reason", label: "Motivo de alta o cierre", group: "Alta clínica" },
+    { key: "discharge_outcome", id: "clinic-discharge-outcome", label: "Estado clínico y objetivos alcanzados", group: "Alta clínica" },
+    { key: "discharge_recommendations", id: "clinic-discharge-recommendations", label: "Recomendaciones y seguimiento", group: "Alta clínica" },
     { key: "reason_for_consultation", id: "clinic-reason-consultation", label: "Motivo de consulta", group: "Historia y antecedentes" },
     { key: "current_problem_history", id: "clinic-problem-history", label: "Historia del problema actual", group: "Historia y antecedentes" },
     { key: "psychological_psychiatric_history", id: "clinic-psych-history", label: "Antecedentes psicológicos / psiquiátricos", group: "Historia y antecedentes" },
@@ -1497,7 +1502,7 @@
   function clinicalProfilePayload() {
     return {
       ...clinicalProfile(currentPatient),
-      ...Object.fromEntries(clinicalProfileSchema.map((field) => [field.key, clinicalProfileFields[field.key]?.value.trim() || null])),
+      ...Object.fromEntries(clinicalProfileSchema.filter((field) => clinicalProfileFields[field.key]).map((field) => [field.key, clinicalProfileFields[field.key].value.trim() || null])),
     };
   }
   function clinicalProfilePrintHtml(patient) {

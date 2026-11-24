@@ -296,6 +296,7 @@ export default function AdminClinicaPage() {
                 <label>Evaluación neuropsicológica<textarea id="clinic-neuropsych-assessment" rows={4} placeholder="Funciones exploradas, pruebas administradas, resultados, perfil cognitivo e interpretación…" /></label>
                 <label className="clinic-full">Diagnósticos registrados<textarea id="clinic-diagnoses" rows={4} placeholder="Diagnóstico, código DSM-5-TR/CIE-11, fecha, profesional y estado…" /></label>
                 <label>Hipótesis diagnósticas<textarea id="clinic-diagnostic-hypotheses" rows={4} placeholder="Hipótesis de trabajo, datos que la apoyan, datos que la cuestionan y aspectos por explorar…" /></label>
+                <label className="clinic-full">Pronóstico clínico<textarea id="clinic-prognosis" rows={4} placeholder="Evolución esperada, factores condicionantes y grado de incertidumbre." /></label>
                 <label>Diagnóstico diferencial<textarea id="clinic-differential-diagnosis" rows={4} placeholder="Alternativas consideradas y elementos clínicos a favor o en contra…" /></label>
               </div>
             </details>
@@ -332,6 +333,14 @@ export default function AdminClinicaPage() {
             </details>
           </section>
 
+          <section id="clinic-section-discharge" className="clinic-record-section">
+            <div className="clinic-record-section-body clinic-form-grid">
+              <label className="clinic-full">Fecha de cierre clínico<input id="clinic-discharge-date" type="date" /></label>
+              <label className="clinic-full">Motivo de alta o cierre<textarea id="clinic-discharge-reason" rows={4} placeholder="Alta acordada, derivación, interrupción u otro motivo." /></label>
+              <label className="clinic-full">Estado clínico y objetivos alcanzados<textarea id="clinic-discharge-outcome" rows={4} placeholder="Resultados, objetivos pendientes y estado funcional." /></label>
+              <label className="clinic-full">Recomendaciones y seguimiento<textarea id="clinic-discharge-recommendations" rows={4} placeholder="Prevención de recaídas, derivación y seguimiento si procede." /></label>
+            </div>
+          </section>
           <div className="clinic-form-actions clinic-form-actions-bottom">
             <span id="clinic-patient-save-state" className="clinic-save-indicator" role="status" aria-live="polite">Ficha guardada</span>
             <button className="clinic-primary" type="submit">Guardar ficha completa</button>
@@ -846,7 +855,7 @@ export default function AdminClinicaPage() {
       <Script src="/clinic-neuro-weekly-composer.js?v=20261010-logic-4" strategy="afterInteractive" />
       <Script src="/clinic-neuro-catalog-browser.js?v=20261010-catalog-2" strategy="afterInteractive" />
       <Script src="/clinic-import-activity.js?v=20261018-1" strategy="afterInteractive" />
-      <Script src="/admin-clinica.js?v=20261111-pdf-workbook-1" strategy="afterInteractive" />
+      <Script src="/admin-clinica.js?v=20261124-history-2" strategy="afterInteractive" />
       <Script src="/clinical-smart-intake.js?v=20261109-theme-1" strategy="afterInteractive" />
       <Script src="/clinical-diagnostic-assistant.js?v=20261109-theme-1" strategy="afterInteractive" />
       <Script src="/clinical-treatment-assistant.js?v=20261029-feedback-1" strategy="afterInteractive" />

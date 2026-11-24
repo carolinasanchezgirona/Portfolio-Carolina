@@ -35,12 +35,12 @@
     ["anamnesis","Anamnesis","Antecedentes y entrevistas estructuradas","▤"],
     ["exploracion","Exploración clínica","Estado mental, observación y seguridad","＋"],
     ["evaluacion","Evaluación","Pruebas y resultados psicométricos y neuropsicológicos","▥"],
-    ["historia","Diagnóstico","Juicio clínico, hipótesis y formulación","◇"],
+    ["historia","Diagnóstico y pronóstico","Juicio clínico, hipótesis y formulación","◇"],
     ["tratamiento","Plan terapéutico","Objetivos, intervención y materiales","◎"],
     ["sesiones","Evolución","Sesiones y seguimiento longitudinal","◷"],
     ["documentos","Documentación","Informes y archivos","▧"],
     ["consentimientos","Consentimientos","Firma y protección de datos","✓"],
-    ["cierre","Cierre y archivo","Gestión del estado de la ficha","□"]
+    ["cierre","Alta clínica","Cierre asistencial y archivo administrativo independiente","□"]
   ];
 
   const navigation = document.createElement("nav");
@@ -119,7 +119,7 @@
   add("anamnesis",details[0]);
   moveFields("exploracion",["clinic-clinical-examination","clinic-risk-safety","clinic-clinical-observations"]);
   moveFields("evaluacion",["clinic-psychometric-assessment","clinic-neuropsych-assessment"]);
-  moveFields("historia",["clinic-diagnoses","clinic-diagnostic-hypotheses","clinic-differential-diagnosis"]);
+  moveFields("historia",["clinic-diagnoses","clinic-diagnostic-hypotheses","clinic-differential-diagnosis","clinic-prognosis"]);
   add("historia",details[2]);
   add("exploracion",details[4]);
   details[1].remove();
@@ -156,7 +156,10 @@
 
   note.after(navigation,workspace);
   adminTools.append(note);
+  add("cierre",select("#clinic-section-discharge"));
   add("cierre",adminTools);
+  const quicknav = select(".clinic-record-quicknav");
+  if (quicknav) quicknav.hidden = true;
   // The original controls stay in the same form; no duplicated IDs or data stores.
   for (const panel of panels.values()) {
     for (const detail of panel.querySelectorAll(":scope > details.clinic-record-section")) detail.open = true;

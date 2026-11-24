@@ -9,9 +9,9 @@ const css = read("app/admin/clinica/patient-workspace.css");
 const base = read("public/admin-clinica.js");
 
 test("La ficha abre el recorrido clínico antes de las funciones administrativas", () => {
-  const items = ["resumen", "sesiones", "tratamiento", "evaluacion", "historia", "documentos", "datos"];
+  const items = ["resumen", "datos", "motivo", "anamnesis", "exploracion", "evaluacion", "historia", "tratamiento", "sesiones", "documentos", "consentimientos", "cierre"];
   const positions = items.map(id => workspace.indexOf('["' + id + '",'));
-  assert.ok(positions.every(n => n >= 0), "Las siete áreas deben conservarse");
+  assert.ok(positions.every(n => n >= 0), "Las doce áreas deben conservarse");
   assert.deepEqual(positions, [...positions].sort((a, b) => a - b));
   assert.match(workspace, /window\.addEventListener\("clinical:patient-opened",\(\) => activate\("resumen"/);
   assert.match(workspace, /Consultar sesiones/);
@@ -46,4 +46,13 @@ test("Estilos sin inyección y respetando el ocultamiento de preparación redund
   assert.match(css, /var\(--admin-action\)/);
   assert.match(css, /\.clinic-patient-admin-tools/);
   assert.match(read("app/admin/clinica/patient-ux.css"), /#clinic-patient-dialog \.clinic-preparation,/);
+});
+
+test("Pronóstico y alta clínica conservan campos únicos y guardado estructurado",()=>{
+  for(const id of ["clinic-prognosis","clinic-discharge-date","clinic-discharge-reason","clinic-discharge-outcome","clinic-discharge-recommendations"]){
+    assert.equal((page.match(new RegExp('id="'+id+'"',"g"))||[]).length,1);
+    assert.ok(base.includes('id: "'+id+'"'));
+  }
+  assert.ok(workspace.includes('add("cierre",select("#clinic-section-discharge"))'));
+  assert.ok(workspace.includes('add("consentimientos",select("#clinic-consent-requests"))'));
 });

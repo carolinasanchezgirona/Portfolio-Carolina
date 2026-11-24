@@ -43,3 +43,10 @@
 
 /* La auditoría se consulta desde /admin/logs, fuera de la ficha asistencial. */
 #clinic-patient-dialog .clinic-audit-section{display:none!important}
+
+/* Clinical workspace: visible tabs without horizontal hunting on desktop. */
+#clinic-patient-dialog .clinic-patient-workspace-nav{display:grid;grid-template-columns:repeat(auto-fit,minmax(155px,1fr));overflow:visible;gap:6px;position:relative;top:auto;padding:10px;background:var(--admin-surface);border:1px solid var(--admin-line);border-radius:12px}
+#clinic-patient-dialog .clinic-workspace-tab{text-align:left;white-space:normal;min-height:44px;line-height:1.3}
+#clinic-patient-dialog .clinic-record-quicknav[hidden]{display:none!important}
+#clinic-patient-dialog .clinic-workspace-panel>.clinic-form-grid{padding:16px;border:1px solid var(--admin-line);border-radius:12px;background:var(--admin-surface)}
+@media(max-width:640px){#clinic-patient-dialog .clinic-patient-workspace-nav{grid-template-columns:repeat(2,minmax(0,1fr));margin-inline:8px;padding:7px}#clinic-patient-dialog .clinic-workspace-tab{font-size:.78rem;padding:9px;overflow-wrap:anywhere}}
