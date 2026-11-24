@@ -340,7 +340,7 @@ export default function AdminClinicaPage() {
           <details id="clinic-consent-requests" className="clinic-record-section clinic-consent-requests">
             <summary><span>Consentimientos y protección de datos</span><small>Firma en Mi espacio · Archivo automático en la ficha</small></summary>
             <div className="clinic-record-section-body">
-              <p>Un único circuito privado: asigna el documento a la ficha, el paciente lo cumplimenta y firma en «Mi espacio» y la copia queda archivada automáticamente para tu revisión.</p>
+              <p>Un único circuito privado: asigna el documento a la ficha, el paciente lo cumplimenta y lo firma en «Mi espacio» (dibujando o escribiendo su nombre y confirmando un código por correo) o presencialmente en consulta desde un enlace temporal. La copia se archiva automáticamente para tu revisión.</p>
               <label htmlFor="clinic-signature-kind">Documento que deseas asignar</label>
               <select id="clinic-signature-kind" defaultValue="psicologico">
                 <option value="psicologico">Consentimiento para atención psicológica</option>
@@ -350,13 +350,14 @@ export default function AdminClinicaPage() {
               </select>
               <div className="clinic-consent-workflow">
                 <div className="clinic-consent-buttons">
-                  <button type="button" id="clinic-consent-assign" className="clinic-primary">Asignar a Mi espacio para firma</button>
+                  <button type="button" id="clinic-consent-assign" className="clinic-primary">Asignar consentimiento a la ficha</button>
                   <button type="button" id="clinic-consent-refresh" className="clinic-secondary">Actualizar estado y firmas</button>
                   <a href="/mi-espacio/" target="_blank" rel="noopener noreferrer">Acceso general de pacientes</a>
                 </div>
                 <p id="clinic-consent-workflow-message" className="clinic-message" role="status" aria-live="polite" />
                 <div id="clinic-consent-status-list" className="clinic-consent-status-list">Abre una ficha para consultar las solicitudes.</div>
-                <p className="clinic-note">La firma recibida se archiva en esta ficha como pendiente de validación profesional. Revisa la identidad, la capacidad para consentir y, cuando proceda, la representación antes de validarla. La firma dibujada en pantalla es una firma electrónica simple.</p>
+                <div id="clinic-consent-onsite-link" className="clinic-consent-onsite-link" role="status" aria-live="polite" />
+                <p className="clinic-note">Todas las modalidades son firmas electrónicas simples. La firma recibida se archiva en esta ficha como pendiente de validación profesional. Revisa la identidad, la capacidad para consentir y, cuando proceda, la representación antes de validarla. El código de correo no equivale a una firma avanzada.</p>
               </div>
             </div>
           </details>
