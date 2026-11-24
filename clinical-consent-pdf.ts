@@ -1,7 +1,7 @@
 import { jsPDF } from "jspdf";
 
 export type ConsentKind = "psicologico" | "neuro_evaluacion" | "neuro_intervencion" | "privacidad";
-export const CONSENT_VERSION = "2026-11-09";
+export const CONSENT_VERSION = "2026-11-24";
 
 type Patient = { full_name: string; birth_date?: string | null; national_id?: string | null };
 export const contents: Record<ConsentKind,{title:string;lead:string;procedures:string[];effects:string;scope:string}> = {
@@ -37,7 +37,7 @@ export const contents: Record<ConsentKind,{title:string;lead:string;procedures:s
       "La finalidad es gestionar citas, asistencia psicológica y neuropsicológica, historia clínica, comunicaciones de servicio y obligaciones legales.",
       "Base jurídica principal de asistencia: arts. 6.1.b / 6.1.c y 9.2.h del RGPD, junto con normativa sanitaria aplicable.",
       "La historia clínica está sujeta a conservación legal. Se facilitan derechos de acceso, rectificación, supresión cuando proceda, limitación, oposición y reclamación ante la AEPD.",
-      "Información completa entregada o puesta a disposición: https://carolinasanchezgirona.com/privacidad/ (versión 2026-11-09)."
+      "Información completa entregada o puesta a disposición: https://carolinasanchezgirona.com/privacidad/ (versión 2026-11-24)."
     ],
     effects:"No se exige consentimiento RGPD general para prestar la asistencia sanitaria amparada legalmente. Publicidad, cesiones opcionales o grabaciones no están autorizadas mediante este acuse.",
     scope:"Confirmo haber recibido o tenido acceso a la política de privacidad indicada, sin autorizar mediante este documento tratamientos voluntarios."
