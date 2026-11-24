@@ -139,7 +139,7 @@
         return;
       }
       appliedPromo = {code,discount};
-      if (promoStatus) promoStatus.textContent = "Descuento de " + discount.toLocaleString("es-ES") + " € aplicado provisionalmente. No se realiza ningún cobro al reservar. Se verificará que sea tu primera visita.";
+      if (promoStatus) promoStatus.textContent = "Descuento de " + discount.toLocaleString("es-ES") + " € aplicado provisionalmente. No se realiza ningún cobro al reservar. Solo un descuento por paciente, sujeto a comprobación.";
       updateServiceChoice();
     } catch {
       if (request === promoRequest && promoStatus) promoStatus.textContent = "No se ha podido comprobar el código. Retíralo para reservar al precio habitual o inténtalo de nuevo.";

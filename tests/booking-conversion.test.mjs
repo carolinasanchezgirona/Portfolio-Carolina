@@ -102,3 +102,16 @@ test("agenda privada y avisos identifican el cupón sin registrar pagos online n
  assert.match(get("public/admin-recurrence-v2.js"),/El cupón es solo para la primera sesión/);
  assert.match(get("app/cita/page.tsx"),/No se realiza ningún cobro al reservar/);
 });
+
+
+test("registro de cupones privado y control transversal de duplicados",()=>{
+ const sql=get("scripts/database/booking-promo-unique-redemptions.sql");
+ assert.match(sql,/create unique index booking_promo_once_email_idx/);
+ assert.match(sql,/create unique index booking_promo_once_phone_idx/);
+ assert.match(sql,/status not in \('cancelled','canceled'\)/);
+ assert.match(sql,/REFERIDOS10/);
+ const admin=get("app/admin/marketing/promo-campaigns.tsx");
+ assert.match(admin,/Registro de uso de cupones/);
+ assert.match(admin,/Cancelado \(liberado\)/);
+ assert.match(admin,/No presentado \(uso retenido\)/);
+});
