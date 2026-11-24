@@ -77,8 +77,28 @@ export async function clinicalConsentWorkflow(request:Request,env:Env, options:O
  if(actor==="admin"){
   if(!await options.owner(request))return json({error:"Identificación profesional y MFA necesarios."},401);
   if(method==="GET"){
-   const patientId=new URL(request.url).searchParams.get("patient_id")||"";
+   const url=new URL(request.url);
+   const patientId=url.searchParams.get("patient_id")||"";
    if(!ID.test(patientId))return json({error:"Paciente no válido."},400);
+   const downloadId=url.searchParams.get("download");
+   if(downloadId){
+    if(!ID.test(downloadId))return json({error:"Documento no válido."},400);
+    const record=await getOne(env,downloadId,patientId);
+    if(!record||!record.document_id||!["submitted","verified"].includes(record.status))return json({error:"Firma no disponible."},404);
+    const recordResponse=await query(env,"clinical_documents?select=file_path,mime_type&id=eq."+
+      encodeURIComponent(record.document_id)+"&patient_id=eq."+encodeURIComponent(patientId)+"&category=eq.consent&limit=1");
+    if(!recordResponse.ok)return json({error:"No se pudo consultar el PDF."},503);
+    const files=await recordResponse.json().catch(()=>[]) as Array<{file_path:string;mime_type:string}>;
+    if(files.length!==1||files[0].mime_type!=="application/pdf"||
+       !files[0].file_path.startsWith(patientId+"/consents/"))return json({error:"PDF no encontrado."},404);
+    const object=await fetch(SUPABASE+"/storage/v1/object/authenticated/clinical-documents/"+
+      files[0].file_path.split("/").map(encodeURIComponent).join("/"),
+      {headers:authHeaders(env),cache:"no-store"}).catch(()=>null);
+    if(!object?.ok)return json({error:"No se pudo recuperar el PDF."},503);
+    const bytes=new Uint8Array(await object.arrayBuffer());
+    if(await digest(bytes)!==record.pdf_sha256)return json({error:"No coincide la huella de integridad del documento."},503);
+    return new Response(bytes,{headers:{"Content-Type":"application/pdf","Content-Disposition":'attachment; filename="consentimiento-'+record.kind+'-'+record.id+'.pdf"',"Cache-Control":"private, no-store","X-Content-Type-Options":"nosniff"}});
+   }
    try {return json({requests:await getRequests(env,patientId)});}catch{return json({error:"No se ha podido cargar el estado de las firmas."},503);}
   }
   let body:Record<string,unknown>;
