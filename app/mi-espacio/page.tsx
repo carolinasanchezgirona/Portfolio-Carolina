@@ -119,6 +119,15 @@ export default function MiEspacioPage() {
               <button type="button" className="space-primary" data-go-therapy>Ir a mis ejercicios →</button>
             </div>
 
+            <section className="space-section space-consents-section" aria-labelledby="space-consents-title">
+              <div className="space-section-heading">
+                <div><p className="space-eyebrow">Documentación de tu consulta</p><h3 id="space-consents-title">Consentimientos y protección de datos</h3></div>
+                <span id="space-consent-count" className="space-pill">Acceso privado</span>
+              </div>
+              <p>Solo aparecen los documentos vinculados a tu ficha clínica. Puedes revisarlos y firmarlos desde el móvil tras haber recibido la información correspondiente.</p>
+              <div id="space-consent-requests" className="space-consent-list" aria-live="polite" />
+            </section>
+
             <section id="space-session-prep" className="space-session-prep" aria-labelledby="space-session-prep-title" tabIndex={-1}>
               <div className="space-session-prep-head">
                 <div>
@@ -310,6 +319,7 @@ export default function MiEspacioPage() {
 
       <Script src="/patient-video.js?v=20261009-1" strategy="afterInteractive" />
       <Script src="/mi-espacio.js?v=20261111-cuadernos-secciones-1" strategy="afterInteractive" />
+      <Script src="/patient-consents.js?v=20261124-1" strategy="afterInteractive" />
       <Script src="/session-prep.js?v=20261017-1" strategy="afterInteractive" />
       <Script src="/patient-goal-process.js?v=20261109-1" strategy="afterInteractive" />
     </main>
