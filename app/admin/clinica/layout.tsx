@@ -24,7 +24,7 @@ export default function ClinicaLayout({ children }: Readonly<{ children: React.R
   return (
     <>
       {children}
-      <Script src="/clinic-video-manager.js?v=20261009-1" strategy="afterInteractive" />
+      <Script src="/clinic-video-manager.js?v=20261124-sessions-1" strategy="afterInteractive" />
       <Script src="/clinic-rebook.js?v=20260915-1" strategy="afterInteractive" />
       <Script src="/clinic-word-export.js?v=20261009-legal-1" strategy="afterInteractive" />
       <Script src="/clinic-report-options.js?v=20261009-legal-1" strategy="afterInteractive" />

@@ -4,10 +4,27 @@
   const patient = document.getElementById('clinic-patient-id');
   const form = document.getElementById('clinic-patient-form');
   if (!page || !patient || !form) return;
+  if (document.getElementById('clinic-video-panel')) return;
   const panel = document.createElement('section');
+  panel.id = 'clinic-video-panel';
   panel.className = 'clinic-patient-dashboard';
   panel.innerHTML = '<h3>Videoconsulta con Google Meet</h3><p>Crea una reunión distinta por cita y pega aquí su enlace. No incluyas nombres ni datos clínicos en el título de Google.</p><p>La cuenta Gmail gratuita sigue pendiente de cobertura contractual para la consulta. Puedes usar <a href="https://workspace.google.com/essentials/" target="_blank" rel="noopener noreferrer">Workspace Essentials Starter sin cuota</a> con un correo de tu dominio, o Workspace Individual. Conserva el acuerdo de tratamiento aplicable antes de publicar enlaces clínicos.</p><label>Cita <select id="video-booking"></select></label><label>Enlace de Google Meet <input id="video-url" type="url" placeholder="https://meet.google.com/xxx-xxxx-xxx" autocomplete="off"></label><label><input id="video-published" type="checkbox"> Mostrar acceso en Mi espacio</label><p>La paciente podrá entrar desde 15 minutos antes hasta el final de su cita confirmada. Retirar el enlace aquí no cierra la reunión en Google Meet.</p><div><button id="video-save" type="button" class="clinic-primary">Guardar videoconsulta</button> <button id="video-remove" type="button" class="clinic-text">Retirar enlace</button> <a href="https://meet.google.com/" target="_blank" rel="noopener noreferrer">Crear reunión en Google Meet</a></div><p id="video-status" role="status" aria-live="polite"></p>';
+  // Mount only in the sessions tab, regardless of script execution order.
+  panel.hidden = true;
   form.after(panel);
+  function mountVideoPanel() {
+    const sessions = form.querySelector('#clinic-panel-sesiones');
+    if (!sessions) return false;
+    sessions.append(panel);
+    panel.hidden = false;
+    return true;
+  }
+  if (!mountVideoPanel()) {
+    const mountObserver = new MutationObserver(() => {
+      if (mountVideoPanel()) mountObserver.disconnect();
+    });
+    mountObserver.observe(form, {childList:true,subtree:true});
+  }
   const select = panel.querySelector('#video-booking'), input = panel.querySelector('#video-url'), published = panel.querySelector('#video-published'), status = panel.querySelector('#video-status');
   const save = panel.querySelector('#video-save'), remove = panel.querySelector('#video-remove');
   let generation = 0, loadedPatient = '';
