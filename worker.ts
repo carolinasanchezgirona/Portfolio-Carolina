@@ -2505,6 +2505,7 @@ export default {
       });
     }
     if (url.pathname.replace(/\/$/, "") === "/api/patient-portal/consents") return clinicalConsentWorkflow(request, env, {owner:verifyEditorialOwner,sameOrigin:patientPortalSameOrigin,patientSession:req => patientPortalSession(req,env)}, "patient");
+    if (url.pathname.replace(/\/$/, "") === "/api/consent/presencial") return clinicalConsentWorkflow(request, env, {owner:verifyEditorialOwner,sameOrigin:patientPortalSameOrigin,patientSession:req => patientPortalSession(req,env)}, "onsite");
     if (url.pathname === "/api/patient-portal/session" || url.pathname === "/api/patient-portal/session/") return handlePatientPortalSession(request, env);
     if (url.pathname === "/api/patient-portal/preferences" || url.pathname === "/api/patient-portal/preferences/") return handlePatientPortalPreferences(request, env);
     if (url.pathname === "/api/patient-portal/response" || url.pathname === "/api/patient-portal/response/") return handlePatientPortalResponse(request, env);

@@ -14,8 +14,8 @@ test("the consent table is private and patient-bound",()=>{
 
 test("patient consent API uses the verified portal session, not a supplied patient_id",()=>{
  const source=read("clinical-consent-workflow.ts");
- const patient=source.slice(source.indexOf(" const session=await options.patientSession(request);"));
- assert.match(patient,/const patientId=session\.patient_id/);
+ const patient=source.slice(source.indexOf('const session=actor==="patient"?await options.patientSession(request):null;'));
+ assert.match(patient,/const patientId=onsite\?\.row\.patient_id\|\|session\?\.patient_id\|\|""/);
  assert.match(patient,/getOne\(env,id,patientId\)/);
  assert.match(source,/options\.owner\(request\)/);
  assert.match(source,/options\.sameOrigin\(request\)/);

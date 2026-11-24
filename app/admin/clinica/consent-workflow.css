@@ -15,3 +15,7 @@
 .clinic-consent-row span,.clinic-consent-row small{font-size:.9rem;color:#526771;}
 .clinic-consent-row .clinic-consent-buttons button{padding:8px 12px;border:1px solid #6c8b9a;background:#edf4f6;color:#233e4a;font:inherit;font-size:.88rem;font-weight:650;}
 @media(max-width:640px){.clinic-consent-workflow{padding:14px}.clinic-consent-buttons{align-items:stretch}.clinic-consent-buttons button{width:100%}}
+
+.clinic-consent-onsite-link:not(:empty){display:grid;justify-items:start;gap:12px;margin:14px 0;padding:16px;background:#eef5f7;border:1px solid #bad0d8;border-radius:10px;overflow-wrap:anywhere;}
+.clinic-consent-onsite-link p{margin:0;line-height:1.5;}
+.clinic-consent-onsite-link a,.clinic-consent-onsite-link button{display:inline-flex;border-radius:8px;border:1px solid #7c9ead;padding:10px 13px;color:#253c46;background:#fff;font:inherit;font-weight:650;cursor:pointer;text-decoration:none;}

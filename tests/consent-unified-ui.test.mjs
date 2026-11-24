@@ -27,7 +27,7 @@ test("obsolete consent endpoints are not accessible from Cloudflare worker",()=>
 test("public signatures require a valid, patient-linked pending request",()=>{
  const form=read("app/components/legal-signature-form.tsx");
  assert.match(form,/const \[assignmentLoading, setAssignmentLoading\] = useState\(true\)/);
- assert.match(form,/Para firmar este documento, entra en Mi espacio/);
+ assert.match(form,/Para firmar este documento, abre la solicitud asignada en Mi espacio/);
  assert.match(form,/assignmentId && !submitted && !assignmentLoading && !assignmentError && <form/);
  assert.doesNotMatch(form,/window\.print\(\)/);
  assert.doesNotMatch(form,/Guardar o imprimir el documento cumplimentado/);
