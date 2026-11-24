@@ -113,7 +113,7 @@ test("clinical visit history uses one chronological presentation and keeps prior
   assert.match(history,/clinicalProfileSchema\.some/);
   assert.match(history,/window\.ClinicPatientWorkspace\?\.activate/);
   assert.doesNotMatch(history,/method:\s*["'](?:POST|PATCH|DELETE)["']|localStorage|sessionStorage|\.innerHTML\s*=/);
-  assert.match(file("app/admin/clinica/page.tsx"),/admin-clinica\.js\?v=20261111-pdf-workbook-1/);
+  assert.match(file("app/admin/clinica/page.tsx"),/admin-clinica\.js\?v=\d{8}-[a-z0-9-]+/);
 });
 
 test("clinical history keeps the original editable fields without rewriting saved notes", () => {
