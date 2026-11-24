@@ -337,40 +337,18 @@ export default function AdminClinicaPage() {
             <button className="clinic-primary" type="submit">Guardar ficha completa</button>
           </div>
 
-          <details id="clinic-manual-documents" className="clinic-record-section clinic-manual-documents" >
-            <summary><span>Enviar documentación al paciente</span><small>Consentimientos y protección de datos · solo envío manual</small></summary>
+          <details id="clinic-consent-requests" className="clinic-record-section clinic-consent-requests">
+            <summary><span>Consentimientos y protección de datos</span><small>Firma en Mi espacio · Archivo automático en la ficha</small></summary>
             <div className="clinic-record-section-body">
-              <p className="clinic-message">No se envía ninguna documentación al reservar, confirmar o recordar una cita. Solo se enviará cuando pulses el botón y confirmes el correo destinatario.</p>
-              <p>Correo de la ficha: <strong id="clinic-legal-email">Selecciona un paciente</strong></p>
-              <div className="clinic-legal-choices">
-                <label><input id="clinic-legal-consents" type="checkbox" defaultChecked /> Consentimientos informados <a href="/consentimientos/" target="_blank" rel="noopener noreferrer">Ver documentos</a></label>
-                <label><input id="clinic-legal-privacy" type="checkbox" defaultChecked /> Política de protección de datos <a href="/privacidad/" target="_blank" rel="noopener noreferrer">Ver documento</a></label>
-              </div>
-              <p className="clinic-note">Se enviarán enlaces públicos a documentos informativos, sin diagnósticos, datos de salud ni documentos firmados. El envío no acredita la firma del consentimiento.</p>
-              <button id="clinic-legal-send" type="button" className="clinic-secondary" disabled>Enviar correo manualmente</button>
-              <p id="clinic-legal-message" className="clinic-message" role="status" aria-live="polite" />
-            </div>
-          </details>
-
-          <details id="clinic-electronic-signature" className="clinic-record-section clinic-electronic-signature">
-            <summary><span>Firma electrónica y archivo digital</span><small>Preparar consentimiento individualizado · Custodia sin papel</small></summary>
-            <div className="clinic-record-section-body">
-              <p>El consentimiento debe ser informado, específico y libre. Prepara el PDF con los datos de esta ficha y tramita la firma con un proveedor de confianza, previa verificación de identidad y representación cuando proceda.</p>
-              <label htmlFor="clinic-signature-kind">Documento para firma electrónica</label>
+              <p>Un único circuito privado: asigna el documento a la ficha, el paciente lo cumplimenta y firma en «Mi espacio» y la copia queda archivada automáticamente para tu revisión.</p>
+              <label htmlFor="clinic-signature-kind">Documento que deseas asignar</label>
               <select id="clinic-signature-kind" defaultValue="psicologico">
                 <option value="psicologico">Consentimiento para atención psicológica</option>
                 <option value="neuro_evaluacion">Consentimiento para evaluación neuropsicológica</option>
                 <option value="neuro_intervencion">Consentimiento para intervención neuropsicológica</option>
                 <option value="privacidad">Acuse de recepción de protección de datos</option>
               </select>
-              <div className="clinic-electronic-signature-actions">
-                <button id="clinic-signature-prepare" className="clinic-secondary" type="button">Preparar PDF individualizado</button>
-                <a href="https://www.signaturit.com/es/" target="_blank" rel="noopener noreferrer">Acceder a proveedor de firma electrónica</a>
-              </div>
-              <p id="clinic-signature-message" className="clinic-message" role="status" aria-live="polite" />
               <div className="clinic-consent-workflow">
-                <h4>Consentimientos vinculados a esta ficha clínica</h4>
-                <p>Selecciona el documento arriba y asígnalo a este paciente. Lo encontrará en Mi espacio tras iniciar sesión. No se envía ningún correo automáticamente ni se publica un enlace con datos clínicos.</p>
                 <div className="clinic-consent-buttons">
                   <button type="button" id="clinic-consent-assign" className="clinic-primary">Asignar a Mi espacio para firma</button>
                   <button type="button" id="clinic-consent-refresh" className="clinic-secondary">Actualizar estado y firmas</button>
@@ -378,19 +356,8 @@ export default function AdminClinicaPage() {
                 </div>
                 <p id="clinic-consent-workflow-message" className="clinic-message" role="status" aria-live="polite" />
                 <div id="clinic-consent-status-list" className="clinic-consent-status-list">Abre una ficha para consultar las solicitudes.</div>
-                <p className="clinic-note">La firma recibida queda en el expediente como pendiente. Revisa el PDF, la identidad, la capacidad para consentir y la representación cuando proceda antes de validarla. No equivale a una firma electrónica avanzada.</p>
+                <p className="clinic-note">La firma recibida se archiva en esta ficha como pendiente de validación profesional. Revisa la identidad, la capacidad para consentir y, cuando proceda, la representación antes de validarla. La firma dibujada en pantalla es una firma electrónica simple.</p>
               </div>
-              <div className="clinic-electronic-signature-steps">
-                <h4>Procedimiento sin papel</h4>
-                <ol>
-                  <li>Revisa con el paciente la finalidad, riesgos y alternativas, y verifica su capacidad para consentir o la representación acreditada.</li>
-                  <li>Descarga el PDF individualizado. Comprueba su contenido y envíalo <strong>manualmente</strong> desde un prestador que ofrezca firma avanzada con verificación adecuada, sellado temporal y documento probatorio.</li>
-                  <li>Después de recibir la firma, descarga el <strong>PDF firmado y el certificado de evidencias o audit trail</strong>. Comprueba que corresponden al mismo documento y paciente.</li>
-                  <li>Archiva ambos archivos por separado en esta ficha, dentro de «Documentos y archivos compartidos», categoría «Consentimiento» y <strong>sin activar «Publicar en Mi espacio»</strong>.</li>
-                </ol>
-                <p className="clinic-note">Antes de usar un prestador con pacientes reales, formaliza el correspondiente contrato de encargado del tratamiento y verifica medidas de seguridad, conservación y subencargados. La generación del PDF no es una firma ni modifica el estado del consentimiento.</p>
-              </div>
-              <button id="clinic-signature-archive" className="clinic-secondary" type="button">Archivar documento firmado o certificado probatorio</button>
             </div>
           </details>
 
