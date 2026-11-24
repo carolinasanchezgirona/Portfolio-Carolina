@@ -25,7 +25,9 @@ const string=(value:unknown,max=140)=>typeof value==="string"?value.trim().repla
 const comparable=(value:string)=>value.normalize("NFKC").replace(/\s+/g," ").toLocaleLowerCase("es").trim();
 async function digest(value:Uint8Array| string){
  const bytes=typeof value==="string"?new TextEncoder().encode(value):value;
- const hash=await crypto.subtle.digest("SHA-256",bytes);
+ const buffer=new ArrayBuffer(bytes.byteLength);
+ new Uint8Array(buffer).set(bytes);
+ const hash=await crypto.subtle.digest("SHA-256",buffer);
  return Array.from(new Uint8Array(hash),x=>x.toString(16).padStart(2,"0")).join("");
 }
 function authHeaders(env:Env, extras:Record<string,string>={}) {
