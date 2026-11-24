@@ -183,14 +183,42 @@ export async function clinicalConsentWorkflow(request:Request,env:Env, options:O
   if(body.action==="assign"){
    const kind=body.kind;
    if(typeof kind!=="string"||!kinds.has(kind as ConsentKind))return json({error:"Tipo no válido."},400);
-   if(!patient.portal_access_enabled)return json({error:"El acceso de Mi espacio de este paciente está deshabilitado."},409);
-   const response=await query(env,"clinical_consent_requests?select=id,kind,status,assigned_at",{
+    const response=await query(env,"clinical_consent_requests?select=id,kind,status,assigned_at",{
     method:"POST",headers:{"Content-Type":"application/json",Prefer:"return=representation"},
     body:JSON.stringify({patient_id:patientId,kind,document_version:CONSENT_VERSION,status:"pending"})
    });
    if(response.status===409)return json({error:"Ya existe una solicitud pendiente de este documento."},409);
    if(!response.ok)return json({error:"No se pudo asignar el consentimiento."},503);
    return json({request:(await response.json())[0]},201);
+  }
+  if(body.action==="onsite_link"){
+   const id=string(body.request_id,36);
+   if(!ID.test(id))return json({error:"Solicitud no válida."},400);
+   const pending=await getOne(env,id,patientId);
+   if(!pending||pending.status!=="pending")return json({error:"Asigna primero un documento pendiente a esta ficha."},409);
+   const lastHour=await query(env,"clinical_consent_onsite_links?select=id&request_id=eq."+
+     encodeURIComponent(id)+"&issued_at=gt."+encodeURIComponent(new Date(Date.now()-3600000).toISOString())+"&limit=6");
+   if(!lastHour.ok)return json({error:"No se pudo comprobar el acceso temporal."},503);
+   const issued=await lastHour.json().catch(()=>[]) as Array<{id:string}>;
+   if(issued.length>=5)return json({error:"Se ha alcanzado el límite de cinco enlaces presenciales por hora."},429);
+   const secret=randomSecret();
+   const hashed=await digest(secret);
+   const tokenId=crypto.randomUUID();
+   const expiresAt=new Date(Date.now()+15*60000).toISOString();
+   const revoked=await query(env,"clinical_consent_onsite_links?request_id=eq."+
+     encodeURIComponent(id)+"&consumed_at=is.null&revoked_at=is.null",{
+     method:"PATCH",headers:{"Content-Type":"application/json",Prefer:"return=minimal"},
+     body:JSON.stringify({revoked_at:new Date().toISOString()})
+   });
+   if(!revoked.ok)return json({error:"No se pudieron invalidar los accesos anteriores."},503);
+   const stored=await query(env,"clinical_consent_onsite_links",{
+     method:"POST",headers:{"Content-Type":"application/json",Prefer:"return=minimal"},
+     body:JSON.stringify({id:tokenId,request_id:id,token_hash:hashed,expires_at:expiresAt})
+   });
+   if(!stored.ok)return json({error:"No se pudo generar el acceso temporal."},503);
+   return json({url:new URL(signatureRoute(pending.kind),request.url).origin+
+       signatureRoute(pending.kind)+"#presencial="+secret,
+       expires_at:expiresAt,request_id:id});
   }
   if(body.action==="verify"||body.action==="cancel"){
    const id=string(body.request_id,36);
@@ -211,10 +239,13 @@ export async function clinicalConsentWorkflow(request:Request,env:Env, options:O
   return json({error:"Acción desconocida."},400);
  }
 
- const session=await options.patientSession(request);
- if(!session)return json({error:"Accede primero a Mi espacio con tu cuenta."},401);
- const patientId=session.patient_id;
+ const onsite=actor==="onsite"?await onsiteAccess(request,env):null;
+ const session=actor==="patient"?await options.patientSession(request):null;
+ if(actor==="onsite"&&!onsite)return json({error:"Acceso presencial caducado o utilizado. Solicita otro a la profesional."},401);
+ if(actor==="patient"&&!session)return json({error:"Accede primero a Mi espacio con tu cuenta."},401);
+ const patientId=onsite?.row.patient_id||session?.patient_id||"";
  if(method==="GET"){
+  if(onsite)return json({request:onsite.row,patient:formatPatient(onsite.patient),presencial:true,expires_at:"15 minutos desde la emisión"});
   try{
    const rows=await getRequests(env,patientId);
    const id=new URL(request.url).searchParams.get("id");
@@ -232,11 +263,22 @@ export async function clinicalConsentWorkflow(request:Request,env:Env, options:O
  try{body=await parsePayload(request);}catch{return json({error:"Formulario no válido."},400);}
  const id=string(body.request_id,36);
  if(!ID.test(id))return json({error:"Solicitud no válida."},400);
- const row=await getOne(env,id,patientId);
+ const row=onsite?.row||await getOne(env,id,patientId);
  if(!row)return json({error:"Esta solicitud no pertenece a tu espacio."},404);
- if(row.status!=="pending")return json({error:"Esta solicitud ya no admite nuevas firmas."},409);
+ if(row.status!=="pending"||row.id!==id)return json({error:"Esta solicitud ya no admite nuevas firmas."},409);
  const patient=await patientRecord(env,patientId);
- if(!patient||patient.status==="archived"||!patient.portal_access_enabled)return json({error:"Acceso clínico inactivo."},403);
+ if(!patient||patient.status==="archived"||(actor==="patient"&&!patient.portal_access_enabled))return json({error:"Acceso clínico inactivo."},403);
+ if(body.action==="request_otp"){
+   if(actor!=="patient")return json({error:"Este código solo se solicita desde Mi espacio."},403);
+   return sendConfirmationCode(env,id,patientId,patient.email||"");
+ }
+ const signingMethod=actor==="onsite"?"drawn_onsite":body.signing_method==="typed_email_otp"?"typed_email_otp":"drawn_portal";
+ const typedName=string(body.typed_name,160);
+ if(signingMethod==="typed_email_otp"&&
+     (body.signer==="representative"||comparable(typedName)!==comparable(patient.full_name))){
+    return json({error:"La firma por nombre escrito requiere que la persona atendida confirme su nombre exacto. La representación se firma de forma manuscrita."},400);
+ }
+ if(actor==="onsite"&&body.signing_method==="typed_email_otp")return json({error:"En consulta utiliza la firma manuscrita en pantalla."},400);
  const name=string(body.name,160), place=string(body.place,100), date=string(body.date,10);
  const signer=body.signer;
  const representativeName=string(body.representative_name,160),representation=string(body.relationship,180);
@@ -251,15 +293,18 @@ export async function clinicalConsentWorkflow(request:Request,env:Env, options:O
     return json({error:"Identifica al representante y su vínculo. La profesional deberá acreditarlo."},400);
  if(row.kind==="neuro_evaluacion"&&scope!=="evaluation"||row.kind==="neuro_intervencion"&&scope!=="intervention")
     return json({error:"El alcance solicitado no coincide con el documento asignado."},400);
- if(!/^data:image\/png;base64,[A-Za-z0-9+/=]{100,180000}$/.test(png)||png.length>180030)
-    return json({error:"La firma debe dibujarse en el recuadro."},400);
- // Reject malformed images before the PDF generator.
- let signatureBytes:string;
- try{
-  signatureBytes=atob(png.slice("data:image/png;base64,".length));
-  if(signatureBytes.length<70||signatureBytes.length>135000||
-     !signatureBytes.startsWith("\x89PNG\r\n\x1a\n"))throw Error("PNG inválido");
- }catch{return json({error:"La firma no contiene una imagen PNG válida."},400);}
+ if(signingMethod!=="typed_email_otp"){
+   if(!/^data:image\/png;base64,[A-Za-z0-9+/=]{100,180000}$/.test(png)||png.length>180030)
+     return json({error:"La firma debe dibujarse en el recuadro."},400);
+   try{
+     const signatureBytes=atob(png.slice("data:image/png;base64,".length));
+     if(signatureBytes.length<70||signatureBytes.length>135000||
+        !signatureBytes.startsWith("\x89PNG\r\n\x1a\n"))throw Error("PNG inválido");
+   }catch{return json({error:"La firma no contiene una imagen PNG válida."},400);}
+ }
+ if(signingMethod==="typed_email_otp"&&!await validateConfirmationCode(env,id,patientId,body.otp_code)){
+   return json({error:"Código incorrecto, caducado o utilizado. Revisa el correo y los intentos disponibles."},403);
+ }
  const signedAt=new Date().toISOString();
  const declared={
   patient_name:patient.full_name,
@@ -276,7 +321,11 @@ export async function clinicalConsentWorkflow(request:Request,env:Env, options:O
   document_id:row.id,
   document_version:CONSENT_VERSION,
   policy_reference:row.kind==="privacidad"?"https://carolinasanchezgirona.com/privacidad/":"",
-  signature_png:png,
+  signature_png:signingMethod==="typed_email_otp"?"":png,
+  signing_method:signingMethod,
+  typed_name:signingMethod==="typed_email_otp"?typedName:"",
+  verified_email_code_at:signingMethod==="typed_email_otp"?signedAt:"",
+  signing_channel:actor==="onsite"?"presencial_temporal":"mi_espacio_autenticado",
  };
  const evidenceSha=await digest(JSON.stringify(declared));
  const signed:ConsentSignedData={...declared,evidence_sha256:evidenceSha};
@@ -292,7 +341,7 @@ export async function clinicalConsentWorkflow(request:Request,env:Env, options:O
   id:documentId,patient_id:patientId,category:"consent",title:names[row.kind],
   file_path:storagePath,file_name:"consentimiento-"+row.kind+"-"+id+".pdf",
   mime_type:"application/pdf",file_size:bytes.length,document_date:signedAt.slice(0,10),
-  notes:"Documento recibido con firma electrónica simple. Pendiente de revisión de identidad, capacidad y representación. Solicitud: "+id+"; evidencia SHA-256 "+evidenceSha+"; PDF SHA-256 "+pdfSha,
+  notes:"Documento recibido con firma electrónica simple ("+signingMethod+"). Pendiente de revisión de identidad, capacidad y representación. Solicitud: "+id+"; evidencia SHA-256 "+evidenceSha+"; PDF SHA-256 "+pdfSha,
  };
  const inserted=await query(env,"clinical_documents?select=id",{method:"POST",headers:{"Content-Type":"application/json",Prefer:"return=representation"},body:JSON.stringify(record)}).catch(()=>null);
  if(!inserted?.ok){
@@ -302,7 +351,7 @@ export async function clinicalConsentWorkflow(request:Request,env:Env, options:O
  const updated=await query(env,"clinical_consent_requests?id=eq."+encodeURIComponent(id)+"&patient_id=eq."+encodeURIComponent(patientId)+"&status=eq.pending&select=id,status",{
   method:"PATCH",headers:{"Content-Type":"application/json",Prefer:"return=representation"},
   body:JSON.stringify({status:"submitted",signed_at:signedAt,signed_payload:declared,
-   evidence_sha256:evidenceSha,pdf_sha256:pdfSha,document_id:documentId})
+   evidence_sha256:evidenceSha,pdf_sha256:pdfSha,document_id:documentId,signing_method:signingMethod})
  }).catch(()=>null);
  const confirmed=updated?.ok?await updated.json().catch(()=>[]):[];
  if(!Array.isArray(confirmed)||confirmed.length!==1){
@@ -310,6 +359,12 @@ export async function clinicalConsentWorkflow(request:Request,env:Env, options:O
   const deleted=await query(env,"clinical_documents?id=eq."+encodeURIComponent(documentId),{method:"DELETE"}).catch(()=>null);
   if(deleted?.ok)await deletePdf(env,storagePath);
   return json({error:"No se ha confirmado la recepción; contacta con la consulta antes de repetir."},409);
+ }
+ if(onsite){
+   await query(env,"clinical_consent_onsite_links?id=eq."+encodeURIComponent(onsite.tokenId),{
+     method:"PATCH",headers:{"Content-Type":"application/json",Prefer:"return=minimal"},
+     body:JSON.stringify({consumed_at:signedAt})
+   }).catch(()=>null);
  }
  return json({ok:true,status:"submitted",message:"Documento recibido en tu ficha clínica, pendiente de validación profesional."},201);
 }
