@@ -12,6 +12,9 @@ export type ConsentSignedData = {
   representation: string;
   scope: string;
   signature_png: string;
+  signing_method: "drawn_portal" | "typed_email_otp" | "drawn_onsite";
+  typed_name: string;
+  verified_email_code_at: string;
   accepted: true;
   signed_at: string;
   evidence_sha256: string;
@@ -67,12 +70,20 @@ export function signedConsentPdf(kind: ConsentKind, data: ConsentSignedData): Ui
   }
   text("Lugar declarado: "+data.place+"   Fecha declarada: "+data.declared_date);
   text("Registrado en el servidor: "+data.signed_at);
-  check(55);
-  text("Firma manuscrita dibujada en pantalla", true);
-  pdf.addImage(data.signature_png, "PNG", left, y, 110, 31);
-  y += 37;
+  const methodLabels = { drawn_portal: "Firma manuscrita en Mi espacio", typed_email_otp: "Firma mediante nombre escrito y código de correo", drawn_onsite: "Firma presencial mediante enlace temporal generado por la profesional" };
+  text("Modalidad: "+methodLabels[data.signing_method], true);
+  if(data.verified_email_code_at) text("Código de un solo uso verificado en servidor: "+data.verified_email_code_at);
+  check(data.signing_method === "typed_email_otp" ? 35 : 55);
+  if (data.signing_method === "typed_email_otp") {
+    text("Nombre escrito como firma: "+data.typed_name, true);
+    text("Declaración afirmativa confirmada mediante código temporal enviado al correo de la ficha.", false, 5);
+  } else {
+    text("Firma manuscrita dibujada en pantalla", true);
+    pdf.addImage(data.signature_png, "PNG", left, y, 110, 31);
+    y += 37;
+  }
   text("Evidencia SHA-256: "+data.evidence_sha256, false, 3, 8);
-  text("Firma electrónica simple. Pendiente de cotejo de identidad, capacidad y representación por la profesional. La imagen de firma por sí sola no acredita firma electrónica avanzada.", false, 4, 9);
+  text("Firma electrónica simple, incluso cuando se utiliza un código de un solo uso. Pendiente de cotejo de identidad, capacidad y representación por la profesional. No equivale automáticamente a firma electrónica avanzada o cualificada.", false, 4, 9);
   const total = pdf.getNumberOfPages();
   for (let index = 1; index <= total; index++) {
     pdf.setPage(index);
