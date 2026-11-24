@@ -82,7 +82,7 @@ jobs:
           node --check public/clinic-consent-workflow.js
           node --check public/patient-consents.js
           node --check public/clinic-deferred-consent.js
-          node --test tests/clinical-consent-workflow.test.mjs tests/consent-unified-ui.test.mjs
+          node --test tests/clinical-consent-workflow.test.mjs tests/consent-unified-ui.test.mjs tests/consent-signing-options.test.mjs
 
       - name: Validar editor clínico, guardado automático y navegación
         run: |
