@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 
 export default function PrivacyPage() {
   return <LegalDocument title="Política de privacidad y protección de datos" updatedAt="9 de noviembre de 2026">
-    <nav aria-label="Contenido de la política"><a href="#responsable">Responsable</a> · <a href="#tratamientos">Tratamientos</a> · <a href="#conservacion">Conservación</a> · <a href="#proveedores">Proveedores</a> · <a href="#derechos">Tus derechos</a> · <a href="/cookies/">Cookies</a> · <a href="#firma-digital">Firmar acuse de información</a></nav>
+    <nav aria-label="Contenido de la política"><a href="#responsable">Responsable</a> · <a href="#tratamientos">Tratamientos</a> · <a href="#conservacion">Conservación</a> · <a href="#proveedores">Proveedores</a> · <a href="#derechos">Tus derechos</a> · <a href="/cookies/">Cookies</a> · <a href="/mi-espacio/">Acuse de información en Mi espacio</a></nav>
     <section id="responsable">
       <h2>1. Responsable del tratamiento</h2>
       <div className="legal-data">
