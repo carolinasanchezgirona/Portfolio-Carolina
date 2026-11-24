@@ -6,6 +6,7 @@
   const refresh=document.getElementById("clinic-consent-refresh");
   const list=document.getElementById("clinic-consent-status-list");
   const message=document.getElementById("clinic-consent-workflow-message");
+  const onsiteBox=document.getElementById("clinic-consent-onsite-link");
   if(!patientInput||!select||!assign||!refresh||!list||!message)return;
   const idPattern=/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
   const kindNames={
@@ -38,7 +39,7 @@
     const node=document.createElement(tag); if(klass)node.className=klass;node.textContent=text;return node;
   }
   function reset(){
-    list.replaceChildren();message.textContent="";
+    list.replaceChildren();onsiteBox?.replaceChildren();message.textContent="";
     if(!idPattern.test(currentId))list.append(txt("p","Abre una ficha clínica para consultar sus consentimientos."));
   }
   async function download(item){
@@ -48,6 +49,36 @@
     const anchor=document.createElement("a");anchor.href=url;anchor.download="consentimiento-"+item.kind+"-"+item.id+".pdf";
     document.body.append(anchor);anchor.click();anchor.remove();
     setTimeout(()=>URL.revokeObjectURL(url),30000);
+  }
+  function displayOnsiteLink(url,expires){
+    if(!onsiteBox)return;
+    onsiteBox.replaceChildren();
+    const title=txt("strong","Enlace presencial temporal de un solo uso");
+    const description=txt("p","Caduca a las "+new Date(expires).toLocaleTimeString("es-ES",{hour:"2-digit",minute:"2-digit"})+
+      ". Ábrelo en el dispositivo donde firmará la persona. No lo envíes por canales inseguros ni lo compartas fuera de la consulta.");
+    const link=txt("a","Abrir formulario de firma presencial");
+    link.href=url;link.target="_blank";link.rel="noopener noreferrer";
+    const copy=txt("button","Copiar enlace temporal");
+    copy.type="button";
+    copy.onclick=async()=>{
+      try{await navigator.clipboard.writeText(url);message.textContent="Enlace copiado. Úsalo solo con la persona presente en consulta.";}
+      catch{message.textContent="Tu navegador no permite copiar. Abre el enlace en este dispositivo.";}
+    };
+    onsiteBox.append(title,description,link,copy);
+  }
+  async function startOnsite(item){
+    if(busy||!currentId)return;
+    if(!window.confirm("¿La persona está presente y has comprobado su identidad? Este enlace solo permite firmar el documento de esta ficha durante 15 minutos."))return;
+    busy=true;message.textContent="Generando acceso presencial de un solo uso…";
+    onsiteBox?.replaceChildren();
+    try{
+      const resp=await request("",{method:"POST",headers:{"Content-Type":"application/json"},
+       body:JSON.stringify({action:"onsite_link",patient_id:currentId,request_id:item.id})});
+      const result=await resp.json();
+      displayOnsiteLink(result.url,result.expires_at);
+      message.textContent="Acceso presencial generado. Una vez firmada la solicitud, pulsa «Actualizar estado y firmas».";
+    }catch(e){message.textContent=e.message||"No pudo generarse el enlace.";}
+    finally{busy=false;}
   }
   async function updateStatus(item,action){
     if(busy)return;
@@ -81,7 +112,11 @@
         const row=txt("article","","clinic-consent-row");
         row.append(txt("strong",kindNames[item.kind]||item.kind));
         row.append(txt("span",(stateNames[item.status]||item.status)+" · "+label(item.assigned_at)));
-        if(item.signed_at)row.append(txt("small","Firma recibida: "+new Date(item.signed_at).toLocaleString("es-ES")));
+        if(item.signed_at){
+          const methods={drawn_portal:"Dibujada en Mi espacio",typed_email_otp:"Nombre escrito + código de correo",drawn_onsite:"Presencial en dispositivo"};
+          row.append(txt("small","Firma recibida: "+new Date(item.signed_at).toLocaleString("es-ES")+
+            " · "+(methods[item.signing_method]||"Firma en pantalla")));
+        }
         const buttons=txt("div","","clinic-consent-buttons");
         if(["submitted","verified"].includes(item.status)){
           const pdf=txt("button","Descargar PDF firmado");
@@ -94,6 +129,8 @@
           verify.type="button";verify.onclick=()=>updateStatus(item,"verify");buttons.append(verify);
         }
         if(item.status==="pending"){
+          const onsite=txt("button","Firma presencial en este dispositivo");
+          onsite.type="button";onsite.onclick=()=>void startOnsite(item);buttons.append(onsite);
           const cancel=txt("button","Anular solicitud");
           cancel.type="button";cancel.onclick=()=>updateStatus(item,"cancel");buttons.append(cancel);
         }
@@ -108,19 +145,19 @@
     const id=String(patientInput.value||"").trim();
     if(busy||!idPattern.test(id)) {message.textContent="Abre primero una ficha clínica.";return;}
     if(id!==currentId){currentId=id;}
-    if(!window.confirm("¿Asignar el documento seleccionado al espacio privado de este paciente? No se enviará ningún correo automáticamente."))return;
+    if(!window.confirm("¿Crear una solicitud de firma en esta ficha clínica? Podrás firmarla desde Mi espacio o en la consulta. No se enviará ningún correo automáticamente."))return;
     busy=true;assign.disabled=true;message.textContent="Asignando documento…";
     try{
       await request("",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({action:"assign",patient_id:id,kind:select.value})});
       await load();
-      message.textContent="Asignado. El paciente lo encontrará al acceder a Mi espacio. Puedes enviarle manualmente el enlace general de acceso, sin identificadores clínicos.";
+      message.textContent="Documento asignado. El paciente puede firmarlo desde Mi espacio si tiene acceso habilitado, o puedes iniciar la firma presencial desde la solicitud.";
     }catch(err){message.textContent=err.message||"No se pudo asignar.";}
     finally{busy=false;assign.disabled=false;}
   });
   refresh.addEventListener("click",()=>{void load();});
   window.addEventListener("clinic-patient-opened",event=>{
     const id=event.detail?.id||"";
-    currentId=idPattern.test(id)?id:"";void load();
+    currentId=idPattern.test(id)?id:"";onsiteBox?.replaceChildren();void load();
   });
   reset();
 })();
