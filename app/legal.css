@@ -110,3 +110,8 @@
 .legal-sign-fields input[readonly]{background:#f1f4f5;color:#344d57;}
 .legal-sign-fields button:disabled{opacity:.6;cursor:not-allowed;}
 @media print{.legal-sign-linked-note{display:none!important;}}
+
+.legal-sign-mode{margin:20px 0;padding:16px;border:1px solid #d3e2e7;border-radius:10px;}
+.legal-sign-typed{display:grid;gap:12px;}
+.legal-sign-typed label{display:grid;gap:8px;max-width:520px;}
+.legal-sign-typed label input{width:100%;box-sizing:border-box;}
