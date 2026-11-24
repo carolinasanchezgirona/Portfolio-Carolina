@@ -2,7 +2,7 @@ import LegalSignatureForm from "./legal-signature-form";
 import "../legal.css";
 
 type Kind = "psychological" | "neuropsychological";
-const VERSION = "2026-11-09";
+const VERSION = "2026-11-24";
 
 const details = {
   psychological: {
