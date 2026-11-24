@@ -79,3 +79,13 @@ test("WhatsApp abre un canal externo y la API de Meta queda fuera de servicio", 
   assert.match(worker, /status: 410/);
   assert.doesNotMatch(worker, /return whatsappWebhook\(request, env\)/);
 });
+
+
+test("los códigos se comprueban en el servidor sin datos identificativos y no alteran reservas ordinarias",()=>{
+ const page=get("app/cita/page.tsx");const script=get("public/booking.js");
+ assert.match(page,/Código promocional \(opcional\)/);
+ assert.match(script,/rpc\("quote_booking_promo", \{p_code: code, p_service_code:serviceCodeValue\(\), p_patient_type:patientTypeValue\(\)\}/);
+ assert.match(script,/appliedPromo \? \{p_promo_code: appliedPromo.code\} : \{\}/);
+ assert.match(script,/resetPromo/);
+ assert.match(get("app/admin/marketing/page.tsx"),/<PromoCampaigns\/>/);
+});

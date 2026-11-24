@@ -12,6 +12,11 @@
   if (!form || !statusEl) return;
 
   const state = { duration: 60, slots: [], selected: null, month: null, selectedDate: null };
+  let appliedPromo = null;
+  let promoRequest = 0;
+  const promoInput = $("#booking-promo-code");
+  const promoStatus = $("#booking-promo-status");
+  const promoButton = $("#booking-promo-apply");
   const SERVICES = {
     psicologia_general_sanitaria: {
       label: "Psicología General Sanitaria",
@@ -100,16 +105,61 @@
     }
   }
 
+  function promoCode() { return (promoInput?.value || "").trim().toUpperCase(); }
+  function displayPrice() {
+    const base = SERVICES[serviceCodeValue()].price;
+    return appliedPromo && appliedPromo.code === promoCode() && serviceCodeValue() === "psicologia_general_sanitaria" && patientTypeValue() === "new"
+      ? base - appliedPromo.discount : base;
+  }
+  function resetPromo() {
+    promoRequest++;
+    appliedPromo = null;
+    if (promoButton) promoButton.disabled = false;
+    if (promoStatus) promoStatus.textContent = "Solo para primeras visitas de psicología, sujeto a comprobación antes de confirmar.";
+    updateServiceChoice();
+  }
+  async function applyPromo() {
+    resetPromo();
+    const code = promoCode();
+    if (!code) return;
+    if (!/^[A-Z0-9_-]{3,32}$/.test(code) || serviceCodeValue() !== "psicologia_general_sanitaria" || patientTypeValue() !== "new") {
+      if (promoStatus) promoStatus.textContent = "Código no aplicable. Solo disponible para primeras visitas de psicología.";
+      return;
+    }
+    const request = ++promoRequest;
+    if (promoButton) promoButton.disabled = true;
+    if (promoStatus) promoStatus.textContent = "Comprobando código…";
+    try {
+      const response = await rpc("quote_booking_promo", {p_code: code, p_service_code:serviceCodeValue(), p_patient_type:patientTypeValue()});
+      if (!response.ok) throw new Error("No se ha podido comprobar el código.");
+      const discount = await response.json();
+      if (request !== promoRequest) return;
+      if (typeof discount !== "number" || !Number.isFinite(discount) || discount <= 0 || discount >= 60) {
+        if (promoStatus) promoStatus.textContent = "Código no disponible. Puedes retirarlo y reservar al precio habitual.";
+        return;
+      }
+      appliedPromo = {code,discount};
+      if (promoStatus) promoStatus.textContent = "Descuento de " + discount.toLocaleString("es-ES") + " € aplicado provisionalmente. Se verificará que sea tu primera visita.";
+      updateServiceChoice();
+    } catch {
+      if (request === promoRequest && promoStatus) promoStatus.textContent = "No se ha podido comprobar el código. Retíralo para reservar al precio habitual o inténtalo de nuevo.";
+    } finally {
+      if (request === promoRequest && promoButton) promoButton.disabled = false;
+    }
+  }
+  promoButton?.addEventListener("click", applyPromo);
+  promoInput?.addEventListener("input", resetPromo);
+  promoInput?.addEventListener("keydown", event => { if (event.key === "Enter") { event.preventDefault(); void applyPromo(); } });
   function updateSelectionSummary() {
     if (!state.selected || !els.summary) return;
     const service = SERVICES[serviceCodeValue()];
-    els.summary.innerHTML = `<strong>${formatSlot(state.selected)}</strong><span>${service.label} · ${state.duration} minutos · ${service.price} €</span>`;
+    els.summary.innerHTML = `<strong>${formatSlot(state.selected)}</strong><span>${service.label} · ${state.duration} minutos · ${displayPrice().toLocaleString("es-ES")} €</span>`;
   }
 
   function updateServiceChoice() {
     const service = SERVICES[serviceCodeValue()];
     if (els.selectedServiceName) els.selectedServiceName.textContent = service.label;
-    if (els.selectedServicePrice) els.selectedServicePrice.textContent = `${service.price} €`;
+    if (els.selectedServicePrice) els.selectedServicePrice.textContent = `${displayPrice().toLocaleString("es-ES")} €`;
     updateSelectionSummary();
   }
 
@@ -275,7 +325,8 @@
     state.month = new Date(Date.UTC(state.month.getUTCFullYear(), state.month.getUTCMonth() + 1, 1));
     renderCalendar();
   });
-  document.querySelectorAll('input[name="service_code"]').forEach((input) => input.addEventListener("change", updateServiceChoice));
+  document.querySelectorAll('input[name="service_code"]').forEach((input) => input.addEventListener("change", resetPromo));
+  document.querySelectorAll('input[name="patient_type"]').forEach(input => input.addEventListener("change", resetPromo));
 
   // Al llegar desde las páginas de evaluación, se selecciona neuropsicología.
   // El fragmento de URL no se transmite al servidor ni añade datos clínicos a la reserva.
@@ -294,6 +345,7 @@
     const serviceCode = serviceCodeValue();
     const isExisting = patientType === "existing";
 
+    if (promoCode() && (!appliedPromo || appliedPromo.code !== promoCode())) return showMessage("Aplica el código o retíralo antes de reservar.", "error");
     if (!state.selected) return showMessage("Selecciona primero una fecha y una hora.", "error");
     if (!name) return showMessage("Escribe tu nombre y apellidos.", "error");
     if (!email) return showMessage("Escribe tu correo electrónico.", "error");
@@ -311,6 +363,7 @@
         p_patient_phone: phone,
         p_patient_type: patientType,
         p_service_code: serviceCode,
+        ...(appliedPromo ? {p_promo_code: appliedPromo.code} : {}),
       });
       if (!response.ok) {
         const body = await response.json().catch(() => ({}));
@@ -324,6 +377,7 @@
       const existingMessage = "Solicitud registrada. El horario queda reservado mientras comprobamos que eres paciente actual.";
       const newMessage = "Reserva registrada correctamente. Recibirás la confirmación por el canal indicado.";
       form.reset();
+      resetPromo();
       state.duration = 60;
       showMessage(isExisting ? existingMessage : newMessage, "success");
       updateServiceChoice();
