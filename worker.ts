@@ -3,6 +3,7 @@ import { residenceMaterialAi } from "./residence-material-ai";
 import { notifyPatientMessages } from "./patient-message-email";
 import { billingInvoiceEmail } from "./billing-invoice-email";
 import { clinicalConsentPacket } from "./clinical-consent-packet";
+import { clinicalConsentWorkflow } from "./clinical-consent-workflow";
 import { manualPatientDocumentsEmail } from "./manual-patient-documents-email";
 import { patientMessages } from "./patient-messages";
 import { adminAppointmentVideo, patientAppointmentVideo } from './appointment-video';
@@ -2433,6 +2434,7 @@ export default {
     if (url.pathname.replace(/\/$/, "") === "/api/admin/invoices/email") return billingInvoiceEmail(request, env, verifyEditorialOwner);
     if (url.pathname.replace(/\/$/, "") === "/api/admin/patient-documents-email") return manualPatientDocumentsEmail(request, env, verifyEditorialOwner, patientPortalSameOrigin);
     if (url.pathname.replace(/\/$/, "") === "/api/admin/clinical-consent-packet") return clinicalConsentPacket(request, env, verifyEditorialOwner, patientPortalSameOrigin);
+    if (url.pathname.replace(/\/$/, "") === "/api/admin/consent-workflow") return clinicalConsentWorkflow(request, env, {owner:verifyEditorialOwner,sameOrigin:patientPortalSameOrigin,patientSession: req => patientPortalSession(req,env)}, "admin");
 
     if (url.pathname === "/api/admin/patient-portal-access" || url.pathname === "/api/admin/patient-portal-access/") return handleAdminPatientPortalAccess(request, env);
     if (url.pathname.replace(/\/$/, "") === "/api/admin/clinical-form-publish") return handleAdminClinicalFormPublish(request, env);
@@ -2506,6 +2508,7 @@ export default {
         json: patientPortalJson,
       });
     }
+    if (url.pathname.replace(/\/$/, "") === "/api/patient-portal/consents") return clinicalConsentWorkflow(request, env, {owner:verifyEditorialOwner,sameOrigin:patientPortalSameOrigin,patientSession:req => patientPortalSession(req,env)}, "patient");
     if (url.pathname === "/api/patient-portal/session" || url.pathname === "/api/patient-portal/session/") return handlePatientPortalSession(request, env);
     if (url.pathname === "/api/patient-portal/preferences" || url.pathname === "/api/patient-portal/preferences/") return handlePatientPortalPreferences(request, env);
     if (url.pathname === "/api/patient-portal/response" || url.pathname === "/api/patient-portal/response/") return handlePatientPortalResponse(request, env);

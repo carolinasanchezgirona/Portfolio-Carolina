@@ -86,6 +86,9 @@ jobs:
         run: |
           node --check public/clinic-electronic-signature.js
           node --experimental-strip-types --test tests/clinical-consent-packet.test.mjs
+          node --check public/clinic-consent-workflow.js
+          node --check public/patient-consents.js
+          node --test tests/clinical-consent-workflow.test.mjs
 
       - name: Validar editor clínico, guardado automático y navegación
         run: |

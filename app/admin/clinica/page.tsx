@@ -361,12 +361,25 @@ export default function AdminClinicaPage() {
                 <option value="psicologico">Consentimiento para atención psicológica</option>
                 <option value="neuro_evaluacion">Consentimiento para evaluación neuropsicológica</option>
                 <option value="neuro_intervencion">Consentimiento para intervención neuropsicológica</option>
+                <option value="privacidad">Acuse de recepción de protección de datos</option>
               </select>
               <div className="clinic-electronic-signature-actions">
                 <button id="clinic-signature-prepare" className="clinic-secondary" type="button">Preparar PDF individualizado</button>
                 <a href="https://www.signaturit.com/es/" target="_blank" rel="noopener noreferrer">Acceder a proveedor de firma electrónica</a>
               </div>
               <p id="clinic-signature-message" className="clinic-message" role="status" aria-live="polite" />
+              <div className="clinic-consent-workflow">
+                <h4>Consentimientos vinculados a esta ficha clínica</h4>
+                <p>Selecciona el documento arriba y asígnalo a este paciente. Lo encontrará en Mi espacio tras iniciar sesión. No se envía ningún correo automáticamente ni se publica un enlace con datos clínicos.</p>
+                <div className="clinic-consent-buttons">
+                  <button type="button" id="clinic-consent-assign" className="clinic-primary">Asignar a Mi espacio para firma</button>
+                  <button type="button" id="clinic-consent-refresh" className="clinic-secondary">Actualizar estado y firmas</button>
+                  <a href="/mi-espacio/" target="_blank" rel="noopener noreferrer">Acceso general de pacientes</a>
+                </div>
+                <p id="clinic-consent-workflow-message" className="clinic-message" role="status" aria-live="polite" />
+                <div id="clinic-consent-status-list" className="clinic-consent-status-list">Abre una ficha para consultar las solicitudes.</div>
+                <p className="clinic-note">La firma recibida queda en el expediente como pendiente. Revisa el PDF, la identidad, la capacidad para consentir y la representación cuando proceda antes de validarla. No equivale a una firma electrónica avanzada.</p>
+              </div>
               <div className="clinic-electronic-signature-steps">
                 <h4>Procedimiento sin papel</h4>
                 <ol>

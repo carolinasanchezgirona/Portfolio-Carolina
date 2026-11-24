@@ -1,0 +1,11 @@
+.clinic-consent-workflow{margin-top:18px;padding:20px;border:1px solid #c4d5db;border-radius:12px;background:var(--clinic-panel,#fff);}
+.clinic-consent-workflow h4{margin:0 0 8px;font-size:1.05rem;}
+.clinic-consent-workflow p{margin:0 0 12px;line-height:1.55;}
+.clinic-consent-buttons{display:flex;align-items:center;flex-wrap:wrap;gap:9px;margin:12px 0;}
+.clinic-consent-buttons button{border-radius:8px;cursor:pointer;}
+.clinic-consent-status-list{display:grid;gap:12px;margin:16px 0;}
+.clinic-consent-row{display:grid;gap:6px;padding:15px;border:1px solid #d7e2e6;border-radius:10px;background:#fff;}
+.clinic-consent-row strong{font-size:1rem;color:#263841;}
+.clinic-consent-row span,.clinic-consent-row small{font-size:.9rem;color:#526771;}
+.clinic-consent-row .clinic-consent-buttons button{padding:8px 12px;border:1px solid #6c8b9a;background:#edf4f6;color:#233e4a;font:inherit;font-size:.88rem;font-weight:650;}
+@media(max-width:640px){.clinic-consent-workflow{padding:14px}.clinic-consent-buttons{align-items:stretch}.clinic-consent-buttons button{width:100%}}

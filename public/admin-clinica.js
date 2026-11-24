@@ -2635,6 +2635,7 @@
   function openPatient(patient) {
     currentPatient = patient;
     els.patientId.value = patient.id;
+    window.dispatchEvent(new CustomEvent("clinic-patient-opened",{detail:{id:patient.id}}));
     fillPatientPersonalData(patient);
     renderPatientIdentityHeader(patient);
     els.summaryNote.value = patient.clinical_summary || "";

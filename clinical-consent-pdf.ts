@@ -1,10 +1,10 @@
 import { jsPDF } from "jspdf";
 
-export type ConsentKind = "psicologico" | "neuro_evaluacion" | "neuro_intervencion";
+export type ConsentKind = "psicologico" | "neuro_evaluacion" | "neuro_intervencion" | "privacidad";
 export const CONSENT_VERSION = "2026-11-09";
 
 type Patient = { full_name: string; birth_date?: string | null; national_id?: string | null };
-const contents: Record<ConsentKind,{title:string;lead:string;procedures:string[];effects:string;scope:string}> = {
+export const contents: Record<ConsentKind,{title:string;lead:string;procedures:string[];effects:string;scope:string}> = {
   psicologico: {
     title:"Consentimiento informado para atención psicológica",
     lead:"Evaluación clínica e intervención psicológica sanitaria individualizada.",
@@ -28,6 +28,19 @@ const contents: Record<ConsentKind,{title:string;lead:string;procedures:string[]
     ],
     effects:"La exploración puede producir cansancio, frustración o malestar transitorio. Los resultados no determinan por sí solos un diagnóstico, un grado de discapacidad ni la capacidad jurídica.",
     scope:"Acepto exclusivamente la evaluación neuropsicológica descrita. Una intervención posterior necesitará información y acuerdo adicionales."
+  },
+  privacidad: {
+    title:"Constancia de recepción de información de protección de datos",
+    lead:"Información sobre el tratamiento de datos personales en la consulta sanitaria.",
+    procedures:[
+      "Responsable: Carolina Sánchez Girona, psicóloga y neuropsicóloga, COPC 24892. Contacto: contact@carolinasanchezgirona.com.",
+      "La finalidad es gestionar citas, asistencia psicológica y neuropsicológica, historia clínica, comunicaciones de servicio y obligaciones legales.",
+      "Base jurídica principal de asistencia: arts. 6.1.b / 6.1.c y 9.2.h del RGPD, junto con normativa sanitaria aplicable.",
+      "La historia clínica está sujeta a conservación legal. Se facilitan derechos de acceso, rectificación, supresión cuando proceda, limitación, oposición y reclamación ante la AEPD.",
+      "Información completa entregada o puesta a disposición: https://carolinasanchezgirona.com/privacidad/ (versión 2026-11-09)."
+    ],
+    effects:"No se exige consentimiento RGPD general para prestar la asistencia sanitaria amparada legalmente. Publicidad, cesiones opcionales o grabaciones no están autorizadas mediante este acuse.",
+    scope:"Confirmo haber recibido o tenido acceso a la política de privacidad indicada, sin autorizar mediante este documento tratamientos voluntarios."
   },
   neuro_intervencion:{
     title:"Consentimiento informado para intervención neuropsicológica",
