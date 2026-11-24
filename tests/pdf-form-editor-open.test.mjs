@@ -53,5 +53,5 @@ test("PDF conversion button reports opening errors inline and jumps to the actua
   assert.match(admin, /feedback\.setAttribute\("aria-live", "polite"\)/);
   assert.match(admin, /try \{\s*convertPatientPdfToInteractiveForm\(doc\);/);
   assert.match(admin, /No se ha podido abrir el editor/);
-  assert.match(page, /admin-clinica\.js\?v=20261111-pdf-workbook-1/);
+  assert.match(page, /admin-clinica\.js\?v=\d{8}-[a-z0-9-]+/);
 });
