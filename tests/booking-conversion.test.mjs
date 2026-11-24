@@ -89,3 +89,16 @@ test("los códigos se comprueban en el servidor sin datos identificativos y no a
  assert.match(script,/resetPromo/);
  assert.match(get("app/admin/marketing/page.tsx"),/<PromoCampaigns\/>/);
 });
+
+
+test("agenda privada y avisos identifican el cupón sin registrar pagos online ni repetir el descuento",()=>{
+ const agenda=get("public/admin-agenda-v3.js");const month=get("public/admin-month-view.js");const notices=get("public/admin-notifications.js");
+ assert.match(agenda,/price_eur,service_code,created_by_admin,promo_code,promo_discount_eur/);
+ assert.match(agenda,/couponMarkup\(appointment\)/);
+ assert.match(agenda,/showCouponDetail\(a\)/);
+ assert.match(agenda,/if \(currentAppointment.promo_code\) els.price.value/);
+ assert.match(month,/promo.textContent="Cupón "/);
+ assert.match(notices,/Nueva reserva con cupón/);
+ assert.match(get("public/admin-recurrence-v2.js"),/El cupón es solo para la primera sesión/);
+ assert.match(get("app/cita/page.tsx"),/No se realiza ningún cobro al reservar/);
+});

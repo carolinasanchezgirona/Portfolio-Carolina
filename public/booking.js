@@ -115,7 +115,7 @@
     promoRequest++;
     appliedPromo = null;
     if (promoButton) promoButton.disabled = false;
-    if (promoStatus) promoStatus.textContent = "Solo para primeras visitas de psicología, sujeto a comprobación antes de confirmar.";
+    if (promoStatus) promoStatus.textContent = "Introduce tú el código si dispones de uno. Solo para primeras visitas de psicología. No se realiza ningún cobro al reservar.";
     updateServiceChoice();
   }
   async function applyPromo() {
@@ -139,7 +139,7 @@
         return;
       }
       appliedPromo = {code,discount};
-      if (promoStatus) promoStatus.textContent = "Descuento de " + discount.toLocaleString("es-ES") + " € aplicado provisionalmente. Se verificará que sea tu primera visita.";
+      if (promoStatus) promoStatus.textContent = "Descuento de " + discount.toLocaleString("es-ES") + " € aplicado provisionalmente. No se realiza ningún cobro al reservar. Se verificará que sea tu primera visita.";
       updateServiceChoice();
     } catch {
       if (request === promoRequest && promoStatus) promoStatus.textContent = "No se ha podido comprobar el código. Retíralo para reservar al precio habitual o inténtalo de nuevo.";
@@ -379,7 +379,7 @@
       form.reset();
       resetPromo();
       state.duration = 60;
-      showMessage(isExisting ? existingMessage : newMessage, "success");
+      showMessage((isExisting ? existingMessage : newMessage) + " No se ha realizado ningún cobro online.", "success");
       updateServiceChoice();
       await loadSlots();
     } catch (error) {

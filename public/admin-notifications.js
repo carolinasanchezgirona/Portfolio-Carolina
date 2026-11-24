@@ -57,7 +57,7 @@
     status.textContent = "Actualizando actividad administrativa…";
 
     const tasks = [
-      ["agenda", "appointment_bookings?select=id,status,created_at,created_by_admin&order=created_at.desc&limit=60"],
+      ["agenda", "appointment_bookings?select=id,status,created_at,created_by_admin,promo_code,price_eur&order=created_at.desc&limit=60"],
       ["patients", "clinical_patients?select=id,created_at&order=created_at.desc&limit=50"],
       ["clinical", "clinical_exercise_assignments?select=id,patient_response_shared_at,reviewed_at&patient_response_shared_at=not.is.null&order=patient_response_shared_at.desc&limit=50"],
       ["clinical", "clinical_admin_tasks?select=id,due_at,status,created_at&order=created_at.desc&limit=80"],
@@ -71,7 +71,7 @@
       const area = tasks[index][0];
       for (const row of result.value) {
         if (area === "agenda" && !row.created_by_admin && !["cancelled", "canceled"].includes(row.status)) {
-          const item = notice("agenda", "booking:" + row.id, "Nueva reserva", "Nueva cita registrada desde la web.", row.created_at, "/admin/agenda/");
+          const item = notice("agenda", "booking:" + row.id, row.promo_code ? "Nueva reserva con cupón" : "Nueva reserva", row.promo_code ? "Cupón " + row.promo_code + " · Tarifa " + Number(row.price_eur).toLocaleString("es-ES",{style:"currency",currency:"EUR"}) + " · Sin cobro online." : "Nueva cita registrada desde la web.", row.created_at, "/admin/agenda/");
           if (item) list.push(item);
         }
         if (area === "patients") {

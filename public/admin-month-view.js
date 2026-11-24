@@ -72,7 +72,7 @@
     const next = m === 12 ? { y:y+1, m:1 } : { y, m:m+1 };
     const startKey = key(y,m,1); const endKey = key(next.y,next.m,1);
     const start = localIso(startKey); const end = localIso(endKey);
-    const select = "id,patient_name,patient_email,patient_phone,patient_type,status,starts_at,ends_at,price_eur,service_code,recurrence_group_id,recurrence_pattern,recurrence_index,recurrence_total";
+    const select = "id,patient_name,patient_email,patient_phone,patient_type,status,starts_at,ends_at,price_eur,service_code,promo_code,promo_discount_eur,recurrence_group_id,recurrence_pattern,recurrence_index,recurrence_total";
     const urls = {
       bookings: `${REST_URL}/appointment_bookings?select=${encodeURIComponent(select)}&starts_at=gte.${encodeURIComponent(start)}&starts_at=lt.${encodeURIComponent(end)}&order=starts_at.asc`,
       blocks: `${REST_URL}/appointment_schedule_blocks?select=starts_at,ends_at&starts_at=lt.${encodeURIComponent(end)}&ends_at=gt.${encodeURIComponent(start)}`,
@@ -284,6 +284,13 @@
           b.className=`month-appointment${r.service_code==="neuropsicologia"?" is-neuro":""}`;
           b.textContent=`${timeFmt.format(new Date(r.starts_at))} · ${r.patient_name}`;
           b.title=`${r.patient_name} · ${r.status}`;
+          if(r.promo_code){
+            const promo=document.createElement("span");
+            promo.style.cssText="display:block;font-weight:700;color:#70451e;white-space:normal;font-size:11px";
+            promo.textContent="Cupón "+r.promo_code+" · "+Number(r.price_eur).toLocaleString("es-ES",{style:"currency",currency:"EUR"});
+            b.append(promo);
+            b.title+=" · "+promo.textContent+" · Sin cobro online";
+          }
           b.addEventListener("click",() => window.dispatchEvent(new CustomEvent("agenda:edit-appointment", { detail: r })));
           list.append(b);
         });

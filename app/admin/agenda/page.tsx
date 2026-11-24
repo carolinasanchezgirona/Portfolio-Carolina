@@ -198,6 +198,7 @@ export default function AdminAgendaPage() {
             <label>Precio (€)<input id="appointment-price" type="number" min="0" step="0.01" defaultValue="60" /></label>
           </div>
 
+          <p id="appointment-coupon-detail" role="status" hidden style={{background:"#fff3db",color:"#70451e",padding:12,borderRadius:8,fontWeight:700}} />
           <p className="admin-note">Este formulario administrativo no registra consentimiento clínico. Las citas creadas aquí quedan marcadas como creadas por la profesional.</p>
           <p id="appointment-message" className="admin-message" role="status" />
 
@@ -259,7 +260,7 @@ export default function AdminAgendaPage() {
         </form>
       </dialog>
 
-      <Script src="/admin-agenda-v3.js?v=20261109-month-1" strategy="afterInteractive" />
+      <Script src="/admin-agenda-v3.js?v=20261124-coupons-1" strategy="afterInteractive" />
       <Script src="/admin-agenda-enhancement.js?v=20261109-month-1" strategy="afterInteractive" />
       <Script src="/pwa.js?v=20260915-admin-2" strategy="afterInteractive" />
     </main>

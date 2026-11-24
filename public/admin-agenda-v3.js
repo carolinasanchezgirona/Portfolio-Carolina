@@ -256,7 +256,7 @@
     setStatus("Cargando agenda…");
     const start = madridLocalToIso(weekStartKey, "00:00");
     const end = madridLocalToIso(addDaysKey(weekStartKey, 7), "00:00");
-    const select = "id,patient_name,patient_email,patient_phone,patient_type,status,starts_at,ends_at,price_eur,service_code,created_by_admin";
+    const select = "id,patient_name,patient_email,patient_phone,patient_type,status,starts_at,ends_at,price_eur,service_code,created_by_admin,promo_code,promo_discount_eur";
     const url = `${REST_URL}/appointment_bookings?select=${encodeURIComponent(select)}&starts_at=gte.${encodeURIComponent(start)}&starts_at=lt.${encodeURIComponent(end)}&order=starts_at.asc`;
     const blockUrl = `${REST_URL}/appointment_schedule_blocks?select=id,starts_at,ends_at,reason&starts_at=lt.${encodeURIComponent(end)}&ends_at=gt.${encodeURIComponent(start)}&order=starts_at.asc`;
     const [response, blocksResponse] = await Promise.all([
@@ -313,7 +313,7 @@
         const button = document.createElement("button");
         button.type = "button";
         button.className = `appointment-card${appointment.service_code === "neuropsicologia" ? " neuro" : ""}${["cancelled", "canceled"].includes(appointment.status) ? " cancelled" : ""}`;
-        button.innerHTML = `<time>${timeFmt.format(new Date(appointment.starts_at))}</time><strong>${escapeHtml(appointment.patient_name)}</strong><small>${serviceLabel(appointment.service_code)} · ${statusLabel(appointment.status)}</small><span class="appointment-card-action">Ver o modificar</span>`;
+        button.innerHTML = `<time>${timeFmt.format(new Date(appointment.starts_at))}</time><strong>${escapeHtml(appointment.patient_name)}</strong><small>${serviceLabel(appointment.service_code)} · ${statusLabel(appointment.status)}</small>${couponMarkup(appointment)}<span class="appointment-card-action">Ver o modificar</span>`;
         button.addEventListener("click", () => openEdit(appointment));
         body.append(button);
       });
@@ -322,11 +322,28 @@
     }
   }
 
+  function couponLabel(a) {
+    if (!a?.promo_code) return "";
+    const euros = Number(a.price_eur).toLocaleString("es-ES",{style:"currency",currency:"EUR"});
+    return "Cupón " + a.promo_code + " · Tarifa " + euros + " · Sin cobro online";
+  }
+
+  function couponMarkup(a) {
+    return a?.promo_code ? '<span class="appointment-coupon" style="display:block;margin:4px 0;font-weight:700;color:#70451e;background:#fff3db;padding:4px 7px;border-radius:5px;white-space:normal">' + escapeHtml(couponLabel(a)) + '</span>' : "";
+  }
+
+  function showCouponDetail(a) {
+    const detail = document.querySelector("#appointment-coupon-detail");
+    if (!detail) return;
+    detail.hidden = !a?.promo_code;
+    detail.textContent = a?.promo_code ? couponLabel(a) + " · Comprueba que sea su primera visita antes de confirmar." : "";
+  }
+
   function createAppointmentCard(appointment, compact = false) {
     const button = document.createElement("button");
     button.type = "button";
     button.className = `appointment-card${compact ? " compact" : ""}${appointment.service_code === "neuropsicologia" ? " neuro" : ""}${["cancelled", "canceled"].includes(appointment.status) ? " cancelled" : ""}`;
-    button.innerHTML = `<time>${timeFmt.format(new Date(appointment.starts_at))}</time><strong>${escapeHtml(appointment.patient_name)}</strong><small>${serviceLabel(appointment.service_code)} · ${statusLabel(appointment.status)}</small><span class="appointment-card-action">Ver o modificar</span>`;
+    button.innerHTML = `<time>${timeFmt.format(new Date(appointment.starts_at))}</time><strong>${escapeHtml(appointment.patient_name)}</strong><small>${serviceLabel(appointment.service_code)} · ${statusLabel(appointment.status)}</small>${couponMarkup(appointment)}<span class="appointment-card-action">Ver o modificar</span>`;
     button.addEventListener("click", () => openEdit(appointment));
     return button;
   }
@@ -393,7 +410,7 @@
       <button type="button" class="day-card-main">
         <time>${timeFmt.format(new Date(appointment.starts_at))}</time>
         <strong>${escapeHtml(appointment.patient_name)}</strong>
-        <small>${serviceLabel(appointment.service_code)} · ${statusLabel(appointment.status)}</small>
+        <small>${serviceLabel(appointment.service_code)} · ${statusLabel(appointment.status)}</small>${couponMarkup(appointment)}
         <span class="appointment-card-action">Ver o modificar</span>
       </button>
       <div class="day-card-actions">
@@ -480,6 +497,7 @@
 
   function openNew(dateKey = todayKey()) {
     els.form.reset();
+    showCouponDetail(null);
     els.id.value = "";
     els.dialogTitle.textContent = "Nueva cita";
     els.date.value = dateKey;
@@ -500,6 +518,7 @@
 
   function openEdit(a) {
     currentAppointment = a;
+    showCouponDetail(a);
     els.id.value = a.id;
     els.dialogTitle.textContent = "Modificar cita";
     els.date.value = keyFromIso(a.starts_at);
@@ -605,6 +624,8 @@
 
     els.id.value = "";
     els.dialogTitle.textContent = "Repetir cita";
+    if (currentAppointment.promo_code) els.price.value = currentAppointment.service_code === "neuropsicologia" ? "75" : "60";
+    showCouponDetail(null);
     els.date.value = addDaysKey(originalDate, 7);
     els.time.value = originalTime;
     els.appointmentStatus.value = "confirmed";
@@ -836,7 +857,7 @@
     els.patientSearchStatus.textContent = "Buscando…";
     const safe = term.replace(/[,%()]/g, " ").trim();
     const filter = `patient_name.ilike.*${safe}*,patient_email.ilike.*${safe}*,patient_phone.ilike.*${safe}*`;
-    const select = "id,patient_name,patient_email,patient_phone,patient_type,status,starts_at,ends_at,price_eur,service_code,created_by_admin";
+    const select = "id,patient_name,patient_email,patient_phone,patient_type,status,starts_at,ends_at,price_eur,service_code,created_by_admin,promo_code,promo_discount_eur";
     const url = `${REST_URL}/appointment_bookings?select=${encodeURIComponent(select)}&or=(${encodeURIComponent(filter)})&order=starts_at.desc&limit=100`;
     const response = await fetch(url, { headers: authHeaders(), cache: "no-store" });
     const rows = await response.json().catch(() => []);
@@ -885,7 +906,7 @@
       items.forEach((item) => {
         const button = document.createElement("button");
         button.type = "button";
-        button.innerHTML = `<time>${dateLong.format(new Date(item.starts_at))} · ${timeFmt.format(new Date(item.starts_at))}</time><span>${serviceLabel(item.service_code)} · ${statusLabel(item.status)}</span>`;
+        button.innerHTML = `<time>${dateLong.format(new Date(item.starts_at))} · ${timeFmt.format(new Date(item.starts_at))}</time><span>${serviceLabel(item.service_code)} · ${statusLabel(item.status)}</span>${couponMarkup(item)}`;
         button.addEventListener("click", () => openEdit(item));
         list.append(button);
       });

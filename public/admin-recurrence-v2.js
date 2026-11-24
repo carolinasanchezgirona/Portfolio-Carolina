@@ -28,6 +28,8 @@
   form.addEventListener("submit",async event=>{
     if(repeat.value==="none")return;
     event.preventDefault();event.stopImmediatePropagation();if(!form.checkValidity())return form.reportValidity();
+    const coupon=document.querySelector("#appointment-coupon-detail");
+    if(coupon && !coupon.hidden){msg("El cupón es solo para la primera sesión. Guarda esta cita por separado y usa Repetir cita para programar las siguientes con la tarifa habitual.");return;}
     const count=Number(total.value||0);if(!Number.isInteger(count)||count<2||count>52){msg("Indica entre 2 y 52 citas en total.");return;}
     const button=document.querySelector("#appointment-save");const existingId=document.querySelector("#appointment-id")?.value||null;
     if(button){button.disabled=true;button.textContent="Guardando serie…";}

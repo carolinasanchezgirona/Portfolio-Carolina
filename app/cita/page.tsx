@@ -104,7 +104,7 @@ export default function BookingPage() {
             <div className="form-field"><label htmlFor="patient-email">Correo electrónico</label><input id="patient-email" name="patient_email" type="email" autoComplete="email" maxLength={254} required /></div>
             <div className="form-field"><label htmlFor="patient-phone">Teléfono</label><input id="patient-phone" name="patient_phone" type="tel" autoComplete="tel" maxLength={30} required /></div>
           </div>
-          <div className="form-field"><label htmlFor="booking-promo-code">Código promocional (opcional)</label><div style={{display:"flex",gap:8,flexWrap:"wrap"}}><input id="booking-promo-code" name="promo_code" type="text" autoComplete="off" maxLength={32} style={{flex:1,minWidth:150,textTransform:"uppercase"}} /><button type="button" id="booking-promo-apply">Aplicar código</button></div><p id="booking-promo-status" className="form-help" role="status" aria-live="polite">Solo para primeras visitas de psicología, sujeto a comprobación antes de confirmar.</p></div>
+          <div className="form-field"><label htmlFor="booking-promo-code">Código promocional (opcional)</label><div style={{display:"flex",gap:8,flexWrap:"wrap"}}><input id="booking-promo-code" name="promo_code" type="text" autoComplete="off" maxLength={32} style={{flex:1,minWidth:150,textTransform:"uppercase"}} /><button type="button" id="booking-promo-apply">Aplicar código</button></div><p id="booking-promo-status" className="form-help" role="status" aria-live="polite">Introduce tú el código si dispones de uno. Solo para primeras visitas de psicología. No se realiza ningún cobro al reservar: abonarás la tarifa correspondiente en consulta.</p></div>
           <p className="form-help">Los datos de contacto son obligatorios. No incluyas información clínica ni el motivo de consulta en este formulario.</p>
 
           <div className="booking-privacy" role="note" aria-label="Información básica sobre protección de datos">
@@ -129,7 +129,7 @@ export default function BookingPage() {
 
       <footer className="editorial-footer booking-footer"><div className="editorial-wrap editorial-footer-inner"><div><p className="editorial-footer-brand">Carolina Sánchez | Psicóloga</p><p>Consulta de Psicología Sanitaria y Neuropsicología</p><LegalLinks /></div><div><p>Arenys de Mar · Atención online</p><p>© 2026 Carolina Sánchez Girona</p></div></div></footer>
 
-      <Script src="/booking.js?v=20261124-promo-1" strategy="afterInteractive" />
+      <Script src="/booking.js?v=20261124-promo-2" strategy="afterInteractive" />
       <Script src="/booking-calendar.js?v=20260913-calendar-1" strategy="afterInteractive" />
       <Script src="/pwa.js" strategy="afterInteractive" />
     </main>

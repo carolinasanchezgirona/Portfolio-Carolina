@@ -83,7 +83,7 @@ export default function AdminNotificationsPage() {
         <div id="admin-notice-list" className="admin-notice-list" />
         <p className="admin-notice-footnote">La lectura se recuerda en este navegador. Las alertas del móvil requieren permiso y solo se envían en las categorías expresamente habilitadas.</p>
       </section>
-      <Script src="/admin-notifications.js?v=20261010-push-permission-ux-2" strategy="afterInteractive" />
+      <Script src="/admin-notifications.js?v=20261124-coupons-1" strategy="afterInteractive" />
     </main>
   );
 }
