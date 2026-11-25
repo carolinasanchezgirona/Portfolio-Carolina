@@ -31,7 +31,11 @@ test("Las barras de navegación secundarias siguen la misma organización", () =
   }
   assert.ok(shared.includes("Protocolos clínicos"));
   assert.ok(clinic.includes("Protocolos clínicos"));
-  assert.ok(shared.includes("/admin/preguntas/"));
+  assert.ok(!shared.includes("/admin/preguntas/"));
+  for (const href of ["/admin/mensajes/", "/admin/notificaciones/"]) {
+    assert.ok(shared.includes(href), href);
+    assert.ok(clinic.includes(href), href);
+  }
 });
 
 test("La búsqueda filtra enlaces, abre grupos y restablece su estado al vaciar", () => {
