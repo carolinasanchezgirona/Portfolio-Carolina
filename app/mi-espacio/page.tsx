@@ -119,9 +119,9 @@ export default function MiEspacioPage() {
               <section className="space-section space-today-messages" aria-label="Mis mensajes">
                 <PortalPatientMessages />
               </section>
-            <section className="space-section space-consents-section" aria-labelledby="space-consents-title">
+            <section className="space-section space-consents-section" hidden aria-labelledby="space-consents-title">
               <div className="space-section-heading">
-                <div><p className="space-eyebrow">Documentación de tu consulta</p><h3 id="space-consents-title">Consentimientos y protección de datos</h3></div>
+                <div><p className="space-eyebrow">Documentación de tu consulta</p><h3 id="space-consents-title">Documentos pendientes de firma</h3></div>
                 <span id="space-consent-count" className="space-pill">Acceso privado</span>
               </div>
               <p>Revisa y firma tus documentos cuando corresponda.</p>
@@ -236,7 +236,7 @@ export default function MiEspacioPage() {
 
       <Script src="/patient-video.js?v=20261009-1" strategy="afterInteractive" />
       <Script src="/mi-espacio.js?v=20261111-cuadernos-secciones-1" strategy="afterInteractive" />
-      <Script src="/patient-consents.js?v=20261124-1" strategy="afterInteractive" />
+      <Script src="/patient-consents.js?v=20261125-pending-1" strategy="afterInteractive" />
       <Script src="/patient-goal-process.js?v=20261109-1" strategy="afterInteractive" />
     </main>
   );
