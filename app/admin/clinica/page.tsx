@@ -14,13 +14,15 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false, nocache: true },
 };
 
-type ClinicIconName = "today" | "agenda" | "patients" | "pending" | "more" | "refresh";
+type ClinicIconName = "messages" | "bell" | "today" | "agenda" | "patients" | "pending" | "more" | "refresh";
 function ClinicIcon({ name }: { name: ClinicIconName }) {
   return <svg className="clinic-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.9} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" focusable="false">
     {name === "today" && <><path d="m3 10 9-7 9 7v10H3V10Z" /><path d="M9 21v-8h6v8" /></>}
     {name === "agenda" && <><rect x="3" y="5" width="18" height="16" rx="2" /><path d="M7 3v4M17 3v4M3 10h18M8 14h3M8 17h3" /></>}
     {name === "patients" && <><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2M16 3a4 4 0 0 1 0 8M22 21v-2a4 4 0 0 0-3-3.87" /><circle cx="9" cy="7" r="4" /></>}
     {name === "pending" && <><rect x="5" y="4" width="14" height="18" rx="2" /><path d="M9 4.5h6M9 11h6M9 15h6M9 19h4" /></>}
+    {name === "messages" && <path d="M4 4h16v13H8l-4 4V4Z M8 8h8M8 12h6" />}
+    {name === "bell" && <path d="M18 8a6 6 0 0 0-12 0c0 7-3 8-3 9h18c0-1-3-2-3-9M10 21h4" />}
     {name === "more" && <path d="M4 6h16M4 12h16M4 18h16" />}
     {name === "refresh" && <><path d="M20 7v5h-5M4 17v-5h5" /><path d="M5.8 9a7 7 0 0 1 12.4-2L20 12M4 12l1.8 5a7 7 0 0 0 12.4-2" /></>}
   </svg>;
@@ -48,6 +50,8 @@ export default function AdminClinicaPage() {
         <nav className="clinic-tabs clinic-navigation" aria-label="Navegación principal de gestión clínica">
           <button id="clinic-view-today" className="active" type="button" aria-current="page"><ClinicIcon name="today" /><span className="clinic-nav-label">Hoy</span></button>
           <a className="clinic-nav-link" href="/admin/agenda/"><ClinicIcon name="agenda" /><span className="clinic-nav-label">Agenda</span></a>
+          <a className="clinic-nav-link" href="/admin/mensajes/"><ClinicIcon name="messages" /><span className="clinic-nav-label">Mensajes de pacientes</span></a>
+          <a className="clinic-nav-link" href="/admin/notificaciones/"><ClinicIcon name="bell" /><span className="clinic-nav-label">Centro de avisos</span></a>
           <button id="clinic-view-patients" type="button"><ClinicIcon name="patients" /><span className="clinic-nav-label">Pacientes</span></button>
           <details className="clinic-more-menu">
             <summary><ClinicIcon name="more" /><span className="clinic-nav-label">Más</span></summary>
@@ -61,14 +65,11 @@ export default function AdminClinicaPage() {
               <a className="clinic-more-item" href="/admin/tareas/">Tareas y notas</a>
               <a className="clinic-more-item" href="/admin/residencia/">Residencia</a>
               <a className="clinic-more-item" href="/admin/asistencia/">Asistencia · Creu Blava</a>
-              <a className="clinic-more-item" href="/admin/mensajes/">Mensajes de pacientes</a>
-              <a className="clinic-more-item" href="/admin/notificaciones/">Centro de avisos</a>
               <p className="clinic-more-heading">Gestión y difusión</p>
               <a className="clinic-more-item" href="/admin/economia/">Contabilidad</a>
               <a className="clinic-more-item" href="/admin/articulos/">Centro editorial</a>
               <a className="clinic-more-item" href="/admin/recursos/">Recursos</a>
               <a className="clinic-more-item" href="/admin/marketing/">Marketing</a>
-              <a className="clinic-more-item" href="/admin/preguntas/">Preguntas</a>
               <p className="clinic-more-heading">Seguridad y privacidad</p>
               <a className="clinic-more-item" href="/admin/proteccion-datos/">Protección de datos e incidencias</a>
               <a className="clinic-more-item" href="/admin/logs/">Logs y auditoría</a>
