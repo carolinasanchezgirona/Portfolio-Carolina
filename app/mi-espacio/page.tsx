@@ -1,6 +1,7 @@
 import LegalLinks from "../components/legal-links";
 import type { Metadata } from "next";
 import Script from "next/script";
+import { PortalPatientMessages } from "../../components/patient-messages";
 import "./mi-espacio.css";
 import "./patient-goals.css";
 
@@ -200,6 +201,8 @@ export default function MiEspacioPage() {
               <h2>Tu trabajo entre sesiones</h2>
               <p>Consulta tus ejercicios, rellena tus respuestas aquí mismo y decide cuándo compartirlas con Carolina. Las notas clínicas internas permanecen fuera de esta zona.</p>
             </div>
+
+            <PortalPatientMessages />
 
             <section className="space-section space-goals-section" aria-labelledby="space-goals-title">
               <div className="space-section-heading">
