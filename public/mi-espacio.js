@@ -242,6 +242,7 @@
     usePatientStorageScope(null);
     patientMaterials?.replaceChildren();
     patientFiles?.replaceChildren();
+    document.getElementById("space-objective-files")?.replaceChildren();
     const quickCount = document.getElementById("space-quick-material-count");
     if (quickCount) quickCount.textContent = "Inicia sesión para ver los materiales de tu cuenta.";
     const privateCount = document.getElementById("space-material-count");
@@ -1066,7 +1067,7 @@
 
     const actions = document.createElement("div");
     actions.className = "space-patient-shared-actions";
-    const linkedMaterial = mime === "application/pdf"
+    const linkedMaterial = !document.getElementById("space-objective-files") && mime === "application/pdf"
       ? (Array.isArray(state.portalData?.materials) ? state.portalData.materials : [])
         .find(material => material.patient_document?.source_document_id === id &&
           ["sent", "assigned", "reviewed"].includes(material.status))
@@ -1152,7 +1153,19 @@
       file.category === "intervention_plan" && !linkedSourceIds.has(String(file.id)));
     const workbookFileIds = new Set([...linkedSourceIds,
       ...standaloneWorkbooks.map(file => String(file.id))]);
-    const otherFiles = files.filter(file => !workbookFileIds.has(String(file.id)));
+    const objectivesHost = document.getElementById("space-objective-files");
+    const isObjective = file => file.mime_type === "application/pdf" && /^Objetivos terapéuticos\s*[:·–-]/i.test(String(file.title || ""));
+    const otherFiles = objectivesHost ? files.filter(file => !isObjective(file)) : files.filter(file => !workbookFileIds.has(String(file.id)));
+    if (objectivesHost) {
+      objectivesHost.replaceChildren();
+      const objectives = files.filter(isObjective);
+      if (!objectives.length) {
+        const empty = document.createElement("div");
+        empty.className = "space-empty";
+        empty.textContent = "Todavía no hay objetivos terapéuticos compartidos.";
+        objectivesHost.append(empty);
+      } else objectives.forEach(file => objectivesHost.append(createPatientFile(file)));
+    }
 
     const fileCount = document.getElementById("space-shared-file-count");
     if (fileCount) fileCount.textContent = otherFiles.length === 1
@@ -1162,7 +1175,7 @@
       if (!otherFiles.length) {
         const empty = document.createElement("div");
         empty.className = "space-empty";
-        empty.textContent = "No hay otros documentos ni audios compartidos.";
+        empty.textContent = "No hay documentos ni audios compartidos.";
         patientFiles.append(empty);
       } else {
         otherFiles.forEach(file => patientFiles.append(createPatientFile(file)));

@@ -2216,6 +2216,8 @@
     const extension = file.name.split(".").pop()?.toLowerCase() || "";
     const mime = PATIENT_FILE_MIME[extension];
     if (!mime) throw new Error("Formato no admitido. Usa PDF, DOCX, imagen o audio MP3/M4A/WAV/OGG/WEBM.");
+    const objectivesPdf = els.documentCategory.value === "objectives_pdf";
+    if (objectivesPdf && mime !== "application/pdf") throw new Error("Los objetivos terapéuticos deben subirse en PDF.");
     const share = Boolean(els.documentShare?.checked);
     if (share && !window.confirm(`¿Compartir «${els.documentTitle.value.trim()}» con este paciente en Mi espacio? Revisa que el archivo no contiene información destinada a otra persona.`)) return;
     els.documentMessage.textContent = "Subiendo archivo privado…";
@@ -2233,8 +2235,8 @@
         headers: { Prefer: "return=representation" },
         body: JSON.stringify({
           patient_id: currentPatient.id,
-          category: els.documentCategory.value,
-          title: els.documentTitle.value.trim(),
+          category: objectivesPdf ? "other" : els.documentCategory.value,
+          title: objectivesPdf ? "Objetivos terapéuticos: " + els.documentTitle.value.trim() : els.documentTitle.value.trim(),
           file_path: path,
           file_name: file.name,
           mime_type: mime,
