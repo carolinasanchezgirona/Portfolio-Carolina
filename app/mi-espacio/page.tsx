@@ -104,159 +104,73 @@ export default function MiEspacioPage() {
         </aside>
 
         <section className="space-content">
-          <section className="space-view" data-space-panel="today" hidden>
-            <div className="space-hero">
+          <section className="space-view space-organized-view" data-space-panel="today" hidden>
+            <div className="space-hero space-compact-hero">
               <p className="space-eyebrow">Hoy</p>
               <h2 id="space-today-title">Un espacio para ti</h2>
-              <p>Tu recorrido, paso a paso y recursos para continuar lo trabajado en consulta, a tu ritmo.</p>
+              <p>Consulta tu próxima cita y comunícate con Carolina.</p>
             </div>
-
-            <div className="space-quick-start">
-              <div>
-                <p className="space-eyebrow">Mi terapia</p>
-                <h3>Tus ejercicios, a mano</h3>
-                <p id="space-quick-material-count">Aquí encontrarás los materiales compartidos contigo para trabajar entre sesiones.</p>
-              </div>
-              <button type="button" className="space-primary" data-go-therapy>Ir a mis ejercicios →</button>
-            </div>
-
-            <section className="space-section space-consents-section" aria-labelledby="space-consents-title">
-              <div className="space-section-heading">
-                <div><p className="space-eyebrow">Documentación de tu consulta</p><h3 id="space-consents-title">Consentimientos y protección de datos</h3></div>
-                <span id="space-consent-count" className="space-pill">Acceso privado</span>
-              </div>
-              <p>Solo aparecen los documentos vinculados a tu ficha clínica. Puedes revisarlos y firmarlos desde el móvil tras haber recibido la información correspondiente.</p>
-              <div id="space-consent-requests" className="space-consent-list" aria-live="polite" />
-            </section>
-
-            <section id="space-session-prep" className="space-session-prep" aria-labelledby="space-session-prep-title" tabIndex={-1}>
-              <div className="space-session-prep-head">
-                <div>
-                  <p className="space-eyebrow">ANTES DE NUESTRA PRÓXIMA SESIÓN</p>
-                  <h3 id="space-session-prep-title">Hay cosas que merece la pena traer a consulta.</h3>
-                  <p>Tres preguntas para ordenar lo que quieras comentar. Puedes dejar cualquiera en blanco.</p>
-                </div>
-                <span className="space-session-prep-icon" aria-hidden="true">✎</span>
-              </div>
-              <form id="space-session-prep-form" className="space-session-prep-form" autoComplete="off">
-                <label htmlFor="space-prep-difficult">
-                  <strong>01 · ¿Qué me ha costado?</strong>
-                  <span>Algo que haya sido difícil, aunque parezca pequeño.</span>
-                </label>
-                <textarea id="space-prep-difficult" rows={3} maxLength={900} placeholder="Si quieres, anótalo aquí…" />
-                <label htmlFor="space-prep-helped">
-                  <strong>02 · ¿Qué me ha ayudado?</strong>
-                  <span>Una estrategia, un momento o un apoyo que hayas notado.</span>
-                </label>
-                <textarea id="space-prep-helped" rows={3} maxLength={900} placeholder="Puedes escribir unas pocas palabras…" />
-                <label htmlFor="space-prep-talk">
-                  <strong>03 · ¿De qué me gustaría hablar?</strong>
-                  <span>Una duda o algo que prefieras abordar en la siguiente sesión.</span>
-                </label>
-                <textarea id="space-prep-talk" rows={3} maxLength={900} placeholder="Una pregunta, una preocupación, un tema…" />
-                <div className="space-session-prep-actions">
-                  <button id="space-prep-preview-button" type="button" className="space-primary">Ver mi resumen</button>
-                  <button id="space-prep-clear" type="button" className="space-secondary">Descartar notas</button>
-                </div>
-              </form>
-              <div id="space-session-prep-preview" className="space-session-prep-preview" hidden aria-live="polite">
-                <h4>Lo que quiero recordar</h4>
-                <div id="space-session-prep-summary" className="space-session-prep-summary" />
-                <div className="space-session-prep-transfer">
-                  <label htmlFor="space-session-prep-target">Si quieres guardarlo o compartirlo desde un ejercicio:</label>
-                  <select id="space-session-prep-target">
-                    <option value="">Selecciona un ejercicio disponible</option>
-                  </select>
-                  <button id="space-session-prep-insert" type="button" className="space-primary">Incorporar al ejercicio</button>
-                  <button id="space-session-prep-copy" type="button" className="space-secondary">Copiar resumen</button>
-                  <p className="space-small">Incorporar el resumen no lo guarda ni lo comparte. Después tendrás que elegir expresamente «Guardar borrador» o «Compartir respuestas» en Mi terapia. Copiar utiliza el portapapeles de tu dispositivo.</p>
-                </div>
-              </div>
-              <p id="space-session-prep-message" className="space-session-prep-message" role="status" aria-live="polite" />
-              <p className="space-session-prep-privacy"><strong>Solo tú decides.</strong> Estas notas se mantienen únicamente en esta pantalla mientras la usas. No se guardan automáticamente ni se envían a Carolina; se descartan al cerrar la página o salir de tu cuenta.</p>
-            </section>
-
-            <aside className="space-membership-note">
-              <strong>Acceso incluido durante la terapia</strong>
-              <p>Durante tu proceso terapéutico puedes acceder a los ejercicios y documentos que se compartan contigo.</p>
-            </aside>
-
-            <div className="space-grid space-dashboard-grid">
-              <article className="space-card space-card-therapy">
-                <div>
-                  <p className="space-kicker">Mi terapia</p>
-                  <h3>Trabajo entre sesiones</h3>
-                  <p id="space-therapy-status">Si Carolina te ha enviado material, puedes acceder desde aquí.</p>
-                </div>
-                <button id="space-between-link" className="space-primary" type="button" data-go-therapy>Ver mi terapia</button>
-              </article>
-
-            </div>
-
-          </section>
-
-          <section className="space-view" data-space-panel="therapy" hidden>
-            <div className="space-hero">
-              <p className="space-eyebrow">Mi terapia</p>
-              <h2>Tu trabajo entre sesiones</h2>
-              <p>Consulta tus ejercicios, rellena tus respuestas aquí mismo y decide cuándo compartirlas con Carolina. Las notas clínicas internas permanecen fuera de esta zona.</p>
-            </div>
-
-            <PortalPatientMessages />
-
-            <section className="space-section space-goals-section" aria-labelledby="space-goals-title">
-              <div className="space-section-heading">
-                <div><p className="space-eyebrow">Mi proceso</p><h3 id="space-goals-title">En qué estamos trabajando</h3></div>
-                <span className="space-pill">Objetivos acordados</span>
-              </div>
-              <p>Estos son los objetivos que hemos revisado conjuntamente y que Carolina ha compartido contigo. Pueden cambiar a medida que avance el proceso.</p>
-              <div id="space-goals-list" className="space-goals-list" aria-live="polite" />
-              <p id="space-goals-message" className="space-small" role="status" aria-live="polite" />
-            </section>
-
-            <section className="space-section space-materials-section">
-              <div className="space-section-heading">
-                <div><p className="space-eyebrow">Entre sesiones</p><h3>Mis cuadernos y ejercicios</h3></div>
-                <span id="space-material-count" className="space-pill">Acceso privado</span>
-              </div>
-              <p>Abre cada cuaderno para consultar las explicaciones, técnicas y ejercicios por separado. Si incluye un formulario, podrás responder y guardar tus avances sin salir de aquí.</p>
-              <div id="space-patient-materials" className="space-patient-materials">
-                <div className="space-empty">Inicia sesión para ver tus materiales.</div>
-              </div>
-            </section>
-
-            <section className="space-section space-materials-section" aria-labelledby="space-shared-files-title">
-              <div className="space-section-heading">
-                <div><p className="space-eyebrow">Archivos de tu consulta</p><h3 id="space-shared-files-title">Otros documentos y audios compartidos</h3></div>
-                <span id="space-shared-file-count" className="space-pill">Acceso privado</span>
-              </div>
-              <p>Despliega cada archivo para consultarlo o descargarlo. Los cuadernos terapéuticos están agrupados en el apartado anterior.</p>
-              <div id="space-shared-files" className="space-patient-materials">
-                <div className="space-empty">Inicia sesión para acceder a tus archivos.</div>
-              </div>
-            </section>
-
-            <div className="space-grid space-feature-grid">
+            <div className="space-today-layout">
               <article id="space-appointment-card" className="space-card space-card-active">
                 <p className="space-kicker">Próxima cita</p>
                 <h3 id="space-appointment-title">Accede para ver tu próxima cita</h3>
                 <p id="space-appointment-copy">La información de agenda solo se muestra después de identificarte.</p>
               </article>
-
-              <article className="space-card space-card-guide">
-                <p className="space-kicker">Cómo funciona</p>
-                <h3>Avanza a tu ritmo</h3>
-                <p>Completa tus ejercicios paso a paso. Puedes guardar un borrador y elegir cuándo compartir tus respuestas.</p>
-                <span className="space-pill">Sin prisas</span>
-              </article>
+              <section className="space-section space-today-messages" aria-label="Mis mensajes">
+                <PortalPatientMessages />
+              </section>
+            <section className="space-section space-consents-section" aria-labelledby="space-consents-title">
+              <div className="space-section-heading">
+                <div><p className="space-eyebrow">Documentación de tu consulta</p><h3 id="space-consents-title">Consentimientos y protección de datos</h3></div>
+                <span id="space-consent-count" className="space-pill">Acceso privado</span>
+              </div>
+              <p>Revisa y firma tus documentos cuando corresponda.</p>
+              <div id="space-consent-requests" className="space-consent-list" aria-live="polite" />
+            </section>
             </div>
+          </section>
 
-
-
-            <aside className="space-info-note">
-              <strong>Privacidad por diseño</strong>
-              <p>Tus respuestas solo se comparten con Carolina cuando eliges «Compartir respuestas». También puedes guardar un borrador y continuar más adelante.</p>
-            </aside>
+          <section className="space-view space-organized-view" data-space-panel="therapy" hidden>
+            <div className="space-hero space-compact-hero">
+              <p className="space-eyebrow">Mi terapia</p>
+              <h2>Tu proceso terapéutico</h2>
+              <p>Consulta tus objetivos, ejercicios y documentos compartidos.</p>
+            </div>
+            <nav className="space-therapy-index" aria-label="Contenido de Mi terapia">
+              <a href="#space-goals-title"><strong>Mis objetivos</strong><span>Tu plan de trabajo</span></a>
+              <a href="#space-workbooks-title"><strong>Entre sesiones</strong><span>Cuadernos y ejercicios</span></a>
+              <a href="#space-shared-files-title"><strong>Mis documentos</strong><span>Archivos compartidos</span></a>
+            </nav>
+            <section className="space-section space-goals-section" aria-labelledby="space-goals-title">
+              <div className="space-section-heading">
+                <div><p className="space-eyebrow">Mi proceso</p><h3 id="space-goals-title">Mis objetivos terapéuticos</h3></div>
+                <span className="space-pill">Objetivos acordados</span>
+              </div>
+              <p>Consulta los objetivos acordados y compartidos contigo.</p>
+              <div id="space-goals-list" className="space-goals-list" aria-live="polite" />
+              <p id="space-goals-message" className="space-small" role="status" aria-live="polite" />
+            </section>
+            <section className="space-section space-materials-section">
+              <div className="space-section-heading">
+                <div><p className="space-eyebrow">Entre sesiones</p><h3 id="space-workbooks-title">Trabajo entre sesiones</h3></div>
+                <span id="space-material-count" className="space-pill">Acceso privado</span>
+              </div>
+              <p>Abre tus cuadernos para consultar o completar los ejercicios.</p>
+              <div id="space-patient-materials" className="space-patient-materials">
+                <div className="space-empty">Inicia sesión para ver tus materiales.</div>
+              </div>
+            </section>
+            <section className="space-section space-materials-section" aria-labelledby="space-shared-files-title">
+              <div className="space-section-heading">
+                <div><p className="space-eyebrow">Archivos de tu consulta</p><h3 id="space-shared-files-title">Mis documentos</h3></div>
+                <span id="space-shared-file-count" className="space-pill">Acceso privado</span>
+              </div>
+              <p>Consulta o descarga los documentos y audios compartidos contigo.</p>
+              <div id="space-shared-files" className="space-patient-materials">
+                <div className="space-empty">Inicia sesión para acceder a tus archivos.</div>
+              </div>
+            </section>
+            <p className="space-small">Tus respuestas se comparten únicamente cuando eliges «Compartir respuestas».</p>
           </section>
 
           <section className="space-view" data-space-panel="account" hidden>
@@ -323,7 +237,6 @@ export default function MiEspacioPage() {
       <Script src="/patient-video.js?v=20261009-1" strategy="afterInteractive" />
       <Script src="/mi-espacio.js?v=20261111-cuadernos-secciones-1" strategy="afterInteractive" />
       <Script src="/patient-consents.js?v=20261124-1" strategy="afterInteractive" />
-      <Script src="/session-prep.js?v=20261017-1" strategy="afterInteractive" />
       <Script src="/patient-goal-process.js?v=20261109-1" strategy="afterInteractive" />
     </main>
   );
