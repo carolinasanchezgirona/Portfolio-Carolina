@@ -89,3 +89,23 @@ export default function PatientMessages({ admin = false }: { admin?: boolean }) 
     <p className="private-messages-refresh">Actualización cada 30 segundos. <button type="button" onClick={() => void load()}>Actualizar</button></p>
   </section>;
 }
+
+
+/** Keep clinical messages out of the DOM until the legacy portal verifies access.
+ * Unmount on logout or revalidation, clearing message history and drafts from memory.
+ */
+export function PortalPatientMessages() {
+  const [authenticated, setAuthenticated] = useState(false);
+  useEffect(() => {
+    const page = document.querySelector<HTMLElement>(".space-page");
+    const shell = document.getElementById("space-shell");
+    if (!page || !shell) return;
+    const sync = () => setAuthenticated(page.dataset.portalPhase === "authenticated" && !shell.hidden);
+    const observer = new MutationObserver(sync);
+    observer.observe(page, { attributes: true, attributeFilter: ["data-portal-phase"] });
+    observer.observe(shell, { attributes: true, attributeFilter: ["hidden"] });
+    sync();
+    return () => observer.disconnect();
+  }, []);
+  return authenticated ? <PatientMessages /> : null;
+}
