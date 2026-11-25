@@ -1037,3 +1037,21 @@ body.space-print-patient-material .space-patient-material[data-print-material] :
 .space-consent-item strong{color:#263b48;font-size:1rem;}
 .space-consent-item p{margin:0;line-height:1.55;}
 .space-consent-item a.space-primary{display:inline-flex;text-decoration:none;padding:10px 14px;}
+
+/* Portal: compact, predictable hierarchy for daily and therapeutic tasks. */
+.space-page .space-organized-view .space-compact-hero{min-height:0;max-width:none;margin:0 0 20px;padding:22px 24px;border:1px solid var(--space-line);border-radius:16px;background:#fff;overflow:visible}
+.space-page .space-organized-view .space-compact-hero::before,.space-page .space-organized-view .space-compact-hero::after{display:none}
+.space-page .space-organized-view .space-compact-hero h2{font-size:clamp(1.85rem,3.4vw,2.65rem);max-width:none;line-height:1.15}
+.space-page .space-organized-view .space-compact-hero>p:last-child{margin-top:9px;max-width:none}
+.space-today-layout{display:grid;gap:16px;grid-template-columns:minmax(0,1fr)}
+.space-today-layout>.space-section{margin:0;min-width:0}
+.space-today-layout>#space-appointment-card{min-height:0;padding:20px 24px}
+.space-today-layout>.space-consents-section{border:1px solid var(--space-line);background:white;border-radius:16px;padding:20px}
+.space-today-messages .private-messages{margin:0;max-width:none}
+.space-therapy-index{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:0 0 20px}
+.space-therapy-index>a{display:grid;gap:5px;padding:17px;border:1px solid var(--space-line);border-radius:13px;color:var(--space-ink);background:white;text-decoration:none;line-height:1.4}
+.space-therapy-index>a:hover,.space-therapy-index>a:focus-visible{border-color:var(--space-ink);background:#eef7fa}
+.space-therapy-index>a>span{font-size:.85rem;color:var(--space-muted)}
+.space-page .space-organized-view[data-space-panel="therapy"]>.space-section{margin:0 0 16px;border:1px solid var(--space-line);border-radius:16px;background:white;padding:20px}
+.space-organized-view :is(#space-goals-title,#space-workbooks-title,#space-shared-files-title){scroll-margin-top:100px}
+@media(max-width:650px){.space-therapy-index{grid-template-columns:1fr;gap:8px}.space-therapy-index>a{padding:12px 15px}.space-page .space-organized-view .space-compact-hero,.space-page .space-organized-view[data-space-panel="therapy"]>.space-section{padding:16px}.space-today-layout>#space-appointment-card{padding:17px}}
