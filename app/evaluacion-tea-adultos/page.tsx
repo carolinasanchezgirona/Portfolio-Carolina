@@ -5,7 +5,7 @@ import "../evaluacion-tdah-adultos/tdah.css";
 const baseUrl = "https://carolinasanchezgirona.com/evaluacion-tea-adultos/";
 
 export const metadata: Metadata = {
-  title: "Evaluación del TEA en adultos en Arenys de Mar | Carolina Sánchez",
+  title: "Evaluación de autismo (TEA) en adultos | Maresme",
   description: "Evaluación clínica del autismo (TEA) en adultos en Arenys de Mar: modalidad clínica diagnóstica y neuropsicológica ampliada, con informe y devolución.",
   alternates: { canonical: "/evaluacion-tea-adultos/" },
   openGraph: {
