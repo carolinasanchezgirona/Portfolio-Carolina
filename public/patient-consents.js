@@ -3,6 +3,7 @@
  const host=document.getElementById("space-consent-requests");
  const count=document.getElementById("space-consent-count");
  if(!host)return;
+ const section=host.closest(".space-consents-section");
  const titles={
   psicologico:"Consentimiento para atención psicológica",
   neuro_evaluacion:"Consentimiento para evaluación neuropsicológica",
@@ -21,6 +22,7 @@
  }
  async function render(){
   const now=++sequence;
+  if(section)section.hidden=false;
   host.replaceChildren(paragraph("Consultando los documentos de tu ficha…"));
   try{
    const response=await fetch("/api/patient-portal/consents",{credentials:"include",cache:"no-store"});
@@ -29,11 +31,12 @@
    const data=await response.json();
    if(now!==sequence||document.getElementById("space-shell")?.hidden)return;
    const rows=Array.isArray(data.requests)?data.requests:[];
-   const pending=rows.filter(x=>x.status==="pending");
+   const pending=rows.filter(x=>x.status==="pending"&&Object.prototype.hasOwnProperty.call(titles,x.kind));
+   if(section)section.hidden=pending.length===0;
    if(count)count.textContent=pending.length===1?"1 pendiente":pending.length+" pendientes";
    host.replaceChildren();
-   if(!rows.length){host.append(paragraph("No tienes documentos pendientes de firma."));return;}
-   for(const item of rows){
+   if(!pending.length)return;
+   for(const item of pending){
     if(!Object.prototype.hasOwnProperty.call(titles,item.kind))continue;
     const card=document.createElement("article");card.className="space-consent-item";
     const title=document.createElement("strong");title.textContent=titles[item.kind];
@@ -55,12 +58,12 @@
    }
    if(!host.childElementCount)host.append(paragraph("No tienes documentos pendientes de firma."));
   }catch(error){
-   if(now===sequence)host.replaceChildren(paragraph(error.message||"No se pudieron cargar los documentos."));
+   if(now===sequence){if(section)section.hidden=false;host.replaceChildren(paragraph(error.message||"No se pudieron cargar los documentos."));}
   }
  }
  window.addEventListener("patient-portal-session-ready",()=>{void render();});
  if(document.getElementById("space-shell")?.hidden===false)void render();
  document.getElementById("space-logout")?.addEventListener("click",()=>{
-   sequence++;host.replaceChildren();if(count)count.textContent="Acceso privado";
+   sequence++;if(section)section.hidden=true;host.replaceChildren();if(count)count.textContent="Acceso privado";
  });
 })();
