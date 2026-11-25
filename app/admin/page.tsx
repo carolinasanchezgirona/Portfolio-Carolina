@@ -8,7 +8,7 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false, nocache: true },
 };
 
-type IconName = "clinical" | "calendar" | "economy" | "editorial" | "resources" | "questions" | "arrow" | "shield" | "bell" | "home" | "patients" | "more";
+type IconName = "messages" | "clinical" | "calendar" | "economy" | "editorial" | "resources" | "questions" | "arrow" | "shield" | "bell" | "home" | "patients" | "more";
 function AdminIcon({ name }: { name: IconName }) {
   return (
     <svg className="admin-hub-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" focusable="false">
@@ -20,6 +20,7 @@ function AdminIcon({ name }: { name: IconName }) {
       {name === "economy" && <><rect x="5" y="3" width="14" height="18" rx="2" /><path d="M8 7h8M8 12h2M14 12h2M8 16h2M14 16h2" /></>}
       {name === "editorial" && <><path d="M4 4h16v16H4zM8 8h8M8 12h8M8 16h5" /></>}
       {name === "resources" && <><path d="M4 4h16v16H4zM8 4v16M12 8h5M12 12h5M12 16h4" /></>}
+      {name === "messages" && <path d="M4 4h16v13H8l-4 4V4Z M8 8h8M8 12h6" />}
       {name === "questions" && <><path d="M20 11.5a8.5 8.5 0 0 1-8.5 8.5 9 9 0 0 1-4-.9L3 20l1.2-4.1a8.5 8.5 0 1 1 15.8-4.4Z" /><path d="M9.5 9a2.5 2.5 0 1 1 4.1 1.9c-.9.7-1.6 1.1-1.6 2.1M12 16h.01" /></>}
       {name === "arrow" && <><path d="M5 12h14M13 6l6 6-6 6" /></>}
       {name === "shield" && <><path d="m12 22-8-4V6l8-4 8 4v12l-8 4Z" /><path d="m9 12 2 2 4-4" /></>}
@@ -36,6 +37,8 @@ type AdminMenuGroup = { id: string; title: string; links: AdminMenuLink[] };
 const quickLinks: AdminMenuLink[] = [
   { href: "/admin/", icon: "home", label: "Inicio" },
   { href: "/admin/agenda/", icon: "calendar", label: "Agenda" },
+  { href: "/admin/mensajes/", icon: "messages", label: "Mensajes de pacientes" },
+  { href: "/admin/notificaciones/", icon: "bell", label: "Centro de avisos" },
   { href: "/admin/clinica/?panel=1&view=patients", icon: "patients", label: "Pacientes", keywords: "historiales fichas pacientes" },
 ];
 
@@ -52,8 +55,6 @@ const adminMenuGroups: AdminMenuGroup[] = [
     id: "organization", title: "Organización y seguimiento", links: [
       { href: "/admin/tareas/", icon: "editorial", label: "Tareas y notas" },
       { href: "/admin/residencia/", icon: "clinical", label: "Residencia" },
-      { href: "/admin/mensajes/", icon: "questions", label: "Mensajes de pacientes" },
-      { href: "/admin/notificaciones/", icon: "bell", label: "Centro de avisos", keywords: "notificaciones" },
     ]
   },
   {
