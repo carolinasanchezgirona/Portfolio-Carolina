@@ -5,6 +5,7 @@ import { notifyPatientMessages } from "./patient-message-email";
 import { billingInvoiceEmail } from "./billing-invoice-email";
 import { clinicalConsentWorkflow } from "./clinical-consent-workflow";
 import { patientMessages } from "./patient-messages";
+import { patientNotices } from "./patient-notices";
 import { adminAppointmentVideo, patientAppointmentVideo } from './appointment-video';
 import { dailyTest } from "./daily-test";
 import { adminPushRequest, runAdminPushCron } from "./admin-webpush";
@@ -2496,6 +2497,17 @@ export default {
     if (url.pathname === "/api/patient-portal/password-link" || url.pathname === "/api/patient-portal/password-link/") return handlePatientPortalPasswordAuth(request, env, "password-link");
     if (url.pathname === "/api/patient-portal/password-set" || url.pathname === "/api/patient-portal/password-set/") return handlePatientPortalPasswordAuth(request, env, "password-set");
     if (url.pathname === "/api/patient-portal/password-login" || url.pathname === "/api/patient-portal/password-login/") return handlePatientPortalPasswordAuth(request, env, "password-login");
+    if (["/api/patient-portal/notices", "/api/admin/patient-notices"].includes(url.pathname.replace(/\/$/, ""))) {
+      return patientNotices(request, {
+        origin: patientPortalSameOrigin,
+        session: req => patientPortalSession(req, env),
+        owner: verifyEditorialOwner,
+        query: (path, init = {}) => fetch(RESOURCE_SUPABASE + "/rest/v1/" + path, {
+          ...init, headers: serviceHeaders(env, { "Content-Type": "application/json", Prefer: "return=minimal" }), cache: "no-store",
+        }),
+        json: patientPortalJson,
+      });
+    }
     if (["/api/patient-portal/messages", "/api/admin/patient-messages"].includes(url.pathname.replace(/\/$/, ""))) {
       return patientMessages(request, {
         origin: patientPortalSameOrigin,
