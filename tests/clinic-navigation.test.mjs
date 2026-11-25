@@ -12,7 +12,7 @@ test("Barra única, controles y enlaces existentes",()=>{
  assert.equal((page.match(new RegExp('id="'+id+'"','g'))||[]).length,1,id);
  assert.doesNotMatch(page,/id="clinic-view-pending"/);
  assert.doesNotMatch(page,/id="clinic-pending-badge"/);
- for(const href of ["/admin/agenda/","/admin/recursos/","/admin/preguntas/","/admin/articulos/","/admin/economia/","/admin/"])
+ for(const href of ["/admin/agenda/","/admin/recursos/","/admin/mensajes/","/admin/notificaciones/","/admin/articulos/","/admin/economia/","/admin/"])
  assert.ok(page.includes('href="'+href+'"'),href);
  assert.match(page,/<details className="clinic-more-menu">/);
  assert.match(clinic,/button\?\.setAttribute\("aria-current", "page"\)/);
@@ -21,7 +21,7 @@ test("Barra única, controles y enlaces existentes",()=>{
 });
 test("Navegación móvil fija y escritorio lateral, sin tapar contenido",()=>{
  assert.match(css,/@media\(max-width:800px\)/);
- assert.match(css,/grid-template-columns:repeat\(4,minmax\(0,1fr\)\)/);
+ assert.match(css,/grid-template-columns:repeat\(6,minmax\(0,1fr\)\)/);
  assert.match(css,/env\(safe-area-inset-bottom\)/);
  assert.match(css,/@media\(min-width:1100px\)/);
 });
