@@ -3,7 +3,7 @@ import Image from "next/image";
 import SocialLinks from "./components/social-links";
 
 export const metadata: Metadata = {
-  title: "Carolina Sánchez Girona | Psicóloga y Neuropsicóloga",
+  title: { absolute: "Psicóloga y neuropsicóloga en Arenys de Mar | Carolina Sánchez Girona" },
   description:
     "Psicóloga y neuropsicóloga en Arenys de Mar. Psicología para adultos, ansiedad, duelo, problemas de memoria y deterioro cognitivo. Presencial y online.",
   alternates: { canonical: "/" },
