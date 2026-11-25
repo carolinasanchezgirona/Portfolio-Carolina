@@ -173,6 +173,21 @@ const structuredData = {
               url: "https://carolinasanchezgirona.com/consultoria-neuropsicologica-juridica/",
             },
           },
+          ...[
+            ["Evaluación neuropsicológica", "/evaluacion-neuropsicologica/"],
+            ["Evaluación del TDAH en adultos", "/evaluacion-tdah-adultos/"],
+            ["Evaluación del TEA en adultos", "/evaluacion-tea-adultos/"],
+            ["Evaluación de altas capacidades en adultos", "/evaluacion-altas-capacidades-adultos/"],
+            ["Evaluación de dislexia en adultos", "/evaluacion-dislexia/"],
+            ["Evaluación de problemas de memoria", "/problemas-de-memoria/"],
+          ].map(([name, path]) => ({
+            "@type": "Offer",
+            itemOffered: {
+              "@type": "Service",
+              name,
+              url: `https://carolinasanchezgirona.com${path}`,
+            },
+          })),
         ],
       },
     },
