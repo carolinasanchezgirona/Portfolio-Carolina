@@ -1,8 +1,9 @@
 (() => {
   "use strict";
   // Keep a statically exported article's cover in sync with its published editorial record.
-  const image = document.querySelector(".article-header .article-figure .article-image");
-  if (!image) return;
+  const header = document.querySelector(".article-detail .article-header");
+  if (!header) return;
+  let image = header.querySelector(".article-figure .article-image");
   const segments = location.pathname.split("/").filter(Boolean);
   if (segments[0] !== "articulos" || !segments[1] || segments[1] === "leer") return;
   // The outdated build included a second movie still as an inline figure.
@@ -25,6 +26,16 @@
   }).then((rows) => {
     const article = rows?.[0];
     if (!article || !article.image_url) return;
+    if (!image) {
+      const figure = document.createElement("figure");
+      figure.className = "article-figure";
+      image = document.createElement("img");
+      image.className = "article-image";
+      image.decoding = "async";
+      image.alt = header.querySelector("h1")?.textContent || "Imagen del artículo";
+      figure.appendChild(image);
+      header.appendChild(figure);
+    }
     if (image.getAttribute("src") !== article.image_url) image.src = article.image_url;
     if (article.image_alt) image.alt = article.image_alt;
     const figure = image.closest("figure");
