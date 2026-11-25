@@ -53,6 +53,10 @@ test("patient component uses text nodes and clears private data on logout", () =
   assert.match(js, /credentials: "include"/);
   assert.doesNotMatch(js, /innerHTML|localStorage|sessionStorage/);
   const page = read("app/mi-espacio/page.tsx");
-  assert.match(page, /id="space-goals-list"/);
-  assert.match(page, /patient-goal-process.js/);
+  assert.match(page, /id="space-objective-files"/);
+  assert.doesNotMatch(page, /id="space-goals-list"/);
+  const portal = read("public/mi-espacio.js");
+  assert.match(portal, /getElementById\("space-objective-files"\)\?\.replaceChildren\(\)/);
+  assert.match(portal, /file\.mime_type === "application\/pdf"/);
+  assert.match(portal, /objectives\.forEach\(file => objectivesHost\.append\(createPatientFile\(file\)\)\)/);
 });
