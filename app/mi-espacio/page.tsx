@@ -1,6 +1,7 @@
 import LegalLinks from "../components/legal-links";
 import type { Metadata } from "next";
 import Script from "next/script";
+import PatientNotices from "../../components/patient-notices";
 import { PortalPatientMessages } from "../../components/patient-messages";
 import "./mi-espacio.css";
 import "./patient-goals.css";
@@ -118,6 +119,7 @@ export default function MiEspacioPage() {
 
           <section className="space-view" data-space-panel="therapy" hidden>
             <h2>Mi terapia</h2>
+            <PatientNotices />
             <PortalPatientMessages />
 
             <section className="space-section" aria-labelledby="space-objectives-title">
