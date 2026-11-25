@@ -5,7 +5,7 @@ import "./consultoria.css";
 const url = "https://carolinasanchezgirona.com/consultoria-neuropsicologica-juridica/";
 
 export const metadata: Metadata = {
-  title: "Consultoría neuropsicológica en Barcelona y Maresme",
+  title: "Consultoría neuropsicológica jurídica | Barcelona y Maresme",
   description: "Consultoría neuropsicológica para particulares, psicólogos y profesionales: evaluación en el ámbito jurídico y revisión técnica preliminar de casos.",
   alternates: { canonical: "/consultoria-neuropsicologica-juridica/" },
   openGraph: {
