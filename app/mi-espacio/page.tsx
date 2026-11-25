@@ -134,11 +134,10 @@ export default function MiEspacioPage() {
             <div className="space-hero space-compact-hero">
               <p className="space-eyebrow">Mi terapia</p>
               <h2>Tu proceso terapéutico</h2>
-              <p>Consulta tus objetivos, ejercicios y documentos compartidos.</p>
+              <p>Consulta tus objetivos y documentos compartidos.</p>
             </div>
             <nav className="space-therapy-index" aria-label="Contenido de Mi terapia">
               <a href="#space-goals-title"><strong>Mis objetivos</strong><span>Tu plan de trabajo</span></a>
-              <a href="#space-workbooks-title"><strong>Entre sesiones</strong><span>Cuadernos y ejercicios</span></a>
               <a href="#space-shared-files-title"><strong>Mis documentos</strong><span>Archivos compartidos</span></a>
             </nav>
             <section className="space-section space-goals-section" aria-labelledby="space-goals-title">
@@ -150,16 +149,6 @@ export default function MiEspacioPage() {
               <div id="space-goals-list" className="space-goals-list" aria-live="polite" />
               <p id="space-goals-message" className="space-small" role="status" aria-live="polite" />
             </section>
-            <section className="space-section space-materials-section">
-              <div className="space-section-heading">
-                <div><p className="space-eyebrow">Entre sesiones</p><h3 id="space-workbooks-title">Trabajo entre sesiones</h3></div>
-                <span id="space-material-count" className="space-pill">Acceso privado</span>
-              </div>
-              <p>Abre tus cuadernos para consultar o completar los ejercicios.</p>
-              <div id="space-patient-materials" className="space-patient-materials">
-                <div className="space-empty">Inicia sesión para ver tus materiales.</div>
-              </div>
-            </section>
             <section className="space-section space-materials-section" aria-labelledby="space-shared-files-title">
               <div className="space-section-heading">
                 <div><p className="space-eyebrow">Archivos de tu consulta</p><h3 id="space-shared-files-title">Mis documentos</h3></div>
@@ -170,7 +159,6 @@ export default function MiEspacioPage() {
                 <div className="space-empty">Inicia sesión para acceder a tus archivos.</div>
               </div>
             </section>
-            <p className="space-small">Tus respuestas se comparten únicamente cuando eliges «Compartir respuestas».</p>
           </section>
 
           <section className="space-view" data-space-panel="account" hidden>
