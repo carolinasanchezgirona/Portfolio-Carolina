@@ -18,11 +18,11 @@ test("one consistent authenticated professional nav, with working clinical deep 
   assert.doesNotMatch(nav, /view=pending/);
   assert.match(clinicJs, /requestedView/);
   assert.match(clinicJs, /setView\(requestedView\)/);
-  for (const href of ["/admin/agenda/", "/admin/recursos/", "/admin/economia/", "/admin/"]) {
+  for (const href of ["/admin/agenda/", "/admin/mensajes/", "/admin/notificaciones/", "/admin/recursos/", "/admin/economia/", "/admin/"]) {
     assert.ok(nav.includes(href));
   }
   assert.match(styles, /@media\(max-width:800px\)/);
-  assert.match(styles, /grid-template-columns:repeat\(4,minmax\(0,1fr\)\)/);
+  assert.match(styles, /grid-template-columns:repeat\(6,minmax\(0,1fr\)\)/);
   assert.match(styles, /@media\(min-width:1100px\)/);
 });
 
