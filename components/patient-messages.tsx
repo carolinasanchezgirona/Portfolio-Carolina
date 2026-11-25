@@ -74,6 +74,11 @@ export default function PatientMessages({ admin = false }: { admin?: boolean }) 
     {error && <p role="alert">{error} <button type="button" onClick={() => void load()}>Reintentar</button></p>}
     {authorized && (!admin || selected) && <>
       {!loaded && !error && <p role="status">Cargando mensajes…</p>}
+      {loaded && <form onSubmit={send}><label htmlFor="private-message-body">{admin ? "Responder al paciente" : "Tu mensaje"}</label><textarea id="private-message-body" required maxLength={4000} rows={4} value={body} disabled={busy} onChange={e => { setBody(e.target.value);drafts.current[selected]=e.target.value; setNonce(""); }} />
+        <div className="private-messages-actions"><small>{body.length}/4000</small><button disabled={busy || !body.trim()} type="submit">{busy ? "Enviando…" : "Enviar mensaje"}</button></div>
+        <p role="status" aria-live="polite">{notice}</p>
+      </form>}
+      <h3>Historial de mensajes</h3>
       {loaded && messages.length === 0 && <p>Todavía no hay mensajes.</p>}
       {unread > 0 && <button type="button" onClick={() => void markRead()}>Marcar {unread} como leído{unread > 1 ? "s" : ""}</button>}
       <div className="private-messages-history" aria-label="Historial de mensajes">{messages.map(m => <article key={m.id} className={m.sender === "clinician" ? "from-clinician" : "from-patient"}>
@@ -81,10 +86,7 @@ export default function PatientMessages({ admin = false }: { admin?: boolean }) 
         <p>{m.body}</p><small>{m.read_at ? "Leído" : "Enviado · pendiente de lectura"}</small>
       </article>)}</div>
       {messages.length >= 200 && <p>Se muestran los 200 mensajes más recientes.</p>}
-      {loaded && <form onSubmit={send}><label htmlFor="private-message-body">{admin ? "Responder al paciente" : "Tu mensaje"}</label><textarea id="private-message-body" required maxLength={4000} rows={4} value={body} disabled={busy} onChange={e => { setBody(e.target.value);drafts.current[selected]=e.target.value; setNonce(""); }} />
-        <div className="private-messages-actions"><small>{body.length}/4000</small><button disabled={busy || !body.trim()} type="submit">{busy ? "Enviando…" : "Enviar mensaje"}</button></div>
-        <p role="status" aria-live="polite">{notice}</p>
-      </form>}
+
     </>}
     <p className="private-messages-refresh">Actualización cada 30 segundos. <button type="button" onClick={() => void load()}>Actualizar</button></p>
   </section>;
