@@ -14,14 +14,14 @@ const artJs = read("public/admin-articles.js");
 const resJs = read("public/admin-resources.js");
 
 test("secondary modules share global navigation, with no link dump in headers", () => {
-  for (const [page, active] of [[art,"articulos"],[res,"recursos"],[ques,"preguntas"]]) {
+  for (const [page, active] of [[art,"articulos"],[res,"recursos"]]) {
     assert.ok(page.includes('<AdminWorkspaceNav active="' + active + '" />'));
     assert.match(page, /workspace-context-menu/);
     assert.doesNotMatch(page, /<a[^>]*href="\/admin\/agenda\/"[^>]*>Agenda<\/a>/);
     assert.doesNotMatch(page, /<a[^>]*href="\/admin\/clinica\/\?panel=1"[^>]*>Historiales<\/a>/);
   }
   assert.doesNotMatch(commonNav, />Agenda de pacientes<\/a>/);
-  for (const link of ["/admin/economia/", "/admin/articulos/", "/admin/recursos/", "/admin/preguntas/"]) {
+  for (const link of ["/admin/economia/", "/admin/articulos/", "/admin/recursos/", "/admin/mensajes/", "/admin/notificaciones/"]) {
     assert.ok(commonNav.includes(link), "missing " + link);
   }
 });
@@ -38,12 +38,10 @@ test("mobile article and resource editors use only one visible pane", () => {
   assert.match(res, /id="resources-back-to-list"/);
 });
 
-test("question buzón and editor have a mobile back flow, no clipped empty panel", () => {
-  assert.match(ques, /mobileEditorOpen/);
-  assert.match(ques, /setMobileEditorOpen\(true\)/);
-  assert.match(ques, /Volver al buzón/);
-  assert.match(quesCss, /mobile-show-editor/);
-  assert.match(quesCss, /grid-template-columns:minmax\(0,1fr\)!important/);
+test("retired questions page redirects to the professional dashboard", () => {
+  assert.match(ques, /window\.location\.replace\("\/admin\/"\)/);
+  assert.doesNotMatch(ques, /mobileEditorOpen/);
+  assert.doesNotMatch(commonNav, /href="\/admin\/preguntas\//);
 });
 
 test("resources authentication cannot show login and admin panel together", () => {
