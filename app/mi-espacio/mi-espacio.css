@@ -1048,7 +1048,7 @@ body.space-print-patient-material .space-patient-material[data-print-material] :
 .space-today-layout>#space-appointment-card{min-height:0;padding:20px 24px}
 .space-today-layout>.space-consents-section{border:1px solid var(--space-line);background:white;border-radius:16px;padding:20px}
 .space-today-messages .private-messages{margin:0;max-width:none}
-.space-therapy-index{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:0 0 20px}
+.space-therapy-index{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:0 0 20px}
 .space-therapy-index>a{display:grid;gap:5px;padding:17px;border:1px solid var(--space-line);border-radius:13px;color:var(--space-ink);background:white;text-decoration:none;line-height:1.4}
 .space-therapy-index>a:hover,.space-therapy-index>a:focus-visible{border-color:var(--space-ink);background:#eef7fa}
 .space-therapy-index>a>span{font-size:.85rem;color:var(--space-muted)}
