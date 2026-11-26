@@ -80,6 +80,10 @@ test("section UI works on mobile and uses a new script revision", () => {
   assert.match(css, /space-shared-file-accordion>summary/);
   assert.match(css, /\.space-fillable-workspace\{grid-template-columns:minmax\(0,1fr\)/);
   assert.match(css, /@media\(max-width:700px\)/);
-  assert.match(page, /Mis cuadernos y ejercicios/);
+  assert.match(page, /href="#space-goals-title"/);
+  assert.match(page, /href="#space-shared-files-title"/);
+  assert.match(page, /id="space-goals-title">Mis objetivos terapéuticos/);
+  assert.match(page, /id="space-shared-files-title">Mis documentos/);
+  assert.doesNotMatch(page, /Mis cuadernos y ejercicios/);
   assert.match(page, /mi-espacio\.js\?v=20261111-cuadernos-secciones-1/);
 });
