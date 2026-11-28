@@ -35,7 +35,7 @@ export default function ClinicaLayout({ children }: Readonly<{ children: React.R
       <Script src="/clinic-scale-trends.js?v=20261109-theme-1" strategy="afterInteractive" />
       <Script src="/clinic-template-library.js?v=20261109-theme-1" strategy="afterInteractive" />
       <Script src="/clinic-patient-admin-enhancements.js?v=20261009-fixes-2" strategy="afterInteractive" />
-      <Script src="/clinic-patient-workspace.js?v=20261128-grouped-2" strategy="afterInteractive" />
+      <Script src="/clinic-patient-workspace.js?v=20261128-grouped-3" strategy="afterInteractive" />
       <Script src="/clinic-deferred-consent.js?v=20261018-1" strategy="afterInteractive" />
       <Script src="/clinic-consent-workflow.js?v=20261124-1" strategy="afterInteractive" />
       <Script src="/clinic-adhd-assessments.js?v=20261104-6" strategy="afterInteractive" />

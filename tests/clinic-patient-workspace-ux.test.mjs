@@ -33,7 +33,9 @@ test("Acciones existentes y acceso del paciente se reubican sin duplicados", () 
 test("Pestañas accesibles con teclado y apertura del apartado que contiene un campo inválido", () => {
   assert.match(workspace, /navigation\.setAttribute\("role", "tablist"\)/);
   assert.match(workspace, /button\.setAttribute\("role","tab"\)/);
-  assert.match(workspace, /panel\.setAttribute\("role","tabpanel"\)/);
+  assert.match(workspace, /panel\.setAttribute\("role",primary \? "tabpanel" : "region"\)/);
+  assert.match(workspace, /const tabOrder = groups\.map\(group => group.id\)/);
+  assert.match(workspace, /primaryButton\.setAttribute\("aria-controls"/);
   assert.match(workspace, /button\.setAttribute\("aria-selected",String\(selected\)\)/);
   assert.match(workspace, /"ArrowRight", "ArrowLeft", "Home", "End"/);
   assert.match(workspace, /if \(collapsed\) collapsed\.open = true/);

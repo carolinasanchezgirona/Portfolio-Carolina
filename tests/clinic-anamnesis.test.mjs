@@ -141,3 +141,26 @@ test("La navegación clínica tiene seis destinos y conserva las rutas de los m�
   assert.equal(new Set(context.groupList.flatMap(g=>g.members)).size,12);
   assert.match(workspace,/if \(!primary\) button.hidden = true/);
 });
+
+test("Situación actual y tratamiento admiten texto libre sin frases de inicio",()=>{
+  const page=read("app/admin/clinica/page.tsx");
+  const admin=read("public/admin-clinica.js");
+  for (const id of ["clinic-summary-note","clinic-treatment-free-text"]) {
+    const markup=page.match(new RegExp('<textarea id="'+id+'"[^>]*>'))?.[0];
+    assert.ok(markup);
+    assert.doesNotMatch(markup,/placeholder|defaultValue/);
+  }
+  const start=admin.indexOf("  function treatmentNarrative(patient)");
+  const end=admin.indexOf("  // Shared, read-only",start);
+  const context={clinicalProfile:p=>p?.clinical_profile||{},treatmentLegacyFields:[{key:"therapeutic_goals",label:"Objetivos terapéuticos"},{key:"clinical_evolution_summary",label:"Evolución clínica"}]};
+  vm.runInNewContext(admin.slice(start,end),context);
+  assert.equal(context.treatmentNarrative({clinical_profile:{}}),"");
+  const profile={therapeutic_goals:"Dato anterior",clinical_evolution_summary:"Seguimiento"};
+  assert.equal(context.treatmentNarrative({clinical_profile:profile}),"Objetivos terapéuticos:\nDato anterior\n\nEvolución clínica:\nSeguimiento");
+  profile.treatment_free_text="Nuevo registro";
+  assert.equal(context.treatmentNarrative({clinical_profile:profile}),"Nuevo registro");
+  assert.equal(profile.therapeutic_goals,"Dato anterior");
+  assert.match(admin,/treatment_free_text: treatmentFreeField.value/);
+  assert.match(workspace,/add\("tratamiento",goals\)/);
+  assert.match(workspace,/add\("sesiones",history\)/);
+});

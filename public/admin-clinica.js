@@ -139,6 +139,8 @@
   ];
   const anamnesisLegacyFields = clinicalProfileSchema.filter(field => field.group === "Historia y antecedentes");
   const anamnesisFreeField = $("#clinic-anamnesis-free-text");
+  const treatmentLegacyFields = clinicalProfileSchema.filter(field => field.group === "Tratamiento y evolución");
+  const treatmentFreeField = $("#clinic-treatment-free-text");
   function anamnesisNarrative(patient) {
     const profile = clinicalProfile(patient);
     if (typeof profile.anamnesis_free_text === "string") return profile.anamnesis_free_text;
@@ -148,10 +150,16 @@
       .map(([label,value]) => label + ":\n" + String(value)).join("\n\n");
   }
   const clinicalProfileFields = Object.fromEntries(clinicalProfileSchema.map((field) => [field.key, $(`#${field.id}`)]));
+  function treatmentNarrative(patient) {
+    const profile = clinicalProfile(patient);
+    if (typeof profile.treatment_free_text === "string") return profile.treatment_free_text;
+    return treatmentLegacyFields.filter(field => String(profile[field.key] ?? "").trim())
+      .map(field => field.label + ":\n" + String(profile[field.key])).join("\n\n");
+  }
   // Shared, read-only list of clinical headings for historical and print views.
   // No patient data is exposed here and no stored content is transformed.
   window.ClinicClinicalProfileSchema = Object.freeze(
-    [...clinicalProfileSchema, {key:"anamnesis_free_text",label:"Anamnesis libre",group:"Historia y antecedentes"}].map(({ key, label, group }) => Object.freeze({ key, label, group }))
+    [...clinicalProfileSchema, {key:"anamnesis_free_text",label:"Anamnesis libre",group:"Historia y antecedentes"},{key:"treatment_free_text",label:"Tratamiento y evolución (texto libre)",group:"Tratamiento y evolución"}].map(({ key, label, group }) => Object.freeze({ key, label, group }))
   );
 
   let session = null;
@@ -1509,12 +1517,14 @@
       if (clinicalProfileFields[field.key]) clinicalProfileFields[field.key].value = profile[field.key] || "";
     });
     if (anamnesisFreeField) anamnesisFreeField.value = anamnesisNarrative(patient);
+    if (treatmentFreeField) treatmentFreeField.value = treatmentNarrative(patient);
   }
   function clinicalProfilePayload() {
     return {
       ...clinicalProfile(currentPatient),
       ...Object.fromEntries(clinicalProfileSchema.filter((field) => clinicalProfileFields[field.key]).map((field) => [field.key, clinicalProfileFields[field.key].value.trim() || null])),
       ...(anamnesisFreeField ? {anamnesis_free_text: anamnesisFreeField.value} : {}),
+      ...(treatmentFreeField ? {treatment_free_text: treatmentFreeField.value} : {}),
     };
   }
   function clinicalProfilePrintHtml(patient) {
@@ -1524,6 +1534,10 @@
       if (group === "Historia y antecedentes") {
         const text = anamnesisNarrative(patient);
         return text.trim() ? `<section class="entry"><h2>Anamnesis</h2><div class="text">${escapeHtml(text)}</div></section>` : "";
+      }
+      if (group === "Tratamiento y evolución") {
+        const text = treatmentNarrative(patient);
+        return text.trim() ? `<section class="entry"><h2>Tratamiento y evolución</h2><div class="text">${escapeHtml(text)}</div></section>` : "";
       }
       const entries = clinicalProfileSchema
         .filter((field) => field.group === group && profile[field.key])
@@ -1577,7 +1591,7 @@
     const profileEntries = clinicalProfilePrintHtml(currentPatient);
     const personalEntries = personalAdministrativePrintHtml(currentPatient);
     const overview = [
-      currentPatient.clinical_summary ? `<section class="entry"><h2>Síntesis clínica</h2><div class="text">${escapeHtml(currentPatient.clinical_summary)}</div></section>` : "",
+      currentPatient.clinical_summary ? `<section class="entry"><h2>Situación actual</h2><div class="text">${escapeHtml(currentPatient.clinical_summary)}</div></section>` : "",
       currentPatient.medication_notes ? `<section class="entry"><h2>Medicación registrada</h2><div class="text">${escapeHtml(currentPatient.medication_notes)}</div></section>` : "",
       currentPatient.next_session_focus ? `<section class="entry"><h2>Focos pendientes</h2><div class="text">${escapeHtml(currentPatient.next_session_focus)}</div></section>` : "",
     ].join("");

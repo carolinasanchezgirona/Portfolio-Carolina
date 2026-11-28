@@ -36,8 +36,8 @@
     ["exploracion","Exploración clínica","Estado mental, observación y seguridad","＋"],
     ["evaluacion","Evaluación","Pruebas y resultados psicométricos y neuropsicológicos","▥"],
     ["historia","Diagnóstico y pronóstico","Juicio clínico, hipótesis y formulación","◇"],
-    ["tratamiento","Plan terapéutico","Objetivos, intervención y materiales","◎"],
-    ["sesiones","Evolución","Sesiones y seguimiento longitudinal","◷"],
+    ["tratamiento","Tratamiento y evolución","Registro libre de intervención y seguimiento","◎"],
+    ["sesiones","Histórico de sesiones","Sesiones y seguimiento longitudinal","◷"],
     ["documentos","Documentación","Informes y archivos","▧"],
     ["consentimientos","Consentimientos","Firma y protección de datos","✓"],
     ["cierre","Alta clínica","Cierre asistencial y archivo administrativo independiente","□"]
@@ -157,7 +157,17 @@
   add("exploracion",details[4]);
   details[1].remove();
   add("evaluacion",toolCards[2]); // instruments and longitudinal chart stay together
-  moveFields("sesiones",["clinic-interventions-summary","clinic-evolution-summary"]);
+  const treatmentFree = details[3].querySelector("#clinic-treatment-free-text");
+  if (treatmentFree) {
+    for (const label of details[3].querySelectorAll("label")) {
+      if (!label.contains(treatmentFree)) label.style.display = "none";
+    }
+    const summary = details[3].querySelector("summary");
+    if (summary) summary.style.display = "none";
+    details[3].open = true;
+  } else {
+    moveFields("sesiones",["clinic-interventions-summary","clinic-evolution-summary"]);
+  }
   add("tratamiento",details[3]);
   add("tratamiento",goals);
   add("tratamiento",reviews);
