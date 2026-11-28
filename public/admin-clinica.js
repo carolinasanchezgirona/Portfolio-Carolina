@@ -137,11 +137,21 @@
     { key: "professional_coordination", id: "clinic-professional-coordination", label: "Coordinación con otros profesionales", group: "Seguridad y coordinación" },
     { key: "clinical_observations", id: "clinic-clinical-observations", label: "Observaciones clínicas", group: "Seguridad y coordinación" },
   ];
+  const anamnesisLegacyFields = clinicalProfileSchema.filter(field => field.group === "Historia y antecedentes");
+  const anamnesisFreeField = $("#clinic-anamnesis-free-text");
+  function anamnesisNarrative(patient) {
+    const profile = clinicalProfile(patient);
+    if (typeof profile.anamnesis_free_text === "string") return profile.anamnesis_free_text;
+    const items = anamnesisLegacyFields.map(field => [field.label, profile[field.key]]);
+    items.push(["Medicación registrada", patient?.medication_notes]);
+    return items.filter(([,value]) => String(value ?? "").trim())
+      .map(([label,value]) => label + ":\n" + String(value)).join("\n\n");
+  }
   const clinicalProfileFields = Object.fromEntries(clinicalProfileSchema.map((field) => [field.key, $(`#${field.id}`)]));
   // Shared, read-only list of clinical headings for historical and print views.
   // No patient data is exposed here and no stored content is transformed.
   window.ClinicClinicalProfileSchema = Object.freeze(
-    clinicalProfileSchema.map(({ key, label, group }) => Object.freeze({ key, label, group }))
+    [...clinicalProfileSchema, {key:"anamnesis_free_text",label:"Anamnesis libre",group:"Historia y antecedentes"}].map(({ key, label, group }) => Object.freeze({ key, label, group }))
   );
 
   let session = null;
@@ -1498,17 +1508,23 @@
     clinicalProfileSchema.forEach((field) => {
       if (clinicalProfileFields[field.key]) clinicalProfileFields[field.key].value = profile[field.key] || "";
     });
+    if (anamnesisFreeField) anamnesisFreeField.value = anamnesisNarrative(patient);
   }
   function clinicalProfilePayload() {
     return {
       ...clinicalProfile(currentPatient),
       ...Object.fromEntries(clinicalProfileSchema.filter((field) => clinicalProfileFields[field.key]).map((field) => [field.key, clinicalProfileFields[field.key].value.trim() || null])),
+      ...(anamnesisFreeField ? {anamnesis_free_text: anamnesisFreeField.value} : {}),
     };
   }
   function clinicalProfilePrintHtml(patient) {
     const profile = clinicalProfile(patient);
     const groups = [...new Set(clinicalProfileSchema.map((field) => field.group))];
     return groups.map((group) => {
+      if (group === "Historia y antecedentes") {
+        const text = anamnesisNarrative(patient);
+        return text.trim() ? `<section class="entry"><h2>Anamnesis</h2><div class="text">${escapeHtml(text)}</div></section>` : "";
+      }
       const entries = clinicalProfileSchema
         .filter((field) => field.group === group && profile[field.key])
         .map((field) => `<h3>${escapeHtml(field.label)}</h3><div class="text">${escapeHtml(profile[field.key])}</div>`)

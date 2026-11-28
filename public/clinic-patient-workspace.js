@@ -32,7 +32,7 @@
     ["resumen","Resumen","Situación clínica actual y próxima sesión","▤"],
     ["datos","Datos personales","Identificación y contacto","◉"],
     ["motivo","Motivo de consulta","Demanda e historia del problema actual","✎"],
-    ["anamnesis","Anamnesis","Antecedentes y entrevistas estructuradas","▤"],
+    ["anamnesis","Anamnesis","Entrevista clínica en escritura libre","▤"],
     ["exploracion","Exploración clínica","Estado mental, observación y seguridad","＋"],
     ["evaluacion","Evaluación","Pruebas y resultados psicométricos y neuropsicológicos","▥"],
     ["historia","Diagnóstico y pronóstico","Juicio clínico, hipótesis y formulación","◇"],
@@ -114,8 +114,20 @@
     }
     if (grid.childElementCount) add(id,grid);
   }
+  // Mantener los campos históricos dentro del formulario, pero no pedir su edición.
   moveFields("motivo",["clinic-reason-consultation","clinic-problem-history"]);
-  moveFields("anamnesis",["clinic-medication"]);
+  const medicationLabel = select("#clinic-medication")?.closest("label");
+  if (medicationLabel) { medicationLabel.style.display = "none"; panels.get("motivo").append(medicationLabel); }
+  const free = details[0].querySelector("#clinic-anamnesis-free-text");
+  if (free) {
+    for (const label of details[0].querySelectorAll("label")) {
+      if (!label.contains(free)) label.style.display = "none";
+    }
+    const summary = details[0].querySelector("summary");
+    if (summary) summary.style.display = "none";
+    details[0].open = true;
+    buttons.get("motivo").style.display = "none";
+  }
   add("anamnesis",details[0]);
   moveFields("exploracion",["clinic-clinical-examination","clinic-risk-safety","clinic-clinical-observations"]);
   moveFields("evaluacion",["clinic-psychometric-assessment","clinic-neuropsych-assessment"]);
@@ -171,6 +183,7 @@
 
   let active = "resumen";
   function activate(id,{scroll = true} = {}) {
+    if (id === "motivo" && select("#clinic-anamnesis-free-text")) id = "anamnesis";
     if (!panels.has(id)) return;
     active = id;
     for (const [key,panel] of panels) panel.hidden = key !== id;
@@ -199,7 +212,7 @@
   panels.get("resumen").querySelector(".clinic-workspace-panel-heading").append(shortcuts);
 
   buttons.forEach((button,id) => button.addEventListener("click",() => activate(id)));
-  const tabOrder = layout.map(([id]) => id);
+  const tabOrder = layout.map(([id]) => id).filter(id => id !== "motivo" || !select("#clinic-anamnesis-free-text"));
   navigation.addEventListener("keydown", event => {
     if (!["ArrowRight", "ArrowLeft", "Home", "End"].includes(event.key)) return;
     const current = event.target.closest(".clinic-workspace-tab");

@@ -203,25 +203,22 @@
     return bank()?.isAnswer?.(answer) ??
       (Array.isArray(answer)?answer.length>0:answer!==undefined&&answer!==null&&String(answer).trim()!=="");
   }
+  const FREE_KEY = "_anamnesis_free_text";
+  function narrative(current) {
+    const answers=current?.answers||{};
+    if (typeof answers[FREE_KEY]==="string") return answers[FREE_KEY];
+    const sections=formSections(current)||sectionList(current?.assessment_type).map(s=>({questions:s.fields.map(([key,label])=>({key,label}))}));
+    const labels=new Map(sections.flatMap(s=>s.questions).map(q=>[q.key,q.label]));
+    const ordered=[...labels.keys(),...Object.keys(answers).filter(key=>!labels.has(key))];
+    return ordered.filter(key=>key!==FREE_KEY&&hasAnswer(answers[key])).map(key=>{
+      const answer=answers[key];
+      const display=Array.isArray(answer)?answer.join(", "):typeof answer==="object"?JSON.stringify(answer):String(answer);
+      return (labels.get(key)||key)+":\n"+display;
+    }).join("\n\n");
+  }
   function values() {
-    // Conservar respuestas de versiones previas y no borrar claves desconocidas.
-    const result={...(record?.answers||{})};
-    const controls=editor?.querySelectorAll("[data-am-field]")||[];
-    const handled=new Set();
-    for (const field of controls) {
-      const key=field.dataset.amField;
-      if (!key || handled.has(key)) continue;
-      handled.add(key);
-      if (field.type==="checkbox") {
-        const selected=Array.from(controls).filter(c=>c.dataset.amField===key && c.type==="checkbox" && c.checked).map(c=>c.value);
-        if (selected.length) result[key]=selected; else delete result[key];
-        continue;
-      }
-      const value=String(field.value??"").trim();
-      if (!value) delete result[key];
-      else result[key]=field.type==="number"?Number(value):value;
-    }
-    return result;
+    const field=editor?.querySelector("[data-am-free-text]");
+    return {...(record?.answers||{}), ...(field?{[FREE_KEY]:field.value}:{})};
   }
   function updateProgress() {
     if (!progressNode || !record) return;
@@ -316,72 +313,6 @@
     recordsSelect.disabled=!records.length;
     recordsSelect.value=selected||records[0]?.id||"";
   }
-  function renderEditor() {
-    editor.replaceChildren();progressNode=null;
-    if (!record) {
-      editor.append(node("p","Selecciona el tipo de valoración para iniciar una anamnesis, o abre una evaluación anterior.","am-empty"));
-      return;
-    }
-    const sections=formSections(record);
-    if (!sections) {
-      editor.append(node("p","Cargando la plantilla estructurada de esta valoración. Si el aviso persiste, actualiza la página y comprueba la conexión.","am-empty"));
-      return;
-    }
-    const readonly=record.status==="reviewed";
-    const header=node("div",null,"am-record-head");
-    const titleArea=node("div");
-    titleArea.append(node("h4",TYPES[record.assessment_type]?.title||"Valoración"));
-    titleArea.append(node("p",(statusNames[record.status]||record.status)
-      +" · Versión "+(record.protocol_version||"1.0")
-      +" · Iniciada "+formatDate(record.created_at)
-      +" · Actualizada "+formatDate(record.updated_at)
-      +" · Revisión interna "+record.revision,"am-muted"));
-    header.append(titleArea);
-    editor.append(header);
-    if (readonly) editor.append(node("p","Registro revisado y bloqueado. Para añadir datos, inicia una nueva evaluación: la anterior se conserva íntegra.","am-readonly"));
-    else editor.append(node("p","Entrevista clínica profesional editable, no instrumento psicométrico validado. Ninguna respuesta se interpreta automáticamente como diagnóstico. Puedes completar los bloques en varias sesiones; se guardan automáticamente y con el botón de guardado.","am-help"));
-
-    if(String(record.protocol_version||"1.0")!=="1.0"){
-      const info=bank().profiles[record.assessment_type];
-      const summary=node("p",info.subtitle,"am-form-summary");
-      editor.append(summary);
-      const citations=node("div",null,"am-references");
-      citations.append(node("strong","Documentación de referencia: "));
-      for (const [label,url] of info.sources) {
-        const link=node("a",label);
-        link.href=url;link.target="_blank";link.rel="noopener noreferrer";
-        citations.append(link);
-      }
-      editor.append(citations);
-    }
-    progressNode=node("div",null,"am-progress");
-    progressNode.setAttribute("role","status");
-    progressNode.setAttribute("aria-live","polite");
-    editor.append(progressNode);
-
-    const previous=record.answers||{};
-    sections.forEach((section,index)=>{
-      // En los formularios 2.0 la entrevista se divide en bloques plegables.
-      const details=node("details",null,"am-section am-section-details");
-      details.open=index<2;
-      const summary=node("summary",section.title,"am-section-toggle");
-      details.append(summary);
-      if (section.description) details.append(node("p",section.description,"am-muted"));
-      const grid=node("div",null,"am-fields");
-      for (const question of section.questions) grid.append(renderQuestion(question,previous,readonly));
-      details.append(grid);
-      editor.append(details);
-    });
-    const actions=node("div",null,"am-actions");
-    if (!readonly) {
-      actions.append(button("Guardar borrador",()=>{void saveCurrent();},"am-btn am-primary"));
-      actions.append(button("Marcar como revisada",()=>{void reviewCurrent();},"am-btn"));
-    }
-    actions.append(button("Copiar para informe",()=>{void copyForReport();},"am-btn"));
-    actions.append(button("Imprimir / guardar PDF",()=>{void printRecord();},"am-btn"));
-    editor.append(actions);
-    updateProgress();
-  }
   function updateDirty() {
     if (!record || record.status==="reviewed") return;
     dirty=true;
@@ -390,57 +321,31 @@
     clearTimeout(saveTimer);
     saveTimer=setTimeout(()=>{ void saveCurrent(); },1300);
   }
-  function renderRecords() {
-    const selected=record?.id||"";
-    recordsSelect.replaceChildren();
-    if (!records.length) recordsSelect.add(new Option("No hay anamnesis iniciadas",""));
-    for (const item of records) {
-      const label=(TYPES[item.assessment_type]?.title||item.assessment_type)
-        +" · "+(statusNames[item.status]||item.status)+" · "+formatDate(item.created_at);
-      recordsSelect.add(new Option(label,item.id));
-    }
-    recordsSelect.disabled=!records.length;
-    recordsSelect.value=selected||records[0]?.id||"";
-  }
   function renderEditor() {
-    editor.replaceChildren();
+    editor.replaceChildren();progressNode=null;
     if (!record) {
-      editor.append(node("p","Selecciona el tipo de valoración para iniciar una anamnesis, o abre una evaluación anterior.","am-empty"));
+      editor.append(node("p","Selecciona una valoración anterior o inicia una entrevista específica si la necesitas.","am-empty"));
       return;
     }
     const readonly=record.status==="reviewed";
     const header=node("div",null,"am-record-head");
-    const text=node("div");
-    text.append(node("h4",TYPES[record.assessment_type]?.title||"Valoración"));
-    text.append(node("p",(statusNames[record.status]||record.status)+" · Iniciada "+formatDate(record.created_at)+" · Última actualización "+formatDate(record.updated_at)+" · Revisión "+record.revision,"am-muted"));
-    header.append(text);
-    editor.append(header);
-    if (readonly) editor.append(node("p","Registro revisado y bloqueado. Para incorporar nueva información abre una nueva evaluación: la anterior se conserva íntegra.","am-readonly"));
-    else editor.append(node("p","Puedes completar esta entrevista en varias sesiones. Los cambios se guardan automáticamente y también puedes guardarlos manualmente.","am-help"));
-
-    const existing=record.answers||{};
-    for (const section of sectionList(record.assessment_type)) {
-      const fieldset=node("fieldset",null,"am-section");
-      fieldset.append(node("legend",section.title));
-      if (section.description) fieldset.append(node("p",section.description,"am-muted"));
-      const grid=node("div",null,"am-fields");
-      for (const [key,labelText] of section.fields) {
-        const label=node("label");
-        label.append(node("span",labelText));
-        const area=node("textarea");
-        area.rows=3;
-        area.maxLength=4000;
-        area.dataset.amField=key;
-        area.value=typeof existing[key]==="string"?existing[key]:"";
-        area.placeholder="Anotaciones clínicas, ejemplos y fuente de información…";
-        area.disabled=readonly;
-        area.addEventListener("input",updateDirty);
-        label.append(area);
-        grid.append(label);
-      }
-      fieldset.append(grid);
-      editor.append(fieldset);
+    const titleArea=node("div");
+    titleArea.append(node("h4",TYPES[record.assessment_type]?.title||"Valoración"));
+    titleArea.append(node("p",(statusNames[record.status]||record.status)+" · Iniciada "+formatDate(record.created_at)+" · Actualizada "+formatDate(record.updated_at)+" · Revisión "+record.revision,"am-muted"));
+    header.append(titleArea);editor.append(header);
+    if (readonly) editor.append(node("p","Registro revisado y bloqueado. Se conserva íntegramente.","am-readonly"));
+    else editor.append(node("p","Escritura libre. Las respuestas anteriores aparecen como texto y se conservan también en el registro original.","am-help"));
+    if (String(record.protocol_version||"1.0")!=="1.0"&&!bank()?.profiles?.[record.assessment_type]&&typeof record.answers?.[FREE_KEY]!=="string") {
+      editor.append(node("p","Cargando las etiquetas de la entrevista anterior…","am-muted"));
+      return;
     }
+    const label=node("label",null,"am-field-label");
+    label.append(node("span","Anamnesis · escritura libre"));
+    const area=node("textarea");area.rows=20;area.style.width="100%";area.dataset.amFreeText="true";
+    area.value=narrative(record);area.readOnly=readonly;
+    area.placeholder="Escribe libremente las observaciones de la entrevista…";
+    area.addEventListener("input",updateDirty);
+    label.append(area);editor.append(label);
     const actions=node("div",null,"am-actions");
     if (!readonly) {
       actions.append(button("Guardar borrador",()=>{void saveCurrent();},"am-btn am-primary"));
@@ -501,22 +406,8 @@
     if (!record||record.status==="reviewed") return;
     if (!confirm("¿Marcar esta anamnesis como revisada? Se bloqueará para evitar modificaciones retrospectivas. Las ampliaciones se documentarán en una nueva evaluación.")) return;
     if (!await saveCurrent()) return;
-    const sourceOk=Array.isArray(record.answers?.fuentes)
-      ? record.answers.fuentes.length>0
-      : Boolean(String(record.answers?.fuentes||"").trim());
-    if (!record.answers?.motivo || !sourceOk || Object.keys(record.answers||{}).length<3) {
-      notify("Antes de cerrar, documenta el motivo, las fuentes y al menos un hallazgo clínico pertinente.",true);
-      return;
-    }
-    if (String(record.protocol_version||"1.0")!=="1.0") {
-      const all=formSections(record)?.flatMap(section=>section.questions)||[];
-      const answered=all.filter(question=>hasAnswer(record.answers?.[question.key])).length;
-      if (answered<12) {
-        notify("Completa al menos 12 campos, incluidos motivo y fuentes, antes de marcar la anamnesis como revisada.",true);
-        return;
-      }
-      if (answered<Math.ceil(all.length*0.65) &&
-          !confirm("Se han cumplimentado "+answered+" de "+all.length+" campos. ¿Marcar como revisada a pesar de la información no explorada? Esta decisión quedará reflejada en el registro.")) return;
+    if (!narrative(record).trim()) {
+      notify("Antes de cerrar, registra la entrevista clínica.",true);return;
     }
     const target=record;
     try {
@@ -561,13 +452,13 @@
       && item.status!=="reviewed" && String(item.protocol_version)==="2.0");
     if (existing) {
       await selectRecord(existing.id);
-      notify("Se ha abierto la anamnesis estructurada en curso para evitar duplicados.");
+      notify("Se ha abierto la anamnesis en curso para evitar duplicados.");
       return;
     }
     const earlier=records.find(item=>item.assessment_type===type
       && item.status!=="reviewed" && String(item.protocol_version||"1.0")==="1.0");
     if (earlier &&
-        !confirm("Existe una entrevista anterior (versión 1.0) de esta valoración. Se conservará sin cambios. ¿Quieres iniciar un nuevo formulario estructurado 2.0 independiente?")) {
+        !confirm("Existe una entrevista anterior (versión 1.0) de esta valoración. Se conservará sin cambios. ¿Quieres iniciar una nueva entrevista independiente?")) {
       await selectRecord(earlier.id); return;
     }
     if (dirty&&!await saveCurrent()) return;
@@ -597,17 +488,7 @@
       "Origen: entrevista y documentación clínica. Pendiente de integración y revisión profesional.",
       ""
     ];
-    const sections=formSections(record)||[];
-    for (const section of sections) {
-      const items=section.questions.filter(question=>hasAnswer(record.answers?.[question.key]));
-      if (!items.length) continue;
-      out.push(section.title.toUpperCase());
-      for (const question of items) {
-        const answer=record.answers[question.key];
-        const display=Array.isArray(answer)?answer.join(", "):String(answer);
-        out.push(question.label+"\n"+display+"\n");
-      }
-    }
+    out.push(narrative(record));
     return out.join("\n");
   }
   async function copyForReport() {
@@ -689,7 +570,7 @@
         details.append(node("summary","Hay cambios pendientes de recuperar de esta evaluación"));
         details.append(node("p","Otro cambio pudo haber modificado el registro. Copia y contrasta estas anotaciones antes de incorporarlas; no se sobrescribirá nada automáticamente."));
         const area=node("textarea");area.rows=10;area.readOnly=true;
-        area.value=Object.entries(recovery.answers).map(([key,value])=>key+": "+value).join("\n\n");
+        area.value=narrative({assessment_type:recovery.assessmentType,answers:recovery.answers});
         details.append(area);
         editor.prepend(details);
         notify("Se han conservado anotaciones de esta ficha en memoria temporal. Revisa las diferencias.",true);
@@ -704,8 +585,8 @@
     const dialog=document.querySelector("#clinic-patient-dialog");
     if (!panel||!dialog) return false;
     root=node("section",null,"am-module");root.id="clinic-anamnesis-module";
-    root.append(node("h3","Anamnesis y evaluaciones"));
-    root.append(node("p","Formularios de entrevista clínica especializados, con casillas, desplegables, fechas y campos para ejemplos. Información privada vinculada a cada paciente; no se comparte con su portal. El formulario no sustituye pruebas estandarizadas ni el juicio clínico.","am-intro"));
+    root.append(node("h3","Entrevistas específicas e histórico"));
+    root.append(node("p","Entrevistas específicas anteriores o complementarias, en escritura libre. Información privada vinculada a cada paciente; no se comparte con su portal.","am-intro"));
     const top=node("div",null,"am-toolbar");
     const newBox=node("label",null,"am-control");
     newBox.append(node("span","Tipo de valoración"));

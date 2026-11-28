@@ -277,6 +277,7 @@ export default function AdminClinicaPage() {
             <details className="clinic-record-section" open>
               <summary><span>Historia y antecedentes</span><small>Demanda, evolución del problema y contexto biopsicosocial</small></summary>
               <div className="clinic-record-section-body clinic-form-grid">
+                <label className="clinic-full">Anamnesis · escritura libre<textarea id="clinic-anamnesis-free-text" rows={20} placeholder="Escribe la entrevista clínica con tus propias palabras, sin apartados obligatorios…" /></label>
                 <label className="clinic-full">Motivo de consulta<textarea id="clinic-reason-consultation" rows={3} placeholder="Demanda principal, quién solicita la consulta, motivo referido y expectativas…" /></label>
                 <label className="clinic-full">Historia del problema actual<textarea id="clinic-problem-history" rows={4} placeholder="Inicio, evolución, desencadenantes, fluctuaciones, impacto funcional y estrategias utilizadas…" /></label>
                 <label>Antecedentes psicológicos / psiquiátricos<textarea id="clinic-psych-history" rows={4} placeholder="Episodios previos, diagnósticos, tratamientos, ingresos, profesionales y evolución…" /></label>
@@ -856,8 +857,8 @@ export default function AdminClinicaPage() {
       <Script src="/clinic-neuro-weekly-composer.js?v=20261010-logic-4" strategy="afterInteractive" />
       <Script src="/clinic-neuro-catalog-browser.js?v=20261010-catalog-2" strategy="afterInteractive" />
       <Script src="/clinic-import-activity.js?v=20261018-1" strategy="afterInteractive" />
-      <Script src="/admin-clinica.js?v=20261124-history-2" strategy="afterInteractive" />
-      <Script src="/clinical-smart-intake.js?v=20261124-tabs-2" strategy="afterInteractive" />
+      <Script src="/admin-clinica.js?v=20261128-anamnesis-1" strategy="afterInteractive" />
+      <Script src="/clinical-smart-intake.js?v=20261128-anamnesis-1" strategy="afterInteractive" />
       <Script src="/clinical-diagnostic-assistant.js?v=20261109-theme-1" strategy="afterInteractive" />
       <Script src="/clinical-treatment-assistant.js?v=20261029-feedback-1" strategy="afterInteractive" />
       <Script src="/admin-clinica-audit-fixes.js?v=20260915-1" strategy="afterInteractive" />
