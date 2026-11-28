@@ -141,6 +141,47 @@
   const anamnesisFreeField = $("#clinic-anamnesis-free-text");
   const treatmentLegacyFields = clinicalProfileSchema.filter(field => field.group === "Tratamiento y evolución");
   const treatmentFreeField = $("#clinic-treatment-free-text");
+  const followupEntry = $("#clinic-followup-entry");
+  const followupSave = $("#clinic-followup-save");
+  const followupStatus = $("#clinic-followup-status");
+  const followupHistory = $("#clinic-followup-history");
+  let patientSaveInProgress = false;
+  function followupEntries(patient) {
+    const entries = clinicalProfile(patient).followup_entries;
+    return Array.isArray(entries) ? entries : [];
+  }
+  function datedFollowupEntries(patient) {
+    return followupEntries(patient).filter(entry => entry && typeof entry.text === "string" &&
+      typeof entry.created_at === "string" && Number.isFinite(Date.parse(entry.created_at)))
+      .slice().sort((a,b) => Date.parse(b.created_at) - Date.parse(a.created_at));
+  }
+  function renderFollowup(patient) {
+    if (!followupHistory) return;
+    followupHistory.replaceChildren();
+    const entries = datedFollowupEntries(patient);
+    if (!entries.length) {
+      followupHistory.append(create("p", "", "Todavía no hay entradas de seguimiento fechadas."));
+      return;
+    }
+    const dateFormat = new Intl.DateTimeFormat("es-ES",{dateStyle:"full",timeZone:ZONE});
+    const hourFormat = new Intl.DateTimeFormat("es-ES",{timeStyle:"short",timeZone:ZONE});
+    let lastDay = "";
+    for (const entry of entries) {
+      const day = localDateKey(entry.created_at);
+      if (day !== lastDay) {
+        followupHistory.append(create("h4", "", dateFormat.format(new Date(entry.created_at))));
+        lastDay = day;
+      }
+      const article = create("article", "clinic-record-section");
+      const time = create("time", "", hourFormat.format(new Date(entry.created_at)));
+      time.dateTime = entry.created_at;
+      const body = create("p", "", entry.text);
+      body.style.whiteSpace = "pre-wrap";
+      body.style.overflowWrap = "anywhere";
+      article.append(time, body);
+      followupHistory.append(article);
+    }
+  }
   function anamnesisNarrative(patient) {
     const profile = clinicalProfile(patient);
     if (typeof profile.anamnesis_free_text === "string") return profile.anamnesis_free_text;
@@ -159,7 +200,7 @@
   // Shared, read-only list of clinical headings for historical and print views.
   // No patient data is exposed here and no stored content is transformed.
   window.ClinicClinicalProfileSchema = Object.freeze(
-    [...clinicalProfileSchema, {key:"anamnesis_free_text",label:"Anamnesis libre",group:"Historia y antecedentes"},{key:"treatment_free_text",label:"Tratamiento y evolución (texto libre)",group:"Tratamiento y evolución"}].map(({ key, label, group }) => Object.freeze({ key, label, group }))
+    [...clinicalProfileSchema, {key:"anamnesis_free_text",label:"Anamnesis libre",group:"Historia y antecedentes"},{key:"treatment_free_text",label:"Tratamiento (texto libre)",group:"Tratamiento y evolución"}].map(({ key, label, group }) => Object.freeze({ key, label, group }))
   );
 
   let session = null;
@@ -283,6 +324,7 @@
 
   function closePatientPage({ force = false } = {}) {
     if (!els.patientDialog || els.patientDialog.hidden) return true;
+    if (patientSaveInProgress) return false;
     if (els.reportDialog?.open && !closeReportEditor({ force })) return false;
     const changed = patientFormBaseline && patientFormSnapshot() !== patientFormBaseline;
     if (!force && changed) {
@@ -1518,13 +1560,15 @@
     });
     if (anamnesisFreeField) anamnesisFreeField.value = anamnesisNarrative(patient);
     if (treatmentFreeField) treatmentFreeField.value = treatmentNarrative(patient);
+    renderFollowup(patient);
   }
-  function clinicalProfilePayload() {
+  function clinicalProfilePayload(pendingFollowup = null) {
     return {
       ...clinicalProfile(currentPatient),
       ...Object.fromEntries(clinicalProfileSchema.filter((field) => clinicalProfileFields[field.key]).map((field) => [field.key, clinicalProfileFields[field.key].value.trim() || null])),
       ...(anamnesisFreeField ? {anamnesis_free_text: anamnesisFreeField.value} : {}),
       ...(treatmentFreeField ? {treatment_free_text: treatmentFreeField.value} : {}),
+      ...(pendingFollowup ? {followup_entries: [...followupEntries(currentPatient), pendingFollowup]} : {}),
     };
   }
   function clinicalProfilePrintHtml(patient) {
@@ -1537,7 +1581,10 @@
       }
       if (group === "Tratamiento y evolución") {
         const text = treatmentNarrative(patient);
-        return text.trim() ? `<section class="entry"><h2>Tratamiento y evolución</h2><div class="text">${escapeHtml(text)}</div></section>` : "";
+        const treatment = text.trim() ? `<section class="entry"><h2>Tratamiento</h2><div class="text">${escapeHtml(text)}</div></section>` : "";
+        const format = new Intl.DateTimeFormat("es-ES",{dateStyle:"medium",timeStyle:"short",timeZone:ZONE});
+        const notes = datedFollowupEntries(patient).map(entry => `<h3>${escapeHtml(format.format(new Date(entry.created_at)))}</h3><div class="text">${escapeHtml(entry.text)}</div>`).join("");
+        return treatment + (notes ? `<section class="entry"><h2>Seguimiento clínico</h2>${notes}</section>` : "");
       }
       const entries = clinicalProfileSchema
         .filter((field) => field.group === group && profile[field.key])
@@ -2668,6 +2715,9 @@
   }
 
   function openPatient(patient) {
+    if (patientSaveInProgress) return;
+    if (followupEntry) followupEntry.value = "";
+    if (followupStatus) followupStatus.textContent = "";
     currentPatient = patient;
     els.patientId.value = patient.id;
     window.dispatchEvent(new CustomEvent("clinic-patient-opened",{detail:{id:patient.id}}));
@@ -2886,8 +2936,17 @@
 
   async function savePatient(event) {
     event.preventDefault();
+    if (patientSaveInProgress || !currentPatient) return;
+    patientSaveInProgress = true;
+    if (followupSave) followupSave.disabled = true;
+    const text = followupEntry?.value.trim() || "";
+    const pendingFollowup = text ? {id: crypto.randomUUID(), created_at: new Date().toISOString(), text} : null;
+    if (followupEntry) followupEntry.readOnly = true;
+    if (followupStatus) followupStatus.textContent = pendingFollowup ? "Guardando entrada…" : "";
     els.patientMessage.textContent = "Guardando…";
-    const rows = await rest(`clinical_patients?id=eq.${encodeURIComponent(els.patientId.value)}&select=*`, {
+    try {
+    const revision = currentPatient.updated_at ? "&updated_at=eq." + encodeURIComponent(currentPatient.updated_at) : "";
+    const rows = await rest(`clinical_patients?id=eq.${encodeURIComponent(els.patientId.value)}${revision}&select=*`, {
       method: "PATCH",
       headers: { Prefer: "return=representation" },
       body: JSON.stringify({
@@ -2909,12 +2968,15 @@
         clinical_summary: els.summaryNote.value.trim() || null,
         next_session_focus: els.nextFocus.value.trim() || null,
         medication_notes: els.medication.value.trim() || null,
-        clinical_profile: clinicalProfilePayload(),
+        clinical_profile: clinicalProfilePayload(pendingFollowup),
         updated_at: new Date().toISOString(),
       }),
     });
     const updated = rows?.[0];
+    if (!updated) throw new Error("La ficha ha cambiado desde que se abrió. Copia las notas pendientes antes de volver a abrirla y comprueba los cambios.");
     if (updated) {
+      if (pendingFollowup && followupEntry) followupEntry.value = "";
+      if (pendingFollowup && followupStatus) followupStatus.textContent = "Entrada guardada.";
       patients = patients.map((patient) => patient.id === updated.id ? updated : patient);
       currentPatient = updated;
       fillPatientPersonalData(updated);
@@ -2928,6 +2990,14 @@
     els.patientMessage.textContent = "Ficha completa guardada.";
     patientFormBaseline = patientFormSnapshot();
     updatePatientSaveState();
+    } catch (error) {
+      if (followupStatus && pendingFollowup) followupStatus.textContent = error.message;
+      throw error;
+    } finally {
+      patientSaveInProgress = false;
+      if (followupSave) followupSave.disabled = false;
+      if (followupEntry) followupEntry.readOnly = false;
+    }
   }
 
   async function togglePatientPortalAccess() {
@@ -3182,6 +3252,14 @@
   els.deletePatient?.addEventListener("click", () => deletePatientCreatedByError().catch((error) => { els.patientMessage.textContent = error.message; }));
   els.patientClose.addEventListener("click", () => closePatientPage());
   els.personalBirthDate?.addEventListener("change", () => { els.personalAge.value = patientAge(els.personalBirthDate.value); });
+  followupSave?.addEventListener("click", () => {
+    if (!followupEntry?.value.trim()) {
+      if (followupStatus) followupStatus.textContent = "Escribe una anotación antes de guardarla.";
+      followupEntry?.focus();
+      return;
+    }
+    els.patientForm.requestSubmit();
+  });
   els.patientForm.addEventListener("submit", (event) => savePatient(event).catch((error) => { els.patientMessage.textContent = error.message; }));
   els.patientForm.addEventListener("input", updatePatientSaveState);
   els.patientForm.addEventListener("change", updatePatientSaveState);
