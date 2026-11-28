@@ -868,11 +868,8 @@ export default function AdminClinicaPage() {
       <Script src="/clinic-import-activity.js?v=20261018-1" strategy="afterInteractive" />
       <Script src="/admin-clinica.js?v=20261128-followup-1" strategy="afterInteractive" />
       <Script src="/clinical-smart-intake.js?v=20261128-narratives-2" strategy="afterInteractive" />
-      <Script src="/clinical-diagnostic-assistant.js?v=20261109-theme-1" strategy="afterInteractive" />
-      <Script src="/clinical-treatment-assistant.js?v=20261128-free-1" strategy="afterInteractive" />
       <Script src="/admin-clinica-audit-fixes.js?v=20260915-1" strategy="afterInteractive" />
       <Script src="/clinic-readable-history.js?v=20261116-direct-edit-1" strategy="afterInteractive" />
-      <Script src="/clinical-ai-button-bridge.js?v=20261029-2" strategy="afterInteractive" />
     </main>
   );
 }
