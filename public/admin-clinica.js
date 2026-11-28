@@ -194,7 +194,7 @@
   function treatmentNarrative(patient) {
     const profile = clinicalProfile(patient);
     if (typeof profile.treatment_free_text === "string") return profile.treatment_free_text;
-    return treatmentLegacyFields.filter(field => String(profile[field.key] ?? "").trim())
+    return treatmentLegacyFields.filter(field => field.key !== "therapeutic_goals" && String(profile[field.key] ?? "").trim())
       .map(field => field.label + ":\n" + String(profile[field.key])).join("\n\n");
   }
   // Shared, read-only list of clinical headings for historical and print views.
@@ -1584,7 +1584,9 @@
         const treatment = text.trim() ? `<section class="entry"><h2>Tratamiento</h2><div class="text">${escapeHtml(text)}</div></section>` : "";
         const format = new Intl.DateTimeFormat("es-ES",{dateStyle:"medium",timeStyle:"short",timeZone:ZONE});
         const notes = datedFollowupEntries(patient).map(entry => `<h3>${escapeHtml(format.format(new Date(entry.created_at)))}</h3><div class="text">${escapeHtml(entry.text)}</div>`).join("");
-        return treatment + (notes ? `<section class="entry"><h2>Seguimiento clínico</h2>${notes}</section>` : "");
+        const objectives = String(profile.therapeutic_goals || "").trim();
+        const goals = objectives ? `<section class="entry"><h2>Objetivos terapéuticos</h2><div class="text">${escapeHtml(objectives)}</div></section>` : "";
+        return goals + treatment + (notes ? `<section class="entry"><h2>Seguimiento clínico</h2>${notes}</section>` : "");
       }
       const entries = clinicalProfileSchema
         .filter((field) => field.group === group && profile[field.key])
