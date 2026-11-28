@@ -318,8 +318,16 @@ export default function AdminClinicaPage() {
             <details className="clinic-record-section">
               <summary><span>Tratamiento y evolución</span><small>Objetivos, intervenciones, seguimiento y respuesta terapéutica</small></summary>
               <div className="clinic-record-section-body clinic-form-grid">
-                <label className="clinic-full">Tratamiento y evolución<textarea id="clinic-treatment-free-text" rows={20} /></label>
-                <label>Objetivos terapéuticos<textarea id="clinic-therapeutic-goals" rows={4} placeholder="Objetivo, prioridad, indicadores de cambio, estado y evolución…" /></label>
+                <label className="clinic-full">Objetivos terapéuticos · escritura libre<textarea id="clinic-therapeutic-goals" rows={10} /></label>
+                <label className="clinic-full">Tratamiento · escritura libre<textarea id="clinic-treatment-free-text" rows={12} /></label>
+                <div className="clinic-full">
+                  <h3>Seguimiento clínico</h3>
+                  <p>Escribe una nueva anotación. Al guardarla se registrará automáticamente la fecha y la hora, sin sustituir las anteriores.</p>
+                  <textarea id="clinic-followup-entry" aria-label="Nueva entrada de seguimiento" rows={7} style={{width:"100%"}} />
+                  <button type="button" id="clinic-followup-save">Guardar entrada de seguimiento</button>
+                  <p id="clinic-followup-status" role="status" aria-live="polite" />
+                  <div id="clinic-followup-history" aria-label="Historial de seguimiento" />
+                </div>
                 <label>Plan terapéutico<textarea id="clinic-treatment-plan" rows={4} placeholder="Focos de intervención, estrategias previstas, frecuencia y criterios de revisión…" /></label>
                 <label>Intervenciones realizadas<textarea id="clinic-interventions-summary" rows={4} placeholder="Técnicas utilizadas, objetivo, respuesta observada y resultado clínico relevante…" /></label>
                 <label>Evolución clínica<textarea id="clinic-evolution-summary" rows={4} placeholder="Cambios en síntomas, funcionamiento, recursos, dificultades y respuesta al tratamiento…" /></label>
@@ -858,10 +866,10 @@ export default function AdminClinicaPage() {
       <Script src="/clinic-neuro-weekly-composer.js?v=20261010-logic-4" strategy="afterInteractive" />
       <Script src="/clinic-neuro-catalog-browser.js?v=20261010-catalog-2" strategy="afterInteractive" />
       <Script src="/clinic-import-activity.js?v=20261018-1" strategy="afterInteractive" />
-      <Script src="/admin-clinica.js?v=20261128-narratives-2" strategy="afterInteractive" />
+      <Script src="/admin-clinica.js?v=20261128-followup-1" strategy="afterInteractive" />
       <Script src="/clinical-smart-intake.js?v=20261128-narratives-2" strategy="afterInteractive" />
       <Script src="/clinical-diagnostic-assistant.js?v=20261109-theme-1" strategy="afterInteractive" />
-      <Script src="/clinical-treatment-assistant.js?v=20261029-feedback-1" strategy="afterInteractive" />
+      <Script src="/clinical-treatment-assistant.js?v=20261128-free-1" strategy="afterInteractive" />
       <Script src="/admin-clinica-audit-fixes.js?v=20260915-1" strategy="afterInteractive" />
       <Script src="/clinic-readable-history.js?v=20261116-direct-edit-1" strategy="afterInteractive" />
       <Script src="/clinical-ai-button-bridge.js?v=20261029-2" strategy="afterInteractive" />

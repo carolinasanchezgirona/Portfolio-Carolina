@@ -58,7 +58,7 @@
       output.append(section);
     };
     addSection("Objetivos terapéuticos propuestos",objectives,v=>[["Objetivo",v.objective],["Justificación",v.rationale],["Indicador",v.indicator],["Prioridad",v.priority]],"clinic-therapeutic-goals");
-    addSection("Intervenciones y tratamiento sugeridos",interventions,v=>[["Enfoque",v.approach],["Intervención",v.actions],["Fundamento clínico",v.rationale],["Precauciones",v.precautions]],"clinic-treatment-plan");
+    addSection("Intervenciones y tratamiento sugeridos",interventions,v=>[["Enfoque",v.approach],["Intervención",v.actions],["Fundamento clínico",v.rationale],["Precauciones",v.precautions]],"clinic-treatment-free-text");
     [["Información pendiente",proposal.missing_information],["Riesgos y precauciones",proposal.safety_considerations],["Limitaciones",proposal.limitations]].forEach(([title,items])=>{
       if(!Array.isArray(items)||!items.length)return;
       const area=document.createElement("section");
@@ -77,6 +77,10 @@
     if(!session?.access_token){status.textContent="Inicia sesión para utilizar el asistente.";return}
     const profile={};
     Object.entries(fields).forEach(([key,id])=>{const value=$(id)?.value?.trim();if(value)profile[key]=value});
+    const anamnesis = $("clinic-anamnesis-free-text")?.value?.trim();
+    const treatment = $("clinic-treatment-free-text")?.value?.trim();
+    if (anamnesis) profile.current_problem_history = anamnesis;
+    if (treatment) profile.treatment_plan = treatment;
     if(Object.values(profile).join(" ").length<80){status.textContent="Se necesita más información en la historia.";return}
     button.disabled=true;
     status.textContent="Generando objetivos y estrategias para revisión…";
@@ -98,10 +102,10 @@
     const field=$("clinic-therapeutic-goals");
     const body=field?.closest(".clinic-record-section-body");
     if(!body||$("clinic-treatment-ai"))return;
-    const area=document.createElement("section");
+    const area=document.createElement("details");
     area.id="clinic-treatment-ai";
     area.className="clinic-treatment-ai clinic-full";
-    area.append(text("h4","Sugerencias de objetivos y tratamiento"));
+    area.append(text("summary","Sugerencias de objetivos y tratamiento (opcional)"));
     area.append(text("p","Genera propuestas a partir de la historia disponible. Puedes incorporar cada sugerencia por separado después de revisarla."));
     const button=text("button","Sugerir objetivos y tratamiento");
     button.type="button";button.className="clinic-secondary";button.id="clinic-treatment-ai-run";
@@ -114,7 +118,7 @@
     const results=document.createElement("div");
     results.id="clinic-treatment-ai-results";results.hidden=true;
     area.append(results);
-    body.prepend(area);
+    body.append(area);
   }
   window.addEventListener("clinical:patient-opened",()=>{
     proposal=null;
