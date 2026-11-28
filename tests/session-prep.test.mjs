@@ -17,21 +17,19 @@ test("home weekly plan uses only actual protected session materials", () => {
   assert.match(home, /weeklyMaterials\.length \? weeklyMaterials\.map/);
   assert.match(home, /UNA PROPUESTA SIN OBLIGACIONES/);
   assert.match(home, /MIS EJERCICIOS/);
-  assert.match(home, /const prepareSession = "\/entre-sesiones\/app\/espacio\/\?vista=panel#space-session-prep"/);
+  assert.doesNotMatch(home, /#space-session-prep/);
   assert.match(homeCss, /\.esapp-weekly-plan/);
 });
 
-test("preparation form has three voluntary prompts and no implied automatic consent", () => {
-  for (const id of ["space-prep-difficult","space-prep-helped","space-prep-talk"]) {
-    assert.match(portalMarkup, new RegExp('id="' + id + '"'));
+test("reorganized portal does not expose the retired preparation form or a broken link", () => {
+  for (const id of ["space-prep-difficult","space-prep-helped","space-prep-talk","space-session-prep","space-session-prep-target"]) {
+    assert.doesNotMatch(portalMarkup, new RegExp('id="' + id + '"'));
   }
-  assert.match(portalMarkup, /id="space-session-prep"/);
-  assert.match(portalMarkup, /No se guardan automáticamente ni se envían a Carolina/);
-  assert.match(portalMarkup, /Incorporar el resumen no lo guarda ni lo comparte/);
-  assert.match(portalMarkup, /id="space-session-prep-target"/);
-  assert.match(portalMarkup, /src="\/session-prep\.js\?v=/);
-  assert.match(portalCss, /\.space-session-prep-privacy/);
-  assert.match(portalCss, /@media\(max-width:680px\)/);
+  assert.doesNotMatch(portalMarkup, /src="\/session-prep\.js\?v=/);
+  assert.match(portalMarkup, /data-space-panel="today"/);
+  assert.match(portalMarkup, /data-space-panel="therapy"/);
+  assert.match(portalMarkup, /PortalPatientMessages/);
+  assert.doesNotMatch(home, /#space-session-prep/);
 });
 
 test("preparation module cannot auto-submit or persist responses", () => {

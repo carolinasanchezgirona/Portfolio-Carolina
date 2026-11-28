@@ -23,7 +23,6 @@ type AppStatus = "checking" | "ready" | "logged-out" | "error";
 type InstallEvent = Event & { prompt(): Promise<void>; userChoice: Promise<{ outcome: string }> };
 
 const workspace = "/entre-sesiones/app/espacio/?vista=terapia";
-const prepareSession = "/entre-sesiones/app/espacio/?vista=panel#space-session-prep";
 const sessionEndpoint = "/api/patient-portal/session";
 
 function readableDate(value?: string | null) {
@@ -261,11 +260,6 @@ export default function EntreSesionesApp() {
             <a className="esapp-weekly-text-link" href={workspace}>Ver todos mis materiales <span aria-hidden="true">→</span></a>
           </div>
         </div>
-        <a className="esapp-weekly-prepare" href={prepareSession}>
-          <span className="esapp-weekly-prepare-symbol" aria-hidden="true">✎</span>
-          <span><strong>Antes de tu próxima sesión</strong><small>Tres preguntas para pensar qué quieres comentar. El texto es privado hasta que decidas compartirlo.</small></span>
-          <span aria-hidden="true" className="esapp-weekly-arrow">↗</span>
-        </a>
       </section>}
 
       {installHint && !isStandalone && <aside className="esapp-hint" role="status">

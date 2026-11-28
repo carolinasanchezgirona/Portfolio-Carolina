@@ -92,3 +92,75 @@ test("La ficha estructura selectores, checkboxes, guardado por versión y conser
 function requireVm(){
   return {runInNewContext:vm.runInNewContext};
 }
+
+test("Anamnesis general en texto libre, sin texto de ejemplo y preservando los campos históricos",()=>{
+  const page=read("app/admin/clinica/page.tsx");
+  const admin=read("public/admin-clinica.js");
+  const markup=page.match(/<textarea id="clinic-anamnesis-free-text"[^>]*>/)?.[0];
+  assert.ok(markup);
+  assert.doesNotMatch(markup,/placeholder|defaultValue/);
+  const start=admin.indexOf("  function anamnesisNarrative(patient)");
+  const end=admin.indexOf("  const clinicalProfileFields",start);
+  const context={
+    clinicalProfile:p=>p?.clinical_profile||{},
+    anamnesisLegacyFields:[{key:"reason_for_consultation",label:"Motivo de consulta"},{key:"medical_history",label:"Antecedentes médicos"}]
+  };
+  vm.runInNewContext(admin.slice(start,end),context);
+  assert.equal(context.anamnesisNarrative({clinical_profile:{}}),"");
+  const patient={clinical_profile:{reason_for_consultation:"Texto anterior",medical_history:"Otro dato"},medication_notes:"Medicación"};
+  assert.equal(context.anamnesisNarrative(patient),"Motivo de consulta:\nTexto anterior\n\nAntecedentes médicos:\nOtro dato\n\nMedicación registrada:\nMedicación");
+  patient.clinical_profile.anamnesis_free_text="";
+  assert.equal(context.anamnesisNarrative(patient),"");
+  assert.equal(patient.clinical_profile.reason_for_consultation,"Texto anterior");
+  assert.match(admin,/\.\.\.clinicalProfile\(currentPatient\)/);
+  assert.match(admin,/anamnesis_free_text: anamnesisFreeField.value/);
+});
+
+test("Entrevista especializada convierte todos los datos previos a texto y no rellena un registro nuevo",()=>{
+  const start=moduleJs.indexOf('  const FREE_KEY =');
+  const end=moduleJs.indexOf('  function updateProgress()',start);
+  const context={formSections:()=>[{questions:[{key:"motivo",label:"Motivo"},{key:"checks",label:"Opciones"}]}],sectionList:()=>[],hasAnswer:a=>a!==undefined&&a!==null&&String(a).trim()!==""};
+  vm.runInNewContext(moduleJs.slice(start,end),context);
+  assert.equal(context.narrative({answers:{}}),"");
+  assert.equal(context.narrative({answers:{motivo:"Texto",checks:["A","B"],other:"Dato"}}),"Motivo:\nTexto\n\nOpciones:\nA, B\n\nother:\nDato");
+  assert.equal(context.narrative({answers:{motivo:"Original",_anamnesis_free_text:""}}),"");
+});
+
+test("La navegación clínica tiene seis destinos y conserva las rutas de los módulos",()=>{
+  const start=workspace.indexOf("  const groups = [");
+  const end=workspace.indexOf("  const navigation",start);
+  const context={};
+  vm.runInNewContext(workspace.slice(start,end)+"\nthis.groupList=groups;this.findGroup=groupFor;",context);
+  assert.equal(context.groupList.length,6);
+  assert.equal(context.findGroup("motivo").id,"anamnesis");
+  assert.equal(context.findGroup("historia").id,"evaluacion");
+  assert.equal(context.findGroup("exploracion").id,"evaluacion");
+  assert.equal(context.findGroup("sesiones").id,"tratamiento");
+  assert.equal(context.findGroup("consentimientos").id,"datos");
+  assert.equal(context.findGroup("cierre").id,"datos");
+  assert.equal(new Set(context.groupList.flatMap(g=>g.members)).size,12);
+  assert.match(workspace,/if \(!primary\) button.hidden = true/);
+});
+
+test("Situación actual y tratamiento admiten texto libre sin frases de inicio",()=>{
+  const page=read("app/admin/clinica/page.tsx");
+  const admin=read("public/admin-clinica.js");
+  for (const id of ["clinic-summary-note","clinic-treatment-free-text"]) {
+    const markup=page.match(new RegExp('<textarea id="'+id+'"[^>]*>'))?.[0];
+    assert.ok(markup);
+    assert.doesNotMatch(markup,/placeholder|defaultValue/);
+  }
+  const start=admin.indexOf("  function treatmentNarrative(patient)");
+  const end=admin.indexOf("  // Shared, read-only",start);
+  const context={clinicalProfile:p=>p?.clinical_profile||{},treatmentLegacyFields:[{key:"therapeutic_goals",label:"Objetivos terapéuticos"},{key:"clinical_evolution_summary",label:"Evolución clínica"}]};
+  vm.runInNewContext(admin.slice(start,end),context);
+  assert.equal(context.treatmentNarrative({clinical_profile:{}}),"");
+  const profile={therapeutic_goals:"Dato anterior",clinical_evolution_summary:"Seguimiento"};
+  assert.equal(context.treatmentNarrative({clinical_profile:profile}),"Objetivos terapéuticos:\nDato anterior\n\nEvolución clínica:\nSeguimiento");
+  profile.treatment_free_text="Nuevo registro";
+  assert.equal(context.treatmentNarrative({clinical_profile:profile}),"Nuevo registro");
+  assert.equal(profile.therapeutic_goals,"Dato anterior");
+  assert.match(admin,/treatment_free_text: treatmentFreeField.value/);
+  assert.match(workspace,/add\("tratamiento",goals\)/);
+  assert.match(workspace,/add\("sesiones",history\)/);
+});

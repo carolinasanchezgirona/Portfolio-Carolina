@@ -488,9 +488,26 @@
 
       const profile = patient.clinical_profile && typeof patient.clinical_profile === "object" ? { ...patient.clinical_profile } : {};
 
+      const legacyKeys = ["reason_for_consultation","current_problem_history","psychological_psychiatric_history","medical_history","family_history","personal_family_context","social_context","academic_work_context","significant_life_events"];
+      const labelFor = key => document.getElementById(fieldMap[key])?.closest("label")?.childNodes[0]?.textContent?.trim() || key;
+      const oldNarrative = typeof profile.anamnesis_free_text === "string" ? profile.anamnesis_free_text :
+        [...legacyKeys.map(key => [labelFor(key),profile[key]]),["Medicación registrada",patient.medication_notes]]
+          .filter(([,value]) => String(value ?? "").trim()).map(([label,value]) => label+":\n"+String(value)).join("\n\n");
+      const freeField = el("clinic-anamnesis-free-text");
+      if (freeField && freeField.value !== oldNarrative) throw new Error("Guarda primero los cambios de la anamnesis libre antes de aplicar la integración.");
+      const additions = [...legacyKeys,"medication_notes"].filter(key => draft.fields?.[key])
+        .map(key => labelFor(key)+":\n"+draft.fields[key]).join("\n\n");
+      if (additions) profile.anamnesis_free_text = mergeText(oldNarrative, additions);
+      const treatmentKeys = ["therapeutic_goals","treatment_plan","interventions_summary","clinical_evolution_summary"];
+      const treatmentField = el("clinic-treatment-free-text");
+      const oldTreatment = typeof profile.treatment_free_text === "string" ? profile.treatment_free_text :
+        treatmentKeys.filter(key => String(profile[key] ?? "").trim()).map(key => labelFor(key)+":\n"+String(profile[key])).join("\n\n");
+      if (treatmentField && treatmentField.value !== oldTreatment) throw new Error("Guarda primero los cambios de tratamiento y evolución antes de aplicar la integración.");
+      const treatmentAdditions = treatmentKeys.filter(key => draft.fields?.[key]).map(key => labelFor(key)+":\n"+draft.fields[key]).join("\n\n");
+      if (treatmentAdditions) profile.treatment_free_text = mergeText(oldTreatment, treatmentAdditions);
       Object.entries(draft.fields || {}).forEach(([key, incoming]) => {
         if (!incoming || !fieldMap[key]) return;
-        if (["clinical_summary", "next_session_focus", "medication_notes"].includes(key)) return;
+        if (["clinical_summary", "next_session_focus", "medication_notes", ...legacyKeys, ...treatmentKeys].includes(key)) return;
         profile[key] = mergeText(profile[key], incoming);
       });
 
@@ -539,6 +556,8 @@
         node.dispatchEvent(new Event("input", { bubbles: true }));
       });
 
+      if (freeField && typeof profile.anamnesis_free_text === "string") freeField.value = profile.anamnesis_free_text;
+      if (treatmentField && typeof profile.treatment_free_text === "string") treatmentField.value = profile.treatment_free_text;
       if (updatedPatient) {
         window.dispatchEvent(new CustomEvent("clinical:patient-updated", { detail: { patient: updatedPatient } }));
       }

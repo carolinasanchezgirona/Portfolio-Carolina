@@ -264,7 +264,7 @@ export default function AdminClinicaPage() {
           </section>
 
           <div className="clinic-form-grid">
-            <label className="clinic-full">Síntesis clínica<textarea id="clinic-summary-note" rows={4} placeholder="Problemas actuales, contexto y evolución relevante…" /></label>
+            <label className="clinic-full">Situación actual<textarea id="clinic-summary-note" rows={16} /></label>
             <label>Para la próxima sesión<textarea id="clinic-next-focus" rows={3} placeholder="Cuestiones pendientes y focos posibles…" /></label>
             <label>Medicación registrada<textarea id="clinic-medication" rows={3} placeholder="Fármaco, dosis, fecha y fuente…" /></label>
           </div>
@@ -277,6 +277,7 @@ export default function AdminClinicaPage() {
             <details className="clinic-record-section" open>
               <summary><span>Historia y antecedentes</span><small>Demanda, evolución del problema y contexto biopsicosocial</small></summary>
               <div className="clinic-record-section-body clinic-form-grid">
+                <label className="clinic-full">Anamnesis · escritura libre<textarea id="clinic-anamnesis-free-text" rows={20} /></label>
                 <label className="clinic-full">Motivo de consulta<textarea id="clinic-reason-consultation" rows={3} placeholder="Demanda principal, quién solicita la consulta, motivo referido y expectativas…" /></label>
                 <label className="clinic-full">Historia del problema actual<textarea id="clinic-problem-history" rows={4} placeholder="Inicio, evolución, desencadenantes, fluctuaciones, impacto funcional y estrategias utilizadas…" /></label>
                 <label>Antecedentes psicológicos / psiquiátricos<textarea id="clinic-psych-history" rows={4} placeholder="Episodios previos, diagnósticos, tratamientos, ingresos, profesionales y evolución…" /></label>
@@ -317,6 +318,7 @@ export default function AdminClinicaPage() {
             <details className="clinic-record-section">
               <summary><span>Tratamiento y evolución</span><small>Objetivos, intervenciones, seguimiento y respuesta terapéutica</small></summary>
               <div className="clinic-record-section-body clinic-form-grid">
+                <label className="clinic-full">Tratamiento y evolución<textarea id="clinic-treatment-free-text" rows={20} /></label>
                 <label>Objetivos terapéuticos<textarea id="clinic-therapeutic-goals" rows={4} placeholder="Objetivo, prioridad, indicadores de cambio, estado y evolución…" /></label>
                 <label>Plan terapéutico<textarea id="clinic-treatment-plan" rows={4} placeholder="Focos de intervención, estrategias previstas, frecuencia y criterios de revisión…" /></label>
                 <label>Intervenciones realizadas<textarea id="clinic-interventions-summary" rows={4} placeholder="Técnicas utilizadas, objetivo, respuesta observada y resultado clínico relevante…" /></label>
@@ -856,8 +858,8 @@ export default function AdminClinicaPage() {
       <Script src="/clinic-neuro-weekly-composer.js?v=20261010-logic-4" strategy="afterInteractive" />
       <Script src="/clinic-neuro-catalog-browser.js?v=20261010-catalog-2" strategy="afterInteractive" />
       <Script src="/clinic-import-activity.js?v=20261018-1" strategy="afterInteractive" />
-      <Script src="/admin-clinica.js?v=20261124-history-2" strategy="afterInteractive" />
-      <Script src="/clinical-smart-intake.js?v=20261124-tabs-2" strategy="afterInteractive" />
+      <Script src="/admin-clinica.js?v=20261128-narratives-2" strategy="afterInteractive" />
+      <Script src="/clinical-smart-intake.js?v=20261128-narratives-2" strategy="afterInteractive" />
       <Script src="/clinical-diagnostic-assistant.js?v=20261109-theme-1" strategy="afterInteractive" />
       <Script src="/clinical-treatment-assistant.js?v=20261029-feedback-1" strategy="afterInteractive" />
       <Script src="/admin-clinica-audit-fixes.js?v=20260915-1" strategy="afterInteractive" />

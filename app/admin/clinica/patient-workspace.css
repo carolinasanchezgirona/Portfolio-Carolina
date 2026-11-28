@@ -50,3 +50,9 @@
 #clinic-patient-dialog .clinic-record-quicknav[hidden]{display:none!important}
 #clinic-patient-dialog .clinic-workspace-panel>.clinic-form-grid{padding:16px;border:1px solid var(--admin-line);border-radius:12px;background:var(--admin-surface)}
 @media(max-width:640px){#clinic-patient-dialog .clinic-patient-workspace-nav{grid-template-columns:repeat(2,minmax(0,1fr));margin-inline:8px;padding:7px}#clinic-patient-dialog .clinic-workspace-tab{font-size:.78rem;padding:9px;overflow-wrap:anywhere}}
+
+/* Six main destinations, with original clinical subsections kept in reading order. */
+#clinic-patient-dialog .clinic-workspace-tab[hidden]{display:none!important}
+#clinic-patient-dialog .clinic-patient-workspace-nav{grid-template-columns:repeat(3,minmax(0,1fr))}
+#clinic-patient-dialog .clinic-workspace-panel[role="region"]{border-top:1px solid var(--admin-line);padding-top:20px;min-height:0}
+@media(max-width:640px){#clinic-patient-dialog .clinic-patient-workspace-nav{grid-template-columns:repeat(2,minmax(0,1fr))}}
