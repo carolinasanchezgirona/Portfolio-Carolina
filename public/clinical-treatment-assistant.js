@@ -77,6 +77,10 @@
     if(!session?.access_token){status.textContent="Inicia sesión para utilizar el asistente.";return}
     const profile={};
     Object.entries(fields).forEach(([key,id])=>{const value=$(id)?.value?.trim();if(value)profile[key]=value});
+    const anamnesis = $("clinic-anamnesis-free-text")?.value?.trim();
+    const treatment = $("clinic-treatment-free-text")?.value?.trim();
+    if (anamnesis) profile.current_problem_history = anamnesis;
+    if (treatment) profile.treatment_plan = treatment;
     if(Object.values(profile).join(" ").length<80){status.textContent="Se necesita más información en la historia.";return}
     button.disabled=true;
     status.textContent="Generando objetivos y estrategias para revisión…";
