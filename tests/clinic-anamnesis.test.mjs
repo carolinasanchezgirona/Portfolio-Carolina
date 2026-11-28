@@ -125,3 +125,19 @@ test("Entrevista especializada convierte todos los datos previos a texto y no re
   assert.equal(context.narrative({answers:{motivo:"Texto",checks:["A","B"],other:"Dato"}}),"Motivo:\nTexto\n\nOpciones:\nA, B\n\nother:\nDato");
   assert.equal(context.narrative({answers:{motivo:"Original",_anamnesis_free_text:""}}),"");
 });
+
+test("La navegación clínica tiene seis destinos y conserva las rutas de los módulos",()=>{
+  const start=workspace.indexOf("  const groups = [");
+  const end=workspace.indexOf("  const navigation",start);
+  const context={};
+  vm.runInNewContext(workspace.slice(start,end)+"\nthis.groupList=groups;this.findGroup=groupFor;",context);
+  assert.equal(context.groupList.length,6);
+  assert.equal(context.findGroup("motivo").id,"anamnesis");
+  assert.equal(context.findGroup("historia").id,"evaluacion");
+  assert.equal(context.findGroup("exploracion").id,"evaluacion");
+  assert.equal(context.findGroup("sesiones").id,"tratamiento");
+  assert.equal(context.findGroup("consentimientos").id,"datos");
+  assert.equal(context.findGroup("cierre").id,"datos");
+  assert.equal(new Set(context.groupList.flatMap(g=>g.members)).size,12);
+  assert.match(workspace,/if \(!primary\) button.hidden = true/);
+});

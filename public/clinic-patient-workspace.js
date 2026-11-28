@@ -43,6 +43,16 @@
     ["cierre","Alta clínica","Cierre asistencial y archivo administrativo independiente","□"]
   ];
 
+  // Six primary destinations. Keep existing panel IDs and activation targets for other modules.
+  const groups = [
+    {id:"resumen",label:"Resumen",members:["resumen"]},
+    {id:"anamnesis",label:"Anamnesis",members:["anamnesis","motivo"]},
+    {id:"evaluacion",label:"Evaluación y diagnóstico",members:["exploracion","evaluacion","historia"]},
+    {id:"tratamiento",label:"Tratamiento y evolución",members:["tratamiento","sesiones"]},
+    {id:"documentos",label:"Documentación",members:["documentos"]},
+    {id:"datos",label:"Datos y gestión",members:["datos","consentimientos","cierre"]}
+  ];
+  const groupFor = id => groups.find(group => group.members.includes(id));
   const navigation = document.createElement("nav");
   navigation.id = "clinic-patient-workspace-nav";
   navigation.className = "clinic-patient-workspace-nav";
@@ -63,7 +73,10 @@
     glyph.setAttribute("aria-hidden","true");
     glyph.textContent = icon;
     glyph.style.marginInlineEnd = "7px";
-    button.append(glyph,document.createTextNode(label));
+    const group = groupFor(id);
+    const primary = group?.id === id;
+    button.append(glyph,document.createTextNode(primary ? group.label : label));
+    if (!primary) button.hidden = true;
     button.dataset.workspaceTab = id;
     button.id = "clinic-tab-" + id;
     button.setAttribute("aria-controls","clinic-panel-" + id);
@@ -77,12 +90,13 @@
     panel.id = "clinic-panel-" + id;
     panel.dataset.workspacePanel = id;
     panel.className = "clinic-workspace-panel";
-    panel.setAttribute("role","tabpanel");
-    panel.setAttribute("aria-labelledby",button.id);
+    panel.setAttribute("role",primary ? "tabpanel" : "region");
+    panel.setAttribute("aria-labelledby",primary ? button.id : "clinic-panel-title-"+id);
     panel.tabIndex = 0;
     const header = document.createElement("div");
     header.className = "clinic-workspace-panel-heading";
     const h3 = document.createElement("h3");
+    h3.id = "clinic-panel-title-"+id;
     h3.textContent = label;
     const p = document.createElement("p");
     p.textContent = description;
@@ -92,6 +106,13 @@
     panels.set(id,panel);
   }
 
+  // Grouped panels stay in the same form and in clinical reading order.
+  for (const group of groups) {
+    for (const id of group.members) workspace.append(panels.get(id));
+    const primaryButton = buttons.get(group.id);
+    navigation.append(primaryButton);
+    primaryButton.setAttribute("aria-controls",group.members.map(id=>"clinic-panel-"+id).join(" "));
+  }
   function add(id, node) { if (node) panels.get(id).append(node); }
   // Preserve native form submission and all existing input IDs.
   add("resumen",dashboard);
@@ -184,16 +205,22 @@
   let active = "resumen";
   function activate(id,{scroll = true} = {}) {
     if (id === "motivo" && select("#clinic-anamnesis-free-text")) id = "anamnesis";
-    if (!panels.has(id)) return;
-    active = id;
-    for (const [key,panel] of panels) panel.hidden = key !== id;
+    const group = groupFor(id);
+    if (!group) return;
+    active = group.id;
+    for (const [key,panel] of panels) {
+      panel.hidden = !group.members.includes(key) || (key === "motivo" && Boolean(select("#clinic-anamnesis-free-text")));
+    }
     for (const [key,button] of buttons) {
-      const selected = key === id;
+      const selected = key === group.id;
       button.classList.toggle("active",selected);
       button.setAttribute("aria-selected",String(selected));
       button.tabIndex = selected ? 0 : -1;
     }
-    if (scroll) navigation.scrollIntoView({behavior:"smooth",block:"start"});
+    if (scroll) {
+      const target = id === group.id ? navigation : panels.get(id);
+      target?.scrollIntoView({behavior:"smooth",block:"start"});
+    }
   }
   const shortcuts = document.createElement("div");
   shortcuts.className = "clinic-workspace-shortcuts";
@@ -212,7 +239,7 @@
   panels.get("resumen").querySelector(".clinic-workspace-panel-heading").append(shortcuts);
 
   buttons.forEach((button,id) => button.addEventListener("click",() => activate(id)));
-  const tabOrder = layout.map(([id]) => id).filter(id => id !== "motivo" || !select("#clinic-anamnesis-free-text"));
+  const tabOrder = groups.map(group => group.id);
   navigation.addEventListener("keydown", event => {
     if (!["ArrowRight", "ArrowLeft", "Home", "End"].includes(event.key)) return;
     const current = event.target.closest(".clinic-workspace-tab");
