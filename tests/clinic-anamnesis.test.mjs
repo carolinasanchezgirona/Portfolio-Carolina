@@ -92,3 +92,36 @@ test("La ficha estructura selectores, checkboxes, guardado por versión y conser
 function requireVm(){
   return {runInNewContext:vm.runInNewContext};
 }
+
+test("Anamnesis general en texto libre, sin texto de ejemplo y preservando los campos históricos",()=>{
+  const page=read("app/admin/clinica/page.tsx");
+  const admin=read("public/admin-clinica.js");
+  const markup=page.match(/<textarea id="clinic-anamnesis-free-text"[^>]*>/)?.[0];
+  assert.ok(markup);
+  assert.doesNotMatch(markup,/placeholder|defaultValue/);
+  const start=admin.indexOf("  function anamnesisNarrative(patient)");
+  const end=admin.indexOf("  const clinicalProfileFields",start);
+  const context={
+    clinicalProfile:p=>p?.clinical_profile||{},
+    anamnesisLegacyFields:[{key:"reason_for_consultation",label:"Motivo de consulta"},{key:"medical_history",label:"Antecedentes médicos"}]
+  };
+  vm.runInNewContext(admin.slice(start,end),context);
+  assert.equal(context.anamnesisNarrative({clinical_profile:{}}),"");
+  const patient={clinical_profile:{reason_for_consultation:"Texto anterior",medical_history:"Otro dato"},medication_notes:"Medicación"};
+  assert.equal(context.anamnesisNarrative(patient),"Motivo de consulta:\nTexto anterior\n\nAntecedentes médicos:\nOtro dato\n\nMedicación registrada:\nMedicación");
+  patient.clinical_profile.anamnesis_free_text="";
+  assert.equal(context.anamnesisNarrative(patient),"");
+  assert.equal(patient.clinical_profile.reason_for_consultation,"Texto anterior");
+  assert.match(admin,/\.\.\.clinicalProfile\(currentPatient\)/);
+  assert.match(admin,/anamnesis_free_text: anamnesisFreeField.value/);
+});
+
+test("Entrevista especializada convierte todos los datos previos a texto y no rellena un registro nuevo",()=>{
+  const start=moduleJs.indexOf('  const FREE_KEY =');
+  const end=moduleJs.indexOf('  function updateProgress()',start);
+  const context={formSections:()=>[{questions:[{key:"motivo",label:"Motivo"},{key:"checks",label:"Opciones"}]}],sectionList:()=>[],hasAnswer:a=>a!==undefined&&a!==null&&String(a).trim()!==""};
+  vm.runInNewContext(moduleJs.slice(start,end),context);
+  assert.equal(context.narrative({answers:{}}),"");
+  assert.equal(context.narrative({answers:{motivo:"Texto",checks:["A","B"],other:"Dato"}}),"Motivo:\nTexto\n\nOpciones:\nA, B\n\nother:\nDato");
+  assert.equal(context.narrative({answers:{motivo:"Original",_anamnesis_free_text:""}}),"");
+});

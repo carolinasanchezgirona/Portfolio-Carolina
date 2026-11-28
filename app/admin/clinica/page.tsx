@@ -277,7 +277,7 @@ export default function AdminClinicaPage() {
             <details className="clinic-record-section" open>
               <summary><span>Historia y antecedentes</span><small>Demanda, evolución del problema y contexto biopsicosocial</small></summary>
               <div className="clinic-record-section-body clinic-form-grid">
-                <label className="clinic-full">Anamnesis · escritura libre<textarea id="clinic-anamnesis-free-text" rows={20} placeholder="Escribe la entrevista clínica con tus propias palabras, sin apartados obligatorios…" /></label>
+                <label className="clinic-full">Anamnesis · escritura libre<textarea id="clinic-anamnesis-free-text" rows={20} /></label>
                 <label className="clinic-full">Motivo de consulta<textarea id="clinic-reason-consultation" rows={3} placeholder="Demanda principal, quién solicita la consulta, motivo referido y expectativas…" /></label>
                 <label className="clinic-full">Historia del problema actual<textarea id="clinic-problem-history" rows={4} placeholder="Inicio, evolución, desencadenantes, fluctuaciones, impacto funcional y estrategias utilizadas…" /></label>
                 <label>Antecedentes psicológicos / psiquiátricos<textarea id="clinic-psych-history" rows={4} placeholder="Episodios previos, diagnósticos, tratamientos, ingresos, profesionales y evolución…" /></label>

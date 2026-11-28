@@ -343,7 +343,6 @@
     label.append(node("span","Anamnesis · escritura libre"));
     const area=node("textarea");area.rows=20;area.style.width="100%";area.dataset.amFreeText="true";
     area.value=narrative(record);area.readOnly=readonly;
-    area.placeholder="Escribe libremente las observaciones de la entrevista…";
     area.addEventListener("input",updateDirty);
     label.append(area);editor.append(label);
     const actions=node("div",null,"am-actions");
