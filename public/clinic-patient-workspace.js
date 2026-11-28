@@ -160,7 +160,7 @@
   const treatmentFree = details[3].querySelector("#clinic-treatment-free-text");
   if (treatmentFree) {
     for (const label of details[3].querySelectorAll("label")) {
-      if (!label.contains(treatmentFree)) label.style.display = "none";
+      if (!label.contains(treatmentFree) && !label.querySelector("#clinic-therapeutic-goals")) label.style.display = "none";
     }
     const summary = details[3].querySelector("summary");
     if (summary) summary.style.display = "none";
@@ -169,7 +169,14 @@
     moveFields("sesiones",["clinic-interventions-summary","clinic-evolution-summary"]);
   }
   add("tratamiento",details[3]);
-  add("tratamiento",goals);
+  if (goals) {
+    const legacyGoals = document.createElement("details");
+    legacyGoals.className = "clinic-record-section";
+    const heading = document.createElement("summary");
+    heading.textContent = "Objetivos individuales anteriores y publicación en el portal";
+    legacyGoals.append(heading,goals);
+    add("tratamiento",legacyGoals);
+  }
   add("tratamiento",reviews);
   add("tratamiento",exercise);
   add("sesiones",toolCards[0]);
